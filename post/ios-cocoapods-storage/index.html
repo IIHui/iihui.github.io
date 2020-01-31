@@ -1,0 +1,527 @@
+<!DOCTYPE HTML>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" /> 
+    <title>第三方库放到Cocoapods中 - Keep It Simple</title>
+    <meta name="keywords" content="爱呆,博客,程序员,思考,读书,笔记,技术,分享,Golang">
+    
+    <meta property="og:title" content="第三方库放到Cocoapods中">
+    <meta property="og:site_name" content="Keep It Simple">
+    <meta property="og:image" content="/img/author.jpg"> 
+    <meta name="title" content="第三方库放到Cocoapods中 - Keep It Simple" />
+    <meta name="description" content="爱呆 | 博客 | 软件 | C&#43;&#43; | Golang"> 
+    
+    <link rel="shortcut icon" href="https://IIHui.github.io/img/favicon.ico" />
+    <link rel="apple-touch-icon" href="https://IIHui.github.io/img/apple-touch-icon.png" />
+    <link rel="apple-touch-icon-precomposed" href="https://IIHui.github.io/img/apple-touch-icon.png" />
+    <link href="https://IIHui.github.io/js/vendor/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+    <link href="https://IIHui.github.io/js/vendor/fancybox/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+    <link href="https://IIHui.github.io/css/main.css" rel="stylesheet" type="text/css" />
+<script type="text/javascript" id="hexo.configuration">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    scheme: 'Pisces',
+    sidebar: {"position":"left","display":"post"},
+     fancybox: true, 
+    motion: true
+  };
+</script>
+
+<link href="https://cdn.bootcss.com/highlight.js/9.12.0/styles/monokai-sublime.min.css" rel="stylesheet">
+<script src="https://cdn.bootcss.com/highlight.js/9.12.0/highlight.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/languages/go.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/languages/swift.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/languages/yaml.min.js"></script>
+<script>hljs.initHighlightingOnLoad();</script>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+<div class="container one-collumn sidebar-position-left page-home  ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"> <div class="site-meta  custom-logo ">
+
+  <div class="custom-logo-site-title">
+    <a href="https://IIHui.github.io/"  class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <span class="site-title">Keep It Simple</span>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+  <p class="site-subtitle">一指流沙，程序年华</p>
+</div>
+
+<div class="site-nav-toggle">
+  <button>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+  </button>
+</div>
+
+<nav class="site-nav">
+    <ul id="menu" class="menu">
+      
+      
+        <li class="menu-item ">
+          <a href="https://IIHui.github.io/" rel="section">
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />首页
+          </a>
+        </li>
+      
+        <li class="menu-item ">
+          <a href="https://IIHui.github.io/tags/" rel="section">
+              <i class="menu-item-icon fa fa-fw fa-tag"></i> <br />标签
+          </a>
+        </li>
+      
+        <li class="menu-item ">
+          <a href="https://IIHui.github.io/post/" rel="section">
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />归档
+          </a>
+        </li>
+      
+        <li class="menu-item ">
+          <a href="https://IIHui.github.io/categories/%E6%97%85%E8%A1%8C/" rel="section">
+              <i class="menu-item-icon fa fa-fw fa-leaf"></i> <br />旅行
+          </a>
+        </li>
+      
+        <li class="menu-item ">
+          <a href="https://IIHui.github.io/categories/%E7%BE%8E%E9%A3%9F/" rel="section">
+              <i class="menu-item-icon fa fa-fw fa-fire"></i> <br />美食
+          </a>
+        </li>
+      
+        <li class="menu-item ">
+          <a href="https://IIHui.github.io/about/" rel="section">
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />关于
+          </a>
+        </li>
+      
+      <li class="menu-item menu-item-search">
+        <a href="javascript:;" class="popup-trigger"> <i class="menu-item-icon fa fa-search fa-fw"></i> <br /> 搜索</a>
+      </li>
+    </ul>
+    <div class="site-search">
+      <div class="popup">
+ <span class="search-icon fa fa-search"></span>
+ <input type="text" id="local-search-input">
+ <div id="local-search-result"></div>
+ <span class="popup-btn-close">close</span>
+</div>
+
+    </div>
+</nav>
+<script type="text/javascript"
+        async
+        src="https://cdn.bootcss.com/mathjax/2.7.3/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+		<!-- src = "http://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"> <\!--  -\-> -->
+MathJax.Hub.Config({
+  tex2jax: {
+    inlineMath: [['$','$'], ['\\(','\\)']],
+    displayMath: [['$$','$$'], ['\[\[','\]\]']],
+    processEscapes: true,
+    processEnvironments: true,
+    skipTags: ['script', 'noscript', 'style', 'textarea', 'pre'],
+    TeX: { equationNumbers: { autoNumber: "AMS" },
+         extensions: ["AMSmath.js", "AMSsymbols.js"] }
+  }
+});
+
+MathJax.Hub.Queue(function() {
+    
+    
+    
+    var all = MathJax.Hub.getAllJax(), i;
+    for(i = 0; i < all.length; i += 1) {
+        all[i].SourceElement().parentNode.className += ' has-jax';
+    }
+});
+</script>
+
+<style>
+code.has-jax {
+    font: inherit;
+    font-size: 100%;
+    background: inherit;
+    border: inherit;
+    color: #515151;
+}
+</style>
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+<section id="posts" class="posts-expand">
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <header class="post-header">
+      <h1 class="post-title" itemprop="name headline">
+        <a class="post-title-link" href="https://IIHui.github.io/post/ios-cocoapods-storage/" itemprop="url">
+        第三方库放到Cocoapods中
+        </a>
+      </h1>
+      <div class="post-meta">
+      <span class="post-time">
+<span class="post-meta-item-icon">
+    <i class="fa fa-calendar-o"></i>
+</span>
+<span class="post-meta-item-text">创建于:</span>
+<time itemprop="dateCreated" datetime="2016-03-22T13:04:35+08:00" content="2019-03-01">
+    2019-03-01
+</time>
+</span>
+&nbsp; | &nbsp;
+<span class="post-updated-time">
+<span class="post-meta-item-icon">
+    <i class="fa fa-calendar-check-o"></i>
+</span>
+<span class="post-meta-item-text">更新于:</span>
+<time itemprop="dateUpdated" content="2019-03-01">
+    2019-03-01
+</time>
+</span> 
+      
+
+  <span class="post-category" >
+  &nbsp; | &nbsp;
+  <span class="post-meta-item-icon">
+    <i class="fa fa-folder-o"></i>
+  </span>
+  <span class="post-meta-item-text">分类:</span>
+  
+    <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
+      <a href="https://IIHui.github.io/categories/ios" itemprop="url" rel="index">
+        <span itemprop="name">iOS</span>
+      </a>
+      &nbsp; 
+    </span>
+  
+</span>
+
+
+       <span>
+&nbsp; | &nbsp;
+<span class="post-meta-item-icon">
+    <i class="fa fa-file-word-o"></i>
+</span>
+<span class="post-meta-item-text">字数统计:</span>
+<span class="leancloud-visitors-count">823</span>
+&nbsp; | &nbsp;
+<span class="post-meta-item-icon">
+    <i class="fa fa-coffee"></i>
+</span>
+<span class="post-meta-item-text">阅读时长:</span>
+<span class="leancloud-visitors-count">2</span>
+</span>
+      </div>
+    </header>
+    <div class="post-body" itemprop="articleBody">
+      <blockquote>
+<p>因项目需要引用百度语音合成<code>SDK</code>，但这个第三方库的<code>.a</code>文件过于庞大，按规定不能直接放到项目中，需要放到项目依赖的<code>Cocoapods</code>仓库中。因为已有相应的模板，所以只要按照要求修改对应的文件，然后执行相应的命令即可，现将这一过程总结为<code>5</code>步。</p>
+</blockquote>
+<h1 id="第一步">第一步</h1>
+<p>第一步为修改<code>.podspec</code>文件，为了修改<code>podspec</code>文件，<!-- raw HTML omitted -->首先必须创建第三方库目录<!-- raw HTML omitted -->。下图为第三方库存放的目录结构，如需新建一个第三方库目录，则选中任意一个拷贝一份:</p>
+<p><img src="https://i.loli.net/2019/03/02/5c79e1459b2d2.jpg" alt="">
+<img src="https://i.loli.net/2019/03/02/5c79e689d522b.jpg" alt=""></p>
+<p>拷贝完了之后修改下图中长方形内文件或者文件夹(总共3处)的名字，然后删除下图椭圆内的文件：</p>
+<p><img src="https://i.loli.net/2019/03/02/5c79e88b56ec3.jpg" alt=""></p>
+<p>这里我将上图的那个副本重命名为<code>BaiduTest</code>，<!-- raw HTML omitted -->修改上面的<code>3</code>个地方和和删除文件后<!-- raw HTML omitted -->如下图所示:</p>
+<p><img src="https://i.loli.net/2019/03/02/5c79ea476a789.jpg" alt=""></p>
+<p>然后修改<code>.podspec</code>文件，这个文件的修改<!-- raw HTML omitted -->必须使用终端文本编辑器<!-- raw HTML omitted -->（我使用<code>vim</code>编辑器），否则可能出错，这个文件<!-- raw HTML omitted -->有三个地方需要修改<!-- raw HTML omitted -->。</p>
+<h2 id="第一个地方">第一个地方</h2>
+<p>首先修改<code>s.name</code>,<code>s.version</code>,<code>s.summary</code>,<code>s.description</code>这四个地方，其中<code>s.name</code>保持为上面修改的名字，版本号为<code>0.0.1</code>：</p>
+<p><img src="https://i.loli.net/2019/03/02/5c79ebb18a620.jpg" alt="">
+<img src="https://i.loli.net/2019/03/02/5c79ec7e8bd0b.jpg" alt=""></p>
+<h2 id="第二个地方">第二个地方</h2>
+<p>接下来修改<code>s.homepage</code>,只要将最后的名字修改为<code>BaiduTest</code>:</p>
+<p><img src="https://i.loli.net/2019/03/02/5c79ed7470194.jpg" alt="">
+<img src="https://i.loli.net/2019/03/02/5c79edad8af62.jpg" alt=""></p>
+<h2 id="第三个地方">第三个地方</h2>
+<p>最后修改<code>s.source</code>,将后面两项修改即可，这两项的名字要和<code>s.name</code>和<code>s.version</code>保持一致:</p>
+<p><img src="https://i.loli.net/2019/03/02/5c79ee32af6c2.jpg" alt="">
+<img src="https://i.loli.net/2019/03/02/5c79ee6903c24.jpg" alt=""></p>
+<hr>
+<h1 id="第二步">第二步</h1>
+<p>第二步修改<code>push.py</code>,目的是<!-- raw HTML omitted -->将<code>LC10_01_BaiduTest</code>这个目录打包并上传到仓库中<!-- raw HTML omitted -->，这个文件<!-- raw HTML omitted -->要修改两处<!-- raw HTML omitted -->:</p>
+<p><img src="https://i.loli.net/2019/03/02/5c79ef077b3a6.jpg" alt=""></p>
+<h2 id="第一个地方-1">第一个地方</h2>
+<p>将<code>zipCommands</code>后面的名字改为<code>LC10_01_BaiduTest</code>：</p>
+<p><img src="https://i.loli.net/2019/03/02/5c79ef5034e00.jpg" alt="">
+<img src="https://i.loli.net/2019/03/02/5c79efca90662.jpg" alt=""></p>
+<h2 id="第二个地方-1">第二个地方</h2>
+<p>将<code>uploadCommand</code>命令后打包的目录和打包后的文件的名字改成<code>LC10_01_BaiduTest</code>：</p>
+<p><img src="https://i.loli.net/2019/03/02/5c79f040f3b4e.jpg" alt=""></p>
+<hr>
+<h1 id="第三步">第三步</h1>
+<p>第三步执行<code>push.py</code>,即转到<code>push.py</code>脚本所在目录执行<code>./push.py</code>即可</p>
+<h1 id="第四步">第四步</h1>
+<p>修改工程所使用的<code>podfile</code>，添加<code>LC10_01_BaiduTest</code>：</p>
+<p><img src="https://i.loli.net/2019/03/02/5c79f18d61e27.jpg" alt="">
+<img src="https://i.loli.net/2019/03/02/5c79f204dd1cf.jpg" alt=""></p>
+<hr>
+<h1 id="第五步">第五步</h1>
+<p>第五步是在<!-- raw HTML omitted -->工程目录下<!-- raw HTML omitted -->依次执行下面<code>3</code>条命令:</p>
+<ol>
+<li>
+<p><code>pod repo-art update CocoaPods-cmb</code></p>
+</li>
+<li>
+<p><code>pod install</code></p>
+</li>
+<li>
+<p><code>pod update</code></p>
+</li>
+</ol>
+<hr>
+<p><img src="https://i.loli.net/2019/04/17/5cb6905c13d74.png" alt="photo"></p>
+
+    </div>
+    <footer class="post-footer">
+     
+ 
+<div class="post-tags">     
+     
+    <a href="https://IIHui.github.io/tags/ios" rel="tag" title="iOS">#iOS#</a>
+    
+</div>
+
+
+
+     <div class="post-nav">
+    <div class="post-nav-next post-nav-item">
+    
+        <a href="https://IIHui.github.io/post/ios-dispatchqueue/" rel="next" title="GCD">
+        <i class="fa fa-chevron-left"></i> GCD
+        </a>
+    
+    </div>
+
+    <div class="post-nav-prev post-nav-item">
+    
+        <a href="https://IIHui.github.io/post/ios-baidusynthesizer/" rel="prev" title="引入百度语音合成">
+        引入百度语音合成 <i class="fa fa-chevron-right"></i>
+        </a>
+    
+    </div>
+</div>
+      
+     <div class="post-nav">
+<div style="border: 1px dashed #e0e0e0; padding: 10px 10px 10px 10px; background-color: #fffeee; background-repeat: no-repeat; background-attachment: scroll; background-position: 1% 50%; -moz-background-size: auto auto; -moz-background-clip: -moz-initial; -moz-background-origin: -moz-initial; -moz-background-inline-policy: -moz-initial;">
+    <div style="float:left;margin-top:0px;">
+    <img src="https://i.loli.net/2018/12/16/5c15cbd7f2b61.jpg" width="128px" height="128px"/>
+    <div style="text-align:center;">谢谢支持!</div>
+    </div>
+    <div>
+        <p style="margin-top:10px;">
+            标题：第三方库放到Cocoapods中
+        <br />作者：<a target="_blank" href="https://IIHui.github.io/">I呆呆</a>
+        
+        <br />地址：https://IIHui.github.io/post/ios-cocoapods-storage/
+        <br />声明：自由转载-非商用-保持署名（创作共享3.0许可证）
+        </p>
+    </div>
+</div>
+<div class="clear"></div>
+</div>
+     
+     
+     
+
+
+
+
+    </footer>
+  </article>
+</section>
+
+          </div>
+        </div>
+        <div class="sidebar-toggle">
+  <div class="sidebar-toggle-line-wrap">
+    <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+    <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+    <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+  </div>
+</div>
+<aside id="sidebar" class="sidebar">
+  <div class="sidebar-inner">
+
+  <ul class="sidebar-nav motion-element">
+    <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+      文章目录
+    </li>
+    <li class="sidebar-nav-overview" data-target="site-overview">
+      站点概览
+    </li>
+  </ul>
+
+    <section class="site-overview sidebar-panel ">
+      <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image"
+        src="https://IIHui.github.io/img/mmhui.png"
+        alt="I呆呆" />
+    <p class="site-author-name" itemprop="name">I呆呆</p>
+    <p class="site-description motion-element" itemprop="description"> </p>
+</div>
+      <nav class="site-state motion-element">
+    <div class="site-state-item site-state-posts">
+      <a href="https://IIHui.github.io/post/">
+        <span class="site-state-item-count">95</span>
+        <span class="site-state-item-name">日志</span>
+      </a>
+    </div>
+    <div class="site-state-item site-state-categories">    
+        <a href="https://IIHui.github.io/categories/">      
+         
+        <span class="site-state-item-count">19</span>
+        
+        <span class="site-state-item-name">分类</span>
+        
+        </a>
+    </div>
+
+    <div class="site-state-item site-state-tags">
+        <a href="https://IIHui.github.io/tags/">
+         
+        <span class="site-state-item-count">19</span>
+        
+        <span class="site-state-item-name">标签</span>
+        </a>
+    </div>
+</nav>
+      
+      
+<div class="links-of-author motion-element">
+    
+        <span class="links-of-author-item">
+        <a href="https://coolshell.cn" target="_blank" title="酷 壳">
+            <i class="fa fa-fw fa-globe"></i>
+            酷 壳
+        </a>
+        </span>
+    
+        <span class="links-of-author-item">
+        <a href="http://www.ideamsg.com" target="_blank" title="灵 感">
+            <i class="fa fa-fw fa-globe"></i>
+            灵 感
+        </a>
+        </span>
+    
+        <span class="links-of-author-item">
+        <a href="http://www.ruanyifeng.com" target="_blank" title="阮一峰">
+            <i class="fa fa-fw fa-globe"></i>
+            阮一峰
+        </a>
+        </span>
+    
+        <span class="links-of-author-item">
+        <a href="https://github.com/qicosmos/" target="_blank" title="祁 宇">
+            <i class="fa fa-fw fa-github"></i>
+            祁 宇
+        </a>
+        </span>
+    
+</div>
+
+      
+      <div class="links-of-blogroll motion-element inline">
+
+
+</div>
+    </section>
+    
+<section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+    <div class="post-toc">
+        <div class="post-toc-content"><nav id="TableOfContents">
+  <ul>
+    <li><a href="#第一个地方">第一个地方</a></li>
+    <li><a href="#第二个地方">第二个地方</a></li>
+    <li><a href="#第三个地方">第三个地方</a></li>
+  </ul>
+
+  <ul>
+    <li><a href="#第一个地方-1">第一个地方</a></li>
+    <li><a href="#第二个地方-1">第二个地方</a></li>
+  </ul>
+</nav></div>
+    </div>
+</section>
+
+  </div>
+</aside>
+
+      </div>
+    </main>
+   
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  <span itemprop="copyrightYear">  &copy; 
+  2018 - 2020</span>
+  <span class="with-love"><i class="fa fa-heart"></i></span>
+  <span class="author" itemprop="copyrightHolder">Keep It Simple</span>
+</div>
+
+  
+
+<div class="theme-info">
+  
+  
+</div>
+
+
+      </div>
+    </footer>
+
+    <div class="back-to-top">
+      <i class="fa fa-arrow-up"></i>
+    </div>
+  </div>
+
+  <script>
+    var _hmt = _hmt || [];
+    (function() {
+    var hm = document.createElement("script");
+    hm.src = "//hm.baidu.com/hm.js?0b07433b4ab8d587dae7d34e71973839";
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(hm, s);
+    })();
+</script>
+<script type="text/javascript" src="http://tajs.qq.com/stats?sId=58416275" charset="UTF-8"></script> 
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+<script type="text/javascript" src="https://IIHui.github.io/js/vendor/jquery/index.js?v=2.1.3"></script>
+<script type="text/javascript" src="https://IIHui.github.io/js/vendor/fastclick/lib/fastclick.min.js?v=1.0.6"></script> 
+<script type="text/javascript" src="https://IIHui.github.io/js/vendor/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+<script type="text/javascript" src="https://IIHui.github.io/js/vendor/velocity/velocity.min.js?v=1.2.1"></script>
+<script type="text/javascript" src="https://IIHui.github.io/js/vendor/velocity/velocity.ui.min.js?v=1.2.1"></script>
+<script src="https://IIHui.github.io/js/vendor/ua-parser-js/dist/ua-parser.min.js?v=0.7.9"></script>
+
+<script src="https://IIHui.github.io/js/vendor/fancybox/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+<script type="text/javascript" src="https://IIHui.github.io/js/utils.js"></script>
+<script type="text/javascript" src="https://IIHui.github.io/js/motion.js"></script>
+<script type="text/javascript" src="https://IIHui.github.io/js/affix.js"></script>
+<script type="text/javascript" src="https://IIHui.github.io/js/schemes/pisces.js"></script>
+
+<script type="text/javascript" src="https://IIHui.github.io/js/scrollspy.js"></script>
+<script type="text/javascript" src="https://IIHui.github.io/js/post-details.js"></script>
+<script type="text/javascript" src="https://IIHui.github.io/js/toc.js"></script>
+
+<script type="text/javascript" src="https://IIHui.github.io/js/bootstrap.js"></script>
+
+<script type="text/javascript" src="https://IIHui.github.io/js/search.js"></script>
+</body>
+</html>

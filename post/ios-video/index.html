@@ -1,0 +1,596 @@
+<!DOCTYPE HTML>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" /> 
+    <title>iOS视频开发入门 - Keep It Simple</title>
+    <meta name="keywords" content="爱呆,博客,程序员,思考,读书,笔记,技术,分享,Golang">
+    
+    <meta property="og:title" content="iOS视频开发入门">
+    <meta property="og:site_name" content="Keep It Simple">
+    <meta property="og:image" content="/img/author.jpg"> 
+    <meta name="title" content="iOS视频开发入门 - Keep It Simple" />
+    <meta name="description" content="爱呆 | 博客 | 软件 | C&#43;&#43; | Golang"> 
+    
+    <link rel="shortcut icon" href="https://IIHui.github.io/img/favicon.ico" />
+    <link rel="apple-touch-icon" href="https://IIHui.github.io/img/apple-touch-icon.png" />
+    <link rel="apple-touch-icon-precomposed" href="https://IIHui.github.io/img/apple-touch-icon.png" />
+    <link href="https://IIHui.github.io/js/vendor/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+    <link href="https://IIHui.github.io/js/vendor/fancybox/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+    <link href="https://IIHui.github.io/css/main.css" rel="stylesheet" type="text/css" />
+<script type="text/javascript" id="hexo.configuration">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    scheme: 'Pisces',
+    sidebar: {"position":"left","display":"post"},
+     fancybox: true, 
+    motion: true
+  };
+</script>
+
+<link href="https://cdn.bootcss.com/highlight.js/9.12.0/styles/monokai-sublime.min.css" rel="stylesheet">
+<script src="https://cdn.bootcss.com/highlight.js/9.12.0/highlight.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/languages/go.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/languages/swift.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/languages/yaml.min.js"></script>
+<script>hljs.initHighlightingOnLoad();</script>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+<div class="container one-collumn sidebar-position-left page-home  ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"> <div class="site-meta  custom-logo ">
+
+  <div class="custom-logo-site-title">
+    <a href="https://IIHui.github.io/"  class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <span class="site-title">Keep It Simple</span>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+  <p class="site-subtitle">一指流沙，程序年华</p>
+</div>
+
+<div class="site-nav-toggle">
+  <button>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+  </button>
+</div>
+
+<nav class="site-nav">
+    <ul id="menu" class="menu">
+      
+      
+        <li class="menu-item ">
+          <a href="https://IIHui.github.io/" rel="section">
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />首页
+          </a>
+        </li>
+      
+        <li class="menu-item ">
+          <a href="https://IIHui.github.io/tags/" rel="section">
+              <i class="menu-item-icon fa fa-fw fa-tag"></i> <br />标签
+          </a>
+        </li>
+      
+        <li class="menu-item ">
+          <a href="https://IIHui.github.io/post/" rel="section">
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />归档
+          </a>
+        </li>
+      
+        <li class="menu-item ">
+          <a href="https://IIHui.github.io/categories/%E6%97%85%E8%A1%8C/" rel="section">
+              <i class="menu-item-icon fa fa-fw fa-leaf"></i> <br />旅行
+          </a>
+        </li>
+      
+        <li class="menu-item ">
+          <a href="https://IIHui.github.io/categories/%E7%BE%8E%E9%A3%9F/" rel="section">
+              <i class="menu-item-icon fa fa-fw fa-fire"></i> <br />美食
+          </a>
+        </li>
+      
+        <li class="menu-item ">
+          <a href="https://IIHui.github.io/about/" rel="section">
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />关于
+          </a>
+        </li>
+      
+      <li class="menu-item menu-item-search">
+        <a href="javascript:;" class="popup-trigger"> <i class="menu-item-icon fa fa-search fa-fw"></i> <br /> 搜索</a>
+      </li>
+    </ul>
+    <div class="site-search">
+      <div class="popup">
+ <span class="search-icon fa fa-search"></span>
+ <input type="text" id="local-search-input">
+ <div id="local-search-result"></div>
+ <span class="popup-btn-close">close</span>
+</div>
+
+    </div>
+</nav>
+<script type="text/javascript"
+        async
+        src="https://cdn.bootcss.com/mathjax/2.7.3/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+		<!-- src = "http://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"> <\!--  -\-> -->
+MathJax.Hub.Config({
+  tex2jax: {
+    inlineMath: [['$','$'], ['\\(','\\)']],
+    displayMath: [['$$','$$'], ['\[\[','\]\]']],
+    processEscapes: true,
+    processEnvironments: true,
+    skipTags: ['script', 'noscript', 'style', 'textarea', 'pre'],
+    TeX: { equationNumbers: { autoNumber: "AMS" },
+         extensions: ["AMSmath.js", "AMSsymbols.js"] }
+  }
+});
+
+MathJax.Hub.Queue(function() {
+    
+    
+    
+    var all = MathJax.Hub.getAllJax(), i;
+    for(i = 0; i < all.length; i += 1) {
+        all[i].SourceElement().parentNode.className += ' has-jax';
+    }
+});
+</script>
+
+<style>
+code.has-jax {
+    font: inherit;
+    font-size: 100%;
+    background: inherit;
+    border: inherit;
+    color: #515151;
+}
+</style>
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+<section id="posts" class="posts-expand">
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <header class="post-header">
+      <h1 class="post-title" itemprop="name headline">
+        <a class="post-title-link" href="https://IIHui.github.io/post/ios-video/" itemprop="url">
+        iOS视频开发入门
+        </a>
+      </h1>
+      <div class="post-meta">
+      <span class="post-time">
+<span class="post-meta-item-icon">
+    <i class="fa fa-calendar-o"></i>
+</span>
+<span class="post-meta-item-text">创建于:</span>
+<time itemprop="dateCreated" datetime="2016-03-22T13:04:35+08:00" content="2018-12-12">
+    2018-12-12
+</time>
+</span>
+&nbsp; | &nbsp;
+<span class="post-updated-time">
+<span class="post-meta-item-icon">
+    <i class="fa fa-calendar-check-o"></i>
+</span>
+<span class="post-meta-item-text">更新于:</span>
+<time itemprop="dateUpdated" content="2018-12-12">
+    2018-12-12
+</time>
+</span> 
+      
+
+  <span class="post-category" >
+  &nbsp; | &nbsp;
+  <span class="post-meta-item-icon">
+    <i class="fa fa-folder-o"></i>
+  </span>
+  <span class="post-meta-item-text">分类:</span>
+  
+    <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
+      <a href="https://IIHui.github.io/categories/ios" itemprop="url" rel="index">
+        <span itemprop="name">iOS</span>
+      </a>
+      &nbsp; 
+    </span>
+  
+</span>
+
+
+       <span>
+&nbsp; | &nbsp;
+<span class="post-meta-item-icon">
+    <i class="fa fa-file-word-o"></i>
+</span>
+<span class="post-meta-item-text">字数统计:</span>
+<span class="leancloud-visitors-count">1432</span>
+&nbsp; | &nbsp;
+<span class="post-meta-item-icon">
+    <i class="fa fa-coffee"></i>
+</span>
+<span class="post-meta-item-text">阅读时长:</span>
+<span class="leancloud-visitors-count">3</span>
+</span>
+      </div>
+    </header>
+    <div class="post-body" itemprop="articleBody">
+      <h1 id="视频实质">视频实质</h1>
+<p>纯粹的视频（不包括音频）实质上就是<!-- raw HTML omitted -->一组帧图片<!-- raw HTML omitted -->，经过视频编码成为视频(<code>video</code>)文件再把音频（<code>audio</code>）文件以及字幕文件组装在一起成为视频（<code>movie</code>）文件。</p>
+<p><code>1</code>秒内出现的图片数就是帧率，<!-- raw HTML omitted -->图片间隔越小画面就越流畅<!-- raw HTML omitted -->，所以帧率越高效果就越好，需要的存储空间也就越多。</p>
+<hr>
+<h1 id="录制视频的3种实现方式">录制视频的3种实现方式</h1>
+<ul>
+<li>
+<p><code>UIImagePickerViewController</code>：只能设置一些简单的参数来实现基本的视频录制的效果，自定义程度不高。</p>
+</li>
+<li>
+<p><code>AVFoundation</code>：苹果提供的底层多媒体框架，用于音视频采集、解码、视频编辑等，使用<code>AVFoundation</code>进行视频录制有以下两种方式：</p>
+<ol>
+<li>
+<p><code>AVCaptureSession</code> + <code>AVCaptureMoiveFileOutput</code>。</p>
+</li>
+<li>
+<p><code>AVCaptureSession</code> +  <code>AVAssetWriter</code>。</p>
+</li>
+</ol>
+<p><img src="https://i.loli.net/2018/12/12/5c1082dab7426.png" alt="-c1600"></p>
+</li>
+</ul>
+<hr>
+<h2 id="uiimagepickercontroller">UIImagePickerController</h2>
+<p>这种方式只能设置一些简单的参数，自定义程度不高，只能自定义界面上的操作按钮以及视频的画质：</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-objc" data-lang="objc">- (<span style="color:#66d9ef">void</span>)<span style="color:#a6e22e">viewDidLoad</span>
+{
+    [super viewDidLoad];
+    
+    <span style="color:#66d9ef">if</span> ([self isVideoRecordingAvailable]) {
+        <span style="color:#66d9ef">return</span>;
+    }
+    self.sourceType <span style="color:#f92672">=</span> UIImagePickerControllerSourceTypeCamera;
+    self.mediaTypes <span style="color:#f92672">=</span> <span style="color:#ae81ff">@[</span>(NSString <span style="color:#f92672">*</span>)kUTTypeMovie<span style="color:#ae81ff">]</span>;
+    self.delegate <span style="color:#f92672">=</span> self;
+    
+    <span style="color:#75715e">//隐藏系统自带UI
+</span><span style="color:#75715e"></span>    self.showsCameraControls <span style="color:#f92672">=</span> NO;
+    <span style="color:#75715e">//设置摄像头
+</span><span style="color:#75715e"></span>    [self switchCameraIsFront:NO];
+    <span style="color:#75715e">//设置视频画质类别
+</span><span style="color:#75715e"></span>    self.videoQuality <span style="color:#f92672">=</span> UIImagePickerControllerQualityTypeMedium;
+    <span style="color:#75715e">//设置散光灯类型
+</span><span style="color:#75715e"></span>    self.cameraFlashMode <span style="color:#f92672">=</span> UIImagePickerControllerCameraFlashModeAuto;
+    <span style="color:#75715e">//设置录制的最大时长
+</span><span style="color:#75715e"></span>    self.videoMaximumDuration <span style="color:#f92672">=</span> <span style="color:#ae81ff">20</span>;
+}
+- (<span style="color:#66d9ef">BOOL</span>)<span style="color:#a6e22e">isVideoRecordingAvailable</span>
+{
+    <span style="color:#66d9ef">if</span>([UIImagePickerController isSourceTypeAvailable:UIImagePickerControllerSourceTypeCamera]){
+        NSArray <span style="color:#f92672">*</span>availableMediaTypes <span style="color:#f92672">=</span> [UIImagePickerController availableMediaTypesForSourceType:UIImagePickerControllerSourceTypeCamera];
+        <span style="color:#66d9ef">if</span>([availableMediaTypes containsObject:(NSString <span style="color:#f92672">*</span>)kUTTypeMovie]){
+            <span style="color:#66d9ef">return</span> YES;
+        }
+    }
+    <span style="color:#66d9ef">return</span> NO;
+}
+- (<span style="color:#66d9ef">void</span>)<span style="color:#a6e22e">switchCameraIsFront:</span>(<span style="color:#66d9ef">BOOL</span>)front
+{
+    <span style="color:#66d9ef">if</span> (front) {
+        <span style="color:#66d9ef">if</span>([UIImagePickerController isCameraDeviceAvailable:UIImagePickerControllerCameraDeviceFront]){
+            [self setCameraDevice:UIImagePickerControllerCameraDeviceFront];
+            
+        }
+    } <span style="color:#66d9ef">else</span> {
+        <span style="color:#66d9ef">if</span>([UIImagePickerController isCameraDeviceAvailable:UIImagePickerControllerCameraDeviceRear]){
+            [self setCameraDevice:UIImagePickerControllerCameraDeviceRear];
+            
+        }
+    }
+}
+</code></pre></div><hr>
+<h2 id="avcapturesessionavcapturemoviefileoutput">AVCaptureSession+AVCaptureMovieFileOutput</h2>
+<p>采用<code>AVCaptureSession+AVCaptureMovieFileOutput</code>进行视频录制一般要经过以下<code>6</code>步：</p>
+<ol>
+<li>创建捕捉会话<code>AVCaptureSession</code>,用于控制<code>input</code>到<code>output</code>的流向。</li>
+<li>设置视频的输入设备<code> AVCaptureDeviceInput</code>，用于视频采集，然后将设备绑定到<code>AVCaptureSession</code>的输入口<code>input</code>中。</li>
+<li>设置音频输入设备<code> AVCaptureDeviceInput</code>，用于音频采集，然后将设备绑定到<code>AVCaptureSession</code>的输入口<code>input</code>中。</li>
+<li>设置输出源<code>AVCaptureMovieFileOutput</code>。此时音频和视频会合并在一起，在代理方法中也可以单独拿到视频或者音频数据，给<code>AVCaptureMovieFileOutput</code>指定路径，开始录制之后就会向这个路径写入数据。</li>
+<li>添加视频预览层。</li>
+<li>开始采集数据，<!-- raw HTML omitted -->这个时候还没有写入数据<!-- raw HTML omitted -->，用户点击录制后就可以开始写入数据。</li>
+</ol>
+<p>如果需要对视频进行实时处理，则需要对相机缓冲区中的视频流进行处理：</p>
+<ol>
+<li>定义一个视频数据输出<code>AVCaptureVideoDataOutput</code>,并将其添加到<code>Session</code>上。</li>
+<li>设置接受的<code>Controller</code>作为视频数据输出缓冲区<code>Sample Buffer</code>的代理。</li>
+<li>实现代理方法。</li>
+</ol>
+<hr>
+<p><a href="http://gcblog.github.io/2017/03/22/iOS%E4%B8%89%E7%A7%8D%E5%BD%95%E5%88%B6%E8%A7%86%E9%A2%91%E6%96%B9%E5%BC%8F%E8%AF%A6%E7%BB%86%E5%AF%B9%E6%AF%94/">参考资料</a>
+<a href="https://www.invasivecode.com/weblog/AVFoundation-Swift-capture-video/">参考资料</a></p>
+<hr>
+<h2 id="avcapturesessionavassetwriter">AVCaptureSession+AVAssetWriter</h2>
+<p>基本流程为</p>
+<ol>
+<li>创建捕捉会话</li>
+<li>设置视频的输入和输出</li>
+<li>设置音频的输入和输出</li>
+<li>添加视频预览层</li>
+<li>开始采集数据，这个时候还没有写入数据，用户点击录制的时候才开始写入数据</li>
+<li>初始化<code>AVAssetWriter</code>，我们会拿到视频和音频数据流，用<code>AVAssetWriter</code>写入文件，这一步需要自己实现。</li>
+<li></li>
+</ol>
+<hr>
+<h2 id="录制视频开启蓝牙录音">录制视频开启蓝牙录音</h2>
+<p>思路是先判断是否有蓝牙或者耳机插入，如果有则将其设置为音频输入源，否则使用默认的麦克风，应当注意的是要在设置了音频输入源之后，再设置<code>self.captureSession.usesApplicationAudioSession = true</code>和<code>self.captureSession.automaticallyConfiguresApplicationAudioSession = false</code>。</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift">fileprivate <span style="color:#66d9ef">var</span> isBlueToothAvailable = <span style="color:#66d9ef">false</span>
+fileprivate <span style="color:#66d9ef">var</span> audioSession = AVAudioSession.sharedInstance()
+<span style="color:#66d9ef">func</span> <span style="color:#a6e22e">isBlueToothConnected</span>()-&gt;Bool{
+    <span style="color:#66d9ef">let</span> route = AVAudioSession.sharedInstance().currentRoute
+    <span style="color:#66d9ef">for</span> item <span style="color:#66d9ef">in</span> route.outputs{
+        <span style="color:#66d9ef">if</span> item.portType == AVAudioSessionPortHeadphones <span style="color:#f92672">||</span> item.portType == AVAudioSessionPortBluetoothA2DP{
+            <span style="color:#66d9ef">self</span>.isBlueToothAvailable = <span style="color:#66d9ef">true</span>
+            <span style="color:#66d9ef">return</span> <span style="color:#66d9ef">true</span>
+         }
+    }
+    <span style="color:#66d9ef">return</span> <span style="color:#66d9ef">false</span>
+}
+
+<span style="color:#66d9ef">if</span> isBlueToothConnected(){
+    <span style="color:#66d9ef">do</span>{
+        <span style="color:#66d9ef">try</span> audioSession.setCategory(AVAudioSessionCategoryPlayAndRecord, with: AVAudioSessionCategoryOptions.allowBluetooth)
+    }<span style="color:#66d9ef">catch</span>{}
+}
+
+<span style="color:#66d9ef">if</span> <span style="color:#66d9ef">self</span>.isBlueToothAvailable {
+    <span style="color:#66d9ef">self</span>.captureSession.usesApplicationAudioSession = <span style="color:#66d9ef">true</span>
+    <span style="color:#66d9ef">self</span>.captureSession.automaticallyConfiguresApplicationAudioSession = <span style="color:#66d9ef">false</span>       
+}
+</code></pre></div><p><a href="https://stackoverflow.com/questions/29835019/how-add-avcapturedeviceinput-to-avcapturesession-from-bluetooth-device/29839703">参考资料</a></p>
+<hr>
+
+    </div>
+    <footer class="post-footer">
+     
+ 
+<div class="post-tags">     
+     
+    <a href="https://IIHui.github.io/tags/ios" rel="tag" title="iOS">#iOS#</a>
+    
+</div>
+
+
+
+     <div class="post-nav">
+    <div class="post-nav-next post-nav-item">
+    
+        <a href="https://IIHui.github.io/post/ios-gif/" rel="next" title="Gif的播放与暂停">
+        <i class="fa fa-chevron-left"></i> Gif的播放与暂停
+        </a>
+    
+    </div>
+
+    <div class="post-nav-prev post-nav-item">
+    
+        <a href="https://IIHui.github.io/post/htm-primer/" rel="prev" title="HTML入门">
+        HTML入门 <i class="fa fa-chevron-right"></i>
+        </a>
+    
+    </div>
+</div>
+      
+     <div class="post-nav">
+<div style="border: 1px dashed #e0e0e0; padding: 10px 10px 10px 10px; background-color: #fffeee; background-repeat: no-repeat; background-attachment: scroll; background-position: 1% 50%; -moz-background-size: auto auto; -moz-background-clip: -moz-initial; -moz-background-origin: -moz-initial; -moz-background-inline-policy: -moz-initial;">
+    <div style="float:left;margin-top:0px;">
+    <img src="https://i.loli.net/2018/12/16/5c15cbd7f2b61.jpg" width="128px" height="128px"/>
+    <div style="text-align:center;">谢谢支持!</div>
+    </div>
+    <div>
+        <p style="margin-top:10px;">
+            标题：iOS视频开发入门
+        <br />作者：<a target="_blank" href="https://IIHui.github.io/">I呆呆</a>
+        
+        <br />地址：https://IIHui.github.io/post/ios-video/
+        <br />声明：自由转载-非商用-保持署名（创作共享3.0许可证）
+        </p>
+    </div>
+</div>
+<div class="clear"></div>
+</div>
+     
+     
+     
+
+
+
+
+    </footer>
+  </article>
+</section>
+
+          </div>
+        </div>
+        <div class="sidebar-toggle">
+  <div class="sidebar-toggle-line-wrap">
+    <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+    <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+    <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+  </div>
+</div>
+<aside id="sidebar" class="sidebar">
+  <div class="sidebar-inner">
+
+  <ul class="sidebar-nav motion-element">
+    <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+      文章目录
+    </li>
+    <li class="sidebar-nav-overview" data-target="site-overview">
+      站点概览
+    </li>
+  </ul>
+
+    <section class="site-overview sidebar-panel ">
+      <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image"
+        src="https://IIHui.github.io/img/mmhui.png"
+        alt="I呆呆" />
+    <p class="site-author-name" itemprop="name">I呆呆</p>
+    <p class="site-description motion-element" itemprop="description"> </p>
+</div>
+      <nav class="site-state motion-element">
+    <div class="site-state-item site-state-posts">
+      <a href="https://IIHui.github.io/post/">
+        <span class="site-state-item-count">95</span>
+        <span class="site-state-item-name">日志</span>
+      </a>
+    </div>
+    <div class="site-state-item site-state-categories">    
+        <a href="https://IIHui.github.io/categories/">      
+         
+        <span class="site-state-item-count">19</span>
+        
+        <span class="site-state-item-name">分类</span>
+        
+        </a>
+    </div>
+
+    <div class="site-state-item site-state-tags">
+        <a href="https://IIHui.github.io/tags/">
+         
+        <span class="site-state-item-count">19</span>
+        
+        <span class="site-state-item-name">标签</span>
+        </a>
+    </div>
+</nav>
+      
+      
+<div class="links-of-author motion-element">
+    
+        <span class="links-of-author-item">
+        <a href="https://coolshell.cn" target="_blank" title="酷 壳">
+            <i class="fa fa-fw fa-globe"></i>
+            酷 壳
+        </a>
+        </span>
+    
+        <span class="links-of-author-item">
+        <a href="http://www.ideamsg.com" target="_blank" title="灵 感">
+            <i class="fa fa-fw fa-globe"></i>
+            灵 感
+        </a>
+        </span>
+    
+        <span class="links-of-author-item">
+        <a href="http://www.ruanyifeng.com" target="_blank" title="阮一峰">
+            <i class="fa fa-fw fa-globe"></i>
+            阮一峰
+        </a>
+        </span>
+    
+        <span class="links-of-author-item">
+        <a href="https://github.com/qicosmos/" target="_blank" title="祁 宇">
+            <i class="fa fa-fw fa-github"></i>
+            祁 宇
+        </a>
+        </span>
+    
+</div>
+
+      
+      <div class="links-of-blogroll motion-element inline">
+
+
+</div>
+    </section>
+    
+<section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+    <div class="post-toc">
+        <div class="post-toc-content"><nav id="TableOfContents">
+  <ul>
+    <li><a href="#uiimagepickercontroller">UIImagePickerController</a></li>
+    <li><a href="#avcapturesessionavcapturemoviefileoutput">AVCaptureSession+AVCaptureMovieFileOutput</a></li>
+    <li><a href="#avcapturesessionavassetwriter">AVCaptureSession+AVAssetWriter</a></li>
+    <li><a href="#录制视频开启蓝牙录音">录制视频开启蓝牙录音</a></li>
+  </ul>
+</nav></div>
+    </div>
+</section>
+
+  </div>
+</aside>
+
+      </div>
+    </main>
+   
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  <span itemprop="copyrightYear">  &copy; 
+  2018 - 2020</span>
+  <span class="with-love"><i class="fa fa-heart"></i></span>
+  <span class="author" itemprop="copyrightHolder">Keep It Simple</span>
+</div>
+
+  
+
+<div class="theme-info">
+  
+  
+</div>
+
+
+      </div>
+    </footer>
+
+    <div class="back-to-top">
+      <i class="fa fa-arrow-up"></i>
+    </div>
+  </div>
+
+  <script>
+    var _hmt = _hmt || [];
+    (function() {
+    var hm = document.createElement("script");
+    hm.src = "//hm.baidu.com/hm.js?0b07433b4ab8d587dae7d34e71973839";
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(hm, s);
+    })();
+</script>
+<script type="text/javascript" src="http://tajs.qq.com/stats?sId=58416275" charset="UTF-8"></script> 
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+<script type="text/javascript" src="https://IIHui.github.io/js/vendor/jquery/index.js?v=2.1.3"></script>
+<script type="text/javascript" src="https://IIHui.github.io/js/vendor/fastclick/lib/fastclick.min.js?v=1.0.6"></script> 
+<script type="text/javascript" src="https://IIHui.github.io/js/vendor/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+<script type="text/javascript" src="https://IIHui.github.io/js/vendor/velocity/velocity.min.js?v=1.2.1"></script>
+<script type="text/javascript" src="https://IIHui.github.io/js/vendor/velocity/velocity.ui.min.js?v=1.2.1"></script>
+<script src="https://IIHui.github.io/js/vendor/ua-parser-js/dist/ua-parser.min.js?v=0.7.9"></script>
+
+<script src="https://IIHui.github.io/js/vendor/fancybox/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+<script type="text/javascript" src="https://IIHui.github.io/js/utils.js"></script>
+<script type="text/javascript" src="https://IIHui.github.io/js/motion.js"></script>
+<script type="text/javascript" src="https://IIHui.github.io/js/affix.js"></script>
+<script type="text/javascript" src="https://IIHui.github.io/js/schemes/pisces.js"></script>
+
+<script type="text/javascript" src="https://IIHui.github.io/js/scrollspy.js"></script>
+<script type="text/javascript" src="https://IIHui.github.io/js/post-details.js"></script>
+<script type="text/javascript" src="https://IIHui.github.io/js/toc.js"></script>
+
+<script type="text/javascript" src="https://IIHui.github.io/js/bootstrap.js"></script>
+
+<script type="text/javascript" src="https://IIHui.github.io/js/search.js"></script>
+</body>
+</html>

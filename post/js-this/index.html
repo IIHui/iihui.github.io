@@ -1,0 +1,564 @@
+<!DOCTYPE HTML>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" /> 
+    <title>javascript 中this指针 - Keep It Simple</title>
+    <meta name="keywords" content="爱呆,博客,程序员,思考,读书,笔记,技术,分享,Golang">
+    
+    <meta property="og:title" content="javascript 中this指针">
+    <meta property="og:site_name" content="Keep It Simple">
+    <meta property="og:image" content="/img/author.jpg"> 
+    <meta name="title" content="javascript 中this指针 - Keep It Simple" />
+    <meta name="description" content="爱呆 | 博客 | 软件 | C&#43;&#43; | Golang"> 
+    
+    <link rel="shortcut icon" href="https://IIHui.github.io/img/favicon.ico" />
+    <link rel="apple-touch-icon" href="https://IIHui.github.io/img/apple-touch-icon.png" />
+    <link rel="apple-touch-icon-precomposed" href="https://IIHui.github.io/img/apple-touch-icon.png" />
+    <link href="https://IIHui.github.io/js/vendor/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+    <link href="https://IIHui.github.io/js/vendor/fancybox/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+    <link href="https://IIHui.github.io/css/main.css" rel="stylesheet" type="text/css" />
+<script type="text/javascript" id="hexo.configuration">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    scheme: 'Pisces',
+    sidebar: {"position":"left","display":"post"},
+     fancybox: true, 
+    motion: true
+  };
+</script>
+
+<link href="https://cdn.bootcss.com/highlight.js/9.12.0/styles/monokai-sublime.min.css" rel="stylesheet">
+<script src="https://cdn.bootcss.com/highlight.js/9.12.0/highlight.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/languages/go.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/languages/swift.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/languages/yaml.min.js"></script>
+<script>hljs.initHighlightingOnLoad();</script>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+<div class="container one-collumn sidebar-position-left page-home  ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"> <div class="site-meta  custom-logo ">
+
+  <div class="custom-logo-site-title">
+    <a href="https://IIHui.github.io/"  class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <span class="site-title">Keep It Simple</span>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+  <p class="site-subtitle">一指流沙，程序年华</p>
+</div>
+
+<div class="site-nav-toggle">
+  <button>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+  </button>
+</div>
+
+<nav class="site-nav">
+    <ul id="menu" class="menu">
+      
+      
+        <li class="menu-item ">
+          <a href="https://IIHui.github.io/" rel="section">
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />首页
+          </a>
+        </li>
+      
+        <li class="menu-item ">
+          <a href="https://IIHui.github.io/tags/" rel="section">
+              <i class="menu-item-icon fa fa-fw fa-tag"></i> <br />标签
+          </a>
+        </li>
+      
+        <li class="menu-item ">
+          <a href="https://IIHui.github.io/post/" rel="section">
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />归档
+          </a>
+        </li>
+      
+        <li class="menu-item ">
+          <a href="https://IIHui.github.io/categories/%E6%97%85%E8%A1%8C/" rel="section">
+              <i class="menu-item-icon fa fa-fw fa-leaf"></i> <br />旅行
+          </a>
+        </li>
+      
+        <li class="menu-item ">
+          <a href="https://IIHui.github.io/categories/%E7%BE%8E%E9%A3%9F/" rel="section">
+              <i class="menu-item-icon fa fa-fw fa-fire"></i> <br />美食
+          </a>
+        </li>
+      
+        <li class="menu-item ">
+          <a href="https://IIHui.github.io/about/" rel="section">
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />关于
+          </a>
+        </li>
+      
+      <li class="menu-item menu-item-search">
+        <a href="javascript:;" class="popup-trigger"> <i class="menu-item-icon fa fa-search fa-fw"></i> <br /> 搜索</a>
+      </li>
+    </ul>
+    <div class="site-search">
+      <div class="popup">
+ <span class="search-icon fa fa-search"></span>
+ <input type="text" id="local-search-input">
+ <div id="local-search-result"></div>
+ <span class="popup-btn-close">close</span>
+</div>
+
+    </div>
+</nav>
+<script type="text/javascript"
+        async
+        src="https://cdn.bootcss.com/mathjax/2.7.3/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+		<!-- src = "http://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"> <\!--  -\-> -->
+MathJax.Hub.Config({
+  tex2jax: {
+    inlineMath: [['$','$'], ['\\(','\\)']],
+    displayMath: [['$$','$$'], ['\[\[','\]\]']],
+    processEscapes: true,
+    processEnvironments: true,
+    skipTags: ['script', 'noscript', 'style', 'textarea', 'pre'],
+    TeX: { equationNumbers: { autoNumber: "AMS" },
+         extensions: ["AMSmath.js", "AMSsymbols.js"] }
+  }
+});
+
+MathJax.Hub.Queue(function() {
+    
+    
+    
+    var all = MathJax.Hub.getAllJax(), i;
+    for(i = 0; i < all.length; i += 1) {
+        all[i].SourceElement().parentNode.className += ' has-jax';
+    }
+});
+</script>
+
+<style>
+code.has-jax {
+    font: inherit;
+    font-size: 100%;
+    background: inherit;
+    border: inherit;
+    color: #515151;
+}
+</style>
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+<section id="posts" class="posts-expand">
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <header class="post-header">
+      <h1 class="post-title" itemprop="name headline">
+        <a class="post-title-link" href="https://IIHui.github.io/post/js-this/" itemprop="url">
+        javascript 中this指针
+        </a>
+      </h1>
+      <div class="post-meta">
+      <span class="post-time">
+<span class="post-meta-item-icon">
+    <i class="fa fa-calendar-o"></i>
+</span>
+<span class="post-meta-item-text">创建于:</span>
+<time itemprop="dateCreated" datetime="2016-03-22T13:04:35+08:00" content="2018-12-19">
+    2018-12-19
+</time>
+</span>
+&nbsp; | &nbsp;
+<span class="post-updated-time">
+<span class="post-meta-item-icon">
+    <i class="fa fa-calendar-check-o"></i>
+</span>
+<span class="post-meta-item-text">更新于:</span>
+<time itemprop="dateUpdated" content="2018-12-19">
+    2018-12-19
+</time>
+</span> 
+      
+
+  <span class="post-category" >
+  &nbsp; | &nbsp;
+  <span class="post-meta-item-icon">
+    <i class="fa fa-folder-o"></i>
+  </span>
+  <span class="post-meta-item-text">分类:</span>
+  
+    <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
+      <a href="https://IIHui.github.io/categories/js" itemprop="url" rel="index">
+        <span itemprop="name">js</span>
+      </a>
+      &nbsp; 
+    </span>
+  
+</span>
+
+
+       <span>
+&nbsp; | &nbsp;
+<span class="post-meta-item-icon">
+    <i class="fa fa-file-word-o"></i>
+</span>
+<span class="post-meta-item-text">字数统计:</span>
+<span class="leancloud-visitors-count">996</span>
+&nbsp; | &nbsp;
+<span class="post-meta-item-icon">
+    <i class="fa fa-coffee"></i>
+</span>
+<span class="post-meta-item-text">阅读时长:</span>
+<span class="leancloud-visitors-count">2</span>
+</span>
+      </div>
+    </header>
+    <div class="post-body" itemprop="articleBody">
+      <blockquote>
+<p>在<code>JavaScript</code>中，<code>this</code>是<!-- raw HTML omitted -->动态绑定<!-- raw HTML omitted -->，或称为<!-- raw HTML omitted -->运行期绑定<!-- raw HTML omitted -->的，这导致<code>JavaScript</code>中的<code>this</code>关键字具有多重含义。它可以是<!-- raw HTML omitted -->全局对象、当前对象或者任意对象<!-- raw HTML omitted -->，这完全取决于函数的调用方式。</p>
+</blockquote>
+<hr>
+<h1 id="作为对象方法调用">作为对象方法调用</h1>
+<p>在<code>JS</code>中，函数也是对象，因此<!-- raw HTML omitted -->函数可以作为一个对象的属性<!-- raw HTML omitted -->，此时该函数被称为该对象的方法，在使用这种调用方式时，<code>this</code>被自然地绑定到该对象。</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-js" data-lang="js"><span style="color:#66d9ef">var</span> <span style="color:#a6e22e">point</span> <span style="color:#f92672">=</span> { 
+<span style="color:#a6e22e">x</span> <span style="color:#f92672">:</span> <span style="color:#ae81ff">0</span>, 
+<span style="color:#a6e22e">y</span> <span style="color:#f92672">:</span> <span style="color:#ae81ff">0</span>, 
+<span style="color:#a6e22e">moveTo</span> <span style="color:#f92672">:</span> <span style="color:#66d9ef">function</span>(<span style="color:#a6e22e">x</span>, <span style="color:#a6e22e">y</span>) { 
+    <span style="color:#66d9ef">this</span>.<span style="color:#a6e22e">x</span> <span style="color:#f92672">=</span> <span style="color:#66d9ef">this</span>.<span style="color:#a6e22e">x</span> <span style="color:#f92672">+</span> <span style="color:#a6e22e">x</span>; 
+    <span style="color:#66d9ef">this</span>.<span style="color:#a6e22e">y</span> <span style="color:#f92672">=</span> <span style="color:#66d9ef">this</span>.<span style="color:#a6e22e">y</span> <span style="color:#f92672">+</span> <span style="color:#a6e22e">y</span>; 
+    } 
+}; 
+ 
+<span style="color:#a6e22e">point</span>.<span style="color:#a6e22e">moveTo</span>(<span style="color:#ae81ff">1</span>, <span style="color:#ae81ff">1</span>)<span style="color:#75715e">//this 绑定到当前对象，即 point 对象
+</span></code></pre></div><hr>
+<h1 id="作为函数调用">作为函数调用</h1>
+<p>函数可以直接调用，此时<code>this</code>绑定到全局对象，在浏览器中，<code>window</code>就是该全局对象。在下面的例子中，函数调用时，<code>this</code>被绑定到全局对象，接下来执行赋值语句，相当于隐式的声明了一个全局变量。</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-js" data-lang="js"><span style="color:#66d9ef">function</span> <span style="color:#a6e22e">makeNoSense</span>(<span style="color:#a6e22e">x</span>) {
+    <span style="color:#66d9ef">this</span>.<span style="color:#a6e22e">x</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">x</span>;
+}
+
+<span style="color:#a6e22e">makeNoSense</span>(<span style="color:#ae81ff">5</span>);
+<span style="color:#a6e22e">x</span>;<span style="color:#75715e">// x 已经成为一个值为 5 的全局变量
+</span></code></pre></div><p>对于内部函数(即声明在另一个函数体中的函数)，如果使用<code>this</code>指针，那么绑定的是全局对象，会产生下面问题：</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-js" data-lang="js"><span style="color:#66d9ef">var</span> <span style="color:#a6e22e">point</span> <span style="color:#f92672">=</span> {
+  <span style="color:#a6e22e">x</span><span style="color:#f92672">:</span> <span style="color:#ae81ff">0</span>,
+  <span style="color:#a6e22e">y</span><span style="color:#f92672">:</span> <span style="color:#ae81ff">0</span>,
+  <span style="color:#a6e22e">moveTo</span><span style="color:#f92672">:</span> <span style="color:#66d9ef">function</span>(<span style="color:#a6e22e">x</span>, <span style="color:#a6e22e">y</span>) {
+    <span style="color:#75715e">// 内部函数
+</span><span style="color:#75715e"></span>    <span style="color:#66d9ef">var</span> <span style="color:#a6e22e">moveX</span> <span style="color:#f92672">=</span> <span style="color:#66d9ef">function</span>(<span style="color:#a6e22e">x</span>) {
+      <span style="color:#66d9ef">this</span>.<span style="color:#a6e22e">x</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">x</span>; <span style="color:#75715e">//this 绑定到了哪里？
+</span><span style="color:#75715e"></span>    };
+    <span style="color:#75715e">// 内部函数
+</span><span style="color:#75715e"></span>    <span style="color:#66d9ef">var</span> <span style="color:#a6e22e">moveY</span> <span style="color:#f92672">=</span> <span style="color:#66d9ef">function</span>(<span style="color:#a6e22e">y</span>) {
+      <span style="color:#66d9ef">this</span>.<span style="color:#a6e22e">y</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">y</span>; <span style="color:#75715e">//this 绑定到了哪里？
+</span><span style="color:#75715e"></span>    };
+
+    <span style="color:#a6e22e">moveX</span>(<span style="color:#a6e22e">x</span>);
+    <span style="color:#a6e22e">moveY</span>(<span style="color:#a6e22e">y</span>);
+  }
+};
+<span style="color:#a6e22e">point</span>.<span style="color:#a6e22e">moveTo</span>(<span style="color:#ae81ff">1</span>, <span style="color:#ae81ff">1</span>);
+<span style="color:#a6e22e">point</span>.<span style="color:#a6e22e">x</span>; <span style="color:#75715e">//==&gt;0
+</span><span style="color:#75715e"></span><span style="color:#a6e22e">point</span>.<span style="color:#a6e22e">y</span>; <span style="color:#75715e">//==&gt;0
+</span><span style="color:#75715e"></span><span style="color:#a6e22e">x</span>; <span style="color:#75715e">//==&gt;1
+</span><span style="color:#75715e"></span><span style="color:#a6e22e">y</span>; <span style="color:#75715e">//==&gt;1
+</span><span style="color:#75715e"></span>
+</code></pre></div><p>这属于<code>JavaScript</code>的<!-- raw HTML omitted -->设计缺陷<!-- raw HTML omitted -->，正确的设计方式是内部函数的<code>this</code>应该绑定到其外层函数对应的对象上，为了规避这一缺陷，使用<!-- raw HTML omitted -->变量替换<!-- raw HTML omitted -->的方式：</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-js" data-lang="js"><span style="color:#66d9ef">var</span> <span style="color:#a6e22e">point</span> <span style="color:#f92672">=</span> {
+  <span style="color:#a6e22e">x</span><span style="color:#f92672">:</span> <span style="color:#ae81ff">0</span>,
+  <span style="color:#a6e22e">y</span><span style="color:#f92672">:</span> <span style="color:#ae81ff">0</span>,
+  <span style="color:#a6e22e">moveTo</span><span style="color:#f92672">:</span> <span style="color:#66d9ef">function</span>(<span style="color:#a6e22e">x</span>, <span style="color:#a6e22e">y</span>) {
+    <span style="color:#66d9ef">var</span> <span style="color:#a6e22e">that</span> <span style="color:#f92672">=</span> <span style="color:#66d9ef">this</span>;
+    <span style="color:#75715e">// 内部函数
+</span><span style="color:#75715e"></span>    <span style="color:#66d9ef">var</span> <span style="color:#a6e22e">moveX</span> <span style="color:#f92672">=</span> <span style="color:#66d9ef">function</span>(<span style="color:#a6e22e">x</span>) {
+      <span style="color:#a6e22e">that</span>.<span style="color:#a6e22e">x</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">x</span>;
+    };
+    <span style="color:#75715e">// 内部函数
+</span><span style="color:#75715e"></span>    <span style="color:#66d9ef">var</span> <span style="color:#a6e22e">moveY</span> <span style="color:#f92672">=</span> <span style="color:#66d9ef">function</span>(<span style="color:#a6e22e">y</span>) {
+      <span style="color:#a6e22e">that</span>.<span style="color:#a6e22e">y</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">y</span>;
+    };
+    <span style="color:#a6e22e">moveX</span>(<span style="color:#a6e22e">x</span>);
+    <span style="color:#a6e22e">moveY</span>(<span style="color:#a6e22e">y</span>);
+  }
+};
+<span style="color:#a6e22e">point</span>.<span style="color:#a6e22e">moveTo</span>(<span style="color:#ae81ff">1</span>, <span style="color:#ae81ff">1</span>);
+<span style="color:#a6e22e">point</span>.<span style="color:#a6e22e">x</span>; <span style="color:#75715e">//==&gt;1
+</span><span style="color:#75715e"></span><span style="color:#a6e22e">point</span>.<span style="color:#a6e22e">y</span>; <span style="color:#75715e">//==&gt;1
+</span><span style="color:#75715e"></span>
+</code></pre></div><hr>
+<h1 id="作为构造函数调用">作为构造函数调用</h1>
+<p><code>JavaScript</code>支持面向对象编程，但它<!-- raw HTML omitted -->没有类<!-- raw HTML omitted -->的概念，而是使用基于原型<code>prototype</code>的继承方式。</p>
+<p>相应的<code>JavaScript</code>中的构造函数也很特殊，如果不使用<code>new</code>调用，则和普通函数一样。约定俗成，<!-- raw HTML omitted -->构造函数以大写字母开头<!-- raw HTML omitted -->，以提醒调用者使用正确的方式调用。</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-js" data-lang="js"><span style="color:#66d9ef">function</span> <span style="color:#a6e22e">Point</span>(<span style="color:#a6e22e">x</span>, <span style="color:#a6e22e">y</span>){ 
+   <span style="color:#66d9ef">this</span>.<span style="color:#a6e22e">x</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">x</span>; 
+   <span style="color:#66d9ef">this</span>.<span style="color:#a6e22e">y</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">y</span>; 
+}
+</code></pre></div><hr>
+<h1 id="使用apply或call调用">使用apply或call调用</h1>
+<p>在<code>JS</code>中<!-- raw HTML omitted -->函数也是对象<!-- raw HTML omitted -->，对象则有方法，<code>apply</code>和<code>call</code>就是<!-- raw HTML omitted -->函数对象的方法<!-- raw HTML omitted -->。他们允许切换函数执行的上下文环境<code>context</code>,即<code>this</code>绑定的对象。</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-js" data-lang="js"><span style="color:#66d9ef">function</span> <span style="color:#a6e22e">Point</span>(<span style="color:#a6e22e">x</span>, <span style="color:#a6e22e">y</span>) {
+  <span style="color:#66d9ef">this</span>.<span style="color:#a6e22e">x</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">x</span>;
+  <span style="color:#66d9ef">this</span>.<span style="color:#a6e22e">y</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">y</span>;
+  <span style="color:#66d9ef">this</span>.<span style="color:#a6e22e">moveTo</span> <span style="color:#f92672">=</span> <span style="color:#66d9ef">function</span>(<span style="color:#a6e22e">x</span>, <span style="color:#a6e22e">y</span>) {
+    <span style="color:#66d9ef">this</span>.<span style="color:#a6e22e">x</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">x</span>;
+    <span style="color:#66d9ef">this</span>.<span style="color:#a6e22e">y</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">y</span>;
+  };
+}
+
+<span style="color:#66d9ef">var</span> <span style="color:#a6e22e">p1</span> <span style="color:#f92672">=</span> <span style="color:#66d9ef">new</span> <span style="color:#a6e22e">Point</span>(<span style="color:#ae81ff">0</span>, <span style="color:#ae81ff">0</span>);
+<span style="color:#66d9ef">var</span> <span style="color:#a6e22e">p2</span> <span style="color:#f92672">=</span> { <span style="color:#a6e22e">x</span><span style="color:#f92672">:</span> <span style="color:#ae81ff">0</span>, <span style="color:#a6e22e">y</span><span style="color:#f92672">:</span> <span style="color:#ae81ff">0</span> };
+<span style="color:#a6e22e">p1</span>.<span style="color:#a6e22e">moveTo</span>(<span style="color:#ae81ff">1</span>, <span style="color:#ae81ff">1</span>);
+<span style="color:#a6e22e">p1</span>.<span style="color:#a6e22e">moveTo</span>.<span style="color:#a6e22e">apply</span>(<span style="color:#a6e22e">p2</span>, [<span style="color:#ae81ff">10</span>, <span style="color:#ae81ff">10</span>]); <span style="color:#75715e">//p1的方法应用到p2
+</span></code></pre></div><p>函数存在①定义时上下文；②运行时上下文；③上下文是可以改变的。在<code>JS</code>中<code>call</code>和<code>apply</code>都是为了改变某个函数执行的上下文<code>context</code>而存在的，即是改变函数体内的<code>this</code>的指向。</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-js" data-lang="js"><span style="color:#66d9ef">var</span> <span style="color:#a6e22e">func</span> <span style="color:#f92672">=</span> <span style="color:#66d9ef">function</span>(<span style="color:#a6e22e">arg1</span>, <span style="color:#a6e22e">arg2</span>) {
+    <span style="color:#75715e">//语句
+</span><span style="color:#75715e"></span>};
+<span style="color:#a6e22e">func</span>.<span style="color:#a6e22e">call</span>(<span style="color:#66d9ef">this</span>, <span style="color:#a6e22e">arg1</span>, <span style="color:#a6e22e">arg2</span>);
+<span style="color:#a6e22e">func</span>.<span style="color:#a6e22e">apply</span>(<span style="color:#66d9ef">this</span>, [<span style="color:#a6e22e">arg1</span>, <span style="color:#a6e22e">arg2</span>])
+</code></pre></div><hr>
+<h1 id="参考资料">参考资料</h1>
+<p><a href="https://www.ibm.com/developerworks/cn/web/1207_wangqf_jsthis/index.html">参考资料</a>
+<a href="https://yehudakatz.com/2011/08/11/understanding-javascript-function-invocation-and-this/">一定要看</a></p>
+<hr>
+
+    </div>
+    <footer class="post-footer">
+     
+ 
+<div class="post-tags">     
+     
+    <a href="https://IIHui.github.io/tags/js" rel="tag" title="js">#js#</a>
+    
+</div>
+
+
+
+     <div class="post-nav">
+    <div class="post-nav-next post-nav-item">
+    
+        <a href="https://IIHui.github.io/post/ios-new-version/" rel="next" title="iOS 版本检查">
+        <i class="fa fa-chevron-left"></i> iOS 版本检查
+        </a>
+    
+    </div>
+
+    <div class="post-nav-prev post-nav-item">
+    
+        <a href="https://IIHui.github.io/post/html-element-category/" rel="prev" title="html 元素分类">
+        html 元素分类 <i class="fa fa-chevron-right"></i>
+        </a>
+    
+    </div>
+</div>
+      
+     <div class="post-nav">
+<div style="border: 1px dashed #e0e0e0; padding: 10px 10px 10px 10px; background-color: #fffeee; background-repeat: no-repeat; background-attachment: scroll; background-position: 1% 50%; -moz-background-size: auto auto; -moz-background-clip: -moz-initial; -moz-background-origin: -moz-initial; -moz-background-inline-policy: -moz-initial;">
+    <div style="float:left;margin-top:0px;">
+    <img src="https://i.loli.net/2018/12/16/5c15cbd7f2b61.jpg" width="128px" height="128px"/>
+    <div style="text-align:center;">谢谢支持!</div>
+    </div>
+    <div>
+        <p style="margin-top:10px;">
+            标题：javascript 中this指针
+        <br />作者：<a target="_blank" href="https://IIHui.github.io/">I呆呆</a>
+        
+        <br />地址：https://IIHui.github.io/post/js-this/
+        <br />声明：自由转载-非商用-保持署名（创作共享3.0许可证）
+        </p>
+    </div>
+</div>
+<div class="clear"></div>
+</div>
+     
+     
+     
+
+
+
+
+    </footer>
+  </article>
+</section>
+
+          </div>
+        </div>
+        <div class="sidebar-toggle">
+  <div class="sidebar-toggle-line-wrap">
+    <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+    <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+    <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+  </div>
+</div>
+<aside id="sidebar" class="sidebar">
+  <div class="sidebar-inner">
+
+  <ul class="sidebar-nav motion-element">
+    <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+      文章目录
+    </li>
+    <li class="sidebar-nav-overview" data-target="site-overview">
+      站点概览
+    </li>
+  </ul>
+
+    <section class="site-overview sidebar-panel ">
+      <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image"
+        src="https://IIHui.github.io/img/mmhui.png"
+        alt="I呆呆" />
+    <p class="site-author-name" itemprop="name">I呆呆</p>
+    <p class="site-description motion-element" itemprop="description"> </p>
+</div>
+      <nav class="site-state motion-element">
+    <div class="site-state-item site-state-posts">
+      <a href="https://IIHui.github.io/post/">
+        <span class="site-state-item-count">95</span>
+        <span class="site-state-item-name">日志</span>
+      </a>
+    </div>
+    <div class="site-state-item site-state-categories">    
+        <a href="https://IIHui.github.io/categories/">      
+         
+        <span class="site-state-item-count">19</span>
+        
+        <span class="site-state-item-name">分类</span>
+        
+        </a>
+    </div>
+
+    <div class="site-state-item site-state-tags">
+        <a href="https://IIHui.github.io/tags/">
+         
+        <span class="site-state-item-count">19</span>
+        
+        <span class="site-state-item-name">标签</span>
+        </a>
+    </div>
+</nav>
+      
+      
+<div class="links-of-author motion-element">
+    
+        <span class="links-of-author-item">
+        <a href="https://coolshell.cn" target="_blank" title="酷 壳">
+            <i class="fa fa-fw fa-globe"></i>
+            酷 壳
+        </a>
+        </span>
+    
+        <span class="links-of-author-item">
+        <a href="http://www.ideamsg.com" target="_blank" title="灵 感">
+            <i class="fa fa-fw fa-globe"></i>
+            灵 感
+        </a>
+        </span>
+    
+        <span class="links-of-author-item">
+        <a href="http://www.ruanyifeng.com" target="_blank" title="阮一峰">
+            <i class="fa fa-fw fa-globe"></i>
+            阮一峰
+        </a>
+        </span>
+    
+        <span class="links-of-author-item">
+        <a href="https://github.com/qicosmos/" target="_blank" title="祁 宇">
+            <i class="fa fa-fw fa-github"></i>
+            祁 宇
+        </a>
+        </span>
+    
+</div>
+
+      
+      <div class="links-of-blogroll motion-element inline">
+
+
+</div>
+    </section>
+    
+<section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+    <div class="post-toc">
+        <div class="post-toc-content"><nav id="TableOfContents"></nav></div>
+    </div>
+</section>
+
+  </div>
+</aside>
+
+      </div>
+    </main>
+   
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  <span itemprop="copyrightYear">  &copy; 
+  2018 - 2020</span>
+  <span class="with-love"><i class="fa fa-heart"></i></span>
+  <span class="author" itemprop="copyrightHolder">Keep It Simple</span>
+</div>
+
+  
+
+<div class="theme-info">
+  
+  
+</div>
+
+
+      </div>
+    </footer>
+
+    <div class="back-to-top">
+      <i class="fa fa-arrow-up"></i>
+    </div>
+  </div>
+
+  <script>
+    var _hmt = _hmt || [];
+    (function() {
+    var hm = document.createElement("script");
+    hm.src = "//hm.baidu.com/hm.js?0b07433b4ab8d587dae7d34e71973839";
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(hm, s);
+    })();
+</script>
+<script type="text/javascript" src="http://tajs.qq.com/stats?sId=58416275" charset="UTF-8"></script> 
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+<script type="text/javascript" src="https://IIHui.github.io/js/vendor/jquery/index.js?v=2.1.3"></script>
+<script type="text/javascript" src="https://IIHui.github.io/js/vendor/fastclick/lib/fastclick.min.js?v=1.0.6"></script> 
+<script type="text/javascript" src="https://IIHui.github.io/js/vendor/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+<script type="text/javascript" src="https://IIHui.github.io/js/vendor/velocity/velocity.min.js?v=1.2.1"></script>
+<script type="text/javascript" src="https://IIHui.github.io/js/vendor/velocity/velocity.ui.min.js?v=1.2.1"></script>
+<script src="https://IIHui.github.io/js/vendor/ua-parser-js/dist/ua-parser.min.js?v=0.7.9"></script>
+
+<script src="https://IIHui.github.io/js/vendor/fancybox/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+<script type="text/javascript" src="https://IIHui.github.io/js/utils.js"></script>
+<script type="text/javascript" src="https://IIHui.github.io/js/motion.js"></script>
+<script type="text/javascript" src="https://IIHui.github.io/js/affix.js"></script>
+<script type="text/javascript" src="https://IIHui.github.io/js/schemes/pisces.js"></script>
+
+<script type="text/javascript" src="https://IIHui.github.io/js/scrollspy.js"></script>
+<script type="text/javascript" src="https://IIHui.github.io/js/post-details.js"></script>
+<script type="text/javascript" src="https://IIHui.github.io/js/toc.js"></script>
+
+<script type="text/javascript" src="https://IIHui.github.io/js/bootstrap.js"></script>
+
+<script type="text/javascript" src="https://IIHui.github.io/js/search.js"></script>
+</body>
+</html>
