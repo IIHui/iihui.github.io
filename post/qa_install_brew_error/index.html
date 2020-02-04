@@ -4,13 +4,13 @@
     <meta charset="UTF-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" /> 
-    <title>GCD - Keep It Simple</title>
+    <title>macOS 安装Homebrew 报错 - Keep It Simple</title>
     <meta name="keywords" content="博客,思考,读书,笔记,技术,分享">
     
-    <meta property="og:title" content="GCD">
+    <meta property="og:title" content="macOS 安装Homebrew 报错">
     <meta property="og:site_name" content="Keep It Simple">
     <meta property="og:image" content="/img/author.jpg"> 
-    <meta name="title" content="GCD - Keep It Simple" />
+    <meta name="title" content="macOS 安装Homebrew 报错 - Keep It Simple" />
     <meta name="description" content="Swift | Go | C&#43;&#43; "> 
     <link rel="shortcut icon" href="https://IIHui.github.io/img/favicon.ico" />
     <link rel="apple-touch-icon" href="https://IIHui.github.io/img/apple-touch-icon.png" />
@@ -121,8 +121,8 @@
   <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
     <header class="post-header">
       <h1 class="post-title" itemprop="name headline">
-        <a class="post-title-link" href="https://IIHui.github.io/post/ios-dispatchqueue/" itemprop="url">
-        GCD
+        <a class="post-title-link" href="https://IIHui.github.io/post/qa_install_brew_error/" itemprop="url">
+        macOS 安装Homebrew 报错
         </a>
       </h1>
       <div class="post-meta">
@@ -131,8 +131,8 @@
     <i class="fa fa-calendar-o"></i>
 </span>
 <span class="post-meta-item-text">时间：</span>
-<time itemprop="dateCreated" datetime="2016-03-22T13:04:35+08:00" content="2019-03-07">
-    2019-03-07
+<time itemprop="dateCreated" datetime="2016-03-22T13:04:35+08:00" content="2020-01-31">
+    2020-01-31
 </time>
 </span> 
       
@@ -145,8 +145,8 @@
   <span class="post-meta-item-text">分类：</span>
   
     <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
-      <a href="https://IIHui.github.io/categories/code" itemprop="url" rel="index">
-        <span itemprop="name">code</span>
+      <a href="https://IIHui.github.io/categories/qa" itemprop="url" rel="index">
+        <span itemprop="name">QA</span>
       </a>
       &nbsp; 
     </span>
@@ -160,14 +160,28 @@
     <i class="fa fa-eye"></i>
 </span>
 <span class="post-meta-item-text">阅读：</span>
-<span class="leancloud-visitors-count">14 字 ~1分钟</span>
+<span class="leancloud-visitors-count">954 字 ~2分钟</span>
 </span>
       </div>
     </header>
     <div class="post-body" itemprop="articleBody">
-    <h1 id="参考资料">参考资料</h1>
-<p><a href="https://www.jianshu.com/p/737233208d40">参考资料1</a>
-<a href="https://www.jianshu.com/p/f5bece2b77d8">参考资料2</a></p>
+    <blockquote>
+<p>重装了<code>macOS Catalina 10.15.2</code>，但使用<code>/usr/bin/ruby -e &quot;$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)&quot;</code>安装<code>Homebrew</code>时报<code>curl: (7) Failed to connect to raw.githubusercontent.com port 443: Connection refused</code>错误，网上大多数说要设置代理，但是于我没有任何效果。翻了一圈资料，猜测是系统的curl有问题，按照这个思路，终于找到了解决方案，首先强制安装Homebrew，然后再利用Homebrew安装curl，最后设置Homebrew安装的curl优先级高于系统的curl。</p>
+</blockquote>
+<h1 id="安装homebrew">安装Homebrew</h1>
+<p>首先在浏览器中打开<code>https://raw.githubusercontent.com/Homebrew/install/master/install</code>。若不能打开，就是网络问题；如果能打开就如下图所示：</p>
+<p><img src="https://i.loli.net/2020/01/31/ZzOr2FxXpGh9Sqg.jpg" alt=""></p>
+<p>然后将这个网页的内容复制粘贴保存，并命名为<code>brew_install.rb</code>。然后再终端中输入<code>curl</code>命令，如果出现<code>curl: try 'curl --help' or 'curl --manual' for more information</code>则表示<code>curl</code>没有问题：</p>
+<p><img src="https://i.loli.net/2020/01/31/UA8294JfdhzuxiP.jpg" alt=""></p>
+<p>接着在终端跳转到保存<code>brew_install.rb</code>的目录下，输入命令<code>ruby brew_install.rb</code>，安装Homebrew。</p>
+<h1 id="安装并启用新curl">安装并启用新curl</h1>
+<p>当上一步提示安装成功之后，则可以通过Homebrew安装curl，再终端输入<code>brew install curl</code>,安装成功之后，如果在终端通过<code>sh -c &quot;$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)&quot;</code>安装oh my zsh 依然会报错<code>curl: (35) Server aborted the SSL handshake</code> 错误，这是还是使用系统默认的curl命令。</p>
+<p>然后就需要将Homebrew安装的curl的优先级调高，使其高于系统的curl，使用命令<code> brew link curl --force</code>会提示
+<img src="https://i.loli.net/2020/01/31/FOZis9L8En5qSjz.jpg" alt=""></p>
+<p>按照上面的提示，首先执行<code>echo 'export PATH=&quot;/usr/local/opt/curl/bin:$PATH&quot;' &gt;&gt; ~/.zshrc</code>
+然后将<code>export LDFLAGS=&quot;-L/usr/local/opt/curl/lib&quot;</code>和<code>export CPPFLAGS=&quot;-I/usr/local/opt/curl/include&quot;</code>放到<code>.zshrc</code>中，至此问题解决。</p>
+<p><a href="https://www.jianshu.com/go-wild?ac=2&amp;url=http%3A%2F%2Fstackoverflow.com%2Fquestions%2F29910217%2Fhomebrew-installation-on-mac-os-x-failed-to-connect-to-raw-githubusercontent-com">参考资料1</a>
+<a href="https://www.jianshu.com/p/68efabd2e32b">参考资料2</a></p>
 
     </div>
     <footer class="post-footer">
@@ -175,7 +189,7 @@
  
 <div class="post-tags">     
      
-    <a href="https://IIHui.github.io/tags/ios" rel="tag" title="iOS">#iOS#</a>
+    <a href="https://IIHui.github.io/tags/qa" rel="tag" title="QA">#QA#</a>
     
 </div>
 
@@ -184,16 +198,12 @@
      <div class="post-nav">
     <div class="post-nav-next post-nav-item">
     
-        <a href="https://IIHui.github.io/post/qa_install_brew_error/" rel="next" title="macOS 安装Homebrew 报错">
-        <i class="fa fa-chevron-left"></i> macOS 安装Homebrew 报错
-        </a>
-    
     </div>
 
     <div class="post-nav-prev post-nav-item">
     
-        <a href="https://IIHui.github.io/post/ios-cocoapods-storage/" rel="prev" title="第三方库放到Cocoapods中">
-        第三方库放到Cocoapods中 <i class="fa fa-chevron-right"></i>
+        <a href="https://IIHui.github.io/post/ios-dispatchqueue/" rel="prev" title="GCD">
+        GCD <i class="fa fa-chevron-right"></i>
         </a>
     
     </div>
