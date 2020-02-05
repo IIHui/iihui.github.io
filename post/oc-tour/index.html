@@ -160,7 +160,7 @@
     <i class="fa fa-eye"></i>
 </span>
 <span class="post-meta-item-text">阅读：</span>
-<span class="leancloud-visitors-count">7196 字 ~15分钟</span>
+<span class="leancloud-visitors-count">8189 字 ~17分钟</span>
 </span>
       </div>
     </header>
@@ -509,6 +509,56 @@ encoding:NSASCIIStringEncoding];
 <p>runtime是一套存<code>C</code>语言的<code>API</code>，<code>OC</code>代码最终都会被编译器转为运行时代码，通过消息机制决定函数的调用方式。</p>
 </blockquote>
 <h2 id="消息机制的基本原理">消息机制的基本原理</h2>
+<p>在OC语言中，对象方法调用都是类似<code>[receiver selector]</code>的形式，其本质：<!-- raw HTML omitted -->让对象在运行时发送消息的过程<!-- raw HTML omitted -->。</p>
+<p>方法调用<code>[receiver selector]</code>分为两个过程：</p>
+<ul>
+<li>
+<p>编译阶段。<code>[receiver selector]</code>方法被编译器转化，分为两种情况</p>
+<ol>
+<li>不带参数的方法被编译为<code>objc_msgSend(receiver,selector)</code></li>
+<li>带参数的方法被编译为<code>objc_msgSend(receiver,selector,org1,org2,...)</code></li>
+</ol>
+</li>
+<li>
+<p>运行阶段：消息接收者<code>receiver</code>寻找对应的<code>selector</code>，也分为两种情况</p>
+<ol>
+<li>接收者能找到对应的<code>selector</code>，直接执行<code>receiver</code>对象的<code>selector</code>方法</li>
+<li>接收者找不到对应的<code>selector</code>，消息被转发或者临时向接收者添加这个<code>selector</code>对应的实现内容，否则崩溃。</li>
+</ol>
+</li>
+</ul>
+<p>总而言之，OC调用方法<code>[receiver selector]</code>，<!-- raw HTML omitted -->编译阶段确定了要向那个接收者发送<code>message</code>消息<!-- raw HTML omitted -->，<!-- raw HTML omitted -->但是接收者如何响应决定于运行时的判断<!-- raw HTML omitted -->。</p>
+<h2 id="runtime中的概念解析">Runtime中的概念解析</h2>
+<p>所有的<code>Objective-C</code>方法调用在编译时都会转化为对<code>C</code>函数<code>objc_msgSend</code>的调用。<code>objc_msgSend(receiver，selector)</code>是 <code>[receiver selector]</code>对应的C函数。</p>
+<h3 id="object对象">Object对象</h3>
+<p>在<code>objc/runtime.h</code>中，<code>Object</code>被定义为指向<code>objc_object</code>结构体的指针，<code>objc_object</code>结构体的数据结构如下：</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-Objective-c" data-lang="Objective-c"><span style="color:#75715e">//runtime对objc_object结构体的定义
+</span><span style="color:#75715e"></span><span style="color:#66d9ef">struct</span> objc_object {
+    <span style="color:#66d9ef">Class</span> _Nonnull isa  OBJC_ISA_AVAILABILITY;
+};
+
+<span style="color:#75715e">//id是一个指向objc_object结构体的指针，即在Runtime中：
+</span><span style="color:#75715e"></span><span style="color:#66d9ef">typedef</span> <span style="color:#66d9ef">struct</span> objc_object <span style="color:#f92672">*</span><span style="color:#66d9ef">id</span>;
+</code></pre></div><h3 id="class类">Class类</h3>
+<p>在<code>objc/runtime.h</code>中，<code>Class</code>被定义为指向<code>objc_class</code>结构体的指针，<code>objc_class</code>结构体的数据结构如下：</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-Objective-C" data-lang="Objective-C"><span style="color:#75715e">//runtime对objc_class结构体的定义
+</span><span style="color:#75715e"></span><span style="color:#66d9ef">struct</span> objc_class {
+    <span style="color:#66d9ef">Class</span> _Nonnull isa;                                          <span style="color:#75715e">// objc_class 结构体的实例指针
+</span><span style="color:#75715e"></span>
+<span style="color:#75715e">#</span><span style="color:#75715e">if !__OBJC2__</span><span style="color:#75715e">
+</span><span style="color:#75715e"></span>    <span style="color:#66d9ef">Class</span> _Nullable super_class;                                 <span style="color:#75715e">// 指向父类的指针
+</span><span style="color:#75715e"></span>    <span style="color:#66d9ef">const</span> <span style="color:#66d9ef">char</span> <span style="color:#f92672">*</span> _Nonnull name;                                  <span style="color:#75715e">// 类的名字
+</span><span style="color:#75715e"></span>    <span style="color:#66d9ef">long</span> version;                                                <span style="color:#75715e">// 类的版本信息，默认为 0
+</span><span style="color:#75715e"></span>    <span style="color:#66d9ef">long</span> info;                                                   <span style="color:#75715e">// 类的信息，供运行期使用的一些位标识
+</span><span style="color:#75715e"></span>    <span style="color:#66d9ef">long</span> instance_size;                                          <span style="color:#75715e">// 该类的实例变量大小;
+</span><span style="color:#75715e"></span>    <span style="color:#66d9ef">struct</span> objc_ivar_list <span style="color:#f92672">*</span> _Nullable ivars;                     <span style="color:#75715e">// 该类的实例变量列表
+</span><span style="color:#75715e"></span>    <span style="color:#66d9ef">struct</span> objc_method_list <span style="color:#f92672">*</span> _Nullable <span style="color:#f92672">*</span> _Nullable methodLists; <span style="color:#75715e">// 方法定义的列表
+</span><span style="color:#75715e"></span>    <span style="color:#66d9ef">struct</span> objc_cache <span style="color:#f92672">*</span> _Nonnull cache;                          <span style="color:#75715e">// 方法缓存
+</span><span style="color:#75715e"></span>    <span style="color:#66d9ef">struct</span> objc_protocol_list <span style="color:#f92672">*</span> _Nullable protocols;             <span style="color:#75715e">// 遵守的协议列表
+</span><span style="color:#75715e"></span><span style="color:#75715e">#</span><span style="color:#75715e">endif</span><span style="color:#75715e">
+</span><span style="color:#75715e"></span>
+};
+</code></pre></div><p>OC中的对象虽然没有明显的使用指针，但是在OC代码被编译转化为C之后，每个OC对象其实都是拥有一个isa的指针的</p>
 <blockquote>
 <p>Objective-C 语言的动态性包括动态和多态。动态性：即OC的动态类型，动态绑定和动态加载特性。将对象类型的确定、方法的确定、代码和资源的转载等推迟到运行时进行。多态，是指面向对象变成语言的特性。OC作为一门面向对象的语言，自然具备这种多态性，多态性指的是来自不同类的对象可以接受同一消息的能力，或者说不同对象以自己的方式响应相同消息的能力。</p>
 </blockquote>
@@ -608,14 +658,14 @@ encoding:NSASCIIStringEncoding];
       <nav class="site-state motion-element">
     <div class="site-state-item site-state-posts">
       <a href="https://IIHui.github.io/post/">
-        <span class="site-state-item-count">85</span>
+        <span class="site-state-item-count">87</span>
         <span class="site-state-item-name">日志</span>
       </a>
     </div>
     <div class="site-state-item site-state-categories">    
         <a href="https://IIHui.github.io/categories/">      
          
-        <span class="site-state-item-count">5</span>
+        <span class="site-state-item-count">6</span>
         
         <span class="site-state-item-name">分类</span>
         
@@ -625,7 +675,7 @@ encoding:NSASCIIStringEncoding];
     <div class="site-state-item site-state-tags">
         <a href="https://IIHui.github.io/tags/">
          
-        <span class="site-state-item-count">13</span>
+        <span class="site-state-item-count">14</span>
         
         <span class="site-state-item-name">标签</span>
         </a>
@@ -704,6 +754,12 @@ encoding:NSASCIIStringEncoding];
 
   <ul>
     <li><a href="#消息机制的基本原理">消息机制的基本原理</a></li>
+    <li><a href="#runtime中的概念解析">Runtime中的概念解析</a>
+      <ul>
+        <li><a href="#object对象">Object对象</a></li>
+        <li><a href="#class类">Class类</a></li>
+      </ul>
+    </li>
     <li><a href="#oc的id类型">OC的id类型</a></li>
     <li><a href="#instancetype">instancetype</a></li>
     <li><a href="#selector">selector</a></li>
