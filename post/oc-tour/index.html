@@ -160,7 +160,7 @@
     <i class="fa fa-eye"></i>
 </span>
 <span class="post-meta-item-text">阅读：</span>
-<span class="leancloud-visitors-count">8189 字 ~17分钟</span>
+<span class="leancloud-visitors-count">8362 字 ~17分钟</span>
 </span>
       </div>
     </header>
@@ -556,9 +556,13 @@ encoding:NSASCIIStringEncoding];
 </span><span style="color:#75715e"></span>    <span style="color:#66d9ef">struct</span> objc_cache <span style="color:#f92672">*</span> _Nonnull cache;                          <span style="color:#75715e">// 方法缓存
 </span><span style="color:#75715e"></span>    <span style="color:#66d9ef">struct</span> objc_protocol_list <span style="color:#f92672">*</span> _Nullable protocols;             <span style="color:#75715e">// 遵守的协议列表
 </span><span style="color:#75715e"></span><span style="color:#75715e">#</span><span style="color:#75715e">endif</span><span style="color:#75715e">
-</span><span style="color:#75715e"></span>
-};
-</code></pre></div><p>OC中的对象虽然没有明显的使用指针，但是在OC代码被编译转化为C之后，每个OC对象其实都是拥有一个isa的指针的</p>
+</span><span style="color:#75715e"></span>};
+</code></pre></div><p><code>class</code>是一个指向<code>objc_class</code>结构体的指针，即在<code>runtime</code>中<code>typedef struct objc_class *Class; </code></p>
+<h3 id="sel方法选择器">SEL方法选择器</h3>
+<p>在<code>objc/runtime.h</code>,<code>SEL</code>被定义为指向<code>ojbc_selector</code>结构体的指针：</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-Objective-C" data-lang="Objective-C"><span style="color:#66d9ef">typedef</span> <span style="color:#66d9ef">struct</span> objc_selector <span style="color:#f92672">*</span><span style="color:#66d9ef">SEL</span>;
+</code></pre></div><p><code>Objective-C</code>在编译时，会依据每一个方法的名字、参数序列，生成一个唯一的整型标识(Int类型的地址)，这个标识就是SEL</p>
+<p>OC中的对象虽然没有明显的使用指针，但是在OC代码被编译转化为C之后，每个OC对象其实都是拥有一个isa的指针的</p>
 <blockquote>
 <p>Objective-C 语言的动态性包括动态和多态。动态性：即OC的动态类型，动态绑定和动态加载特性。将对象类型的确定、方法的确定、代码和资源的转载等推迟到运行时进行。多态，是指面向对象变成语言的特性。OC作为一门面向对象的语言，自然具备这种多态性，多态性指的是来自不同类的对象可以接受同一消息的能力，或者说不同对象以自己的方式响应相同消息的能力。</p>
 </blockquote>
@@ -581,6 +585,8 @@ encoding:NSASCIIStringEncoding];
 <p><code>selector</code>是一个方法的名字。基于动态绑定环境下，<code>method</code>是一个组合体，包含了名字和实现。可以理解<code>@selector()</code>就是取类方法的编号，他的行为基本可以等同<code>C</code>语言中的函数指针，只不过C语言中，可以把函数名直接赋值给一个函数指针，而<code>OC</code>的类不能直接应用函数指针，这样只能做一个<code>@selector</code>语法来取，它的结果是一个<code>SEL</code>类型。而这个类型本质是类方法的编号（函数地址）。</p>
 <h2 id="target-action机制">target-action机制</h2>
 <p>目标是动作消息的接收者。例如一个控件，或者更为常见的是它的单元，以插座变量的形式保有其动作的目标。动作是控件发送给目标的消息，或者从目标的角度看，他是目标为了响应动作而实现的方法。程序需要某些机制来进行实践和指令的翻译，这个机制就是目标-动作机制。</p>
+<p><a href="https://juejin.im/post/5d6bea9651882563e82aff2b">资料1</a>
+<a href="https://juejin.im/post/5be24b826fb9a04a102ec12b">资料2</a></p>
 
     </div>
     <footer class="post-footer">
@@ -758,6 +764,7 @@ encoding:NSASCIIStringEncoding];
       <ul>
         <li><a href="#object对象">Object对象</a></li>
         <li><a href="#class类">Class类</a></li>
+        <li><a href="#sel方法选择器">SEL方法选择器</a></li>
       </ul>
     </li>
     <li><a href="#oc的id类型">OC的id类型</a></li>

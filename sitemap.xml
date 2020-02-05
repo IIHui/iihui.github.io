@@ -1049,7 +1049,10 @@ runtime  runtime是一套存C语言的API，OC代码最终都会被编译器转�
 Runtime中的概念解析 所有的Objective-C方法调用在编译时都会转化为对C函数objc_msgSend的调用。objc_msgSend(receiver，selector)是 [receiver selector]对应的C函数。
 Object对象 在objc/runtime.h中，Object被定义为指向objc_object结构体的指针，objc_object结构体的数据结构如下：
 //runtime对objc_object结构体的定义 struct objc_object { Class _Nonnull isa OBJC_ISA_AVAILABILITY; }; //id是一个指向objc_object结构体的指针，即在Runtime中： typedef struct objc_object *id; Class类 在objc/runtime.h中，Class被定义为指向objc_class结构体的指针，objc_class结构体的数据结构如下：
-//runtime对objc_class结构体的定义 struct objc_class { Class _Nonnull isa; // objc_class 结构体的实例指针  #if !__OBJC2__ Class _Nullable super_class; // 指向父类的指针  const char * _Nonnull name; // 类的名字  long version; // 类的版本信息，默认为 0  long info; // 类的信息，供运行期使用的一些位标识  long instance_size; // 该类的实例变量大小;  struct objc_ivar_list * _Nullable ivars; // 该类的实例变量列表  struct objc_method_list * _Nullable * _Nullable methodLists; // 方法定义的列表  struct objc_cache * _Nonnull cache; // 方法缓存  struct objc_protocol_list * _Nullable protocols; // 遵守的协议列表 #endif }; OC中的对象虽然没有明显的使用指针，但是在OC代码被编译转化为C之后，每个OC对象其实都是拥有一个isa的指针的
+//runtime对objc_class结构体的定义 struct objc_class { Class _Nonnull isa; // objc_class 结构体的实例指针  #if !__OBJC2__ Class _Nullable super_class; // 指向父类的指针  const char * _Nonnull name; // 类的名字  long version; // 类的版本信息，默认为 0  long info; // 类的信息，供运行期使用的一些位标识  long instance_size; // 该类的实例变量大小;  struct objc_ivar_list * _Nullable ivars; // 该类的实例变量列表  struct objc_method_list * _Nullable * _Nullable methodLists; // 方法定义的列表  struct objc_cache * _Nonnull cache; // 方法缓存  struct objc_protocol_list * _Nullable protocols; // 遵守的协议列表 #endif}; class是一个指向objc_class结构体的指针，即在runtime中typedef struct objc_class *Class; 
+SEL方法选择器 在objc/runtime.h,SEL被定义为指向ojbc_selector结构体的指针：
+typedef struct objc_selector *SEL; Objective-C在编译时，会依据每一个方法的名字、参数序列，生成一个唯一的整型标识(Int类型的地址)，这个标识就是SEL
+OC中的对象虽然没有明显的使用指针，但是在OC代码被编译转化为C之后，每个OC对象其实都是拥有一个isa的指针的
  Objective-C 语言的动态性包括动态和多态。动态性：即OC的动态类型，动态绑定和动态加载特性。将对象类型的确定、方法的确定、代码和资源的转载等推迟到运行时进行。多态，是指面向对象变成语言的特性。OC作为一门面向对象的语言，自然具备这种多态性，多态性指的是来自不同类的对象可以接受同一消息的能力，或者说不同对象以自己的方式响应相同消息的能力。
  动态绑定将调用方法的确定推迟到运行时。在编译时，方法的调用并不和代码绑定在一起，只有在消息发送出来之后，才确定被调用的代码。
 通过动态类型和动态绑定技术，代码每次执行都可以得到不同的结果。运行时负责确定消息的接收者和被调用的方法。
@@ -1060,6 +1063,7 @@ instancetype instancetype和id都可以用来表示任意类型，将对象的�
   id类型既可以作为返回类型，也可以作为参数类型，也可以作为变量类型，但id类型在编译期不会进行类型检测。
   selector selector是一个方法的名字。基于动态绑定环境下，method是一个组合体，包含了名字和实现。可以理解@selector()就是取类方法的编号，他的行为基本可以等同C语言中的函数指针，只不过C语言中，可以把函数名直接赋值给一个函数指针，而OC的类不能直接应用函数指针，这样只能做一个@selector语法来取，它的结果是一个SEL类型。而这个类型本质是类方法的编号（函数地址）。
 target-action机制 目标是动作消息的接收者。例如一个控件，或者更为常见的是它的单元，以插座变量的形式保有其动作的目标。动作是控件发送给目标的消息，或者从目标的角度看，他是目标为了响应动作而实现的方法。程序需要某些机制来进行实践和指令的翻译，这个机制就是目标-动作机制。
+资料1 资料2
 </content>
     </entry>
     
