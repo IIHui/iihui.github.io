@@ -4,13 +4,13 @@
     <meta charset="UTF-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" /> 
-    <title>memcpy 的实现 - Keep It Simple</title>
+    <title>Objective-C runtime - Keep It Simple</title>
     <meta name="keywords" content="博客,思考,读书,笔记,技术,分享">
     
-    <meta property="og:title" content="memcpy 的实现">
+    <meta property="og:title" content="Objective-C runtime">
     <meta property="og:site_name" content="Keep It Simple">
     <meta property="og:image" content="/img/author.jpg"> 
-    <meta name="title" content="memcpy 的实现 - Keep It Simple" />
+    <meta name="title" content="Objective-C runtime - Keep It Simple" />
     <meta name="description" content="Swift | Go | C&#43;&#43; "> 
     <link rel="shortcut icon" href="https://IIHui.github.io/img/favicon.ico" />
     <link rel="apple-touch-icon" href="https://IIHui.github.io/img/apple-touch-icon.png" />
@@ -121,8 +121,8 @@
   <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
     <header class="post-header">
       <h1 class="post-title" itemprop="name headline">
-        <a class="post-title-link" href="https://IIHui.github.io/post/cpp-memcpy/" itemprop="url">
-        memcpy 的实现
+        <a class="post-title-link" href="https://IIHui.github.io/post/oc-runtime/" itemprop="url">
+        Objective-C runtime
         </a>
       </h1>
       <div class="post-meta">
@@ -131,78 +131,99 @@
     <i class="fa fa-calendar-o"></i>
 </span>
 <span class="post-meta-item-text">时间：</span>
-<time itemprop="dateCreated" datetime="2016-03-22T13:04:35+08:00" content="2017-06-01">
-    2017-06-01
+<time itemprop="dateCreated" datetime="2016-03-22T13:04:35+08:00" content="2020-02-04">
+    2020-02-04
 </time>
 </span> 
       
+
+  <span class="post-category" >
+  &nbsp; | &nbsp;
+  <span class="post-meta-item-icon">
+    <i class="fa fa-folder-o"></i>
+  </span>
+  <span class="post-meta-item-text">分类：</span>
+  
+    <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
+      <a href="https://IIHui.github.io/categories/code" itemprop="url" rel="index">
+        <span itemprop="name">code</span>
+      </a>
+      &nbsp; 
+    </span>
+  
+</span>
+
+
        <span>
 &nbsp; | &nbsp;
 <span class="post-meta-item-icon">
     <i class="fa fa-eye"></i>
 </span>
 <span class="post-meta-item-text">阅读：</span>
-<span class="leancloud-visitors-count">396 字 ~1分钟</span>
+<span class="leancloud-visitors-count">1817 字 ~4分钟</span>
 </span>
       </div>
     </header>
     <div class="post-body" itemprop="articleBody">
-    <h2 id="地址重叠">地址重叠</h2>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-cpp" data-lang="cpp"><span style="color:#66d9ef">void</span> <span style="color:#f92672">*</span><span style="color:#a6e22e">memcpy</span>(<span style="color:#66d9ef">void</span> <span style="color:#f92672">*</span>dst, <span style="color:#66d9ef">const</span> <span style="color:#66d9ef">void</span> <span style="color:#f92672">*</span>src, size_t n);
-<span style="color:#75715e">//If copying takes place between objects that overlap, the behavior is undefined.
-</span></code></pre></div><ul>
+    <h2 id="runtime中的概念解析">Runtime中的概念解析</h2>
+<p>所有的<code>Objective-C</code>方法调用在编译时都会转化为对<code>C</code>函数<code>objc_msgSend</code>的调用。<code>objc_msgSend(receiver，selector)</code>是 <code>[receiver selector]</code>对应的C函数。</p>
+<h3 id="object对象">Object对象</h3>
+<p>在<code>objc/runtime.h</code>中，<code>Object</code>被定义为指向<code>objc_object</code>结构体的指针，<code>objc_object</code>结构体的数据结构如下：</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-Objective-c" data-lang="Objective-c"><span style="color:#75715e">//runtime对objc_object结构体的定义
+</span><span style="color:#75715e"></span><span style="color:#66d9ef">struct</span> objc_object {
+    <span style="color:#66d9ef">Class</span> _Nonnull isa  OBJC_ISA_AVAILABILITY;
+};
+
+<span style="color:#75715e">//id是一个指向objc_object结构体的指针，即在Runtime中：
+</span><span style="color:#75715e"></span><span style="color:#66d9ef">typedef</span> <span style="color:#66d9ef">struct</span> objc_object <span style="color:#f92672">*</span><span style="color:#66d9ef">id</span>;
+</code></pre></div><h3 id="class类">Class类</h3>
+<p>在<code>objc/runtime.h</code>中，<code>Class</code>被定义为指向<code>objc_class</code>结构体的指针，<code>objc_class</code>结构体的数据结构如下：</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-Objective-C" data-lang="Objective-C"><span style="color:#75715e">//runtime对objc_class结构体的定义
+</span><span style="color:#75715e"></span><span style="color:#66d9ef">struct</span> objc_class {
+    <span style="color:#66d9ef">Class</span> _Nonnull isa;                                          <span style="color:#75715e">// objc_class 结构体的实例指针
+</span><span style="color:#75715e"></span>
+<span style="color:#75715e">#</span><span style="color:#75715e">if !__OBJC2__</span><span style="color:#75715e">
+</span><span style="color:#75715e"></span>    <span style="color:#66d9ef">Class</span> _Nullable super_class;                                 <span style="color:#75715e">// 指向父类的指针
+</span><span style="color:#75715e"></span>    <span style="color:#66d9ef">const</span> <span style="color:#66d9ef">char</span> <span style="color:#f92672">*</span> _Nonnull name;                                  <span style="color:#75715e">// 类的名字
+</span><span style="color:#75715e"></span>    <span style="color:#66d9ef">long</span> version;                                                <span style="color:#75715e">// 类的版本信息，默认为 0
+</span><span style="color:#75715e"></span>    <span style="color:#66d9ef">long</span> info;                                                   <span style="color:#75715e">// 类的信息，供运行期使用的一些位标识
+</span><span style="color:#75715e"></span>    <span style="color:#66d9ef">long</span> instance_size;                                          <span style="color:#75715e">// 该类的实例变量大小;
+</span><span style="color:#75715e"></span>    <span style="color:#66d9ef">struct</span> objc_ivar_list <span style="color:#f92672">*</span> _Nullable ivars;                     <span style="color:#75715e">// 该类的实例变量列表
+</span><span style="color:#75715e"></span>    <span style="color:#66d9ef">struct</span> objc_method_list <span style="color:#f92672">*</span> _Nullable <span style="color:#f92672">*</span> _Nullable methodLists; <span style="color:#75715e">// 方法定义的列表
+</span><span style="color:#75715e"></span>    <span style="color:#66d9ef">struct</span> objc_cache <span style="color:#f92672">*</span> _Nonnull cache;                          <span style="color:#75715e">// 方法缓存
+</span><span style="color:#75715e"></span>    <span style="color:#66d9ef">struct</span> objc_protocol_list <span style="color:#f92672">*</span> _Nullable protocols;             <span style="color:#75715e">// 遵守的协议列表
+</span><span style="color:#75715e"></span><span style="color:#75715e">#</span><span style="color:#75715e">endif</span><span style="color:#75715e">
+</span><span style="color:#75715e"></span>};
+</code></pre></div><p><code>class</code>是一个指向<code>objc_class</code>结构体的指针，即在<code>runtime</code>中<code>typedef struct objc_class *Class; </code></p>
+<h3 id="sel方法选择器">SEL方法选择器</h3>
+<p>在<code>objc/runtime.h</code>,<code>SEL</code>被定义为指向<code>ojbc_selector</code>结构体的指针：</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-Objective-C" data-lang="Objective-C"><span style="color:#66d9ef">typedef</span> <span style="color:#66d9ef">struct</span> objc_selector <span style="color:#f92672">*</span><span style="color:#66d9ef">SEL</span>;
+</code></pre></div><p><code>Objective-C</code>在编译时，会依据每一个方法的名字、参数序列，生成一个唯一的整型标识(Int类型的地址)，这个标识就是SEL</p>
+<p>OC中的对象虽然没有明显的使用指针，但是在OC代码被编译转化为C之后，每个OC对象其实都是拥有一个isa的指针的</p>
+<blockquote>
+<p>Objective-C 语言的动态性包括动态和多态。动态性：即OC的动态类型，动态绑定和动态加载特性。将对象类型的确定、方法的确定、代码和资源的转载等推迟到运行时进行。多态，是指面向对象变成语言的特性。OC作为一门面向对象的语言，自然具备这种多态性，多态性指的是来自不同类的对象可以接受同一消息的能力，或者说不同对象以自己的方式响应相同消息的能力。</p>
+</blockquote>
+<p>动态绑定将调用方法的确定推迟到运行时。在编译时，方法的调用并不和代码绑定在一起，只有在消息发送出来之后，才确定被调用的代码。</p>
+<p>通过动态类型和动态绑定技术，代码每次执行都可以得到不同的结果。运行时负责确定消息的接收者和被调用的方法。</p>
+<p>运行时的消息分发机制为动态绑定提供支持。当向一个动态类型确定了的对象发送消息时，运行环境会通过接收者的<code>isa</code>指针定位对象的类，并以此确定被调用的方法，方法时动态绑定的。</p>
+<h3 id="oc的id类型">OC的id类型</h3>
+<p><code>id</code>表示变量或对象的类型在<!-- raw HTML omitted -->编写代码时（编译期）不确定，视为任意类型<!-- raw HTML omitted -->，直到程序跑起来推迟到运行时才最终确定其类型。<code>id</code>类似于C++中的<code>void *</code>，但是<code>id</code>和<code>void *</code>并非完全一样。<code>id</code>是一个指向继承了<code>NSObject</code>的<code>OC</code>对象的指针，注意<code>id</code>是一个指针，虽然省略了<code>*</code>号。<code>id</code>和<code>C</code>语言的<code>void *</code>之间需要通过<code>bridge</code>关键字来实现桥接转换。</p>
+<h3 id="instancetype">instancetype</h3>
+<p><code>instancetype</code>和<code>id</code>都可以用来表示任意类型，将对象的类型确定往后推迟，用于体现OC语言的动态性，使其声明的对象具有运行时特性。区别是：</p>
+<ul>
 <li>
-<p>注意注释，<!-- raw HTML omitted -->对于地址重叠的情况，该函数的行为是未定义的<!-- raw HTML omitted -->。事实上所说的陷阱也在于此，自己动手实现<code>memcpy</code>时就需要考虑地址重叠的情况。</p>
+<p><code>instancetype</code>只能作为返回值类型，但在编译期<code>instancetype</code>会进行类型检测，因此对于所有返回类的实例的类方法或实例方法，建议返回类型<code>instancetype</code>而不是<code>id</code>。</p>
 </li>
 <li>
-<p>另外，标准库也提供了地址重叠时的内存拷贝函数：<code>memmove</code>，那么为什么还要考虑重写<code>memcpy</code>函数呢?</p>
-</li>
-<li>
-<p>因为<code>memmove</code>函数的实现效率问题，<!-- raw HTML omitted -->该函数把源字符串拷贝到临时<code>buffer</code>里，然后再从临时<code>buffer</code>里写到目的地址，增加了一次不必要的开销<!-- raw HTML omitted -->。</p>
+<p><code>id</code>类型既可以作为返回类型，也可以作为参数类型，也可以作为变量类型，但<code>id</code>类型在编译期不会进行类型检测。</p>
 </li>
 </ul>
-<hr>
-<h2 id="自实现版本">自实现版本</h2>
-<p>当可能<!-- raw HTML omitted -->会发生重叠时，应该从后往前拷贝，<!-- raw HTML omitted -->类似于<code>vector</code>的插入时当插入点的元素大于要插入的元素个数时。</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-cpp" data-lang="cpp"><span style="color:#75715e">#</span><span style="color:#75715e">include</span> <span style="color:#75715e">&lt;stdio.h&gt;</span><span style="color:#75715e">
-</span><span style="color:#75715e"></span><span style="color:#75715e">#</span><span style="color:#75715e">include</span> <span style="color:#75715e">&lt;stdlib.h&gt;</span><span style="color:#75715e">
-</span><span style="color:#75715e"></span><span style="color:#75715e">#</span><span style="color:#75715e">include</span> <span style="color:#75715e">&lt;string.h&gt;</span><span style="color:#75715e">
-</span><span style="color:#75715e"></span>
-<span style="color:#66d9ef">void</span> <span style="color:#f92672">*</span><span style="color:#a6e22e">Memcpy</span>(<span style="color:#66d9ef">void</span> <span style="color:#f92672">*</span>dst, <span style="color:#66d9ef">const</span> <span style="color:#66d9ef">void</span> <span style="color:#f92672">*</span>src, size_t size);
-
-<span style="color:#66d9ef">int</span> <span style="color:#a6e22e">main</span>(<span style="color:#66d9ef">int</span> argc, <span style="color:#66d9ef">char</span> <span style="color:#f92672">*</span>argv[]) {
-  <span style="color:#66d9ef">char</span> buf[<span style="color:#ae81ff">100</span>] <span style="color:#f92672">=</span> <span style="color:#e6db74"></span><span style="color:#e6db74">&#34;</span><span style="color:#e6db74">abcdefghijk</span><span style="color:#e6db74">&#34;</span>;
-  <span style="color:#75715e">// memcpy(buf+2, buf, 5);
-</span><span style="color:#75715e"></span>  Memcpy(buf <span style="color:#f92672">+</span> <span style="color:#ae81ff">2</span>, buf, <span style="color:#ae81ff">5</span>);
-  printf(<span style="color:#e6db74"></span><span style="color:#e6db74">&#34;</span><span style="color:#e6db74">%s</span><span style="color:#ae81ff">\n</span><span style="color:#e6db74">&#34;</span>, buf <span style="color:#f92672">+</span> <span style="color:#ae81ff">2</span>);
-}
-
-<span style="color:#66d9ef">void</span> <span style="color:#f92672">*</span><span style="color:#a6e22e">Memcpy</span>(<span style="color:#66d9ef">void</span> <span style="color:#f92672">*</span>dst, <span style="color:#66d9ef">const</span> <span style="color:#66d9ef">void</span> <span style="color:#f92672">*</span>src, size_t size) {
-  <span style="color:#66d9ef">char</span> <span style="color:#f92672">*</span>psrc;
-  <span style="color:#66d9ef">char</span> <span style="color:#f92672">*</span>pdst;
-
-  <span style="color:#66d9ef">if</span> (NULL <span style="color:#f92672">=</span><span style="color:#f92672">=</span> dst <span style="color:#f92672">|</span><span style="color:#f92672">|</span> NULL <span style="color:#f92672">=</span><span style="color:#f92672">=</span> src) {
-    <span style="color:#66d9ef">return</span> NULL;
-  }
-
-  <span style="color:#66d9ef">if</span> ((src <span style="color:#f92672">&lt;</span> dst) <span style="color:#f92672">&amp;</span><span style="color:#f92672">&amp;</span> (<span style="color:#66d9ef">char</span> <span style="color:#f92672">*</span>)src <span style="color:#f92672">+</span> size <span style="color:#f92672">&gt;</span> (<span style="color:#66d9ef">char</span> <span style="color:#f92672">*</span>)dst)  <span style="color:#75715e">// 自后向前拷贝
-</span><span style="color:#75715e"></span>  {
-    psrc <span style="color:#f92672">=</span> (<span style="color:#66d9ef">char</span> <span style="color:#f92672">*</span>)src <span style="color:#f92672">+</span> size <span style="color:#f92672">-</span> <span style="color:#ae81ff">1</span>;
-    pdst <span style="color:#f92672">=</span> (<span style="color:#66d9ef">char</span> <span style="color:#f92672">*</span>)dst <span style="color:#f92672">+</span> size <span style="color:#f92672">-</span> <span style="color:#ae81ff">1</span>;
-    <span style="color:#66d9ef">while</span> (size<span style="color:#f92672">-</span><span style="color:#f92672">-</span>) {
-      <span style="color:#f92672">*</span>pdst<span style="color:#f92672">-</span><span style="color:#f92672">-</span> <span style="color:#f92672">=</span> <span style="color:#f92672">*</span>psrc<span style="color:#f92672">-</span><span style="color:#f92672">-</span>;
-    }
-  } <span style="color:#66d9ef">else</span> {
-    psrc <span style="color:#f92672">=</span> (<span style="color:#66d9ef">char</span> <span style="color:#f92672">*</span>)src;
-    pdst <span style="color:#f92672">=</span> (<span style="color:#66d9ef">char</span> <span style="color:#f92672">*</span>)dst;
-    <span style="color:#66d9ef">while</span> (size<span style="color:#f92672">-</span><span style="color:#f92672">-</span>) {
-      <span style="color:#f92672">*</span>pdst<span style="color:#f92672">+</span><span style="color:#f92672">+</span> <span style="color:#f92672">=</span> <span style="color:#f92672">*</span>psrc<span style="color:#f92672">+</span><span style="color:#f92672">+</span>;
-    }
-  }
-
-  <span style="color:#66d9ef">return</span> dst;
-}
-</code></pre></div><hr>
+<h3 id="selector">selector</h3>
+<p><code>selector</code>是一个方法的名字。基于动态绑定环境下，<code>method</code>是一个组合体，包含了名字和实现。可以理解<code>@selector()</code>就是取类方法的编号，他的行为基本可以等同<code>C</code>语言中的函数指针，只不过C语言中，可以把函数名直接赋值给一个函数指针，而<code>OC</code>的类不能直接应用函数指针，这样只能做一个<code>@selector</code>语法来取，它的结果是一个<code>SEL</code>类型。而这个类型本质是类方法的编号（函数地址）。</p>
+<h3 id="target-action机制">target-action机制</h3>
+<p>目标是动作消息的接收者。例如一个控件，或者更为常见的是它的单元，以插座变量的形式保有其动作的目标。动作是控件发送给目标的消息，或者从目标的角度看，他是目标为了响应动作而实现的方法。程序需要某些机制来进行实践和指令的翻译，这个机制就是目标-动作机制。</p>
+<p><a href="https://juejin.im/post/5d6bea9651882563e82aff2b">资料1</a>
+<a href="https://juejin.im/post/5be24b826fb9a04a102ec12b">资料2</a></p>
 
     </div>
     <footer class="post-footer">
@@ -210,7 +231,9 @@
  
 <div class="post-tags">     
      
-    <a href="https://IIHui.github.io/tags/c&#43;&#43;" rel="tag" title="C&#43;&#43;">#C&#43;&#43;#</a>
+    <a href="https://IIHui.github.io/tags/oc" rel="tag" title="oc">#oc#</a>
+    
+    <a href="https://IIHui.github.io/tags/ios" rel="tag" title="iOS">#iOS#</a>
     
 </div>
 
@@ -219,16 +242,12 @@
      <div class="post-nav">
     <div class="post-nav-next post-nav-item">
     
-        <a href="https://IIHui.github.io/post/go-type/" rel="next" title="Go 基本类型">
-        <i class="fa fa-chevron-left"></i> Go 基本类型
-        </a>
-    
     </div>
 
     <div class="post-nav-prev post-nav-item">
     
-        <a href="https://IIHui.github.io/post/arith-sort/" rel="prev" title="基本排序算法">
-        基本排序算法 <i class="fa fa-chevron-right"></i>
+        <a href="https://IIHui.github.io/post/food-2020/" rel="prev" title="陈小厨作品集">
+        陈小厨作品集 <i class="fa fa-chevron-right"></i>
         </a>
     
     </div>
@@ -348,8 +367,17 @@
     <div class="post-toc">
         <div class="post-toc-content"><nav id="TableOfContents">
   <ul>
-    <li><a href="#地址重叠">地址重叠</a></li>
-    <li><a href="#自实现版本">自实现版本</a></li>
+    <li><a href="#runtime中的概念解析">Runtime中的概念解析</a>
+      <ul>
+        <li><a href="#object对象">Object对象</a></li>
+        <li><a href="#class类">Class类</a></li>
+        <li><a href="#sel方法选择器">SEL方法选择器</a></li>
+        <li><a href="#oc的id类型">OC的id类型</a></li>
+        <li><a href="#instancetype">instancetype</a></li>
+        <li><a href="#selector">selector</a></li>
+        <li><a href="#target-action机制">target-action机制</a></li>
+      </ul>
+    </li>
   </ul>
 </nav></div>
     </div>
