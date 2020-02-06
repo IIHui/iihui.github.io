@@ -53,7 +53,6 @@ $(document).ready(function () {
       });
     });
   }
-
   var $t = $("#TableOfContents");
   toc($t, "");
 });
