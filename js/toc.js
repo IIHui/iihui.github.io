@@ -44,7 +44,7 @@ $(document).ready(function () {
         listStr = prefex
         if ($li.children("a").length > 0) {
           if (listStr != "") { listStr += "."}
-          listStr += ($li.index() + 1);
+          listStr += ($li.index() + 1); //list前面的数字
           $li.html(listStr + " " + $li.html());
           toc($li, listStr)
         } else {
