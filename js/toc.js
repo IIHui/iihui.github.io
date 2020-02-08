@@ -53,6 +53,15 @@ $(document).ready(function () {
       });
     });
   }
+  var navbarHeight = 55;
+  $("#page-scrollspy a.nav-link").on('click', function () {
+    /* decode chinese hash */
+    var target = decodeURI(this.hash.replace(/^#/, ''));
+    $('html,body').animate({scrollTop: $(":header[id='" + target + "']").offset().top - navbarHeight}, scrollSpeed);
+    return false;
+  });
+
+  $('body').scrollspy({ target: "#page-scrollspy", offset: navbarHeight+5 });
   var $t = $("#TableOfContents");
   toc($t, "");
 });
