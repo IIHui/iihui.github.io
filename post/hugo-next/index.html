@@ -221,13 +221,13 @@ code.has-jax {
     <i class="fa fa-file-word-o"></i>
 </span>
 <span class="post-meta-item-text">字数: </span>
-<span class="leancloud-visitors-count">623</span>
+<span class="leancloud-visitors-count">1029</span>
 &nbsp; | &nbsp;
 <span class="post-meta-item-icon">
     <i class="fa fa-coffee"></i>
 </span>
 <span class="post-meta-item-text">时长: </span>
-<span class="leancloud-visitors-count">2 分钟</span>
+<span class="leancloud-visitors-count">3 分钟</span>
 </span>
       </div>
     </header>
@@ -270,14 +270,69 @@ code.has-jax {
 <p><img src="https://i.loli.net/2020/02/08/VS5ifNspEdcwYHF.jpg" alt=""></p>
 <p>经过上面的两步骤，就可以得到如下效果：</p>
 <p><img src="https://i.loli.net/2020/02/08/6icSaUuD2bKQJvg.jpg" alt=""></p>
-<p>1、学习iOS WKWebView开发中监听原生H5性能数据window.performance</p>
-<p>2、学习优化WebView初始化时间的三种方案</p>
-<ul>
-<li>全局WebView</li>
-<li>客户端代理数据请求</li>
-<li>建立连接/服务器处理</li>
-</ul>
+<h1 id="删除文章列表之间的横线">删除文章列表之间的横线</h1>
+<p>Next主题默认首页文章列表之间有条横线，看着觉得挺别扭的，找了一下资料，发现可以在<code>/static/css/main.css</code>文件中将<code>.posts-expand .post-eof</code>中的<code>height</code>设为0，就可以将其隐藏：</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-css" data-lang="css">.<span style="color:#a6e22e">posts-expand</span> .<span style="color:#a6e22e">post-eof</span> {
+  <span style="color:#66d9ef">display</span>: <span style="color:#66d9ef">block</span>;
+  <span style="color:#66d9ef">margin</span>: <span style="color:#ae81ff">50</span><span style="color:#66d9ef">px</span> <span style="color:#66d9ef">auto</span> <span style="color:#ae81ff">10</span><span style="color:#66d9ef">px</span>;
+  <span style="color:#66d9ef">width</span>: <span style="color:#ae81ff">100</span><span style="color:#66d9ef">%</span>;
+  <span style="color:#66d9ef">height</span>: <span style="color:#ae81ff">0</span><span style="color:#66d9ef">px</span>;
+  <span style="color:#66d9ef">background</span>: <span style="color:#ae81ff">#ccc</span>;
+  <span style="color:#66d9ef">text-align</span>: <span style="color:#66d9ef">center</span>;
+}
+</code></pre></div><h1 id="修改文章的信息">修改文章的信息</h1>
+<p>默认文章的信息展示如下图所示：
+<img src="https://i.loli.net/2020/02/08/dOmhZkBzW7RJjPo.jpg" alt="-c"></p>
+<p>我需要改成这样的：</p>
+<p><img src="https://i.loli.net/2020/02/08/RGfoqHSwlUkLaNc.jpg" alt="-c"></p>
+<p>首先在<code>zh.yaml</code>中做如下修改：</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-yaml" data-lang="yaml">- <span style="color:#66d9ef">id</span>: Time
+  <span style="color:#66d9ef">translation</span>: 创建
+- <span style="color:#66d9ef">id</span>: TimeUpdated
+  <span style="color:#66d9ef">translation</span>: 更新
+- <span style="color:#66d9ef">id</span>: View
+  <span style="color:#66d9ef">translation</span>: 字数
+- <span style="color:#66d9ef">id</span>: ReadMore
+  <span style="color:#66d9ef">translation</span>: 阅读全文
+- <span style="color:#66d9ef">id</span>: ViewTime
+  <span style="color:#66d9ef">translation</span>: 时长
+- <span style="color:#66d9ef">id</span>: ReadingTime
+  <span style="color:#66d9ef">translation</span>: <span style="color:#e6db74">&#34;{{ .ReadingTime }} 分钟&#34;</span>
+- <span style="color:#66d9ef">id</span>: NumberOfText
+  <span style="color:#66d9ef">translation</span>: <span style="color:#e6db74">&#34;{{ .WordCount }}字&#34;</span>
+</code></pre></div><p>然后在<code>readtime.html</code>中做如下修改：</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-html" data-lang="html">&lt;<span style="color:#f92672">span</span>&gt;
+&amp;nbsp; | &amp;nbsp;
+&lt;<span style="color:#f92672">span</span> <span style="color:#a6e22e">class</span><span style="color:#f92672">=</span><span style="color:#e6db74">&#34;post-meta-item-icon&#34;</span>&gt;
+    &lt;<span style="color:#f92672">i</span> <span style="color:#a6e22e">class</span><span style="color:#f92672">=</span><span style="color:#e6db74">&#34;fa fa-file-word-o&#34;</span>&gt;&lt;/<span style="color:#f92672">i</span>&gt;
+&lt;/<span style="color:#f92672">span</span>&gt;
+&lt;<span style="color:#f92672">span</span> <span style="color:#a6e22e">class</span><span style="color:#f92672">=</span><span style="color:#e6db74">&#34;post-meta-item-text&#34;</span>&gt;{{ i18n &#34;View&#34; }}{{ i18n &#34;Colon&#34;}}&lt;/<span style="color:#f92672">span</span>&gt;
+&lt;<span style="color:#f92672">span</span> <span style="color:#a6e22e">class</span><span style="color:#f92672">=</span><span style="color:#e6db74">&#34;leancloud-visitors-count&#34;</span>&gt;{{ i18n &#34;ReadingCount&#34; .}}&lt;/<span style="color:#f92672">span</span>&gt;
+&amp;nbsp; | &amp;nbsp;
+&lt;<span style="color:#f92672">span</span> <span style="color:#a6e22e">class</span><span style="color:#f92672">=</span><span style="color:#e6db74">&#34;post-meta-item-icon&#34;</span>&gt;
+    &lt;<span style="color:#f92672">i</span> <span style="color:#a6e22e">class</span><span style="color:#f92672">=</span><span style="color:#e6db74">&#34;fa fa-coffee&#34;</span>&gt;&lt;/<span style="color:#f92672">i</span>&gt;
+&lt;/<span style="color:#f92672">span</span>&gt;
+&lt;<span style="color:#f92672">span</span> <span style="color:#a6e22e">class</span><span style="color:#f92672">=</span><span style="color:#e6db74">&#34;post-meta-item-text&#34;</span>&gt;{{ i18n &#34;ViewTime&#34; }}{{ i18n &#34;Colon&#34;}}&lt;/<span style="color:#f92672">span</span>&gt;
+&lt;<span style="color:#f92672">span</span> <span style="color:#a6e22e">class</span><span style="color:#f92672">=</span><span style="color:#e6db74">&#34;leancloud-visitors-count&#34;</span>&gt;{{ i18n &#34;ReadingTime&#34; .}}&lt;/<span style="color:#f92672">span</span>&gt;
+&lt;/<span style="color:#f92672">span</span>&gt;
+</code></pre></div><h1 id="修改左侧菜单栏的顺序">修改左侧菜单栏的顺序</h1>
+<h1 id="文章展示目录">文章展示目录</h1>
+<p>Hugo 展示目录需要在文章开头添加<code>toc = true</code>：</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-fallback" data-lang="fallback">---
+title:  Hugo next 主题问题
+date: 2020-02-07  11:27:41
+tags:  [hugo,tool]
+categories: [code]
+toc: true
+---
 
+</code></pre></div><h1 id="首页展示文章数目设置">首页展示文章数目设置</h1>
+<p>首页展示的文章数目可以在<code>themes/next/config.toml</code>中设置<code>Paginate</code>字段：</p>
+<p><img src="https://i.loli.net/2020/02/08/Gz3wUjqPQr8yBeL.jpg" alt="-c"></p>
+<h1 id="首页摘要字数设置">首页摘要字数设置</h1>
+<p>首页摘要的字数设置必须在同<code>themes</code>同级的<code>config.toml</code>中设置：</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-fallback" data-lang="fallback">summaryLength = 100  #放在同themes同级的config.toml上才有效
+</code></pre></div>
     </div>
     <footer class="post-footer">
         
