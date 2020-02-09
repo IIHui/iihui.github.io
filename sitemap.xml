@@ -96,19 +96,19 @@ target-action机制 目标是动作消息的接收者。例如一个控件，或
     
      <entry>
         <title>macOS 安装Homebrew 报错</title>
-        <url>https://iihui.github.io/post/qa_install_brew_error/</url>
+        <url>https://iihui.github.io/post/qa_install_brew/</url>
         <categories>
           <category>QA</category>
         </categories>
         <tags>
           <tag>QA</tag>
         </tags>
-        <content type="html">  重装了macOS Catalina 10.15.2，但使用/usr/bin/ruby -e &amp;quot;$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)&amp;quot;安装Homebrew时报curl: (7) Failed to connect to raw.githubusercontent.com port 443: Connection refused错误，网上大多数说要设置代理，但是于我没有任何效果。翻了一圈资料，猜测是系统的curl有问题，按照这个思路，终于找到了解决方案，首先强制安装Homebrew，然后再利用Homebrew安装curl，最后设置Homebrew安装的curl优先级高于系统的curl。
+        <content type="html">  重装了macOS Catalina 10.15.2，但使用/usr/bin/ruby -e &amp;quot;$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)&amp;quot;安装Homebrew时报curl: (7) Failed to connect to raw.githubusercontent.com port 443: Connection refused错误，网上大多数说要设置代理，但于我而言没有任何效果。翻了一圈资料，猜测是系统的curl有问题，按照这个思路，首先应该使用另一种方式安装Homebrew，然后再利用Homebrew安装curl，最后设置Homebrew安装的curl优先级高于系统的curl。
  安装Homebrew 首先在浏览器中打开https://raw.githubusercontent.com/Homebrew/install/master/install。若不能打开，就是网络问题；如果能打开就如下图所示：
-然后将这个网页的内容复制粘贴保存，并命名为brew_install.rb。然后再终端中输入curl命令，如果出现curl: try &#39;curl --help&#39; or &#39;curl --manual&#39; for more information则表示curl没有问题：
-接着在终端跳转到保存brew_install.rb的目录下，输入命令ruby brew_install.rb，安装Homebrew。
-安装并启用新curl 当上一步提示安装成功之后，则可以通过Homebrew安装curl，再终端输入brew install curl,安装成功之后，如果在终端通过sh -c &amp;quot;$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)&amp;quot;安装oh my zsh 依然会报错curl: (35) Server aborted the SSL handshake 错误，这是还是使用系统默认的curl命令。
-然后就需要将Homebrew安装的curl的优先级调高，使其高于系统的curl，使用命令 brew link curl --force会提示 按照上面的提示，首先执行echo &#39;export PATH=&amp;quot;/usr/local/opt/curl/bin:$PATH&amp;quot;&#39; &amp;gt;&amp;gt; ~/.zshrc 然后将export LDFLAGS=&amp;quot;-L/usr/local/opt/curl/lib&amp;quot;和export CPPFLAGS=&amp;quot;-I/usr/local/opt/curl/include&amp;quot;放到.zshrc中，至此问题解决。
+然后将这个网页的内容复制粘贴保存，并命名为brew_install.rb。再再终端中输入curl命令，如果出现curl: try &#39;curl --help&#39; or &#39;curl --manual&#39; for more information则表示curl本身没有问题：
+接着在终端跳转到保存brew_install.rb的目录下，输入命令ruby brew_install.rb，以完成安装Homebrew。
+安装并启用新curl 当上一步提示安装成功之后，则可以通过Homebrew安装curl，即在终端输入brew install curl，安装成功之后，如果在终端通过sh -c &amp;quot;$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)&amp;quot;命令安装oh my zsh 依然会报错curl: (35) Server aborted the SSL handshake 错误，这是因为brew安装的curl的优先级低于系统的。
+接着就需要将Homebrew安装的curl的优先级调高，使其高于系统的curl，使用命令 brew link curl --force会提示 按照上面的提示，首先执行echo &#39;export PATH=&amp;quot;/usr/local/opt/curl/bin:$PATH&amp;quot;&#39; &amp;gt;&amp;gt; ~/.zshrc 然后将export LDFLAGS=&amp;quot;-L/usr/local/opt/curl/lib&amp;quot;和export CPPFLAGS=&amp;quot;-I/usr/local/opt/curl/include&amp;quot;放到.zshrc（我用的zsh，如果用户的是其他shell则修改对应的配置文件）中，至此问题解决。
 参考资料1 参考资料2
 </content>
     </entry>
