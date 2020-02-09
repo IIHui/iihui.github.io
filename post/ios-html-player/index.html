@@ -226,7 +226,7 @@ code.has-jax {
     <i class="fa fa-file-word-o"></i>
 </span>
 <span class="post-meta-item-text">字数: </span>
-<span class="leancloud-visitors-count">585</span>
+<span class="leancloud-visitors-count">655</span>
 &nbsp; | &nbsp;
 <span class="post-meta-item-icon">
     <i class="fa fa-coffee"></i>
@@ -238,11 +238,12 @@ code.has-jax {
     </header>
     <div class="post-body" itemprop="articleBody">
     <blockquote>
-<p>最近<code>APP</code>出现了在<code>iPhone</code>上拍的视频，同步到<code>Android</code>手机后播放不了的问题，第一感觉应该是<code>iPhone</code>上录制视频所使用的编码不兼容<code>Android</code>。经过沟通，了解到播放视频是用<code>H5</code>嵌入的，因为手边没有视频播放源码和可测试的<code>Android</code>设备，为了验证我的猜测，尝试着先改变<code>iPhone</code>录制视频时的编码方式，然后写一段播放视频的<code>H5</code>，用<code>Chrome</code>浏览器进行测试能够正常播放。</p>
+<p>近期<code>APP</code>出现了在<code>iPhone</code>上拍的视频，同步到<code>Android</code>手机后播放不了的问题，第一直觉应该是<code>iPhone</code>上录制视频所使用的编码不兼容<code>Android</code>。经过沟通，了解到播放视频是用<code>H5</code>嵌入的，因为手边没有视频播放源码和可测试的<code>Android</code>设备，为了验证我的猜测，尝试着先改变<code>iPhone</code>录制视频时的编码方式，然后写一段播放视频的<code>H5</code>，用<code>Chrome</code>浏览器进行测试。</p>
 </blockquote>
 <h1 id="确认编码">确认编码</h1>
 <p>首先找到视频输出的编码方式，通过对比<code>iOS 11.3</code>，<code>iOS 12.0</code>以及<code>iOS 12.01</code>发现默认的输出编码格式从<code>avc1</code>变成了<code>hcv1</code>：</p>
 <p><img src="https://i.loli.net/2019/02/25/5c73cf5466533.jpg" alt=""></p>
+<p>对应的代码如下：</p>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift"><span style="color:#66d9ef">if</span> <span style="color:#66d9ef">self</span>.captureSession.canAddOutput(<span style="color:#66d9ef">self</span>.captureMovieFileOutput) {
     <span style="color:#66d9ef">self</span>.captureSession.addOutput(<span style="color:#66d9ef">self</span>.captureMovieFileOutput)
     <span style="color:#66d9ef">if</span> <span style="color:#66d9ef">let</span> outPutConnection = <span style="color:#66d9ef">self</span>.captureMovieFileOutput.connection(withMediaType:AVMediaTypeVideo){
@@ -251,7 +252,7 @@ code.has-jax {
 }
 </code></pre></div><hr>
 <h1 id="改变编码">改变编码</h1>
-<p>因此需要显式指定视频的输出编码格式，而<!-- raw HTML omitted -->不是使用之前的默认编码格式<!-- raw HTML omitted -->，代码片段如下所示：</p>
+<p>因此需要显式指定视频的输出编码格式，而<!-- raw HTML omitted -->不是使用之前的默认编码格式<!-- raw HTML omitted -->，代码片段如下：</p>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift"><span style="color:#66d9ef">if</span> <span style="color:#66d9ef">self</span>.captureSession.canAddOutput(<span style="color:#66d9ef">self</span>.captureMovieFileOutput) {
     <span style="color:#66d9ef">self</span>.captureSession.addOutput(<span style="color:#66d9ef">self</span>.captureMovieFileOutput)
     <span style="color:#66d9ef">if</span> <span style="color:#66d9ef">let</span> outPutConnection = <span style="color:#66d9ef">self</span>.captureMovieFileOutput.connection(withMediaType:AVMediaTypeVideo){
@@ -290,7 +291,8 @@ code.has-jax {
       <span style="color:#960050;background-color:#1e0010">&lt;</span><span style="color:#960050;background-color:#1e0010">/</span><span style="color:#a6e22e">video</span>&gt;
 &lt;/<span style="color:#f92672">body</span>&gt;
 &lt;/<span style="color:#f92672">html</span>&gt;
-</code></pre></div><hr>
+</code></pre></div><p>然后发现使用这段代码在修改编码之前不可播放视频，修改编码之后可以播放相应的视频。最后在找到<code>Android</code>测试机发现也是可以的，至此问题解决。</p>
+<hr>
 
     </div>
     <footer class="post-footer">
