@@ -226,7 +226,7 @@ code.has-jax {
     <i class="fa fa-file-word-o"></i>
 </span>
 <span class="post-meta-item-text">字数: </span>
-<span class="leancloud-visitors-count">2402</span>
+<span class="leancloud-visitors-count">2498</span>
 &nbsp; | &nbsp;
 <span class="post-meta-item-icon">
     <i class="fa fa-coffee"></i>
@@ -242,10 +242,17 @@ code.has-jax {
 </blockquote>
 <h1 id="runtime版本">Runtime版本</h1>
 <p><code>Runtime</code>有两个版本: <code>modern</code>和<code>legacy</code>。现用的<code>Objective-C 2.0</code>是<code>Modern</code> 版，只能运行在<code>iOS</code>和<code>macOS 10.5</code>之后的<code>64</code>位程序中。而<code>macOS</code>较老的<code>32</code>位程序仍采用<code>Objective-C 1</code>中的<code>Legacy</code>版本。两个版本最大的区别在于:当更改一个类的实例变量布局时，在早期版本中需要重新编译它的子类，而<code>Modern</code>版不需要重新编译子类。</p>
-<p>高级编程语言想要成为可执行文件需要先编译为汇编语言，再从汇编到机器语言，因为机器语言是计算机能够识别的唯一语言。但是<code>OC</code>并不能直接编译为汇编语言，而是要先转写为纯<code>C</code>语言再进行编译和汇编的操作，从<code>OC</code>到<code>C</code>语言的过渡就是由<code>runtime</code>来实现的。然而我们使用<code>OC</code>进行面向对象开发，而<code>C</code>语言更多的是面向过程开发，这就需要将面向对象的类转变为面向过程的结构体。</p>
-<h1 id="runtime中的概念解析">Runtime中的概念解析</h1>
-<p>所有的<code>Objective-C</code>方法调用<code>[receiver selector]</code><!-- raw HTML omitted -->在编译时都会转化为对应的<code>C</code>函数<code>objc_msgSend(receiver，selector)</code>的调用。<!-- raw HTML omitted --></p>
+<p>高级编程语言想要成为可执行文件需要先编译为汇编语言，再从汇编语言转换为机器语言（机器语言是计算机能够识别的唯一语言）。但是，<code>OC</code>并不能直接编译为汇编语言，而是要先转写为纯<code>C</code>语言再进行编译和汇编的操作，从<code>OC</code>到<code>C</code>语言的过渡就是由<code>runtime</code>库来实现的。然而<code>OC</code>主要进行的是面向对象开发，而<code>C</code>语言是面向过程开发，这就需要将面向对象的类转变为面向过程的结构体。</p>
 <p><img src="https://i.loli.net/2020/02/05/eF8MSkxbqKYnJ7d.jpg" alt="16ced8c577c984e3"></p>
+<h1 id="消息传递">消息传递</h1>
+<p>所有的<code>Objective-C</code>方法调用<code>[receiver selector]</code><!-- raw HTML omitted -->在编译时都会转化为对应的<code>C</code>函数<code>objc_msgSend(receiver，selector)</code>的调用。<!-- raw HTML omitted --> <code>runtime</code>执行时的过程如下：</p>
+<ul>
+<li>首先，通过<code>obj</code>的<code>isa</code>指针找到它的<code>class</code></li>
+<li>然后在 class 的 method list 找 foo ;
+如果 class 中没到 foo，继续往它的 superclass 中找 ;
+一旦找到 foo 这个函数，就去执行它的实现IMP 。</li>
+</ul>
+<h1 id="runtime中的概念解析">Runtime中的概念解析</h1>
 <h2 id="object对象">Object对象</h2>
 <p>在<code>objc/runtime.h</code>中，<code>Object</code>被定义为指向<code>objc_object</code>结构体的指针，<code>objc_object</code>结构体的定义如下：</p>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-objc" data-lang="objc"><span style="color:#75715e">//runtime对objc_object结构体的定义
@@ -469,6 +476,7 @@ code.has-jax {
         <div class="post-toc-content"><nav id="TableOfContents">
   <ul>
     <li><a href="#runtime版本">Runtime版本</a></li>
+    <li><a href="#消息传递">消息传递</a></li>
     <li><a href="#runtime中的概念解析">Runtime中的概念解析</a>
       <ul>
         <li><a href="#object对象">Object对象</a></li>
