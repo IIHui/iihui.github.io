@@ -226,13 +226,13 @@ code.has-jax {
     <i class="fa fa-file-word-o"></i>
 </span>
 <span class="post-meta-item-text">字数: </span>
-<span class="leancloud-visitors-count">2879</span>
+<span class="leancloud-visitors-count">3047</span>
 &nbsp; | &nbsp;
 <span class="post-meta-item-icon">
     <i class="fa fa-coffee"></i>
 </span>
 <span class="post-meta-item-text">阅读: </span>
-<span class="leancloud-visitors-count">6 分钟</span>
+<span class="leancloud-visitors-count">7 分钟</span>
 </span>
       </div>
     </header>
@@ -264,35 +264,70 @@ code.has-jax {
 <h2 id="objc_msgsend定义">objc_msgSend定义</h2>
 <p>在<code>runtime</code>中，<code>objc_msgSend</code>的定义如下：</p>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-objc" data-lang="objc">OBJC_EXPORT <span style="color:#66d9ef">id</span> objc_msgSend(<span style="color:#66d9ef">id</span> self, <span style="color:#66d9ef">SEL</span> op, ...)
-</code></pre></div><p>要了解消息传递机制，首先需要了解<code>object、class、method</code>这几个结构体。</p>
-<h2 id="object对象">Object对象</h2>
-<p>在<code>objc/runtime.h</code>中，<code>Object</code>被定义为指向<code>objc_object</code>结构体的指针，<code>objc_object</code>结构体的定义如下：</p>
+</code></pre></div><p>要了解消息传递机制，首先需要了解对象<code>object</code>，类<code>class</code>、方法<code>method</code>这几个结构体。</p>
+<h3 id="对象object">对象(object)</h3>
+<p>在<code>objc/runtime.h</code>中，对象被定义为指向<code>objc_object</code>结构体的指针，<code>objc_object</code>结构体的定义如下：</p>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-objc" data-lang="objc"><span style="color:#75715e">//runtime对objc_object结构体的定义
 </span><span style="color:#75715e"></span><span style="color:#66d9ef">struct</span> objc_object {
-    <span style="color:#66d9ef">Class</span> _Nonnull isa  OBJC_ISA_AVAILABILITY;
+    <span style="color:#66d9ef">Class</span> isa  OBJC_ISA_AVAILABILITY;
 };
 
-<span style="color:#75715e">//id是一个指向objc_object结构体的指针，即在Runtime中：
+<span style="color:#75715e">//id是一个指向objc_object结构体的指针：
 </span><span style="color:#75715e"></span><span style="color:#66d9ef">typedef</span> <span style="color:#66d9ef">struct</span> objc_object <span style="color:#f92672">*</span><span style="color:#66d9ef">id</span>;
-</code></pre></div><h2 id="class类">Class类</h2>
-<p>在<code>objc/runtime.h</code>中，<code>Class</code>被定义为指向<code>objc_class</code>结构体的指针，<code>objc_class</code>结构体的数据结构如下：</p>
+</code></pre></div><h3 id="类class">类(class)</h3>
+<p>在<code>objc/runtime.h</code>中，类被定义为指向<code>objc_class</code>结构体的指针，<code>objc_class</code>结构体的数据结构如下：</p>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-objc" data-lang="objc"><span style="color:#75715e">//runtime对objc_class结构体的定义
 </span><span style="color:#75715e"></span><span style="color:#66d9ef">struct</span> objc_class {
-    <span style="color:#66d9ef">Class</span> _Nonnull isa;                                          <span style="color:#75715e">// objc_class 结构体的实例指针
+    <span style="color:#66d9ef">Class</span> isa OBJC_ISA_AVAILABILITY;;       <span style="color:#75715e">// objc_class 结构体的实例指针
 </span><span style="color:#75715e"></span>
 <span style="color:#75715e">#</span><span style="color:#75715e">if !__OBJC2__</span><span style="color:#75715e">
-</span><span style="color:#75715e"></span>    <span style="color:#66d9ef">Class</span> _Nullable super_class;                                 <span style="color:#75715e">// 指向父类的指针
-</span><span style="color:#75715e"></span>    <span style="color:#66d9ef">const</span> <span style="color:#66d9ef">char</span> <span style="color:#f92672">*</span> _Nonnull name;                                  <span style="color:#75715e">// 类的名字
-</span><span style="color:#75715e"></span>    <span style="color:#66d9ef">long</span> version;                                                <span style="color:#75715e">// 类的版本信息，默认为 0
-</span><span style="color:#75715e"></span>    <span style="color:#66d9ef">long</span> info;                                                   <span style="color:#75715e">// 类的信息，供运行期使用的一些位标识
-</span><span style="color:#75715e"></span>    <span style="color:#66d9ef">long</span> instance_size;                                          <span style="color:#75715e">// 该类的实例变量大小;
-</span><span style="color:#75715e"></span>    <span style="color:#66d9ef">struct</span> objc_ivar_list <span style="color:#f92672">*</span> _Nullable ivars;                     <span style="color:#75715e">// 该类的实例变量列表
-</span><span style="color:#75715e"></span>    <span style="color:#66d9ef">struct</span> objc_method_list <span style="color:#f92672">*</span> _Nullable <span style="color:#f92672">*</span> _Nullable methodLists; <span style="color:#75715e">// 方法定义的列表
-</span><span style="color:#75715e"></span>    <span style="color:#66d9ef">struct</span> objc_cache <span style="color:#f92672">*</span> _Nonnull cache;                          <span style="color:#75715e">// 方法缓存
-</span><span style="color:#75715e"></span>    <span style="color:#66d9ef">struct</span> objc_protocol_list <span style="color:#f92672">*</span> _Nullable protocols;             <span style="color:#75715e">// 遵守的协议列表
+</span><span style="color:#75715e"></span>    <span style="color:#66d9ef">Class</span> super_class OBJC2_UNAVAILABLE;    <span style="color:#75715e">// 指向父类的指针
+</span><span style="color:#75715e"></span>    <span style="color:#66d9ef">const</span> <span style="color:#66d9ef">char</span> <span style="color:#f92672">*</span>  name OBJC2_UNAVAILABLE;   <span style="color:#75715e">// 类的名字
+</span><span style="color:#75715e"></span>    <span style="color:#66d9ef">long</span> version OBJC2_UNAVAILABLE;        <span style="color:#75715e">// 类的版本信息，默认为 0
+</span><span style="color:#75715e"></span>    <span style="color:#66d9ef">long</span> info OBJC2_UNAVAILABLE;         <span style="color:#75715e">// 类的信息，供运行期使用的一些位标识
+</span><span style="color:#75715e"></span>    <span style="color:#66d9ef">long</span> instance_size OBJC2_UNAVAILABLE;       <span style="color:#75715e">// 该类的实例变量大小;
+</span><span style="color:#75715e"></span>    <span style="color:#66d9ef">struct</span> objc_ivar_list <span style="color:#f92672">*</span> ivars OBJC2_UNAVAILABLE; <span style="color:#75715e">// 该类的实例变量列表
+</span><span style="color:#75715e"></span>    <span style="color:#66d9ef">struct</span> objc_method_list <span style="color:#f92672">*</span> <span style="color:#f92672">*</span>  methodLists OBJC2_UNAVAILABLE; <span style="color:#75715e">// 方法定义的列表
+</span><span style="color:#75715e"></span>    <span style="color:#66d9ef">struct</span> objc_cache <span style="color:#f92672">*</span> cache OBJC2_UNAVAILABLE;    <span style="color:#75715e">// 方法缓存
+</span><span style="color:#75715e"></span>    <span style="color:#66d9ef">struct</span> objc_protocol_list <span style="color:#f92672">*</span> protocols OBJC2_UNAVAILABLE; <span style="color:#75715e">// 遵守的协议列表
 </span><span style="color:#75715e"></span><span style="color:#75715e">#</span><span style="color:#75715e">endif</span><span style="color:#75715e">
-</span><span style="color:#75715e"></span>};
+</span><span style="color:#75715e"></span>}OBJC2_UNAVAILABLE;
 </code></pre></div><p><code>class</code>是一个指向<code>objc_class</code>结构体的指针，即在<code>runtime</code>中<code>typedef struct objc_class *Class; </code></p>
+<h3 id="方法列表method">方法列表(method)</h3>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-objc" data-lang="objc"><span style="color:#75715e">//方法列表
+</span><span style="color:#75715e"></span><span style="color:#66d9ef">struct</span> objc_method_list {
+    <span style="color:#66d9ef">struct</span> objc_method_list <span style="color:#f92672">*</span>obsolete                        OBJC2_UNAVAILABLE;
+    <span style="color:#66d9ef">int</span> method_count                                         OBJC2_UNAVAILABLE;
+<span style="color:#75715e">#</span><span style="color:#75715e">ifdef __LP64__</span><span style="color:#75715e">
+</span><span style="color:#75715e"></span>    <span style="color:#66d9ef">int</span> space                                                OBJC2_UNAVAILABLE;
+<span style="color:#75715e">#</span><span style="color:#75715e">endif</span><span style="color:#75715e">
+</span><span style="color:#75715e"></span>    <span style="color:#75715e">/* variable length structure */</span>
+    <span style="color:#66d9ef">struct</span> objc_method method_list[<span style="color:#ae81ff">1</span>]                        OBJC2_UNAVAILABLE;
+}                                                            OBJC2_UNAVAILABLE;
+<span style="color:#75715e">//方法
+</span><span style="color:#75715e"></span><span style="color:#66d9ef">struct</span> objc_method {
+    <span style="color:#66d9ef">SEL</span> method_name                                          OBJC2_UNAVAILABLE;
+    <span style="color:#66d9ef">char</span> <span style="color:#f92672">*</span>method_types                                       OBJC2_UNAVAILABLE;
+    <span style="color:#66d9ef">IMP</span> method_imp                                           OBJC2_UNAVAILABLE;
+}
+
+</code></pre></div><ol>
+<li>
+<p>系统首先找到消息的接收对象，然后通过对象的<code>isa</code>找到它的类</p>
+</li>
+<li>
+<p>在它的类中查找<code>method_list</code>，是否有<code>selector</code>方法</p>
+</li>
+<li>
+<p>没有则查找父类的<code>method_list</code></p>
+</li>
+<li>
+<p>找到对应的<code>method</code>，执行它的<code>IMP</code>IMP</p>
+</li>
+<li>
+<p>转发<code>IMP</code>的<code>return</code>值</p>
+</li>
+</ol>
 <h2 id="sel方法选择器">SEL方法选择器</h2>
 <p>在<code>objc/runtime.h</code>,<code>SEL</code>被定义为指向<code>ojbc_selector</code>结构体的指针：</p>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-objc" data-lang="objc"><span style="color:#66d9ef">typedef</span> <span style="color:#66d9ef">struct</span> objc_selector <span style="color:#f92672">*</span><span style="color:#66d9ef">SEL</span>;
@@ -491,9 +526,13 @@ code.has-jax {
     <li><a href="#runtime版本">Runtime版本</a></li>
     <li><a href="#消息传递">消息传递</a>
       <ul>
-        <li><a href="#objc_msgsend定义">objc_msgSend定义</a></li>
-        <li><a href="#object对象">Object对象</a></li>
-        <li><a href="#class类">Class类</a></li>
+        <li><a href="#objc_msgsend定义">objc_msgSend定义</a>
+          <ul>
+            <li><a href="#对象object">对象(object)</a></li>
+            <li><a href="#类class">类(class)</a></li>
+            <li><a href="#方法列表method">方法列表(method)</a></li>
+          </ul>
+        </li>
         <li><a href="#sel方法选择器">SEL方法选择器</a></li>
         <li><a href="#oc的id类型">OC的id类型</a></li>
         <li><a href="#instancetype">instancetype</a></li>
