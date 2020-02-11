@@ -226,13 +226,13 @@ code.has-jax {
     <i class="fa fa-file-word-o"></i>
 </span>
 <span class="post-meta-item-text">字数: </span>
-<span class="leancloud-visitors-count">2498</span>
+<span class="leancloud-visitors-count">2800</span>
 &nbsp; | &nbsp;
 <span class="post-meta-item-icon">
     <i class="fa fa-coffee"></i>
 </span>
 <span class="post-meta-item-text">阅读: </span>
-<span class="leancloud-visitors-count">5 分钟</span>
+<span class="leancloud-visitors-count">6 分钟</span>
 </span>
       </div>
     </header>
@@ -242,16 +242,25 @@ code.has-jax {
 </blockquote>
 <h1 id="runtime版本">Runtime版本</h1>
 <p><code>Runtime</code>有两个版本: <code>modern</code>和<code>legacy</code>。现用的<code>Objective-C 2.0</code>是<code>Modern</code> 版，只能运行在<code>iOS</code>和<code>macOS 10.5</code>之后的<code>64</code>位程序中。而<code>macOS</code>较老的<code>32</code>位程序仍采用<code>Objective-C 1</code>中的<code>Legacy</code>版本。两个版本最大的区别在于:当更改一个类的实例变量布局时，在早期版本中需要重新编译它的子类，而<code>Modern</code>版不需要重新编译子类。</p>
-<p>高级编程语言想要成为可执行文件需要先编译为汇编语言，再从汇编语言转换为机器语言（机器语言是计算机能够识别的唯一语言）。但是，<code>OC</code>并不能直接编译为汇编语言，而是要先转写为纯<code>C</code>语言再进行编译和汇编的操作，从<code>OC</code>到<code>C</code>语言的过渡就是由<code>runtime</code>库来实现的。然而<code>OC</code>主要进行的是面向对象开发，而<code>C</code>语言是面向过程开发，这就需要将面向对象的类转变为面向过程的结构体。</p>
+<p>高级编程语言想要成为可执行文件需要先编译为汇编语言，再将汇编语言转换为机器语言（机器语言是计算机能够识别的唯一语言）。但是，<code>OC</code>并不能直接编译为汇编语言，而是要先转写为纯<code>C</code>语言再进行编译和汇编操作，从<code>OC</code>到<code>C</code>语言的过渡就是由<code>runtime</code>库来实现的。然而<code>OC</code>主要进行的是面向对象开发，而<code>C</code>语言是面向过程开发，这就需要将面向对象的类转变为面向过程的结构体。</p>
 <p><img src="https://i.loli.net/2020/02/05/eF8MSkxbqKYnJ7d.jpg" alt="16ced8c577c984e3"></p>
 <h1 id="消息传递">消息传递</h1>
 <p>所有的<code>Objective-C</code>方法调用<code>[receiver selector]</code><!-- raw HTML omitted -->在编译时都会转化为对应的<code>C</code>函数<code>objc_msgSend(receiver，selector)</code>的调用。<!-- raw HTML omitted --> <code>runtime</code>执行时的过程如下：</p>
 <ul>
-<li>首先，通过<code>obj</code>的<code>isa</code>指针找到它的<code>class</code></li>
-<li>然后在 class 的 method list 找 foo ;
-如果 class 中没到 foo，继续往它的 superclass 中找 ;
-一旦找到 foo 这个函数，就去执行它的实现IMP 。</li>
+<li>
+<p>首先，通过<code>receiver</code>的<code>isa</code>指针找到它的<code>class</code></p>
+</li>
+<li>
+<p>然后在<code>class</code>的<code>method list</code>找<code>selector</code></p>
+</li>
+<li>
+<p>如果<code>class</code>中没到<code>selector</code>,继续往它的<code>superclass</code>中找</p>
+</li>
+<li>
+<p>一旦找到<code>selector</code>这个函数，就去执行它的实现<code>IMP</code></p>
+</li>
 </ul>
+<p>但上述流程存在效率低的问题：通常一个<code>class</code>只有<code>20%</code>的函数被经常调用，可能占总调用次数的<code>80%</code>，所以每个消息传递的时候都遍历一次<code>objc_method_list</code>并不合理。如果把经常被调用的函数缓存下来，就可以大大提高函数的查询效率。<code>objc_cache</code>就是做这样的事情，当找到<code>selector</code>后，它将<code>selector</code>的<code>method_name</code>作为<code>key</code>，<code>method_imp</code>作为<code>value</code>存储起来，当再次收到<code>selector</code>消息时，可以直接在<code>cache</code>里找到，避免去遍历<code>objc_method_list</code></p>
 <h1 id="runtime中的概念解析">Runtime中的概念解析</h1>
 <h2 id="object对象">Object对象</h2>
 <p>在<code>objc/runtime.h</code>中，<code>Object</code>被定义为指向<code>objc_object</code>结构体的指针，<code>objc_object</code>结构体的定义如下：</p>
@@ -309,7 +318,8 @@ code.has-jax {
 <h2 id="target-action机制">target-action机制</h2>
 <p>目标是动作消息的接收者。例如一个控件，或者更为常见的是它的单元，以插座变量的形式保有其动作的目标。动作是控件发送给目标的消息，或者从目标的角度看，他是目标为了响应动作而实现的方法。程序需要某些机制来进行实践和指令的翻译，这个机制就是目标-动作机制。</p>
 <p><a href="https://juejin.im/post/5d6bea9651882563e82aff2b">参考资料1</a>
-<a href="https://juejin.im/post/5be24b826fb9a04a102ec12b">参考资料2</a></p>
+<a href="https://juejin.im/post/5be24b826fb9a04a102ec12b">参考资料2</a>
+<a href="https://juejin.im/post/5ac0a6116fb9a028de44d717">参考资料3</a></p>
 
     </div>
     <footer class="post-footer">
