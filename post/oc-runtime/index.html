@@ -300,8 +300,25 @@ code.has-jax {
     <span style="color:#66d9ef">char</span> <span style="color:#f92672">*</span>method_types                                       OBJC2_UNAVAILABLE;
     <span style="color:#66d9ef">IMP</span> method_imp                                           OBJC2_UNAVAILABLE;
 }
-
-</code></pre></div><h3 id="类对象objc_class">类对象objc_class</h3>
+</code></pre></div><p>消息传递的过程如下：</p>
+<ol>
+<li>
+<p>系统首先找到消息的接收对象，然后通过对象的<code>isa</code>找到它的类</p>
+</li>
+<li>
+<p>在它的类中查找<code>method_list</code>，是否有<code>selector</code>方法</p>
+</li>
+<li>
+<p>没有则查找父类的<code>method_list</code></p>
+</li>
+<li>
+<p>找到对应的<code>method</code>，执行它的<code>IMP</code>IMP</p>
+</li>
+<li>
+<p>转发<code>IMP</code>的<code>return</code>值</p>
+</li>
+</ol>
+<h3 id="类对象objc_class">类对象objc_class</h3>
 <p>在<code>OC</code>中，类是由<code>Class</code>类型来表示的，它实际上是一个指向<code>objc_class</code>结构体的指针：</p>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-objc" data-lang="objc"><span style="color:#66d9ef">typedef</span> <span style="color:#66d9ef">struct</span> objc_class <span style="color:#f92672">*</span> <span style="color:#66d9ef">Class</span>;
 </code></pre></div><p>其中<code>objc_class</code>结构体在<code>objc/runtime.h</code>中的定义如下：</p>
@@ -339,41 +356,26 @@ code.has-jax {
 <p><img src="https://i.loli.net/2020/02/11/aE4sNtSK7gyYZ63.jpg" alt="-c"></p>
 <p>任何<code>NSObject</code>继承体系下的<code>meta-class</code>都使用<code>NSObject</code>的<code>meta-class</code>作为自己的所属类，而基类的<code>meta-class</code>的<code>isa</code>指针是指向它自己。</p>
 <h3 id="方法method">方法(method)</h3>
+<p>首先看一下<code>objc_method</code>的定义：</p>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-objc" data-lang="objc">runtime.h
 <span style="color:#75715e">/// An opaque type that represents a method in a class definition.代表类定义中一个方法的不透明类型
 </span><span style="color:#75715e"></span><span style="color:#66d9ef">typedef</span> <span style="color:#66d9ef">struct</span> objc_method <span style="color:#f92672">*</span>Method;
 <span style="color:#66d9ef">struct</span> objc_method {
-    <span style="color:#66d9ef">SEL</span> method_name                                          OBJC2_UNAVAILABLE;
-    <span style="color:#66d9ef">char</span> <span style="color:#f92672">*</span>method_types                                       OBJC2_UNAVAILABLE;
-    <span style="color:#66d9ef">IMP</span> method_imp                                           OBJC2_UNAVAILABLE;
-</code></pre></div><p><code>Method</code>和平时理解的函数一致，表示能够独立完成一个功能的一段代码，比如：</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-objc" data-lang="objc">- (<span style="color:#66d9ef">void</span>)<span style="color:#a6e22e">logName</span>
-{
-	NSLog(<span style="color:#e6db74">@&#34;</span><span style="color:#e6db74">name</span><span style="color:#e6db74">&#34;</span>);
-}
-</code></pre></div><p>在<code>objc_method</code>的定义中，可以看到<code>SEL</code>和<code>IMP</code>，这说明<code>SEL</code>和<code>IMP</code>都是<code>Method</code>的属性：</p>
+    <span style="color:#66d9ef">SEL</span> method_name    OBJC2_UNAVAILABLE; <span style="color:#75715e">//方法名
+</span><span style="color:#75715e"></span>    <span style="color:#66d9ef">char</span> <span style="color:#f92672">*</span>method_types OBJC2_UNAVAILABLE; <span style="color:#75715e">//方法类型
+</span><span style="color:#75715e"></span>    <span style="color:#66d9ef">IMP</span> method_imp     OBJC2_UNAVAILABLE; <span style="color:#75715e">//方法实现
+</span></code></pre></div><p>在<code>objc_method</code>的定义中，可以看到<code>SEL</code>和<code>IMP</code>，这说明<code>SEL</code>和<code>IMP</code>都是方法的属性:</p>
 <ul>
-<li><code>SEL method_name</code>方法名</li>
-<li><code>char * method_types</code> 方法类型</li>
-<li><code>IMP method_imp</code> 方法实现</li>
+<li>
+<p><code>SEL method_name</code>方法名</p>
+</li>
+<li>
+<p><code>char * method_types</code> 方法类型</p>
+</li>
+<li>
+<p><code>IMP method_imp</code> 方法实现</p>
+</li>
 </ul>
-<ol>
-<li>
-<p>系统首先找到消息的接收对象，然后通过对象的<code>isa</code>找到它的类</p>
-</li>
-<li>
-<p>在它的类中查找<code>method_list</code>，是否有<code>selector</code>方法</p>
-</li>
-<li>
-<p>没有则查找父类的<code>method_list</code></p>
-</li>
-<li>
-<p>找到对应的<code>method</code>，执行它的<code>IMP</code>IMP</p>
-</li>
-<li>
-<p>转发<code>IMP</code>的<code>return</code>值</p>
-</li>
-</ol>
 <h3 id="sel方法选择器">SEL方法选择器</h3>
 <p>在<code>objc/runtime.h</code>,<code>SEL</code>被定义为指向<code>ojbc_selector</code>结构体的指针：</p>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-objc" data-lang="objc"><span style="color:#75715e">///objc.h

@@ -104,7 +104,13 @@ H5 加载过程 初始化 当App首次打开时，默认是并不初始化浏览
   但上述流程存在效率低的问题：通常一个class只有20%的函数经常被调用，可能占总调用次数的80%，所以每次消息传递的时候都遍历一次objc_method_list并不合理。如果把经常被调用的函数缓存下来，就可以大大提高函数的查询效率。objc_cache就是做这样的事情，当找到selector后，它将selector的method_name作为key，method_imp作为value存储起来，当再次收到selector消息时，可以直接在objc_cache里找到，避免去遍历objc_method_list。
 objc_msgSend定义 在runtime中，objc_msgSend的定义如下：
 OBJC_EXPORT id objc_msgSend(id self, SEL op, ...) 要了解消息传递机制，首先需要了解类objc_class、对象objc_object、方法objc_method这几个结构体。
-//对象 struct objc_object { Class isa OBJC_ISA_AVAILABILITY; }; //类 struct objc_class { Class isa OBJC_ISA_AVAILABILITY; #if !__OBJC2__ Class super_class OBJC2_UNAVAILABLE; const char *name OBJC2_UNAVAILABLE; long version OBJC2_UNAVAILABLE; long info OBJC2_UNAVAILABLE; long instance_size OBJC2_UNAVAILABLE; struct objc_ivar_list *ivars OBJC2_UNAVAILABLE; struct objc_method_list **methodLists OBJC2_UNAVAILABLE; struct objc_cache *cache OBJC2_UNAVAILABLE; struct objc_protocol_list *protocols OBJC2_UNAVAILABLE; #endif} OBJC2_UNAVAILABLE; //方法列表 struct objc_method_list { struct objc_method_list *obsolete OBJC2_UNAVAILABLE; int method_count OBJC2_UNAVAILABLE; #ifdef __LP64__ int space OBJC2_UNAVAILABLE; #endif /* variable length structure */ struct objc_method method_list[1] OBJC2_UNAVAILABLE; } OBJC2_UNAVAILABLE; //方法 struct objc_method { SEL method_name OBJC2_UNAVAILABLE; char *method_types OBJC2_UNAVAILABLE; IMP method_imp OBJC2_UNAVAILABLE; } 类对象objc_class 在OC中，类是由Class类型来表示的，它实际上是一个指向objc_class结构体的指针：
+//对象 struct objc_object { Class isa OBJC_ISA_AVAILABILITY; }; //类 struct objc_class { Class isa OBJC_ISA_AVAILABILITY; #if !__OBJC2__ Class super_class OBJC2_UNAVAILABLE; const char *name OBJC2_UNAVAILABLE; long version OBJC2_UNAVAILABLE; long info OBJC2_UNAVAILABLE; long instance_size OBJC2_UNAVAILABLE; struct objc_ivar_list *ivars OBJC2_UNAVAILABLE; struct objc_method_list **methodLists OBJC2_UNAVAILABLE; struct objc_cache *cache OBJC2_UNAVAILABLE; struct objc_protocol_list *protocols OBJC2_UNAVAILABLE; #endif} OBJC2_UNAVAILABLE; //方法列表 struct objc_method_list { struct objc_method_list *obsolete OBJC2_UNAVAILABLE; int method_count OBJC2_UNAVAILABLE; #ifdef __LP64__ int space OBJC2_UNAVAILABLE; #endif /* variable length structure */ struct objc_method method_list[1] OBJC2_UNAVAILABLE; } OBJC2_UNAVAILABLE; //方法 struct objc_method { SEL method_name OBJC2_UNAVAILABLE; char *method_types OBJC2_UNAVAILABLE; IMP method_imp OBJC2_UNAVAILABLE; } 消息传递的过程如下：
+  系统首先找到消息的接收对象，然后通过对象的isa找到它的类
+  在它的类中查找method_list，是否有selector方法
+  没有则查找父类的method_list
+  找到对应的method，执行它的IMPIMP
+  转发IMP的return值
+  类对象objc_class 在OC中，类是由Class类型来表示的，它实际上是一个指向objc_class结构体的指针：
 typedef struct objc_class * Class; 其中objc_class结构体在objc/runtime.h中的定义如下：
 struct objc_class { Class _Nonnull isa OBJC_ISA_AVAILABILITY; #if !__OBJC2__ Class _Nullable super_class OBJC2_UNAVAILABLE; // 指向父类的指针  const char * _Nonnull name OBJC2_UNAVAILABLE; // 类的名字  long version OBJC2_UNAVAILABLE; // 类的版本信息，默认为 0  long info OBJC2_UNAVAILABLE; // 类的信息，供运行期使用的一些位标识  long instance_size OBJC2_UNAVAILABLE; // 该类的实例变量大小;  struct objc_ivar_list * _Nullable ivars OBJC2_UNAVAILABLE; // 该类的实例变量列表  struct objc_method_list * _Nullable * _Nullable methodLists OBJC2_UNAVAILABLE; // 方法定义的列表  struct objc_cache * _Nonnull cache OBJC2_UNAVAILABLE; // 方法缓存  struct objc_protocol_list * _Nullable protocols OBJC2_UNAVAILABLE; // 遵守的协议列表 #endif} OBJC2_UNAVAILABLE; 类对象就是一个结构体struct objc_class，这个结构体存放的数据称为元数据(metadata)，类对象在编译期产生用于创建实例对象，是单例。
 实例对象(object) 在objc/runtime.h中，对象被定义为指向objc_object结构体的指针，objc_object结构体的定义如下：
@@ -112,13 +118,11 @@ struct objc_class { Class _Nonnull isa OBJC_ISA_AVAILABILITY; #if !__OBJC2__ Cla
 元类(meta class) 通过上图可以看出整个体系构成了一个自闭环，struct objc_object结构体实例的isa指针指向类对象，类对象的isa指针指向了元类，super_class指针指向了父类的类对象，而元类的super_class指针指向了父类的元类，那元类的isa指针又指向了自己。
 元类(Meta Class)是一个类对象的类。在上面我们提到，所有的类自身也是一个对象，我们可以向这个对象发送消息(即调用类方法)。为了调用类方法，这个类的isa指针必须指向一个包含这些类方法的一个objc_class结构体。这就引出了meta-class的概念，元类中保存了创建类对象以及类方法所需的所有信息。
 任何NSObject继承体系下的meta-class都使用NSObject的meta-class作为自己的所属类，而基类的meta-class的isa指针是指向它自己。
-方法(method) runtime.h /// An opaque type that represents a method in a class definition.代表类定义中一个方法的不透明类型 typedef struct objc_method *Method; struct objc_method { SEL method_name OBJC2_UNAVAILABLE; char *method_types OBJC2_UNAVAILABLE; IMP method_imp OBJC2_UNAVAILABLE; Method和平时理解的函数一致，表示能够独立完成一个功能的一段代码，比如：
-- (void)logName { NSLog(@&amp;#34;name&amp;#34;); } 在objc_method的定义中，可以看到SEL和IMP，这说明SEL和IMP都是Method的属性：
- SEL method_name方法名 char * method_types 方法类型 IMP method_imp 方法实现    系统首先找到消息的接收对象，然后通过对象的isa找到它的类
-  在它的类中查找method_list，是否有selector方法
-  没有则查找父类的method_list
-  找到对应的method，执行它的IMPIMP
-  转发IMP的return值
+方法(method) 首先看一下objc_method的定义：
+runtime.h /// An opaque type that represents a method in a class definition.代表类定义中一个方法的不透明类型 typedef struct objc_method *Method; struct objc_method { SEL method_name OBJC2_UNAVAILABLE; //方法名  char *method_types OBJC2_UNAVAILABLE; //方法类型  IMP method_imp OBJC2_UNAVAILABLE; //方法实现 在objc_method的定义中，可以看到SEL和IMP，这说明SEL和IMP都是方法的属性:
+  SEL method_name方法名
+  char * method_types 方法类型
+  IMP method_imp 方法实现
   SEL方法选择器 在objc/runtime.h,SEL被定义为指向ojbc_selector结构体的指针：
 ///objc.h /// An opaque type that represents a method selector.代表一个方法的不透明类型 typedef struct objc_selector *SEL; ojbc_msgSend函数第二个参数类型为SEL，它是selector在OC中的表示类型（Swift中是Selector类）。selector是方法选择器，可以理解为区分方法的ID，而这个ID的数据结构就是SEL：
 @property SEL selector; 可以看到selector是SEL的一个实例
