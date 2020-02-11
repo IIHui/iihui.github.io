@@ -226,7 +226,7 @@ code.has-jax {
     <i class="fa fa-file-word-o"></i>
 </span>
 <span class="post-meta-item-text">字数: </span>
-<span class="leancloud-visitors-count">4491</span>
+<span class="leancloud-visitors-count">4507</span>
 &nbsp; | &nbsp;
 <span class="post-meta-item-icon">
     <i class="fa fa-coffee"></i>
@@ -238,33 +238,33 @@ code.has-jax {
     </header>
     <div class="post-body" itemprop="articleBody">
     <blockquote>
-<p><code>Objective-C</code>扩展了<code>C</code>语言，并加入了面向对象特性和<code>Smalltalk</code>式的消息传递机制。而这个扩展的核心是一个用<code>C</code>写的<code>Runtime</code>库。它是<code>Objective-C</code>面向对象和动态机制的基石。<code>OC</code>运行时用于动态创建类和对象、进行消息传递和转发。理解<code>OC</code>的<code>Runtime</code>机制可以更好地了解这个语言，适当的时候还能对语言进行扩展，从系统层面解决项目中的一些设计或技术问题。了解<code>Runtime</code>，首先应该了解它的核心——消息传递（<code>Messaging</code>）机制。</p>
+<p><code>Objective-C</code>扩展了<code>C</code>语言，并加入了面向对象特性和<code>Smalltalk</code>式的消息传递机制。而这个扩展的核心是一个用<code>C</code>写的<code>Runtime</code>库，它是<code>OC</code>面向对象和动态机制的基石。<code>OC</code>的<code>Runtime</code>用于创建类对象、进行消息传递和转发。理解<code>OC</code>的<code>Runtime</code>机制可以更好地了解这个语言，适当的时候还能对语言进行扩展，从系统层面解决项目中的一些设计或技术问题。理解<code>Runtime</code>，首先应该了解它的核心——消息传递（<code>Messaging</code>）机制。</p>
 </blockquote>
 <h1 id="runtime版本">Runtime版本</h1>
-<p><code>Runtime</code>有两个版本: <code>modern</code>和<code>legacy</code>。现用的<code>Objective-C 2.0</code>是<code>Modern</code> 版，只能运行在<code>iOS</code>和<code>macOS 10.5</code>之后的<code>64</code>位程序中。而<code>macOS</code>较老的<code>32</code>位程序仍采用<code>Objective-C 1</code>中的<code>Legacy</code>版本。两个版本最大的区别在于:当更改一个类的实例变量布局时，在早期版本中需要重新编译它的子类，而<code>Modern</code>版不需要重新编译子类。</p>
-<p>高级编程语言想要成为可执行文件需要先编译为汇编语言，再将汇编语言转换为机器语言（机器语言是计算机能够识别的唯一语言）。但是，<code>OC</code>并不能直接编译为汇编语言，而是要先转写为纯<code>C</code>语言再进行编译和汇编操作，从<code>OC</code>到<code>C</code>语言的过渡就是由<code>runtime</code>库来实现的。然而<code>OC</code>主要进行的是面向对象开发，而<code>C</code>语言是面向过程开发，这就需要将面向对象的类转变为面向过程的结构体。</p>
-<p><img src="https://i.loli.net/2020/02/05/eF8MSkxbqKYnJ7d.jpg" alt="16ced8c577c984e3"></p>
+<p><code>Runtime</code>有两个版本: <code>modern</code>和<code>legacy</code>版。现用的<code>Objective-C 2.0</code>是<code>Modern</code> 版，只能运行在<code>iOS</code>和<code>macOS 10.5</code>之后的<code>64</code>位程序中。而<code>macOS</code>较老的<code>32</code>位程序仍采用<code>Objective-C 1</code>中的<code>Legacy</code>版本。两个版本最大的区别在于:当更改一个类的实例变量布局时，在早期版本中需要重新编译它的子类，而<code>Modern</code>版不需要重新编译子类。</p>
+<p>高级编程语言想要成为可执行文件需要先编译为汇编语言，再将汇编语言转换为机器语言（机器语言是计算机能够识别的唯一语言）。但是，<code>OC</code>并不能直接编译为汇编语言，而是要先转写为纯<code>C</code>语言再进行编译和汇编操作，从<code>OC</code>到<code>C</code>的过渡是由<code>runtime</code>库来实现的。因为<code>OC</code>主要进行面向对象开发，而<code>C</code>语言是面向过程开发，这就需要将面向对象的类转变为面向过程的结构体。</p>
+<p><img src="https://i.loli.net/2020/02/05/eF8MSkxbqKYnJ7d.jpg" alt="-c"></p>
 <h1 id="消息传递">消息传递</h1>
-<p>所有的<code>Objective-C</code>方法调用<code>[receiver selector]</code><!-- raw HTML omitted -->在编译时都会转化为对应的<code>C</code>函数<code>objc_msgSend(receiver，selector)</code>的调用。<!-- raw HTML omitted --> <code>runtime</code>执行时的过程如下：</p>
+<p>所有的<code>OC</code>方法调用<code>[receiver selector]</code><!-- raw HTML omitted -->在编译时都会转化为对应的<code>C</code>函数<code>objc_msgSend(receiver，selector)</code>的调用。<!-- raw HTML omitted --> <code>Runtime</code>执行方法调用的过程如下：</p>
 <ul>
 <li>
 <p>首先，通过<code>receiver</code>的<code>isa</code>指针找到它的<code>class</code></p>
 </li>
 <li>
-<p>然后在<code>class</code>的<code>method list</code>找<code>selector</code></p>
+<p>然后，在<code>class</code>的<code>objc_method_list</code>找<code>selector</code></p>
 </li>
 <li>
-<p>如果<code>class</code>中没到<code>selector</code>,继续往它的<code>superclass</code>中找</p>
+<p>如果<code>class</code>中没到<code>selector</code>，继续往它的<code>super_class</code>中找</p>
 </li>
 <li>
-<p>一旦找到<code>selector</code>这个函数，就去执行它的实现<code>IMP</code></p>
+<p>一旦找到<code>selector</code>这个函数，就去执行它的实现<code>IMP</code>，否则报错</p>
 </li>
 </ul>
-<p>但上述流程存在效率低的问题：通常一个<code>class</code>只有<code>20%</code>的函数被经常调用，可能占总调用次数的<code>80%</code>，所以每个消息传递的时候都遍历一次<code>objc_method_list</code>并不合理。如果把经常被调用的函数缓存下来，就可以大大提高函数的查询效率。<code>objc_cache</code>就是做这样的事情，当找到<code>selector</code>后，它将<code>selector</code>的<code>method_name</code>作为<code>key</code>，<code>method_imp</code>作为<code>value</code>存储起来，当再次收到<code>selector</code>消息时，可以直接在<code>cache</code>里找到，避免去遍历<code>objc_method_list</code>。</p>
+<p>但上述流程存在效率低的问题：通常一个<code>class</code>只有<code>20%</code>的函数经常被调用，可能占总调用次数的<code>80%</code>，所以每次消息传递的时候都遍历一次<code>objc_method_list</code>并不合理。如果把经常被调用的函数缓存下来，就可以大大提高函数的查询效率。<code>objc_cache</code>就是做这样的事情，当找到<code>selector</code>后，它将<code>selector</code>的<code>method_name</code>作为<code>key</code>，<code>method_imp</code>作为<code>value</code>存储起来，当再次收到<code>selector</code>消息时，可以直接在<code>objc_cache</code>里找到，避免去遍历<code>objc_method_list</code>。</p>
 <h2 id="objc_msgsend定义">objc_msgSend定义</h2>
 <p>在<code>runtime</code>中，<code>objc_msgSend</code>的定义如下：</p>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-objc" data-lang="objc">OBJC_EXPORT <span style="color:#66d9ef">id</span> objc_msgSend(<span style="color:#66d9ef">id</span> self, <span style="color:#66d9ef">SEL</span> op, ...)
-</code></pre></div><p>要了解消息传递机制，首先需要了解对象<code>object</code>，类<code>class</code>、方法<code>method</code>这几个结构体。</p>
+</code></pre></div><p>要了解消息传递机制，首先需要了解类<code>objc_class</code>、对象<code>objc_object</code>、方法<code>objc_method</code>这几个结构体。</p>
 <h3 id="类对象objc_class">类对象objc_class</h3>
 <p>在<code>OC</code>中，类是由<code>Class</code>类型来表示的，它实际上是一个指向指向<code>objc_class</code>结构体的指针：</p>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-objc" data-lang="objc"><span style="color:#66d9ef">typedef</span> <span style="color:#66d9ef">struct</span> objc_class <span style="color:#f92672">*</span><span style="color:#66d9ef">Class</span>;
