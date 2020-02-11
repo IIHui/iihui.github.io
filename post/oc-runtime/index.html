@@ -226,7 +226,7 @@ code.has-jax {
     <i class="fa fa-file-word-o"></i>
 </span>
 <span class="post-meta-item-text">字数: </span>
-<span class="leancloud-visitors-count">2800</span>
+<span class="leancloud-visitors-count">2879</span>
 &nbsp; | &nbsp;
 <span class="post-meta-item-icon">
     <i class="fa fa-coffee"></i>
@@ -260,8 +260,11 @@ code.has-jax {
 <p>一旦找到<code>selector</code>这个函数，就去执行它的实现<code>IMP</code></p>
 </li>
 </ul>
-<p>但上述流程存在效率低的问题：通常一个<code>class</code>只有<code>20%</code>的函数被经常调用，可能占总调用次数的<code>80%</code>，所以每个消息传递的时候都遍历一次<code>objc_method_list</code>并不合理。如果把经常被调用的函数缓存下来，就可以大大提高函数的查询效率。<code>objc_cache</code>就是做这样的事情，当找到<code>selector</code>后，它将<code>selector</code>的<code>method_name</code>作为<code>key</code>，<code>method_imp</code>作为<code>value</code>存储起来，当再次收到<code>selector</code>消息时，可以直接在<code>cache</code>里找到，避免去遍历<code>objc_method_list</code></p>
-<h1 id="runtime中的概念解析">Runtime中的概念解析</h1>
+<p>但上述流程存在效率低的问题：通常一个<code>class</code>只有<code>20%</code>的函数被经常调用，可能占总调用次数的<code>80%</code>，所以每个消息传递的时候都遍历一次<code>objc_method_list</code>并不合理。如果把经常被调用的函数缓存下来，就可以大大提高函数的查询效率。<code>objc_cache</code>就是做这样的事情，当找到<code>selector</code>后，它将<code>selector</code>的<code>method_name</code>作为<code>key</code>，<code>method_imp</code>作为<code>value</code>存储起来，当再次收到<code>selector</code>消息时，可以直接在<code>cache</code>里找到，避免去遍历<code>objc_method_list</code>。</p>
+<h2 id="objc_msgsend定义">objc_msgSend定义</h2>
+<p>在<code>runtime</code>中，<code>objc_msgSend</code>的定义如下：</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-objc" data-lang="objc">OBJC_EXPORT <span style="color:#66d9ef">id</span> objc_msgSend(<span style="color:#66d9ef">id</span> self, <span style="color:#66d9ef">SEL</span> op, ...)
+</code></pre></div><p>要了解消息传递机制，首先需要了解<code>object、class、method</code>这几个结构体。</p>
 <h2 id="object对象">Object对象</h2>
 <p>在<code>objc/runtime.h</code>中，<code>Object</code>被定义为指向<code>objc_object</code>结构体的指针，<code>objc_object</code>结构体的定义如下：</p>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-objc" data-lang="objc"><span style="color:#75715e">//runtime对objc_object结构体的定义
@@ -486,9 +489,9 @@ code.has-jax {
         <div class="post-toc-content"><nav id="TableOfContents">
   <ul>
     <li><a href="#runtime版本">Runtime版本</a></li>
-    <li><a href="#消息传递">消息传递</a></li>
-    <li><a href="#runtime中的概念解析">Runtime中的概念解析</a>
+    <li><a href="#消息传递">消息传递</a>
       <ul>
+        <li><a href="#objc_msgsend定义">objc_msgSend定义</a></li>
         <li><a href="#object对象">Object对象</a></li>
         <li><a href="#class类">Class类</a></li>
         <li><a href="#sel方法选择器">SEL方法选择器</a></li>
