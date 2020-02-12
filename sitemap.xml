@@ -63,6 +63,19 @@ summaryLength = 100 #放在同themes同级的config.toml上才有效 文章置�
     </entry>
     
      <entry>
+        <title>飞书特色功能</title>
+        <url>https://iihui.github.io/post/ios-feishu/</url>
+        <categories>
+          <category>code</category>
+        </categories>
+        <tags>
+          <tag>iOS</tag>
+        </tags>
+        <content type="html"> 消息回复 对于某条消息是在征求意见的时候，收到消息的人长按这条消息可以回复，没有问题的人可以直接以快捷键「OK」或者 「点赞」回复，有问题的人则可以针对这条消息进行回复，所有的话题都可以串联在一起追溯，避免刷屏。
+在线文档 </content>
+    </entry>
+    
+     <entry>
         <title>H5 性能监控</title>
         <url>https://iihui.github.io/post/ios-h5-monitoring/</url>
         <categories>
@@ -135,13 +148,16 @@ selector既然是一个字符串，应该类似className&#43;method的组合，�
 比如下面代码在OC中是会报错的：
 - (void)caculate(NSInteger)num; - (void)caculate(CGFloat)num; 所以只能通过命名来区分：
 - (void)caculateWithInt(NSInteger)num; - (void)caculateWithFloat(CGFloat)num; IMP IMP是指向一个方法实现的指针，实质上就是指向最终实现程序的内存地址的指针，它的定义为：
-/// A pointer to the function of a method implementation. 指向一个方法实现的指针 typedef id (*IMP)(id, SEL, ...); #endif在iOS的runtime中，Method通过selector和IMP两个属性，实现了快速查询方法及其实现，相对提高了性能，又保持了灵活性。
+/// A pointer to the function of a method implementation. 指向一个方法实现的指针 typedef id (*IMP)(id, SEL, ...); #endif在iOS的runtime中，方法通过selector和IMP两个属性，实现了快速查询方法及其实现，相对提高了性能，又保持了灵活性。
 Objective-C在编译时，会依据每一个方法的名字、参数序列，生成一个唯一的整型标识(Int类型的地址)，这个标识就是SEL
-OC中的对象虽然没有明显的使用指针，但是在OC代码被编译转化为C之后，每个OC对象其实都是拥有一个isa的指针的
- Objective-C 语言的动态性包括动态和多态。动态性：即OC的动态类型，动态绑定和动态加载特性。将对象类型的确定、方法的确定、代码和资源的转载等推迟到运行时进行。多态，是指面向对象变成语言的特性。OC作为一门面向对象的语言，自然具备这种多态性，多态性指的是来自不同类的对象可以接受同一消息的能力，或者说不同对象以自己的方式响应相同消息的能力。
- 动态绑定将调用方法的确定推迟到运行时。在编译时，方法的调用并不和代码绑定在一起，只有在消息发送出来之后，才确定被调用的代码。
-通过动态类型和动态绑定技术，代码每次执行都可以得到不同的结果。运行时负责确定消息的接收者和被调用的方法。
-运行时的消息分发机制为动态绑定提供支持。当向一个动态类型确定了的对象发送消息时，运行环境会通过接收者的isa指针定位对象的类，并以此确定被调用的方法，方法时动态绑定的。
+Category(objc_catory) 当Catrgory表示一个指向分类的结构体的指针，它的定义如下：
+struct category_t { const char *name; classref_t cls; struct method_list_t *instanceMethods; struct method_list_t *classMethods; struct protocol_list_t *protocols; struct property_list_t *instanceProperties; };   name是class_name而不是category_name
+  cls表示要扩展的类对象，编译期间是不会定义的，而是在Runtime阶段通过name对应到对应的类对象
+  instanceMethods表示category中所有给类添加的实例方法的列表
+  classMethos表示category中所有添加的类方法的列表
+  protocols 表示category实现的所有协议的列表
+ instanceProperties 表示category里所有的Properties，这就是我们可以通过objc_setAssociatedObject和objc_getAssociatedObject增加实例变量的原因，不过这个和一般的实例变量是不一样的。    从上面的category_t结构体中可以看出，分类中可以添加实例方法，类方法，甚至可以实现协议，添加属性，不可以添加成员变量。
+Runtime消息转发 OC在发送消息时会在相关的类对象中搜索方法列表，如果找不到则会沿着继承树向上一直搜索直到树根部（NSObject），如果还是找不到，那么消息转发就是失败了。此时，会执行doesNotRecognizeSelector:方法，报unrecognized selector错。
 OC的id类型 id表示变量或对象的类型在编写代码时（编译期）不确定，视为任意类型，直到程序跑起来推迟到运行时才最终确定其类型。id类似于C&#43;&#43;中的void *，但是id和void *并非完全一样。id是一个指向继承了NSObject的OC对象的指针，注意id是一个指针，虽然省略了*号。id和C语言的void *之间需要通过bridge关键字来实现桥接转换。
 instancetype instancetype和id都可以用来表示任意类型，将对象的类型确定往后推迟，用于体现OC语言的动态性，使其声明的对象具有运行时特性。区别是：
   instancetype只能作为返回值类型，但在编译期instancetype会进行类型检测，因此对于所有返回类的实例的类方法或实例方法，建议返回类型instancetype而不是id。
