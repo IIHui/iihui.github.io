@@ -226,13 +226,13 @@ code.has-jax {
     <i class="fa fa-file-word-o"></i>
 </span>
 <span class="post-meta-item-text">字数: </span>
-<span class="leancloud-visitors-count">4491</span>
+<span class="leancloud-visitors-count">4608</span>
 &nbsp; | &nbsp;
 <span class="post-meta-item-icon">
     <i class="fa fa-coffee"></i>
 </span>
 <span class="post-meta-item-text">阅读: </span>
-<span class="leancloud-visitors-count">9 分钟</span>
+<span class="leancloud-visitors-count">10 分钟</span>
 </span>
       </div>
     </header>
@@ -302,8 +302,8 @@ code.has-jax {
 }
 </code></pre></div><h3 id="类对象objc_class">类对象objc_class</h3>
 <p>在<code>OC</code>中，类是由<code>Class</code>类型来表示的，它实际上是一个指向<code>objc_class</code>结构体的指针：</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-objc" data-lang="objc"><span style="color:#66d9ef">typedef</span> <span style="color:#66d9ef">struct</span> objc_class <span style="color:#f92672">*</span> <span style="color:#66d9ef">Class</span>;
-</code></pre></div><p>其中<code>objc_class</code>结构体在<code>objc/runtime.h</code>中的定义如下：</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-objc" data-lang="objc"><span style="color:#66d9ef">typedef</span> <span style="color:#66d9ef">struct</span> objc_class <span style="color:#f92672">*</span><span style="color:#66d9ef">Class</span>; <span style="color:#75715e">//Class是一个指向objc_class 的指针
+</span></code></pre></div><p>其中<code>objc_class</code>结构体在<code>objc/runtime.h</code>中的定义如下：</p>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-objc" data-lang="objc"><span style="color:#66d9ef">struct</span> objc_class {
     <span style="color:#66d9ef">Class</span> _Nonnull isa  OBJC_ISA_AVAILABILITY;
 
@@ -320,17 +320,17 @@ code.has-jax {
 </span><span style="color:#75715e"></span>    <span style="color:#66d9ef">struct</span> objc_protocol_list <span style="color:#f92672">*</span> _Nullable protocols OBJC2_UNAVAILABLE; <span style="color:#75715e">// 遵守的协议列表
 </span><span style="color:#75715e"></span><span style="color:#75715e">#</span><span style="color:#75715e">endif</span><span style="color:#75715e">
 </span><span style="color:#75715e"></span>} OBJC2_UNAVAILABLE;
-</code></pre></div><p>类对象就是一个结构体<code>struct objc_class</code>，这个结构体存放的数据称为元数据(<code>metadata</code>)，类对象在编译期产生用于创建实例对象，是单例。</p>
+</code></pre></div><p>类对象就是一个结构体<code>struct objc_class</code>，这个结构体存放的数据称为元数据(<code>metadata</code>)。该结构体的第一个成员变量也是<code>isa</code>指针，这说明了<code>Class</code>本身其实是一个对象，称之为类对象。类对象在编译期产生用于创建实例对象，是单例。</p>
 <h3 id="实例对象object">实例对象(object)</h3>
 <p>在<code>objc/runtime.h</code>中，对象被定义为指向<code>objc_object</code>结构体的指针，<code>objc_object</code>结构体的定义如下：</p>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-objc" data-lang="objc"><span style="color:#75715e">//runtime对objc_object结构体的定义
 </span><span style="color:#75715e"></span><span style="color:#66d9ef">struct</span> objc_object {
-    <span style="color:#66d9ef">Class</span> isa  OBJC_ISA_AVAILABILITY;
-};
+    <span style="color:#66d9ef">Class</span> isa  OBJC_ISA_AVAILABILITY; <span style="color:#75715e">//objc_object只有一个成员，就是指向O
+</span><span style="color:#75715e"></span>};
 
 <span style="color:#75715e">//id是一个指向objc_object结构体的指针：
-</span><span style="color:#75715e"></span><span style="color:#66d9ef">typedef</span> <span style="color:#66d9ef">struct</span> objc_object <span style="color:#f92672">*</span><span style="color:#66d9ef">id</span>;
-</code></pre></div><p>类对象中的元数据存储的都是如何创建一个实例的相关信息，那么类对象和类方法应该从哪里创建呢？就是从<code>isa</code>指针指向的结构体创建，类对象的<code>isa</code>指针指向的我们称之为元类(<code>meatclass</code>)，元类中保存了创建类对象以及类方法所需的所有信息，因此整个结构应该如下图所示:</p>
+</span><span style="color:#75715e"></span><span style="color:#66d9ef">typedef</span> <span style="color:#66d9ef">struct</span> objc_object <span style="color:#f92672">*</span><span style="color:#66d9ef">id</span>; <span style="color:#75715e">//id是指向objc_class指针的指针
+</span></code></pre></div><p>类对象中的元数据存储的都是如何创建一个实例的相关信息，那么类对象和类方法应该从哪里创建呢？就是从<code>isa</code>指针指向的结构体创建，类对象的<code>isa</code>指针指向的我们称之为元类(<code>meatclass</code>)，元类中保存了创建类对象以及类方法所需的所有信息，因此整个结构应该如下图所示:</p>
 <p><img src="https://i.loli.net/2020/02/11/aE4sNtSK7gyYZ63.jpg" alt="-c"></p>
 <h3 id="元类meta-class">元类(meta class)</h3>
 <p>通过上图可以看出整个体系构成了一个自闭环，<code>struct objc_object</code>结构体实例的<code>isa</code>指针指向类对象，类对象的<code>isa</code>指针指向了元类，<code>super_class</code>指针指向了父类的类对象，而元类的<code>super_class</code>指针指向了父类的元类，那元类的<code>isa</code>指针又指向了自己。</p>
