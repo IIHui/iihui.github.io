@@ -146,7 +146,7 @@ typedef struct objc_class *Class; //Class是一个指向objc_class 的指针 其
 struct objc_class { Class _Nonnull isa OBJC_ISA_AVAILABILITY; #if !__OBJC2__ Class _Nullable super_class OBJC2_UNAVAILABLE; // 指向父类的指针  const char * _Nonnull name OBJC2_UNAVAILABLE; // 类的名字  long version OBJC2_UNAVAILABLE; // 类的版本信息，默认为 0  long info OBJC2_UNAVAILABLE; // 类的信息，供运行期使用的一些位标识  long instance_size OBJC2_UNAVAILABLE; // 该类的实例变量大小;  struct objc_ivar_list * _Nullable ivars OBJC2_UNAVAILABLE; // 该类的实例变量列表  struct objc_method_list * _Nullable * _Nullable methodLists OBJC2_UNAVAILABLE; // 方法定义的列表  struct objc_cache * _Nonnull cache OBJC2_UNAVAILABLE; // 方法缓存  struct objc_protocol_list * _Nullable protocols OBJC2_UNAVAILABLE; // 遵守的协议列表 #endif} OBJC2_UNAVAILABLE; 类对象就是一个结构体struct objc_class，这个结构体存放的数据称为元数据(metadata)。该结构体的第一个成员变量也是isa指针，这说明了Class本身其实是一个对象，称之为类对象。类对象在编译期产生用于创建实例对象，是单例。
 实例对象(object) 在objc/runtime.h中，对象被定义为指向objc_object结构体的指针，objc_object结构体的定义如下：
 //runtime对objc_object结构体的定义 struct objc_object { Class isa OBJC_ISA_AVAILABILITY; //objc_object只有一个成员，就是指向O }; //id是一个指向objc_object结构体的指针： typedef struct objc_object *id; //id是指向objc_class指针的指针 类对象中的元数据存储的都是如何创建一个实例的相关信息，那么类对象和类方法应该从哪里创建呢？就是从isa指针指向的结构体创建，类对象的isa指针指向的我们称之为元类(meatclass)，元类中保存了创建类对象以及类方法所需的所有信息，因此整个结构应该如下图所示:
-元类(meta class) 通过上图可以看出整个体系构成了一个自闭环，struct objc_object结构体实例的isa指针指向类对象，类对象的isa指针指向了元类，super_class指针指向了父类的类对象，而元类的super_class指针指向了父类的元类，那元类的isa指针又指向了自己。
+元类(meta class) 通过上图可以看出整个体系构成了一个自闭环，struct objc_object结构体实例的isa指针指向类对象，类对象的isa指针指向了元类，super_class指针指向了父类的类对象，而元类的super_class指针指向了父类的元类，那元类的isa指针又指向了自己(还不理解为什么会指向自己)。
 元类(Meta Class)是一个类对象的类。在上面我们提到，所有的类自身也是一个对象，我们可以向这个对象发送消息(即调用类方法)。为了调用类方法，这个类的isa指针必须指向一个包含这些类方法的一个objc_class结构体。这就引出了meta-class的概念，元类中保存了创建类对象以及类方法所需的所有信息。
 任何NSObject继承体系下的meta-class都使用NSObject的meta-class作为自己的所属类，而基类的meta-class的isa指针是指向它自己。
 方法(method) 首先看一下objc_method的定义：
@@ -169,12 +169,11 @@ selector既然是一个字符串，应该类似className&#43;method的组合，�
 /// A pointer to the function of a method implementation. 指向一个方法实现的指针 typedef id (*IMP)(id, SEL, ...); #endif在iOS的runtime中，方法通过selector和IMP两个属性，实现了快速查询方法及其实现，相对提高了性能，又保持了灵活性。
 Objective-C在编译时，会依据每一个方法的名字、参数序列，生成一个唯一的整型标识(Int类型的地址)，这个标识就是SEL
 Category(objc_catory) 当Catrgory表示一个指向分类的结构体的指针，它的定义如下：
-struct category_t { const char *name; classref_t cls; struct method_list_t *instanceMethods; struct method_list_t *classMethods; struct protocol_list_t *protocols; struct property_list_t *instanceProperties; };   name是class_name而不是category_name
-  cls表示要扩展的类对象，编译期间是不会定义的，而是在Runtime阶段通过name对应到对应的类对象
-  instanceMethods表示category中所有给类添加的实例方法的列表
-  classMethos表示category中所有添加的类方法的列表
-  protocols 表示category实现的所有协议的列表
- instanceProperties 表示category里所有的Properties，这就是我们可以通过objc_setAssociatedObject和objc_getAssociatedObject增加实例变量的原因，不过这个和一般的实例变量是不一样的。    从上面的category_t结构体中可以看出，分类中可以添加实例方法，类方法，甚至可以实现协议，添加属性，不可以添加成员变量。
+struct category_t { const char *name; classref_t cls; struct method_list_t *instanceMethods; struct method_list_t *classMethods; struct protocol_list_t *protocols; struct property_list_t *instanceProperties; };   name是class_name而不是category_name。
+  cls表示要扩展的类对象，编译期间是不会定义的，而是在Runtime阶段通过name对应到相应的类对象。
+  instanceMethods表示category中所有给类添加的实例方法的列表。  classMethods表示category中所有添加的类方法的列表。  protocols 表示category实现的所有协议的列表。
+  instanceProperties 表示category里所有的Properties，这就是我们可以通过objc_setAssociatedObject和objc_getAssociatedObject增加实例变量的原因，不过这个和一般的实例变量是不一样的。
+  从上面的category_t结构体中可以看出，分类中可以添加实例方法，类方法，甚至可以实现协议，添加属性，不可以添加成员变量。
 Runtime消息转发 OC在发送消息时会在相关的类对象中搜索方法列表，如果找不到则会沿着继承树向上一直搜索直到树根部（NSObject），如果还是找不到，那么消息转发就是失败了。此时，会执行doesNotRecognizeSelector:方法，报unrecognized selector错。
 OC的id类型 id表示变量或对象的类型在编写代码时（编译期）不确定，视为任意类型，直到程序跑起来推迟到运行时才最终确定其类型。id类似于C&#43;&#43;中的void *，但是id和void *并非完全一样。id是一个指向继承了NSObject的OC对象的指针，注意id是一个指针，虽然省略了*号。id和C语言的void *之间需要通过bridge关键字来实现桥接转换。
 instancetype instancetype和id都可以用来表示任意类型，将对象的类型确定往后推迟，用于体现OC语言的动态性，使其声明的对象具有运行时特性。区别是：
