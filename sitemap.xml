@@ -75,20 +75,22 @@ summaryLength = 100 #放在同themes同级的config.toml上才有效 文章置�
         <tags>
           <tag>iOS</tag><tag>oc</tag>
         </tags>
-        <content type="html">  KVC(Key Value Coding)键值编码，指允许通过Key名字来直接访问对象的属性，而不需要调用明确的存取方法，这样就在运行时可以动态的访问和修改对象的属性值。在iOS中，无论是Swift还是OC，KVC都是通过对NSObject的扩展来实现的。所以，继承了NSObject的类型的对象都能使用KVC。
- KeyPath KeyPath，表示键路径，是一个由用点作分隔符的键组成的字符串（点语法），用于指定一个连接在一起的对象性质序列。后一个键的性质是由前一个键的性质决定的。
+        <content type="html">  KVC(Key Value Coding)键值编码，指允许通过Key名字来直接访问对象的属性，而不需要调用明确的存取方法。这样，便能在运行时动态地访问和修改对象的属性值。在iOS中，无论是Swift还是OC，KVC都是通过对NSObject的扩展来实现的。所以，继承了NSObject的类型的对象都能使用KVC。
+ KeyPath KeyPath，表示键路径，是一个由点作分隔符的键组成的字符串（点语法），用于表示一个连接在一起的对象序列。其中，后一个键的性质是由前一个键的性质决定的。（如同现代面向对象语言取成员）
+有了键路径，就可以不通过相应的方法来直接取相关的性质（属性/方法）。通过键路径，可以指定对象中的一个任意深度的路径，使其指向相关对象的特定属性。
 通过键
 KVC 定义 KVC是一种通过字符串间接访问对象的属性的方法。不是通过调用存取方法（setter/getter）来获取属性，而是使用字符串来标识属性，直接或通过实例变量访问的机制，非对象类型的变量将自动封装或者解封成对象，很多情况下会简化程序代码。在字典转模型、自定义模型归档/解档都会使用到。
-缺点   一旦使用KVC，编译器将无法检查出错误，即不会对设置的键、键路径进行错误检查。
-  执行效率要低于合成存取器方法和自定义的setter和getter方法。效率低的原因是使用KVC键值编码，它必须先解析字符串，然后在设置或者访问对象的实例变量。
-  机制 当通过KVC访问对象时，例如：[self valueForKey:@&amp;quot;view&amp;quot;]，程序会自动试图通过下面几种不同的方式解析这个方法的调用：
+下面是KVC最为重要的四个方法：
+- (nullable id)valueForKey:(NSString *)key; //直接通过Key来取值 - (void)setValue:(nullable id)value forKey:(NSString *)key; //通过Key来设值 - (nullable id)valueForKeyPath:(NSString *)keyPath; //通过KeyPath来取值 - (void)setValue:(nullable id)value forKeyPath:(NSString *)keyPath; //通过KeyPath来设值  机制 当通过KVC访问对象时，例如：[self valueForKey:@&amp;quot;view&amp;quot;]，程序会自动试图通过下面几种不同的方式解析这个方法的调用：
   查找对象是否带有view这个方法
   如果没有找到，会继续查找对象是否带有view这个实例变量（iVar）
   如果还没有找到，程序会继续试图调用方法-(id)valueForUndefinedKey:
   如果这个方法还是没有被实现的话，程序会抛出一个 NSundefinedKeyException异常错误
-  注意事项   在上面的例子中，KVC查找方法的时候，不仅仅会查找 view这个方法，还会查找getview(前面加一个get)这个方法，或者 _view 以及_getview 这个几种形式。
+  注意   在上面的例子中，KVC查找方法的时候，不仅仅会查找 view这个方法，还会查找getview(前面加一个get)这个方法，或者 _view 以及_getview 这个几种形式。
   在查找实例变量的时候，不仅仅查找view这个变量，也会查找_view这个变量是否存在。
-  设计valueForUndefinedKey:方法的主要目的是：当使用-(id)valueForKey方法从对象中请求值时，对象能够在错误发生前，有最后的机会响应这个请求。  参考资料 参考资料
+  设计valueForUndefinedKey:方法的主要目的是：当使用-(id)valueForKey方法从对象中请求值时，对象能够在错误发生前，有最后的机会响应这个请求。  缺点   一旦使用KVC，编译器将无法检查出错误，即不会对设置的键、键路径进行错误检查。
+  执行效率要低于合成存取器方法和自定义的setter和getter方法。效率低的原因是使用KVC键值编码，它必须先解析字符串，然后在设置或者访问对象的实例变量。
+  参考资料 参考资料
 </content>
     </entry>
     
