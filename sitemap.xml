@@ -81,12 +81,19 @@ summaryLength = 100 #放在同themes同级的config.toml上才有效 文章置�
 通过键
 KVC 定义 KVC是一种通过字符串间接访问对象的属性的方法。不是通过调用存取方法（setter/getter）来获取属性，而是使用字符串来标识属性，直接或通过实例变量访问的机制，非对象类型的变量将自动封装或者解封成对象，很多情况下会简化程序代码。在字典转模型、自定义模型归档/解档都会使用到。
 下面是KVC最为重要的四个方法：
-- (nullable id)valueForKey:(NSString *)key; //直接通过Key来取值 - (void)setValue:(nullable id)value forKey:(NSString *)key; //通过Key来设值 - (nullable id)valueForKeyPath:(NSString *)keyPath; //通过KeyPath来取值 - (void)setValue:(nullable id)value forKeyPath:(NSString *)keyPath; //通过KeyPath来设值  机制 当通过KVC访问对象时，例如：[self valueForKey:@&amp;quot;view&amp;quot;]，程序会自动试图通过下面几种不同的方式解析这个方法的调用：
+- (nullable id)valueForKey:(NSString *)key; //直接通过Key来取值 - (void)setValue:(nullable id)value forKey:(NSString *)key; //通过Key来设值 - (nullable id)valueForKeyPath:(NSString *)keyPath; //通过KeyPath来取值 - (void)setValue:(nullable id)value forKeyPath:(NSString *)keyPath; //通过KeyPath来设值  寻找Key机制 当通过KVC访问对象时，例如：[self valueForKey:@&amp;quot;view&amp;quot;]，程序会自动试图通过下面几种不同的方式解析这个方法的调用：
   查找对象是否带有view这个方法
   如果没有找到，会继续查找对象是否带有view这个实例变量（iVar）
   如果还没有找到，程序会继续试图调用方法-(id)valueForUndefinedKey:
   如果这个方法还是没有被实现的话，程序会抛出一个 NSundefinedKeyException异常错误
-  注意   在上面的例子中，KVC查找方法的时候，不仅仅会查找 view这个方法，还会查找getview(前面加一个get)这个方法，或者 _view 以及_getview 这个几种形式。
+  当调用setValue：属性值 forKey：@”name“，来设置值时，底层的执行机制如下：
+  程序优先调用set&amp;lt;Key&amp;gt;:属性值方法，代码通过setter方法完成设置。这里的Key是指成员变量名，而不是forKey表示的值。
+  如果没有找到setName:方法，KVC机制会检查&#43; (BOOL)accessInstanceVariablesDirectly方法有没有返回YES（默认返回）。如果重写了该方法并返回NO的话，那么接下来执行setValue：forUndefinedKey方法，不过一般开发者不会这么做。所以KVC机制会搜索该类里面有没有名为_&amp;lt;key&amp;gt;的成员变量，无论该变量是在类接口处定义，还是在类实现处定义，也无论用了什么样的访问修饰符，只在存在以_&amp;lt;key&amp;gt;命名的变量，KVC都可以对该成员变量赋值。
+  如果该类既没有set&amp;lt;key&amp;gt;方法，也没有_&amp;lt;key&amp;gt;成员变量，KVC机制会搜索_is&amp;lt;Key&amp;gt;的成员变量。
+  如果该类既没有set&amp;lt;Key&amp;gt;方法，也没有_&amp;lt;key&amp;gt;和_is&amp;lt;Key&amp;gt;成员变量，KVC机制再会继续搜索是否存在&amp;lt;key&amp;gt;和is&amp;lt;Key&amp;gt;的成员变量，再给它们赋值。
+  如果上面列出的方法或者成员变量都不存在，系统将会执行该对象的setValue：forUndefinedKey方法，默认是抛出异常。
+  如果想让这个类禁用KVC，只要重写&#43; (BOOL)accessInstanceVariablesDirectly方法，并让它返回NO即可。
+注意   在上面的例子中，KVC查找方法的时候，不仅仅会查找 view这个方法，还会查找getview(前面加一个get)这个方法，或者 _view 以及_getview 这个几种形式。
   在查找实例变量的时候，不仅仅查找view这个变量，也会查找_view这个变量是否存在。
   设计valueForUndefinedKey:方法的主要目的是：当使用-(id)valueForKey方法从对象中请求值时，对象能够在错误发生前，有最后的机会响应这个请求。  缺点   一旦使用KVC，编译器将无法检查出错误，即不会对设置的键、键路径进行错误检查。
   执行效率要低于合成存取器方法和自定义的setter和getter方法。效率低的原因是使用KVC键值编码，它必须先解析字符串，然后在设置或者访问对象的实例变量。
