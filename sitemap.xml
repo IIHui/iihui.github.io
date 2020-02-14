@@ -850,25 +850,24 @@ if (selection.rangeCount &amp;gt; 0) { let range = selection.getRangeAt(0); } //
     </entry>
     
      <entry>
-        <title>KVO 简介</title>
+        <title>KVO 介绍</title>
         <url>https://iihui.github.io/post/ios-kvo/</url>
         <categories>
           <category>code</category>
         </categories>
         <tags>
-          <tag>iOS</tag>
+          <tag>iOS</tag><tag>oc</tag>
         </tags>
-        <content type="html">  在OC中KVO(key-value observing)是一种通知机制，定义了一种对象之间监控对方状态，并做出相应动作的机制。当指定的被观察者对象的属性被修改时，KVO都会自动去通知相应的观察者。
- 使用步骤   注册观察者，实时监听。
-//第一个参数 observer：观察者 （这里观察self.myKVO对象的属性变化） //第二个参数 keyPath： 被观察的属性名称(这里观察 self.myKVO 中   num 属性值的改变) //第三个参数 options： 观察属性的新值、旧值等的一些配置（枚举值，可 以根据需要设置，例如这里可以使用两项） //第四个参数 context： 上下文，可以为 KVO 的回调方法传值（例如设定 为一个放置数据的字典） [self.myKVO addObserver:self forKeyPath:@&amp;ldquo;num&amp;rdquo; options:NSKeyValueObservingOptionOld| NSKeyValueObservingOptionNew context:nil];
-2. 在回调方法中处理属性值发生变化。 ```objc //keyPath:属性名称 //object:被观察的对象 //change:变化前后的值都存储在 change 字典中 //context:注册观察者时，context 传过来的值 -(void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary&amp;lt;NSString *,id&amp;gt; *)change context:(void *)context { }  移除观察者。
-- (void)removeObserver:(NSObject *)observer forKeyPath:(NSString *)keyPath;   参考
- 注意事项 使用KVO消息传递机制有两个要求：
+        <content type="html">  在应用开发中，经常需要使用观察者模式，以监听某些对象属性的变化，然后进行相应操作。OC提供了一套简洁优雅的观察方式——KVO。KVO(key-value observing)是一种通知机制，当指定的被观察者对象的属性被修改时，KVO会自动通知相应的观察者。KVO由NSKeyValueObserving协议提供支持，NSObject类继承了该协议，所以任何NSObject的子类都可使用该方法。
+ KVO的使用 KVO的使用比较简单，只需要给对象的指定属性添加监听，并设置监听类型。每当对指定的属性进行读写操作时，OC就会调用observeValueForKeyPath方法，在observeValueForKeyPath中进行判断，确定是哪个对象的事件。
+下面的例子是便实现一个属性值的监听。可总结为三步：第一步是添加监听；第二步是实现协议；第三步是移除监听：
+Person *person = [Person alloc] init]; /* 作用:给对象绑定一个监听器(观察者) - Observer 观察者 - KeyPath 要监听的属性 - options 选项(方便在监听的方法中拿到属性值) */ [person addObserver:person forKeyPath:@&amp;#34;name&amp;#34; options:NSKeyValueObservingOptionNew | NSKeyValueObservingOptionOld context:nil]; // 移除监听 [person removeObserver:person forKeyPath:@&amp;#34;name&amp;#34;]; /** * 当监听的属性值发生改变 * * @param keyPath 要改变的属性 * @param object 要改变的属性所属的对象 * @param change 改变的内容 * @param context 上下文 */ - (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary&amp;lt;NSString *,id&amp;gt; *)change context:(void *)context{ NSLog(@&amp;#34;%@------%@------%@&amp;#34;, keyPath, object, change); } 添加监听 //第一个参数 observer观察者 （这里观察self.myKVO对象的属性变化） //第二个参数 keyPath被观察的属性名称(这里观察 self.myKVO 中 num 属性值的改变) //第三个参数 options： 观察属性的新值、旧值等的一些配置（枚举值，可以根据需要设置，例如这里可以使用两项） //第四个参数 context： 上下文，可以为 KVO 的回调方法传值（例如设定为一个放置数据的字典） - (void)addObserver:(NSObject *)observer forKeyPath:(NSString *)keyPath options:(NSKeyValueObservingOptions)options context:(nullable void *)context; 实现协议 在回调方法中处理属性值发生变化。
+//keyPath:属性名称 //object:被观察的对象 //change:变化前后的值都存储在change字典中 //context:注册观察者时，context 传过来的值  - (void)observeValueForKeyPath:(nullable NSString *)keyPath ofObject:(nullable id)object change:(nullable NSDictionary *)change context:(nullable void *)context; 移除观察者。 - (void)removeObserver:(NSObject *)observer forKeyPath:(NSString *)keyPath; 注意事项 使用KVO消息传递机制有两个要求：
   观察者必须知道被观察者对象，即在同一作用域。
   观察者还需要知道被观察对象的生命周期，因为在销毁发送者对象之间，需要取消观察者的注册。
-   Swift中属性观察器 在Swift中有两个属性观察者willSet和didSet,类似于触发器。用来监控属性除初始化之外的属性值变化，当属性值发生变化时可以对此作出响应。
+  Swift中属性观察器 在Swift中有两个属性观察者willSet和didSet,类似于触发器。用来监控属性除初始化之外的属性值变化，当属性值发生变化时可以对此作出响应。
  不仅可以在属性值发生变化后触发didSet,也可以在属性值改变前触发willSet。 给属性添加观察者必须要声明清楚属性的类型，否则编译器报错。 willSet可以带一个newName的参数，没有的话，默认命名为newValue。 didSet 可以带一个oldName的参数，表示旧的值，不带的话，默认命名为oldValue。 属性初始化时，willSet和didSet不会调用。只有初始化上下文之外，属性值发生变化时才会调用。 即使设置的值和原来的一样，willSet和didSet也会被调用。  var firstName: String = &amp;#34;First&amp;#34; { willSet { //新值设置之前被调用，在此可以进行条件筛选，过滤数据 print(&amp;#34;willSet的新值是\(newValue)&amp;#34;) } didSet { //新值设置之后立即调用，在此可以进行条件筛选，过滤数据,可以直接绑定数据到UI上面 print(&amp;#34;didSet的旧值是\(oldValue)--- 新值是 \(firstName)&amp;#34;) self.nameLabel.text = firstName } }  Swift实现KVO值监听 利用设计模式中的观察者模式，观察者定义了对象之间的一对多依赖。当一个对象改变状态时，它的所有依赖者都会收到通知并自动更新。观察者模式适用在一个被观察者（数据源）要通知多个观察者的场景。
-参考资料
+参考资料 参考资料
  </content>
     </entry>
     
