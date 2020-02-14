@@ -226,13 +226,13 @@ code.has-jax {
     <i class="fa fa-file-word-o"></i>
 </span>
 <span class="post-meta-item-text">字数: </span>
-<span class="leancloud-visitors-count">7933</span>
+<span class="leancloud-visitors-count">8729</span>
 &nbsp; | &nbsp;
 <span class="post-meta-item-icon">
     <i class="fa fa-coffee"></i>
 </span>
 <span class="post-meta-item-text">阅读: </span>
-<span class="leancloud-visitors-count">16 分钟</span>
+<span class="leancloud-visitors-count">18 分钟</span>
 </span>
       </div>
     </header>
@@ -745,8 +745,79 @@ self <span style="color:#66d9ef">class</span><span style="color:#f92672">:</span
 <p>所以当我们从应用层面上看来，完全没有意识到有新的类出现，这是<!-- raw HTML omitted -->系统隐瞒了对<code>KVO</code>的底层实现过程，让我们误以为还是原来的类。但是此时如果我们创建一个新的名为<code>NSKVONotifying_A</code>的类，就会发现系统运行到注册<code>KVO</code>的那段代码时程序就崩溃，因为系统在注册监听的时候动态创建了名为<code>NSKVONotifying_A</code>的中间类，并指向这个中间类了。</p>
 <p>子类<code>setter</code>方法剖析：</p>
 <p><code>KVO</code>的键值观察通知依赖于<code>NSObject</code>的两个方法<code>willChangeValueForKey:</code>和 <code>didChangeValueForKey:</code>，在存取数值的前后分别调用<code>2</code>个方法：被观察属性发生改变之前，<code>willChangeValueForKey:</code>被调用，通知系统该<code>keyPath</code>的属性值即将变更；
-当改变发生后，<code>didChangeValueForKey:</code>被调用，通知系统该<code>keyPath</code>的属性值已经变更；之后，<code>observeValueForKey:ofObject:change:context:</code>也会被调用。且重写观察属性的<code>setter</code>方法这种继承方式的注入是在运行时而不是编译时实现的。</p>
-<p><a href="https://juejin.im/post/5d6bea9651882563e82aff2b">参考资料</a>
+当改变发生后，<code>didChangeValueForKey:</code>被调用，通知系统该<code>keyPath</code>的属性值已经变更；之后，<code>observeValueForKey:ofObject:change:context:</code>也会被调用。<!-- raw HTML omitted -->且重写观察属性的<code>setter</code>方法这种继承方式的注入是在运行时而不是编译时实现的<!-- raw HTML omitted -->。</p>
+<p><code>KVO</code>为子类的观察者属性重写调用存取方法的工作原理在代码中相当于：</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-objc" data-lang="objc">- (<span style="color:#66d9ef">void</span>)<span style="color:#a6e22e">setName:</span>(NSString <span style="color:#f92672">*</span>)newName { 
+      [self willChangeValueForKey:<span style="color:#e6db74">@&#34;</span><span style="color:#e6db74">name</span><span style="color:#e6db74">&#34;</span>];    <span style="color:#75715e">//KVO 在调用存取方法之前总调用 
+</span><span style="color:#75715e"></span>      [super setValue:newName forKey:<span style="color:#e6db74">@&#34;</span><span style="color:#e6db74">name</span><span style="color:#e6db74">&#34;</span>]; <span style="color:#75715e">//调用父类的存取方法 
+</span><span style="color:#75715e"></span>      [self didChangeValueForKey:<span style="color:#e6db74">@&#34;</span><span style="color:#e6db74">name</span><span style="color:#e6db74">&#34;</span>];     <span style="color:#75715e">//KVO 在调用存取方法之后总调用
+</span><span style="color:#75715e"></span>}
+</code></pre></div><h3 id="热更新jspatch">热更新JSPatch</h3>
+<p><code>JSPatch</code>是一个<code>iOS</code>动态更新框架，只需在项目中引入极小的引擎，就可以使用 <code>JavaScript</code>调用任何<code>OC</code>原生接口，获得脚本语言的优势：为项目动态添加模块，或替换项目原生代码动态修复<code>bug</code>。</p>
+<p>关于消息转发，前面已经讲到过了，消息转发分为三级，我们可以在每级实现替换功能，实现消息转发，从而不会造成崩溃。<code>JSPatch</code><!-- raw HTML omitted -->不仅能够实现消息转发，还可以实现方法添加、替换等一系列功能<!-- raw HTML omitted -->。</p>
+<h3 id="实现nscoding的自动归档和自动解档">实现<code>NSCoding</code>的自动归档和自动解档</h3>
+<p>用<code>Runtime</code>提供的函数遍历<code>Model</code>自身所有属性，并对属性进行<code>encode</code>和<code>decode</code>操作。 核心方法：在<code>Model</code>的基类中重写方法：</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-objc" data-lang="objc">- (<span style="color:#66d9ef">id</span>)<span style="color:#a6e22e">initWithCoder:</span>(NSCoder <span style="color:#f92672">*</span>)aDecoder {
+    <span style="color:#66d9ef">if</span> (self <span style="color:#f92672">=</span> [super init]) {
+        <span style="color:#66d9ef">unsigned</span> <span style="color:#66d9ef">int</span> outCount;
+        Ivar <span style="color:#f92672">*</span> ivars <span style="color:#f92672">=</span> class_copyIvarList([self <span style="color:#66d9ef">class</span>], <span style="color:#f92672">&amp;</span>outCount);
+        <span style="color:#66d9ef">for</span> (<span style="color:#66d9ef">int</span> i <span style="color:#f92672">=</span> <span style="color:#ae81ff">0</span>; i <span style="color:#f92672">&lt;</span> outCount; i <span style="color:#f92672">+</span><span style="color:#f92672">+</span>) {
+            Ivar ivar <span style="color:#f92672">=</span> ivars[i];
+            NSString <span style="color:#f92672">*</span> key <span style="color:#f92672">=</span> [NSString stringWithUTF8String:ivar_getName(ivar)];
+            [self setValue:[aDecoder decodeObjectForKey:key] forKey:key];
+        }
+    }
+    <span style="color:#66d9ef">return</span> self;
+}
+
+- (<span style="color:#66d9ef">void</span>)<span style="color:#a6e22e">encodeWithCoder:</span>(NSCoder <span style="color:#f92672">*</span>)aCoder {
+    <span style="color:#66d9ef">unsigned</span> <span style="color:#66d9ef">int</span> outCount;
+    Ivar <span style="color:#f92672">*</span> ivars <span style="color:#f92672">=</span> class_copyIvarList([self <span style="color:#66d9ef">class</span>], <span style="color:#f92672">&amp;</span>outCount);
+    <span style="color:#66d9ef">for</span> (<span style="color:#66d9ef">int</span> i <span style="color:#f92672">=</span> <span style="color:#ae81ff">0</span>; i <span style="color:#f92672">&lt;</span> outCount; i <span style="color:#f92672">+</span><span style="color:#f92672">+</span>) {
+        Ivar ivar <span style="color:#f92672">=</span> ivars[i];
+        NSString <span style="color:#f92672">*</span> key <span style="color:#f92672">=</span> [NSString stringWithUTF8String:ivar_getName(ivar)];
+        [aCoder encodeObject:[self valueForKey:key] forKey:key];
+    }
+}
+
+</code></pre></div><h3 id="实现字典和模型的自动转换mjextension">实现字典和模型的自动转换(MJExtension)</h3>
+<p>用<code>runtime</code>提供的函数遍历<code>Model</code>自身所有属性，如果属性在<code>json</code>中有对应的值，则将其赋值。 核心方法：在<code>NSObject</code>的分类中添加方法。</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-objc" data-lang="objc">- (<span style="color:#66d9ef">instancetype</span>)<span style="color:#a6e22e">initWithDict:</span>(NSDictionary <span style="color:#f92672">*</span>)dict {
+
+    <span style="color:#66d9ef">if</span> (self <span style="color:#f92672">=</span> [self init]) {
+        <span style="color:#75715e">//(1)获取类的属性及属性对应的类型
+</span><span style="color:#75715e"></span>        NSMutableArray <span style="color:#f92672">*</span> keys <span style="color:#f92672">=</span> [NSMutableArray array];
+        NSMutableArray <span style="color:#f92672">*</span> attributes <span style="color:#f92672">=</span> [NSMutableArray array];
+        <span style="color:#75715e">/*
+</span><span style="color:#75715e">         * 例子
+</span><span style="color:#75715e">         * name = value3 attribute = T@&#34;NSString&#34;,C,N,V_value3
+</span><span style="color:#75715e">         * name = value4 attribute = T^i,N,V_value4
+</span><span style="color:#75715e">         */</span>
+        <span style="color:#66d9ef">unsigned</span> <span style="color:#66d9ef">int</span> outCount;
+        objc_property_t <span style="color:#f92672">*</span> properties <span style="color:#f92672">=</span> class_copyPropertyList([self <span style="color:#66d9ef">class</span>], <span style="color:#f92672">&amp;</span>outCount);
+        <span style="color:#66d9ef">for</span> (<span style="color:#66d9ef">int</span> i <span style="color:#f92672">=</span> <span style="color:#ae81ff">0</span>; i <span style="color:#f92672">&lt;</span> outCount; i <span style="color:#f92672">+</span><span style="color:#f92672">+</span>) {
+            objc_property_t property <span style="color:#f92672">=</span> properties[i];
+            <span style="color:#75715e">//通过property_getName函数获得属性的名字
+</span><span style="color:#75715e"></span>            NSString <span style="color:#f92672">*</span> propertyName <span style="color:#f92672">=</span> [NSString stringWithCString:property_getName(property) encoding:NSUTF8StringEncoding];
+            [keys addObject:propertyName];
+            <span style="color:#75715e">//通过property_getAttributes函数可以获得属性的名字和@encode编码
+</span><span style="color:#75715e"></span>            NSString <span style="color:#f92672">*</span> propertyAttribute <span style="color:#f92672">=</span> [NSString stringWithCString:property_getAttributes(property) encoding:NSUTF8StringEncoding];
+            [attributes addObject:propertyAttribute];
+        }
+        <span style="color:#75715e">//立即释放properties指向的内存
+</span><span style="color:#75715e"></span>        free(properties);
+
+        <span style="color:#75715e">//(2)根据类型给属性赋值
+</span><span style="color:#75715e"></span>        <span style="color:#66d9ef">for</span> (NSString <span style="color:#f92672">*</span> key <span style="color:#66d9ef">in</span> keys) {
+            <span style="color:#66d9ef">if</span> ([dict valueForKey:key] <span style="color:#f92672">=</span><span style="color:#f92672">=</span> nil) <span style="color:#66d9ef">continue</span>;
+            [self setValue:[dict valueForKey:key] forKey:key];
+        }
+    }
+    <span style="color:#66d9ef">return</span> self;
+
+}
+
+</code></pre></div><p><a href="https://juejin.im/post/5d6bea9651882563e82aff2b">参考资料</a>
 <a href="https://juejin.im/post/5be24b826fb9a04a102ec12b">参考资料</a>
 <a href="https://juejin.im/post/5ac0a6116fb9a028de44d717">参考资料</a></p>
 
@@ -953,6 +1024,9 @@ self <span style="color:#66d9ef">class</span><span style="color:#f92672">:</span
             <li><a href="#方法添加">方法添加</a></li>
             <li><a href="#方法替换">方法替换</a></li>
             <li><a href="#kvo实现">KVO实现</a></li>
+            <li><a href="#热更新jspatch">热更新JSPatch</a></li>
+            <li><a href="#实现nscoding的自动归档和自动解档">实现NSCoding的自动归档和自动解档</a></li>
+            <li><a href="#实现字典和模型的自动转换mjextension">实现字典和模型的自动转换(MJExtension)</a></li>
           </ul>
         </li>
       </ul>
