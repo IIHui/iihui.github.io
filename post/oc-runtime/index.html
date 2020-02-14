@@ -226,7 +226,7 @@ code.has-jax {
     <i class="fa fa-file-word-o"></i>
 </span>
 <span class="post-meta-item-text">字数: </span>
-<span class="leancloud-visitors-count">6165</span>
+<span class="leancloud-visitors-count">6304</span>
 &nbsp; | &nbsp;
 <span class="post-meta-item-icon">
     <i class="fa fa-coffee"></i>
@@ -615,7 +615,9 @@ objc_AssociationPolicy policy：内存管理的策略
 </span><span style="color:#75715e">                                            *   The association is made atomically. */</span>
 };
 
-</code></pre></div><p>下面是<code>OC</code>中下实现一个<code>UIView</code>的<code>Category</code>添加自定义属性<code>defaultColor</code>：</p>
+</code></pre></div><p>内存分配各个值的含义如下所示：
+<img src="https://i.loli.net/2020/02/14/GM4N5cJ9uDeBjq7.jpg" alt="-c"></p>
+<p>下面是<code>OC</code>中下实现一个<code>UIView</code>的<code>Category</code>添加自定义属性<code>defaultColor</code>：</p>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-objc" data-lang="objc"><span style="color:#75715e">#</span><span style="color:#75715e">import &#34;ViewController.h&#34;</span><span style="color:#75715e">
 </span><span style="color:#75715e"></span><span style="color:#75715e">#</span><span style="color:#75715e">import &#34;objc</span><span style="color:#75715e">/</span><span style="color:#75715e">runtime.h&#34;</span><span style="color:#75715e">
 </span><span style="color:#75715e"></span>
@@ -669,7 +671,19 @@ objc_AssociationPolicy policy：内存管理的策略
         <span style="color:#66d9ef">return</span> value
     }
 }
-</code></pre></div><p><a href="https://juejin.im/post/5d6bea9651882563e82aff2b">参考资料1</a>
+</code></pre></div><h2 id="method-swizzling">Method Swizzling</h2>
+<h3 id="方法添加">方法添加</h3>
+<p>添加方法的实际上在上面的消息转发机制中已经提到了，其函数定义为：</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-objc" data-lang="objc"><span style="color:#75715e">//class_addMethod(Class  _Nullable __unsafe_unretained cls, SEL  _Nonnull name, IMP  _Nonnull imp, const char * _Nullable types)
+</span><span style="color:#75715e"></span>class_addMethod([self <span style="color:#66d9ef">class</span>], sel, (<span style="color:#66d9ef">IMP</span>)fooMethod, <span style="color:#e6db74"></span><span style="color:#e6db74">&#34;</span><span style="color:#e6db74">v@:</span><span style="color:#e6db74">&#34;</span>);
+
+</code></pre></div><p>其中，参数的解释如下：</p>
+<ul>
+<li><code>cls</code>表示被添加的类</li>
+<li><code>name</code>添加的方法的名称<code>SEL</code></li>
+<li><code>imp</code>方法的实现，该函数必须至少有两个参数<code>self,_cmd</code></li>
+</ul>
+<p><a href="https://juejin.im/post/5d6bea9651882563e82aff2b">参考资料1</a>
 <a href="https://juejin.im/post/5be24b826fb9a04a102ec12b">参考资料2</a>
 <a href="https://juejin.im/post/5ac0a6116fb9a028de44d717">参考资料3</a></p>
 
@@ -869,6 +883,11 @@ objc_AssociationPolicy policy：内存管理的策略
           <ul>
             <li><a href="#3个接口">3个接口</a></li>
             <li><a href="#参数解释">参数解释</a></li>
+          </ul>
+        </li>
+        <li><a href="#method-swizzling">Method Swizzling</a>
+          <ul>
+            <li><a href="#方法添加">方法添加</a></li>
           </ul>
         </li>
       </ul>
