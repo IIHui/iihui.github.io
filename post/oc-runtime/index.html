@@ -226,7 +226,7 @@ code.has-jax {
     <i class="fa fa-file-word-o"></i>
 </span>
 <span class="post-meta-item-text">字数: </span>
-<span class="leancloud-visitors-count">6304</span>
+<span class="leancloud-visitors-count">6473</span>
 &nbsp; | &nbsp;
 <span class="post-meta-item-icon">
     <i class="fa fa-coffee"></i>
@@ -683,7 +683,47 @@ objc_AssociationPolicy policy：内存管理的策略
 <li><code>name</code>添加的方法的名称<code>SEL</code></li>
 <li><code>imp</code>方法的实现，该函数必须至少有两个参数<code>self,_cmd</code></li>
 </ul>
-<p><a href="https://juejin.im/post/5d6bea9651882563e82aff2b">参考资料1</a>
+<h3 id="方法替换">方法替换</h3>
+<p>下面代码实现替换<code>ViewController</code>的<code>viewDidLoad</code>方法：</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-objc" data-lang="objc"><span style="color:#66d9ef">@implementation</span> <span style="color:#a6e22e">ViewController</span>
+
++ (<span style="color:#66d9ef">void</span>)<span style="color:#a6e22e">load</span> {
+    <span style="color:#66d9ef">static</span> dispatch_once_t onceToken;
+    dispatch_once(<span style="color:#f92672">&amp;</span>onceToken, <span style="color:#f92672">^</span>{
+        <span style="color:#66d9ef">Class</span> <span style="color:#66d9ef">class</span> <span style="color:#f92672">=</span> [self <span style="color:#66d9ef">class</span>];
+        <span style="color:#66d9ef">SEL</span> originalSelector <span style="color:#f92672">=</span> <span style="color:#66d9ef">@selector</span>(viewDidLoad);
+        <span style="color:#66d9ef">SEL</span> swizzledSelector <span style="color:#f92672">=</span> <span style="color:#66d9ef">@selector</span>(jkviewDidLoad);
+        
+        Method originalMethod <span style="color:#f92672">=</span> class_getInstanceMethod(<span style="color:#66d9ef">class</span>,originalSelector);
+        Method swizzledMethod <span style="color:#f92672">=</span> class_getInstanceMethod(<span style="color:#66d9ef">class</span>,swizzledSelector);
+        
+        <span style="color:#75715e">//judge the method named  swizzledMethod is already existed.
+</span><span style="color:#75715e"></span>        <span style="color:#66d9ef">BOOL</span> didAddMethod <span style="color:#f92672">=</span> class_addMethod(<span style="color:#66d9ef">class</span>, originalSelector, method_getImplementation(swizzledMethod), method_getTypeEncoding(swizzledMethod));
+        <span style="color:#75715e">// if swizzledMethod is already existed.
+</span><span style="color:#75715e"></span>        <span style="color:#66d9ef">if</span> (didAddMethod) {
+            class_replaceMethod(<span style="color:#66d9ef">class</span>, swizzledSelector, method_getImplementation(originalMethod), method_getTypeEncoding(originalMethod));
+        }
+        <span style="color:#66d9ef">else</span> {
+            method_exchangeImplementations(originalMethod, swizzledMethod);
+        }
+    });
+}
+
+- (<span style="color:#66d9ef">void</span>)<span style="color:#a6e22e">jkviewDidLoad</span> {
+    NSLog(<span style="color:#e6db74">@&#34;</span><span style="color:#e6db74">替换的方法</span><span style="color:#e6db74">&#34;</span>);
+    
+    [self jkviewDidLoad];
+}
+
+- (<span style="color:#66d9ef">void</span>)<span style="color:#a6e22e">viewDidLoad</span> {
+    NSLog(<span style="color:#e6db74">@&#34;</span><span style="color:#e6db74">自带的方法</span><span style="color:#e6db74">&#34;</span>);
+    
+    [super viewDidLoad];
+}
+
+<span style="color:#66d9ef">@end</span>
+
+</code></pre></div><p><a href="https://juejin.im/post/5d6bea9651882563e82aff2b">参考资料1</a>
 <a href="https://juejin.im/post/5be24b826fb9a04a102ec12b">参考资料2</a>
 <a href="https://juejin.im/post/5ac0a6116fb9a028de44d717">参考资料3</a></p>
 
@@ -888,6 +928,7 @@ objc_AssociationPolicy policy：内存管理的策略
         <li><a href="#method-swizzling">Method Swizzling</a>
           <ul>
             <li><a href="#方法添加">方法添加</a></li>
+            <li><a href="#方法替换">方法替换</a></li>
           </ul>
         </li>
       </ul>
