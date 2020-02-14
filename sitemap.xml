@@ -201,6 +201,11 @@ extension NSObject { func setAssociated&amp;lt;T&amp;gt;(value: T, associatedKey
  cls表示被添加的类 name添加的方法的名称SEL imp方法的实现，该函数必须至少有两个参数self,_cmd  方法替换 下面OC代码实现替换ViewController的viewDidLoad方法：
 @implementation ViewController &#43; (void)load { static dispatch_once_t onceToken; dispatch_once(&amp;amp;onceToken, ^{ Class class = [self class]; SEL originalSelector = @selector(viewDidLoad); SEL swizzledSelector = @selector(jkviewDidLoad); Method originalMethod = class_getInstanceMethod(class,originalSelector); Method swizzledMethod = class_getInstanceMethod(class,swizzledSelector); //judge the method named swizzledMethod is already existed.  BOOL didAddMethod = class_addMethod(class, originalSelector, method_getImplementation(swizzledMethod), method_getTypeEncoding(swizzledMethod)); // if swizzledMethod is already existed.  if (didAddMethod) { class_replaceMethod(class, swizzledSelector, method_getImplementation(originalMethod), method_getTypeEncoding(originalMethod)); } else { method_exchangeImplementations(originalMethod, swizzledMethod); } }); } - (void)jkviewDidLoad { NSLog(@&amp;#34;替换的方法&amp;#34;); [self jkviewDidLoad]; } - (void)viewDidLoad { NSLog(@&amp;#34;自带的方法&amp;#34;); [super viewDidLoad]; } @end OC的swizzling应该只在&#43;load中完成。在OC的Runtime中，每个类有两个方法都会自动调用。&#43;load是在一个类被初始装载时调用，&#43;initialize是在应用第一次调用该类的类方法或实例方法前调用的。两个方法都是可选的，并且只有在方法被实现的情况下才会被调用。
 swizzling应该只在dispatch_once中完成，由于swizzling改变了全局的状态，所以我们需要确保每个预防措施在运行时都是可用的。原子操作就是这样一个用于确保代码只会被执行一次的预防措施，就算是在不同的线程中也能确保代码只执行一次。Grand Central Dispatch的dispatch_once满足了所需要的需求，并且应该被当做使用swizzling的初始化单例方法的标准。
+在上图中，通过Swizzling特性，将selectorC的方法实现IMPc与selectorN的方法实现IMPn交换了，当调用selectorC，也就是给对象发送selectorC消息时，所查找到的方法实现就是IMPn而不是IMPc了。
+KVO实现 KVO的全称是Key-value observing，译为键值观察。提供了一种当其它对象属性被修改的时候能通知当前对象的机制。再MVC大行其道的Cocoa中，KVO机制很适合实现model和controller类之间的通信。
+KVO的实现依赖于OC强大的Runtime，当观察某对象A时，KVO机制动态创建一个对象A当前类的子类，并为这个新的子类重写了被观察属性keyPath的setter方法。setter方法随后负责通知观察对象属性的改变状况。
+Apple使用了isa-swizzling来实现KVO。当观察对象A时，KVO机制动态创建一个新的名为：NSKVONotifying_A的新类，该类继承自对象A的本类，且 KVO 为 NSKVONotifying_A 重写观察属性的 setter 方法，setter 方法会负责在调用原 setter 方法之前和之后，通知所有观察对象属性值的更改情况
+作者：jackyshan_ 链接：https://juejin.im/post/5ac0a6116fb9a028de44d717 来源：掘金 著作权归作者所有。商业转载请联系作者获得授权，非商业转载请注明出处。
 参考资料 参考资料 参考资料
 </content>
     </entry>

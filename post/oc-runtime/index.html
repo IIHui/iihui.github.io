@@ -226,13 +226,13 @@ code.has-jax {
     <i class="fa fa-file-word-o"></i>
 </span>
 <span class="post-meta-item-text">字数: </span>
-<span class="leancloud-visitors-count">6803</span>
+<span class="leancloud-visitors-count">7390</span>
 &nbsp; | &nbsp;
 <span class="post-meta-item-icon">
     <i class="fa fa-coffee"></i>
 </span>
 <span class="post-meta-item-text">阅读: </span>
-<span class="leancloud-visitors-count">14 分钟</span>
+<span class="leancloud-visitors-count">15 分钟</span>
 </span>
       </div>
     </header>
@@ -725,6 +725,16 @@ objc_AssociationPolicy policy：内存管理的策略
 
 </code></pre></div><p><code>OC</code>的<code>swizzling</code>应该只在<code>+load</code>中完成。在<code>OC</code>的<code>Runtime</code>中，每个类有两个方法都会自动调用。<code>+load</code>是在一个类被初始装载时调用，<code>+initialize</code>是在应用<!-- raw HTML omitted -->第一次调用该类的类方法或实例方法前调用的<!-- raw HTML omitted -->。<!-- raw HTML omitted -->两个方法都是可选的，并且只有在方法被实现的情况下才会被调用<!-- raw HTML omitted -->。</p>
 <p><code>swizzling</code>应该只在<code>dispatch_once</code>中完成，由于<code>swizzling</code><!-- raw HTML omitted -->改变了全局的状态，所以我们需要确保每个预防措施在运行时都是可用的<!-- raw HTML omitted -->。原子操作就是这样一个用于确保代码只会被执行一次的预防措施，就算是在不同的线程中也能确保代码只执行一次。<code>Grand Central Dispatch</code>的<code>dispatch_once</code>满足了所需要的需求，并且应该被当做使用<code>swizzling</code>的初始化单例方法的标准。</p>
+<p><img src="https://i.loli.net/2020/02/14/jLqMQwgiGkK4aJB.jpg" alt="-c"></p>
+<p>在上图中，通过<code>Swizzling</code>特性，将<code>selectorC</code>的方法实现<code>IMPc</code>与<code>selectorN</code>的方法实现<code>IMPn</code>交换了，当调用<code>selectorC</code>，也就是给对象发送<code>selectorC</code>消息时，所查找到的方法实现就是<code>IMPn</code>而不是<code>IMPc</code>了。</p>
+<h3 id="kvo实现">KVO实现</h3>
+<p><code>KVO</code>的全称是<code>Key-value observing</code>，译为键值观察。提供了一种当其它对象属性被修改的时候能通知当前对象的机制。再<code>MVC</code>大行其道的<code>Cocoa</code>中，<code>KVO</code>机制很适合实现<code>model</code>和<code>controller</code>类之间的通信。</p>
+<p><code>KVO</code>的实现依赖于<code>OC</code>强大的<code>Runtime</code>，当观察某对象<code>A</code>时，<code>KVO</code>机制动态创建一个对象<code>A</code>当前类的子类，并为这个新的子类重写了被观察属性<code>keyPath</code>的<code>setter</code>方法。<code>setter</code>方法随后负责通知观察对象属性的改变状况。</p>
+<p><code>Apple</code>使用了<code>isa-swizzling</code>来实现<code>KVO</code>。当观察对象A时，KVO机制动态创建一个新的名为：NSKVONotifying_A的新类，该类继承自对象A的本类，且 KVO 为 NSKVONotifying_A 重写观察属性的 setter 方法，setter 方法会负责在调用原 setter 方法之前和之后，通知所有观察对象属性值的更改情况</p>
+<p>作者：jackyshan_
+链接：https://juejin.im/post/5ac0a6116fb9a028de44d717
+来源：掘金
+著作权归作者所有。商业转载请联系作者获得授权，非商业转载请注明出处。</p>
 <p><a href="https://juejin.im/post/5d6bea9651882563e82aff2b">参考资料</a>
 <a href="https://juejin.im/post/5be24b826fb9a04a102ec12b">参考资料</a>
 <a href="https://juejin.im/post/5ac0a6116fb9a028de44d717">参考资料</a></p>
@@ -931,6 +941,7 @@ objc_AssociationPolicy policy：内存管理的策略
           <ul>
             <li><a href="#方法添加">方法添加</a></li>
             <li><a href="#方法替换">方法替换</a></li>
+            <li><a href="#kvo实现">KVO实现</a></li>
           </ul>
         </li>
       </ul>
