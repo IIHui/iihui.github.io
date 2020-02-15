@@ -107,7 +107,11 @@ Address* add2 = [Address new]; add2.country = @&amp;#34;England&amp;#34;; [peopl
   KVC的使用 KVC在iOS开发中是绝不可少的利器，这种基于运行时的编程方式极大地提高了灵活性，简化了代码，下面来列举iOS开发中KVC的使用场景。
 动态的取值和设值 上面很多例子就是使用KVC动态地取值和设值，这是最基本的用途了，每一个iOS developer都应该要掌握。
 访问私有成员 对于类中的私有成员，OC是无法直接访问的，但是KVC是可以的，可以参考前面Dog的例子。
-Model和字典的相互转换 参考资料 参考资料
+Model和字典的相互转换 Model和字典的相互转换，具体参考。充分地运用了KVC和Runtime组合的技巧，只用了短短数行代码就是完成了很多功能。
+修改一些控件的内部属性 众所周知很多UI控件都由很多内部UI控件组合而成的，但是Apple没有提供这访问这些控件的API，这样我们就无法正常地访问和修改这些控件的样式。而KVC在大多数情况可下可以解决这个问题，最常用的就是个性化UITextField中的placeHolderText了。下面演示如果修改placeHolder的文字样式。这里的关键点是如何获取要修改的样式的属性名，也就是key或者keyPath：
+let count:UnsafeMutablePointer&amp;lt;UInt32&amp;gt; = UnsafeMutablePointer&amp;lt;UInt32&amp;gt;() var properties = class_copyIvarList(UITextField.self, count) while properties.memory.debugDescription != &amp;#34;0x0000000000000000&amp;#34;{ let t = ivar_getName(properties.memory) let n = NSString(CString: t, encoding: NSUTF8StringEncoding) print(n) //打印出所有属性，这里我用了Swift语言  properties = properties.successor() } //上面省略了部分属性 Optional(_disabledBackgroundView) Optional(_systemBackgroundView) Optional(_floatingContentView) Optional(_contentBackdropView) Optional(_fieldEditorBackgroundView) Optional(_fieldEditorEffectView) Optional(_displayLabel) Optional(_placeholderLabel) //这个正是我想要修改的属性。 Optional(_dictationLabel) Optional(_suffixLabel) Optional(_prefixLabel) Optional(_iconView) //下面省略了部分属性 操作集合 Apple对KVC的valueForKey:方法作了一些特殊的实现，比如说NSArray和NSSet这样的容器类就实现了这些方法，所以可以用KVC很方便地操作集合。
+高阶消息传递 当对容器类使用KVC时，valueForKey:将会被传递给容器中的每一个对象，而不是容器本身进行操作。结果会被添加进返回的容器中。这样，开发者可以很方便的操作集合来返回另一个集合。
+NSArray* arrStr = @[@&amp;#34;english&amp;#34;,@&amp;#34;franch&amp;#34;,@&amp;#34;chinese&amp;#34;]; NSArray* arrCapStr = [arrStr valueForKey:@&amp;#34;capitalizedString&amp;#34;]; for (NSString* str in arrCapStr) { NSLog(@&amp;#34;%@&amp;#34;,str); } NSArray* arrCapStrLength = [arrStr valueForKeyPath:@&amp;#34;capitalizedString.length&amp;#34;]; for (NSNumber* length in arrCapStrLength) { NSLog(@&amp;#34;%ld&amp;#34;,(long)length.integerValue); } //结果 2020-02-15 13:08:35.863142&#43;0800 test[55706:3138103] English 2020-02-15 13:08:35.863904&#43;0800 test[55706:3138103] Franch 2020-02-15 13:08:35.863924&#43;0800 test[55706:3138103] Chinese 2020-02-15 13:08:35.864765&#43;0800 test[55706:3138103] 7 2020-02-15 13:08:35.864805&#43;0800 test[55706:3138103] 6 2020-02-15 13:08:35.864820&#43;0800 test[55706:3138103] 7 参考资料 参考资料
 </content>
     </entry>
     

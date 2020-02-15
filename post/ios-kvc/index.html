@@ -226,13 +226,13 @@ code.has-jax {
     <i class="fa fa-file-word-o"></i>
 </span>
 <span class="post-meta-item-text">字数: </span>
-<span class="leancloud-visitors-count">4029</span>
+<span class="leancloud-visitors-count">4637</span>
 &nbsp; | &nbsp;
 <span class="post-meta-item-icon">
     <i class="fa fa-coffee"></i>
 </span>
 <span class="post-meta-item-text">阅读: </span>
-<span class="leancloud-visitors-count">9 分钟</span>
+<span class="leancloud-visitors-count">10 分钟</span>
 </span>
       </div>
     </header>
@@ -463,7 +463,56 @@ NSLog(<span style="color:#e6db74">@&#34;</span><span style="color:#e6db74">count
 <h3 id="访问私有成员">访问私有成员</h3>
 <p>对于类中的私有成员，<code>OC</code>是无法直接访问的，但是<code>KVC</code>是可以的，可以参考前面<code>Dog</code>的例子。</p>
 <h3 id="model和字典的相互转换">Model和字典的相互转换</h3>
-<p><a href="https://www.jianshu.com/p/45cbd324ea65">参考资料</a>
+<p><code>Model</code>和字典的相互转换，具体<a href="https://www.jianshu.com/p/53b1e5785b24">参考</a>。充分地运用了<code>KVC</code>和<code>Runtime</code>组合的技巧，只用了短短数行代码就是完成了很多功能。</p>
+<h3 id="修改一些控件的内部属性">修改一些控件的内部属性</h3>
+<p>众所周知很多<code>UI</code>控件都由<!-- raw HTML omitted -->很多内部<code>UI</code>控件组合而成<!-- raw HTML omitted -->的，但是<code>Apple</code>没有提供这访问这些控件的<code>API</code>，这样我们就无法正常地访问和修改这些控件的样式。而<code>KVC</code>在大多数情况可下可以解决这个问题，最常用的就是个性化<code>UITextField</code>中的<code>placeHolderText</code>了。下面演示如果修改<code>placeHolder</code>的文字样式。这里的关键点是如何获取要修改的样式的属性名，也就是<code>key</code>或者<code>keyPath</code>：</p>
+<p><img src="https://i.loli.net/2020/02/15/USyvOpWMc9TweXt.jpg" alt="-c"></p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-objc" data-lang="objc">let count:UnsafeMutablePointer<span style="color:#f92672">&lt;</span><span style="color:#66d9ef">UInt32</span><span style="color:#f92672">&gt;</span> <span style="color:#f92672">=</span>  UnsafeMutablePointer<span style="color:#f92672">&lt;</span><span style="color:#66d9ef">UInt32</span><span style="color:#f92672">&gt;</span>()
+var properties <span style="color:#f92672">=</span> class_copyIvarList(UITextField.self, count)
+<span style="color:#66d9ef">while</span> properties.memory.debugDescription <span style="color:#f92672">!</span><span style="color:#f92672">=</span>  <span style="color:#e6db74"></span><span style="color:#e6db74">&#34;</span><span style="color:#e6db74">0x0000000000000000</span><span style="color:#e6db74">&#34;</span>{
+    let t <span style="color:#f92672">=</span> ivar_getName(properties.memory)
+    let n <span style="color:#f92672">=</span> NSString(CString: t, encoding: NSUTF8StringEncoding)
+    print(n)                                                         <span style="color:#75715e">//打印出所有属性，这里我用了Swift语言
+</span><span style="color:#75715e"></span>    properties <span style="color:#f92672">=</span> properties.successor()
+}
+
+<span style="color:#75715e">//上面省略了部分属性
+</span><span style="color:#75715e"></span>Optional(_disabledBackgroundView)
+Optional(_systemBackgroundView)
+Optional(_floatingContentView)
+Optional(_contentBackdropView)
+Optional(_fieldEditorBackgroundView)
+Optional(_fieldEditorEffectView)
+Optional(_displayLabel)
+Optional(_placeholderLabel)                                         <span style="color:#75715e">//这个正是我想要修改的属性。
+</span><span style="color:#75715e"></span>Optional(_dictationLabel)
+Optional(_suffixLabel)
+Optional(_prefixLabel)
+Optional(_iconView)
+<span style="color:#75715e">//下面省略了部分属性
+</span></code></pre></div><h3 id="操作集合">操作集合</h3>
+<p><code>Apple</code>对<code>KVC</code>的<code>valueForKey:</code>方法作了一些特殊的实现，比如说<code>NSArray</code>和<code>NSSet</code>这样的容器类就实现了这些方法，所以可以用<code>KVC</code>很方便地操作集合。</p>
+<h3 id="高阶消息传递">高阶消息传递</h3>
+<p>当对容器类使用<code>KVC</code>时，<code>valueForKey:</code>将会被传递给容器中的每一个对象，而不是容器本身进行操作。结果会被添加进返回的容器中。这样，开发者可以很方便的操作集合来返回另一个集合。</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-objc" data-lang="objc">NSArray<span style="color:#f92672">*</span> arrStr <span style="color:#f92672">=</span> <span style="color:#ae81ff">@[</span><span style="color:#e6db74">@&#34;</span><span style="color:#e6db74">english</span><span style="color:#e6db74">&#34;</span>,<span style="color:#e6db74">@&#34;</span><span style="color:#e6db74">franch</span><span style="color:#e6db74">&#34;</span>,<span style="color:#e6db74">@&#34;</span><span style="color:#e6db74">chinese</span><span style="color:#e6db74">&#34;</span><span style="color:#ae81ff">]</span>;
+NSArray<span style="color:#f92672">*</span> arrCapStr <span style="color:#f92672">=</span> [arrStr valueForKey:<span style="color:#e6db74">@&#34;</span><span style="color:#e6db74">capitalizedString</span><span style="color:#e6db74">&#34;</span>];
+<span style="color:#66d9ef">for</span> (NSString<span style="color:#f92672">*</span> str  <span style="color:#66d9ef">in</span> arrCapStr) {
+    NSLog(<span style="color:#e6db74">@&#34;</span><span style="color:#e6db74">%@</span><span style="color:#e6db74">&#34;</span>,str);
+}
+NSArray<span style="color:#f92672">*</span> arrCapStrLength <span style="color:#f92672">=</span> [arrStr valueForKeyPath:<span style="color:#e6db74">@&#34;</span><span style="color:#e6db74">capitalizedString.length</span><span style="color:#e6db74">&#34;</span>];
+<span style="color:#66d9ef">for</span> (NSNumber<span style="color:#f92672">*</span> length  <span style="color:#66d9ef">in</span> arrCapStrLength) {
+    NSLog(<span style="color:#e6db74">@&#34;</span><span style="color:#e6db74">%ld</span><span style="color:#e6db74">&#34;</span>,(<span style="color:#66d9ef">long</span>)length.integerValue);
+}
+
+<span style="color:#75715e">//结果
+</span><span style="color:#75715e"></span><span style="color:#ae81ff">2020</span><span style="color:#f92672">-</span><span style="color:#ae81ff">02</span><span style="color:#f92672">-</span><span style="color:#ae81ff">15</span> <span style="color:#ae81ff">13</span><span style="color:#f92672">:</span><span style="color:#ae81ff">08</span><span style="color:#f92672">:</span><span style="color:#ae81ff">35.863142</span><span style="color:#f92672">+</span><span style="color:#ae81ff">0800</span> test[<span style="color:#ae81ff">55706</span><span style="color:#f92672">:</span><span style="color:#ae81ff">3138103</span>] English
+<span style="color:#ae81ff">2020</span><span style="color:#f92672">-</span><span style="color:#ae81ff">02</span><span style="color:#f92672">-</span><span style="color:#ae81ff">15</span> <span style="color:#ae81ff">13</span><span style="color:#f92672">:</span><span style="color:#ae81ff">08</span><span style="color:#f92672">:</span><span style="color:#ae81ff">35.863904</span><span style="color:#f92672">+</span><span style="color:#ae81ff">0800</span> test[<span style="color:#ae81ff">55706</span><span style="color:#f92672">:</span><span style="color:#ae81ff">3138103</span>] Franch
+<span style="color:#ae81ff">2020</span><span style="color:#f92672">-</span><span style="color:#ae81ff">02</span><span style="color:#f92672">-</span><span style="color:#ae81ff">15</span> <span style="color:#ae81ff">13</span><span style="color:#f92672">:</span><span style="color:#ae81ff">08</span><span style="color:#f92672">:</span><span style="color:#ae81ff">35.863924</span><span style="color:#f92672">+</span><span style="color:#ae81ff">0800</span> test[<span style="color:#ae81ff">55706</span><span style="color:#f92672">:</span><span style="color:#ae81ff">3138103</span>] Chinese
+<span style="color:#ae81ff">2020</span><span style="color:#f92672">-</span><span style="color:#ae81ff">02</span><span style="color:#f92672">-</span><span style="color:#ae81ff">15</span> <span style="color:#ae81ff">13</span><span style="color:#f92672">:</span><span style="color:#ae81ff">08</span><span style="color:#f92672">:</span><span style="color:#ae81ff">35.864765</span><span style="color:#f92672">+</span><span style="color:#ae81ff">0800</span> test[<span style="color:#ae81ff">55706</span><span style="color:#f92672">:</span><span style="color:#ae81ff">3138103</span>] <span style="color:#ae81ff">7</span>
+<span style="color:#ae81ff">2020</span><span style="color:#f92672">-</span><span style="color:#ae81ff">02</span><span style="color:#f92672">-</span><span style="color:#ae81ff">15</span> <span style="color:#ae81ff">13</span><span style="color:#f92672">:</span><span style="color:#ae81ff">08</span><span style="color:#f92672">:</span><span style="color:#ae81ff">35.864805</span><span style="color:#f92672">+</span><span style="color:#ae81ff">0800</span> test[<span style="color:#ae81ff">55706</span><span style="color:#f92672">:</span><span style="color:#ae81ff">3138103</span>] <span style="color:#ae81ff">6</span>
+<span style="color:#ae81ff">2020</span><span style="color:#f92672">-</span><span style="color:#ae81ff">02</span><span style="color:#f92672">-</span><span style="color:#ae81ff">15</span> <span style="color:#ae81ff">13</span><span style="color:#f92672">:</span><span style="color:#ae81ff">08</span><span style="color:#f92672">:</span><span style="color:#ae81ff">35.864820</span><span style="color:#f92672">+</span><span style="color:#ae81ff">0800</span> test[<span style="color:#ae81ff">55706</span><span style="color:#f92672">:</span><span style="color:#ae81ff">3138103</span>] <span style="color:#ae81ff">7</span>
+
+</code></pre></div><p><a href="https://www.jianshu.com/p/45cbd324ea65">参考资料</a>
 <a href="http://www.mengyueping.com/2017/07/18/iOS_KVO/">参考资料</a></p>
 
     </div>
@@ -647,6 +696,9 @@ NSLog(<span style="color:#e6db74">@&#34;</span><span style="color:#e6db74">count
             <li><a href="#动态的取值和设值">动态的取值和设值</a></li>
             <li><a href="#访问私有成员">访问私有成员</a></li>
             <li><a href="#model和字典的相互转换">Model和字典的相互转换</a></li>
+            <li><a href="#修改一些控件的内部属性">修改一些控件的内部属性</a></li>
+            <li><a href="#操作集合">操作集合</a></li>
+            <li><a href="#高阶消息传递">高阶消息传递</a></li>
           </ul>
         </li>
       </ul>
