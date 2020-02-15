@@ -76,9 +76,7 @@ summaryLength = 100 #放在同themes同级的config.toml上才有效 文章置�
           <tag>iOS</tag><tag>oc</tag>
         </tags>
         <content type="html">  KVC(Key Value Coding)键值编码，指允许通过Key名字来直接访问对象的属性，而不需要调用明确的存取方法。这样，便能在运行时动态地访问和修改对象的属性值。在iOS中，无论是Swift还是OC，KVC都是通过对NSObject的扩展来实现的。所以，继承了NSObject的类型的对象都能使用KVC。
- KeyPath KeyPath，表示键路径，是一个由点作分隔符的键组成的字符串（点语法），用于表示一个连接在一起的对象序列。其中，后一个键的性质是由前一个键的性质决定的（如同现代面向对象语言取成员）。
-有了键路径，就可以不通过相应的方法来直接取相关的性质（属性/方法）。通过键路径，可以指定对象中的一个任意深度的路径，使其指向相关对象的特定属性。
-KVC KVC是一种通过字符串间接访问对象的属性的方法，而不是通过调用存取方法（setter/getter）来获取属性，下面是KVC最为重要的四个方法：
+ KVC KVC是一种通过字符串间接访问对象的属性的方法，而不是通过调用存取方法（setter/getter）来获取属性，下面是KVC最为重要的四个方法：
 - (nullable id)valueForKey:(NSString *)key; //直接通过Key(NSString属性的名字)来取值 - (void)setValue:(nullable id)value forKey:(NSString *)key; //通过Key(NSString属性的名字)来设值 - (nullable id)valueForKeyPath:(NSString *)keyPath; //通过KeyPath(xx.xx)来取值 - (void)setValue:(nullable id)value forKeyPath:(NSString *)keyPath; //通过KeyPath(xx.xx)来设值  寻找Key机制 在赋值和取之的时候都要先寻找Key，但这两者在寻找Key的方式是有区别的，接下来一一说明它们寻找Key的机制。
 设置值 当调用setValue：属性值 forKey：@”name“，来设置值时，底层的执行机制如下：
   程序优先调用set&amp;lt;Key&amp;gt;:属性值方法，代码通过setter方法完成设置。这里的Key是指成员变量名，而不是forKey表示的值。
@@ -98,7 +96,11 @@ KVC KVC是一种通过字符串间接访问对象的属性的方法，而不是�
   如果上面的getter没有找到，KVC则会查找countOf&amp;lt;Key&amp;gt;,objectIn&amp;lt;Key&amp;gt;AtIndex或&amp;lt;Key&amp;gt;AtIndexes格式的方法。如果countOf&amp;lt;Key&amp;gt;方法和另外两个方法中的一个被找到，那么就会返回一个可以响应NSArray所有方法的代理集合(它是NSKeyValueArray，为NSArray的子类)，调用这个代理集合的方法，或者说给这个代理集合发送属于NSArray的方法，就会以countOf&amp;lt;Key&amp;gt;,objectIn&amp;lt;Key&amp;gt;AtIndex或&amp;lt;Key&amp;gt;AtIndexes这几个方法组合的形式调用。还有一个可选的get&amp;lt;Key&amp;gt;:range:方法。所以你想重新定义KVC的一些功能，你可以添加这些方法，需要注意的是你的方法名要符合KVC的标准命名方法，包括方法签名。  如果上面的方法没有找到，那么会同时查找countOf&amp;lt;Key&amp;gt;，enumeratorOf&amp;lt;Key&amp;gt;,memberOf&amp;lt;Key&amp;gt;格式的方法。如果这三个方法都找到，那么就返回一个可以响应NSSet所的方法的代理集合，和上面一样，给这个代理集合发NSSet的消息，就会以countOf&amp;lt;Key&amp;gt;，enumeratorOf&amp;lt;Key&amp;gt;,memberOf&amp;lt;Key&amp;gt;组合的形式调用。
   如果还没有找到，再检查类方法&#43;(BOOL)accessInstanceVariablesDirectly,如果返回YES(默认行为)，那么和先前的设值一样，会按_&amp;lt;key&amp;gt;,_is&amp;lt;Key&amp;gt;,&amp;lt;key&amp;gt;,is&amp;lt;Key&amp;gt;的顺序搜索成员变量名，这里不推荐这么做，因为这样直接访问实例变量破坏了封装性，使代码更脆弱。如果重写了类方法&#43; (BOOL)accessInstanceVariablesDirectly返回NO的话，那么会直接调用valueForUndefinedKey:
   还没有找到的话，调用valueForUndefinedKey:
-  缺点   一旦使用KVC，编译器将无法检查出错误，即不会对设置的键、键路径进行错误检查。
+  KeyPath 一个类的成员变量有可能是自定义类或其他的复杂数据类型，可以先用KVC获取该属性，然后再次用KVC来获取这个自定义类的属性，但这样是比较繁琐的。因此，KVC提供了一个解决方案，那就是键路径keyPath。
+KeyPath，表示键路径，是一个由点作分隔符的键组成的字符串（点语法），用于表示一个连接在一起的对象序列。其中，后一个键的性质是由前一个键的性质决定的（如同现代面向对象语言取成员）。所以，KVC对于keyPath是搜索机制第一步就是分离key，用小数点.来分割key，然后再像普通key一样按照先前介绍的顺序搜索下去。
+有了键路径，就可以不通过相应的方法来直接取相关的性质（属性/方法）。通过键路径，可以指定对象中的一个任意深度的路径，使其指向相关对象的特定属性。
+- (nullable id)valueForKeyPath:(NSString *)keyPath; //通过KeyPath来取值 - (void)setValue:(nullable id)value forKeyPath:(NSString *)keyPath; //通过KeyPath来设值  下面是一个例子：
+@interface Address : NSObject @end @interface Address() @property (nonatomic,copy)NSString* country; @end @implementation Address @end @interface People : NSObject @end @interface People() @property (nonatomic,copy) NSString* name; @property (nonatomic,strong) Address* address; @property (nonatomic,assign) NSInteger age; @end @implementation People @end int main(int argc, const char * argv[]) { @autoreleasepool { People* people1 = [People new]; Address* add = [Address new]; add.country = @&amp;#34;China&amp;#34;; people1.address = add; NSString* country1 = people1.address.country; NSString * country2 = [people1 valueForKeyPath:@&amp;#34;address.country&amp;#34;]; NSLog(@&amp;#34;country1:%@ country2:%@&amp;#34;,country1,country2); [people1 setValue:@&amp;#34;USA&amp;#34; forKeyPath:@&amp;#34;address.country&amp;#34;]; country1 = people1.address.country; country2 = [people1 valueForKeyPath:@&amp;#34;address.country&amp;#34;]; NSLog(@&amp;#34;country1:%@ country2:%@&amp;#34;,country1,country2); } return 0; } //打印结果 2020-02-15 11:13:48.223700&#43;0800 test[54340:3105892] country1:China country2:China 2020-02-15 11:13:48.224670&#43;0800 test[54340:3105892] country1:USA country2:USA 缺点   一旦使用KVC，编译器将无法检查出错误，即不会对设置的键、键路径进行错误检查。
   执行效率要低于合成存取器方法和自定义的setter和getter方法。效率低的原因是使用KVC键值编码，它必须先解析字符串，然后在设置或者访问对象的实例变量。
   参考资料 参考资料
 </content>
