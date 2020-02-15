@@ -4,13 +4,13 @@
     <meta charset="UTF-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" /> 
-    <title>Go 未命名类型 - Keep It Simple</title>
+    <title>Swift 反射 - Keep It Simple</title>
     <meta name="keywords" content="博客,思考,读书,笔记,技术,分享">
     
-    <meta property="og:title" content="Go 未命名类型">
+    <meta property="og:title" content="Swift 反射">
     <meta property="og:site_name" content="Keep It Simple">
     <meta property="og:image" content="/img/author.jpg"> 
-    <meta name="title" content="Go 未命名类型 - Keep It Simple" />
+    <meta name="title" content="Swift 反射 - Keep It Simple" />
     <meta name="description" content="Swift | Go | C&#43;&#43; "> 
     <link rel="shortcut icon" href="https://iihui.github.io/img/favicon.ico" />
     <link rel="apple-touch-icon" href="https://iihui.github.io/img/apple-touch-icon.png" />
@@ -177,8 +177,8 @@ code.has-jax {
   <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
     <header class="post-header">
       <h1 class="post-title" itemprop="name headline">
-        <a class="post-title-link" href="https://iihui.github.io/post/go-undef-type/" itemprop="url">
-        Go 未命名类型
+        <a class="post-title-link" href="https://iihui.github.io/post/ios-reflection/" itemprop="url">
+        Swift 反射
         </a>
       </h1>
       <div class="post-meta">
@@ -187,8 +187,8 @@ code.has-jax {
     <i class="fa fa-calendar-o"></i>
 </span>
 <span class="post-meta-item-text">创建: </span>
-<time itemprop="dateCreated" datetime="2016-03-22T13:04:35+08:00" content="2017-08-03">
-    2017-08-03
+<time itemprop="dateCreated" datetime="2016-03-22T13:04:35+08:00" content="2020-02-14">
+    2020-02-14
 </time>
 </span>
 &nbsp; | &nbsp;
@@ -197,8 +197,8 @@ code.has-jax {
     <i class="fa fa-calendar-check-o"></i>
 </span>
 <span class="post-meta-item-text">更新: </span>
-<time itemprop="dateUpdated" content="2017-08-03">
-    2017-08-03
+<time itemprop="dateUpdated" content="2020-02-14">
+    2020-02-14
 </time>
 </span> 
       
@@ -211,8 +211,8 @@ code.has-jax {
   <span class="post-meta-item-text">分类: </span>
   
     <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
-      <a href="https://iihui.github.io/categories/code" itemprop="url" rel="index">
-        <span itemprop="name">code</span>
+      <a href="https://iihui.github.io/categories/ios" itemprop="url" rel="index">
+        <span itemprop="name">iOS</span>
       </a>
       &nbsp; 
     </span>
@@ -226,7 +226,7 @@ code.has-jax {
     <i class="fa fa-file-word-o"></i>
 </span>
 <span class="post-meta-item-text">字数: </span>
-<span class="leancloud-visitors-count">508</span>
+<span class="leancloud-visitors-count">916</span>
 &nbsp; | &nbsp;
 <span class="post-meta-item-icon">
     <i class="fa fa-coffee"></i>
@@ -237,79 +237,91 @@ code.has-jax {
       </div>
     </header>
     <div class="post-body" itemprop="articleBody">
-    <h2 id="未命名类型">未命名类型</h2>
-<p>在Go中<!-- raw HTML omitted -->数组、切片、字典、通道<!-- raw HTML omitted -->类型<!-- raw HTML omitted -->与具体元素类型或长度属性相关<!-- raw HTML omitted -->，故被称为未命名类型。<!-- raw HTML omitted -->具有相同声明的未命名类型被称为同一类型<!-- raw HTML omitted -->，在 Go 中未命名类型<!-- raw HTML omitted -->共有8类<!-- raw HTML omitted -->。</p>
-<ul>
-<li>
-<p>具有相同基础类型的指针</p>
-</li>
-<li>
-<p>具有相同<!-- raw HTML omitted -->元素类型和长度<!-- raw HTML omitted -->的数组<code>array</code></p>
-</li>
-<li>
-<p>具有<!-- raw HTML omitted -->相同元素类型<!-- raw HTML omitted -->的切片<code>slice</code></p>
-</li>
-<li>
-<p>具有相同<!-- raw HTML omitted -->键和值<!-- raw HTML omitted -->类型的字典<code>map</code></p>
-</li>
-<li>
-<p>具有<!-- raw HTML omitted -->相同数据类型以及操作方向<!-- raw HTML omitted -->的通道<code>channel</code></p>
-</li>
-<li>
-<p>具有相同字段序列（字段名、字段类型、<!-- raw HTML omitted -->标签以及字段顺序<!-- raw HTML omitted -->）的结构体<code>struct</code></p>
-</li>
-<li>
-<p>具有相同签名的（参数和返回值列表，<!-- raw HTML omitted -->不包括参数名<!-- raw HTML omitted -->）的函数<code>func</code>，其中函数的<!-- raw HTML omitted -->参数顺序<!-- raw HTML omitted -->也属于签名的组成部分</p>
-</li>
-<li>
-<p>具有相同方法集（方法名，方法签名，<!-- raw HTML omitted -->不包括顺序<!-- raw HTML omitted -->）的接口<code>interface</code></p>
-</li>
-<li>
-<p>容易被忽略的是<code>struct tag</code>它属于类型组成的一部分，而不仅仅是元数据描述</p>
-</li>
-</ul>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#66d9ef">var</span> <span style="color:#a6e22e">a</span> <span style="color:#66d9ef">struct</span>{
-    <span style="color:#a6e22e">x</span> <span style="color:#66d9ef">int</span> <span style="color:#e6db74">`</span><span style="color:#e6db74">x</span><span style="color:#e6db74">`</span>
-    <span style="color:#a6e22e">s</span> <span style="color:#66d9ef">string</span> <span style="color:#e6db74">`</span><span style="color:#e6db74">s</span><span style="color:#e6db74">`</span>
- }
+    <blockquote>
+<p>在计算机学中，反射（<code>reflection</code>）是指计算机程序在运行时（<code>runtime</code>）可以访问、检测和修改它本身状态或行为的一种能力。用比喻来说，反射就是程序在运行的时候能够“观察”并且修改自己的行为。</p>
+</blockquote>
+<h1 id="objc">@objc</h1>
+<p><code>Swift</code>是一门静态语言，和<code>OC</code>不同，不能在运行时做很多复杂的操作，这也是<code>Swift</code>被吐槽比较多的一点。<code>Swift</code>虽然不能像<code>OC</code>一样在运行时做很多事，但是还是做一些小动作，比如和<code>Java</code>类似的反射机制等。</p>
+<p><code>@objc</code>，可以用来<!-- raw HTML omitted -->标记函数和类、协议等等<!-- raw HTML omitted -->。这个标记<!-- raw HTML omitted -->表示该方法或者该类可以被用于运行时<!-- raw HTML omitted -->。例如，在<code>Swift</code>中类似按钮点击的<code>selector</code>都必须用<code>@objc</code>标记，表示该方法是运行时调用（按钮点击是运行时事件，编译器在编译时对没有调用到的非运行时函数会优化掉），同时可以做其他比如<code>KVO</code>这种在运时的操作。所以加了<code>@objc</code>后可用于<code>OC</code>代码里。在<code>Swift 4</code>之后的版本里，类继承 <code>NSObjct</code>不会再默认带<code>@objc</code> 标记，当重写<code>NSObjct</code>编辑器会自动提示带上 <code>@objc</code>。</p>
+<h1 id="swift反射">Swift反射</h1>
+<p><code>Swift</code>的反射机制是基于一个叫<code>Mirror</code>的<code>Stuct</code>来实现的。具体的操作方式为：首先创建一个你想要反射的类的实例，再传给<code>Mirror</code>的构造器来实例化一个<code>Mirror</code>对象，最后使用这个<code>Mirror</code>来获取你想要的东西。</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift"><span style="color:#75715e">//</span>
+<span style="color:#75715e">//</span><span style="color:#75715e"> </span><span style="color:#75715e"> </span><span style="color:#75715e">m</span><span style="color:#75715e">a</span><span style="color:#75715e">i</span><span style="color:#75715e">n</span><span style="color:#75715e">.</span><span style="color:#75715e">s</span><span style="color:#75715e">w</span><span style="color:#75715e">i</span><span style="color:#75715e">f</span><span style="color:#75715e">t</span>
+<span style="color:#66d9ef">import</span> <span style="color:#a6e22e">Foundation</span>
 
-<span style="color:#66d9ef">var</span> <span style="color:#a6e22e">b</span> <span style="color:#66d9ef">struct</span>{
-   <span style="color:#a6e22e">x</span> <span style="color:#66d9ef">int</span>
-   <span style="color:#a6e22e">s</span> <span style="color:#66d9ef">string</span>
+<span style="color:#66d9ef">protocol</span> <span style="color:#a6e22e">Drive</span> {
+    <span style="color:#66d9ef">func</span> <span style="color:#a6e22e">run</span>()
 }
 
-<span style="color:#a6e22e">b</span>=<span style="color:#a6e22e">a</span>  <span style="color:#75715e">//cannot use a (type struct { x int &#34;x&#34;; s string &#34;s&#34; })
-</span><span style="color:#75715e"></span>      <span style="color:#75715e">//as type struct { x int; s string } in assignment
-</span><span style="color:#75715e"></span><span style="color:#a6e22e">fmt</span>.<span style="color:#a6e22e">Println</span>(<span style="color:#a6e22e">b</span>)
-</code></pre></div><hr>
-<h2 id="未命名类型的转换规则">未命名类型的转换规则</h2>
-<ul>
-<li>
-<p>所属类型完全相同</p>
-</li>
-<li>
-<p>基础类型相同，其中一个是未命名类型</p>
-</li>
-<li>
-<p>数据类型相同，将双向通道赋值给单向通道，且其中一个是未命名类型</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go">  <span style="color:#66d9ef">type</span> <span style="color:#a6e22e">data</span> [<span style="color:#ae81ff">2</span>]<span style="color:#66d9ef">int</span> <span style="color:#75715e">//data是使用数组新定义的类型
-</span><span style="color:#75715e"></span>  <span style="color:#66d9ef">var</span> <span style="color:#a6e22e">d</span> <span style="color:#a6e22e">data</span> =[<span style="color:#ae81ff">2</span>]<span style="color:#66d9ef">int</span>{<span style="color:#ae81ff">1</span>,<span style="color:#ae81ff">2</span>} <span style="color:#75715e">//基础类型相同，其中一个是未命名类型
-</span><span style="color:#75715e"></span>	
-  <span style="color:#a6e22e">doubleChan</span> <span style="color:#f92672">:=</span> make(<span style="color:#66d9ef">chan</span> <span style="color:#66d9ef">int</span>,<span style="color:#ae81ff">3</span>) <span style="color:#75715e">//双向通道
-</span><span style="color:#75715e"></span>  <span style="color:#66d9ef">var</span> <span style="color:#a6e22e">singleChan</span> <span style="color:#66d9ef">chan</span><span style="color:#f92672">&lt;-</span> <span style="color:#66d9ef">int</span> = <span style="color:#a6e22e">doubleChan</span> <span style="color:#75715e">//双向通道赋值给单向通道
-</span></code></pre></div></li>
-</ul>
-<hr>
-<p><img src="http://oqe76o492.bkt.clouddn.com/Snipaste_2018-04-24_18-21-03.png" alt="c600"></p>
-<hr>
+<span style="color:#66d9ef">public</span> <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">Tire</span> { <span style="color:#75715e">//</span><span style="color:#75715e">轮</span><span style="color:#75715e">胎</span>
+    <span style="color:#66d9ef">var</span> brand: String? <span style="color:#75715e">//</span><span style="color:#75715e">品</span><span style="color:#75715e">牌</span>
+    <span style="color:#66d9ef">var</span> size: Float = <span style="color:#ae81ff">0</span> <span style="color:#75715e">//</span><span style="color:#75715e">大</span><span style="color:#75715e">小</span>
+}
 
+<span style="color:#66d9ef">public</span> <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">Vehicle</span>: Drive {
+    <span style="color:#66d9ef">var</span> carType: String?
+    <span style="color:#66d9ef">var</span> tires: [Tire]?
+    <span style="color:#66d9ef">var</span> host: String?<span style="color:#75715e">//</span><span style="color:#75715e"> </span><span style="color:#75715e">主</span><span style="color:#75715e">人</span>
+    <span style="color:#66d9ef">var</span> brand: String?<span style="color:#75715e">//</span><span style="color:#75715e">汽</span><span style="color:#75715e">车</span><span style="color:#75715e">品</span><span style="color:#75715e">牌</span>
+
+    <span style="color:#66d9ef">func</span> <span style="color:#a6e22e">run</span>() {
+        <span style="color:#66d9ef">if</span> <span style="color:#66d9ef">let</span> h = host {
+            print(<span style="color:#e6db74">&#34;</span><span style="color:#e6db74">\(</span>h<span style="color:#e6db74">)</span><span style="color:#e6db74">Drive a </span><span style="color:#e6db74">\(</span>brand<span style="color:#e6db74">)</span><span style="color:#e6db74"> </span><span style="color:#e6db74">\(</span>carType<span style="color:#e6db74">)</span><span style="color:#e6db74"> car run</span><span style="color:#e6db74">&#34;</span>)
+        } <span style="color:#66d9ef">else</span> {
+            print(<span style="color:#e6db74">&#34;</span><span style="color:#e6db74">this car is not selled</span><span style="color:#e6db74">&#34;</span>)
+        }
+    }
+}
+
+<span style="color:#66d9ef">public</span> <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">Trunk</span>: Vehicle {
+    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">var</span> packintBox: String?
+}
+
+<span style="color:#66d9ef">public</span> <span style="color:#66d9ef">struct</span> <span style="color:#a6e22e">TranGroup</span> { <span style="color:#75715e">//</span><span style="color:#75715e">货</span><span style="color:#75715e">运</span><span style="color:#75715e">集</span><span style="color:#75715e">团</span>
+    <span style="color:#66d9ef">var</span> trunks = {
+        <span style="color:#66d9ef">return</span> [Trunk]()
+    }()
+
+    <span style="color:#66d9ef">var</span> country: String?
+    <span style="color:#66d9ef">var</span> turnover: Float?
+}
+
+<span style="color:#75715e">//</span><span style="color:#75715e">一</span><span style="color:#75715e">个</span><span style="color:#75715e">中</span><span style="color:#75715e">国</span><span style="color:#75715e">的</span><span style="color:#75715e">货</span><span style="color:#75715e">运</span><span style="color:#75715e">集</span><span style="color:#75715e">团</span>
+<span style="color:#66d9ef">var</span> tranGroup = TranGroup()
+
+tranGroup.country = <span style="color:#e6db74">&#34;</span><span style="color:#e6db74">天朝</span><span style="color:#e6db74">&#34;</span>
+tranGroup.turnover = <span style="color:#ae81ff">2222</span>
+<span style="color:#66d9ef">let</span> trunk1 = Trunk()
+trunk1.brand = <span style="color:#e6db74">&#34;</span><span style="color:#e6db74">MAN</span><span style="color:#e6db74">&#34;</span>
+trunk1.host = <span style="color:#e6db74">&#34;</span><span style="color:#e6db74">Stan</span><span style="color:#e6db74">&#34;</span>
+trunk1.packintBox = <span style="color:#e6db74">&#34;</span><span style="color:#e6db74">Big And Long</span><span style="color:#e6db74">&#34;</span>
+tranGroup.trunks.append(trunk1)
+<span style="color:#66d9ef">let</span> mirrorTran = Mirror(reflecting: tranGroup)
+print(tranGroup) <span style="color:#75715e">//</span><span style="color:#75715e">打</span><span style="color:#75715e">印</span><span style="color:#75715e">出</span><span style="color:#75715e"> </span><span style="color:#75715e"> </span><span style="color:#75715e"> </span><span style="color:#75715e">T</span><span style="color:#75715e">r</span><span style="color:#75715e">a</span><span style="color:#75715e">n</span><span style="color:#75715e">G</span><span style="color:#75715e">r</span><span style="color:#75715e">o</span><span style="color:#75715e">u</span><span style="color:#75715e">p</span><span style="color:#75715e"> </span><span style="color:#75715e">相</span><span style="color:#75715e">关</span><span style="color:#75715e">信</span><span style="color:#75715e">息</span>
+print(mirrorTran.subjectType) <span style="color:#75715e">//</span><span style="color:#75715e">打</span><span style="color:#75715e">印</span><span style="color:#75715e">出</span><span style="color:#75715e"> </span><span style="color:#75715e"> </span><span style="color:#75715e">T</span><span style="color:#75715e">r</span><span style="color:#75715e">a</span><span style="color:#75715e">n</span><span style="color:#75715e">G</span><span style="color:#75715e">r</span><span style="color:#75715e">o</span><span style="color:#75715e">u</span><span style="color:#75715e">p</span>
+print(mirrorTran.displayStyle) <span style="color:#75715e">//</span><span style="color:#75715e">O</span><span style="color:#75715e">p</span><span style="color:#75715e">t</span><span style="color:#75715e">i</span><span style="color:#75715e">o</span><span style="color:#75715e">n</span><span style="color:#75715e">a</span><span style="color:#75715e">l</span><span style="color:#75715e">(</span><span style="color:#75715e">S</span><span style="color:#75715e">w</span><span style="color:#75715e">i</span><span style="color:#75715e">f</span><span style="color:#75715e">t</span><span style="color:#75715e">.</span><span style="color:#75715e">M</span><span style="color:#75715e">i</span><span style="color:#75715e">r</span><span style="color:#75715e">r</span><span style="color:#75715e">o</span><span style="color:#75715e">r</span><span style="color:#75715e">.</span><span style="color:#75715e">D</span><span style="color:#75715e">i</span><span style="color:#75715e">s</span><span style="color:#75715e">p</span><span style="color:#75715e">l</span><span style="color:#75715e">a</span><span style="color:#75715e">y</span><span style="color:#75715e">S</span><span style="color:#75715e">t</span><span style="color:#75715e">y</span><span style="color:#75715e">l</span><span style="color:#75715e">e</span><span style="color:#75715e">.</span><span style="color:#75715e">S</span><span style="color:#75715e">t</span><span style="color:#75715e">r</span><span style="color:#75715e">u</span><span style="color:#75715e">c</span><span style="color:#75715e">t</span><span style="color:#75715e">)</span><span style="color:#75715e">，</span><span style="color:#75715e">是</span><span style="color:#75715e">个</span><span style="color:#75715e">S</span><span style="color:#75715e">t</span><span style="color:#75715e">r</span><span style="color:#75715e">u</span><span style="color:#75715e">c</span><span style="color:#75715e">t</span><span style="color:#75715e">类</span><span style="color:#75715e">型</span>
+print(mirrorTran.superclassMirror) <span style="color:#75715e">//</span><span style="color:#75715e">n</span><span style="color:#75715e">i</span><span style="color:#75715e">l</span><span style="color:#75715e">，</span><span style="color:#75715e">因</span><span style="color:#75715e">为</span><span style="color:#75715e">没</span><span style="color:#75715e">有</span><span style="color:#75715e">父</span><span style="color:#75715e">类</span>
+<span style="color:#66d9ef">for</span> (key, value) <span style="color:#66d9ef">in</span> mirrorTran.children {
+    print(<span style="color:#e6db74">&#34;</span><span style="color:#e6db74">\(</span>key<span style="color:#e6db74">)</span><span style="color:#e6db74"> : </span><span style="color:#e6db74">\(</span>value<span style="color:#e6db74">)</span><span style="color:#e6db74">&#34;</span>)
+}
+</code></pre></div><p>打印的结果：</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift">TranGroup(trunks: [test.Trunk], country: Optional(<span style="color:#e6db74">&#34;</span><span style="color:#e6db74">天朝</span><span style="color:#e6db74">&#34;</span>), turnover: Optional(<span style="color:#ae81ff">2222.0</span>))
+TranGroup
+Optional(Swift.Mirror.DisplayStyle.<span style="color:#66d9ef">struct</span>)
+<span style="color:#66d9ef">nil</span>
+Optional(<span style="color:#e6db74">&#34;</span><span style="color:#e6db74">trunks</span><span style="color:#e6db74">&#34;</span>) : [test.Trunk]
+Optional(<span style="color:#e6db74">&#34;</span><span style="color:#e6db74">country</span><span style="color:#e6db74">&#34;</span>) : Optional(<span style="color:#e6db74">&#34;</span><span style="color:#e6db74">天朝</span><span style="color:#e6db74">&#34;</span>)
+Optional(<span style="color:#e6db74">&#34;</span><span style="color:#e6db74">turnover</span><span style="color:#e6db74">&#34;</span>) : Optional(<span style="color:#ae81ff">2222.0</span>)
+</code></pre></div>
     </div>
     <footer class="post-footer">
         
  
 <div class="post-tags">     
      
-    <a href="https://iihui.github.io/tags/go" rel="tag" title="Go">#Go#</a>
+    <a href="https://iihui.github.io/tags/swift" rel="tag" title="swift">#swift#</a>
+    
+    <a href="https://iihui.github.io/tags/ios" rel="tag" title="iOS">#iOS#</a>
     
 </div>
 
@@ -318,16 +330,16 @@ code.has-jax {
         <div class="post-nav">
     <div class="post-nav-next post-nav-item">
     
-        <a href="https://iihui.github.io/post/go-array/" rel="next" title="Go 数组">
-        <i class="fa fa-chevron-left"></i> Go 数组
+        <a href="https://iihui.github.io/post/hugo-next/" rel="next" title="Hugo Next 主题">
+        <i class="fa fa-chevron-left"></i> Hugo Next 主题
         </a>
     
     </div>
 
     <div class="post-nav-prev post-nav-item">
     
-        <a href="https://iihui.github.io/post/go-interface/" rel="prev" title="Go 接口">
-        Go 接口 <i class="fa fa-chevron-right"></i>
+        <a href="https://iihui.github.io/post/ios-kvc/" rel="prev" title="KVC 键值编码">
+        KVC 键值编码 <i class="fa fa-chevron-right"></i>
         </a>
     
     </div>
@@ -341,10 +353,10 @@ code.has-jax {
         </div>
         <div>
             <p style="margin-top:10px;">
-                标题：Go 未命名类型
+                标题：Swift 反射
                 <br />作者：阿呆<a target="_blank" href="https://iihui.github.io/"></a>
                 
-                <br />地址：https://iihui.github.io/post/go-undef-type/
+                <br />地址：https://iihui.github.io/post/ios-reflection/
                 <br />声明：自由转载-非商用-保持署名（创作共享4.0许可证）
             </p>
         </div>
@@ -465,12 +477,8 @@ code.has-jax {
     <div class="post-toc">
         <div class="post-toc-content"><nav id="TableOfContents">
   <ul>
-    <li>
-      <ul>
-        <li><a href="#未命名类型">未命名类型</a></li>
-        <li><a href="#未命名类型的转换规则">未命名类型的转换规则</a></li>
-      </ul>
-    </li>
+    <li><a href="#objc">@objc</a></li>
+    <li><a href="#swift反射">Swift反射</a></li>
   </ul>
 </nav></div>
     </div>
