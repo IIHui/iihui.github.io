@@ -79,12 +79,8 @@ summaryLength = 100 #放在同themes同级的config.toml上才有效 文章置�
  KeyPath KeyPath，表示键路径，是一个由点作分隔符的键组成的字符串（点语法），用于表示一个连接在一起的对象序列。其中，后一个键的性质是由前一个键的性质决定的（如同现代面向对象语言取成员）。
 有了键路径，就可以不通过相应的方法来直接取相关的性质（属性/方法）。通过键路径，可以指定对象中的一个任意深度的路径，使其指向相关对象的特定属性。
 KVC KVC是一种通过字符串间接访问对象的属性的方法，而不是通过调用存取方法（setter/getter）来获取属性，下面是KVC最为重要的四个方法：
-- (nullable id)valueForKey:(NSString *)key; //直接通过Key(NSString属性的名字)来取值 - (void)setValue:(nullable id)value forKey:(NSString *)key; //通过Key(NSString属性的名字)来设值 - (nullable id)valueForKeyPath:(NSString *)keyPath; //通过KeyPath(xx.xx)来取值 - (void)setValue:(nullable id)value forKeyPath:(NSString *)keyPath; //通过KeyPath(xx.xx)来设值  寻找Key机制 当通过KVC访问对象时，例如：[self valueForKey:@&amp;quot;view&amp;quot;]，程序会自动试图通过下面几种不同的方式解析这个方法的调用：
-  查找对象是否带有view这个方法
-  如果没有找到，会继续查找对象是否带有view这个实例变量（iVar）
-  如果还没有找到，程序会继续试图调用方法-(id)valueForUndefinedKey:
-  如果这个方法还是没有被实现的话，程序会抛出一个 NSundefinedKeyException异常错误
-  当调用setValue：属性值 forKey：@”name“，来设置值时，底层的执行机制如下：
+- (nullable id)valueForKey:(NSString *)key; //直接通过Key(NSString属性的名字)来取值 - (void)setValue:(nullable id)value forKey:(NSString *)key; //通过Key(NSString属性的名字)来设值 - (nullable id)valueForKeyPath:(NSString *)keyPath; //通过KeyPath(xx.xx)来取值 - (void)setValue:(nullable id)value forKeyPath:(NSString *)keyPath; //通过KeyPath(xx.xx)来设值  寻找Key机制 在赋值和取之的时候都要先寻找Key，但这两者在寻找Key的方式是有区别的，接下来一一说明它们寻找Key的机制。
+设置值 当调用setValue：属性值 forKey：@”name“，来设置值时，底层的执行机制如下：
   程序优先调用set&amp;lt;Key&amp;gt;:属性值方法，代码通过setter方法完成设置。这里的Key是指成员变量名，而不是forKey表示的值。
   如果没有找到setName:方法，KVC机制会检查&#43; (BOOL)accessInstanceVariablesDirectly方法有没有返回YES（默认返回）。如果重写了该方法并返回NO的话，那么接下来执行setValue：forUndefinedKey方法，不过一般开发者不会这么做。所以KVC机制会搜索该类里面有没有名为_&amp;lt;key&amp;gt;的成员变量，无论该变量是在类接口处定义，还是在类实现处定义，也无论用了什么样的访问修饰符，只在存在以_&amp;lt;key&amp;gt;命名的变量，KVC都可以对该成员变量赋值。
   如果该类既没有set&amp;lt;key&amp;gt;方法，也没有_&amp;lt;key&amp;gt;成员变量，KVC机制会搜索_is&amp;lt;Key&amp;gt;的成员变量。
@@ -97,7 +93,8 @@ KVC KVC是一种通过字符串间接访问对象的属性的方法，而不是�
 -(void)setName:(NSString*)name{ toSetName = name; } -(NSString*)getName{ return toSetName; } 并将NSString* name = [dog valueForKey:@&amp;quot;toSetName&amp;quot;]; 换成 NSString* name = [dog valueForKey:@&amp;quot;name&amp;quot;];就可以得到正确的结果了：
 2020-02-15 09:59:52.961889&#43;0800 test[52736:3072979] newName 根据上面的寻找机制，按照如下修改，仍然可以设置name的值：
 #import &amp;#34;Dog.h&amp;#34; @implementation Dog { NSString* toSetName; NSString* isName; //NSString* name;  NSString* _name; NSString* _isName; } // -(void)setName:(NSString*)name{ // toSetName = name; // } //-(NSString*)getName{ // return toSetName; //} &#43;(BOOL)accessInstanceVariablesDirectly{ return YES; } -(id)valueForUndefinedKey:(NSString *)key{ NSLog(@&amp;#34;出现异常，该key不存在%@&amp;#34;,key); return nil; } -(void)setValue:(id)value forUndefinedKey:(NSString *)key{ NSLog(@&amp;#34;出现异常，该key不存在%@&amp;#34;,key); } @end #import &amp;lt;Foundation/Foundation.h&amp;gt;#import &amp;#34;Dog.h&amp;#34; int main(int argc, const char * argv[]) { @autoreleasepool { // insert code here...  Dog * dog = [Dog new]; [dog setValue:@&amp;#34;newName&amp;#34; forKey:@&amp;#34;name&amp;#34;]; NSString* name = [dog valueForKey:@&amp;#34;name&amp;#34;]; NSLog(@&amp;#34;%@&amp;#34;,name); } return 0; } 打印的结果如下所示：
-2020-02-15 10:09:25.756648&#43;0800 test[52930:3077204] newName 注意   在上面的例子中，KVC查找方法的时候，不仅仅会查找 view这个方法，还会查找getview(前面加一个get)这个方法，或者 _view 以及_getview 这个几种形式。
+2020-02-15 10:09:25.756648&#43;0800 test[52930:3077204] newName 取值 当调用valueForKey：@”name“的代码时，KVC对key的搜索方式不同于setValue：属性值 forKey：@”name“，其搜索方式如下：
+注意   在上面的例子中，KVC查找方法的时候，不仅仅会查找 view这个方法，还会查找getview(前面加一个get)这个方法，或者 _view 以及_getview 这个几种形式。
   在查找实例变量的时候，不仅仅查找view这个变量，也会查找_view这个变量是否存在。
   设计valueForUndefinedKey:方法的主要目的是：当使用-(id)valueForKey方法从对象中请求值时，对象能够在错误发生前，有最后的机会响应这个请求。  缺点   一旦使用KVC，编译器将无法检查出错误，即不会对设置的键、键路径进行错误检查。
   执行效率要低于合成存取器方法和自定义的setter和getter方法。效率低的原因是使用KVC键值编码，它必须先解析字符串，然后在设置或者访问对象的实例变量。
