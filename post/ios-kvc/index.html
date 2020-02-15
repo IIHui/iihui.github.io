@@ -226,7 +226,7 @@ code.has-jax {
     <i class="fa fa-file-word-o"></i>
 </span>
 <span class="post-meta-item-text">字数: </span>
-<span class="leancloud-visitors-count">2099</span>
+<span class="leancloud-visitors-count">2384</span>
 &nbsp; | &nbsp;
 <span class="post-meta-item-icon">
     <i class="fa fa-coffee"></i>
@@ -329,7 +329,60 @@ code.has-jax {
 <span style="color:#ae81ff">2020</span><span style="color:#f92672">-</span><span style="color:#ae81ff">02</span><span style="color:#f92672">-</span><span style="color:#ae81ff">15</span> <span style="color:#ae81ff">09</span><span style="color:#f92672">:</span><span style="color:#ae81ff">33</span><span style="color:#f92672">:</span><span style="color:#ae81ff">48.596987</span><span style="color:#f92672">+</span><span style="color:#ae81ff">0800</span> test[<span style="color:#ae81ff">52035</span><span style="color:#f92672">:</span><span style="color:#ae81ff">3057928</span>] (null)
 
 </code></pre></div><p>这是因为重写了<code>+(BOOL)accessInstanceVariablesDirectly</code>，并让它返回了<code>NO</code>之后，<code>KVC</code>不再去找<code>name</code>系列成员变量，而是直接调用<code>setValue：forUndefinedKey：</code>。所以如果不想让自定义的类实现<code>KVC</code>，则可以像上面那样做。</p>
-<h3 id="注意">注意</h3>
+<p>如果将下面的注释取消：</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-objc" data-lang="objc"> <span style="color:#f92672">-</span>(<span style="color:#66d9ef">void</span>)setName:(NSString<span style="color:#f92672">*</span>)name{
+     toSetName <span style="color:#f92672">=</span> name;
+ }
+<span style="color:#f92672">-</span>(NSString<span style="color:#f92672">*</span>)getName{
+    <span style="color:#66d9ef">return</span> toSetName;
+}
+</code></pre></div><p>并将<code>NSString* name = [dog valueForKey:@&quot;toSetName&quot;]</code>; 换成 <code>NSString* name = [dog valueForKey:@&quot;name&quot;];</code>就可以得到正确的结果了：</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-objc" data-lang="objc"><span style="color:#ae81ff">2020</span><span style="color:#f92672">-</span><span style="color:#ae81ff">02</span><span style="color:#f92672">-</span><span style="color:#ae81ff">15</span> <span style="color:#ae81ff">09</span><span style="color:#f92672">:</span><span style="color:#ae81ff">59</span><span style="color:#f92672">:</span><span style="color:#ae81ff">52.961889</span><span style="color:#f92672">+</span><span style="color:#ae81ff">0800</span> test[<span style="color:#ae81ff">52736</span><span style="color:#f92672">:</span><span style="color:#ae81ff">3072979</span>] newName
+</code></pre></div><p>根据上面的寻找机制，按照如下修改，仍然可以设置<code>name</code>的值：</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-objc" data-lang="objc"><span style="color:#75715e">#</span><span style="color:#75715e">import &#34;Dog.h&#34;</span><span style="color:#75715e">
+</span><span style="color:#75715e"></span>
+<span style="color:#66d9ef">@implementation</span> <span style="color:#a6e22e">Dog</span> {
+    NSString<span style="color:#f92672">*</span> toSetName;
+    NSString<span style="color:#f92672">*</span> isName;
+    <span style="color:#75715e">//NSString* name;
+</span><span style="color:#75715e"></span>    NSString<span style="color:#f92672">*</span> _name;
+    NSString<span style="color:#f92672">*</span> _isName;
+}
+<span style="color:#75715e">// -(void)setName:(NSString*)name{
+</span><span style="color:#75715e"></span><span style="color:#75715e">//     toSetName = name;
+</span><span style="color:#75715e"></span><span style="color:#75715e">// }
+</span><span style="color:#75715e"></span><span style="color:#75715e">//-(NSString*)getName{
+</span><span style="color:#75715e"></span><span style="color:#75715e">//    return toSetName;
+</span><span style="color:#75715e"></span><span style="color:#75715e">//}
+</span><span style="color:#75715e"></span>+(<span style="color:#66d9ef">BOOL</span>)<span style="color:#a6e22e">accessInstanceVariablesDirectly</span>{
+    <span style="color:#66d9ef">return</span> YES;
+}
+-(<span style="color:#66d9ef">id</span>)<span style="color:#a6e22e">valueForUndefinedKey:</span>(NSString <span style="color:#f92672">*</span>)key{
+    NSLog(<span style="color:#e6db74">@&#34;</span><span style="color:#e6db74">出现异常，该key不存在%@</span><span style="color:#e6db74">&#34;</span>,key);
+    <span style="color:#66d9ef">return</span> nil;
+}
+-(<span style="color:#66d9ef">void</span>)<span style="color:#a6e22e">setValue:</span>(<span style="color:#66d9ef">id</span>)value <span style="color:#a6e22e">forUndefinedKey:</span>(NSString <span style="color:#f92672">*</span>)key{
+     NSLog(<span style="color:#e6db74">@&#34;</span><span style="color:#e6db74">出现异常，该key不存在%@</span><span style="color:#e6db74">&#34;</span>,key);
+}
+<span style="color:#66d9ef">@end</span>
+
+<span style="color:#75715e">#</span><span style="color:#75715e">import &lt;Foundation</span><span style="color:#75715e">/</span><span style="color:#75715e">Foundation.h&gt;</span><span style="color:#75715e">
+</span><span style="color:#75715e"></span><span style="color:#75715e">#</span><span style="color:#75715e">import &#34;Dog.h&#34;</span><span style="color:#75715e">
+</span><span style="color:#75715e"></span>
+<span style="color:#66d9ef">int</span> main(<span style="color:#66d9ef">int</span> argc, <span style="color:#66d9ef">const</span> <span style="color:#66d9ef">char</span> <span style="color:#f92672">*</span> argv[]) {
+    <span style="color:#66d9ef">@autoreleasepool</span> {
+        <span style="color:#75715e">// insert code here...
+</span><span style="color:#75715e"></span>        Dog <span style="color:#f92672">*</span> dog <span style="color:#f92672">=</span> [Dog new];
+        [dog setValue:<span style="color:#e6db74">@&#34;</span><span style="color:#e6db74">newName</span><span style="color:#e6db74">&#34;</span> forKey:<span style="color:#e6db74">@&#34;</span><span style="color:#e6db74">name</span><span style="color:#e6db74">&#34;</span>];
+        NSString<span style="color:#f92672">*</span> name <span style="color:#f92672">=</span> [dog valueForKey:<span style="color:#e6db74">@&#34;</span><span style="color:#e6db74">name</span><span style="color:#e6db74">&#34;</span>];
+        NSLog(<span style="color:#e6db74">@&#34;</span><span style="color:#e6db74">%@</span><span style="color:#e6db74">&#34;</span>,name);
+    }
+    <span style="color:#66d9ef">return</span> <span style="color:#ae81ff">0</span>;
+    
+}
+</code></pre></div><p>打印的结果如下所示：</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-objc" data-lang="objc"><span style="color:#ae81ff">2020</span><span style="color:#f92672">-</span><span style="color:#ae81ff">02</span><span style="color:#f92672">-</span><span style="color:#ae81ff">15</span> <span style="color:#ae81ff">10</span><span style="color:#f92672">:</span><span style="color:#ae81ff">09</span><span style="color:#f92672">:</span><span style="color:#ae81ff">25.756648</span><span style="color:#f92672">+</span><span style="color:#ae81ff">0800</span> test[<span style="color:#ae81ff">52930</span><span style="color:#f92672">:</span><span style="color:#ae81ff">3077204</span>] newName
+</code></pre></div><h3 id="注意">注意</h3>
 <ul>
 <li>
 <p>在上面的例子中，<code>KVC</code>查找方法的时候，不仅仅会查找 <code>view</code>这个方法，还会查找<code>getview</code>(前面加一个<code>get</code>)这个方法，或者<code> _view</code> 以及<code>_getview</code> 这个几种形式。</p>
