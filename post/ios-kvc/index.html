@@ -226,13 +226,13 @@ code.has-jax {
     <i class="fa fa-file-word-o"></i>
 </span>
 <span class="post-meta-item-text">字数: </span>
-<span class="leancloud-visitors-count">3424</span>
+<span class="leancloud-visitors-count">4029</span>
 &nbsp; | &nbsp;
 <span class="post-meta-item-icon">
     <i class="fa fa-coffee"></i>
 </span>
 <span class="post-meta-item-text">阅读: </span>
-<span class="leancloud-visitors-count">7 分钟</span>
+<span class="leancloud-visitors-count">9 分钟</span>
 </span>
       </div>
     </header>
@@ -430,6 +430,23 @@ code.has-jax {
 </span><span style="color:#75715e"></span><span style="color:#ae81ff">2020</span><span style="color:#f92672">-</span><span style="color:#ae81ff">02</span><span style="color:#f92672">-</span><span style="color:#ae81ff">15</span> <span style="color:#ae81ff">11</span><span style="color:#f92672">:</span><span style="color:#ae81ff">13</span><span style="color:#f92672">:</span><span style="color:#ae81ff">48.223700</span><span style="color:#f92672">+</span><span style="color:#ae81ff">0800</span> test[<span style="color:#ae81ff">54340</span><span style="color:#f92672">:</span><span style="color:#ae81ff">3105892</span>] country1:China   country2:China
 <span style="color:#ae81ff">2020</span><span style="color:#f92672">-</span><span style="color:#ae81ff">02</span><span style="color:#f92672">-</span><span style="color:#ae81ff">15</span> <span style="color:#ae81ff">11</span><span style="color:#f92672">:</span><span style="color:#ae81ff">13</span><span style="color:#f92672">:</span><span style="color:#ae81ff">48.224670</span><span style="color:#f92672">+</span><span style="color:#ae81ff">0800</span> test[<span style="color:#ae81ff">54340</span><span style="color:#f92672">:</span><span style="color:#ae81ff">3105892</span>] country1:USA   country2:USA
 
+</code></pre></div><h2 id="异常处理">异常处理</h2>
+<p><code>KVC</code>中最常见的异常就是不小心使用了错误的<code>key</code>，或者在设置值的时候不小心传递了<code>nil</code>。如果不小心传递了<code>nil</code>值，<code>KVC</code>会调用<code>setNilValueForKey:</code>方法，这个方法默认是抛出异常，所以一般而言还是重写这个方法：</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-objc" data-lang="objc"><span style="color:#66d9ef">@implementation</span> <span style="color:#a6e22e">People</span>
+
+-(<span style="color:#66d9ef">void</span>)<span style="color:#a6e22e">setNilValueForKey:</span>(NSString <span style="color:#f92672">*</span>)key{
+    NSLog(<span style="color:#e6db74">@&#34;</span><span style="color:#e6db74">不能将%@设成nil</span><span style="color:#e6db74">&#34;</span>,key);
+}
+<span style="color:#66d9ef">@end</span>
+</code></pre></div><h2 id="非对象和自定义对象">非对象和自定义对象</h2>
+<p>不是每一个方法都返回对象，但是<code>valueForKey：</code>总是返回一个<code>id</code>对象。如果原本的变量类型是值类型或者结构体，返回值会封装成<code>NSNumber</code>或者<code>NSValue</code>对象。这两个类会处理从数字，布尔值到指针和结构体的任何类型。然后，如果需要使用的话，需手动转换成原来的类型。尽管<code>valueForKey</code>会自动将值类型封装成对象，但是<code>setValue：forKey：</code>却不行。必须手动将值类型转换成<code>NSNumber</code>或者<code>NSValue</code>类型，才能传递过去。</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-objc" data-lang="objc">Address<span style="color:#f92672">*</span> add2 <span style="color:#f92672">=</span> [Address new];
+add2.country <span style="color:#f92672">=</span> <span style="color:#e6db74">@&#34;</span><span style="color:#e6db74">England</span><span style="color:#e6db74">&#34;</span>;
+[people1 setValue:add2 forKey:<span style="color:#e6db74">@&#34;</span><span style="color:#e6db74">address</span><span style="color:#e6db74">&#34;</span>];
+NSString<span style="color:#f92672">*</span> country1 <span style="color:#f92672">=</span> people1.address.country;
+NSString <span style="color:#f92672">*</span> country2 <span style="color:#f92672">=</span> [people1 valueForKeyPath:<span style="color:#e6db74">@&#34;</span><span style="color:#e6db74">address.country</span><span style="color:#e6db74">&#34;</span>];
+NSLog(<span style="color:#e6db74">@&#34;</span><span style="color:#e6db74">country1:%@   country2:%@</span><span style="color:#e6db74">&#34;</span>,country1,country2);
+
 </code></pre></div><h2 id="缺点">缺点</h2>
 <ul>
 <li>
@@ -439,6 +456,13 @@ code.has-jax {
 <p>执行效率要低于合成存取器方法和自定义的<code>setter</code>和<code>getter</code>方法。效率低的原因是使用<code>KVC</code>键值编码，<!-- raw HTML omitted -->它必须先解析字符串，然后在设置或者访问对象的实例变量<!-- raw HTML omitted -->。</p>
 </li>
 </ul>
+<h2 id="kvc的使用">KVC的使用</h2>
+<p><code>KVC</code>在<code>iOS</code>开发中是绝不可少的利器，这种基于运行时的编程方式极大地提高了灵活性，简化了代码，下面来列举<code>iOS</code>开发中<code>KVC</code>的使用场景。</p>
+<h3 id="动态的取值和设值">动态的取值和设值</h3>
+<p>上面很多例子就是使用<code>KVC</code>动态地取值和设值，这是最基本的用途了，每一个<code>iOS developer</code>都应该要掌握。</p>
+<h3 id="访问私有成员">访问私有成员</h3>
+<p>对于类中的私有成员，<code>OC</code>是无法直接访问的，但是<code>KVC</code>是可以的，可以参考前面<code>Dog</code>的例子。</p>
+<h3 id="model和字典的相互转换">Model和字典的相互转换</h3>
 <p><a href="https://www.jianshu.com/p/45cbd324ea65">参考资料</a>
 <a href="http://www.mengyueping.com/2017/07/18/iOS_KVO/">参考资料</a></p>
 
@@ -615,7 +639,16 @@ code.has-jax {
           </ul>
         </li>
         <li><a href="#keypath">KeyPath</a></li>
+        <li><a href="#异常处理">异常处理</a></li>
+        <li><a href="#非对象和自定义对象">非对象和自定义对象</a></li>
         <li><a href="#缺点">缺点</a></li>
+        <li><a href="#kvc的使用">KVC的使用</a>
+          <ul>
+            <li><a href="#动态的取值和设值">动态的取值和设值</a></li>
+            <li><a href="#访问私有成员">访问私有成员</a></li>
+            <li><a href="#model和字典的相互转换">Model和字典的相互转换</a></li>
+          </ul>
+        </li>
       </ul>
     </li>
   </ul>
