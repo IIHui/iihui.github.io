@@ -226,7 +226,7 @@ code.has-jax {
     <i class="fa fa-file-word-o"></i>
 </span>
 <span class="post-meta-item-text">字数: </span>
-<span class="leancloud-visitors-count">2748</span>
+<span class="leancloud-visitors-count">2940</span>
 &nbsp; | &nbsp;
 <span class="post-meta-item-icon">
     <i class="fa fa-coffee"></i>
@@ -512,6 +512,42 @@ code.has-jax {
         assist[k...(k <span style="color:#f92672">+</span> (end <span style="color:#f92672">-</span> j))] = data[j...end]
     }
     data = assist
+}
+</code></pre></div><div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift"><span style="color:#75715e">//</span><span style="color:#75715e">归</span><span style="color:#75715e">并</span><span style="color:#75715e">排</span><span style="color:#75715e">序</span><span style="color:#75715e">，</span><span style="color:#75715e">时</span><span style="color:#75715e">间</span><span style="color:#75715e">复</span><span style="color:#75715e">杂</span><span style="color:#75715e">度</span><span style="color:#75715e">为</span><span style="color:#75715e">O</span><span style="color:#75715e">(</span><span style="color:#75715e">n</span><span style="color:#75715e">l</span><span style="color:#75715e">o</span><span style="color:#75715e">g</span><span style="color:#75715e">(</span><span style="color:#75715e">n</span><span style="color:#75715e">)</span><span style="color:#75715e">)</span><span style="color:#75715e">,</span><span style="color:#75715e">空</span><span style="color:#75715e">间</span><span style="color:#75715e">复</span><span style="color:#75715e">杂</span><span style="color:#75715e">度</span><span style="color:#75715e">为</span><span style="color:#75715e">(</span><span style="color:#75715e">O</span><span style="color:#75715e">(</span><span style="color:#75715e">n</span><span style="color:#75715e">)</span><span style="color:#75715e">,</span><span style="color:#75715e">稳</span><span style="color:#75715e">定</span><span style="color:#75715e">的</span><span style="color:#75715e">排</span><span style="color:#75715e">序</span><span style="color:#75715e">算</span><span style="color:#75715e">法</span>
+<span style="color:#66d9ef">static</span> <span style="color:#66d9ef">func</span> <span style="color:#a6e22e">mergeSort</span>&lt;T: Comparable&gt;(data: [T]) -&gt; [T] {
+    <span style="color:#66d9ef">var</span> result = data
+    <span style="color:#66d9ef">self</span>.mergeSort(data: &amp;result, start: <span style="color:#ae81ff">0</span>, end: result.count <span style="color:#f92672">-</span> <span style="color:#ae81ff">1</span>)
+    <span style="color:#66d9ef">return</span> result
+}
+<span style="color:#66d9ef">static</span> <span style="color:#66d9ef">private</span> <span style="color:#66d9ef">func</span> <span style="color:#a6e22e">mergeSort</span>&lt;T: Comparable&gt;(data: <span style="color:#66d9ef">inout</span> [T], start: Int, end: Int) {
+    <span style="color:#66d9ef">if</span> start <span style="color:#f92672">&lt;</span> end {
+        <span style="color:#66d9ef">var</span> assist = data
+        <span style="color:#66d9ef">let</span> mid = start <span style="color:#f92672">+</span> (end <span style="color:#f92672">-</span> start) <span style="color:#f92672">/</span> <span style="color:#ae81ff">2</span>
+        mergeSort(data: &amp;data, start: start, end: mid)
+        mergeSort(data: &amp;data, start: mid <span style="color:#f92672">+</span> <span style="color:#ae81ff">1</span>, end: end)
+        <span style="color:#66d9ef">var</span> index = start, i = start, j = mid <span style="color:#f92672">+</span> <span style="color:#ae81ff">1</span>
+        <span style="color:#66d9ef">while</span> i <span style="color:#f92672">&lt;=</span> mid <span style="color:#f92672">&amp;&amp;</span> j <span style="color:#f92672">&lt;=</span> end {
+            <span style="color:#66d9ef">if</span> data[i] <span style="color:#f92672">&lt;</span> data[j] {
+                assist[index] = data[i]
+                i <span style="color:#f92672">+=</span> <span style="color:#ae81ff">1</span>
+            } <span style="color:#66d9ef">else</span> {
+                assist[index] = data[j]
+                j <span style="color:#f92672">+=</span> <span style="color:#ae81ff">1</span>
+            }
+            index <span style="color:#f92672">+=</span> <span style="color:#ae81ff">1</span>
+        }
+        <span style="color:#66d9ef">while</span> i <span style="color:#f92672">&lt;=</span> mid {
+            assist[index] = data[i]
+            index <span style="color:#f92672">+=</span> <span style="color:#ae81ff">1</span>
+            i <span style="color:#f92672">+=</span> <span style="color:#ae81ff">1</span>
+        }
+        <span style="color:#66d9ef">while</span> j <span style="color:#f92672">&lt;=</span> mid {
+            assist[index] = data[j]
+            index <span style="color:#f92672">+=</span> <span style="color:#ae81ff">1</span>
+            j <span style="color:#f92672">+=</span> <span style="color:#ae81ff">1</span>
+        }
+        data = assist
+    }
 }
 </code></pre></div><hr>
 <h1 id="计数排序">计数排序</h1>
