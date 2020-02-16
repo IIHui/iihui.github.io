@@ -226,7 +226,7 @@ code.has-jax {
     <i class="fa fa-file-word-o"></i>
 </span>
 <span class="post-meta-item-text">字数: </span>
-<span class="leancloud-visitors-count">2524</span>
+<span class="leancloud-visitors-count">2748</span>
 &nbsp; | &nbsp;
 <span class="post-meta-item-icon">
     <i class="fa fa-coffee"></i>
@@ -515,51 +515,88 @@ code.has-jax {
 }
 </code></pre></div><hr>
 <h1 id="计数排序">计数排序</h1>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift"><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">countingSort</span>(data:<span style="color:#66d9ef">inout</span> Array&lt;Int&gt;){
-    <span style="color:#66d9ef">if</span> <span style="color:#66d9ef">let</span> max = data.max(){
-        <span style="color:#66d9ef">var</span> counting = Array(repeating: <span style="color:#ae81ff">0</span>, count: max <span style="color:#f92672">+</span> <span style="color:#ae81ff">1</span>) <span style="color:#75715e">//</span><span style="color:#75715e">计</span><span style="color:#75715e">数</span><span style="color:#75715e">数</span><span style="color:#75715e">组</span>
-        <span style="color:#66d9ef">var</span> assist  = data
-        <span style="color:#66d9ef">for</span> item <span style="color:#66d9ef">in</span> data{
-            counting[item] <span style="color:#f92672">+=</span> <span style="color:#ae81ff">1</span>
-        }
-        <span style="color:#66d9ef">for</span> i <span style="color:#66d9ef">in</span> <span style="color:#ae81ff">1.</span>..max{
-            counting[i] <span style="color:#f92672">+=</span> counting[i<span style="color:#f92672">-</span><span style="color:#ae81ff">1</span>]
-        }
-        <span style="color:#66d9ef">for</span> i <span style="color:#66d9ef">in</span> stride(from: data.count<span style="color:#f92672">-</span><span style="color:#ae81ff">1</span>, through:<span style="color:#ae81ff">0</span> , by: <span style="color:#f92672">-</span><span style="color:#ae81ff">1</span>){
-            assist[counting[data[i]]<span style="color:#f92672">-</span><span style="color:#ae81ff">1</span>] = data[i]
-            counting[data[i]] <span style="color:#f92672">-=</span> <span style="color:#ae81ff">1</span>
-        }
-        data = assist
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift"><span style="color:#75715e">//</span><span style="color:#75715e">计</span><span style="color:#75715e">数</span><span style="color:#75715e">排</span><span style="color:#75715e">序</span><span style="color:#75715e">，</span><span style="color:#75715e">时</span><span style="color:#75715e">间</span><span style="color:#75715e">复</span><span style="color:#75715e">杂</span><span style="color:#75715e">度</span><span style="color:#75715e">为</span><span style="color:#75715e">O</span><span style="color:#75715e">(</span><span style="color:#75715e">n</span><span style="color:#75715e">+</span><span style="color:#75715e">K</span><span style="color:#75715e">)</span><span style="color:#75715e">,</span><span style="color:#75715e">空</span><span style="color:#75715e">间</span><span style="color:#75715e">复</span><span style="color:#75715e">杂</span><span style="color:#75715e">度</span><span style="color:#75715e">为</span><span style="color:#75715e">O</span><span style="color:#75715e">(</span><span style="color:#75715e">n</span><span style="color:#75715e">+</span><span style="color:#75715e">K</span><span style="color:#75715e">)</span><span style="color:#75715e">,</span><span style="color:#75715e">稳</span><span style="color:#75715e">定</span><span style="color:#75715e">的</span><span style="color:#75715e">排</span><span style="color:#75715e">序</span><span style="color:#75715e">算</span><span style="color:#75715e">法</span>
+<span style="color:#66d9ef">static</span> <span style="color:#66d9ef">func</span> <span style="color:#a6e22e">countSort</span>(data: [Int]) -&gt; [Int]? {
+    <span style="color:#66d9ef">guard</span> <span style="color:#66d9ef">let</span> arr = preCountSort(data: data), <span style="color:#66d9ef">let</span> max = arr.max() <span style="color:#66d9ef">else</span> 
+        <span style="color:#66d9ef">return</span> <span style="color:#66d9ef">nil</span>
     }
+    <span style="color:#66d9ef">var</span> countArr = [Int](repeating: <span style="color:#ae81ff">0</span>, count: max <span style="color:#f92672">+</span> <span style="color:#ae81ff">1</span>)
+    <span style="color:#66d9ef">for</span> item <span style="color:#66d9ef">in</span> arr {
+        countArr[item] <span style="color:#f92672">+=</span> <span style="color:#ae81ff">1</span>
+    }
+    <span style="color:#66d9ef">for</span> i <span style="color:#66d9ef">in</span> <span style="color:#ae81ff">1</span> ..<span style="color:#f92672">&lt;</span> countArr.count {
+        countArr[i] <span style="color:#f92672">+=</span> countArr[i <span style="color:#f92672">-</span> <span style="color:#ae81ff">1</span>]
+    }
+    <span style="color:#66d9ef">var</span> result = [Int](repeating: <span style="color:#ae81ff">0</span>, count: arr.count)
+    <span style="color:#66d9ef">for</span> i <span style="color:#66d9ef">in</span> stride(from: arr.count <span style="color:#f92672">-</span> <span style="color:#ae81ff">1</span>, through: <span style="color:#ae81ff">0</span>, by: <span style="color:#f92672">-</span><span style="color:#ae81ff">1</span>) {
+        result[countArr[arr[i]] <span style="color:#f92672">-</span> <span style="color:#ae81ff">1</span>] = arr[i]
+        countArr[arr[i]] <span style="color:#f92672">-=</span> <span style="color:#ae81ff">1</span>
+    }
+    <span style="color:#66d9ef">let</span> realResult = postCountSort(data: data, result: result)
+    <span style="color:#66d9ef">return</span> realResult
+}
+<span style="color:#66d9ef">static</span> <span style="color:#66d9ef">private</span> <span style="color:#66d9ef">func</span> <span style="color:#a6e22e">preCountSort</span>(data: [Int]) -&gt; [Int]? {
+    <span style="color:#66d9ef">guard</span> <span style="color:#66d9ef">let</span> min = data.min() <span style="color:#66d9ef">else</span> {
+        <span style="color:#66d9ef">return</span> <span style="color:#66d9ef">nil</span>
+    }
+    <span style="color:#66d9ef">if</span> min <span style="color:#f92672">&lt;</span> <span style="color:#ae81ff">0</span> {
+        <span style="color:#66d9ef">let</span> adder = abs(min)
+        <span style="color:#66d9ef">let</span> result = data.map {
+            $0 <span style="color:#f92672">+</span> adder
+        }
+        <span style="color:#66d9ef">return</span> result
+    } <span style="color:#66d9ef">else</span> {
+        <span style="color:#66d9ef">return</span> data
+    }
+}
+<span style="color:#66d9ef">static</span> <span style="color:#66d9ef">private</span> <span style="color:#66d9ef">func</span> <span style="color:#a6e22e">postCountSort</span>(data: [Int], result: [Int]) -&gt; [Int]?
+    <span style="color:#66d9ef">guard</span> data.count == result.count, <span style="color:#66d9ef">let</span> min = data.min() <span style="color:#66d9ef">else</span> {
+        <span style="color:#66d9ef">return</span> <span style="color:#66d9ef">nil</span>
+    }
+    <span style="color:#66d9ef">var</span> realResult = result
+    <span style="color:#66d9ef">if</span> min <span style="color:#f92672">&lt;</span> <span style="color:#ae81ff">0</span> {
+        realResult = result.map {
+            $0 <span style="color:#f92672">+</span> min
+        }
+    }
+    <span style="color:#66d9ef">return</span> realResult
 }
 </code></pre></div><hr>
 <h1 id="基数排序">基数排序</h1>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift"><span style="color:#75715e">//</span><span style="color:#75715e">以</span><span style="color:#75715e">1</span><span style="color:#75715e">0</span><span style="color:#75715e">为</span><span style="color:#75715e">基</span><span style="color:#75715e">数</span><span style="color:#75715e">的</span><span style="color:#75715e">计</span><span style="color:#75715e">数</span><span style="color:#75715e">排</span><span style="color:#75715e">序</span>
-<span style="color:#66d9ef">func</span> <span style="color:#a6e22e">radixSort</span>(data:<span style="color:#66d9ef">inout</span> Array&lt;Int&gt;){
-    <span style="color:#66d9ef">if</span> <span style="color:#66d9ef">let</span> max = data.max(){
-        <span style="color:#66d9ef">var</span> base = <span style="color:#ae81ff">1</span>
-        <span style="color:#66d9ef">while</span> base <span style="color:#f92672">&lt;=</span> max{
-            radixSort(data: &amp;data, base: base)
-            base <span style="color:#f92672">*=</span> <span style="color:#ae81ff">10</span>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift"><span style="color:#75715e">//</span><span style="color:#75715e">十</span><span style="color:#75715e">进</span><span style="color:#75715e">制</span><span style="color:#75715e">的</span><span style="color:#75715e">基</span><span style="color:#75715e">数</span><span style="color:#75715e">排</span><span style="color:#75715e">序</span>
+<span style="color:#66d9ef">static</span> <span style="color:#66d9ef">func</span> <span style="color:#a6e22e">radixSort</span>(data: [Int]) -&gt; [Int]? {
+    <span style="color:#66d9ef">guard</span> <span style="color:#66d9ef">var</span> arr = preRadixSort(data: data), <span style="color:#66d9ef">let</span> max = arr.max() <span style="color:#66d9ef">else</span> {
+        <span style="color:#66d9ef">return</span> <span style="color:#66d9ef">nil</span>
+    }
+    <span style="color:#66d9ef">var</span> assist = <span style="color:#ae81ff">1</span>
+    <span style="color:#66d9ef">while</span> assist <span style="color:#f92672">&lt;=</span> max {
+        inRadixSort(data: &amp;arr, assist: assist, radix: <span style="color:#ae81ff">10</span>)
+        assist <span style="color:#f92672">*=</span> <span style="color:#ae81ff">10</span>
+    }
+    <span style="color:#66d9ef">return</span> arr
+}
+<span style="color:#66d9ef">static</span> <span style="color:#66d9ef">private</span> <span style="color:#66d9ef">func</span> <span style="color:#a6e22e">preRadixSort</span>(data: [Int]) -&gt; [Int]? {
+    <span style="color:#66d9ef">for</span> item <span style="color:#66d9ef">in</span> data {
+        <span style="color:#66d9ef">if</span> item <span style="color:#f92672">&lt;</span> <span style="color:#ae81ff">0</span> {
+            <span style="color:#66d9ef">return</span> <span style="color:#66d9ef">nil</span>
         }
     }
+    <span style="color:#66d9ef">return</span> data
 }
-
-<span style="color:#66d9ef">func</span> <span style="color:#a6e22e">radixSort</span>(data:<span style="color:#66d9ef">inout</span> Array&lt;Int&gt;, base:Int){
-    <span style="color:#66d9ef">var</span> counting = Array(repeating: <span style="color:#ae81ff">0</span>, count: <span style="color:#ae81ff">10</span>)
-    <span style="color:#66d9ef">var</span> assist = data
-    <span style="color:#66d9ef">for</span> item <span style="color:#66d9ef">in</span> data{
-        counting[(item<span style="color:#f92672">/</span>base)<span style="color:#f92672">%</span><span style="color:#ae81ff">10</span>] <span style="color:#f92672">+=</span> <span style="color:#ae81ff">1</span>
+<span style="color:#66d9ef">static</span> <span style="color:#66d9ef">private</span> <span style="color:#66d9ef">func</span> <span style="color:#a6e22e">inRadixSort</span>(data: <span style="color:#66d9ef">inout</span> [Int], assist: Int, radix: Int) {
+    <span style="color:#66d9ef">var</span> countArr = [Int](repeating: <span style="color:#ae81ff">0</span>, count: <span style="color:#ae81ff">10</span>)
+    <span style="color:#66d9ef">for</span> item <span style="color:#66d9ef">in</span> data {
+        countArr[(item <span style="color:#f92672">/</span> assist) <span style="color:#f92672">%</span> radix] <span style="color:#f92672">+=</span> <span style="color:#ae81ff">1</span>
     }
-    
-    <span style="color:#66d9ef">for</span> i <span style="color:#66d9ef">in</span> <span style="color:#ae81ff">1.</span>..<span style="color:#ae81ff">9</span>{
-        counting[i] <span style="color:#f92672">+=</span> counting[i<span style="color:#f92672">-</span><span style="color:#ae81ff">1</span>]
+    <span style="color:#66d9ef">var</span> tmpArr = data
+    <span style="color:#66d9ef">for</span> i <span style="color:#66d9ef">in</span> <span style="color:#ae81ff">1</span> ..<span style="color:#f92672">&lt;</span> countArr.count {
+        countArr[i] <span style="color:#f92672">+=</span> countArr[i <span style="color:#f92672">-</span> <span style="color:#ae81ff">1</span>]
     }
-    <span style="color:#66d9ef">for</span> i <span style="color:#66d9ef">in</span> stride(from: data.count<span style="color:#f92672">-</span><span style="color:#ae81ff">1</span>, through:<span style="color:#ae81ff">0</span> , by: <span style="color:#f92672">-</span><span style="color:#ae81ff">1</span>){
-        assist[counting[(data[i]<span style="color:#f92672">/</span>base)<span style="color:#f92672">%</span><span style="color:#ae81ff">10</span>]<span style="color:#f92672">-</span><span style="color:#ae81ff">1</span>] = data[i]
-        counting[(data[i]<span style="color:#f92672">/</span>base)<span style="color:#f92672">%</span><span style="color:#ae81ff">10</span>] <span style="color:#f92672">-=</span> <span style="color:#ae81ff">1</span>
+    <span style="color:#66d9ef">for</span> i <span style="color:#66d9ef">in</span> stride(from: data.count <span style="color:#f92672">-</span> <span style="color:#ae81ff">1</span>, through: <span style="color:#ae81ff">0</span>, by: <span style="color:#f92672">-</span><span style="color:#ae81ff">1</span>) {
+        tmpArr[countArr[(data[i] <span style="color:#f92672">/</span> assist) <span style="color:#f92672">%</span> radix] <span style="color:#f92672">-</span> <span style="color:#ae81ff">1</span>] = data[i]
+        countArr[(data[i] <span style="color:#f92672">/</span> assist) <span style="color:#f92672">%</span> radix] <span style="color:#f92672">-=</span> <span style="color:#ae81ff">1</span>
     }
-    data = assist
+    data = tmpArr
 }
 </code></pre></div><hr>
 
