@@ -4,13 +4,13 @@
     <meta charset="UTF-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" /> 
-    <title>Range的保存与恢复 - Keep It Simple</title>
+    <title>Swift访问权限 - Keep It Simple</title>
     <meta name="keywords" content="博客,思考,读书,笔记,技术,分享">
     
-    <meta property="og:title" content="Range的保存与恢复">
+    <meta property="og:title" content="Swift访问权限">
     <meta property="og:site_name" content="Keep It Simple">
     <meta property="og:image" content="/img/author.jpg"> 
-    <meta name="title" content="Range的保存与恢复 - Keep It Simple" />
+    <meta name="title" content="Swift访问权限 - Keep It Simple" />
     <meta name="description" content="Swift | Go | C&#43;&#43; "> 
     <link rel="shortcut icon" href="https://iihui.github.io/img/favicon.ico" />
     <link rel="apple-touch-icon" href="https://iihui.github.io/img/apple-touch-icon.png" />
@@ -177,8 +177,8 @@ code.has-jax {
   <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
     <header class="post-header">
       <h1 class="post-title" itemprop="name headline">
-        <a class="post-title-link" href="https://iihui.github.io/post/js-focus-save/" itemprop="url">
-        Range的保存与恢复
+        <a class="post-title-link" href="https://iihui.github.io/post/ios-access-level/" itemprop="url">
+        Swift访问权限
         </a>
       </h1>
       <div class="post-meta">
@@ -197,8 +197,8 @@ code.has-jax {
     <i class="fa fa-calendar-check-o"></i>
 </span>
 <span class="post-meta-item-text">更新: </span>
-<time itemprop="dateUpdated" content="2019-01-09">
-    2019-01-09
+<time itemprop="dateUpdated" content="2020-02-15">
+    2020-02-15
 </time>
 </span> 
       
@@ -226,52 +226,54 @@ code.has-jax {
     <i class="fa fa-file-word-o"></i>
 </span>
 <span class="post-meta-item-text">字数: </span>
-<span class="leancloud-visitors-count">295</span>
+<span class="leancloud-visitors-count">1055</span>
 &nbsp; | &nbsp;
 <span class="post-meta-item-icon">
     <i class="fa fa-coffee"></i>
 </span>
 <span class="post-meta-item-text">阅读: </span>
-<span class="leancloud-visitors-count">1 分钟</span>
+<span class="leancloud-visitors-count">3 分钟</span>
 </span>
       </div>
     </header>
     <div class="post-body" itemprop="articleBody">
     <blockquote>
-<p>在<code>iOS 11.3</code>以下的<code>UIWebview</code>中插入图片时，因图片选择器的弹出导致<code>UIWebview</code>失去焦点，故在插入图片前需先保存图片将要插入的位置。</p>
+<p>访问权限用于限制部分代码被<!-- raw HTML omitted -->其它源文件或者模块访问<!-- raw HTML omitted -->，目的是隐藏某些代码的实现细节。在<code>Swift</code>中可以设置类型(<!-- raw HTML omitted -->类、结构和枚举<!-- raw HTML omitted -->)的访问权限，也可以设置<!-- raw HTML omitted -->属性和方法<!-- raw HTML omitted -->的访问权限。<code>Swift</code>提供了<code>5</code>个访问级别，这些访问级别以<!-- raw HTML omitted -->模块和源文件<!-- raw HTML omitted -->为区分粒度。</p>
 </blockquote>
-<!-- raw HTML omitted -->
-<h1 id="保存range区域">保存range区域</h1>
-<p>图片选择器打开前，利用一个<!-- raw HTML omitted -->全局的<!-- raw HTML omitted --><code>Range</code>对象保存插入前光标所在的位置的<code>Range</code>对象：</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-js" data-lang="js"><span style="color:#75715e">//插入图片和超链接的时候因为webview会失去焦点，因此需要保存range区域
-</span><span style="color:#75715e"></span><span style="color:#66d9ef">let</span> <span style="color:#a6e22e">currentSelection</span>;
-<span style="color:#66d9ef">function</span> <span style="color:#a6e22e">backupRange</span>() {
-    <span style="color:#66d9ef">let</span> <span style="color:#a6e22e">selection</span> <span style="color:#f92672">=</span> window.<span style="color:#a6e22e">getSelection</span>();
-    <span style="color:#66d9ef">if</span> (<span style="color:#a6e22e">selection</span>.<span style="color:#a6e22e">rangeCount</span>) {
-        <span style="color:#66d9ef">let</span> <span style="color:#a6e22e">range</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">selection</span>.<span style="color:#a6e22e">getRangeAt</span>(<span style="color:#ae81ff">0</span>);
-        <span style="color:#66d9ef">this</span>.<span style="color:#a6e22e">currentSelection</span> <span style="color:#f92672">=</span> {
-            <span style="color:#e6db74">&#34;startContainer&#34;</span><span style="color:#f92672">:</span> <span style="color:#a6e22e">range</span>.<span style="color:#a6e22e">startContainer</span>,
-            <span style="color:#e6db74">&#34;startOffset&#34;</span><span style="color:#f92672">:</span> <span style="color:#a6e22e">range</span>.<span style="color:#a6e22e">startOffset</span>,
-            <span style="color:#e6db74">&#34;endContainer&#34;</span><span style="color:#f92672">:</span> <span style="color:#a6e22e">range</span>.<span style="color:#a6e22e">endContainer</span>,
-            <span style="color:#e6db74">&#34;endOffset&#34;</span><span style="color:#f92672">:</span> <span style="color:#a6e22e">range</span>.<span style="color:#a6e22e">endOffset</span>
-        }
-    }
-}
-</code></pre></div><hr>
-<h1 id="恢复range区域">恢复Range区域</h1>
-<p>选择图片后，插入时要找到图片选择器打开前光标所在的<code>Range</code>，以便插入到正确的位置：</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-js" data-lang="js"><span style="color:#75715e">//恢复保存的range区域
-</span><span style="color:#75715e"></span><span style="color:#66d9ef">function</span> <span style="color:#a6e22e">restoreRange</span>() {
-    <span style="color:#66d9ef">if</span> (<span style="color:#66d9ef">this</span>.<span style="color:#a6e22e">currentSelection</span>) {
-        <span style="color:#66d9ef">let</span> <span style="color:#a6e22e">selection</span> <span style="color:#f92672">=</span> window.<span style="color:#a6e22e">getSelection</span>();
-        <span style="color:#a6e22e">selection</span>.<span style="color:#a6e22e">removeAllRanges</span>();
-        <span style="color:#66d9ef">let</span> <span style="color:#a6e22e">range</span> <span style="color:#f92672">=</span> document.<span style="color:#a6e22e">createRange</span>();
-        <span style="color:#a6e22e">range</span>.<span style="color:#a6e22e">setStart</span>(<span style="color:#66d9ef">this</span>.<span style="color:#a6e22e">currentSelection</span>.<span style="color:#a6e22e">startContainer</span>, <span style="color:#66d9ef">this</span>.<span style="color:#a6e22e">currentSelection</span>.<span style="color:#a6e22e">startOffset</span>);
-        <span style="color:#a6e22e">range</span>.<span style="color:#a6e22e">setEnd</span>(<span style="color:#66d9ef">this</span>.<span style="color:#a6e22e">currentSelection</span>.<span style="color:#a6e22e">endContainer</span>, <span style="color:#66d9ef">this</span>.<span style="color:#a6e22e">currentSelection</span>.<span style="color:#a6e22e">endOffset</span>);
-        <span style="color:#a6e22e">selection</span>.<span style="color:#a6e22e">addRange</span>(<span style="color:#a6e22e">range</span>); <span style="color:#75715e">// 向选区中添加一个区域
-</span><span style="color:#75715e"></span>    }
-}
-</code></pre></div><hr>
+<h1 id="模块和源文件">模块和源文件</h1>
+<h2 id="模块">模块</h2>
+<p>模块是指独立的代码单元，在<code>iOS</code>中框架或应用程序就是一个独立模块。在一个模块中可以用<code>import</code>关键字导入另一个模块。</p>
+<h2 id="源文件">源文件</h2>
+<p>源文件即<code>Swift</code>中的<!-- raw HTML omitted -->源代码文件<!-- raw HTML omitted -->，它通常属于一个模块，即一个框架（<code>Framework</code>）或者应用程序。</p>
+<h1 id="访问级别">访问级别</h1>
+<p><code>Swift</code>有5个级别的访问权限，从高到低依次为<code>open</code>，<code>public</code>，<code>internal</code>，<code>fileprivate</code>和<code>private</code>。它们遵循的原则是，高级别的变量不允许被定义为低级别变量的成员变量。例如，一个<code>private</code>的类中不应该出现<code>public</code>的<code>String</code>。但是，低级别的变量可以定义在高级别的变量中。例如，<code>public</code>的<code>class</code>中可以含有<code>private</code>的<code>Int</code>值。</p>
+<h2 id="open">open</h2>
+<p><code>open</code>具有最高的访问权限。其修饰的类和方法可以在任意<code>Module</code>中被<!-- raw HTML omitted -->访问和重写<!-- raw HTML omitted -->，它是<code>Swift3</code>中新添加的访问权限。</p>
+<h2 id="public">public</h2>
+<p><code>public</code>的权限仅次于<code>open</code>。与<code>open</code>唯一的区别在于，它修饰的对象可以在任意<code>module</code>中被访问，但是不能被重写。</p>
+<h3 id="open与public的区别">open与public的区别</h3>
+<p>虽然<code>open</code>和<code>public</code>都有最高的访问级别，但<code>open</code>访问权限<!-- raw HTML omitted -->只适用于修饰<code>class</code>和<code>class</code>的成员<!-- raw HTML omitted -->，它与<code>public</code>有明显的不同：</p>
+<ul>
+<li>
+<p>由<code>public</code>修饰的<code>class</code>，或被其他更严格的访问级别修饰，这个<code>class</code>只能在<!-- raw HTML omitted -->当前模块内被继承<!-- raw HTML omitted -->。</p>
+</li>
+<li>
+<p>由<code>public</code>修饰的<code>class</code>成员，或被其他更严格的访问级别修饰，这些成员只能被<!-- raw HTML omitted -->当前模块内的子类重写<!-- raw HTML omitted -->。</p>
+</li>
+<li>
+<p>由<code>open</code>修饰的<code>class</code>，不仅能在当前模块内被继承，而且也可以在导入了这个模块的<!-- raw HTML omitted -->另一个模块内被继承<!-- raw HTML omitted -->。</p>
+</li>
+<li>
+<p>由<code>open</code>修饰的<code>class</code>成员，不仅能被当前模块内的子类重写，而且也可以被导入了这个模块的<!-- raw HTML omitted -->另一个模块内的子类重写<!-- raw HTML omitted -->。</p>
+</li>
+</ul>
+<h2 id="internal">internal</h2>
+<p><code>internal</code>是默认的权限。它表示只能在当前定义的<code>module</code>中访问和重写。它可以被一个<code>module</code>中的多个文件访问，但不能被其他<code>module</code>访问。</p>
+<h2 id="fileprivate">fileprivate</h2>
+<p>由<code>fileprivate</code>修饰的实体可以在<!-- raw HTML omitted -->当前文件内被访问<!-- raw HTML omitted -->。若某个功能只要在文件内使用，则可以使用这个访问符修饰，这也是<code>Swift 3</code>新添加的权限。</p>
+<h2 id="private">private</h2>
+<p><code>private</code>是最低阶别的访问权限，它的对象只能在定义的作用域内使用，离开了这个作用域，即时是同一个文件的其他作用域，也无法访问。</p>
+<hr>
 
     </div>
     <footer class="post-footer">
@@ -279,7 +281,7 @@ code.has-jax {
  
 <div class="post-tags">     
      
-    <a href="https://iihui.github.io/tags/js" rel="tag" title="JS">#JS#</a>
+    <a href="https://iihui.github.io/tags/ios" rel="tag" title="iOS">#iOS#</a>
     
 </div>
 
@@ -288,16 +290,16 @@ code.has-jax {
         <div class="post-nav">
     <div class="post-nav-next post-nav-item">
     
-        <a href="https://iihui.github.io/post/ios-new-target/" rel="next" title="创建新的Target">
-        <i class="fa fa-chevron-left"></i> 创建新的Target
+        <a href="https://iihui.github.io/post/js-focus-save/" rel="next" title="Range的保存与恢复">
+        <i class="fa fa-chevron-left"></i> Range的保存与恢复
         </a>
     
     </div>
 
     <div class="post-nav-prev post-nav-item">
     
-        <a href="https://iihui.github.io/post/ios-access-level/" rel="prev" title="Swift访问权限">
-        Swift访问权限 <i class="fa fa-chevron-right"></i>
+        <a href="https://iihui.github.io/post/js-image-addclicklistener/" rel="prev" title="img添加和取消点击监听">
+        img添加和取消点击监听 <i class="fa fa-chevron-right"></i>
         </a>
     
     </div>
@@ -311,10 +313,10 @@ code.has-jax {
         </div>
         <div>
             <p style="margin-top:10px;">
-                标题：Range的保存与恢复
+                标题：Swift访问权限
                 <br />作者：阿呆<a target="_blank" href="https://iihui.github.io/"></a>
                 
-                <br />地址：https://iihui.github.io/post/js-focus-save/
+                <br />地址：https://iihui.github.io/post/ios-access-level/
                 <br />声明：自由转载-非商用-保持署名（创作共享4.0许可证）
             </p>
         </div>
@@ -435,8 +437,25 @@ code.has-jax {
     <div class="post-toc">
         <div class="post-toc-content"><nav id="TableOfContents">
   <ul>
-    <li><a href="#保存range区域">保存range区域</a></li>
-    <li><a href="#恢复range区域">恢复Range区域</a></li>
+    <li><a href="#模块和源文件">模块和源文件</a>
+      <ul>
+        <li><a href="#模块">模块</a></li>
+        <li><a href="#源文件">源文件</a></li>
+      </ul>
+    </li>
+    <li><a href="#访问级别">访问级别</a>
+      <ul>
+        <li><a href="#open">open</a></li>
+        <li><a href="#public">public</a>
+          <ul>
+            <li><a href="#open与public的区别">open与public的区别</a></li>
+          </ul>
+        </li>
+        <li><a href="#internal">internal</a></li>
+        <li><a href="#fileprivate">fileprivate</a></li>
+        <li><a href="#private">private</a></li>
+      </ul>
+    </li>
   </ul>
 </nav></div>
     </div>

@@ -532,7 +532,7 @@ import Foundation //参考自https://www.jianshu.com/p/e31eeb26cdce enum positio
     
      <entry>
         <title>Swift访问权限</title>
-        <url>https://iihui.github.io/post/ios-access-control/</url>
+        <url>https://iihui.github.io/post/ios-access-level/</url>
         <categories>
           <category>code</category>
         </categories>
@@ -542,15 +542,17 @@ import Foundation //参考自https://www.jianshu.com/p/e31eeb26cdce enum positio
         <content type="html">  访问权限用于限制部分代码被其它源文件或者模块访问，目的是隐藏某些代码的实现细节。在Swift中可以设置类型(类、结构和枚举)的访问权限，也可以设置属性和方法的访问权限。Swift提供了5个访问级别，这些访问级别以模块和源文件为区分粒度。
  模块和源文件 模块 模块是指独立的代码单元，在iOS中框架或应用程序就是一个独立模块。在一个模块中可以用import关键字导入另一个模块。
 源文件 源文件即Swift中的源代码文件，它通常属于一个模块，即一个框架（Framework）或者应用程序。
-访问级别 open 与 pulic 由open和public修饰的实体可以被模块内的任何文件访问，也可以被主动导入这个模块的主模块中的源文件使用。当要定义框架的公开接口时，通常使用open或者public。
-区别 虽然open和public都有最高的访问级别，但open访问权限只适用于修饰class和class的成员，它与public有明显的不同：
+访问级别 Swift有5个级别的访问权限，从高到低依次为open，public，internal，fileprivate和private。它们遵循的原则是，高级别的变量不允许被定义为低级别变量的成员变量。例如，一个private的类中不应该出现public的String。但是，低级别的变量可以定义在高级别的变量中。例如，public的class中可以含有private的Int值。
+open open具有最高的访问权限。其修饰的类和方法可以在任意Module中被访问和重写，它是Swift3中新添加的访问权限。
+public public的权限仅次于open。与open唯一的区别在于，它修饰的对象可以在任意module中被访问，但是不能被重写。
+open与public的区别 虽然open和public都有最高的访问级别，但open访问权限只适用于修饰class和class的成员，它与public有明显的不同：
   由public修饰的class，或被其他更严格的访问级别修饰，这个class只能在当前模块内被继承。
   由public修饰的class成员，或被其他更严格的访问级别修饰，这些成员只能被当前模块内的子类重写。
   由open修饰的class，不仅能在当前模块内被继承，而且也可以在导入了这个模块的另一个模块内被继承。
   由open修饰的class成员，不仅能被当前模块内的子类重写，而且也可以被导入了这个模块的另一个模块内的子类重写。
-  internal 由internal修饰的实体可以被模块内的任何文件访问，模块之外的其它文件不能访问。这是所有实体的默认权限。
-fileprivate 由fileprivate修饰的实体可以在当前文件内被访问。若某个功能只要在文件内使用，则可以使用这个访问符修饰。
-private 由private修饰的实体只能被实体所在的声明内部访问，当实现细节只在声明内部使用时使用private修饰。
+  internal internal是默认的权限。它表示只能在当前定义的module中访问和重写。它可以被一个module中的多个文件访问，但不能被其他module访问。
+fileprivate 由fileprivate修饰的实体可以在当前文件内被访问。若某个功能只要在文件内使用，则可以使用这个访问符修饰，这也是Swift 3新添加的权限。
+private private是最低阶别的访问权限，它的对象只能在定义的作用域内使用，离开了这个作用域，即时是同一个文件的其他作用域，也无法访问。
  </content>
     </entry>
     
