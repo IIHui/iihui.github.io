@@ -546,11 +546,10 @@ import Foundation //参考自https://www.jianshu.com/p/e31eeb26cdce enum positio
 open open具有最高的访问权限。其修饰的类和方法可以在任意Module中被访问和重写，它是Swift3中新添加的访问权限。
 public public的权限仅次于open。与open唯一的区别在于，它修饰的对象可以在任意module中被访问，但是不能被重写。
 open与public的区别 虽然open和public都有最高的访问级别，但open访问权限只适用于修饰class和class的成员，它与public有明显的不同：
-  由public修饰的class，或被其他更严格的访问级别修饰，这个class只能在当前模块内被继承。
-  由public修饰的class成员，或被其他更严格的访问级别修饰，这些成员只能被当前模块内的子类重写。
-  由open修饰的class，不仅能在当前模块内被继承，而且也可以在导入了这个模块的另一个模块内被继承。
-  由open修饰的class成员，不仅能被当前模块内的子类重写，而且也可以被导入了这个模块的另一个模块内的子类重写。
-  internal internal是默认的权限。它表示只能在当前定义的module中访问和重写。它可以被一个module中的多个文件访问，但不能被其他module访问。
+  public修饰的class只允许外部模块调用，但是不允许外部模块继承，本模块可以继承。而open修饰的class既允许其他模块调用，也允许被子类继承。
+  public修饰的成员只允许其他模块调用，但不能被外部模块重写(override)，本模块可以重写。而open修饰的成员既允许被其他模块调用，也允许成员被覆盖。
+  其他模块继承覆盖父类的成员时，也需要把成员声明为open。
+  open class SubclassableParentClass { public func foo() { } open func bar() { } public final func baz() { } } open class SubclassC: SubclassableParentClass { //非法，成员没有被声明为open  override func bar() { } } internal internal是默认的权限。它表示只能在当前定义的module中访问和重写。它可以被一个module中的多个文件访问，但不能被其他module访问。
 fileprivate 由fileprivate修饰的实体可以在当前文件内被访问。若某个功能只要在文件内使用，则可以使用这个访问符修饰，这也是Swift 3新添加的权限。
 private private是最低阶别的访问权限，它的对象只能在定义的作用域内使用，离开了这个作用域，即时是同一个文件的其他作用域，也无法访问。
  </content>
