@@ -226,7 +226,7 @@ code.has-jax {
     <i class="fa fa-file-word-o"></i>
 </span>
 <span class="post-meta-item-text">字数: </span>
-<span class="leancloud-visitors-count">1342</span>
+<span class="leancloud-visitors-count">1369</span>
 &nbsp; | &nbsp;
 <span class="post-meta-item-icon">
     <i class="fa fa-coffee"></i>
@@ -238,12 +238,12 @@ code.has-jax {
     </header>
     <div class="post-body" itemprop="articleBody">
     <h1 id="判断是否为2的n次方">判断是否为2的n次方</h1>
-<p>对于整数数来说，如果一个数为$x=2^n$,那么必然有一位为<code>1</code>，那么$(x-1)$的对应位为<code>0</code>，对应位的右边全部为<code>1</code>。</p>
+<p>对于整数数来说，如果一个数为$x=2^n$,那么必然有一位为<code>1</code>，其它位为<code>0</code>。那么$(x-1)$在其对应位为<code>0</code>，对应位的右边全部为<code>1</code>。</p>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-cpp" data-lang="cpp"><span style="color:#f92672">!</span>(x(x<span style="color:#f92672">-</span><span style="color:#ae81ff">1</span>))  <span style="color:#75715e">//正整数
 </span></code></pre></div><hr>
 <h1 id="位运算实现加法">位运算实现加法</h1>
 <p>对于二进制的加法，首先如果<!-- raw HTML omitted -->不考虑进位<!-- raw HTML omitted -->时：<code>1+1=0</code>，<code>0+1=1</code>，<code>1+0=1</code>，<code>0+0=0</code>，这是二进制的异或。然后，考虑进位<code>1+1=1</code>，<code>1+0=0</code>，<code>0+1=0</code>，<code>0+0=0</code>，这是二进制的与运算。</p>
-<p>因此，二进制可以按照如下的方式进行：①首先不考虑进位的情况时，计算各位的累加得到值的累加<code>a</code>；②然后考虑有进位的情况，先计算进位并将其左移得到<code>b</code>，如果<code>b</code>的值为0，那么<code>a</code>的值就是最后的计算结果，如果<code>b</code>的值不为<code>0</code>，则<code>a+b</code>是最后的结果。</p>
+<p>因此，二进制可以按照如下的方式进行：①首先不考虑进位的情况时，计算各位的累加得到值的累加<code>a</code>；②然后考虑有进位的情况，先计算进位并将其左移得到<code>b</code>，如果<code>b</code>的值为<code>0</code>，那么<code>a</code>的值就是最后的计算结果，如果<code>b</code>的值不为<code>0</code>，则<code>a+b</code>是最后的结果。</p>
 <p>下面是非递归方式的实现：</p>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-cpp" data-lang="cpp"><span style="color:#66d9ef">int</span> <span style="color:#a6e22e">add</span>(<span style="color:#66d9ef">int</span> x,<span style="color:#66d9ef">int</span> y)
 {
@@ -299,7 +299,8 @@ b <span style="color:#f92672">=</span> a <span style="color:#f92672">^</span> b;
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-cpp" data-lang="cpp"> (x <span style="color:#f92672">&amp;</span> y) <span style="color:#f92672">+</span> (x <span style="color:#f92672">^</span> y <span style="color:#f92672">&gt;</span><span style="color:#f92672">&gt;</span> <span style="color:#ae81ff">1</span>);
 </code></pre></div><hr>
 <h1 id="二进制中1的个数">二进制中1的个数</h1>
-<p>第一种方式<!-- raw HTML omitted -->每次使用公式<code>n &amp; (n-1)</code>可以去除二进制表示中的<code>1</code>位<code>1</code><!-- raw HTML omitted -->，当所有位置的<code>1</code>都被去除之后，结果为<code>0</code>，这就是终止条件。</p>
+<h2 id="利用n--n-1">利用n &amp; (n-1)</h2>
+<p>第一种方式<!-- raw HTML omitted -->每次使用公式<code>n&amp;(n-1)</code>可以去除二进制表示中的<code>1</code>位<code>1</code><!-- raw HTML omitted -->，当所有位置的<code>1</code>都被去除之后，结果为<code>0</code>，这就是终止条件。</p>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-cpp" data-lang="cpp"><span style="color:#66d9ef">int</span> <span style="color:#a6e22e">getBinary1Bits1</span>(<span style="color:#66d9ef">int</span> n)
 {
     <span style="color:#66d9ef">int</span> count <span style="color:#f92672">=</span> <span style="color:#ae81ff">0</span>;
@@ -320,7 +321,8 @@ b <span style="color:#f92672">=</span> a <span style="color:#f92672">^</span> b;
     }
     <span style="color:#66d9ef">return</span> count;
 }
-</code></pre></div><p>第二种方式，使用一个标识数，其初始值设置为<code>1</code>。然后，使用这次标识数与当前数进行位与运算，便可得到当前位是否为<code>1</code>；接着，使标识数向左移动一位，然后重复上一步，最终得到<code>1</code>的个数。</p>
+</code></pre></div><h2 id="利用标识位">利用标识位</h2>
+<p>第二种方式，使用一个标识数，其初始值设置为<code>1</code>。然后，使用这次标识数与当前数进行位与运算，便可得到当前位是否为<code>1</code>；接着，使标识数向左移动一位，然后重复上一步，最终得到<code>1</code>的个数。</p>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-cpp" data-lang="cpp"><span style="color:#66d9ef">int</span> <span style="color:#a6e22e">getBinary1Bits3</span>(<span style="color:#66d9ef">int</span> n)
 {
     <span style="color:#66d9ef">int</span> count <span style="color:#f92672">=</span> <span style="color:#ae81ff">0</span>;
@@ -336,7 +338,8 @@ b <span style="color:#f92672">=</span> a <span style="color:#f92672">^</span> b;
     }
     <span style="color:#66d9ef">return</span> count;
 }
-</code></pre></div><p>第三种方式使用<!-- raw HTML omitted -->汉明<!-- raw HTML omitted -->：</p>
+</code></pre></div><h2 id="利用汉明编码">利用汉明编码</h2>
+<p>第三种方式使用<!-- raw HTML omitted -->汉明<!-- raw HTML omitted -->：</p>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-cpp" data-lang="cpp"><span style="color:#66d9ef">typedef</span> <span style="color:#66d9ef">unsigned</span> int64 uint64;  <span style="color:#75715e">//assume this gives 64-bits
 </span><span style="color:#75715e"></span><span style="color:#66d9ef">const</span> uint64 m1 <span style="color:#f92672">=</span> <span style="color:#ae81ff">0x5555555555555555</span>; <span style="color:#75715e">//binary: 0101...
 </span><span style="color:#75715e"></span><span style="color:#66d9ef">const</span> uint64 m2 <span style="color:#f92672">=</span> <span style="color:#ae81ff">0x3333333333333333</span>; <span style="color:#75715e">//binary: 00110011..
@@ -531,7 +534,13 @@ b <span style="color:#f92672">=</span> a <span style="color:#f92672">^</span> b;
     <li><a href="#两个数较大者">两个数较大者</a></li>
     <li><a href="#两个数较小者">两个数较小者</a></li>
     <li><a href="#两个数的平均值">两个数的平均值</a></li>
-    <li><a href="#二进制中1的个数">二进制中1的个数</a></li>
+    <li><a href="#二进制中1的个数">二进制中1的个数</a>
+      <ul>
+        <li><a href="#利用n--n-1">利用n & (n-1)</a></li>
+        <li><a href="#利用标识位">利用标识位</a></li>
+        <li><a href="#利用汉明编码">利用汉明编码</a></li>
+      </ul>
+    </li>
   </ul>
 </nav></div>
     </div>
