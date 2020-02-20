@@ -1872,7 +1872,7 @@ int recAddNoArithm(int a, int b) { if (b == 0) return a; int sum = a ^ b; int ca
 由b求-b的快捷方式是按位取反，然后末位加1：
 int subNoArithm(int a, int b) { auto sub = nonRecAddNoArithm(~b, 1); return nonRecAddNoArithm(a, sub); }  交换两个数的值 在异或运算中，偶数个相同的数异或的结果为0；奇数个相同的数的异或的结果为还是当前数；某个数和0进行异或的结果仍为原数，并且异或运算是支持交换律的：
 a = a ^ b; b = a ^ b; a = a ^ b; 上面是a在公式左边出现两次，或者b在公式左边出现两次，这两次是最开始和最后出现：
-b = a ^ b; a = a ^ b; b = a ^ b;  两个数较大者 主要运用异或的特点：偶数个相同的数异或的结果为0；奇数个相同的数的异或的结果为还是当前数；某个数和0进行异或的结果仍为原数。并且异或运算是支持交换律的。以及-1的二进制位全部为1，
+b = a ^ b; a = a ^ b; b = a ^ b;  两个数较大者 主要运用异或的特点：偶数个相同的数异或的结果为0；奇数个相同数异或结果还是当前数；某个数和0进行异或的结果仍为原数,并且异或运算是支持交换律的。以及-1的二进制位全部为1，
 y ^ ((x ^ y) &amp;amp; (-(x &amp;gt;= y))  两个数较小者 x ^ ((x ^ y) &amp;amp; (-( x &amp;gt;= y))  两个数的平均值 (x &amp;amp; y) &#43; (x ^ y &amp;gt;&amp;gt; 1);  二进制中1的个数 利用n &amp;amp; (n-1) 第一种方式每次使用公式n&amp;amp;(n-1)可以去除二进制表示中的1位1，当所有位置的1都被去除之后，结果为0，这就是终止条件。
 int getBinary1Bits1(int n) { int count = 0; while (n != 0) { n = n &amp;amp; (n - 1); //n &amp;amp; （n-1)每次可以去除二进制表示中的一个1  count&#43;&#43;; } return count; } int getBinary1Bits2(unsigned int n) //注意参数的变化 { int count = 0; while (n &amp;gt; 0) //终止条件是 n&amp;gt;0,因为 n 总是&amp;gt;=0  { n = n &amp;amp; (n - 1); count&#43;&#43;; } return count; }  利用标识位 第二种方式，使用一个标识数，其初始值设置为1。然后，使用这次标识数与当前数进行位与运算，便可得到当前位是否为1；接着，使标识数向左移动一位，然后重复上一步，最终得到1的个数。
 int getBinary1Bits3(int n) { int count = 0; unsigned int flag = 1; //标识数应该声明为无符号数  while (flag != 0) { if (flag &amp;amp; n) { count&#43;&#43;; } flag = flag &amp;lt;&amp;lt; 1; } return count; } 利用汉明编码 第三种方式使用汉明：
