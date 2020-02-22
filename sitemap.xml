@@ -37,7 +37,24 @@ summaryLength = 100 #放在同themes同级的config.toml上才有效 文章置�
         <tags>
           <tag>Swift</tag><tag>iOS</tag>
         </tags>
-        <content type="html"> </content>
+        <content type="html">  方法交换Swizzle 是OC运行时的黑魔法之一。通过Swizzle可以在运行时对某些方法进行替换。在Swift也可以使用OC的Swizzle在运行时进行方法交换。
+ 工具类 因为项目埋点需要使用到方法交换，因此决定写一个专门的工具类来实现Swift的方法交换，在``
+class_addMethod 首先看下面的这段代码，在下面的代码中直接交换了originalSelector和swizzledSelector
+extension NSObject { static func swizzlingForClass(_ forClass: AnyClass, originalSelector: Selector, swizzledSelector: Selector) { guard let originalMethod = class_getInstanceMethod(forClass, originalSelector), let swizzledMethod = class_getInstanceMethod(forClass, swizzledSelector) else { return } method_exchangeImplementations(originalMethod, swizzledMethod) } } 问题提出 假设父类有个方法method，子类未重写method方法，子类的中想要拿来替换的方法为swizzledMethod。如果按照上面的方法交换时，因为父类有该方法，而子类未重写该方法，所以调用class_getInstanceMethod得到的是父类的method方法，所以它与子类的swizzledMethod方法进行交换，现在分两个方向讨论：
+  如果在子类实例中调用method方法时，因为已经与自己的swizzledMethod方法交换，所以实际上调用的自己swizzledMethod，所以能够正常运行。
+  如果在父类的实例中调用method方法，因为已经与子类的swizzledMethod方法交换，所以调用的是子类的swizzledMethod方法。也就是说此时是父类调用子类的方法，所以会崩溃。
+  根据上面的讨论，首先应该判断子类是否有method方法，如果有则直接进行交换。如果没有，则应该将swizzledMethod的IMP赋值给method这个Selector，然后在将method的IMP（其实是父类中的实现）赋值给swizzledMethod这个Selector。
+问题解决 根据上面的分析，应该先来看一下class_addMethod的函数原型，如下所示：
+@available(iOS 2.0, *) public func class_addMethod(_ cls: AnyClass?, _ name: Selector, _ imp: IMP, _ types: UnsafePointer&amp;lt;Int8&amp;gt;?) -&amp;gt; Bool 这个方法的作用是在一个类中添加一个新方法(名字和实现）,其中的参数的含义为下：
+  cls表示需要添加方法的类
+  name表示要添加的方法的selector（方法名，这里的方法名是一个结构体）
+  imp 表示要添加的方法的实现的指针IMP（定义见运行时文章）
+  types用来描述方法参数的字符串数组
+  如果cls中含有name则添加失败，返回false。这个方法会重写cls父类中与name同名的方法，但是不会替换cls中已经存在的与cls同名的方法。但是，如果想要替换cls中与name同名的方法，应该调用method_setImplementation。
+  因此，可以使用class_addMethod方法的返回值来确定当前类中是否存在能够交换的方法，如果存在(添加失败)则直接交换。
+let didAddMethod: Bool = class_addMethod(object, originalSelector, method_getImplementation(swizzledMethod), method_getTypeEncoding(swizzledMethod)) 上面的代码中如果didAddMethod返回为false，则说明可以直接进行方法交换，如果返回值为true，则说明将originalSelector指向了swizzledMethod的实现，接下来就要将swizzledSelector指向originalMethod的实现。因此，完整的代码应该像如下所示：
+static func exchangeSelector(object:AnyClass,originalSelector: Selector, swizzledSelector: Selector) { //对于class_getInstanceMethod方法，若类没有实现对应的方法，但父类实现了，则这个函数会返回父类的方法 guard let originalMethod = class_getInstanceMethod(object, originalSelector) else { return } guard let swizzledMethod = class_getInstanceMethod(object, swizzledSelector) else { return } //在进行Swizzling的时候,需要用class_addMethod先进行判断一下原有类中是否有要替换方法的实现 //如果有，则class_addMethod添加失败，直接进行交换 //如果没有，则添加成功，参考https://juejin.im/post/5cb6df44e51d456e6f45c6f1 let didAddMethod: Bool = class_addMethod(object, originalSelector, method_getImplementation(swizzledMethod), method_get //如果class_addMethod返回true,说明当前类中没有要替换方法的实现,所以需要在父类中查找,这时候就用到method_getImplementation去获取class_getInstanceMethod里面 if didAddMethod { class_replaceMethod(object, swizzledSelector, method_getImplementation(originalMethod), method_getTypeEncoding(orig } else { method_exchangeImplementations(originalMethod, swizzledMethod) } } 参考资料
+</content>
     </entry>
     
      <entry>
@@ -49,7 +66,7 @@ summaryLength = 100 #放在同themes同级的config.toml上才有效 文章置�
         <tags>
           <tag>swift</tag><tag>iOS</tag>
         </tags>
-        <content type="html"> AnyObject AnyObject类似于OC中的id类型，表示任意的class类型。但在Swift中由于String、Array等都变成结构体了，AnyObject的试用范围就变窄了。
+        <content type="html"> AnyObject AnyObject类似于OC中的id类型，表示任意的class类型。但在Swift中由于String、Array等都变成结构体了，AnyObject的适用范围就变窄了。
 实际上AnyObject是一个成员为空的协议@objc public protocol AnyObject {}。它注释的第一行:The protocol to which all classes implicitly conform.表明所有的类都隐式遵守了这个协议。
 Any Any也是一个协议，根据其注释The protocol to which all types implicitly conform.表明所有的类型都遵守该协议，包括基本数据类型，enum, struct, func(方法)等等。
 AnyClass AnyClass表示任意类的元类型。根据AnyClass的定义typealias AnyClass = AnyObject .Type可知它为AnyObject.Type的别名。AnyObject.Type中的.Type就是获取元类型, 辟如你有一个Student类，Student.Type就是获取Student的元类型。
