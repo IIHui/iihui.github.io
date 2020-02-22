@@ -37,7 +37,7 @@ summaryLength = 100 #放在同themes同级的config.toml上才有效 文章置�
         <tags>
           <tag>Swift</tag><tag>iOS</tag>
         </tags>
-        <content type="html">  方法交换Swizzle 是OC运行时的黑魔法之一。通过Swizzle可以在运行时对某些方法进行替换。在Swift也可以使用OC的Swizzle在运行时进行方法交换。
+        <content type="html">  方法交换Swizzle 是OC运行时的黑魔法之一，通过Swizzle可以在运行时对某些方法进行交换。在Swift也可以使用OC的Swizzle在运行时进行方法交换，但是写法上与OC有些区别。
  class_addMethod 首先看下面的这段代码，在下面的代码中直接交换了originalSelector和swizzledSelector
 extension NSObject { static func swizzlingForClass(_ forClass: AnyClass, originalSelector: Selector, swizzledSelector: Selector) { guard let originalMethod = class_getInstanceMethod(forClass, originalSelector), let swizzledMethod = class_getInstanceMethod(forClass, swizzledSelector) else { return } method_exchangeImplementations(originalMethod, swizzledMethod) } } 问题提出 假设父类有个方法method，子类未重写method方法，子类的中想要拿来替换的方法为swizzledMethod。如果按照上面的方法交换时，因为父类有该方法，而子类未重写该方法，所以调用class_getInstanceMethod得到的是父类的method方法，所以它与子类的swizzledMethod方法进行交换，现在分两个方向讨论：
   如果在子类实例中调用method方法时，因为已经与自己的swizzledMethod方法交换，所以实际上调用的自己swizzledMethod，所以能够正常运行。
