@@ -1403,9 +1403,9 @@ runtime  runtime是一套存C语言的API，OC代码最终都会被编译器转�
         </tags>
         <content type="html">  在Swift中方法是关联了特定类型的函数。类，结构体，枚举类型都能定义实例方法，方法封装了给定类型特定的任务和功能。
  实例方法 实例方法是属于特定实例（类实例、结构体实例或者枚举实例）的函数。实例方法只能在类型的具体实例里被调用，不能独立于实例而被调用，也就是说不能直接使用类名直接调用。
-class Counter { var count = 0 func increment() { count &#43;= 1 } func increment(by amount: Int) { count &#43;= amount } func reset() { count = 0 } }  异变方法 在Swift中结构体和枚举是值类型。默认情况下，值类型属性不能被自身的实例方法修改。如果需要改变结构体或者枚举类型的属性，应该将实例方法进行异变——实例方法的func关键字前添加mutating关键字：
+class Counter { var count = 0 func increment() { count &#43;= 1 } func increment(by amount: Int) { count &#43;= amount } func reset() { count = 0 } }  异变方法 在Swift中结构体和枚举是值类型。默认情况下，值类型属性不能被自身的实例方法修改。如果需要改变结构体或者枚举类型的属性，应该将实例方法进行异变。即在实例方法的func关键字前添加mutating关键字：
 struct Point { var x = 0.0, y = 0.0 mutating func moveBy(x deltaX: Double, y deltaY: Double) { x &#43;= deltaX y &#43;= deltaY } } 但是，不能在常量结构体类型里调用异变方法，因为常量代表自身属性不能被改变，即使这些属性是变量属性：
-let fixedPoint = Point(x: 3.0, y: 3.0) fixedPoint.moveBy(x: 2.0, y: 3.0) //编译器会报错  self属性 每一个类的实例都隐含一个叫做self的属性，它完全和实例本身相等，可以使用self来调用实例的方法或者使用实例的属性。
+let fixedPoint = Point(x: 3.0, y: 3.0) fixedPoint.moveBy(x: 2.0, y: 3.0) //编译器会报错，因为常量结构体里的数据不能被修改，而moveBy声明是异变的，所以矛盾，编译器会报错。  self属性 每一个类的实例都隐含一个叫做self的属性，它完全和实例本身相等，可以使用self来调用实例的方法或者使用实例的属性。
 struct Point { var x = 0.0, y = 0.0 func isToTheRightOf(x: Double) -&amp;gt; Bool { return self.x &amp;gt; x //形参的优先级别高于实例属性 } } 枚举的异变方法可以设置隐含的self属性为相同枚举里的不同成员：
 enum TriStateSwitch { case off, low, high mutating func next() { switch self { case .off: self = .low case .low: self = .high case .high: self = .off } } } 类型方法 类型方法是用来定义类型本身调用的方法，通过在func关键字前加static来实现。类还可以用关键字class来允许子类重写父类的方法实现。
 在类方法中，隐含的self指向的是类本身而不是类的实例。同样在类型方法中，有self访问的属性与同名的形参相比，优先级低一些：
