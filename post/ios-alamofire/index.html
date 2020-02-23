@@ -226,7 +226,7 @@ code.has-jax {
     <i class="fa fa-file-word-o"></i>
 </span>
 <span class="post-meta-item-text">字数: </span>
-<span class="leancloud-visitors-count">690</span>
+<span class="leancloud-visitors-count">790</span>
 &nbsp; | &nbsp;
 <span class="post-meta-item-icon">
     <i class="fa fa-coffee"></i>
@@ -364,6 +364,32 @@ code.has-jax {
             }
         <span style="color:#66d9ef">case</span> .failure(<span style="color:#66d9ef">let</span> error):
              Dprint(error.localizedDescription)
+        }
+    }
+}
+</code></pre></div><div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift"><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">bindUserDevice</span>(with model: LoginUserModel, and existUsers: ExistUsers, block: @escaping (<span style="color:#66d9ef">_</span> model: UserInfoModel?, <span style="color:#66d9ef">_</span> errorMsg: String?) -&gt; Void) {
+    <span style="color:#66d9ef">var</span> dataDic = Dictionary&lt;String, String&gt;()
+    dataDic[<span style="color:#e6db74">&#34;</span><span style="color:#e6db74">rand</span><span style="color:#e6db74">&#34;</span>] = UUID().uuidString
+    
+    <span style="color:#66d9ef">var</span> metaDic = <span style="color:#66d9ef">self</span>.getDefaultMetaDic(forAction: ConfigRequestAction.bindUserDeviceV2)
+    metaDic[<span style="color:#e6db74">&#34;</span><span style="color:#e6db74">ystID</span><span style="color:#e6db74">&#34;</span>] = model.ystId
+    metaDic[<span style="color:#e6db74">&#34;</span><span style="color:#e6db74">sapID</span><span style="color:#e6db74">&#34;</span>] = model.sapId
+    metaDic[<span style="color:#e6db74">&#34;</span><span style="color:#e6db74">inuseID</span><span style="color:#e6db74">&#34;</span>] = model.inUseId
+    
+    <span style="color:#66d9ef">let</span> parameters = <span style="color:#66d9ef">self</span>.getRequestPostParameters(metaDic: metaDic, dataDic: dataDic)
+    
+    Alamofire.request(ConfigRequestMoUrl, method: .post, parameters: parameters, encoding: JSONEncoding.<span style="color:#66d9ef">default</span>, headers: <span style="color:#66d9ef">nil</span>).responseJSON { (response) <span style="color:#66d9ef">in</span>
+        <span style="color:#66d9ef">switch</span> response.result {
+        <span style="color:#66d9ef">case</span> .success(<span style="color:#66d9ef">let</span> value):
+            <span style="color:#66d9ef">let</span> json = JSON(value)
+            <span style="color:#66d9ef">if</span> <span style="color:#66d9ef">let</span> retCode = json[<span style="color:#e6db74">&#34;</span><span style="color:#e6db74">data</span><span style="color:#e6db74">&#34;</span>][<span style="color:#e6db74">&#34;</span><span style="color:#e6db74">retCode</span><span style="color:#e6db74">&#34;</span>].string, retCode == <span style="color:#e6db74">&#34;</span><span style="color:#e6db74">0</span><span style="color:#e6db74">&#34;</span> {
+                <span style="color:#66d9ef">let</span> model = UserInfoModel(from: json[<span style="color:#e6db74">&#34;</span><span style="color:#e6db74">data</span><span style="color:#e6db74">&#34;</span>])
+                block(model, <span style="color:#66d9ef">nil</span>)
+            } <span style="color:#66d9ef">else</span> {
+                block(<span style="color:#66d9ef">nil</span>, json[<span style="color:#e6db74">&#34;</span><span style="color:#e6db74">data</span><span style="color:#e6db74">&#34;</span>][<span style="color:#e6db74">&#34;</span><span style="color:#e6db74">retMsg</span><span style="color:#e6db74">&#34;</span>].stringValue)
+            }
+        <span style="color:#66d9ef">case</span> .failure(<span style="color:#66d9ef">_</span>):
+            block(<span style="color:#66d9ef">nil</span>, <span style="color:#e6db74">&#34;</span><span style="color:#e6db74">network is poor</span><span style="color:#e6db74">&#34;</span>)
         }
     }
 }
