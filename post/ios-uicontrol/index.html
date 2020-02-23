@@ -226,7 +226,7 @@ code.has-jax {
     <i class="fa fa-file-word-o"></i>
 </span>
 <span class="post-meta-item-text">字数: </span>
-<span class="leancloud-visitors-count">97</span>
+<span class="leancloud-visitors-count">176</span>
 &nbsp; | &nbsp;
 <span class="post-meta-item-icon">
     <i class="fa fa-coffee"></i>
@@ -240,7 +240,27 @@ code.has-jax {
     <blockquote>
 <p><code>UIControl</code>是<code>UIView</code>的子类，也是<code>UIResponder</code>的子类。是<code>UIButton，UISwitch，UITextField</code>等控件的父类。它本身定义了一些属性和方法，但是不能直接使用。</p>
 </blockquote>
+<h1 id="方法交换">方法交换</h1>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift"><span style="color:#66d9ef">extension</span> <span style="color:#a6e22e">UIControl</span> {
+    <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">func</span> swizzleMethod() {
+        <span style="color:#66d9ef">struct</span> <span style="color:#a6e22e">Static</span> {
+            <span style="color:#66d9ef">static</span> <span style="color:#66d9ef">var</span> token = NSUUID().uuidString
+        }
 
+        <span style="color:#75715e">//</span><span style="color:#75715e"> </span><span style="color:#75715e">确</span><span style="color:#75715e">保</span><span style="color:#75715e">不</span><span style="color:#75715e">是</span><span style="color:#75715e">子</span><span style="color:#75715e">类</span>
+        <span style="color:#66d9ef">if</span> <span style="color:#66d9ef">self</span> <span style="color:#f92672">!=</span> UIControl.<span style="color:#66d9ef">self</span> {
+            <span style="color:#66d9ef">return</span>
+        }
+        <span style="color:#75715e">//</span><span style="color:#75715e"> </span><span style="color:#75715e">防</span><span style="color:#75715e">止</span><span style="color:#75715e">手</span><span style="color:#75715e">动</span><span style="color:#75715e">调</span><span style="color:#75715e">用</span><span style="color:#75715e">，</span><span style="color:#75715e">造</span><span style="color:#75715e">成</span><span style="color:#75715e">交</span><span style="color:#75715e">换</span><span style="color:#75715e">多</span><span style="color:#75715e">次</span>
+        DispatchQueue.once(token: Static.token) {
+            MethodSwizzlingTools.exchangeSelector(object: <span style="color:#66d9ef">self</span>, originalSelector: <span style="color:#66d9ef">#selector</span>(UIControl.sendAction(<span style="color:#66d9ef">_</span>:to:<span style="color:#66d9ef">for</span>:)), swizzledSelector: <span style="color:#66d9ef">#selector</span>(userSendAction(<span style="color:#66d9ef">_</span>:to:<span style="color:#66d9ef">for</span>:)))
+        }
+    }
+
+    <span style="color:#66d9ef">@objc</span> <span style="color:#66d9ef">func</span> <span style="color:#a6e22e">userSendAction</span>(<span style="color:#66d9ef">_</span> action: Selector, to target: Any?, <span style="color:#66d9ef">for</span> event: UIEvent?) {
+        <span style="color:#66d9ef">self</span>.userSendAction(action, to: target, <span style="color:#66d9ef">for</span>: event)
+   }
+</code></pre></div>
     </div>
     <footer class="post-footer">
         
@@ -333,7 +353,7 @@ code.has-jax {
       <nav class="site-state motion-element">
     <div class="site-state-item site-state-posts">
       <a href="https://iihui.github.io/post/">
-        <span class="site-state-item-count">96</span>
+        <span class="site-state-item-count">94</span>
         <span class="site-state-item-name">日志</span>
       </a>
     </div>
@@ -401,7 +421,11 @@ code.has-jax {
     
 <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
     <div class="post-toc">
-        <div class="post-toc-content"><nav id="TableOfContents"></nav></div>
+        <div class="post-toc-content"><nav id="TableOfContents">
+  <ul>
+    <li><a href="#方法交换">方法交换</a></li>
+  </ul>
+</nav></div>
     </div>
 </section>
 
