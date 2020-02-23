@@ -650,7 +650,7 @@ private private是最低阶别的访问权限，它的对象只能在定义的�
     
      <entry>
         <title>单例模式</title>
-        <url>https://iihui.github.io/post/ios-swift-singleton/</url>
+        <url>https://iihui.github.io/post/ios-singleton/</url>
         <categories>
           <category>code</category>
         </categories>
@@ -777,37 +777,6 @@ var step = -3 for i in stride(from: 10, through: 0, by: step){ print(i, terminat
         </tags>
         <content type="html"> 在iOS 9之后，苹果默认要求App访问的url必须为https的安全链接，为了能在项目中请求Http链接，需要在项目中自动生成的Info.plist文件里，将App Transport Security Settings下的Allow Arbitrary Loads设置为YES「如果没有则先添加这两项」:
  </content>
-    </entry>
-    
-     <entry>
-        <title>笔记剥离</title>
-        <url>https://iihui.github.io/post/ios-note-peel/</url>
-        <categories>
-          <category>code</category>
-        </categories>
-        <tags>
-          <tag>iOS</tag>
-        </tags>
-        <content type="html"> 需要处理的  集成百度语音到Framework，应当集成到基础模块 集成百度地图到Framework中，应该以接口的形式抽取出来 数据库剥离 用户数据同步 用户信息获取的剥离   已经遇到的问题 NoteLogInfo.swift  需要集成百度地图 需要配置ConfigNoteIP   NoteSpeechViewController  self.redCircle?.frame.y 中的y已经重命名为minY CGRect没有成员bottom   NoteSpeechPresenter.swift  需要集成百度语音SDK   注意事项  不要将百度语音的SDK集成到FrameWork里，否则后续会发生冲突。 首先抽取一个基础模块，然后再调用这个基础模块的功能 边拆边改，应该拆完一点就改一下 抽离基础数据 应该将百度语音放到基础框架里  抽离思路   基础模块抽离出一个FrameWork
-  笔记也要抽离出一个FrameWork
-  笔记模块依赖基础模块
-  一事通框架也依赖基础模块
-  一事通引入笔记FrameWork
-  按照这个思路，抽离出来的基础模块的FrameWork应该要弄成动态链接库的形式。
-笔记需要基础模块提供的数据  当前服务器时间 InUseId： 当前用户实际使用人的一事通ID deviceId: 当前设备ID platform: 当前设备平台  可能面临的问题 在基础模块中引入的第三方类，如果另外一个第三方工程使用基础模块的FrameWork也用到了这个第三方库，那么这个第三方工程就要把这个第三方库删除以避免冲突。
-小技巧  一进入到手机就获取服务器时间和手机的时间，因为手机时间可能不准确，则过段时间后服务器时间计算为: $$ time = 刚进入APP时服务器时间&#43;手机当前时间-刚进入APP时手机时间$$  基础模块的剥离 首先剥离服务器时间 onReachabilityChanged 修改onReachabilityChanged不依赖于APPDelegate  TimeHttpController 需要修改TimeHttpController: 而TimeHttpController的基类BaseHttpController依赖于
- UserStatus EnvironmentService UpdateService UserInfoService AppService CMBMobClick Extension FlashAlertView   UserStatus 修复UserStatus导致的问题
- 添加UserInfoEntity.swift。而添加UserInfoEntity.swift后会出现.localized的报错。 自建extension.swift文件，并添加.localized变量   alert.show 修复alert.show报错时，首先修改Extension中UIAlertController下的show()函数，然后引入 extension UIWindow和extension UIScreen，则可消除错误。
-extension UIAlertController { func show() { var presentViewController = UIApplication.shared.keyWindow?.safeRootViewController while(presentViewController?.presentedViewController != nil) { presentViewController = presentViewController?.presentedViewController } var topViewController = presentViewController if topViewController is UITabBarController { topViewController = (topViewController as! UITabBarController).selectedViewController } if topViewController is UINavigationController { topViewController = (topViewController as! UINavigationController).topViewController } topViewController?.present(self, animated: true, completion: nil) } }  Date().defaultString 在Extension中添加
-extension Date { var defaultString:String { get { let formatter = DateFormatter() formatter.dateFormat = &amp;#34;yyyy-MM-dd HH:mm:ss&amp;#34; return formatter.string(from: self) } } var fileString:String { get { let formatter = DateFormatter() formatter.dateFormat = &amp;#34;yyyyMMddHHmmssSSS&amp;#34; return formatter.string(from: self) } } var noteString:String { get { let formatter = DateFormatter() formatter.dateFormat = &amp;#34;yyyy-MM-dd HH:mm&amp;#34; return formatter.string(from: self) } } }  FlashAlertView报错 首先将FlashAlertView中的类加入到基础框架中，然后会报下面的错误： 在Extension中添加
-extension DispatchTime: ExpressibleByFloatLiteral { public init(floatLiteral value: Double) { self = DispatchTime.now() &#43; .milliseconds(Int(value * 1000)) } }  EnvironmentService 首先将EnvironmentService.swift引入到项目中，因为EnvironmentService.swift中涉及到UpdateService，因此先剥离UpdateService
- UpdateService 只要将UpdateService.swift加入到工程中即可
-UserInfoService 首先将UserInfoService加入到UserInfoService.swift
- 讨论的剥离思路   使用AFNetworking将笔记的网络独立出来，不动移事通原来的网络逻辑。
-  进入移事通时将需要用到的信息保存到一个类中，存到内存中。
-  然后新建一个桥接类。
-  剥离流程
- 将笔记需要的信息都传进来（通过JSON的形式）  </content>
     </entry>
     
      <entry>
