@@ -4,13 +4,13 @@
     <meta charset="UTF-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" /> 
-    <title>memcpy 的实现 - Keep It Simple</title>
+    <title>Swift 中 where 关键字 - Keep It Simple</title>
     <meta name="keywords" content="博客,思考,读书,笔记,技术,分享">
     
-    <meta property="og:title" content="memcpy 的实现">
+    <meta property="og:title" content="Swift 中 where 关键字">
     <meta property="og:site_name" content="Keep It Simple">
     <meta property="og:image" content="/img/author.jpg"> 
-    <meta name="title" content="memcpy 的实现 - Keep It Simple" />
+    <meta name="title" content="Swift 中 where 关键字 - Keep It Simple" />
     <meta name="description" content="Swift | Go | C&#43;&#43; "> 
     <link rel="shortcut icon" href="https://iihui.github.io/img/favicon.ico" />
     <link rel="apple-touch-icon" href="https://iihui.github.io/img/apple-touch-icon.png" />
@@ -177,8 +177,8 @@ code.has-jax {
   <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
     <header class="post-header">
       <h1 class="post-title" itemprop="name headline">
-        <a class="post-title-link" href="https://iihui.github.io/post/cpp-memcpy/" itemprop="url">
-        memcpy 的实现
+        <a class="post-title-link" href="https://iihui.github.io/post/ios-where/" itemprop="url">
+        Swift 中 where 关键字
         </a>
       </h1>
       <div class="post-meta">
@@ -187,8 +187,8 @@ code.has-jax {
     <i class="fa fa-calendar-o"></i>
 </span>
 <span class="post-meta-item-text">创建: </span>
-<time itemprop="dateCreated" datetime="2016-03-22T13:04:35+08:00" content="2017-06-01">
-    2017-06-01
+<time itemprop="dateCreated" datetime="2016-03-22T13:04:35+08:00" content="2020-02-22">
+    2020-02-22
 </time>
 </span>
 &nbsp; | &nbsp;
@@ -197,92 +197,85 @@ code.has-jax {
     <i class="fa fa-calendar-check-o"></i>
 </span>
 <span class="post-meta-item-text">更新: </span>
-<time itemprop="dateUpdated" content="2017-06-01">
-    2017-06-01
+<time itemprop="dateUpdated" content="2020-02-22">
+    2020-02-22
 </time>
 </span> 
       
+
+  <span class="post-category" >
+  &nbsp; | &nbsp;
+  <span class="post-meta-item-icon">
+    <i class="fa fa-folder-o"></i>
+  </span>
+  <span class="post-meta-item-text">分类: </span>
+  
+    <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
+      <a href="https://iihui.github.io/categories/ios" itemprop="url" rel="index">
+        <span itemprop="name">ios</span>
+      </a>
+      &nbsp; 
+    </span>
+  
+</span>
+
+
       <span>
 &nbsp; | &nbsp;
 <span class="post-meta-item-icon">
     <i class="fa fa-file-word-o"></i>
 </span>
 <span class="post-meta-item-text">字数: </span>
-<span class="leancloud-visitors-count">396</span>
+<span class="leancloud-visitors-count">560</span>
 &nbsp; | &nbsp;
 <span class="post-meta-item-icon">
     <i class="fa fa-coffee"></i>
 </span>
 <span class="post-meta-item-text">阅读: </span>
-<span class="leancloud-visitors-count">1 分钟</span>
+<span class="leancloud-visitors-count">2 分钟</span>
 </span>
       </div>
     </header>
     <div class="post-body" itemprop="articleBody">
-    <h2 id="地址重叠">地址重叠</h2>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-cpp" data-lang="cpp"><span style="color:#66d9ef">void</span> <span style="color:#f92672">*</span><span style="color:#a6e22e">memcpy</span>(<span style="color:#66d9ef">void</span> <span style="color:#f92672">*</span>dst, <span style="color:#66d9ef">const</span> <span style="color:#66d9ef">void</span> <span style="color:#f92672">*</span>src, size_t n);
-<span style="color:#75715e">//If copying takes place between objects that overlap, the behavior is undefined.
-</span></code></pre></div><ul>
-<li>
-<p>注意注释，<!-- raw HTML omitted -->对于地址重叠的情况，该函数的行为是未定义的<!-- raw HTML omitted -->。事实上所说的陷阱也在于此，自己动手实现<code>memcpy</code>时就需要考虑地址重叠的情况。</p>
-</li>
-<li>
-<p>另外，标准库也提供了地址重叠时的内存拷贝函数：<code>memmove</code>，那么为什么还要考虑重写<code>memcpy</code>函数呢?</p>
-</li>
-<li>
-<p>因为<code>memmove</code>函数的实现效率问题，<!-- raw HTML omitted -->该函数把源字符串拷贝到临时<code>buffer</code>里，然后再从临时<code>buffer</code>里写到目的地址，增加了一次不必要的开销<!-- raw HTML omitted -->。</p>
-</li>
-</ul>
-<hr>
-<h2 id="自实现版本">自实现版本</h2>
-<p>当可能<!-- raw HTML omitted -->会发生重叠时，应该从后往前拷贝，<!-- raw HTML omitted -->类似于<code>vector</code>的插入时当插入点的元素大于要插入的元素个数时。</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-cpp" data-lang="cpp"><span style="color:#75715e">#</span><span style="color:#75715e">include</span> <span style="color:#75715e">&lt;stdio.h&gt;</span><span style="color:#75715e">
-</span><span style="color:#75715e"></span><span style="color:#75715e">#</span><span style="color:#75715e">include</span> <span style="color:#75715e">&lt;stdlib.h&gt;</span><span style="color:#75715e">
-</span><span style="color:#75715e"></span><span style="color:#75715e">#</span><span style="color:#75715e">include</span> <span style="color:#75715e">&lt;string.h&gt;</span><span style="color:#75715e">
-</span><span style="color:#75715e"></span>
-<span style="color:#66d9ef">void</span> <span style="color:#f92672">*</span><span style="color:#a6e22e">Memcpy</span>(<span style="color:#66d9ef">void</span> <span style="color:#f92672">*</span>dst, <span style="color:#66d9ef">const</span> <span style="color:#66d9ef">void</span> <span style="color:#f92672">*</span>src, size_t size);
-
-<span style="color:#66d9ef">int</span> <span style="color:#a6e22e">main</span>(<span style="color:#66d9ef">int</span> argc, <span style="color:#66d9ef">char</span> <span style="color:#f92672">*</span>argv[]) {
-  <span style="color:#66d9ef">char</span> buf[<span style="color:#ae81ff">100</span>] <span style="color:#f92672">=</span> <span style="color:#e6db74"></span><span style="color:#e6db74">&#34;</span><span style="color:#e6db74">abcdefghijk</span><span style="color:#e6db74">&#34;</span>;
-  <span style="color:#75715e">// memcpy(buf+2, buf, 5);
-</span><span style="color:#75715e"></span>  Memcpy(buf <span style="color:#f92672">+</span> <span style="color:#ae81ff">2</span>, buf, <span style="color:#ae81ff">5</span>);
-  printf(<span style="color:#e6db74"></span><span style="color:#e6db74">&#34;</span><span style="color:#e6db74">%s</span><span style="color:#ae81ff">\n</span><span style="color:#e6db74">&#34;</span>, buf <span style="color:#f92672">+</span> <span style="color:#ae81ff">2</span>);
+    <blockquote>
+<p><code>Swift</code>中的<code>where</code>关键字主要用于限定条件，既可以用在<code>switch</code>语句中，也可以用在<code>for in</code>中，还可以在协议中使用。</p>
+</blockquote>
+<h1 id="switch中使用">switch中使用</h1>
+<p>在<code>switch</code>语句中使用<code>where</code>配合<code>if let</code>用于限定某些条件：</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift"><span style="color:#66d9ef">let</span> names = [<span style="color:#e6db74">&#34;</span><span style="color:#e6db74">张三</span><span style="color:#e6db74">&#34;</span>, <span style="color:#e6db74">&#34;</span><span style="color:#e6db74">李四</span><span style="color:#e6db74">&#34;</span>, <span style="color:#e6db74">&#34;</span><span style="color:#e6db74">吴奇隆</span><span style="color:#e6db74">&#34;</span>, <span style="color:#e6db74">&#34;</span><span style="color:#e6db74">周六</span><span style="color:#e6db74">&#34;</span>, <span style="color:#e6db74">&#34;</span><span style="color:#e6db74">赵七</span><span style="color:#e6db74">&#34;</span>, <span style="color:#e6db74">&#34;</span><span style="color:#e6db74">吴青峰</span><span style="color:#e6db74">&#34;</span>, <span style="color:#e6db74">&#34;</span><span style="color:#e6db74">吴镇宇</span><span style="color:#e6db74">&#34;</span>]
+names.forEach {
+    <span style="color:#66d9ef">switch</span> $0 {
+    <span style="color:#66d9ef">case</span> <span style="color:#66d9ef">let</span> name <span style="color:#66d9ef">where</span> name.hasPrefix(<span style="color:#e6db74">&#34;</span><span style="color:#e6db74">吴</span><span style="color:#e6db74">&#34;</span>):
+        print(<span style="color:#e6db74">&#34;</span><span style="color:#e6db74">\(</span>name<span style="color:#e6db74">)</span><span style="color:#e6db74">是吴家大院的人</span><span style="color:#e6db74">&#34;</span>)
+    <span style="color:#66d9ef">default</span>:
+        print(<span style="color:#e6db74">&#34;</span><span style="color:#e6db74">hello，</span><span style="color:#e6db74">\(</span>$0<span style="color:#e6db74">)</span><span style="color:#e6db74">&#34;</span>)
+    }
+}
+</code></pre></div><h1 id="for-in中使用">for in中使用</h1>
+<p>配合<code>for in</code>使用，用于添加限定条件使代码更加易读：</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift"><span style="color:#66d9ef">let</span> names = [<span style="color:#e6db74">&#34;</span><span style="color:#e6db74">张三</span><span style="color:#e6db74">&#34;</span>, <span style="color:#e6db74">&#34;</span><span style="color:#e6db74">李四</span><span style="color:#e6db74">&#34;</span>, <span style="color:#e6db74">&#34;</span><span style="color:#e6db74">吴奇隆</span><span style="color:#e6db74">&#34;</span>, <span style="color:#e6db74">&#34;</span><span style="color:#e6db74">周六</span><span style="color:#e6db74">&#34;</span>, <span style="color:#e6db74">&#34;</span><span style="color:#e6db74">赵七</span><span style="color:#e6db74">&#34;</span>, <span style="color:#e6db74">&#34;</span><span style="color:#e6db74">吴青峰</span><span style="color:#e6db74">&#34;</span>, <span style="color:#e6db74">&#34;</span><span style="color:#e6db74">吴镇宇</span><span style="color:#e6db74">&#34;</span>]
+<span style="color:#66d9ef">for</span> name <span style="color:#66d9ef">in</span> names <span style="color:#66d9ef">where</span> name == <span style="color:#e6db74">&#34;</span><span style="color:#e6db74">吴奇隆</span><span style="color:#e6db74">&#34;</span> {
+    print(<span style="color:#e6db74">&#34;</span><span style="color:#e6db74">\(</span>name<span style="color:#e6db74">)</span><span style="color:#e6db74">大哥</span><span style="color:#e6db74">&#34;</span>)
+}
+</code></pre></div><h1 id="接口扩展中使用">接口扩展中使用</h1>
+<p>接口扩展使用<code>where</code>进行限定（如果希望接口扩展的默认实现只在某些限定的条件下才适用):</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift"><span style="color:#66d9ef">extension</span> <span style="color:#a6e22e">ContiguousArray</span> <span style="color:#66d9ef">where</span> Element: BidirectionalCollection {
+    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">func</span> <span style="color:#a6e22e">joined</span>() -&gt; FlattenBidirectionalCollection&lt;ContiguousArray&lt;Element&gt;<span style="color:#f92672">&gt;</span>
 }
 
-<span style="color:#66d9ef">void</span> <span style="color:#f92672">*</span><span style="color:#a6e22e">Memcpy</span>(<span style="color:#66d9ef">void</span> <span style="color:#f92672">*</span>dst, <span style="color:#66d9ef">const</span> <span style="color:#66d9ef">void</span> <span style="color:#f92672">*</span>src, size_t size) {
-  <span style="color:#66d9ef">char</span> <span style="color:#f92672">*</span>psrc;
-  <span style="color:#66d9ef">char</span> <span style="color:#f92672">*</span>pdst;
-
-  <span style="color:#66d9ef">if</span> (NULL <span style="color:#f92672">=</span><span style="color:#f92672">=</span> dst <span style="color:#f92672">|</span><span style="color:#f92672">|</span> NULL <span style="color:#f92672">=</span><span style="color:#f92672">=</span> src) {
-    <span style="color:#66d9ef">return</span> NULL;
-  }
-
-  <span style="color:#66d9ef">if</span> ((src <span style="color:#f92672">&lt;</span> dst) <span style="color:#f92672">&amp;</span><span style="color:#f92672">&amp;</span> (<span style="color:#66d9ef">char</span> <span style="color:#f92672">*</span>)src <span style="color:#f92672">+</span> size <span style="color:#f92672">&gt;</span> (<span style="color:#66d9ef">char</span> <span style="color:#f92672">*</span>)dst)  <span style="color:#75715e">// 自后向前拷贝
-</span><span style="color:#75715e"></span>  {
-    psrc <span style="color:#f92672">=</span> (<span style="color:#66d9ef">char</span> <span style="color:#f92672">*</span>)src <span style="color:#f92672">+</span> size <span style="color:#f92672">-</span> <span style="color:#ae81ff">1</span>;
-    pdst <span style="color:#f92672">=</span> (<span style="color:#66d9ef">char</span> <span style="color:#f92672">*</span>)dst <span style="color:#f92672">+</span> size <span style="color:#f92672">-</span> <span style="color:#ae81ff">1</span>;
-    <span style="color:#66d9ef">while</span> (size<span style="color:#f92672">-</span><span style="color:#f92672">-</span>) {
-      <span style="color:#f92672">*</span>pdst<span style="color:#f92672">-</span><span style="color:#f92672">-</span> <span style="color:#f92672">=</span> <span style="color:#f92672">*</span>psrc<span style="color:#f92672">-</span><span style="color:#f92672">-</span>;
-    }
-  } <span style="color:#66d9ef">else</span> {
-    psrc <span style="color:#f92672">=</span> (<span style="color:#66d9ef">char</span> <span style="color:#f92672">*</span>)src;
-    pdst <span style="color:#f92672">=</span> (<span style="color:#66d9ef">char</span> <span style="color:#f92672">*</span>)dst;
-    <span style="color:#66d9ef">while</span> (size<span style="color:#f92672">-</span><span style="color:#f92672">-</span>) {
-      <span style="color:#f92672">*</span>pdst<span style="color:#f92672">+</span><span style="color:#f92672">+</span> <span style="color:#f92672">=</span> <span style="color:#f92672">*</span>psrc<span style="color:#f92672">+</span><span style="color:#f92672">+</span>;
-    }
-  }
-
-  <span style="color:#66d9ef">return</span> dst;
+<span style="color:#66d9ef">extension</span> <span style="color:#a6e22e">ContiguousArray</span> <span style="color:#66d9ef">where</span> Element: Sequence {
+    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">func</span> <span style="color:#a6e22e">joined</span>&lt;Separator&gt;(separator: Separator) -&gt; JoinedSequence&lt;ContiguousArray&lt;Element&gt;<span style="color:#f92672">&gt;</span> <span style="color:#66d9ef">where</span> Separator: Sequence, Separator.Element == Element.Element
 }
-</code></pre></div><hr>
-
+</code></pre></div>
     </div>
     <footer class="post-footer">
         
  
 <div class="post-tags">     
      
-    <a href="https://iihui.github.io/tags/c&#43;&#43;" rel="tag" title="C&#43;&#43;">#C&#43;&#43;#</a>
+    <a href="https://iihui.github.io/tags/swift" rel="tag" title="swift">#swift#</a>
+    
+    <a href="https://iihui.github.io/tags/ios" rel="tag" title="ios">#ios#</a>
     
 </div>
 
@@ -291,16 +284,16 @@ code.has-jax {
         <div class="post-nav">
     <div class="post-nav-next post-nav-item">
     
-        <a href="https://iihui.github.io/post/go-type/" rel="next" title="Go 基本类型">
-        <i class="fa fa-chevron-left"></i> Go 基本类型
+        <a href="https://iihui.github.io/post/hugo-next/" rel="next" title="Hugo Next 主题">
+        <i class="fa fa-chevron-left"></i> Hugo Next 主题
         </a>
     
     </div>
 
     <div class="post-nav-prev post-nav-item">
     
-        <a href="https://iihui.github.io/post/arith-sort/" rel="prev" title="基本排序算法">
-        基本排序算法 <i class="fa fa-chevron-right"></i>
+        <a href="https://iihui.github.io/post/ios-method-swizzling/" rel="prev" title="Swift 方法交换">
+        Swift 方法交换 <i class="fa fa-chevron-right"></i>
         </a>
     
     </div>
@@ -314,10 +307,10 @@ code.has-jax {
         </div>
         <div>
             <p style="margin-top:10px;">
-                标题：memcpy 的实现
+                标题：Swift 中 where 关键字
                 <br />作者：阿呆<a target="_blank" href="https://iihui.github.io/"></a>
                 
-                <br />地址：https://iihui.github.io/post/cpp-memcpy/
+                <br />地址：https://iihui.github.io/post/ios-where/
                 <br />声明：自由转载-非商用-保持署名（创作共享4.0许可证）
             </p>
         </div>
@@ -438,12 +431,9 @@ code.has-jax {
     <div class="post-toc">
         <div class="post-toc-content"><nav id="TableOfContents">
   <ul>
-    <li>
-      <ul>
-        <li><a href="#地址重叠">地址重叠</a></li>
-        <li><a href="#自实现版本">自实现版本</a></li>
-      </ul>
-    </li>
+    <li><a href="#switch中使用">switch中使用</a></li>
+    <li><a href="#for-in中使用">for in中使用</a></li>
+    <li><a href="#接口扩展中使用">接口扩展中使用</a></li>
   </ul>
 </nav></div>
     </div>
