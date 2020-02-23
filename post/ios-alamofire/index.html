@@ -226,7 +226,7 @@ code.has-jax {
     <i class="fa fa-file-word-o"></i>
 </span>
 <span class="post-meta-item-text">字数: </span>
-<span class="leancloud-visitors-count">621</span>
+<span class="leancloud-visitors-count">690</span>
 &nbsp; | &nbsp;
 <span class="post-meta-item-icon">
     <i class="fa fa-coffee"></i>
@@ -297,6 +297,26 @@ code.has-jax {
         }<span style="color:#66d9ef">else</span>{
             completionHandler(<span style="color:#66d9ef">nil</span>)
         }
+    }
+}
+</code></pre></div><div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift"><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">requestImage</span>(url: String, completionHandler: @escaping (<span style="color:#66d9ef">_</span> image: UIImage?) -&gt; Void) {
+    <span style="color:#66d9ef">self</span>.tokenHttpController.requestLoginDataAndToken(type: .base64, success: { (data, token) <span style="color:#66d9ef">in</span>
+        <span style="color:#66d9ef">let</span> data = data?.extStringByUrlEncode ?? <span style="color:#e6db74">&#34;</span><span style="color:#e6db74">&#34;</span>
+        <span style="color:#66d9ef">let</span> token = token?.extStringByUrlEncode ?? <span style="color:#e6db74">&#34;</span><span style="color:#e6db74">&#34;</span>
+        <span style="color:#66d9ef">let</span> header: HTTPHeaders = [
+            <span style="color:#e6db74">&#34;</span><span style="color:#e6db74">data</span><span style="color:#e6db74">&#34;</span>: data,
+            <span style="color:#e6db74">&#34;</span><span style="color:#e6db74">token</span><span style="color:#e6db74">&#34;</span>: token
+        ]
+        Alamofire.request(url, method: .<span style="color:#66d9ef">get</span>, headers: header).response { (response) <span style="color:#66d9ef">in</span>
+            <span style="color:#66d9ef">if</span> <span style="color:#66d9ef">let</span> data = response.data {
+                <span style="color:#66d9ef">let</span> image = UIImage(data: data)
+                completionHandler(image)
+            }<span style="color:#66d9ef">else</span>{
+                completionHandler(<span style="color:#66d9ef">nil</span>)
+            }
+        }
+    }) {
+        completionHandler(<span style="color:#66d9ef">nil</span>)
     }
 }
 </code></pre></div><div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift"><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">requestScreenADConfigInfo</span>(completionHandler:@escaping (JSON) -&gt; Void){
