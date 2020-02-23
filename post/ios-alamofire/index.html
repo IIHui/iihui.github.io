@@ -226,13 +226,13 @@ code.has-jax {
     <i class="fa fa-file-word-o"></i>
 </span>
 <span class="post-meta-item-text">字数: </span>
-<span class="leancloud-visitors-count">463</span>
+<span class="leancloud-visitors-count">621</span>
 &nbsp; | &nbsp;
 <span class="post-meta-item-icon">
     <i class="fa fa-coffee"></i>
 </span>
 <span class="post-meta-item-text">阅读: </span>
-<span class="leancloud-visitors-count">1 分钟</span>
+<span class="leancloud-visitors-count">2 分钟</span>
 </span>
       </div>
     </header>
@@ -296,6 +296,54 @@ code.has-jax {
             completionHandler(response.data)
         }<span style="color:#66d9ef">else</span>{
             completionHandler(<span style="color:#66d9ef">nil</span>)
+        }
+    }
+}
+</code></pre></div><div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift"><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">requestScreenADConfigInfo</span>(completionHandler:@escaping (JSON) -&gt; Void){
+    <span style="color:#66d9ef">let</span> url = ConfigRequestUrl
+    <span style="color:#66d9ef">let</span> op = ConfigRequestAction.getScreenPictureInfo
+    <span style="color:#66d9ef">let</span> meta = getDefaultMetaData(op)
+    <span style="color:#66d9ef">var</span> data = [String:String]()
+    <span style="color:#66d9ef">if</span> <span style="color:#66d9ef">let</span> model = ScreenADConfigDBRepository.Instance.getScreenConfigModel(),<span style="color:#66d9ef">let</span> jsonStr = model.screenConfigJsonStr{
+        <span style="color:#66d9ef">if</span> <span style="color:#66d9ef">let</span> dataJson = jsonStr.data(using: String.Encoding.utf8) {
+            <span style="color:#66d9ef">do</span>{
+                <span style="color:#66d9ef">let</span> json = <span style="color:#66d9ef">try</span> JSON(data:dataJson)
+                data[<span style="color:#e6db74">&#34;</span><span style="color:#e6db74">configHash</span><span style="color:#e6db74">&#34;</span>] = json[<span style="color:#e6db74">&#34;</span><span style="color:#e6db74">configHash</span><span style="color:#e6db74">&#34;</span>].stringValue
+            }<span style="color:#66d9ef">catch</span>{
+                data[<span style="color:#e6db74">&#34;</span><span style="color:#e6db74">configHash</span><span style="color:#e6db74">&#34;</span>] = <span style="color:#e6db74">&#34;</span><span style="color:#e6db74">&#34;</span>
+            }
+        }
+    }<span style="color:#66d9ef">else</span>{
+        data[<span style="color:#e6db74">&#34;</span><span style="color:#e6db74">configHash</span><span style="color:#e6db74">&#34;</span>] = <span style="color:#e6db74">&#34;</span><span style="color:#e6db74">&#34;</span>
+    }
+    
+    <span style="color:#66d9ef">switch</span> UIDevice.current.userInterfaceIdiom{
+    <span style="color:#66d9ef">case</span> .pad: data[<span style="color:#e6db74">&#34;</span><span style="color:#e6db74">type</span><span style="color:#e6db74">&#34;</span>] = <span style="color:#e6db74">&#34;</span><span style="color:#e6db74">Pad</span><span style="color:#e6db74">&#34;</span>
+    <span style="color:#66d9ef">case</span> .phone: data[<span style="color:#e6db74">&#34;</span><span style="color:#e6db74">type</span><span style="color:#e6db74">&#34;</span>] = <span style="color:#e6db74">&#34;</span><span style="color:#e6db74">Phone</span><span style="color:#e6db74">&#34;</span>
+    <span style="color:#66d9ef">default</span>:<span style="color:#66d9ef">break</span>
+    }
+    
+    <span style="color:#66d9ef">var</span> bodyData = [String:Any]()
+    bodyData[<span style="color:#e6db74">&#34;</span><span style="color:#e6db74">meta</span><span style="color:#e6db74">&#34;</span>] = meta
+    bodyData[<span style="color:#e6db74">&#34;</span><span style="color:#e6db74">data</span><span style="color:#e6db74">&#34;</span>] = data
+        
+    Alamofire.request(url, method: .post, parameters: bodyData,encoding: JSONEncoding.<span style="color:#66d9ef">default</span>).responseJSON{ response <span style="color:#66d9ef">in</span>
+        <span style="color:#66d9ef">switch</span> response.result{
+        <span style="color:#66d9ef">case</span> .success(<span style="color:#66d9ef">let</span> value):            
+            <span style="color:#66d9ef">let</span> json = JSON(value)
+            <span style="color:#66d9ef">let</span> subJSON = json[<span style="color:#e6db74">&#34;</span><span style="color:#e6db74">data</span><span style="color:#e6db74">&#34;</span>]
+            <span style="color:#66d9ef">let</span> retCode = subJSON[<span style="color:#e6db74">&#34;</span><span style="color:#e6db74">retCode</span><span style="color:#e6db74">&#34;</span>].stringValue
+            <span style="color:#75715e">//</span><span style="color:#75715e">r</span><span style="color:#75715e">e</span><span style="color:#75715e">t</span><span style="color:#75715e">C</span><span style="color:#75715e">o</span><span style="color:#75715e">d</span><span style="color:#75715e">e</span><span style="color:#75715e"> </span><span style="color:#75715e">为</span><span style="color:#75715e">1</span><span style="color:#75715e">表</span><span style="color:#75715e">示</span><span style="color:#75715e">有</span><span style="color:#75715e">更</span><span style="color:#75715e">新</span><span style="color:#75715e">，</span><span style="color:#75715e">0</span><span style="color:#75715e">表</span><span style="color:#75715e">示</span><span style="color:#75715e">没</span><span style="color:#75715e">有</span><span style="color:#75715e">更</span><span style="color:#75715e">新</span><span style="color:#75715e">，</span><span style="color:#75715e">其</span><span style="color:#75715e">它</span><span style="color:#75715e">表</span><span style="color:#75715e">示</span><span style="color:#75715e">出</span><span style="color:#75715e">错</span>
+            <span style="color:#66d9ef">switch</span> retCode{
+            <span style="color:#66d9ef">case</span> <span style="color:#e6db74">&#34;</span><span style="color:#e6db74">1</span><span style="color:#e6db74">&#34;</span>:
+                completionHandler(subJSON)
+            <span style="color:#66d9ef">case</span> <span style="color:#e6db74">&#34;</span><span style="color:#e6db74">0</span><span style="color:#e6db74">&#34;</span>: <span style="color:#66d9ef">break</span>
+            <span style="color:#66d9ef">default</span>:
+                <span style="color:#66d9ef">let</span> msg = subJSON[<span style="color:#e6db74">&#34;</span><span style="color:#e6db74">retMsg</span><span style="color:#e6db74">&#34;</span>].stringValue
+                DPrint(msg)
+            }
+        <span style="color:#66d9ef">case</span> .failure(<span style="color:#66d9ef">let</span> error):
+             Dprint(error.localizedDescription)
         }
     }
 }
