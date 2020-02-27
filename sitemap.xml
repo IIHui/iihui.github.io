@@ -25,7 +25,14 @@
 summaryLength = 100 #放在同themes同级的config.toml上才有效 文章置顶设置 想要把文章置顶，需要在文章头部设置weight,如下所示：
 --- title: 陈小厨作品集 date: 2020-02-03 13:28:05 tags: [美食] categories: [美食] weight: 1 toc: true --- 效果如下图：
 设置从H1开始显示文章目录 不知道从什么时候开始Hugo从h2生成toc，为了设置从h1开始生成toc，需要设置全局的config.toml(即跟themes同级的config.toml)，如下所示：
-[markup] [markup.tableOfContents] endLevel = 4 startLevel = 1  </content>
+[markup] [markup.tableOfContents] endLevel = 4 startLevel = 1  使用KaTex渲染公式 因为Markdown中的下划线和latex公式里的下划线冲突，导致Hugo中latex公式里的下标总是渲染不出来，如下图所示，看着很不舒服：
+使用Katex来渲染公式可以达到正常的效果：
+首先进到主题目录下的layouts/partials目录，新建一个名为katex.html文件：
+katex.html文件的内容如下所示：
+&amp;lt;!DOCTYPE html&amp;gt; &amp;lt;html lang=&amp;#34;en&amp;#34;&amp;gt; &amp;lt;!--CSS File --&amp;gt; &amp;lt;head&amp;gt; &amp;lt;meta charset=&amp;#34;UTF-8&amp;#34;&amp;gt; &amp;lt;link rel=&amp;#34;stylesheet&amp;#34; href=&amp;#34;https://cdn.jsdelivr.net/npm/katex@0.10.0-rc.1/dist/katex.min.css&amp;#34; integrity=&amp;#34;sha384-D&#43;9gmBxUQogRLqvARvNLmA9hS2x//eK1FhVb9PiU86gmcrBrJAQT8okdJ4LMp2uv&amp;#34; crossorigin=&amp;#34;anonymous&amp;#34;&amp;gt; &amp;lt;!--JS Fle --&amp;gt; &amp;lt;script defer src=&amp;#34;https://cdn.jsdelivr.net/npm/katex@0.10.0-rc.1/dist/katex.min.js&amp;#34; integrity=&amp;#34;sha384-483A6DwYfKeDa0Q52fJmxFXkcPCFfnXMoXblOkJ4JcA8zATN6Tm78UNL72AKk&#43;0O&amp;#34; crossorigin=&amp;#34;anonymous&amp;#34;&amp;gt;&amp;lt;/script&amp;gt; &amp;lt;/head&amp;gt; &amp;lt;body&amp;gt; &amp;lt;/body&amp;gt; &amp;lt;/html&amp;gt; 然后在layouts/partials目录下的header.html下添加如下代码：
+{{ if .Params.katex}}{{ partial &amp;#34;katex.html&amp;#34; . }}{{ end }} 最后在需要渲染公式的文章头部，添加katex: true：
+--- title: 线性表 date: 2018-04-25T20:52:42&#43;08:00 tags: [算法] categories: [算法] toc: true katex: true --- 参考资料
+</content>
     </entry>
     
      <entry>
