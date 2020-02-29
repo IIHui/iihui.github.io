@@ -248,7 +248,7 @@ code.has-jax {
     <i class="fa fa-file-word-o"></i>
 </span>
 <span class="post-meta-item-text">字数: </span>
-<span class="leancloud-visitors-count">1653</span>
+<span class="leancloud-visitors-count">1718</span>
 &nbsp; | &nbsp;
 <span class="post-meta-item-icon">
     <i class="fa fa-coffee"></i>
@@ -274,7 +274,7 @@ code.has-jax {
     }
 }
 </code></pre></div><h2 id="问题提出">问题提出</h2>
-<p>假设父类有个方法<code>method</code>，<!-- raw HTML omitted -->子类未重写<!-- raw HTML omitted --><code>method</code>方法，子类的中想要拿来替换的方法为<code>swizzledMethod</code>。如果按照上面的方法交换时，因为父类有该方法，而子类未重写该方法，所以调用<code>class_getInstanceMethod</code>得到的是父类的<code>method</code>方法，所以它与子类的<code>swizzledMethod</code>方法进行交换，现在分两个方向讨论：</p>
+<p>假设父类名为<code>method</code>的方法，<!-- raw HTML omitted -->子类未重写<!-- raw HTML omitted -->这个<code>method</code>方法，子类的中想要用来交换的方法为<code>swizzledMethod</code>。如果按照上面的方法交换时，因为父类有该方法，而子类未重写该方法，<!-- raw HTML omitted -->所以调用<code>class_getInstanceMethod</code>得到的是父类的<code>method</code>方法<!-- raw HTML omitted -->，所以它与子类的<code>swizzledMethod</code>方法进行交换需要分两种情形来讨论：</p>
 <ul>
 <li>
 <p>如果在子类实例中调用<code>method</code>方法时，因为已经与自己的<code>swizzledMethod</code>方法交换，所以实际上调用的自己<code>swizzledMethod</code>，所以能够正常运行。</p>
@@ -283,21 +283,21 @@ code.has-jax {
 <p>如果在父类的实例中调用<code>method</code>方法，因为已经与子类的<code>swizzledMethod</code>方法交换，所以调用的是子类的<code>swizzledMethod</code>方法。也就是说此时是父类调用子类的方法，所以会崩溃。</p>
 </li>
 </ul>
-<p>根据上面的讨论，首先应该判断子类是否有<code>method</code>方法，如果有则直接进行交换。如果没有，则应该将<code>swizzledMethod</code>的<code>IMP</code>赋值给<code>method</code>这个<code>Selector</code>，然后在将<code>method</code>的<code>IMP</code>（其实是父类中的实现）赋值给<code>swizzledMethod</code>这个<code>Selector</code>。</p>
+<p>根据上面的讨论，首先应该判断子类是否重写了<code>method</code>方法，如果实重写了父类的该方法则直接进行交换。如果没有重写父类的该方法，则应该先在父类中新建一个同名的方法。为了新建一个同名的方法，首先应当了解<code>class_addMethod</code>这个函数。</p>
 <h2 id="问题解决">问题解决</h2>
-<p>根据上面的分析，应该先来看一下<code>class_addMethod</code>的函数原型，如下所示：</p>
+<p>根据上面的分析，先来看一下<code>class_addMethod</code>的函数原型，如下所示：</p>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift">@available(iOS <span style="color:#ae81ff">2.0</span>, <span style="color:#f92672">*</span>)
 <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">func</span> <span style="color:#a6e22e">class_addMethod</span>(<span style="color:#66d9ef">_</span> cls: AnyClass?, <span style="color:#66d9ef">_</span> name: Selector, <span style="color:#66d9ef">_</span> imp: IMP, <span style="color:#66d9ef">_</span> types: UnsafePointer&lt;Int8&gt;?) -&gt; Bool
-</code></pre></div><p>这个方法的作用是在一个类中添加一个新方法(名字和实现）,其中的参数的含义为下：</p>
+</code></pre></div><p>这个方法的作用是在一个类中添加一个新方法(名字+实现）,<code>class_addMethod</code>函数中参数的含义为下：</p>
 <ul>
 <li>
 <p><code>cls</code>表示需要添加方法的类</p>
 </li>
 <li>
-<p><code>name</code>表示要添加的方法的<code>selector</code>（方法名，这里的方法名是一个结构体）</p>
+<p><code>name</code>表示要添加的方法的<code>selector</code>（方法名，<a href="https://iihui.github.io/post/oc-runtime/#selector">这里的方法名是一个结构体</a>）</p>
 </li>
 <li>
-<p><code>imp</code> 表示要添加的方法的实现的指针<code>IMP</code>（定义见运行时文章）</p>
+<p><code>imp</code> 表示要添加的方法的实现的指针<code>IMP</code>（定义在<a href="https://iihui.github.io/post/oc-runtime/#imp">这里</a>)）</p>
 </li>
 <li>
 <p><code>types</code>用来描述方法参数的字符串数组</p>
@@ -308,7 +308,7 @@ code.has-jax {
 </ul>
 <p>因此，可以使用<code>class_addMethod</code>方法的返回值来确定当前类中是否存在能够交换的方法，如果存在(添加失败)则直接交换。</p>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift"><span style="color:#66d9ef">let</span> didAddMethod: Bool = class_addMethod(object, originalSelector, method_getImplementation(swizzledMethod), method_getTypeEncoding(swizzledMethod))
-</code></pre></div><p>上面的代码中如果<code>didAddMethod</code>返回为<code>false</code>，则说明可以直接进行方法交换，如果返回值为<code>true</code>，则说明将<code>originalSelector</code>指向了<code>swizzledMethod</code>的实现，接下来就要将<code>swizzledSelector</code>指向<code>originalMethod</code>的实现。因此，完整的代码应该像如下所示：</p>
+</code></pre></div><p>上面的代码中如果<code>didAddMethod</code>返回为<code>false</code>，则说明可以直接进行方法交换，如果返回值为<code>true</code>，则说明在子类中添加<code>originalSelector</code>成功，并且<code>originalSelector</code>指向了子类的<code>swizzledMethod</code>的实现。但是<code>swizzledSelector</code>的实现还是它原来的实现，接下来就要将<code>swizzledSelector</code>指向<code>originalMethod</code>的实现。因此，完整的代码应该如下所示：</p>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift"><span style="color:#66d9ef">static</span> <span style="color:#66d9ef">func</span> <span style="color:#a6e22e">exchangeSelector</span>(object:AnyClass,originalSelector: Selector, swizzledSelector: Selector) {
     <span style="color:#66d9ef">guard</span> <span style="color:#66d9ef">let</span> originalMethod = class_getInstanceMethod(object, originalSelector) <span style="color:#66d9ef">else</span> {
         <span style="color:#66d9ef">return</span>
@@ -346,7 +346,7 @@ code.has-jax {
         }
     }
 
-    <span style="color:#75715e">//</span><span style="color:#75715e">交</span><span style="color:#75715e">换</span><span style="color:#75715e">两</span><span style="color:#75715e">个</span><span style="color:#75715e">不</span><span style="color:#75715e">同</span><span style="color:#75715e">类</span><span style="color:#75715e">的</span><span style="color:#75715e">方</span><span style="color:#75715e">法</span>
+    <span style="color:#75715e">//</span><span style="color:#75715e">交</span><span style="color:#75715e">换</span><span style="color:#75715e">两</span><span style="color:#75715e">个</span><span style="color:#75715e">不</span><span style="color:#75715e">同</span><span style="color:#75715e">类</span><span style="color:#75715e">的</span><span style="color:#75715e">方</span><span style="color:#75715e">法</span><span style="color:#75715e">，</span><span style="color:#75715e">这</span><span style="color:#75715e">两</span><span style="color:#75715e">个</span><span style="color:#75715e">类</span><span style="color:#75715e">应</span><span style="color:#75715e">该</span><span style="color:#75715e">满</span><span style="color:#75715e">足</span><span style="color:#75715e">父</span><span style="color:#75715e">子</span><span style="color:#75715e">关</span><span style="color:#75715e">系</span>
     <span style="color:#66d9ef">static</span> <span style="color:#66d9ef">func</span> <span style="color:#a6e22e">exchangeSelector</span>(originalClass: AnyClass, originalSelector: Selector, swizzledClass: AnyClass, swizzledSelector: Selector) {
         <span style="color:#66d9ef">guard</span> <span style="color:#66d9ef">let</span> originalMethod = class_getInstanceMethod(originalClass, originalSelector), <span style="color:#66d9ef">let</span> swizzledMethod = class_getInstanceMethod(swizzledClass, swizzledSelector) <span style="color:#66d9ef">else</span> {
             <span style="color:#66d9ef">return</span>
