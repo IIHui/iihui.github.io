@@ -77,7 +77,7 @@ extension ContiguousArray where Element: BidirectionalCollection { public func j
         <tags>
           <tag>Swift</tag><tag>iOS</tag>
         </tags>
-        <content type="html">  Swizzle是OC的黑魔法之一，可以在运行时对两个方法的实现进行交换，也就是用户可以用自己的方法替换原来的方法实现，做一些其它事情。在Swift中也可以使用OC的Swizzle，但是语法上与OC有些区别。如果要了解Swift的方法交换，首先应该了解class_addMethod方法。
+        <content type="html">  Swizzle是OC的黑魔法之一，可以在运行时对两个方法的实现进行交换，也就是用户可以用自己的方法替换原来的方法实现，做一些其它事情。在Swift中也可以使用OC的Swizzle，但是语法上与OC有些区别。如果要了解Swift的方法交换，首先应该了解class_addMethod这个方法的作用。
  class_addMethod 为了了解class_addMethod方法的作用，首先看下面的这段代码，在下面的代码中直接交换了originalSelector和swizzledSelector
 extension NSObject { static func swizzlingForClass(_ forClass: AnyClass, originalSelector: Selector, swizzledSelector: Selector) { guard let originalMethod = class_getInstanceMethod(forClass, originalSelector), let swizzledMethod = class_getInstanceMethod(forClass, swizzledSelector) else { return } method_exchangeImplementations(originalMethod, swizzledMethod) } } 问题提出 假设父类有个方法method，子类未重写method方法，子类的中想要拿来替换的方法为swizzledMethod。如果按照上面的方法交换时，因为父类有该方法，而子类未重写该方法，所以调用class_getInstanceMethod得到的是父类的method方法，所以它与子类的swizzledMethod方法进行交换，现在分两个方向讨论：
   如果在子类实例中调用method方法时，因为已经与自己的swizzledMethod方法交换，所以实际上调用的自己swizzledMethod，所以能够正常运行。
