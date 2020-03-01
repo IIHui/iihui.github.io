@@ -61,7 +61,7 @@ katex.html文件的内容如下所示：
         <tags>
           <tag>swift</tag><tag>ios</tag>
         </tags>
-        <content type="html">  Swift中的where关键字主要用于限定条件，既可在switch语句中使用，也可以用在for in中，还可以用在扩展中限定应当遵循某种协议。
+        <content type="html">  Swift中的where关键字主要用于限定条件，既可在switch语句中使用，也可以用在for in中，还可以在扩展中限定应该遵循某种协议。
  switch中使用 在switch语句中使用，where一般是配合if let来用于限定某些条件，例如：
 let names = [&amp;#34;dog&amp;#34;, &amp;#34;cat&amp;#34;, &amp;#34;fish&amp;#34;, &amp;#34;bigDog&amp;#34;, &amp;#34;bigCat&amp;#34;, &amp;#34;bigFish&amp;#34;] names.forEach { switch $0 { case let name where name.hasPrefix(&amp;#34;big&amp;#34;): print(&amp;#34;wow this is a \(name)&amp;#34;) default: break } } for in中使用 在for in使用，也用于添加限定条件，用于过滤，例如：
 let names = [&amp;#34;dog&amp;#34;, &amp;#34;cat&amp;#34;, &amp;#34;fish&amp;#34;, &amp;#34;bigDog&amp;#34;, &amp;#34;bigCat&amp;#34;, &amp;#34;bigFish&amp;#34;] for name in names where name == &amp;#34;dog&amp;#34; { print(&amp;#34;\(name)&amp;#34;) } 接口扩展中使用 在扩展中使用where，目的也是进行限定，即希望扩展的默认实现只在某些限定的条件下才可以用:
@@ -70,15 +70,15 @@ extension ContiguousArray where Element: BidirectionalCollection { public func j
     </entry>
     
      <entry>
-        <title>Swift 方法交换</title>
-        <url>https://iihui.github.io/post/ios-method-swizzling/</url>
+        <title>Swift 方法交换中的addMethod</title>
+        <url>https://iihui.github.io/post/ios-addmethod/</url>
         <categories>
           <category>Swift</category><category>iOS</category>
         </categories>
         <tags>
           <tag>Swift</tag><tag>iOS</tag>
         </tags>
-        <content type="html">  Swizzle是OC的黑魔法之一，可以在运行时对两个方法的实现进行交换，也就是用户可以用自己的方法替换原来的方法实现，做一些其它事情。在Swift中也可以使用OC的Swizzle，但是语法上与OC有些区别。如果要了解Swift的方法交换，首先应该了解class_addMethod这个方法的作用。
+        <content type="html">  Swizzle是OC的黑魔法之一，可以在运行时对两个方法的实现进行交换，也就是用户可以用自己的方法替换原来的方法实现，做一些其它事情。如果要了解Swift的方法交换，首先应该了解class_addMethod这个方法的作用。
  class_addMethod 为了了解class_addMethod方法的作用，首先看下面的这段代码，在下面的代码中直接交换了originalSelector和swizzledSelector
 extension NSObject { static func swizzlingForClass(_ forClass: AnyClass, originalSelector: Selector, swizzledSelector: Selector) { guard let originalMethod = class_getInstanceMethod(forClass, originalSelector), let swizzledMethod = class_getInstanceMethod(forClass, swizzledSelector) else { return } method_exchangeImplementations(originalMethod, swizzledMethod) } } 问题提出 假设父类名为method的方法，子类未重写这个method方法，子类的中想要用来交换的方法为swizzledMethod。如果按照上面的方法交换时，因为父类有该方法，而子类未重写该方法，所以调用class_getInstanceMethod得到的是父类的method方法，所以它与子类的swizzledMethod方法进行交换需要分两种情形来讨论：
   如果在子类实例中调用method方法时，因为已经与自己的swizzledMethod方法交换，所以实际上调用的自己swizzledMethod，所以能够正常运行。
