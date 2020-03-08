@@ -241,7 +241,7 @@ code.has-jax {
     <i class="fa fa-file-word-o"></i>
 </span>
 <span class="post-meta-item-text">字数: </span>
-<span class="leancloud-visitors-count">8301</span>
+<span class="leancloud-visitors-count">8052</span>
 &nbsp; | &nbsp;
 <span class="post-meta-item-icon">
     <i class="fa fa-coffee"></i>
@@ -686,25 +686,21 @@ code.has-jax {
 <hr>
 <h2 id="选择类排序">选择类排序</h2>
 <h3 id="简单选择排序">简单选择排序</h3>
-<p>简单选择排序:每一趟在$n-i(i=1,2,&hellip;,n-1)$个数据元素中$R[i],R[i+1],&hellip;,R[n-1]$中选择最小的数据元素作为有序序列中第$i$个数据元素。</p>
-<p>![c600](<a href="http://oqe76o492.bkt.clouddn.com/">http://oqe76o492.bkt.clouddn.com/</a>屏幕快照 2017-05-24 上午9.46.23.png)</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-cpp" data-lang="cpp"><span style="color:#66d9ef">void</span> <span style="color:#a6e22e">selectSort</span>(<span style="color:#66d9ef">int</span> <span style="color:#f92672">*</span>data, <span style="color:#66d9ef">int</span> length)
-{
+<p>简单选择排序：每一趟在$n-i(i=1,2,&hellip;,n-1)$个数据元素中$R[i],R[i+1],&hellip;,R[n-1]$中选择最小的数据元素作为有序序列中第$i$个数据元素。</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-cpp" data-lang="cpp"><span style="color:#66d9ef">template</span><span style="color:#f92672">&lt;</span><span style="color:#66d9ef">typename</span> T<span style="color:#f92672">&gt;</span>
+<span style="color:#66d9ef">void</span> innerSort<span style="color:#f92672">&lt;</span>T<span style="color:#f92672">&gt;</span><span style="color:#f92672">:</span><span style="color:#f92672">:</span>selectSort(T <span style="color:#f92672">*</span>data, <span style="color:#66d9ef">int</span> length) {
+    assert(length <span style="color:#f92672">&gt;</span><span style="color:#f92672">=</span> <span style="color:#ae81ff">0</span>);
     <span style="color:#66d9ef">int</span> index;
-    <span style="color:#66d9ef">for</span> (<span style="color:#66d9ef">int</span> i <span style="color:#f92672">=</span> <span style="color:#ae81ff">0</span>; i <span style="color:#f92672">&lt;</span> length <span style="color:#f92672">-</span> <span style="color:#ae81ff">1</span>; <span style="color:#f92672">+</span><span style="color:#f92672">+</span>i)  <span style="color:#75715e">//从0开始便于index的取值，因为数组下标是从0开始的
-</span><span style="color:#75715e"></span>    {
+    <span style="color:#75715e">//从0开始便于index的取值，因为数组下标是从0开始的
+</span><span style="color:#75715e"></span>    <span style="color:#66d9ef">for</span> (<span style="color:#66d9ef">int</span> i <span style="color:#f92672">=</span> <span style="color:#ae81ff">0</span>; i <span style="color:#f92672">&lt;</span> length <span style="color:#f92672">-</span> <span style="color:#ae81ff">1</span>; <span style="color:#f92672">+</span><span style="color:#f92672">+</span>i) {
         index <span style="color:#f92672">=</span> i;
-        <span style="color:#66d9ef">for</span> (<span style="color:#66d9ef">int</span> j <span style="color:#f92672">=</span> i <span style="color:#f92672">+</span> <span style="color:#ae81ff">1</span>; j <span style="color:#f92672">&lt;</span> length; <span style="color:#f92672">+</span><span style="color:#f92672">+</span>j)
-        {
-            <span style="color:#66d9ef">if</span> (data[j] <span style="color:#f92672">&lt;</span> data[index])
-            {
+        <span style="color:#66d9ef">for</span> (<span style="color:#66d9ef">int</span> j <span style="color:#f92672">=</span> i <span style="color:#f92672">+</span> <span style="color:#ae81ff">1</span>; j <span style="color:#f92672">&lt;</span> length; <span style="color:#f92672">+</span><span style="color:#f92672">+</span>j) {
+            <span style="color:#66d9ef">if</span> (data[index] <span style="color:#f92672">&gt;</span> data[j]) {
                 index <span style="color:#f92672">=</span> j;
             }
         }
-
-        <span style="color:#66d9ef">if</span> (index <span style="color:#f92672">!</span><span style="color:#f92672">=</span> i)
-        {
-            std<span style="color:#f92672">:</span><span style="color:#f92672">:</span>swap(data[i], data[index]);
+        <span style="color:#66d9ef">if</span> (index <span style="color:#f92672">!</span><span style="color:#f92672">=</span> i) {
+            std<span style="color:#f92672">:</span><span style="color:#f92672">:</span>swap(data[index], data[i]);
         }
     }
 }
@@ -739,49 +735,17 @@ code.has-jax {
 <h3 id="堆排序">堆排序</h3>
 <p>可以把堆<!-- raw HTML omitted --> 看成一棵完全二叉树，<!-- raw HTML omitted -->满足：任何一个非叶子节点的值都不大于(或不小于）其左右孩子节点的值，若父亲大孩子小，则这样的堆叫做大顶堆，若父亲小孩子大，则这样的堆叫做小顶堆。</p>
 <p>根据堆的定义，代表堆的这棵完全二叉树的<!-- raw HTML omitted -->根节点的值是最大的或者最小的<!-- raw HTML omitted -->，因此将一个无序的序列调整为一个堆，就可以找出这个序列的最大（最小）值，然后将找出的这个值交换到序列的最后（或最前），这样<!-- raw HTML omitted -->有序序列元素增加<code>1</code>个，无序序列中元素减少<code>1</code>个<!-- raw HTML omitted -->，对新的无序序列重复这样的操作就可以实现排序。</p>
-<p>![c600](<a href="http://oqe76o492.bkt.clouddn.com/">http://oqe76o492.bkt.clouddn.com/</a>屏幕快照 2017-05-24 上午9.49.30.png)</p>
-<p><img src="http://oqe76o492.bkt.clouddn.com/F9037CEA9CE25CBED43310AA305387D1.png" alt="c600"></p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-cpp" data-lang="cpp"><span style="color:#66d9ef">void</span> <span style="color:#a6e22e">heapSort</span>(<span style="color:#66d9ef">int</span> <span style="color:#f92672">*</span>data, <span style="color:#66d9ef">int</span> length)
-{
-    <span style="color:#66d9ef">for</span> (<span style="color:#66d9ef">int</span> i <span style="color:#f92672">=</span> (length <span style="color:#f92672">-</span> <span style="color:#ae81ff">2</span>) <span style="color:#f92672">/</span> <span style="color:#ae81ff">2</span>; i <span style="color:#f92672">&gt;</span><span style="color:#f92672">=</span> <span style="color:#ae81ff">0</span>; <span style="color:#f92672">-</span><span style="color:#f92672">-</span>i)  <span style="color:#75715e">//当数组下标是从0开始的时候i的初始值就为(length-2)/2
-</span><span style="color:#75715e"></span>    {
-        adjustHeap(data, i, length <span style="color:#f92672">-</span> <span style="color:#ae81ff">1</span>);
-    }
-
-    <span style="color:#66d9ef">for</span> (<span style="color:#66d9ef">int</span> j <span style="color:#f92672">=</span> length <span style="color:#f92672">-</span> <span style="color:#ae81ff">1</span>; j <span style="color:#f92672">&gt;</span> <span style="color:#ae81ff">0</span>; <span style="color:#f92672">-</span><span style="color:#f92672">-</span>j)
-    {
-        swap(data[j], data[<span style="color:#ae81ff">0</span>]);
-        adjustHeap(data, <span style="color:#ae81ff">0</span>, j <span style="color:#f92672">-</span> <span style="color:#ae81ff">1</span>);
-    }
-}
-<span style="color:#66d9ef">void</span> <span style="color:#a6e22e">adjustHeap</span>(<span style="color:#66d9ef">int</span> <span style="color:#f92672">*</span>data, <span style="color:#66d9ef">int</span> start, <span style="color:#66d9ef">int</span> end)
-{
-    <span style="color:#75715e">//注意控制条件是child&lt;=upper
-</span><span style="color:#75715e"></span>    <span style="color:#66d9ef">for</span> (<span style="color:#66d9ef">int</span> parent <span style="color:#f92672">=</span> start, child <span style="color:#f92672">=</span> <span style="color:#ae81ff">2</span> <span style="color:#f92672">*</span> start <span style="color:#f92672">+</span> <span style="color:#ae81ff">1</span>; child <span style="color:#f92672">&lt;</span><span style="color:#f92672">=</span> end; child <span style="color:#f92672">=</span> <span style="color:#ae81ff">2</span> <span style="color:#f92672">*</span> parent <span style="color:#f92672">+</span> <span style="color:#ae81ff">1</span>)
-    {   <span style="color:#75715e">//注意控制条件是child&lt;upper
-</span><span style="color:#75715e"></span>        <span style="color:#66d9ef">if</span> (child <span style="color:#f92672">&lt;</span> end <span style="color:#f92672">&amp;</span><span style="color:#f92672">&amp;</span> data[child] <span style="color:#f92672">&lt;</span> data[child <span style="color:#f92672">+</span> <span style="color:#ae81ff">1</span>]) <span style="color:#75715e">//child &lt; end
-</span><span style="color:#75715e"></span>        {
-            child <span style="color:#f92672">=</span> child <span style="color:#f92672">+</span> <span style="color:#ae81ff">1</span>;
-        }
-
-        <span style="color:#66d9ef">if</span> (data[parent] <span style="color:#f92672">&lt;</span> data[child])
-        {
-            swap(data[parent], data[child]);
-            parent <span style="color:#f92672">=</span> child;  <span style="color:#75715e">//先交换，再更改parent的值
-</span><span style="color:#75715e"></span>        } <span style="color:#66d9ef">else</span>
-            <span style="color:#66d9ef">break</span>;
-    }
-}
-</code></pre></div><div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-cpp" data-lang="cpp"><span style="color:#66d9ef">template</span><span style="color:#f92672">&lt;</span><span style="color:#66d9ef">typename</span> T<span style="color:#f92672">&gt;</span>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-cpp" data-lang="cpp"><span style="color:#66d9ef">template</span><span style="color:#f92672">&lt;</span><span style="color:#66d9ef">typename</span> T<span style="color:#f92672">&gt;</span>
 <span style="color:#66d9ef">void</span> innerSort<span style="color:#f92672">&lt;</span>T<span style="color:#f92672">&gt;</span><span style="color:#f92672">:</span><span style="color:#f92672">:</span>heapSort(T <span style="color:#f92672">*</span>data, <span style="color:#66d9ef">int</span> length) {
     assert(length <span style="color:#f92672">&gt;</span><span style="color:#f92672">=</span> <span style="color:#ae81ff">0</span>);
-    <span style="color:#75715e">//首先从(length-1)/2开始调整，让他成为大顶堆
-</span><span style="color:#75715e"></span>    <span style="color:#66d9ef">for</span> (<span style="color:#66d9ef">int</span> i <span style="color:#f92672">=</span> (length <span style="color:#f92672">-</span> <span style="color:#ae81ff">1</span>) <span style="color:#f92672">/</span> <span style="color:#ae81ff">2</span>; i <span style="color:#f92672">&gt;</span><span style="color:#f92672">=</span> <span style="color:#ae81ff">0</span>; <span style="color:#f92672">-</span><span style="color:#f92672">-</span>i) {
+    <span style="color:#75715e">//首先从(length-2)/2开始调整，让他成为大顶堆
+</span><span style="color:#75715e"></span>    <span style="color:#75715e">//当数组下标是从0开始的时候i的初始值就为(length-2)/2，下标为1开始时为(length-1)/2
+</span><span style="color:#75715e"></span>    <span style="color:#66d9ef">for</span> (<span style="color:#66d9ef">int</span> i <span style="color:#f92672">=</span> (length <span style="color:#f92672">-</span> <span style="color:#ae81ff">2</span>) <span style="color:#f92672">/</span> <span style="color:#ae81ff">2</span>; i <span style="color:#f92672">&gt;</span><span style="color:#f92672">=</span> <span style="color:#ae81ff">0</span>; <span style="color:#f92672">-</span><span style="color:#f92672">-</span>i) {
         assistHeapSort(data, i, length <span style="color:#f92672">-</span> <span style="color:#ae81ff">1</span>);
     }
 
     <span style="color:#66d9ef">for</span> (<span style="color:#66d9ef">int</span> j <span style="color:#f92672">=</span> length <span style="color:#f92672">-</span> <span style="color:#ae81ff">1</span>; j <span style="color:#f92672">&gt;</span><span style="color:#f92672">=</span> <span style="color:#ae81ff">1</span>; <span style="color:#f92672">-</span><span style="color:#f92672">-</span>j) {
-        swap(data[<span style="color:#ae81ff">0</span>], data[j]);
+        std<span style="color:#f92672">:</span><span style="color:#f92672">:</span>swap(data[<span style="color:#ae81ff">0</span>], data[j]);
         assistHeapSort(data, <span style="color:#ae81ff">0</span>, j <span style="color:#f92672">-</span> <span style="color:#ae81ff">1</span>);
     }
 }
@@ -792,12 +756,13 @@ code.has-jax {
     assert(start <span style="color:#f92672">&lt;</span><span style="color:#f92672">=</span> end <span style="color:#f92672">&amp;</span><span style="color:#f92672">&amp;</span> start <span style="color:#f92672">&gt;</span><span style="color:#f92672">=</span> <span style="color:#ae81ff">0</span>);
     <span style="color:#66d9ef">int</span> parent <span style="color:#f92672">=</span> start, child <span style="color:#f92672">=</span> <span style="color:#ae81ff">2</span> <span style="color:#f92672">*</span> start <span style="color:#f92672">+</span> <span style="color:#ae81ff">1</span>;
     <span style="color:#66d9ef">while</span> (child <span style="color:#f92672">&lt;</span><span style="color:#f92672">=</span> end) {
-        <span style="color:#66d9ef">if</span> (child <span style="color:#f92672">&lt;</span> end <span style="color:#f92672">&amp;</span><span style="color:#f92672">&amp;</span> data[child] <span style="color:#f92672">&lt;</span> data[child <span style="color:#f92672">+</span> <span style="color:#ae81ff">1</span>]) {
+        <span style="color:#75715e">//注意控制条件是child &lt; end，不越界
+</span><span style="color:#75715e"></span>        <span style="color:#66d9ef">if</span> (child <span style="color:#f92672">&lt;</span> end <span style="color:#f92672">&amp;</span><span style="color:#f92672">&amp;</span> data[child] <span style="color:#f92672">&lt;</span> data[child <span style="color:#f92672">+</span> <span style="color:#ae81ff">1</span>]) {
             child<span style="color:#f92672">+</span><span style="color:#f92672">+</span>;
         }
 
         <span style="color:#66d9ef">if</span> (data[parent] <span style="color:#f92672">&lt;</span> data[child]) {
-            swap(data[parent], data[child]);
+            std<span style="color:#f92672">:</span><span style="color:#f92672">:</span>swap(data[parent], data[child]);
         }
         parent <span style="color:#f92672">=</span> child;
         child <span style="color:#f92672">=</span> <span style="color:#ae81ff">2</span> <span style="color:#f92672">*</span> parent <span style="color:#f92672">+</span> <span style="color:#ae81ff">1</span>;
