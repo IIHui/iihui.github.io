@@ -941,39 +941,32 @@ code.has-jax {
 <h2 id="基数排序">基数排序</h2>
 <p>将所有待比较数值（正整数）<!-- raw HTML omitted -->统一为同样的数位长度，数位较短的数前面补零。<!-- raw HTML omitted -->然后，从最低位开始，依次进行一次排序。这样从最低位排序一直到最高位排序完成以后, 数列就变成一个有序序列。</p>
 <p>基数排序法会使用到桶，<!-- raw HTML omitted -->先进先出的队列<!-- raw HTML omitted -->，通过将要比较的位（个位、十位、百位…），将要排序的元素分配至$0 \to 9$ 个桶中，借以达到排序的作用，在某些时候，基数排序法的效率高于其它的比较性排序算法。</p>
-<p><img src="http://oqe76o492.bkt.clouddn.com/3941C31AE7160FD3B1507C7E0FBC62CC.png" alt="c600"></p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-cpp" data-lang="cpp"><span style="color:#66d9ef">void</span> <span style="color:#a6e22e">radixSort</span>(<span style="color:#66d9ef">int</span> <span style="color:#f92672">*</span>data, <span style="color:#66d9ef">int</span> length)
-{
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-cpp" data-lang="cpp"><span style="color:#66d9ef">void</span> <span style="color:#a6e22e">radixSort</span>(<span style="color:#66d9ef">int</span> <span style="color:#f92672">*</span>data, <span style="color:#66d9ef">int</span> length) {
     <span style="color:#66d9ef">int</span> max <span style="color:#f92672">=</span> getMax(data, length); <span style="color:#75715e">//找出待排序数组中最大的那个数
 </span><span style="color:#75715e"></span>    <span style="color:#66d9ef">int</span> radix <span style="color:#f92672">=</span> <span style="color:#ae81ff">10</span>;
 
-    <span style="color:#66d9ef">for</span> (<span style="color:#66d9ef">int</span> exp <span style="color:#f92672">=</span> <span style="color:#ae81ff">1</span>; exp <span style="color:#f92672">&lt;</span><span style="color:#f92672">=</span> max; exp <span style="color:#f92672">*</span><span style="color:#f92672">=</span> <span style="color:#ae81ff">10</span>)
-    {
+    <span style="color:#66d9ef">for</span> (<span style="color:#66d9ef">int</span> exp <span style="color:#f92672">=</span> <span style="color:#ae81ff">1</span>; exp <span style="color:#f92672">&lt;</span><span style="color:#f92672">=</span> max; exp <span style="color:#f92672">*</span><span style="color:#f92672">=</span> <span style="color:#ae81ff">10</span>) {
         bucketSort(data, length, exp, radix);
     }
 }
-<span style="color:#66d9ef">void</span> <span style="color:#a6e22e">bucketSort</span>(<span style="color:#66d9ef">int</span> <span style="color:#f92672">*</span>data, <span style="color:#66d9ef">int</span> length, <span style="color:#66d9ef">int</span> exp, <span style="color:#66d9ef">int</span> radix)
-{
+
+<span style="color:#66d9ef">void</span> <span style="color:#a6e22e">bucketSort</span>(<span style="color:#66d9ef">int</span> <span style="color:#f92672">*</span>data, <span style="color:#66d9ef">int</span> length, <span style="color:#66d9ef">int</span> exp, <span style="color:#66d9ef">int</span> radix) {
     <span style="color:#66d9ef">auto</span> <span style="color:#f92672">*</span>count <span style="color:#f92672">=</span> <span style="color:#66d9ef">new</span> <span style="color:#66d9ef">int</span>[radix]{<span style="color:#ae81ff">0</span>};
     <span style="color:#66d9ef">auto</span> <span style="color:#f92672">*</span>result <span style="color:#f92672">=</span> <span style="color:#66d9ef">new</span> <span style="color:#66d9ef">int</span>[length];
 
-    <span style="color:#66d9ef">for</span> (<span style="color:#66d9ef">int</span> i <span style="color:#f92672">=</span> <span style="color:#ae81ff">0</span>; i <span style="color:#f92672">&lt;</span> length; <span style="color:#f92672">+</span><span style="color:#f92672">+</span>i)
-    {
+    <span style="color:#66d9ef">for</span> (<span style="color:#66d9ef">int</span> i <span style="color:#f92672">=</span> <span style="color:#ae81ff">0</span>; i <span style="color:#f92672">&lt;</span> length; <span style="color:#f92672">+</span><span style="color:#f92672">+</span>i) {
         count[(data[i] <span style="color:#f92672">/</span> exp) <span style="color:#f92672">%</span> radix]<span style="color:#f92672">+</span><span style="color:#f92672">+</span>;  <span style="color:#75715e">//(data[i] / exp) 获取当前位的数值
 </span><span style="color:#75715e"></span>    }
 
-    <span style="color:#66d9ef">for</span> (<span style="color:#66d9ef">int</span> j <span style="color:#f92672">=</span> <span style="color:#ae81ff">1</span>; j <span style="color:#f92672">&lt;</span> radix; <span style="color:#f92672">+</span><span style="color:#f92672">+</span>j)
-    {
+    <span style="color:#66d9ef">for</span> (<span style="color:#66d9ef">int</span> j <span style="color:#f92672">=</span> <span style="color:#ae81ff">1</span>; j <span style="color:#f92672">&lt;</span> radix; <span style="color:#f92672">+</span><span style="color:#f92672">+</span>j) {
         count[j] <span style="color:#f92672">+</span><span style="color:#f92672">=</span> count[j <span style="color:#f92672">-</span> <span style="color:#ae81ff">1</span>];
     }
 
-    <span style="color:#66d9ef">for</span> (<span style="color:#66d9ef">int</span> i <span style="color:#f92672">=</span> length <span style="color:#f92672">-</span> <span style="color:#ae81ff">1</span>; i <span style="color:#f92672">&gt;</span><span style="color:#f92672">=</span> <span style="color:#ae81ff">0</span>; <span style="color:#f92672">-</span><span style="color:#f92672">-</span>i)
-    {
+    <span style="color:#66d9ef">for</span> (<span style="color:#66d9ef">int</span> i <span style="color:#f92672">=</span> length <span style="color:#f92672">-</span> <span style="color:#ae81ff">1</span>; i <span style="color:#f92672">&gt;</span><span style="color:#f92672">=</span> <span style="color:#ae81ff">0</span>; <span style="color:#f92672">-</span><span style="color:#f92672">-</span>i) {
         result[<span style="color:#f92672">-</span><span style="color:#f92672">-</span>count[(data[i] <span style="color:#f92672">/</span> exp) <span style="color:#f92672">%</span> radix]] <span style="color:#f92672">=</span> data[i];
     }
 
-    <span style="color:#66d9ef">for</span> (<span style="color:#66d9ef">int</span> i <span style="color:#f92672">=</span> <span style="color:#ae81ff">0</span>; i <span style="color:#f92672">&lt;</span> length; <span style="color:#f92672">+</span><span style="color:#f92672">+</span>i)
-    {
+    <span style="color:#66d9ef">for</span> (<span style="color:#66d9ef">int</span> i <span style="color:#f92672">=</span> <span style="color:#ae81ff">0</span>; i <span style="color:#f92672">&lt;</span> length; <span style="color:#f92672">+</span><span style="color:#f92672">+</span>i) {
         data[i] <span style="color:#f92672">=</span> result[i];
     }
     <span style="color:#66d9ef">delete</span>[] result;
@@ -1088,7 +1081,6 @@ code.has-jax {
 <p>此时一个有序序列已经产生，此时将输入缓冲区中剩下的所有元素建立最小堆，开始生成下一个有序序列。</p>
 </li>
 </ol>
-<p><img src="http://oqe76o492.bkt.clouddn.com/4B5DC3F8DF9C38EA74A285DEE672FAC9.png" alt="c600"></p>
 <hr>
 
     </div>
