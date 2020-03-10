@@ -1785,15 +1785,16 @@ const_cast绝对不是为了改变const变量的值而设计的！在函数参�
   线性表是一种逻辑结构，线性表的存储结构有两种：
   顺序存储：顺序表
   链式存储：单链表
-  顺序表 线性表的顺序存储是指一组地址连续的存储单元依次存储线性表中的各个元素，使得线性表中在逻辑结构上相邻的数据元素存储在相邻的物理存储单元中，即通过数据元素物理存储的相邻关系来反映数据元素之间逻辑上的相邻关系，采用顺序存储结构的线性表通常称为顺序表。
-顺序表的特点   属于直接映射——逻辑上相邻的元素，其物理位置也相邻。
+  顺序表  线性表的顺序存储是指一组地址连续的存储单元依次存储线性表中的各个元素，使得线性表中在逻辑结构上相邻的数据元素存储在相邻的物理存储单元中。即通过数据元素物理存储的相邻关系来反映数据元素之间逻辑上的相邻关系，采用顺序存储结构的线性表通常称为顺序表。
+ 顺序表的特点 根据顺序表的定义，总结顺序表有以下的特征：
+  属于直接映射——逻辑上相邻的元素，其物理位置也相邻。
   具有随机存取特性，通过首地址和元素序号可以在 $O(1)$ 时间内找到指定元素。
   存储密度高，其值为$1$。$存储密度=\frac{节点数据本身所占用的存储量}{节点结构占用的存储量}$
   删除和插入元素需要移动大量元素：
   插入元素移动的平均次数$=\frac{1}{n}\sum_{i=1}^{n}(n-i&#43;1)=\frac{n}{2}$, 因此时间复杂度为$O(n)$。
   删除元素移动的平均次数$=\frac{1}{n}\sum_{i=1}^{n}(n-i)=\frac{n-1}{2}$，因此时间复杂度为$O(n)$。
-     描述顺序表的结构 为了描述顺序表，需要知道：①顺序表的起始地址；②顺序表的最大长度；③顺序表的当前长度。
-#define MaxSize 100typedef struct { int data[MaxSize]; int length; } SqList; 最长平台 给定一个有$n$ 个元素的整型数组$arr$,其中连续的相等元素构成的子序列称为平台，设计一个算法求 $arr$中最长平台的长度。
+    描述顺序表的结构 为了描述顺序表，需要知道：①顺序表的起始地址；②顺序表的最大长度；③顺序表的当前长度。
+#define MaxSize 1000typedef struct { int data[MaxSize]; int length; } SqList; 最长平台 给定一个有$n$ 个元素的整型数组$arr$,其中连续的相等元素构成的子序列称为平台，设计一个算法求 $arr$中最长平台的长度。
 int maxLength(int data[], int n) { int length = 1; int max = 1; int start = 0; for (int i = 1; i &amp;lt; n; i&#43;&#43;) { if (data[i] == data[start]) { length&#43;&#43;; } else { if (length &amp;gt; max) { max = length; } start = i; length = 1; } } if (length &amp;gt; max) { max = length; } return max } 以0为轴调整 设有一个顺序表$L$, 其元素为整型数据，设计一个算法将$L$中所有小于$0$的整数放在前半部分，大于等于$0$的整数放在后半部分。
 void change(SqList &amp;amp;L) { int tmp; int i = 0, j = L.length - 1; while (i &amp;lt; j) { while (i &amp;lt; j &amp;amp;&amp;amp; L.data[i] &amp;lt; 0) i&#43;&#43;; while (i &amp;lt; j &amp;amp;&amp;amp; L.data[j] &amp;gt;= 0) j--; if (i &amp;lt; j) { tmp = L.data[i]; L.data[i] = L.data[j]; L.data[j] = tmp; } } } 以第一个元素为轴调整 设有一个顺序表$L$，其元素为整型。设计一个尽可能高效的算法，以第一个元素为分界线，将所有小于等于它的元素移到该元素前面，将所有大于它的元素移到该元素的后面。
 void move1(SqList &amp;amp;L) { int i = 0; j = L.length - 1; int pivot = L.data[0]; int tmp; while (i &amp;lt; j) { while (i &amp;lt; j &amp;amp;&amp;amp; L.data[j] &amp;gt; pivot) j--; while (i &amp;lt; j &amp;amp;&amp;amp; L.data[i] &amp;lt;= pivot) //第一个元素肯定会被忽略掉  i&#43;&#43;; //此处可以添加一个 i &amp;lt; j 的判断，这里省略掉是因为前面已经判断i&amp;lt;j,  //所以到这里的时候最多也是i==j, 这时候直接交换也是没有副作用的  tmp = L.data[i]; L.data[i] = L.data[j]; L.data[j] = tmp; } if (L.data[i] &amp;lt; pivot)//因为忽略了第一个元素，因此这里需要检查最终位置的那个元素和第一个元素的大小关系  { tmp = L.data[0]; L.data[0] = L.data[i]; L.data[i] = tmp; } } void move2(SqList &amp;amp;L) { int i = 0, j = L.length - 1; int pivot = L.data[0]; while (i &amp;lt; j) { while (i &amp;lt; j &amp;amp;&amp;amp; L.data[j] &amp;gt; pivot) j--; //先从最后开始，因为第一个元素需要首先被替换  if(i &amp;lt; j ) { L.data[i] = L.data[j]; i&#43;&#43;; } while (i &amp;lt; j &amp;amp;&amp;amp; L.data[i] &amp;lt;= pivot) i&#43;&#43;; if(i&amp;lt;j) { L.data[j] = L.data[i]; j--; } } L.data[i] = pivot; //最后找到最终的位置 } void move3(SqList &amp;amp;L) //剑指offer里快速排序的思路 { //该算法可以保持相对次序不变  int i = 0; int pivot = L.data[0]; int tmp; for (int j = 1; j &amp;lt; L.length; j&#43;&#43;) { if(data[j] &amp;lt; pivot) { i&#43;&#43;; if (i &amp;lt; j) //是小于不是&amp;lt;=,因为第一个元素要被替换掉  { tmp = L.data[i]; L.data[i] = L.data[j]; L.data[j] = tmp; } } } tmp = L.data[0]; //最后交换下标为0的元素和下标为i的元素  L.data[0] = L.data[i]; L.data[i] = tmp; } 删除元素 已知长度为$n$的线性表$L$采用顺序存储结构，编写一个时间复杂度为$O(n)$,空间复杂度为$O(1)$ 的算法，该算法删除线性表中所有值为$x$的数据元素。
