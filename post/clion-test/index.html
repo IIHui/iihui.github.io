@@ -241,7 +241,7 @@ code.has-jax {
     <i class="fa fa-file-word-o"></i>
 </span>
 <span class="post-meta-item-text">字数: </span>
-<span class="leancloud-visitors-count">4</span>
+<span class="leancloud-visitors-count">278</span>
 &nbsp; | &nbsp;
 <span class="post-meta-item-icon">
     <i class="fa fa-coffee"></i>
@@ -252,7 +252,62 @@ code.has-jax {
       </div>
     </header>
     <div class="post-body" itemprop="articleBody">
-    <hr>
+    <blockquote>
+<p>首先在<a href="https://github.com/google/googletest">github</a>下载最新的<code>googletest</code>，解压之后命名为<code>googletest</code>。并将其放入到<code>CLion</code>工程目录下。然后修改工程的<code>CMakeList.txt</code>文件以加入<code>googletest</code>。接着修改<code>main</code>函数，最后写单元测试。</p>
+</blockquote>
+<h2 id="下载">下载</h2>
+<p>在<a href="https://github.com/google/googletest">github</a>下载最新的<code>googletest</code>，解压之后命名为<code>googletest</code>，然后将其放在工程目录下：</p>
+<p><img src="https://i.loli.net/2020/03/18/3wgor4OElR2TJkA.jpg" alt="-c"></p>
+<p><img src="https://i.loli.net/2020/03/18/zFZYT9BRSNcjv83.jpg" alt="-c"></p>
+<h2 id="修改cmkelists">修改CMkeLists</h2>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-cpp" data-lang="cpp">cmake_minimum_required(VERSION <span style="color:#ae81ff">3.15</span>)
+project(test)
+
+set(CMAKE_CXX_STANDARD <span style="color:#ae81ff">14</span>)
+
+set(googleTestDir .<span style="color:#f92672">/</span>googletest)
+
+<span style="color:#75715e">#</span><span style="color:#75715e">Add the google test subdirectory</span><span style="color:#75715e">
+</span><span style="color:#75715e"></span>add_subdirectory(<span style="color:#960050;background-color:#1e0010">$</span>{googleTestDir})
+<span style="color:#75715e">#</span><span style="color:#75715e">include</span> <span style="color:#75715e">googletest/include dir</span><span style="color:#75715e">
+</span><span style="color:#75715e"></span>include_directories(<span style="color:#960050;background-color:#1e0010">$</span>{googleTestDir}<span style="color:#f92672">/</span>googletest<span style="color:#f92672">/</span>include)
+<span style="color:#75715e">#</span><span style="color:#75715e">include</span> <span style="color:#75715e">the googlemock/include dir</span><span style="color:#75715e">
+</span><span style="color:#75715e"></span>include_directories(<span style="color:#960050;background-color:#1e0010">$</span>{googleTestDir}<span style="color:#f92672">/</span>googlemock<span style="color:#f92672">/</span>include)
+
+set(SOURCE_FILE main.cpp)
+add_executable(test <span style="color:#960050;background-color:#1e0010">$</span>{SOURCE_FILE})
+
+<span style="color:#75715e">#</span><span style="color:#75715e"> Link with GoogleTest</span><span style="color:#75715e">
+</span><span style="color:#75715e"></span>target_link_libraries(test gtest gtest_main)
+<span style="color:#75715e">#</span><span style="color:#75715e">Link with GoogleMock</span><span style="color:#75715e">
+</span><span style="color:#75715e"></span>target_link_libraries(test gmock gmock_main)
+</code></pre></div><h2 id="修改maincpp">修改main.cpp</h2>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-cpp" data-lang="cpp"><span style="color:#75715e">#</span><span style="color:#75715e">include</span> <span style="color:#75715e">&lt;iostream&gt;</span><span style="color:#75715e">
+</span><span style="color:#75715e"></span><span style="color:#75715e">#</span><span style="color:#75715e">include</span> <span style="color:#75715e">&#34;gtest/gtest.h&#34;</span><span style="color:#75715e">
+</span><span style="color:#75715e"></span><span style="color:#66d9ef">int</span> <span style="color:#a6e22e">main</span>(<span style="color:#66d9ef">int</span> argc, <span style="color:#66d9ef">char</span><span style="color:#f92672">*</span><span style="color:#f92672">*</span> argv) {
+    testing<span style="color:#f92672">:</span><span style="color:#f92672">:</span>InitGoogleTest(<span style="color:#f92672">&amp;</span>argc, argv);
+    <span style="color:#66d9ef">return</span> RUN_ALL_TESTS();
+}
+</code></pre></div><h2 id="单元测试">单元测试</h2>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-cpp" data-lang="cpp"><span style="color:#75715e">#</span><span style="color:#75715e">include</span> <span style="color:#75715e">&lt;iostream&gt;</span><span style="color:#75715e">
+</span><span style="color:#75715e"></span><span style="color:#75715e">#</span><span style="color:#75715e">include</span> <span style="color:#75715e">&#34;gtest/gtest.h&#34;</span><span style="color:#75715e">
+</span><span style="color:#75715e"></span>
+
+<span style="color:#66d9ef">int</span> <span style="color:#a6e22e">add</span>(<span style="color:#66d9ef">int</span> a, <span style="color:#66d9ef">int</span> b){
+    <span style="color:#66d9ef">return</span> a<span style="color:#f92672">+</span>b;
+}
+
+TEST(test1, add){
+    EXPECT_EQ(<span style="color:#ae81ff">3</span>, add(<span style="color:#ae81ff">1</span>,<span style="color:#ae81ff">2</span>));
+    EXPECT_EQ(<span style="color:#ae81ff">0</span>, add(<span style="color:#f92672">-</span><span style="color:#ae81ff">1</span>,<span style="color:#ae81ff">1</span>));
+}
+
+<span style="color:#66d9ef">int</span> <span style="color:#a6e22e">main</span>(<span style="color:#66d9ef">int</span> argc, <span style="color:#66d9ef">char</span><span style="color:#f92672">*</span><span style="color:#f92672">*</span> argv) {
+    testing<span style="color:#f92672">:</span><span style="color:#f92672">:</span>InitGoogleTest(<span style="color:#f92672">&amp;</span>argc, argv);
+    <span style="color:#66d9ef">return</span> RUN_ALL_TESTS();
+}
+
+</code></pre></div><p><a href="https://my.oschina.net/miclewang/blog/1806435">参考资料</a></p>
 <p><a href="https://www.jetbrains.com/help/clion/creating-google-test-run-debug-configuration-for-test.html">参考资料</a></p>
 
     </div>
@@ -270,8 +325,8 @@ code.has-jax {
         <div class="post-nav">
     <div class="post-nav-next post-nav-item">
     
-        <a href="https://iihui.github.io/post/hugo-next/" rel="next" title="Hugo Next 主题">
-        <i class="fa fa-chevron-left"></i> Hugo Next 主题
+        <a href="https://iihui.github.io/post/ios-aes/" rel="next" title="AES 实现">
+        <i class="fa fa-chevron-left"></i> AES 实现
         </a>
     
     </div>
@@ -347,7 +402,7 @@ code.has-jax {
       <nav class="site-state motion-element">
     <div class="site-state-item site-state-posts">
       <a href="https://iihui.github.io/post/">
-        <span class="site-state-item-count">95</span>
+        <span class="site-state-item-count">96</span>
         <span class="site-state-item-name">日志</span>
       </a>
     </div>
@@ -415,7 +470,18 @@ code.has-jax {
     
 <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
     <div class="post-toc">
-        <div class="post-toc-content"><nav id="TableOfContents"></nav></div>
+        <div class="post-toc-content"><nav id="TableOfContents">
+  <ul>
+    <li>
+      <ul>
+        <li><a href="#下载">下载</a></li>
+        <li><a href="#修改cmkelists">修改CMkeLists</a></li>
+        <li><a href="#修改maincpp">修改main.cpp</a></li>
+        <li><a href="#单元测试">单元测试</a></li>
+      </ul>
+    </li>
+  </ul>
+</nav></div>
     </div>
 </section>
 
