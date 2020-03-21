@@ -64,7 +64,10 @@ let data = [1, 2, 3, 4, 5] //闭区间运算符，表示截取下标0～2的数�
 { (parameters) -&amp;gt; returnType in statements } 尾随闭包 当函数最后的一个参数是闭包时，可以使用尾随闭包来增强函数的可读性。在使用尾随闭包时，可以不用写出它的参数标签：
 func test(closure: () -&amp;gt; Void) { ... } //不使用尾随闭包 test(closure: { ... }) //使用尾随闭包 test() { ... } 逃逸闭包 当一个闭包作为参数传递到一个函数中，但是这个闭包在函数返回之后还可以被使用，称该闭包从函数中逃逸。
 var completions: [() -&amp;gt; Void] = [] func testClosure(completion: () -&amp;gt; Void) { completions.append(completion) } 此时编译器会报错，提示你这是一个逃逸闭包，我们可以在参数名之前标注 @escaping，用来指明这个闭包是允许“逃逸”出这个函数的：
-var completions: [() -&amp;gt; Void] = [] func testEscapingClosure(completion: @escaping () -&amp;gt; Void) { completions.append(completion) } 。 </content>
+var completions: [() -&amp;gt; Void] = [] func testEscapingClosure(completion: @escaping () -&amp;gt; Void) { completions.append(completion) } 将一个闭包标记为@escaping意味着必须在闭包中显式地引用self，而非逃逸闭包则不需要。这个self提醒可能会一不小心就捕获了self，要注意循环引用。
+自动闭包 自动闭包是一种自动创建的闭包，用于包装传递给函数作为参数的表达式。这种闭包不接受任何参数，让你能够省略闭包的花括号，用一个普通的表达式来替代显式的闭包。
+并且自动闭包可以能够延迟求值，因为直到调用到这个闭包，代码段才会被执行。
+//未使用自动闭包，需要显示用花括号说明这个参数是一个闭包 func test(closure: () -&amp;gt; Bool) { } test(closure: { 1 &amp;lt; 2 } ) //使用自动闭包，只需要传递表达式 func test(closure: @autoclosure () -&amp;gt; String) { } test(customer: 1 &amp;lt; 2) 递归枚举 </content>
     </entry>
     
      <entry>
