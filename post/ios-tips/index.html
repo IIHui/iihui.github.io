@@ -241,13 +241,13 @@ code.has-jax {
     <i class="fa fa-file-word-o"></i>
 </span>
 <span class="post-meta-item-text">字数: </span>
-<span class="leancloud-visitors-count">1641</span>
+<span class="leancloud-visitors-count">2075</span>
 &nbsp; | &nbsp;
 <span class="post-meta-item-icon">
     <i class="fa fa-coffee"></i>
 </span>
 <span class="post-meta-item-text">阅读: </span>
-<span class="leancloud-visitors-count">4 分钟</span>
+<span class="leancloud-visitors-count">5 分钟</span>
 </span>
       </div>
     </header>
@@ -352,8 +352,7 @@ test() {
 }
 </code></pre></div><p>将一个闭包标记为<code>@escaping</code>意味着必须在闭包中显式地引用<code>self</code>，而非逃逸闭包则不需要。这个<code>self</code>提醒可能会一不小心就捕获了<code>self</code>，要注意循环引用。</p>
 <h3 id="自动闭包">自动闭包</h3>
-<p>自动闭包是一种自动创建的闭包，用于包装传递给函数作为参数的表达式。这种闭包不接受任何参数，让你能够省略闭包的花括号，用一个普通的表达式来替代显式的闭包。</p>
-<p>并且自动闭包可以能够延迟求值，因为直到调用到这个闭包，代码段才会被执行。</p>
+<p>自动闭包是一种自动创建的闭包，用于包装传递给函数作为参数的表达式。这种闭包不接受任何参数，让你能够省略闭包的花括号，用一个普通的表达式来替代显式的闭包。并且自动闭包<!-- raw HTML omitted -->可以能够延迟求值<!-- raw HTML omitted -->，因为直到调用到这个闭包，代码段才会被执行。</p>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift"><span style="color:#75715e">//</span><span style="color:#75715e"> </span><span style="color:#75715e">未</span><span style="color:#75715e">使</span><span style="color:#75715e">用</span><span style="color:#75715e">自</span><span style="color:#75715e">动</span><span style="color:#75715e">闭</span><span style="color:#75715e">包</span><span style="color:#75715e">，</span><span style="color:#75715e">需</span><span style="color:#75715e">要</span><span style="color:#75715e">显</span><span style="color:#75715e">示</span><span style="color:#75715e">用</span><span style="color:#75715e">花</span><span style="color:#75715e">括</span><span style="color:#75715e">号</span><span style="color:#75715e">说</span><span style="color:#75715e">明</span><span style="color:#75715e">这</span><span style="color:#75715e">个</span><span style="color:#75715e">参</span><span style="color:#75715e">数</span><span style="color:#75715e">是</span><span style="color:#75715e">一</span><span style="color:#75715e">个</span><span style="color:#75715e">闭</span><span style="color:#75715e">包</span>
 <span style="color:#66d9ef">func</span> <span style="color:#a6e22e">test</span>(closure: () -&gt; Bool) {
 }
@@ -364,6 +363,36 @@ test(closure: { <span style="color:#ae81ff">1</span> <span style="color:#f92672"
 }
 test(customer: <span style="color:#ae81ff">1</span> <span style="color:#f92672">&lt;</span> <span style="color:#ae81ff">2</span>)
 </code></pre></div><h2 id="递归枚举">递归枚举</h2>
+<p>可能有这样一个场景，定义一个<code>Food</code>的枚举，包含了一些食物，同时还支持基于这些食物可以两两混合成新食物：</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift"><span style="color:#66d9ef">enum</span> <span style="color:#a6e22e">Food</span> {
+    <span style="color:#66d9ef">case</span> beef
+    <span style="color:#66d9ef">case</span> potato
+    <span style="color:#66d9ef">case</span> mix(Food, Food)
+}
+</code></pre></div><p>此时编译器会提示<code>Recursive enum 'Food' is not marked 'indirect'</code>，原因是因为枚举成员中出现了递归调用。因此，需要在枚举成员前加上<code>indirect</code>来表示成员可递归。</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift"><span style="color:#75715e">//</span><span style="color:#75715e"> </span><span style="color:#75715e">标</span><span style="color:#75715e">记</span><span style="color:#75715e">整</span><span style="color:#75715e">个</span><span style="color:#75715e">枚</span><span style="color:#75715e">举</span><span style="color:#75715e">是</span><span style="color:#75715e">递</span><span style="color:#75715e">归</span><span style="color:#75715e">枚</span><span style="color:#75715e">举</span>
+<span style="color:#66d9ef">indirect</span> <span style="color:#66d9ef">enum</span> <span style="color:#a6e22e">Food</span> {
+    <span style="color:#66d9ef">case</span> beef
+    <span style="color:#66d9ef">case</span> potato
+    <span style="color:#66d9ef">case</span> mix(Food, Food)
+}
+
+<span style="color:#75715e">//</span><span style="color:#75715e"> </span><span style="color:#75715e">仅</span><span style="color:#75715e">标</span><span style="color:#75715e">记</span><span style="color:#75715e">存</span><span style="color:#75715e">在</span><span style="color:#75715e">递</span><span style="color:#75715e">归</span><span style="color:#75715e">的</span><span style="color:#75715e">枚</span><span style="color:#75715e">举</span><span style="color:#75715e">成</span><span style="color:#75715e">员</span>
+<span style="color:#66d9ef">enum</span> <span style="color:#a6e22e">Food</span> {
+    <span style="color:#66d9ef">case</span> beef
+    <span style="color:#66d9ef">case</span> potato
+    <span style="color:#66d9ef">indirect</span> <span style="color:#66d9ef">case</span> mix(Food, Food)
+}
+</code></pre></div><p>更推荐第二种写法，因为使用递归枚举时，编译器会<!-- raw HTML omitted -->插入一个间接层<!-- raw HTML omitted -->。仅标记枚举成员，能够减少不必要的消耗。</p>
+<h2 id="属性">属性</h2>
+<p>一个存储属性就是存储在特定类或结构体实例里的一个常量或变量。存储属性可以是变量存储属性（用关键字<code>var</code>定义），也可以是常量存储属性（用关键字 <code>let</code>定义）。</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift"><span style="color:#66d9ef">struct</span> <span style="color:#a6e22e">Person</span> {
+    <span style="color:#66d9ef">var</span> name: String
+    <span style="color:#66d9ef">var</span> height: CGFloat
+}
+</code></pre></div><p>还可以通过<code>Lazy</code>来标示该属性位延迟存储属性，类似于<code>OC</code>常说的懒加载：</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift"><span style="color:#66d9ef">lazy</span> <span style="color:#66d9ef">var</span> fileName: String = <span style="color:#e6db74">&#34;</span><span style="color:#e6db74">data.txt</span><span style="color:#e6db74">&#34;</span>
+</code></pre></div><p>如果一个被标志为<code>lazy</code>的属性在没有初始化时就同时被多个线程访问，则无法保证该属性只会初始化一次，即它是非线性安全的。</p>
 
     </div>
     <footer class="post-footer">
@@ -543,6 +572,7 @@ test(customer: <span style="color:#ae81ff">1</span> <span style="color:#f92672">
           </ul>
         </li>
         <li><a href="#递归枚举">递归枚举</a></li>
+        <li><a href="#属性">属性</a></li>
       </ul>
     </li>
   </ul>

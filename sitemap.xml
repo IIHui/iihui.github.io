@@ -65,9 +65,14 @@ let data = [1, 2, 3, 4, 5] //闭区间运算符，表示截取下标0～2的数�
 func test(closure: () -&amp;gt; Void) { ... } //不使用尾随闭包 test(closure: { ... }) //使用尾随闭包 test() { ... } 逃逸闭包 当一个闭包作为参数传递到一个函数中，但是这个闭包在函数返回之后还可以被使用，称该闭包从函数中逃逸。
 var completions: [() -&amp;gt; Void] = [] func testClosure(completion: () -&amp;gt; Void) { completions.append(completion) } 此时编译器会报错，提示你这是一个逃逸闭包，我们可以在参数名之前标注 @escaping，用来指明这个闭包是允许“逃逸”出这个函数的：
 var completions: [() -&amp;gt; Void] = [] func testEscapingClosure(completion: @escaping () -&amp;gt; Void) { completions.append(completion) } 将一个闭包标记为@escaping意味着必须在闭包中显式地引用self，而非逃逸闭包则不需要。这个self提醒可能会一不小心就捕获了self，要注意循环引用。
-自动闭包 自动闭包是一种自动创建的闭包，用于包装传递给函数作为参数的表达式。这种闭包不接受任何参数，让你能够省略闭包的花括号，用一个普通的表达式来替代显式的闭包。
-并且自动闭包可以能够延迟求值，因为直到调用到这个闭包，代码段才会被执行。
-//未使用自动闭包，需要显示用花括号说明这个参数是一个闭包 func test(closure: () -&amp;gt; Bool) { } test(closure: { 1 &amp;lt; 2 } ) //使用自动闭包，只需要传递表达式 func test(closure: @autoclosure () -&amp;gt; String) { } test(customer: 1 &amp;lt; 2) 递归枚举 </content>
+自动闭包 自动闭包是一种自动创建的闭包，用于包装传递给函数作为参数的表达式。这种闭包不接受任何参数，让你能够省略闭包的花括号，用一个普通的表达式来替代显式的闭包。并且自动闭包可以能够延迟求值，因为直到调用到这个闭包，代码段才会被执行。
+//未使用自动闭包，需要显示用花括号说明这个参数是一个闭包 func test(closure: () -&amp;gt; Bool) { } test(closure: { 1 &amp;lt; 2 } ) //使用自动闭包，只需要传递表达式 func test(closure: @autoclosure () -&amp;gt; String) { } test(customer: 1 &amp;lt; 2) 递归枚举 可能有这样一个场景，定义一个Food的枚举，包含了一些食物，同时还支持基于这些食物可以两两混合成新食物：
+enum Food { case beef case potato case mix(Food, Food) } 此时编译器会提示Recursive enum &#39;Food&#39; is not marked &#39;indirect&#39;，原因是因为枚举成员中出现了递归调用。因此，需要在枚举成员前加上indirect来表示成员可递归。
+//标记整个枚举是递归枚举 indirect enum Food { case beef case potato case mix(Food, Food) } //仅标记存在递归的枚举成员 enum Food { case beef case potato indirect case mix(Food, Food) } 更推荐第二种写法，因为使用递归枚举时，编译器会插入一个间接层。仅标记枚举成员，能够减少不必要的消耗。
+属性 一个存储属性就是存储在特定类或结构体实例里的一个常量或变量。存储属性可以是变量存储属性（用关键字var定义），也可以是常量存储属性（用关键字 let定义）。
+struct Person { var name: String var height: CGFloat } 还可以通过Lazy来标示该属性位延迟存储属性，类似于OC常说的懒加载：
+lazy var fileName: String = &amp;#34;data.txt&amp;#34; 如果一个被标志为lazy的属性在没有初始化时就同时被多个线程访问，则无法保证该属性只会初始化一次，即它是非线性安全的。
+</content>
     </entry>
     
      <entry>
