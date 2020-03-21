@@ -241,7 +241,7 @@ code.has-jax {
     <i class="fa fa-file-word-o"></i>
 </span>
 <span class="post-meta-item-text">字数: </span>
-<span class="leancloud-visitors-count">1129</span>
+<span class="leancloud-visitors-count">1371</span>
 &nbsp; | &nbsp;
 <span class="post-meta-item-icon">
     <i class="fa fa-coffee"></i>
@@ -324,6 +324,33 @@ data[<span style="color:#ae81ff">2.</span>..]
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift">{ (parameters) -&gt; returnType <span style="color:#66d9ef">in</span>
     statements
 }
+</code></pre></div><h3 id="尾随闭包">尾随闭包</h3>
+<p>当函数最后的一个参数是闭包时，可以使用尾随闭包来增强函数的可读性。在使用尾随闭包时，可以不用写出它的参数标签：</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift"><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">test</span>(closure: () -&gt; Void) {
+    ...
+}
+
+<span style="color:#75715e">//</span><span style="color:#75715e"> </span><span style="color:#75715e">不</span><span style="color:#75715e">使</span><span style="color:#75715e">用</span><span style="color:#75715e">尾</span><span style="color:#75715e">随</span><span style="color:#75715e">闭</span><span style="color:#75715e">包</span>
+test(closure: {
+    ...
+})
+
+<span style="color:#75715e">//</span><span style="color:#75715e"> </span><span style="color:#75715e">使</span><span style="color:#75715e">用</span><span style="color:#75715e">尾</span><span style="color:#75715e">随</span><span style="color:#75715e">闭</span><span style="color:#75715e">包</span>
+test() {
+    ...
+}
+</code></pre></div><h3 id="逃逸闭包">逃逸闭包</h3>
+<p>当一个闭包作为参数传递到一个函数中，但是这个闭包在函数返回之后还可以被使用，称该闭包从函数中逃逸。</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift"><span style="color:#66d9ef">var</span> completions: [() -&gt; Void] = []
+<span style="color:#66d9ef">func</span> <span style="color:#a6e22e">testClosure</span>(completion: () -&gt; Void) {
+    completions.append(completion)
+}
+</code></pre></div><p>此时编译器会报错，提示你这是一个逃逸闭包，我们可以在参数名之前标注 <code>@escaping</code>，用来指明这个闭包是允许“逃逸”出这个函数的：</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift"><span style="color:#66d9ef">var</span> completions: [() -&gt; Void] = []
+<span style="color:#66d9ef">func</span> <span style="color:#a6e22e">testEscapingClosure</span>(completion: @escaping () -&gt; Void) {
+    completions.append(completion)
+}
+<span style="color:#960050;background-color:#1e0010">。</span>
 </code></pre></div>
     </div>
     <footer class="post-footer">
@@ -495,7 +522,12 @@ data[<span style="color:#ae81ff">2.</span>..]
         <li><a href="#可变参数函数">可变参数函数</a></li>
         <li><a href="#区间运算符">区间运算符</a></li>
         <li><a href="#和--">++和&ndash;</a></li>
-        <li><a href="#闭包">闭包</a></li>
+        <li><a href="#闭包">闭包</a>
+          <ul>
+            <li><a href="#尾随闭包">尾随闭包</a></li>
+            <li><a href="#逃逸闭包">逃逸闭包</a></li>
+          </ul>
+        </li>
       </ul>
     </li>
   </ul>
