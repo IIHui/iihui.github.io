@@ -241,7 +241,7 @@ code.has-jax {
     <i class="fa fa-file-word-o"></i>
 </span>
 <span class="post-meta-item-text">字数: </span>
-<span class="leancloud-visitors-count">3146</span>
+<span class="leancloud-visitors-count">3370</span>
 &nbsp; | &nbsp;
 <span class="post-meta-item-icon">
     <i class="fa fa-coffee"></i>
@@ -274,6 +274,29 @@ print(<span style="color:#e6db74">&#34;</span><span style="color:#e6db74">\(</sp
     <span style="color:#66d9ef">@objc</span> <span style="color:#66d9ef">optional</span> <span style="color:#66d9ef">func</span> <span style="color:#a6e22e">incrementForCount</span>(count: Int) -&gt; Int
     <span style="color:#66d9ef">@objc</span> <span style="color:#66d9ef">optional</span> <span style="color:#66d9ef">var</span> fixedIncrement: Int { <span style="color:#66d9ef">get</span> }
 }
+</code></pre></div><p>但是标记<code>@objc</code>特性的协议只能被继承<code>NSObject</code>类类或者<code>@objc</code>类遵循，其他类以及结构体和枚举均不能遵循这种协议，这对于<code>Swift protocol</code>是一个很大的限制。</p>
+<p>由于<code>protocol</code>支持可扩展，那么可以声明一个<code>protocol</code>之后再用<code>extension</code>的方式给出部分方法默认的实现，这样这些方法在实际的类中就是可选实现了。</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift"><span style="color:#66d9ef">protocol</span> <span style="color:#a6e22e">CounterDataSource</span> {
+    <span style="color:#66d9ef">func</span> <span style="color:#a6e22e">incrementForCount</span>(count: Int) -&gt; Int
+    <span style="color:#66d9ef">var</span> fixedIncrement: Int { <span style="color:#66d9ef">get</span> }
+}
+
+<span style="color:#66d9ef">extension</span> <span style="color:#a6e22e">CounterDataSource</span> {
+    <span style="color:#66d9ef">func</span> <span style="color:#a6e22e">incrementForCount</span>(count: Int) -&gt; Int {
+        <span style="color:#66d9ef">if</span> count == <span style="color:#ae81ff">0</span> {
+            <span style="color:#66d9ef">return</span> <span style="color:#ae81ff">0</span>
+        } <span style="color:#66d9ef">else</span> <span style="color:#66d9ef">if</span> count <span style="color:#f92672">&lt;</span> <span style="color:#ae81ff">0</span> {
+            <span style="color:#66d9ef">return</span> <span style="color:#ae81ff">1</span>
+        } <span style="color:#66d9ef">else</span> {
+            <span style="color:#66d9ef">return</span> <span style="color:#f92672">-</span><span style="color:#ae81ff">1</span>
+        }
+    }
+}
+
+<span style="color:#66d9ef">class</span> <span style="color:#a6e22e">Counter</span>: CounterDataSource {
+    <span style="color:#66d9ef">var</span> fixedIncrement: Int = <span style="color:#ae81ff">0</span>
+}
+
 </code></pre></div><h2 id="随机数">随机数</h2>
 <p>我们常常可能使用下面这种方式来获取随机数，比如生产<code>100</code>以内的随机数：</p>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift"><span style="color:#66d9ef">let</span> randomNum: Int = arc4random() <span style="color:#f92672">%</span> <span style="color:#ae81ff">100</span>
