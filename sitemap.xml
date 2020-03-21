@@ -78,7 +78,10 @@ var center: CGPoint { let centerX = origin.x &#43; (size.width / 2) let centerY 
 var origin: CGPoint { willSet { print(&amp;#34;\(newValue)&amp;#34;) } didSet { print(&amp;#34;\(oldValue)&amp;#34;) } } 调用时序 let b = B() b.number = 0 //输出 //get //willSet //set //didSet 首先出现get是因为实现didSet，didSet中用到oldValue，而这个值需要在整个set动作之前进行获取并存储待用，否则将无法确保正确性。如果我们不实现didSet的话，这次get操作也将不存在。？？？
 is和as is is在功能上相当于OC的isKindOfClass，可以检查一个对象是否属于某类型或其子类型。is和原来的区别主要在于两点，首先它不仅可以用于class类型上，也可以用在struct或enum类型进行判断。
 class ClassA { } class ClassB: ClassA { } let obj: AnyObject = ClassB() if (obj is ClassA) { print(&amp;#34;属于 ClassA&amp;#34;) } if (obj is ClassB) { print(&amp;#34;属于 ClassB&amp;#34;) } as 某类型的一个常量或变量可能在幕后实际上属于一个子类。当确定是这种情况时，可以尝试向下转到它的子类型，用类型转换操作符（as？ 或as！）
-class Media {} class Movie: Media {} class Song: Media {} for item in medias { if let movie = item as? Movie { print(&amp;#34;It&amp;#39;s Movie&amp;#34;) } else if let song = item as? Song { print(&amp;#34;It&amp;#39;s Song&amp;#34;) } } </content>
+class Media {} class Movie: Media {} class Song: Media {} for item in medias { if let movie = item as? Movie { print(&amp;#34;It&amp;#39;s Movie&amp;#34;) } else if let song = item as? Song { print(&amp;#34;It&amp;#39;s Song&amp;#34;) } } 扩展下标 Swift支持通过Extension为已有类型添加新下标，例如：
+extension Int { subscript(digitIndex: Int) -&amp;gt; Int { var decimalBase = 1 for _ in 0..&amp;lt;digitIndex { decimalBase *= 10 } return (self / decimalBase) % 10 } } 746381295[0] //返回5 746381295[1] //返回9 746381295[2] //返回2 746381295[8] //返回7 mutating 结构体和枚举类型中修改self或其属性的方法必须将该实例方法标注为mutating，否则无法在方法里改变自己的变量：
+struct MyCar { var color = UIColor.blue mutating func changeColor() { color = UIColor.red } } 由于Swift的protocol不仅可以被class类型实现，也适用于struct和enum，因此在写给别人用的接口时需要多考虑是否适用mutating来修饰方法。
+</content>
     </entry>
     
      <entry>
