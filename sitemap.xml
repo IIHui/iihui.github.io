@@ -69,9 +69,13 @@ var completions: [() -&amp;gt; Void] = [] func testEscapingClosure(completion: @
 //未使用自动闭包，需要显示用花括号说明这个参数是一个闭包 func test(closure: () -&amp;gt; Bool) { } test(closure: { 1 &amp;lt; 2 } ) //使用自动闭包，只需要传递表达式 func test(closure: @autoclosure () -&amp;gt; String) { } test(customer: 1 &amp;lt; 2) 递归枚举 可能有这样一个场景，定义一个Food的枚举，包含了一些食物，同时还支持基于这些食物可以两两混合成新食物：
 enum Food { case beef case potato case mix(Food, Food) } 此时编译器会提示Recursive enum &#39;Food&#39; is not marked &#39;indirect&#39;，原因是因为枚举成员中出现了递归调用。因此，需要在枚举成员前加上indirect来表示成员可递归。
 //标记整个枚举是递归枚举 indirect enum Food { case beef case potato case mix(Food, Food) } //仅标记存在递归的枚举成员 enum Food { case beef case potato indirect case mix(Food, Food) } 更推荐第二种写法，因为使用递归枚举时，编译器会插入一个间接层。仅标记枚举成员，能够减少不必要的消耗。
-属性 一个存储属性就是存储在特定类或结构体实例里的一个常量或变量。存储属性可以是变量存储属性（用关键字var定义），也可以是常量存储属性（用关键字 let定义）。
+属性 存储属性 一个存储属性就是存储在特定类或结构体实例里的一个常量或变量。存储属性可以是变量存储属性（用关键字var定义），也可以是常量存储属性（用关键字 let定义）。
 struct Person { var name: String var height: CGFloat } 还可以通过Lazy来标示该属性位延迟存储属性，类似于OC常说的懒加载：
 lazy var fileName: String = &amp;#34;data.txt&amp;#34; 如果一个被标志为lazy的属性在没有初始化时就同时被多个线程访问，则无法保证该属性只会初始化一次，即它是非线性安全的。
+计算属性 除存储属性外，类，结构体和枚举定义计算属性。计算属性不直接存储值，而是提供一个getter和一个可选setter，来间接获取和设置其它属性和变量的值。
+struct Rect { var origin = CGPoint.zero var size = CGSize.zero var center: CGPoint { get { let centerX = origin.x &#43; (size.width / 2) let centerY = origin.y &#43; (size.height / 2) return Point(x: centerX, y: centerY) } set { origin.x = newValue.x - (size.width / 2) origin.y = newValue.y - (size.height / 2) } } } 如果只希望可读而不可写时，setter方法不提供即可，可以简写为：
+var center: CGPoint { let centerX = origin.x &#43; (size.width / 2) let centerY = origin.y &#43; (size.height / 2) return Point(x: centerX, y: centerY) } 观察器 Swift提供了非常方便的观察属性变化的方法，每次属性被设置值的时候都会调用属性观察器，即使新值和当前值相同的时候也不例外：
+var origin: CGPoint { willSet { print(&amp;#34;\(newValue)&amp;#34;) } didSet { print(&amp;#34;\(oldValue)&amp;#34;) } } 调用时序 let b = B() b.number = 0 //输出 //get //willSet //set //didSet 首先出现get是因为实现didSet，didSet中用到oldValue，而这个值需要在整个set动作之前进行获取并存储待用，否则将无法确保正确性。如果我们不实现didSet的话，这次get操作也将不存在。？？？
 </content>
     </entry>
     

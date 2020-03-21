@@ -241,7 +241,7 @@ code.has-jax {
     <i class="fa fa-file-word-o"></i>
 </span>
 <span class="post-meta-item-text">字数: </span>
-<span class="leancloud-visitors-count">2075</span>
+<span class="leancloud-visitors-count">2478</span>
 &nbsp; | &nbsp;
 <span class="post-meta-item-icon">
     <i class="fa fa-coffee"></i>
@@ -385,6 +385,7 @@ test(customer: <span style="color:#ae81ff">1</span> <span style="color:#f92672">
 }
 </code></pre></div><p>更推荐第二种写法，因为使用递归枚举时，编译器会<!-- raw HTML omitted -->插入一个间接层<!-- raw HTML omitted -->。仅标记枚举成员，能够减少不必要的消耗。</p>
 <h2 id="属性">属性</h2>
+<h3 id="存储属性">存储属性</h3>
 <p>一个存储属性就是存储在特定类或结构体实例里的一个常量或变量。存储属性可以是变量存储属性（用关键字<code>var</code>定义），也可以是常量存储属性（用关键字 <code>let</code>定义）。</p>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift"><span style="color:#66d9ef">struct</span> <span style="color:#a6e22e">Person</span> {
     <span style="color:#66d9ef">var</span> name: String
@@ -393,6 +394,49 @@ test(customer: <span style="color:#ae81ff">1</span> <span style="color:#f92672">
 </code></pre></div><p>还可以通过<code>Lazy</code>来标示该属性位延迟存储属性，类似于<code>OC</code>常说的懒加载：</p>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift"><span style="color:#66d9ef">lazy</span> <span style="color:#66d9ef">var</span> fileName: String = <span style="color:#e6db74">&#34;</span><span style="color:#e6db74">data.txt</span><span style="color:#e6db74">&#34;</span>
 </code></pre></div><p>如果一个被标志为<code>lazy</code>的属性在没有初始化时就同时被多个线程访问，则无法保证该属性只会初始化一次，即它是非线性安全的。</p>
+<h3 id="计算属性">计算属性</h3>
+<p>除存储属性外，类，结构体和枚举定义计算属性。计算属性不直接存储值，而是提供一个<code>getter</code>和一个可选<code>setter</code>，来间接获取和设置其它属性和变量的值。</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift"><span style="color:#66d9ef">struct</span> <span style="color:#a6e22e">Rect</span> {
+    <span style="color:#66d9ef">var</span> origin = CGPoint.zero
+    <span style="color:#66d9ef">var</span> size = CGSize.zero
+    <span style="color:#66d9ef">var</span> center: CGPoint {
+        <span style="color:#66d9ef">get</span> {
+            <span style="color:#66d9ef">let</span> centerX = origin.x <span style="color:#f92672">+</span> (size.width <span style="color:#f92672">/</span> <span style="color:#ae81ff">2</span>)
+            <span style="color:#66d9ef">let</span> centerY = origin.y <span style="color:#f92672">+</span> (size.height <span style="color:#f92672">/</span> <span style="color:#ae81ff">2</span>)
+            <span style="color:#66d9ef">return</span> Point(x: centerX, y: centerY)
+        }
+        <span style="color:#66d9ef">set</span> {
+            origin.x = newValue.x <span style="color:#f92672">-</span> (size.width <span style="color:#f92672">/</span> <span style="color:#ae81ff">2</span>)
+            origin.y = newValue.y <span style="color:#f92672">-</span> (size.height <span style="color:#f92672">/</span> <span style="color:#ae81ff">2</span>)
+        }
+    }
+}
+</code></pre></div><p>如果只希望可读而不可写时，<code>setter</code>方法不提供即可，可以简写为：</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift"><span style="color:#66d9ef">var</span> center: CGPoint {
+    <span style="color:#66d9ef">let</span> centerX = origin.x <span style="color:#f92672">+</span> (size.width <span style="color:#f92672">/</span> <span style="color:#ae81ff">2</span>)
+    <span style="color:#66d9ef">let</span> centerY = origin.y <span style="color:#f92672">+</span> (size.height <span style="color:#f92672">/</span> <span style="color:#ae81ff">2</span>)
+    <span style="color:#66d9ef">return</span> Point(x: centerX, y: centerY)
+}
+</code></pre></div><h3 id="观察器">观察器</h3>
+<p><code>Swift</code>提供了非常方便的观察属性变化的方法，每次属性被设置值的时候都会调用属性观察器，即使新值和当前值相同的时候也不例外：</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift"><span style="color:#66d9ef">var</span> origin: CGPoint {
+    <span style="color:#66d9ef">willSet</span> {
+        print(<span style="color:#e6db74">&#34;</span><span style="color:#e6db74">\(</span>newValue<span style="color:#e6db74">)</span><span style="color:#e6db74">&#34;</span>)
+    }
+    <span style="color:#66d9ef">didSet</span> {
+        print(<span style="color:#e6db74">&#34;</span><span style="color:#e6db74">\(</span>oldValue<span style="color:#e6db74">)</span><span style="color:#e6db74">&#34;</span>)
+    }
+}
+</code></pre></div><h3 id="调用时序">调用时序</h3>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift"><span style="color:#66d9ef">let</span> b = B()
+b.number = <span style="color:#ae81ff">0</span>
+
+<span style="color:#75715e">//</span><span style="color:#75715e"> </span><span style="color:#75715e">输</span><span style="color:#75715e">出</span>
+<span style="color:#75715e">//</span><span style="color:#75715e"> </span><span style="color:#75715e">g</span><span style="color:#75715e">e</span><span style="color:#75715e">t</span>
+<span style="color:#75715e">//</span><span style="color:#75715e"> </span><span style="color:#75715e">w</span><span style="color:#75715e">i</span><span style="color:#75715e">l</span><span style="color:#75715e">l</span><span style="color:#75715e">S</span><span style="color:#75715e">e</span><span style="color:#75715e">t</span>
+<span style="color:#75715e">//</span><span style="color:#75715e"> </span><span style="color:#75715e">s</span><span style="color:#75715e">e</span><span style="color:#75715e">t</span>
+<span style="color:#75715e">//</span><span style="color:#75715e"> </span><span style="color:#75715e">d</span><span style="color:#75715e">i</span><span style="color:#75715e">d</span><span style="color:#75715e">S</span><span style="color:#75715e">e</span><span style="color:#75715e">t</span>
+</code></pre></div><p>首先出现<code>get</code>是因为实现<code>didSet，didSet</code>中用到<code>oldValue</code>，而这个值需要在整个<code>set</code>动作之前进行获取并存储待用，否则将无法确保正确性。如果我们不实现<code>didSet</code>的话，这次<code>get</code>操作也将不存在。？？？</p>
 
     </div>
     <footer class="post-footer">
@@ -572,7 +616,14 @@ test(customer: <span style="color:#ae81ff">1</span> <span style="color:#f92672">
           </ul>
         </li>
         <li><a href="#递归枚举">递归枚举</a></li>
-        <li><a href="#属性">属性</a></li>
+        <li><a href="#属性">属性</a>
+          <ul>
+            <li><a href="#存储属性">存储属性</a></li>
+            <li><a href="#计算属性">计算属性</a></li>
+            <li><a href="#观察器">观察器</a></li>
+            <li><a href="#调用时序">调用时序</a></li>
+          </ul>
+        </li>
       </ul>
     </li>
   </ul>
