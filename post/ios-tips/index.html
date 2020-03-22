@@ -241,13 +241,13 @@ code.has-jax {
     <i class="fa fa-file-word-o"></i>
 </span>
 <span class="post-meta-item-text">字数: </span>
-<span class="leancloud-visitors-count">3753</span>
+<span class="leancloud-visitors-count">4149</span>
 &nbsp; | &nbsp;
 <span class="post-meta-item-icon">
     <i class="fa fa-coffee"></i>
 </span>
 <span class="post-meta-item-text">阅读: </span>
-<span class="leancloud-visitors-count">8 分钟</span>
+<span class="leancloud-visitors-count">9 分钟</span>
 </span>
       </div>
     </header>
@@ -562,7 +562,34 @@ b.number = <span style="color:#ae81ff">0</span>
     }
 }
 </code></pre></div><p>由于<code>Swift</code>的<code>protocol</code>不仅可以被<code>class</code>类型实现，也适用于<code>struct</code>和<code>enum</code>，因此在写给别人用的接口时需要多考虑是否适用<code>mutating</code>来修饰方法。</p>
-<hr>
+<h2 id="kvo">KVO</h2>
+<p>在<code>Swift</code>中也可以使用<code>KVO</code>，但仅限于<code>NSObject</code>的子类。因为，<code>KVO</code>是基于<code>KVC</code>以及动态派发技术实现的，而这些都是运行时的概念。<code>Swift</code>为了效率，默认禁用了动态派发，因此想要<code>Swift</code>来实现<code>KVO</code>，需要将观测对象标记为<code>@objc dynamic</code></p>
+<h2 id="lazy">lazy</h2>
+<p>关键词<code>lazy</code>可以用来标示属性的延迟加载，它还可以配合像<code>map</code>或<code>filter</code>这类接受闭包并进行运行的方法一起，让整个行为变为延迟进行，在某些情况下这么做也对性能会有不小的帮助。</p>
+<p>例如，直接使用<code>map</code>时：</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift"><span style="color:#66d9ef">let</span> data = <span style="color:#ae81ff">1.</span>..<span style="color:#ae81ff">3</span>
+<span style="color:#66d9ef">let</span> result = data.map {
+    (i: Int) -&gt; Int <span style="color:#66d9ef">in</span>
+    print(<span style="color:#e6db74">&#34;</span><span style="color:#e6db74">正在处理 </span><span style="color:#e6db74">\(</span>i<span style="color:#e6db74">)</span><span style="color:#e6db74">&#34;</span>)
+    <span style="color:#66d9ef">return</span> i <span style="color:#f92672">*</span> <span style="color:#ae81ff">2</span>
+}
+
+print(<span style="color:#e6db74">&#34;</span><span style="color:#e6db74">准备访问结果</span><span style="color:#e6db74">&#34;</span>)
+<span style="color:#66d9ef">for</span> i <span style="color:#66d9ef">in</span> result {
+    print(<span style="color:#e6db74">&#34;</span><span style="color:#e6db74">操作后结果为 </span><span style="color:#e6db74">\(</span>i<span style="color:#e6db74">)</span><span style="color:#e6db74">&#34;</span>)
+}
+
+print(<span style="color:#e6db74">&#34;</span><span style="color:#e6db74">操作完毕</span><span style="color:#e6db74">&#34;</span>)
+</code></pre></div><p>这段代码的输出为：</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift"><span style="color:#75715e">//</span><span style="color:#75715e"> </span><span style="color:#75715e">正</span><span style="color:#75715e">在</span><span style="color:#75715e">处</span><span style="color:#75715e">理</span><span style="color:#75715e"> </span><span style="color:#75715e">1</span>
+<span style="color:#75715e">//</span><span style="color:#75715e"> </span><span style="color:#75715e">正</span><span style="color:#75715e">在</span><span style="color:#75715e">处</span><span style="color:#75715e">理</span><span style="color:#75715e"> </span><span style="color:#75715e">2</span>
+<span style="color:#75715e">//</span><span style="color:#75715e"> </span><span style="color:#75715e">正</span><span style="color:#75715e">在</span><span style="color:#75715e">处</span><span style="color:#75715e">理</span><span style="color:#75715e"> </span><span style="color:#75715e">3</span>
+<span style="color:#75715e">//</span><span style="color:#75715e"> </span><span style="color:#75715e">准</span><span style="color:#75715e">备</span><span style="color:#75715e">访</span><span style="color:#75715e">问</span><span style="color:#75715e">结</span><span style="color:#75715e">果</span>
+<span style="color:#75715e">//</span><span style="color:#75715e"> </span><span style="color:#75715e">操</span><span style="color:#75715e">作</span><span style="color:#75715e">后</span><span style="color:#75715e">结</span><span style="color:#75715e">果</span><span style="color:#75715e">为</span><span style="color:#75715e"> </span><span style="color:#75715e">2</span>
+<span style="color:#75715e">//</span><span style="color:#75715e"> </span><span style="color:#75715e">操</span><span style="color:#75715e">作</span><span style="color:#75715e">后</span><span style="color:#75715e">结</span><span style="color:#75715e">果</span><span style="color:#75715e">为</span><span style="color:#75715e"> </span><span style="color:#75715e">4</span>
+<span style="color:#75715e">//</span><span style="color:#75715e"> </span><span style="color:#75715e">操</span><span style="color:#75715e">作</span><span style="color:#75715e">后</span><span style="color:#75715e">结</span><span style="color:#75715e">果</span><span style="color:#75715e">为</span><span style="color:#75715e"> </span><span style="color:#75715e">6</span>
+<span style="color:#75715e">//</span><span style="color:#75715e"> </span><span style="color:#75715e">操</span><span style="color:#75715e">作</span><span style="color:#75715e">完</span><span style="color:#75715e">毕</span>
+</code></pre></div><hr>
 <p><a href="https://juejin.im/post/5e5cf951e51d452712105052">摘抄自这里</a></p>
 
     </div>
@@ -761,6 +788,8 @@ b.number = <span style="color:#ae81ff">0</span>
         </li>
         <li><a href="#扩展下标">扩展下标</a></li>
         <li><a href="#mutating">mutating</a></li>
+        <li><a href="#kvo">KVO</a></li>
+        <li><a href="#lazy">lazy</a></li>
       </ul>
     </li>
   </ul>
