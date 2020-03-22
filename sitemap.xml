@@ -51,7 +51,12 @@ let size = (width: 10, height: 10) print(&amp;#34;\(size.0)&amp;#34;) print(&amp
 func testComposition(protocols: ProtocolA &amp;amp; ProtocolB) { //code } 可选协议 Swift的protocol本身不允许可选项，要求所有方法都是必须实现的。但是，由于Swift和OC可以混编，为了方便和OC打交道，Swift支持在protocol中使用optional关键字作为前缀来定义可选要求，且协议可选要求都必须带上objc属性。
 @objc protocol CounterDataSource { @objc optional func incrementForCount(count: Int) -&amp;gt; Int @objc optional var fixedIncrement: Int { get } } 但是标记@objc特性的协议只能被继承NSObject类类或者@objc类遵循，其他类以及结构体和枚举均不能遵循这种协议，这对于Swift protocol是一个很大的限制。
 由于protocol支持可扩展，那么可以声明一个protocol之后再用extension的方式给出部分方法默认的实现，这样这些方法在实际的类中就是可选实现了。
-protocol CounterDataSource { func incrementForCount(count: Int) -&amp;gt; Int var fixedIncrement: Int { get } } extension CounterDataSource { func incrementForCount(count: Int) -&amp;gt; Int { if count == 0 { return 0 } else if count &amp;lt; 0 { return 1 } else { return -1 } } } class Counter: CounterDataSource { var fixedIncrement: Int = 0 } 随机数 我们常常可能使用下面这种方式来获取随机数，比如生产100以内的随机数：
+protocol CounterDataSource { func incrementForCount(count: Int) -&amp;gt; Int var fixedIncrement: Int { get } } extension CounterDataSource { func incrementForCount(count: Int) -&amp;gt; Int { if count == 0 { return 0 } else if count &amp;lt; 0 { return 1 } else { return -1 } } } class Counter: CounterDataSource { var fixedIncrement: Int = 0 } 协议扩展 先来看下面这段代码：
+protocol A2 { func method1() } extension A2 { func method1() { return print(&amp;#34;hi&amp;#34;) } func method2() { return print(&amp;#34;hi&amp;#34;) } } struct B2: A2 { func method1() { return print(&amp;#34;hello&amp;#34;) } func method2() { return print(&amp;#34;hello&amp;#34;) } } let b2 = B2() b2.method1() b2.method2() 打印的结果如下：
+hello hello 结果看起来在医疗意料之中，但如果稍作修改：
+let a2 = b2 as A2 a2.method1() a2.method2() 此时的结果是：
+hello hi 对于method1，因为它在protocol中被定义了，因此对于一个被声明为遵循协议的类型实例来说，可以确定实例必须实现了method1，可以放心大胆地用动态派发的方式使用最终的实现（不论它是在协议扩展中进行了定义，还是在协议扩展中默认实现）。但是，对于method2来说，只是在接口扩展中进行了定义，没有任何规定它必须在最终的类型中被实现。在使用时，因为a2只有一个符合A2接口的实例，编译器对method2唯一能确定的是知识在接口扩展中有一个默认实现，因此在调用时，无法确定安全，也就不会去进行动态派发，而是转而编译期间就确定的默认实现。
+随机数 我们常常可能使用下面这种方式来获取随机数，比如生产100以内的随机数：
 let randomNum: Int = arc4random() % 100 此时编译器会提示error，这是因为arc4random()返回UInt32，而randomNum是Int，所以需要做类型转换。如果不假思索，就可能直接写出下面的代码：
 let randomNum: Int = Int(arc4random()) % 100 这是因为Int在32位机器上（iPhone5及以下）相当于Int32，而在64位机器上相当于Int64，表现上与OC中的NSInteger一致，而arc4random()始终返回UInt32，所以在32位机器上可能会越界崩溃了，所以应当先取余之后再类型转换：
 let randomNum: Int = Int(arc4random() % 100) 可变参数函数 如果想要一个可变参数的函数只需要在声明参数时在类型后面加上 ... 就可以了：
