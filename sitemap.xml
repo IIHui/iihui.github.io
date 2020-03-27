@@ -36,6 +36,60 @@ katex.html文件的内容如下所示：
     </entry>
     
      <entry>
+        <title>AutoLayout</title>
+        <url>https://iihui.github.io/post/ios-autolayout/</url>
+        <categories>
+          <category>iOS</category>
+        </categories>
+        <tags>
+          <tag>iOS</tag>
+        </tags>
+        <content type="html"> 几个需要更新方法的区别   setNeedsLayout 告知页面需要更新，但是不会立刻开始更新。
+  layoutIfNeeded 如果有需要刷新的标记，立即调用layoutSubViews进行布局；如果没有标记，不会调用layoutSubbViews。如果希望立即刷新frame，要先调用setNeedsLayout，把标记为需要布局，然后马上调用layoutIfNeeded实现布局。
+  layoutSubviews：对subviews进行布局，不能主动调用，需要的时候在子类中重写，系统会在合适的时候调用。
+  setNeedsUpdateConstraints告知需要更新约束，但是不会立刻开始。
+  updateConstraintsIfNeeded告知立刻更新约束。
+  updateConstraints系统更新约束。
+  调用layoutSubviews的时机   init初始化不会触发layoutSubviews，但是使用initWithFrame进行初始化且rect不为zero时。
+  addSubview的时候会触发系统调用layoutSubviews。
+  当view的frame发生改变时触发layoutSubviews。
+  滚动一个UIScrollView会触发layoutSubviews。
+  旋转屏幕会触发父UIView上的layoutSubviews事件。
+  改变一个UIView大小的时候也会调用父UIView上的layoutSubviews事件。
+  import UIKit enum SMSLoginType { case Personal case Virtual } class NewSMSViewController: UIViewController, UITableViewDelegate, UITableViewDataSource { @IBOutlet weak var personalAccountBtn: UIButton! @IBOutlet weak var personalAccountUnderline: UILabel! @IBOutlet weak var virtualAccountBtn: UIButton! @IBOutlet weak var virtualAccountUnderline: UILabel! @IBOutlet weak var tableView: UITableView! private let defaultColor = UIColor(hex: &amp;#34;#4B5169&amp;#34;) private let hiddenColor = UIColor(hex: &amp;#34;#9294A6&amp;#34;) private var imageAndText: [(image: String, tip: String)] = [(&amp;#34;virtualid&amp;#34;, &amp;#34;请输入虚拟账号ID&amp;#34;), (&amp;#34;no&amp;#34;, &amp;#34;请输入一事通ID或员工编号&amp;#34;), (&amp;#34;idcard_small&amp;#34;, &amp;#34;请输入身份证后六位&amp;#34;)] private var _loginType: SMSLoginType = .Personal private var loginType: SMSLoginType { get { return _loginType } set { switch newValue { case .Personal: self.personalAccountUnderline.isHidden = false self.virtualAccountUnderline.isHidden = true self.personalAccountBtn.setTitleColor(self.defaultColor, for: .normal) self.virtualAccountBtn.setTitleColor(self.hiddenColor, for: .normal) case .Virtual: self.personalAccountUnderline.isHidden = true self.virtualAccountUnderline.isHidden = false self.personalAccountBtn.setTitleColor(self.hiddenColor, for: .normal) self.virtualAccountBtn.setTitleColor(self.defaultColor, for: .normal) } _loginType = newValue self.tableView.reloadData() } } override func viewDidLoad() { super.viewDidLoad() self.tableView.delegate = self self.tableView.dataSource = self self.tableView.tableFooterView = UIView() self.tableView.separatorColor = UIColor.gray self.tableView.separatorInset = UIEdgeInsets(top: 0, left: -10, bottom: 0, right: 0) } @IBAction func back(_ sender: Any) { self.navigationController?.popViewController(animated: true) } @IBAction func showPersonalAccountUI(_ sender: Any) { self.loginType = .Personal } @IBAction func showVirtualAccountUI(_ sender: Any) { self.loginType = .Virtual } func numberOfSections(in tableView: UITableView) -&amp;gt; Int { return 3 } func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -&amp;gt; CGFloat { return 48 } func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -&amp;gt; Int { switch section { case 0: switch _loginType { case .Personal: return 2 case .Virtual: return 3 } default: return 1 } } func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) { cell.selectionStyle = .none } func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -&amp;gt; CGFloat { if section == 2 { return 60 } return 0 } func tableView(_ tableView: UITableView, heightForFooterInSection section: Int) -&amp;gt; CGFloat { switch section { case 0, 1: return 0.5 default: return 0 } } func tableView(_ tableView: UITableView, viewForFooterInSection section: Int) -&amp;gt; UIView? { let headerView = UIView() headerView.backgroundColor = UIColor.gray return headerView } func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -&amp;gt; UIView? { let footerView = UIView() footerView.backgroundColor = UIColor.clear return footerView } func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -&amp;gt; UITableViewCell { switch indexPath.section { case 0: let cell = tableView.dequeueReusableCell(withIdentifier: &amp;#34;SMSNormalCell&amp;#34;, for: indexPath) if let norCell = cell as? SMSNormalCell { var index = indexPath.row switch loginType { case .Personal: index = index &#43; 1 default: break } norCell.iconImageView.image = UIImage(named: imageAndText[index].image) norCell.textField.placeholder = imageAndText[index].tip norCell.textField.clearButtonMode = .whileEditing } return cell case 1: let cell = tableView.dequeueReusableCell(withIdentifier: &amp;#34;SMSCodeCell&amp;#34;, for: indexPath) if let codeCell = cell as? SMSCodeCell { codeCell.iconImageView.image = UIImage(named: &amp;#34;authcode&amp;#34;) codeCell.textField.placeholder = &amp;#34;请输入手机验证码&amp;#34; codeCell.textField.clearButtonMode = .whileEditing codeCell.codeBtn.layer.cornerRadius = 18.0 codeCell.codeBtn.layer.borderColor = UIColor.black.cgColor codeCell.codeBtn.layer.borderWidth = 1.0 } cell.separatorInset = UIEdgeInsets(top: 0, left: 0, bottom: 12, right: 0) return cell default: let cell = tableView.dequeueReusableCell(withIdentifier: &amp;#34;SMSBindCell&amp;#34;, for: indexPath) return cell } } } </content>
+    </entry>
+    
+     <entry>
+        <title>swift一些不常见的关键字</title>
+        <url>https://iihui.github.io/post/ios-keywords/</url>
+        <categories>
+          <category>iOS</category>
+        </categories>
+        <tags>
+          <tag>iOS</tag>
+        </tags>
+        <content type="html"> convenience convenience用于构造函数中，称之为便利构造函数。通常在对一些系统控件扩展分类的时候用convenience关键字，比如：
+extension UIColor { convenience init(hex: String) { var cString: String = hex.trimmingCharacters(in: .whitespacesAndNewlines).uppercased() if (cString.hasPrefix(&amp;#34;#&amp;#34;)) { cString.remove(at: cString.startIndex) } assert(cString.count == 6, &amp;#34;无效的hex值&amp;#34;) var rgbValue: UInt64 = 0 Scanner(string: cString).scanHexInt64(&amp;amp;rgbValue) self.init( red: CGFloat((rgbValue &amp;amp; 0xFF0000) &amp;gt;&amp;gt; 16) / 255.0, green: CGFloat((rgbValue &amp;amp; 0x00FF00) &amp;gt;&amp;gt; 8) / 255.0, blue: CGFloat(rgbValue &amp;amp; 0x0000FF) / 255.0, alpha: CGFloat(1.0) ) } } 原因是Swift为了保证安全，有个严格的初始化方法——Swift中不加修饰的init方法需要在方法中保证所有的非Optional的实例变量被赋值初始化。此时，如果想写一个自定义的构造函数，要把所有的非Optional的实例变量被赋值初始化，就变得很麻烦。此时便利构造函数就发挥作用了，它通常用在对系统的类进行构造函数的扩充时使用。
+  必须调用在convenience中修饰的构造函数中，必须调用本类的构造函数，不能调用父类的构造函数。
+  其本身不负责属性的创建和初始化工作。
+  不能被重写。
+  </content>
+    </entry>
+    
+     <entry>
+        <title>Keyboard Maestro 使用</title>
+        <url>https://iihui.github.io/post/tool-keyboard-maestro/</url>
+        <categories>
+          <category>tool</category>
+        </categories>
+        <tags>
+          <tag>tool</tag>
+        </tags>
+        <content type="html"> 自动关闭和开启wifi git区分大小写 打开终端，利用cd命令，将本地项目切换到git仓库下，输入如下命令使其对文件名大小写敏感：
+git config core.ignorecase false </content>
+    </entry>
+    
+     <entry>
         <title>git 使用</title>
         <url>https://iihui.github.io/post/tool-git-usage/</url>
         <categories>
