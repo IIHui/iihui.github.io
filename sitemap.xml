@@ -58,19 +58,23 @@ katex.html文件的内容如下所示：
           <tag>iOS</tag>
         </tags>
         <content type="html">  苹果公司推出的AutoLayout是一个基于约束，动态计算视图大小和位置的库。它以布局引擎系统Layout Engine为核心，采用了Cassowary布局算法，在简化布局思路的同时，还保证了布局的高效性。布局算法Cassowary能够有效解析线性等式系统和线性不等式系统，用来表示用户界面中那些相等关系和不等关系，通过设定约束来表示一个视图相对于另一个视图的位置。
- 几个需要更新方法的区别   setNeedsLayout 告知页面需要更新，但是不会立刻开始更新。
+ 原理 在Layout Engine中，每当约束发生变化，会重新计算布局，获取到布局后会调用superview.setNeedLayout()，然后触发Deffered Layout Pass做容错处理，然后Layout Engine会从上到下调用layoutSubviews()来确定各子视图的位置，算出来后将子视图的frame从Layout Engine中拷贝出来，然后进行绘制、渲染。
+几个更新方法的区别   setNeedsLayout 告知页面需要更新，但是不会立刻开始更新，也就是先做一个标记。
   layoutIfNeeded 如果有需要刷新的标记，立即调用layoutSubViews进行布局；如果没有标记，不会调用layoutSubbViews。如果希望立即刷新frame，要先调用setNeedsLayout，把标记为需要布局，然后马上调用layoutIfNeeded实现布局。
-  layoutSubviews：对subviews进行布局，不能主动调用，需要的时候在子类中重写，系统会在合适的时候调用。
-  setNeedsUpdateConstraints告知需要更新约束，但是不会立刻开始。
-  updateConstraintsIfNeeded告知立刻更新约束。
-  updateConstraints系统更新约束。
-  调用layoutSubviews的时机   init初始化不会触发layoutSubviews，但是使用initWithFrame进行初始化且rect不为zero时。
-  addSubview的时候会触发系统调用layoutSubviews。
-  当view的frame发生改变时触发layoutSubviews。
-  滚动一个UIScrollView会触发layoutSubviews。
+  layoutSubviews 对subviews进行布局，不能主动调用，需要的时候在子类中重写，系统会在合适的时候调用。
+  setNeedsUpdateConstraints 告知需要更新约束，但是不会立刻开始，也就是先做一个标记，调用updateConstraintsIfNeeded会查看该标记。
+  updateConstraintsIfNeeded 告知立刻更新约束，如果有需要刷新约束的标记，则立即更新，否则不更新约束。
+  updateConstraints 系统更新约束？？？。
+  系统调layoutSubviews时机   使用init初始化不会触发layoutSubviews，但是使用initWithFrame进行初始化且rect不为zero时会调用layoutSubviews。
+  调用addSubview的时候会触发系统调用layoutSubviews。
+  当view的frame发生改变时触发layoutSubviews调用。
+  滚动一个UIScrollView会触发layoutSubviews调用。
   旋转屏幕会触发父UIView上的layoutSubviews事件。
   改变一个UIView大小的时候也会调用父UIView上的layoutSubviews事件。
-  </content>
+  固有内容大小 Intrinsic content size 就是固有内容大小，对应是intrinsicContentSize计算属性。实际上我们可以重写UIView的固有内容大小：
+class TestView: UIView { override var intrinsicContentSize: CGSize { return CGSize(width: 300, height: 800) } } UITableView高度计算 自动计算 当布局满足self-satisfied（设置约束时，只有一个不确定时，例如高度）时，系统会自动计算高度，缺点时慢，因为没有缓存高度，每次都要计算一次。
+//首先在viewDidLoad中cell预估高度,设一个接近cell高度的值 self.tableView.estimatedRowHeight = 100; //然后在设置返回automaticDimension override func tableView(_ tableView:UITableView, heightForRawAt: indexPath IndexPath) -&amp;gt; CGFloat { return UITableView.automaticDimension }  摘抄自这里
+</content>
     </entry>
     
      <entry>
