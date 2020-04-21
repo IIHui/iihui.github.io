@@ -241,7 +241,7 @@ code.has-jax {
     <i class="fa fa-file-word-o"></i>
 </span>
 <span class="post-meta-item-text">字数: </span>
-<span class="leancloud-visitors-count">63</span>
+<span class="leancloud-visitors-count">269</span>
 &nbsp; | &nbsp;
 <span class="post-meta-item-icon">
     <i class="fa fa-coffee"></i>
@@ -253,9 +253,68 @@ code.has-jax {
     </header>
     <div class="post-body" itemprop="articleBody">
     <blockquote>
-<p>最近使用<code>UIAlertViewController</code>时，需要定制其背景颜色，在网上找到一些解决方案，这篇文章以扩展的形式记录这个</p>
+<p>最近使用<code>UIAlertViewController</code>时，需要定制其背景颜色，在网上找到一个解决方案，基本思路是为<code>UIAlertViewController</code>设置一个计算属性，这个属性改变时即将<code>UIAlertViewController</code>的背景色修改。</p>
 </blockquote>
+<h2 id="计算属性">计算属性</h2>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift"><span style="color:#66d9ef">class</span> <span style="color:#a6e22e">AlertController</span>: UIAlertController {
 
+    <span style="color:#75715e">//</span><span style="color:#75715e">/</span><span style="color:#75715e"> </span><span style="color:#75715e">B</span><span style="color:#75715e">u</span><span style="color:#75715e">t</span><span style="color:#75715e">t</span><span style="color:#75715e">o</span><span style="color:#75715e">n</span><span style="color:#75715e">s</span><span style="color:#75715e"> </span><span style="color:#75715e">b</span><span style="color:#75715e">a</span><span style="color:#75715e">c</span><span style="color:#75715e">k</span><span style="color:#75715e">g</span><span style="color:#75715e">r</span><span style="color:#75715e">o</span><span style="color:#75715e">u</span><span style="color:#75715e">n</span><span style="color:#75715e">d</span><span style="color:#75715e"> </span><span style="color:#75715e">c</span><span style="color:#75715e">o</span><span style="color:#75715e">l</span><span style="color:#75715e">o</span><span style="color:#75715e">r</span><span style="color:#75715e">.</span>
+    <span style="color:#66d9ef">var</span> buttonBackgroundColor: UIColor = .darkGray {
+        <span style="color:#66d9ef">didSet</span> {
+            <span style="color:#75715e">//</span><span style="color:#75715e"> </span><span style="color:#75715e">I</span><span style="color:#75715e">n</span><span style="color:#75715e">v</span><span style="color:#75715e">a</span><span style="color:#75715e">l</span><span style="color:#75715e">i</span><span style="color:#75715e">d</span><span style="color:#75715e">a</span><span style="color:#75715e">t</span><span style="color:#75715e">e</span><span style="color:#75715e"> </span><span style="color:#75715e">c</span><span style="color:#75715e">u</span><span style="color:#75715e">r</span><span style="color:#75715e">r</span><span style="color:#75715e">e</span><span style="color:#75715e">n</span><span style="color:#75715e">t</span><span style="color:#75715e"> </span><span style="color:#75715e">c</span><span style="color:#75715e">o</span><span style="color:#75715e">l</span><span style="color:#75715e">o</span><span style="color:#75715e">r</span><span style="color:#75715e">s</span><span style="color:#75715e"> </span><span style="color:#75715e">o</span><span style="color:#75715e">n</span><span style="color:#75715e"> </span><span style="color:#75715e">c</span><span style="color:#75715e">h</span><span style="color:#75715e">a</span><span style="color:#75715e">n</span><span style="color:#75715e">g</span><span style="color:#75715e">e</span><span style="color:#75715e">.</span>
+            view.setNeedsLayout()
+        }
+    }
+
+    <span style="color:#66d9ef">override</span> <span style="color:#66d9ef">func</span> <span style="color:#a6e22e">viewDidLayoutSubviews</span>() {
+        <span style="color:#66d9ef">super</span>.viewDidLayoutSubviews()
+
+        <span style="color:#75715e">//</span><span style="color:#75715e"> </span><span style="color:#75715e">T</span><span style="color:#75715e">r</span><span style="color:#75715e">a</span><span style="color:#75715e">v</span><span style="color:#75715e">e</span><span style="color:#75715e">r</span><span style="color:#75715e">s</span><span style="color:#75715e">e</span><span style="color:#75715e"> </span><span style="color:#75715e">v</span><span style="color:#75715e">i</span><span style="color:#75715e">e</span><span style="color:#75715e">w</span><span style="color:#75715e"> </span><span style="color:#75715e">h</span><span style="color:#75715e">i</span><span style="color:#75715e">e</span><span style="color:#75715e">r</span><span style="color:#75715e">a</span><span style="color:#75715e">r</span><span style="color:#75715e">c</span><span style="color:#75715e">h</span><span style="color:#75715e">y</span><span style="color:#75715e">.</span>
+        view.allViews.forEach {
+            <span style="color:#75715e">//</span><span style="color:#75715e"> </span><span style="color:#75715e">I</span><span style="color:#75715e">f</span><span style="color:#75715e"> </span><span style="color:#75715e">t</span><span style="color:#75715e">h</span><span style="color:#75715e">e</span><span style="color:#75715e">r</span><span style="color:#75715e">e</span><span style="color:#75715e"> </span><span style="color:#75715e">w</span><span style="color:#75715e">a</span><span style="color:#75715e">s</span><span style="color:#75715e"> </span><span style="color:#75715e">a</span><span style="color:#75715e">n</span><span style="color:#75715e">y</span><span style="color:#75715e"> </span><span style="color:#75715e">n</span><span style="color:#75715e">o</span><span style="color:#75715e">n</span><span style="color:#75715e">-</span><span style="color:#75715e">c</span><span style="color:#75715e">l</span><span style="color:#75715e">e</span><span style="color:#75715e">a</span><span style="color:#75715e">r</span><span style="color:#75715e"> </span><span style="color:#75715e">b</span><span style="color:#75715e">a</span><span style="color:#75715e">c</span><span style="color:#75715e">k</span><span style="color:#75715e">g</span><span style="color:#75715e">r</span><span style="color:#75715e">o</span><span style="color:#75715e">u</span><span style="color:#75715e">n</span><span style="color:#75715e">d</span><span style="color:#75715e"> </span><span style="color:#75715e">c</span><span style="color:#75715e">o</span><span style="color:#75715e">l</span><span style="color:#75715e">o</span><span style="color:#75715e">r</span><span style="color:#75715e">,</span><span style="color:#75715e"> </span><span style="color:#75715e">u</span><span style="color:#75715e">p</span><span style="color:#75715e">d</span><span style="color:#75715e">a</span><span style="color:#75715e">t</span><span style="color:#75715e">e</span><span style="color:#75715e"> </span><span style="color:#75715e">t</span><span style="color:#75715e">o</span><span style="color:#75715e"> </span><span style="color:#75715e">c</span><span style="color:#75715e">u</span><span style="color:#75715e">s</span><span style="color:#75715e">t</span><span style="color:#75715e">o</span><span style="color:#75715e">m</span><span style="color:#75715e"> </span><span style="color:#75715e">b</span><span style="color:#75715e">a</span><span style="color:#75715e">c</span><span style="color:#75715e">k</span><span style="color:#75715e">g</span><span style="color:#75715e">r</span><span style="color:#75715e">o</span><span style="color:#75715e">u</span><span style="color:#75715e">n</span><span style="color:#75715e">d</span><span style="color:#75715e">.</span>
+            <span style="color:#66d9ef">if</span> <span style="color:#66d9ef">let</span> color = $0.backgroundColor, color <span style="color:#f92672">!=</span> .clear {
+                $0.backgroundColor = buttonBackgroundColor
+            }
+            <span style="color:#75715e">//</span><span style="color:#75715e"> </span><span style="color:#75715e">I</span><span style="color:#75715e">f</span><span style="color:#75715e"> </span><span style="color:#75715e">v</span><span style="color:#75715e">i</span><span style="color:#75715e">e</span><span style="color:#75715e">w</span><span style="color:#75715e"> </span><span style="color:#75715e">i</span><span style="color:#75715e">s</span><span style="color:#75715e"> </span><span style="color:#75715e">U</span><span style="color:#75715e">I</span><span style="color:#75715e">V</span><span style="color:#75715e">i</span><span style="color:#75715e">s</span><span style="color:#75715e">u</span><span style="color:#75715e">a</span><span style="color:#75715e">l</span><span style="color:#75715e">E</span><span style="color:#75715e">f</span><span style="color:#75715e">f</span><span style="color:#75715e">e</span><span style="color:#75715e">c</span><span style="color:#75715e">t</span><span style="color:#75715e">V</span><span style="color:#75715e">i</span><span style="color:#75715e">e</span><span style="color:#75715e">w</span><span style="color:#75715e">,</span><span style="color:#75715e"> </span><span style="color:#75715e">r</span><span style="color:#75715e">e</span><span style="color:#75715e">m</span><span style="color:#75715e">o</span><span style="color:#75715e">v</span><span style="color:#75715e">e</span><span style="color:#75715e"> </span><span style="color:#75715e">i</span><span style="color:#75715e">t</span><span style="color:#75715e">&#39;</span><span style="color:#75715e">s</span><span style="color:#75715e"> </span><span style="color:#75715e">e</span><span style="color:#75715e">f</span><span style="color:#75715e">f</span><span style="color:#75715e">e</span><span style="color:#75715e">c</span><span style="color:#75715e">t</span><span style="color:#75715e"> </span><span style="color:#75715e">a</span><span style="color:#75715e">n</span><span style="color:#75715e">d</span><span style="color:#75715e"> </span><span style="color:#75715e">c</span><span style="color:#75715e">u</span><span style="color:#75715e">s</span><span style="color:#75715e">t</span><span style="color:#75715e">o</span><span style="color:#75715e">m</span><span style="color:#75715e">i</span><span style="color:#75715e">s</span><span style="color:#75715e">e</span><span style="color:#75715e"> </span><span style="color:#75715e">c</span><span style="color:#75715e">o</span><span style="color:#75715e">l</span><span style="color:#75715e">o</span><span style="color:#75715e">r</span><span style="color:#75715e">.</span>
+            <span style="color:#66d9ef">if</span> <span style="color:#66d9ef">let</span> visualEffectView = $0 <span style="color:#66d9ef">as</span>? UIVisualEffectView {
+                visualEffectView.effect = <span style="color:#66d9ef">nil</span>
+                visualEffectView.backgroundColor = buttonBackgroundColor
+            }
+        }
+        <span style="color:#75715e">//</span><span style="color:#75715e"> </span><span style="color:#75715e">U</span><span style="color:#75715e">p</span><span style="color:#75715e">d</span><span style="color:#75715e">a</span><span style="color:#75715e">t</span><span style="color:#75715e">e</span><span style="color:#75715e"> </span><span style="color:#75715e">b</span><span style="color:#75715e">a</span><span style="color:#75715e">c</span><span style="color:#75715e">k</span><span style="color:#75715e">g</span><span style="color:#75715e">r</span><span style="color:#75715e">o</span><span style="color:#75715e">u</span><span style="color:#75715e">n</span><span style="color:#75715e">d</span><span style="color:#75715e"> </span><span style="color:#75715e">c</span><span style="color:#75715e">o</span><span style="color:#75715e">l</span><span style="color:#75715e">o</span><span style="color:#75715e">r</span><span style="color:#75715e"> </span><span style="color:#75715e">o</span><span style="color:#75715e">f</span><span style="color:#75715e"> </span><span style="color:#75715e">p</span><span style="color:#75715e">o</span><span style="color:#75715e">p</span><span style="color:#75715e">o</span><span style="color:#75715e">v</span><span style="color:#75715e">e</span><span style="color:#75715e">r</span><span style="color:#75715e">P</span><span style="color:#75715e">r</span><span style="color:#75715e">e</span><span style="color:#75715e">s</span><span style="color:#75715e">e</span><span style="color:#75715e">n</span><span style="color:#75715e">t</span><span style="color:#75715e">a</span><span style="color:#75715e">t</span><span style="color:#75715e">i</span><span style="color:#75715e">o</span><span style="color:#75715e">n</span><span style="color:#75715e">C</span><span style="color:#75715e">o</span><span style="color:#75715e">n</span><span style="color:#75715e">t</span><span style="color:#75715e">r</span><span style="color:#75715e">o</span><span style="color:#75715e">l</span><span style="color:#75715e">l</span><span style="color:#75715e">e</span><span style="color:#75715e">r</span><span style="color:#75715e"> </span><span style="color:#75715e">(</span><span style="color:#75715e">f</span><span style="color:#75715e">o</span><span style="color:#75715e">r</span><span style="color:#75715e"> </span><span style="color:#75715e">i</span><span style="color:#75715e">P</span><span style="color:#75715e">a</span><span style="color:#75715e">d</span><span style="color:#75715e">s</span><span style="color:#75715e">)</span><span style="color:#75715e">.</span>
+        popoverPresentationController?.backgroundColor = buttonBackgroundColor
+    }
+}
+</code></pre></div><h2 id="获取views">获取views</h2>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift"><span style="color:#66d9ef">extension</span> <span style="color:#a6e22e">UIView</span> {
+    <span style="color:#75715e">//</span><span style="color:#75715e">/</span><span style="color:#75715e"> </span><span style="color:#75715e">A</span><span style="color:#75715e">l</span><span style="color:#75715e">l</span><span style="color:#75715e"> </span><span style="color:#75715e">c</span><span style="color:#75715e">h</span><span style="color:#75715e">i</span><span style="color:#75715e">l</span><span style="color:#75715e">d</span><span style="color:#75715e"> </span><span style="color:#75715e">s</span><span style="color:#75715e">u</span><span style="color:#75715e">b</span><span style="color:#75715e">v</span><span style="color:#75715e">i</span><span style="color:#75715e">e</span><span style="color:#75715e">w</span><span style="color:#75715e">s</span><span style="color:#75715e"> </span><span style="color:#75715e">i</span><span style="color:#75715e">n</span><span style="color:#75715e"> </span><span style="color:#75715e">v</span><span style="color:#75715e">i</span><span style="color:#75715e">e</span><span style="color:#75715e">w</span><span style="color:#75715e"> </span><span style="color:#75715e">h</span><span style="color:#75715e">i</span><span style="color:#75715e">e</span><span style="color:#75715e">r</span><span style="color:#75715e">a</span><span style="color:#75715e">r</span><span style="color:#75715e">c</span><span style="color:#75715e">h</span><span style="color:#75715e">y</span><span style="color:#75715e"> </span><span style="color:#75715e">p</span><span style="color:#75715e">l</span><span style="color:#75715e">u</span><span style="color:#75715e">s</span><span style="color:#75715e"> </span><span style="color:#75715e">s</span><span style="color:#75715e">e</span><span style="color:#75715e">l</span><span style="color:#75715e">f</span><span style="color:#75715e">.</span>
+    fileprivate <span style="color:#66d9ef">var</span> allViews: [UIView] {
+        <span style="color:#66d9ef">var</span> views = [<span style="color:#66d9ef">self</span>]
+        subviews.forEach {
+            views.append(contentsOf: $0.allViews)
+        }
+
+        <span style="color:#66d9ef">return</span> views
+    }
+}
+</code></pre></div><h2 id="扩展">扩展</h2>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift"><span style="color:#66d9ef">extension</span> <span style="color:#a6e22e">UIViewController</span> {
+
+    <span style="color:#66d9ef">func</span> <span style="color:#a6e22e">notify</span>(msg: String) -&gt; Void {
+        <span style="color:#66d9ef">let</span> alert = UIAlertController(title: <span style="color:#e6db74">&#34;</span><span style="color:#e6db74">&#34;</span>, message: msg, preferredStyle: .alert)
+        <span style="color:#66d9ef">if</span> <span style="color:#66d9ef">let</span> visualEffectView = alert.view.searchVisualEffectsSubview() {
+            visualEffectView.effect = UIBlurEffect(style: .light)
+        }
+
+        alert.setMessage(font: UIFont.systemFont(ofSize: <span style="color:#ae81ff">17</span>))
+
+        present(alert, animated: <span style="color:#66d9ef">true</span>, completion: <span style="color:#66d9ef">nil</span>)
+        DispatchQueue.main.asyncAfter(deadline: .now() <span style="color:#f92672">+</span> <span style="color:#ae81ff">1.5</span>) { [<span style="color:#66d9ef">weak</span> <span style="color:#66d9ef">self</span>] <span style="color:#66d9ef">in</span>
+            <span style="color:#66d9ef">self</span>?.dismiss(animated: <span style="color:#66d9ef">true</span>)
+        }
+    }
+}
+</code></pre></div>
     </div>
     <footer class="post-footer">
         
@@ -416,7 +475,17 @@ code.has-jax {
     
 <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
     <div class="post-toc">
-        <div class="post-toc-content"><nav id="TableOfContents"></nav></div>
+        <div class="post-toc-content"><nav id="TableOfContents">
+  <ul>
+    <li>
+      <ul>
+        <li><a href="#计算属性">计算属性</a></li>
+        <li><a href="#获取views">获取views</a></li>
+        <li><a href="#扩展">扩展</a></li>
+      </ul>
+    </li>
+  </ul>
+</nav></div>
     </div>
 </section>
 

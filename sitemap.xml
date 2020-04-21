@@ -44,8 +44,8 @@ katex.html文件的内容如下所示：
         <tags>
           <tag>iOS</tag>
         </tags>
-        <content type="html">  最近使用UIAlertViewController时，需要定制其背景颜色，在网上找到一些解决方案，这篇文章以扩展的形式记录这个
- </content>
+        <content type="html">  最近使用UIAlertViewController时，需要定制其背景颜色，在网上找到一个解决方案，基本思路是为UIAlertViewController设置一个计算属性，这个属性改变时即将UIAlertViewController的背景色修改。
+ 计算属性 class AlertController: UIAlertController { ///Buttonsbackgroundcolor. var buttonBackgroundColor: UIColor = .darkGray { didSet { //Invalidatecurrentcolorsonchange. view.setNeedsLayout() } } override func viewDidLayoutSubviews() { super.viewDidLayoutSubviews() //Traverseviewhierarchy. view.allViews.forEach { //Iftherewasanynon-clearbackgroundcolor,updatetocustombackground. if let color = $0.backgroundColor, color != .clear { $0.backgroundColor = buttonBackgroundColor } //IfviewisUIVisualEffectView,removeit&amp;#39;seffectandcustomisecolor. if let visualEffectView = $0 as? UIVisualEffectView { visualEffectView.effect = nil visualEffectView.backgroundColor = buttonBackgroundColor } } //UpdatebackgroundcolorofpopoverPresentationController(foriPads). popoverPresentationController?.backgroundColor = buttonBackgroundColor } } 获取views extension UIView { ///Allchildsubviewsinviewhierarchyplusself. fileprivate var allViews: [UIView] { var views = [self] subviews.forEach { views.append(contentsOf: $0.allViews) } return views } } 扩展 extension UIViewController { func notify(msg: String) -&amp;gt; Void { let alert = UIAlertController(title: &amp;#34;&amp;#34;, message: msg, preferredStyle: .alert) if let visualEffectView = alert.view.searchVisualEffectsSubview() { visualEffectView.effect = UIBlurEffect(style: .light) } alert.setMessage(font: UIFont.systemFont(ofSize: 17)) present(alert, animated: true, completion: nil) DispatchQueue.main.asyncAfter(deadline: .now() &#43; 1.5) { [weak self] in self?.dismiss(animated: true) } } } </content>
     </entry>
     
      <entry>
