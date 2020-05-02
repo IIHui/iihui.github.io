@@ -3114,7 +3114,7 @@ x := 100 p := (*int)(&amp;amp;x)    </content>
         <content type="html"> 地址重叠 void *memcpy(void *dst, const void *src, size_t n); //If copying takes place between objects that overlap, the behavior is undefined.   注意注释，对于地址重叠的情况，该函数的行为是未定义的。事实上所说的陷阱也在于此，自己动手实现memcpy时就需要考虑地址重叠的情况。
   另外，标准库也提供了地址重叠时的内存拷贝函数：memmove，那么为什么还要考虑重写memcpy函数呢?
   因为memmove函数的实现效率问题，该函数把源字符串拷贝到临时buffer里，然后再从临时buffer里写到目的地址，增加了一次不必要的开销。
-   自实现版本 当可能会发生重叠时，应该从后往前拷贝，类似于vector的插入时当插入点的元素大于要插入的元素个数时。
+  自实现版本 当可能会发生重叠时，应该从后往前拷贝，类似于vector的插入时当插入点的元素大于要插入的元素个数时。
 #include &amp;lt;stdio.h&amp;gt;#include &amp;lt;stdlib.h&amp;gt;#include &amp;lt;string.h&amp;gt; void *Memcpy(void *dst, const void *src, size_t size); int main(int argc, char *argv[]) { char buf[100] = &amp;#34;abcdefghijk&amp;#34;; // memcpy(buf&#43;2, buf, 5);  Memcpy(buf &#43; 2, buf, 5); printf(&amp;#34;%s\n&amp;#34;, buf &#43; 2); } void *Memcpy(void *dst, const void *src, size_t size) { char *psrc; char *pdst; if (NULL == dst || NULL == src) { return NULL; } if ((src &amp;lt; dst) &amp;amp;&amp;amp; (char *)src &#43; size &amp;gt; (char *)dst) // 自后向前拷贝  { psrc = (char *)src &#43; size - 1; pdst = (char *)dst &#43; size - 1; while (size--) { *pdst-- = *psrc--; } } else { psrc = (char *)src; pdst = (char *)dst; while (size--) { *pdst&#43;&#43; = *psrc&#43;&#43;; } } return dst; }  </content>
     </entry>
     
