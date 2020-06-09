@@ -4,13 +4,13 @@
     <meta charset="UTF-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" /> 
-    <title>验证码绑定界面 - Keep It Simple</title>
+    <title>屏幕旋转 - Keep It Simple</title>
     <meta name="keywords" content="博客,思考,读书,笔记,技术,分享">
     
-    <meta property="og:title" content="验证码绑定界面">
+    <meta property="og:title" content="屏幕旋转">
     <meta property="og:site_name" content="Keep It Simple">
     <meta property="og:image" content="/img/author.jpg"> 
-    <meta name="title" content="验证码绑定界面 - Keep It Simple" />
+    <meta name="title" content="屏幕旋转 - Keep It Simple" />
     <meta name="description" content="Swift | Go | C&#43;&#43; "> 
     <link rel="shortcut icon" href="https://iihui.github.io/img/favicon.ico" />
     <link rel="apple-touch-icon" href="https://iihui.github.io/img/apple-touch-icon.png" />
@@ -192,8 +192,8 @@ code.has-jax {
   <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
     <header class="post-header">
       <h1 class="post-title" itemprop="name headline">
-        <a class="post-title-link" href="https://iihui.github.io/post/ios-login/" itemprop="url">
-        验证码绑定界面
+        <a class="post-title-link" href="https://iihui.github.io/post/ios-rotate/" itemprop="url">
+        屏幕旋转
         </a>
       </h1>
       <div class="post-meta">
@@ -202,8 +202,8 @@ code.has-jax {
     <i class="fa fa-calendar-o"></i>
 </span>
 <span class="post-meta-item-text">创建: </span>
-<time itemprop="dateCreated" datetime="2016-03-22T13:04:35+08:00" content="2020-03-28">
-    2020-03-28
+<time itemprop="dateCreated" datetime="2016-03-22T13:04:35+08:00" content="2020-06-08">
+    2020-06-08
 </time>
 </span>
 &nbsp; | &nbsp;
@@ -212,8 +212,8 @@ code.has-jax {
     <i class="fa fa-calendar-check-o"></i>
 </span>
 <span class="post-meta-item-text">更新: </span>
-<time itemprop="dateUpdated" content="2020-03-28">
-    2020-03-28
+<time itemprop="dateUpdated" content="2020-06-08">
+    2020-06-08
 </time>
 </span> 
       
@@ -241,178 +241,48 @@ code.has-jax {
     <i class="fa fa-file-word-o"></i>
 </span>
 <span class="post-meta-item-text">字数: </span>
-<span class="leancloud-visitors-count">682</span>
+<span class="leancloud-visitors-count">482</span>
 &nbsp; | &nbsp;
 <span class="post-meta-item-icon">
     <i class="fa fa-coffee"></i>
 </span>
 <span class="post-meta-item-text">阅读: </span>
-<span class="leancloud-visitors-count">2 分钟</span>
+<span class="leancloud-visitors-count">1 分钟</span>
 </span>
       </div>
     </header>
     <div class="post-body" itemprop="articleBody">
     <blockquote>
-<p>验证码绑定，包括个人账户，和虚拟账户。之前写的验证码绑定界面扩展性太差，这次决定尝试使用<code>tableView</code>实现验证码绑定界面，主要是为了增加可扩展性，便于当需要增加新的验证信息时，可以不大动原界面。这篇文章是对应的<code>ViewController</code>的代码和最终的界面。</p>
+<p><code>iOS</code>开发时经常会遇到要将某些界面强制竖屏或者横屏。要做到某个页面能强制横竖屏的前提是允许屏幕旋转，然后再在具体的界面强制横竖屏。但是要区分这个具体的界面时<code>push</code>还是<code>present</code>呈现的。</p>
 </blockquote>
-<h2 id="vc代码">VC代码</h2>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift"><span style="color:#66d9ef">import</span> <span style="color:#a6e22e">UIKit</span>
-
-<span style="color:#66d9ef">enum</span> <span style="color:#a6e22e">SMSLoginType</span> {
-    <span style="color:#66d9ef">case</span> Personal
-    <span style="color:#66d9ef">case</span> Virtual
+<h2 id="全局允许横竖屏">全局允许横竖屏</h2>
+<p>一种方式，是在<code>Target</code>中的<code>General</code>下的<code>Device Orientation</code>中设置，但是这种方式设置的允许横竖屏会被<code>AppDelegate.swift</code>中对应的代码覆盖，所以一般不在这里设置。设置方式如下图所示：</p>
+<p><img src="https://i.loli.net/2020/06/09/GUvoVtrzQgsfPx2.jpg" alt=""></p>
+<p>另一种是在<code>AppDelegate.swift</code>中设置允许横竖屏，如下代码所示：</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift"><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">application</span>(<span style="color:#66d9ef">_</span> application: UIApplication, supportedInterfaceOrientationsFor window: UIWindow?) -&gt; UIInterfaceOrientationMask {
+    <span style="color:#66d9ef">return</span> .all
 }
-
-<span style="color:#66d9ef">class</span> <span style="color:#a6e22e">NewSMSViewController</span>: UIViewController, UITableViewDelegate, UITableViewDataSource {
-    <span style="color:#66d9ef">@IBOutlet</span> <span style="color:#66d9ef">weak</span> <span style="color:#66d9ef">var</span> personalAccountBtn: UIButton!
-    <span style="color:#66d9ef">@IBOutlet</span> <span style="color:#66d9ef">weak</span> <span style="color:#66d9ef">var</span> personalAccountUnderline: UILabel!
-    <span style="color:#66d9ef">@IBOutlet</span> <span style="color:#66d9ef">weak</span> <span style="color:#66d9ef">var</span> virtualAccountBtn: UIButton!
-    <span style="color:#66d9ef">@IBOutlet</span> <span style="color:#66d9ef">weak</span> <span style="color:#66d9ef">var</span> virtualAccountUnderline: UILabel!
-    <span style="color:#66d9ef">@IBOutlet</span> <span style="color:#66d9ef">weak</span> <span style="color:#66d9ef">var</span> tableView: UITableView!
-    <span style="color:#66d9ef">private</span> <span style="color:#66d9ef">let</span> defaultColor = UIColor(hex: <span style="color:#e6db74">&#34;</span><span style="color:#e6db74">#4B5169</span><span style="color:#e6db74">&#34;</span>)
-    <span style="color:#66d9ef">private</span> <span style="color:#66d9ef">let</span> hiddenColor = UIColor(hex: <span style="color:#e6db74">&#34;</span><span style="color:#e6db74">#9294A6</span><span style="color:#e6db74">&#34;</span>)
-    <span style="color:#66d9ef">private</span> <span style="color:#66d9ef">var</span> imageAndText: [(image: String, tip: String)] = [(<span style="color:#e6db74">&#34;</span><span style="color:#e6db74">virtualid</span><span style="color:#e6db74">&#34;</span>, <span style="color:#e6db74">&#34;</span><span style="color:#e6db74">请输入虚拟账号ID</span><span style="color:#e6db74">&#34;</span>), (<span style="color:#e6db74">&#34;</span><span style="color:#e6db74">no</span><span style="color:#e6db74">&#34;</span>, <span style="color:#e6db74">&#34;</span><span style="color:#e6db74">请输入一事通ID或员工编号</span><span style="color:#e6db74">&#34;</span>), (<span style="color:#e6db74">&#34;</span><span style="color:#e6db74">idcard_small</span><span style="color:#e6db74">&#34;</span>, <span style="color:#e6db74">&#34;</span><span style="color:#e6db74">请输入身份证后六位</span><span style="color:#e6db74">&#34;</span>)]
-    <span style="color:#66d9ef">private</span> <span style="color:#66d9ef">var</span> _loginType: SMSLoginType = .Personal
-    <span style="color:#66d9ef">private</span> <span style="color:#66d9ef">var</span> loginType: SMSLoginType {
-        <span style="color:#66d9ef">get</span> {
-            <span style="color:#66d9ef">return</span> _loginType
-        }
-        <span style="color:#66d9ef">set</span> {
-            <span style="color:#66d9ef">switch</span> newValue {
-            <span style="color:#66d9ef">case</span> .Personal:
-                <span style="color:#66d9ef">self</span>.personalAccountUnderline.isHidden = <span style="color:#66d9ef">false</span>
-                <span style="color:#66d9ef">self</span>.virtualAccountUnderline.isHidden = <span style="color:#66d9ef">true</span>
-                <span style="color:#66d9ef">self</span>.personalAccountBtn.setTitleColor(<span style="color:#66d9ef">self</span>.defaultColor, <span style="color:#66d9ef">for</span>: .normal)
-                <span style="color:#66d9ef">self</span>.virtualAccountBtn.setTitleColor(<span style="color:#66d9ef">self</span>.hiddenColor, <span style="color:#66d9ef">for</span>: .normal)
-            <span style="color:#66d9ef">case</span> .Virtual:
-                <span style="color:#66d9ef">self</span>.personalAccountUnderline.isHidden = <span style="color:#66d9ef">true</span>
-                <span style="color:#66d9ef">self</span>.virtualAccountUnderline.isHidden = <span style="color:#66d9ef">false</span>
-                <span style="color:#66d9ef">self</span>.personalAccountBtn.setTitleColor(<span style="color:#66d9ef">self</span>.hiddenColor, <span style="color:#66d9ef">for</span>: .normal)
-                <span style="color:#66d9ef">self</span>.virtualAccountBtn.setTitleColor(<span style="color:#66d9ef">self</span>.defaultColor, <span style="color:#66d9ef">for</span>: .normal)
-            }
-            _loginType = newValue
-
-            <span style="color:#66d9ef">self</span>.tableView.reloadData()
-        }
-    }
-
-    <span style="color:#66d9ef">override</span> <span style="color:#66d9ef">func</span> <span style="color:#a6e22e">viewDidLoad</span>() {
-        <span style="color:#66d9ef">super</span>.viewDidLoad()
-        <span style="color:#66d9ef">self</span>.tableView.delegate = <span style="color:#66d9ef">self</span>
-        <span style="color:#66d9ef">self</span>.tableView.dataSource = <span style="color:#66d9ef">self</span>
-        <span style="color:#66d9ef">self</span>.tableView.tableFooterView = UIView()
-        <span style="color:#66d9ef">self</span>.tableView.separatorColor = UIColor.gray
-        <span style="color:#66d9ef">self</span>.tableView.separatorInset = UIEdgeInsets(top: <span style="color:#ae81ff">0</span>, <span style="color:#66d9ef">left</span>: <span style="color:#f92672">-</span><span style="color:#ae81ff">10</span>, bottom: <span style="color:#ae81ff">0</span>, <span style="color:#66d9ef">right</span>: <span style="color:#ae81ff">0</span>)
-    }
-
-    <span style="color:#66d9ef">@IBAction</span> <span style="color:#66d9ef">func</span> <span style="color:#a6e22e">back</span>(<span style="color:#66d9ef">_</span> sender: Any) {
-        <span style="color:#66d9ef">self</span>.navigationController?.popViewController(animated: <span style="color:#66d9ef">true</span>)
-    }
-
-    <span style="color:#66d9ef">@IBAction</span> <span style="color:#66d9ef">func</span> <span style="color:#a6e22e">showPersonalAccountUI</span>(<span style="color:#66d9ef">_</span> sender: Any) {
-        <span style="color:#66d9ef">self</span>.loginType = .Personal
-    }
-
-    <span style="color:#66d9ef">@IBAction</span> <span style="color:#66d9ef">func</span> <span style="color:#a6e22e">showVirtualAccountUI</span>(<span style="color:#66d9ef">_</span> sender: Any) {
-        <span style="color:#66d9ef">self</span>.loginType = .Virtual
-    }
-
-    <span style="color:#66d9ef">func</span> <span style="color:#a6e22e">numberOfSections</span>(<span style="color:#66d9ef">in</span> tableView: UITableView) -&gt; Int {
-        <span style="color:#66d9ef">return</span> <span style="color:#ae81ff">3</span>
-    }
-
-    <span style="color:#66d9ef">func</span> <span style="color:#a6e22e">tableView</span>(<span style="color:#66d9ef">_</span> tableView: UITableView, heightForRowAt indexPath: IndexPath) -&gt; CGFloat {
-        <span style="color:#66d9ef">return</span> <span style="color:#ae81ff">48</span>
-    }
-
-    <span style="color:#66d9ef">func</span> <span style="color:#a6e22e">tableView</span>(<span style="color:#66d9ef">_</span> tableView: UITableView, numberOfRowsInSection section: Int) -&gt; Int {
-        <span style="color:#66d9ef">switch</span> section {
-        <span style="color:#66d9ef">case</span> <span style="color:#ae81ff">0</span>:
-            <span style="color:#66d9ef">switch</span> _loginType {
-            <span style="color:#66d9ef">case</span> .Personal:
-                <span style="color:#66d9ef">return</span> <span style="color:#ae81ff">2</span>
-            <span style="color:#66d9ef">case</span> .Virtual:
-                <span style="color:#66d9ef">return</span> <span style="color:#ae81ff">3</span>
-            }
-        <span style="color:#66d9ef">default</span>:
-            <span style="color:#66d9ef">return</span> <span style="color:#ae81ff">1</span>
-        }
-    }
-
-    <span style="color:#66d9ef">func</span> <span style="color:#a6e22e">tableView</span>(<span style="color:#66d9ef">_</span> tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
-        cell.selectionStyle = .<span style="color:#66d9ef">none</span>
-    }
-
-    <span style="color:#66d9ef">func</span> <span style="color:#a6e22e">tableView</span>(<span style="color:#66d9ef">_</span> tableView: UITableView, heightForHeaderInSection section: Int) -&gt; CGFloat {
-        <span style="color:#66d9ef">if</span> section == <span style="color:#ae81ff">2</span> {
-            <span style="color:#66d9ef">return</span> <span style="color:#ae81ff">60</span>
-        }
-        <span style="color:#66d9ef">return</span> <span style="color:#ae81ff">0</span>
-    }
-
-    <span style="color:#66d9ef">func</span> <span style="color:#a6e22e">tableView</span>(<span style="color:#66d9ef">_</span> tableView: UITableView, heightForFooterInSection section: Int) -&gt; CGFloat {
-        <span style="color:#66d9ef">switch</span> section {
-        <span style="color:#66d9ef">case</span> <span style="color:#ae81ff">0</span>, <span style="color:#ae81ff">1</span>:
-            <span style="color:#66d9ef">return</span> <span style="color:#ae81ff">0.5</span>
-        <span style="color:#66d9ef">default</span>:
-            <span style="color:#66d9ef">return</span> <span style="color:#ae81ff">0</span>
-        }
-    }
-
-    <span style="color:#66d9ef">func</span> <span style="color:#a6e22e">tableView</span>(<span style="color:#66d9ef">_</span> tableView: UITableView, viewForFooterInSection section: Int) -&gt; UIView? {
-        <span style="color:#66d9ef">let</span> headerView = UIView()
-        headerView.backgroundColor = UIColor.gray
-        <span style="color:#66d9ef">return</span> headerView
-    }
-
-    <span style="color:#66d9ef">func</span> <span style="color:#a6e22e">tableView</span>(<span style="color:#66d9ef">_</span> tableView: UITableView, viewForHeaderInSection section: Int) -&gt; UIView? {
-        <span style="color:#66d9ef">let</span> footerView = UIView()
-        footerView.backgroundColor = UIColor.clear
-        <span style="color:#66d9ef">return</span> footerView
-    }
-
-
-    <span style="color:#66d9ef">func</span> <span style="color:#a6e22e">tableView</span>(<span style="color:#66d9ef">_</span> tableView: UITableView, cellForRowAt indexPath: IndexPath) -&gt; UITableViewCell {
-        <span style="color:#66d9ef">switch</span> indexPath.section {
-        <span style="color:#66d9ef">case</span> <span style="color:#ae81ff">0</span>:
-            <span style="color:#66d9ef">let</span> cell = tableView.dequeueReusableCell(withIdentifier: <span style="color:#e6db74">&#34;</span><span style="color:#e6db74">SMSNormalCell</span><span style="color:#e6db74">&#34;</span>, <span style="color:#66d9ef">for</span>: indexPath)
-            <span style="color:#66d9ef">if</span> <span style="color:#66d9ef">let</span> norCell = cell <span style="color:#66d9ef">as</span>? SMSNormalCell {
-                <span style="color:#66d9ef">var</span> index = indexPath.row
-                <span style="color:#66d9ef">switch</span> loginType {
-                <span style="color:#66d9ef">case</span> .Personal:
-                    index = index <span style="color:#f92672">+</span> <span style="color:#ae81ff">1</span>
-                <span style="color:#66d9ef">default</span>:
-                    <span style="color:#66d9ef">break</span>
-                }
-                norCell.iconImageView.image = UIImage(named: imageAndText[index].image)
-                norCell.textField.placeholder = imageAndText[index].tip
-                norCell.textField.clearButtonMode = .whileEditing
-            }
-            <span style="color:#66d9ef">return</span> cell
-        <span style="color:#66d9ef">case</span> <span style="color:#ae81ff">1</span>:
-            <span style="color:#66d9ef">let</span> cell = tableView.dequeueReusableCell(withIdentifier: <span style="color:#e6db74">&#34;</span><span style="color:#e6db74">SMSCodeCell</span><span style="color:#e6db74">&#34;</span>, <span style="color:#66d9ef">for</span>: indexPath)
-            <span style="color:#66d9ef">if</span> <span style="color:#66d9ef">let</span> codeCell = cell <span style="color:#66d9ef">as</span>? SMSCodeCell {
-                codeCell.iconImageView.image = UIImage(named: <span style="color:#e6db74">&#34;</span><span style="color:#e6db74">authcode</span><span style="color:#e6db74">&#34;</span>)
-                codeCell.textField.placeholder = <span style="color:#e6db74">&#34;</span><span style="color:#e6db74">请输入手机验证码</span><span style="color:#e6db74">&#34;</span>
-                codeCell.textField.clearButtonMode = .whileEditing
-                codeCell.codeBtn.layer.cornerRadius = <span style="color:#ae81ff">18.0</span>
-                codeCell.codeBtn.layer.borderColor = UIColor.black.cgColor
-                codeCell.codeBtn.layer.borderWidth = <span style="color:#ae81ff">1.0</span>
-            }
-            cell.separatorInset = UIEdgeInsets(top: <span style="color:#ae81ff">0</span>, <span style="color:#66d9ef">left</span>: <span style="color:#ae81ff">0</span>, bottom: <span style="color:#ae81ff">12</span>, <span style="color:#66d9ef">right</span>: <span style="color:#ae81ff">0</span>)
-            <span style="color:#66d9ef">return</span> cell
-        <span style="color:#66d9ef">default</span>:
-            <span style="color:#66d9ef">let</span> cell = tableView.dequeueReusableCell(withIdentifier: <span style="color:#e6db74">&#34;</span><span style="color:#e6db74">SMSBindCell</span><span style="color:#e6db74">&#34;</span>, <span style="color:#66d9ef">for</span>: indexPath)
-            <span style="color:#66d9ef">return</span> cell
-        }
-    }
+</code></pre></div><h2 id="界面强制竖屏">界面强制竖屏</h2>
+<p>对于以<code>present</code>方式呈现的界面，需要在当前界面所属的<code>UIViewController</code>中重写以下两个属性：</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift"><span style="color:#66d9ef">override</span> <span style="color:#66d9ef">var</span> supportedInterfaceOrientations: UIInterfaceOrientationMask {
+    <span style="color:#66d9ef">return</span> .portrait
 }
-</code></pre></div><h2 id="绑定界面">绑定界面</h2>
-<p><img src="https://i.loli.net/2020/03/27/joNHcJ73mCsvTt8.jpg" alt="-c"></p>
-<p><img src="https://i.loli.net/2020/03/27/yS9o8jmgsIQVUBp.jpg" alt="-c"></p>
-<hr>
-<p><a href="https://blog.csdn.net/gaomingyangc/article/details/54912633">按钮圆角设置</a></p>
+<span style="color:#66d9ef">override</span> <span style="color:#66d9ef">var</span> shouldAutorotate: Bool {
+    <span style="color:#66d9ef">return</span> <span style="color:#66d9ef">false</span>
+}
+</code></pre></div><p>而对于以<code>push</code>方式呈现的界面，需要重写对应的<code>UINavigationController</code>中重写上面的两个属性。为了方便可以写一个继承自<code>UINavigationController</code>，然后将强制横竖屏的代码交给要<code>push</code>的界面，如下所示：</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift"><span style="color:#66d9ef">class</span> <span style="color:#a6e22e">RotatableNavigationController</span>: UINavigationController {
+    
+    <span style="color:#66d9ef">override</span> <span style="color:#66d9ef">var</span> shouldAutorotate : Bool {
+        <span style="color:#66d9ef">return</span> <span style="color:#66d9ef">self</span>.topViewController?.shouldAutorotate ?? <span style="color:#66d9ef">super</span>.shouldAutorotate
+    }
+    
+    <span style="color:#66d9ef">override</span> <span style="color:#66d9ef">var</span> supportedInterfaceOrientations : UIInterfaceOrientationMask {
+        <span style="color:#66d9ef">return</span> <span style="color:#66d9ef">self</span>.topViewController?.supportedInterfaceOrientations ?? <span style="color:#66d9ef">super</span>.supportedInterfaceOrientations
+    }
 
+}
+</code></pre></div>
     </div>
     <footer class="post-footer">
         
@@ -428,16 +298,16 @@ code.has-jax {
         <div class="post-nav">
     <div class="post-nav-next post-nav-item">
     
-        <a href="https://iihui.github.io/post/ios-pods-question/" rel="next" title="指定Podfile中source">
-        <i class="fa fa-chevron-left"></i> 指定Podfile中source
+        <a href="https://iihui.github.io/post/hugo-next/" rel="next" title="Hugo Next 主题">
+        <i class="fa fa-chevron-left"></i> Hugo Next 主题
         </a>
     
     </div>
 
     <div class="post-nav-prev post-nav-item">
     
-        <a href="https://iihui.github.io/post/ios-autolayout/" rel="prev" title="AutoLayout">
-        AutoLayout <i class="fa fa-chevron-right"></i>
+        <a href="https://iihui.github.io/post/ios-wcdb/" rel="prev" title="WCDB">
+        WCDB <i class="fa fa-chevron-right"></i>
         </a>
     
     </div>
@@ -451,10 +321,10 @@ code.has-jax {
         </div>
         <div>
             <p style="margin-top:10px;">
-                标题：验证码绑定界面
+                标题：屏幕旋转
                 <br />作者：阿呆<a target="_blank" href="https://iihui.github.io/"></a>
                 
-                <br />地址：https://iihui.github.io/post/ios-login/
+                <br />地址：https://iihui.github.io/post/ios-rotate/
                 <br />声明：自由转载-非商用-保持署名（创作共享4.0许可证）
             </p>
         </div>
@@ -577,8 +447,8 @@ code.has-jax {
   <ul>
     <li>
       <ul>
-        <li><a href="#vc代码">VC代码</a></li>
-        <li><a href="#绑定界面">绑定界面</a></li>
+        <li><a href="#全局允许横竖屏">全局允许横竖屏</a></li>
+        <li><a href="#界面强制竖屏">界面强制竖屏</a></li>
       </ul>
     </li>
   </ul>
