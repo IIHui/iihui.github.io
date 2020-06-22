@@ -241,7 +241,7 @@ code.has-jax {
     <i class="fa fa-file-word-o"></i>
 </span>
 <span class="post-meta-item-text">字数: </span>
-<span class="leancloud-visitors-count">556</span>
+<span class="leancloud-visitors-count">1002</span>
 &nbsp; | &nbsp;
 <span class="post-meta-item-icon">
     <i class="fa fa-coffee"></i>
@@ -259,15 +259,50 @@ code.has-jax {
 <p><code>AnyObject</code>类似于<code>OC</code>中的<code>id</code>类型，表示<!-- raw HTML omitted -->任意的<code>class</code>类型<!-- raw HTML omitted -->。但在<code>Swift</code>中由于<code>String、Array</code>等都变成结构体了，<code>AnyObject</code>的适用范围就变窄了。</p>
 <p>实际上<code>AnyObject</code>是一个成员为空的协议<code>@objc public protocol AnyObject {}</code>。它注释的第一行:<code>The protocol to which all classes implicitly conform</code>表明<!-- raw HTML omitted -->所有的类都隐式遵守了这个协议<!-- raw HTML omitted -->。</p>
 <h1 id="any">Any</h1>
-<p><code>Any</code>也是一个协议，根据其注释<code>The protocol to which all types implicitly conform.</code>表明所有的类型都遵守该协议，包括基本数据类型，<code>enum, struct, func</code>等等。</p>
+<p><code>Any</code>也是一个协议，根据其注释<code>The protocol to which all types implicitly conform.</code>表明所有的类型都遵守该协议，包括基本数据类型，<code>enum, struct, func</code>等等。因此<code>Any</code>可以表示任何类型的实例，包括函数类型</p>
 <h1 id="anyclass">AnyClass</h1>
 <p><code>AnyClass</code>表示任意类的元类型。根据<code>AnyClass</code>的定义<code>typealias AnyClass = AnyObject .Type</code>可知它为<code>AnyObject.Type</code>的别名。<code>AnyObject.Type</code>中的<code>.Type</code>就是获取元类型。例如。对于<code>Student</code>类，<code>Student.Type</code>就是获取<code>Student</code>的元类型。</p>
 <p>再根据注释<code>The protocol to which all class types implicitly conform</code>，可知道所有的<!-- raw HTML omitted -->类的类型<!-- raw HTML omitted -->都隐式遵守这个协议。</p>
 <h1 id="重要区别">重要区别</h1>
 <p><code>AnyObject</code>代表任意<code>class</code>类型的对象实例，<code>Any</code>代表任意类型，甚至包括方法类型，所以<code>AnyObject</code>是<code>Any</code>的子集。</p>
 <hr>
+<h1 id="类型转换">类型转换</h1>
+<p>操作符<code>is</code>检查一个实例是否某个确定的类或者其子类类型，如果是则返回<code>true</code>，否则返回<code>false</code>。</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift"><span style="color:#66d9ef">class</span> <span style="color:#a6e22e">Cat</span> {
+    <span style="color:#66d9ef">func</span> <span style="color:#a6e22e">hairColor</span>() -&gt; String {
+        <span style="color:#66d9ef">return</span> <span style="color:#e6db74">&#34;</span><span style="color:#e6db74">五颜六色</span><span style="color:#e6db74">&#34;</span>
+    }
+}
+<span style="color:#66d9ef">class</span> <span style="color:#a6e22e">WhiteCat</span>: Cat {
+    <span style="color:#66d9ef">override</span> <span style="color:#66d9ef">func</span> <span style="color:#a6e22e">hairColor</span>() -&gt; String {
+        <span style="color:#66d9ef">return</span> <span style="color:#e6db74">&#34;</span><span style="color:#e6db74">白色</span><span style="color:#e6db74">&#34;</span>
+    }
+}
+<span style="color:#66d9ef">class</span> <span style="color:#a6e22e">BlackCat</span>: Cat {
+    <span style="color:#66d9ef">override</span> <span style="color:#66d9ef">func</span> <span style="color:#a6e22e">hairColor</span>() -&gt; String {
+        <span style="color:#66d9ef">return</span> <span style="color:#e6db74">&#34;</span><span style="color:#e6db74">黑色</span><span style="color:#e6db74">&#34;</span>
+    }
+}
+<span style="color:#75715e">//</span><span style="color:#75715e">必</span><span style="color:#75715e">须</span><span style="color:#75715e">符</span><span style="color:#75715e">合</span><span style="color:#75715e">`</span><span style="color:#75715e">C</span><span style="color:#75715e">a</span><span style="color:#75715e">t</span><span style="color:#75715e">`</span><span style="color:#75715e">类</span><span style="color:#75715e">以</span><span style="color:#75715e">及</span><span style="color:#75715e">其</span><span style="color:#75715e">子</span><span style="color:#75715e">类</span><span style="color:#75715e">，</span><span style="color:#75715e">类</span><span style="color:#75715e">型</span><span style="color:#75715e">推</span><span style="color:#75715e">断</span><span style="color:#75715e">需</span><span style="color:#75715e">要</span>
+<span style="color:#66d9ef">let</span> kinds = [WhiteCat(),BlackCat(),WhiteCat(),WhiteCat()]
+<span style="color:#66d9ef">for</span> item <span style="color:#66d9ef">in</span> kinds {
+    <span style="color:#66d9ef">if</span> item <span style="color:#66d9ef">is</span> WhiteCat {
+        print(<span style="color:#e6db74">&#34;</span><span style="color:#e6db74">白猫</span><span style="color:#e6db74">&#34;</span>)<span style="color:#75715e">//</span><span style="color:#75715e"> </span><span style="color:#75715e">3</span><span style="color:#75715e">次</span>
+    }
+    <span style="color:#66d9ef">if</span> item <span style="color:#66d9ef">is</span> BlackCat {
+        print(<span style="color:#e6db74">&#34;</span><span style="color:#e6db74">黑猫</span><span style="color:#e6db74">&#34;</span>)<span style="color:#75715e">//</span><span style="color:#75715e"> </span><span style="color:#75715e">1</span><span style="color:#75715e">次</span>
+    }
+    <span style="color:#66d9ef">if</span> item <span style="color:#66d9ef">is</span> Cat {
+        print(<span style="color:#e6db74">&#34;</span><span style="color:#e6db74">猫</span><span style="color:#e6db74">&#34;</span>)<span style="color:#75715e">//</span><span style="color:#75715e"> </span><span style="color:#75715e">4</span><span style="color:#75715e">次</span>
+    }
+}
+</code></pre></div><h1 id="向下转换">向下转换</h1>
+<p>某个类型的常量或变量可能是其子类的实例，此时需要用到类型转换操作<code>as？</code>或<code>as!</code>向下转换为子类类型</p>
+<p><code>as?</code>：类型转换的条件形式，向下转换为某个类型时，返回该类型的可选值，即转换失败时返回<code>nil</code>。</p>
+<p><code>as!</code>：类型转换的强制形式，向下转换为某个类型时，会进行强制解包，即：转换失败时触发运行时错误。除非十分确定类型转换会成功，否则不建议使用该模式。</p>
 <p><a href="https://juejin.im/post/5a3e801ef265da430a50c97a">参考资料</a>
-<a href="https://blog.csdn.net/shihuboke/article/details/86488031">参考资料</a></p>
+<a href="https://blog.csdn.net/shihuboke/article/details/86488031">参考资料</a>
+<a href="https://www.jianshu.com/p/b30063598555">参考资料</a></p>
 
     </div>
     <footer class="post-footer">
@@ -286,8 +321,8 @@ code.has-jax {
         <div class="post-nav">
     <div class="post-nav-next post-nav-item">
     
-        <a href="https://iihui.github.io/post/ios-addmethod/" rel="next" title="Swift 方法交换中的addMethod">
-        <i class="fa fa-chevron-left"></i> Swift 方法交换中的addMethod
+        <a href="https://iihui.github.io/post/ios-any-nsconflict-halo-mac10.15.5/" rel="next" title="Any,AnyObject,AnyClass">
+        <i class="fa fa-chevron-left"></i> Any,AnyObject,AnyClass
         </a>
     
     </div>
@@ -363,7 +398,7 @@ code.has-jax {
       <nav class="site-state motion-element">
     <div class="site-state-item site-state-posts">
       <a href="https://iihui.github.io/post/">
-        <span class="site-state-item-count">117</span>
+        <span class="site-state-item-count">118</span>
         <span class="site-state-item-name">日志</span>
       </a>
     </div>
@@ -437,6 +472,8 @@ code.has-jax {
     <li><a href="#any">Any</a></li>
     <li><a href="#anyclass">AnyClass</a></li>
     <li><a href="#重要区别">重要区别</a></li>
+    <li><a href="#类型转换">类型转换</a></li>
+    <li><a href="#向下转换">向下转换</a></li>
   </ul>
 </nav></div>
     </div>
