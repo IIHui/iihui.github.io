@@ -36,6 +36,43 @@ katex.html文件的内容如下所示：
     </entry>
     
      <entry>
+        <title>Swift defer</title>
+        <url>https://iihui.github.io/post/swift-defer/</url>
+        <categories>
+          <category>iOS</category>
+        </categories>
+        <tags>
+          <tag>iOS</tag>
+        </tags>
+        <content type="html">  从语言设计上来说，defer的目的就是进行资源清理和避免重复的返回前需要执行的代码，而不是用来取巧的实现某些功能，这样做只会让代码的可读性降低。
+ 典型用法 Swift中defer所声明的block会在当前代码执行退出后调用，这种延迟调用特性，一般用来进行资源释放或者销毁。
+func operateOnFile(descriptor: Int32) { let fileHandle = FileHandle(fileDescriptor: descriptor) let data = fileHandle.readDataToEndOfFile() if /*onlyRead*/ { fileHandle.closeFile() return } let shouldWrite = /*是否需要写文件*/ guard shouldWrite else { fileHandle.closeFile() return } fileHandle.seekToEndOfFile() fileHandle.write(someData) fileHandle.closeFile() } 上面代码在不同的地方需要调用fileHandle.closeFile()来关闭文件，更好的方法是使用defer来统一处理。这不仅可以就近在资源申请的地方就声明释放，也减少了未来添加代码时忘记释放资源的可能性。
+func operateOnFile(descriptor: Int32) { let fileHandle = FileHandle(fileDescriptor: descriptor) defer { fileHandle.closeFile() } let data = fileHandle.readDataToEndOfFile() if /*onlyRead*/ { return } let shouldWrite = /*是否需要写文件*/ guard shouldWrite else { return } fileHandle.seekToEndOfFile() fileHandle.write(someData) } 作用域 以前很单纯地认为 defer 是在函数退出的时候调用，并没有注意其实是当前 scope 退出的时候调用这个事实，造成了这个错误。在 if，guard，for，try 这些语句中使用 defer 时，应该要特别注意这一点。
+defer和闭包 另一个比较有意思的事实是，虽然 defer 后面跟了一个闭包，但是它更多地像是一个语法糖，和我们所熟知的闭包特性不一样，并不会持有里面的值：
+func foo() { var number = 1 defer { print(&amp;#34;Statement 2: \(number)&amp;#34;) } number = 100 print(&amp;#34;Statement 1: \(number)&amp;#34;) } 将会输出：
+Statement 1: 100 Statement 2: 100 执行时机 defer 的执行时机紧接在离开作用域之后，但是是在其他语句之前。这个特性为 defer 带来了一些很“微妙”的使用方式。比如从 0 开始的自增：
+class Foo { var num = 0 func foo() -&amp;gt; Int { defer { num &#43;= 1 } return num } //没有`defer`的话我们可能要这么写 //funcfoo()-&amp;gt;Int{ //num&#43;=1 //returnnum-1 //} } let f = Foo() f.foo() //0 f.foo() //1 f.num //2 摘抄自
+</content>
+    </entry>
+    
+     <entry>
+        <title>Swift5.3 新特性</title>
+        <url>https://iihui.github.io/post/swift-5.3/</url>
+        <categories>
+          <category>iOS</category>
+        </categories>
+        <tags>
+          <tag>iOS</tag>
+        </tags>
+        <content type="html"> 多尾闭包 在Swift5.3以前尾闭包的精简写法，仅限于一个函数的最后一个参数为函数。如下所示：
+UIView.animate(withDuration: 0.25, animations: { //animationcode }) //单个尾闭包的精简写法 UIView.animate(withDuration: 0.25) { //animationcode } 在Swift 5.3之前如果一个函数中有多个闭包，只有最后一个闭包能被写成精简形式，即既有在圆括号内的闭包，又有在圆括号外的闭包。
+//写法1（单尾闭包精简写法） UIView.animate(withDuration: 0.25, animations: { //animationcode }) { completed in //completioncode } //写法2（传统写法） UIView.animate(withDuration: 0.25, animations: { //animationcode }, completion: { completed in //completioncode }) 而在Swift 5.3中，多尾闭包有了新的精简模式，如下所示，这种新的写法把最好的连续几个闭包参数都算作是尾闭包，这些闭包都可以放在圆括号外面。
+//写法3（多尾闭包精简写法） UIView.animate(withDuration: 0.25) { //animationcode } completion: { completed in //completioncode } 但是，这些尾闭包中第一个闭包被强制省略标签。苹果给出的解释是：如果允许第一个尾闭包加上标签，那么开发者需要考虑是加好还是不加好，你看这会导致代码风格不一致，那么干脆禁了吧。　除了第一个尾闭包需要省略标签之外，其余的尾闭包都需有标签。
+参考资料
+</content>
+    </entry>
+    
+     <entry>
         <title>Xcode编译报错问题</title>
         <url>https://iihui.github.io/post/ios-compiler/</url>
         <categories>

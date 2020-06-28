@@ -4,13 +4,13 @@
     <meta charset="UTF-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" /> 
-    <title>where 关键字 - Keep It Simple</title>
+    <title>Swift defer - Keep It Simple</title>
     <meta name="keywords" content="博客,思考,读书,笔记,技术,分享">
     
-    <meta property="og:title" content="where 关键字">
+    <meta property="og:title" content="Swift defer">
     <meta property="og:site_name" content="Keep It Simple">
     <meta property="og:image" content="/img/author.jpg"> 
-    <meta name="title" content="where 关键字 - Keep It Simple" />
+    <meta name="title" content="Swift defer - Keep It Simple" />
     <meta name="description" content="Swift | Go | C&#43;&#43; "> 
     <link rel="shortcut icon" href="https://iihui.github.io/img/favicon.ico" />
     <link rel="apple-touch-icon" href="https://iihui.github.io/img/apple-touch-icon.png" />
@@ -192,8 +192,8 @@ code.has-jax {
   <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
     <header class="post-header">
       <h1 class="post-title" itemprop="name headline">
-        <a class="post-title-link" href="https://iihui.github.io/post/ios-where/" itemprop="url">
-        where 关键字
+        <a class="post-title-link" href="https://iihui.github.io/post/swift-defer/" itemprop="url">
+        Swift defer
         </a>
       </h1>
       <div class="post-meta">
@@ -202,8 +202,8 @@ code.has-jax {
     <i class="fa fa-calendar-o"></i>
 </span>
 <span class="post-meta-item-text">创建: </span>
-<time itemprop="dateCreated" datetime="2016-03-22T13:04:35+08:00" content="2020-02-22">
-    2020-02-22
+<time itemprop="dateCreated" datetime="2016-03-22T13:04:35+08:00" content="2020-06-28">
+    2020-06-28
 </time>
 </span>
 &nbsp; | &nbsp;
@@ -212,8 +212,8 @@ code.has-jax {
     <i class="fa fa-calendar-check-o"></i>
 </span>
 <span class="post-meta-item-text">更新: </span>
-<time itemprop="dateUpdated" content="2020-04-27">
-    2020-04-27
+<time itemprop="dateUpdated" content="2020-06-28">
+    2020-06-28
 </time>
 </span> 
       
@@ -227,7 +227,7 @@ code.has-jax {
   
     <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
       <a href="https://iihui.github.io/categories/ios" itemprop="url" rel="index">
-        <span itemprop="name">ios</span>
+        <span itemprop="name">iOS</span>
       </a>
       &nbsp; 
     </span>
@@ -241,66 +241,90 @@ code.has-jax {
     <i class="fa fa-file-word-o"></i>
 </span>
 <span class="post-meta-item-text">字数: </span>
-<span class="leancloud-visitors-count">339</span>
+<span class="leancloud-visitors-count">647</span>
 &nbsp; | &nbsp;
 <span class="post-meta-item-icon">
     <i class="fa fa-coffee"></i>
 </span>
 <span class="post-meta-item-text">阅读: </span>
-<span class="leancloud-visitors-count">1 分钟</span>
+<span class="leancloud-visitors-count">2 分钟</span>
 </span>
       </div>
     </header>
     <div class="post-body" itemprop="articleBody">
     <blockquote>
-<p><code>Swift</code>中的<code>where</code>关键字主要用于限定条件，既可在<code>switch</code>语句中使用，也可以在<code>for in</code>中使用，还可以用在扩展中用于限定应该遵循某种协议。</p>
+<p>从语言设计上来说，<code>defer</code>的目的就是进行资源清理和避免重复的返回前需要执行的代码，而不是用来取巧的实现某些功能，这样做只会让代码的可读性降低。</p>
 </blockquote>
-<h2 id="switch中使用">switch中使用</h2>
-<p>在<code>switch</code>语句中使用，<code>where</code>一般是配合<code>if let</code>来用于限定某些条件，例如：</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift"><span style="color:#66d9ef">let</span> names = [<span style="color:#e6db74">&#34;</span><span style="color:#e6db74">dog</span><span style="color:#e6db74">&#34;</span>, <span style="color:#e6db74">&#34;</span><span style="color:#e6db74">cat</span><span style="color:#e6db74">&#34;</span>, <span style="color:#e6db74">&#34;</span><span style="color:#e6db74">fish</span><span style="color:#e6db74">&#34;</span>, <span style="color:#e6db74">&#34;</span><span style="color:#e6db74">bigDog</span><span style="color:#e6db74">&#34;</span>, <span style="color:#e6db74">&#34;</span><span style="color:#e6db74">bigCat</span><span style="color:#e6db74">&#34;</span>, <span style="color:#e6db74">&#34;</span><span style="color:#e6db74">bigFish</span><span style="color:#e6db74">&#34;</span>]
-names.forEach {
-    <span style="color:#66d9ef">switch</span> $0 {
-    <span style="color:#66d9ef">case</span> <span style="color:#66d9ef">let</span> name <span style="color:#66d9ef">where</span> name.hasPrefix(<span style="color:#e6db74">&#34;</span><span style="color:#e6db74">big</span><span style="color:#e6db74">&#34;</span>):
-        print(<span style="color:#e6db74">&#34;</span><span style="color:#e6db74">wow this is a </span><span style="color:#e6db74">\(</span>name<span style="color:#e6db74">)</span><span style="color:#e6db74">&#34;</span>)
-    <span style="color:#66d9ef">default</span>:
-        <span style="color:#66d9ef">break</span>
+<h2 id="典型用法">典型用法</h2>
+<p>Swift中<code>defer</code>所声明的<code>block</code>会在<!-- raw HTML omitted -->当前代码执行退出后<!-- raw HTML omitted -->调用，这种延迟调用特性，一般用来进行资源释放或者销毁。</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift"><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">operateOnFile</span>(descriptor: Int32) {
+    <span style="color:#66d9ef">let</span> fileHandle = FileHandle(fileDescriptor: descriptor)
+    
+    <span style="color:#66d9ef">let</span> data = fileHandle.readDataToEndOfFile()
+
+    <span style="color:#66d9ef">if</span> <span style="color:#75715e">/*</span><span style="color:#75715e"> </span><span style="color:#75715e">o</span><span style="color:#75715e">n</span><span style="color:#75715e">l</span><span style="color:#75715e">y</span><span style="color:#75715e">R</span><span style="color:#75715e">e</span><span style="color:#75715e">a</span><span style="color:#75715e">d</span><span style="color:#75715e"> </span><span style="color:#75715e">*/</span> {
+        fileHandle.closeFile()
+        <span style="color:#66d9ef">return</span>
     }
-}
-</code></pre></div><hr>
-<h2 id="for-in中使用">for in中使用</h2>
-<p>在<code>for in</code>使用，也是用于添加限定条件(过滤)，例如：</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift"><span style="color:#66d9ef">let</span> names = [<span style="color:#e6db74">&#34;</span><span style="color:#e6db74">dog</span><span style="color:#e6db74">&#34;</span>, <span style="color:#e6db74">&#34;</span><span style="color:#e6db74">cat</span><span style="color:#e6db74">&#34;</span>, <span style="color:#e6db74">&#34;</span><span style="color:#e6db74">fish</span><span style="color:#e6db74">&#34;</span>, <span style="color:#e6db74">&#34;</span><span style="color:#e6db74">bigDog</span><span style="color:#e6db74">&#34;</span>, <span style="color:#e6db74">&#34;</span><span style="color:#e6db74">bigCat</span><span style="color:#e6db74">&#34;</span>, <span style="color:#e6db74">&#34;</span><span style="color:#e6db74">bigFish</span><span style="color:#e6db74">&#34;</span>]
-<span style="color:#66d9ef">for</span> name <span style="color:#66d9ef">in</span> names <span style="color:#66d9ef">where</span> name == <span style="color:#e6db74">&#34;</span><span style="color:#e6db74">dog</span><span style="color:#e6db74">&#34;</span> {
-    print(<span style="color:#e6db74">&#34;</span><span style="color:#e6db74">\(</span>name<span style="color:#e6db74">)</span><span style="color:#e6db74">&#34;</span>)
-}
-</code></pre></div><hr>
-<h2 id="接口扩展中使用">接口扩展中使用</h2>
-<p>在扩展中使用<code>where</code>，目的也是进行限定，即希望扩展需要满足某些限定的条件下才可以用，如下所示:</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift"><span style="color:#66d9ef">extension</span> <span style="color:#a6e22e">ContiguousArray</span> <span style="color:#66d9ef">where</span> Element: BidirectionalCollection {
-    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">func</span> <span style="color:#a6e22e">joined</span>() -&gt; FlattenBidirectionalCollection&lt;ContiguousArray&lt;Element&gt;<span style="color:#f92672">&gt;</span>
-}
-
-<span style="color:#66d9ef">extension</span> <span style="color:#a6e22e">ContiguousArray</span> <span style="color:#66d9ef">where</span> Element: Sequence {
-    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">func</span> <span style="color:#a6e22e">joined</span>&lt;Separator&gt;(separator: Separator) -&gt; JoinedSequence&lt;ContiguousArray&lt;Element&gt;<span style="color:#f92672">&gt;</span> <span style="color:#66d9ef">where</span> Separator: Sequence, Separator.Element == Element.Element
-}
-
-<span style="color:#66d9ef">extension</span> <span style="color:#a6e22e">Array</span> <span style="color:#66d9ef">where</span> Element: Comparable {
-    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">var</span> isSorted: Bool {
-        <span style="color:#66d9ef">var</span> preIndex = startIndex
-        <span style="color:#66d9ef">var</span> curIndex = startIndex <span style="color:#f92672">+</span> <span style="color:#ae81ff">1</span>
-
-        <span style="color:#66d9ef">while</span> curIndex <span style="color:#f92672">!=</span> endIndex {
-            <span style="color:#66d9ef">if</span> <span style="color:#66d9ef">self</span>[preIndex] <span style="color:#f92672">&gt;</span> <span style="color:#66d9ef">self</span>[curIndex] {
-                <span style="color:#66d9ef">return</span> <span style="color:#66d9ef">false</span>
-            }
-            preIndex = curIndex
-            curIndex <span style="color:#f92672">+</span> <span style="color:#ae81ff">1</span>
-        }
-        <span style="color:#66d9ef">return</span> <span style="color:#66d9ef">true</span>
+    
+    <span style="color:#66d9ef">let</span> shouldWrite = <span style="color:#75715e">/*</span><span style="color:#75715e"> </span><span style="color:#75715e">是</span><span style="color:#75715e">否</span><span style="color:#75715e">需</span><span style="color:#75715e">要</span><span style="color:#75715e">写</span><span style="color:#75715e">文</span><span style="color:#75715e">件</span><span style="color:#75715e"> </span><span style="color:#75715e">*/</span>
+    <span style="color:#66d9ef">guard</span> shouldWrite <span style="color:#66d9ef">else</span> {
+        fileHandle.closeFile()
+        <span style="color:#66d9ef">return</span>
     }
+    
+    fileHandle.seekToEndOfFile()
+    fileHandle.write(someData)
+    fileHandle.closeFile()
 }
-</code></pre></div><hr>
-<p><a href="https://juejin.im/post/5a3a336b51882569707822de">参考资料</a></p>
+</code></pre></div><p>上面代码在不同的地方需要调用<code>fileHandle.closeFile()</code>来关闭文件，更好的方法是使用<code>defer</code>来统一处理。这不仅可以就近在资源申请的地方就声明释放，也减少了未来添加代码时忘记释放资源的可能性。</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift"><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">operateOnFile</span>(descriptor: Int32) {
+    <span style="color:#66d9ef">let</span> fileHandle = FileHandle(fileDescriptor: descriptor)
+    <span style="color:#66d9ef">defer</span> { fileHandle.closeFile() }
+    <span style="color:#66d9ef">let</span> data = fileHandle.readDataToEndOfFile()
+
+    <span style="color:#66d9ef">if</span> <span style="color:#75715e">/*</span><span style="color:#75715e"> </span><span style="color:#75715e">o</span><span style="color:#75715e">n</span><span style="color:#75715e">l</span><span style="color:#75715e">y</span><span style="color:#75715e">R</span><span style="color:#75715e">e</span><span style="color:#75715e">a</span><span style="color:#75715e">d</span><span style="color:#75715e"> </span><span style="color:#75715e">*/</span> { <span style="color:#66d9ef">return</span> }
+    
+    <span style="color:#66d9ef">let</span> shouldWrite = <span style="color:#75715e">/*</span><span style="color:#75715e"> </span><span style="color:#75715e">是</span><span style="color:#75715e">否</span><span style="color:#75715e">需</span><span style="color:#75715e">要</span><span style="color:#75715e">写</span><span style="color:#75715e">文</span><span style="color:#75715e">件</span><span style="color:#75715e"> </span><span style="color:#75715e">*/</span>
+    <span style="color:#66d9ef">guard</span> shouldWrite <span style="color:#66d9ef">else</span> { <span style="color:#66d9ef">return</span> }
+    
+    fileHandle.seekToEndOfFile()
+    fileHandle.write(someData)
+}
+</code></pre></div><h2 id="作用域">作用域</h2>
+<p>以前很单纯地认为 defer 是在函数退出的时候调用，并没有注意其实是当前 scope 退出的时候调用这个事实，造成了这个错误。在 if，guard，for，try 这些语句中使用 defer 时，应该要特别注意这一点。</p>
+<h2 id="defer和闭包">defer和闭包</h2>
+<p>另一个比较有意思的事实是，虽然 defer 后面跟了一个闭包，但是它更多地像是一个语法糖，和我们所熟知的闭包特性不一样，并不会持有里面的值：</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift"><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">foo</span>() {
+    <span style="color:#66d9ef">var</span> number = <span style="color:#ae81ff">1</span>
+    <span style="color:#66d9ef">defer</span> { print(<span style="color:#e6db74">&#34;</span><span style="color:#e6db74">Statement 2: </span><span style="color:#e6db74">\(</span>number<span style="color:#e6db74">)</span><span style="color:#e6db74">&#34;</span>) }
+    number = <span style="color:#ae81ff">100</span>
+    print(<span style="color:#e6db74">&#34;</span><span style="color:#e6db74">Statement 1: </span><span style="color:#e6db74">\(</span>number<span style="color:#e6db74">)</span><span style="color:#e6db74">&#34;</span>)
+}
+</code></pre></div><p>将会输出：</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift">Statement <span style="color:#ae81ff">1</span>: <span style="color:#ae81ff">100</span>
+Statement <span style="color:#ae81ff">2</span>: <span style="color:#ae81ff">100</span>
+</code></pre></div><h2 id="执行时机">执行时机</h2>
+<p>defer 的执行时机紧接在离开作用域之后，但是是在其他语句之前。这个特性为 defer 带来了一些很“微妙”的使用方式。比如从 0 开始的自增：</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift"><span style="color:#66d9ef">class</span> <span style="color:#a6e22e">Foo</span> {
+    <span style="color:#66d9ef">var</span> num = <span style="color:#ae81ff">0</span>
+    <span style="color:#66d9ef">func</span> <span style="color:#a6e22e">foo</span>() -&gt; Int {
+        <span style="color:#66d9ef">defer</span> { num <span style="color:#f92672">+=</span> <span style="color:#ae81ff">1</span> }
+        <span style="color:#66d9ef">return</span> num
+    }
+    
+    <span style="color:#75715e">//</span><span style="color:#75715e"> </span><span style="color:#75715e">没</span><span style="color:#75715e">有</span><span style="color:#75715e"> </span><span style="color:#75715e">`</span><span style="color:#75715e">d</span><span style="color:#75715e">e</span><span style="color:#75715e">f</span><span style="color:#75715e">e</span><span style="color:#75715e">r</span><span style="color:#75715e">`</span><span style="color:#75715e"> </span><span style="color:#75715e">的</span><span style="color:#75715e">话</span><span style="color:#75715e">我</span><span style="color:#75715e">们</span><span style="color:#75715e">可</span><span style="color:#75715e">能</span><span style="color:#75715e">要</span><span style="color:#75715e">这</span><span style="color:#75715e">么</span><span style="color:#75715e">写</span>
+    <span style="color:#75715e">//</span><span style="color:#75715e"> </span><span style="color:#75715e">f</span><span style="color:#75715e">u</span><span style="color:#75715e">n</span><span style="color:#75715e">c</span><span style="color:#75715e"> </span><span style="color:#75715e">f</span><span style="color:#75715e">o</span><span style="color:#75715e">o</span><span style="color:#75715e">(</span><span style="color:#75715e">)</span><span style="color:#75715e"> </span><span style="color:#75715e">-</span><span style="color:#75715e">&gt;</span><span style="color:#75715e"> </span><span style="color:#75715e">I</span><span style="color:#75715e">n</span><span style="color:#75715e">t</span><span style="color:#75715e"> </span><span style="color:#75715e">{</span>
+    <span style="color:#75715e">//</span><span style="color:#75715e"> </span><span style="color:#75715e"> </span><span style="color:#75715e"> </span><span style="color:#75715e"> </span><span style="color:#75715e">n</span><span style="color:#75715e">u</span><span style="color:#75715e">m</span><span style="color:#75715e"> </span><span style="color:#75715e">+</span><span style="color:#75715e">=</span><span style="color:#75715e"> </span><span style="color:#75715e">1</span>
+    <span style="color:#75715e">//</span><span style="color:#75715e"> </span><span style="color:#75715e"> </span><span style="color:#75715e"> </span><span style="color:#75715e"> </span><span style="color:#75715e">r</span><span style="color:#75715e">e</span><span style="color:#75715e">t</span><span style="color:#75715e">u</span><span style="color:#75715e">r</span><span style="color:#75715e">n</span><span style="color:#75715e"> </span><span style="color:#75715e">n</span><span style="color:#75715e">u</span><span style="color:#75715e">m</span><span style="color:#75715e"> </span><span style="color:#75715e">-</span><span style="color:#75715e"> </span><span style="color:#75715e">1</span>
+    <span style="color:#75715e">//</span><span style="color:#75715e"> </span><span style="color:#75715e">}</span>
+}
+
+<span style="color:#66d9ef">let</span> f = Foo()
+f.foo() <span style="color:#75715e">//</span><span style="color:#75715e"> </span><span style="color:#75715e">0</span>
+f.foo() <span style="color:#75715e">//</span><span style="color:#75715e"> </span><span style="color:#75715e">1</span>
+f.num   <span style="color:#75715e">//</span><span style="color:#75715e"> </span><span style="color:#75715e">2</span>
+</code></pre></div><p><a href="https://onevcat.com/2018/11/defer/">摘抄自</a></p>
 
     </div>
     <footer class="post-footer">
@@ -308,9 +332,7 @@ names.forEach {
  
 <div class="post-tags">     
      
-    <a href="https://iihui.github.io/tags/swift" rel="tag" title="swift">#swift#</a>
-    
-    <a href="https://iihui.github.io/tags/ios" rel="tag" title="ios">#ios#</a>
+    <a href="https://iihui.github.io/tags/ios" rel="tag" title="iOS">#iOS#</a>
     
 </div>
 
@@ -319,16 +341,16 @@ names.forEach {
         <div class="post-nav">
     <div class="post-nav-next post-nav-item">
     
-        <a href="https://iihui.github.io/post/ios-debug-safari/" rel="next" title="iOS开发使用Safari调试WebView">
-        <i class="fa fa-chevron-left"></i> iOS开发使用Safari调试WebView
+        <a href="https://iihui.github.io/post/hugo-next/" rel="next" title="Hugo Next 主题">
+        <i class="fa fa-chevron-left"></i> Hugo Next 主题
         </a>
     
     </div>
 
     <div class="post-nav-prev post-nav-item">
     
-        <a href="https://iihui.github.io/post/ios-addmethod/" rel="prev" title="Swift 方法交换中的addMethod">
-        Swift 方法交换中的addMethod <i class="fa fa-chevron-right"></i>
+        <a href="https://iihui.github.io/post/swift-5.3/" rel="prev" title="Swift5.3 新特性">
+        Swift5.3 新特性 <i class="fa fa-chevron-right"></i>
         </a>
     
     </div>
@@ -342,10 +364,10 @@ names.forEach {
         </div>
         <div>
             <p style="margin-top:10px;">
-                标题：where 关键字
+                标题：Swift defer
                 <br />作者：阿呆<a target="_blank" href="https://iihui.github.io/"></a>
                 
-                <br />地址：https://iihui.github.io/post/ios-where/
+                <br />地址：https://iihui.github.io/post/swift-defer/
                 <br />声明：自由转载-非商用-保持署名（创作共享4.0许可证）
             </p>
         </div>
@@ -468,9 +490,10 @@ names.forEach {
   <ul>
     <li>
       <ul>
-        <li><a href="#switch中使用">switch中使用</a></li>
-        <li><a href="#for-in中使用">for in中使用</a></li>
-        <li><a href="#接口扩展中使用">接口扩展中使用</a></li>
+        <li><a href="#典型用法">典型用法</a></li>
+        <li><a href="#作用域">作用域</a></li>
+        <li><a href="#defer和闭包">defer和闭包</a></li>
+        <li><a href="#执行时机">执行时机</a></li>
       </ul>
     </li>
   </ul>
