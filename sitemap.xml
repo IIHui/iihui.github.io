@@ -64,10 +64,10 @@ struct Stack { var items = [Int]() mutating func push(_ item:Int){ items.append(
         <content type="html">  从语言设计上来说，defer的目的是进行资源清理和避免重复返回前需要执行的代码，而不是用来取巧的实现某些功能，这样做只会让代码的可读性降低。
  典型用法 Swift中defer声明的block会在当前代码执行退出后调用，这种延迟调用特性，一般用来进行资源释放或者销毁。
 func operateOnFile(descriptor: Int32) { let fileHandle = FileHandle(fileDescriptor: descriptor) let data = fileHandle.readDataToEndOfFile() if /*onlyRead*/ { fileHandle.closeFile() return } let shouldWrite = /*是否需要写文件*/ guard shouldWrite else { fileHandle.closeFile() return } fileHandle.seekToEndOfFile() fileHandle.write(someData) fileHandle.closeFile() } 上面代码在不同的地方需要调用fileHandle.closeFile()来关闭文件，更好的方法是使用defer来统一处理。这不仅可以就近在资源申请的地方就声明释放，也减少了未来添加代码时忘记释放资源的可能性。
-func operateOnFile(descriptor: Int32) { let fileHandle = FileHandle(fileDescriptor: descriptor) defer { fileHandle.closeFile() } let data = fileHandle.readDataToEndOfFile() if /*onlyRead*/ { return } let shouldWrite = /*是否需要写文件*/ guard shouldWrite else { return } fileHandle.seekToEndOfFile() fileHandle.write(someData) } 作用域 以前很单纯地认为defer是在函数退出的时候调用，并没有注意其实是当前 scope退出的时候调用这个事实。在 if，guard，for，try 这些语句中使用defer时，应该要特别注意这一点。
+func operateOnFile(descriptor: Int32) { let fileHandle = FileHandle(fileDescriptor: descriptor) defer { fileHandle.closeFile() } let data = fileHandle.readDataToEndOfFile() if /*onlyRead*/ { return } let shouldWrite = /*是否需要写文件*/ guard shouldWrite else { return } fileHandle.seekToEndOfFile() fileHandle.write(someData) } 作用域 以前很单纯地认为defer是在函数退出的时候调用，并没有注意其实是当前scope退出的时候调用这个事实。在 if，guard，for，try这些语句中使用defer时，应该要特别注意这一点。
 defer和闭包 另一个比较有意思的事实是，虽然defer后面跟了一个闭包，但是它更多地像是一个语法糖，和我们所熟知的闭包特性不一样，并不会持有里面的值：
 func foo() { var number = 1 defer { print(&amp;#34;Statement 2: \(number)&amp;#34;) } number = 100 print(&amp;#34;Statement 1: \(number)&amp;#34;) } 将会输出：
-Statement 1: 100 Statement 2: 100 执行时机 defer的执行时机紧接在离开作用域之后，但是是在其他语句之前。这个特性为 defer带来了一些很“微妙”的使用方式，比如从0开始的自增：
+Statement 1: 100 Statement 2: 100 执行时机 defer的执行时机紧接在离开作用域之后，但是是在其他语句之前。这个特性为defer带来了一些很“微妙”的使用方式，比如从0开始的自增：
 class Foo { var num = 0 func foo() -&amp;gt; Int { defer { num &#43;= 1 } return num } //没有`defer`的话我们可能要这么写 //funcfoo()-&amp;gt;Int{ //num&#43;=1 //returnnum-1 //} } let f = Foo() f.foo() //0 f.foo() //1 f.num //2  摘抄自
 </content>
     </entry>
