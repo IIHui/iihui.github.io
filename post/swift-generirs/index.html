@@ -4,13 +4,13 @@
     <meta charset="UTF-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" /> 
-    <title>WCDB - Keep It Simple</title>
+    <title>Swift 范型 - Keep It Simple</title>
     <meta name="keywords" content="博客,思考,读书,笔记,技术,分享">
     
-    <meta property="og:title" content="WCDB">
+    <meta property="og:title" content="Swift 范型">
     <meta property="og:site_name" content="Keep It Simple">
     <meta property="og:image" content="/img/author.jpg"> 
-    <meta name="title" content="WCDB - Keep It Simple" />
+    <meta name="title" content="Swift 范型 - Keep It Simple" />
     <meta name="description" content="Swift | Go | C&#43;&#43; "> 
     <link rel="shortcut icon" href="https://iihui.github.io/img/favicon.ico" />
     <link rel="apple-touch-icon" href="https://iihui.github.io/img/apple-touch-icon.png" />
@@ -192,8 +192,8 @@ code.has-jax {
   <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
     <header class="post-header">
       <h1 class="post-title" itemprop="name headline">
-        <a class="post-title-link" href="https://iihui.github.io/post/ios-wcdb/" itemprop="url">
-        WCDB
+        <a class="post-title-link" href="https://iihui.github.io/post/swift-generirs/" itemprop="url">
+        Swift 范型
         </a>
       </h1>
       <div class="post-meta">
@@ -202,8 +202,8 @@ code.has-jax {
     <i class="fa fa-calendar-o"></i>
 </span>
 <span class="post-meta-item-text">创建: </span>
-<time itemprop="dateCreated" datetime="2016-03-22T13:04:35+08:00" content="2020-05-25">
-    2020-05-25
+<time itemprop="dateCreated" datetime="2016-03-22T13:04:35+08:00" content="2020-06-30">
+    2020-06-30
 </time>
 </span>
 &nbsp; | &nbsp;
@@ -212,8 +212,8 @@ code.has-jax {
     <i class="fa fa-calendar-check-o"></i>
 </span>
 <span class="post-meta-item-text">更新: </span>
-<time itemprop="dateUpdated" content="2020-05-25">
-    2020-05-25
+<time itemprop="dateUpdated" content="2020-06-30">
+    2020-06-30
 </time>
 </span> 
       
@@ -241,45 +241,87 @@ code.has-jax {
     <i class="fa fa-file-word-o"></i>
 </span>
 <span class="post-meta-item-text">字数: </span>
-<span class="leancloud-visitors-count">116</span>
+<span class="leancloud-visitors-count">560</span>
 &nbsp; | &nbsp;
 <span class="post-meta-item-icon">
     <i class="fa fa-coffee"></i>
 </span>
 <span class="post-meta-item-text">阅读: </span>
-<span class="leancloud-visitors-count">1 分钟</span>
+<span class="leancloud-visitors-count">2 分钟</span>
 </span>
       </div>
     </header>
     <div class="post-body" itemprop="articleBody">
-    <h2 id="自定义类型入库">自定义类型入库</h2>
-<p>自定义类型要遵循<code>ColumnCodable</code>才能入库：</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift"><span style="color:#66d9ef">enum</span> <span style="color:#a6e22e">UserOrgType</span>: String, ColumnCodable {
-    
-    <span style="color:#66d9ef">case</span> CMB = <span style="color:#e6db74">&#34;</span><span style="color:#e6db74">CMB</span><span style="color:#e6db74">&#34;</span>
-    <span style="color:#66d9ef">case</span> ODC = <span style="color:#e6db74">&#34;</span><span style="color:#e6db74">3</span><span style="color:#e6db74">&#34;</span>
-    
-    <span style="color:#66d9ef">static</span> <span style="color:#66d9ef">var</span> columnType: ColumnType = .text
-    
-    <span style="color:#66d9ef">init</span>(with value: FundamentalValue) {
-        <span style="color:#66d9ef">self</span> = UserOrgType(rawValue: value.stringValue) ?? UserOrgType.CMB
+    <h2 id="范型类型">范型类型</h2>
+<p>Swift允许自定义的范型类型包括类、结构体、枚举类型。</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift"><span style="color:#66d9ef">struct</span> <span style="color:#a6e22e">Stack</span> {
+    <span style="color:#66d9ef">var</span> items = [Int]()
+    <span style="color:#66d9ef">mutating</span> <span style="color:#66d9ef">func</span> <span style="color:#a6e22e">push</span>(<span style="color:#66d9ef">_</span> item:Int){
+        items.append(item)
     }
-    
-    <span style="color:#66d9ef">func</span> <span style="color:#a6e22e">archivedValue</span>() -&gt; FundamentalValue {
-        <span style="color:#66d9ef">return</span> FundamentalValue(<span style="color:#66d9ef">self</span>.rawValue)
+    <span style="color:#66d9ef">mutating</span> <span style="color:#66d9ef">func</span> <span style="color:#a6e22e">pop</span>(<span style="color:#66d9ef">_</span> item:Int) -&gt; Int {
+       <span style="color:#66d9ef">return</span> items.removeLast()
     }
 }
-</code></pre></div><div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift"><span style="color:#75715e">//</span><span style="color:#75715e">/</span><span style="color:#75715e"> </span><span style="color:#75715e">查</span><span style="color:#75715e">看</span><span style="color:#75715e">用</span><span style="color:#75715e">户</span><span style="color:#75715e">表</span><span style="color:#75715e">是</span><span style="color:#75715e">否</span><span style="color:#75715e">为</span><span style="color:#75715e">空</span>
-<span style="color:#66d9ef">func</span> <span style="color:#a6e22e">isEmpty</span>() -&gt; Bool {
-    <span style="color:#66d9ef">do</span> {
-        <span style="color:#66d9ef">let</span> count = <span style="color:#66d9ef">try</span> DBManager_V2.shared.userDb.getValue(on: UserInfoModel_V2.CodingKeys.openId.count(), fromTable: tableName).int64Value
-        <span style="color:#66d9ef">return</span> count == <span style="color:#ae81ff">0</span>
-    } <span style="color:#66d9ef">catch</span> <span style="color:#66d9ef">let</span> error {
-        printError(msg: error.localizedDescription, type: .db)
-        <span style="color:#66d9ef">return</span> <span style="color:#66d9ef">true</span>
+<span style="color:#75715e">//</span><span style="color:#75715e">调</span><span style="color:#75715e">用</span>
+<span style="color:#66d9ef">var</span> stack_int = Stack()
+stack_int.push(<span style="color:#ae81ff">7</span>)
+stack_int.push(<span style="color:#ae81ff">3</span>)
+stack_int.push(<span style="color:#ae81ff">2</span>)
+print(stack_int)<span style="color:#75715e">//</span><span style="color:#75715e">S</span><span style="color:#75715e">t</span><span style="color:#75715e">a</span><span style="color:#75715e">c</span><span style="color:#75715e">k</span><span style="color:#75715e">(</span><span style="color:#75715e">i</span><span style="color:#75715e">t</span><span style="color:#75715e">e</span><span style="color:#75715e">m</span><span style="color:#75715e">s</span><span style="color:#75715e">:</span><span style="color:#75715e"> </span><span style="color:#75715e">[</span><span style="color:#75715e">7</span><span style="color:#75715e">,</span><span style="color:#75715e"> </span><span style="color:#75715e">3</span><span style="color:#75715e">,</span><span style="color:#75715e"> </span><span style="color:#75715e">2</span><span style="color:#75715e">]</span><span style="color:#75715e">)</span>
+
+</code></pre></div><h3 id="类型约束">类型约束</h3>
+<p>范型函数和范型类型虽然可以和任何类型一起使用，但有时需要限制使用的类型，此时就需要使用类型约束。例如Swift中<code>Dictionary</code>的<code>Key</code>便被约束为必须遵守<code>hashable</code>协议。</p>
+<blockquote>
+<p>类型约束是指指定类型参数必须继承自特定的类，遵守某个协议或协议组合。</p>
+</blockquote>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift"><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">someFunction</span>&lt;T: SomeClass, U: SomeProtocol&gt;(someT: T, someU: U) {
+    <span style="color:#75715e">//</span><span style="color:#75715e"> </span><span style="color:#75715e">`</span><span style="color:#75715e">T</span><span style="color:#75715e">`</span><span style="color:#75715e">约</span><span style="color:#75715e">束</span><span style="color:#75715e">为</span><span style="color:#75715e">继</span><span style="color:#75715e">承</span><span style="color:#75715e">自</span><span style="color:#75715e">`</span><span style="color:#75715e">S</span><span style="color:#75715e">o</span><span style="color:#75715e">m</span><span style="color:#75715e">e</span><span style="color:#75715e">C</span><span style="color:#75715e">l</span><span style="color:#75715e">a</span><span style="color:#75715e">s</span><span style="color:#75715e">s</span><span style="color:#75715e">`</span><span style="color:#75715e">的</span><span style="color:#75715e">类</span><span style="color:#75715e">型</span><span style="color:#75715e"> </span><span style="color:#75715e">`</span><span style="color:#75715e">U</span><span style="color:#75715e">`</span><span style="color:#75715e">约</span><span style="color:#75715e">束</span><span style="color:#75715e">为</span><span style="color:#75715e">遵</span><span style="color:#75715e">守</span><span style="color:#75715e">`</span><span style="color:#75715e">S</span><span style="color:#75715e">o</span><span style="color:#75715e">m</span><span style="color:#75715e">e</span><span style="color:#75715e">P</span><span style="color:#75715e">r</span><span style="color:#75715e">o</span><span style="color:#75715e">t</span><span style="color:#75715e">o</span><span style="color:#75715e">c</span><span style="color:#75715e">o</span><span style="color:#75715e">l</span><span style="color:#75715e">`</span><span style="color:#75715e"> </span><span style="color:#75715e">协</span><span style="color:#75715e">议</span><span style="color:#75715e">的</span><span style="color:#75715e">类</span><span style="color:#75715e">型</span>
+}
+
+<span style="color:#66d9ef">func</span> <span style="color:#a6e22e">findIndex</span>&lt;T : Equatable&gt;(of valueToFind: T, <span style="color:#66d9ef">in</span> array:[T]) -&gt; Int? {
+    <span style="color:#66d9ef">for</span> (index, value) <span style="color:#66d9ef">in</span> array.enumerated() {
+        <span style="color:#66d9ef">if</span> value == valueToFind {
+            <span style="color:#66d9ef">return</span> index
+        }
+    }
+    <span style="color:#66d9ef">return</span> <span style="color:#66d9ef">nil</span>
+}
+</code></pre></div><h3 id="关联类型">关联类型</h3>
+<p>在定义协议时，有时声明一个或多个关联类型作为协议定义的一部分是很有用的。关联类型的作用，主要是提供某个类型的占位名称，然后作为协议的一部分去使用。关联类型的实际使用类型直到协议被实现时才会指定。关联类型使用关键字<code>associatedtype</code>指定。</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift"><span style="color:#75715e">//</span><span style="color:#75715e">定</span><span style="color:#75715e">义</span><span style="color:#75715e">协</span><span style="color:#75715e">议</span><span style="color:#75715e">使</span><span style="color:#75715e">用</span><span style="color:#75715e">类</span><span style="color:#75715e">型</span><span style="color:#75715e">关</span><span style="color:#75715e">联</span>
+<span style="color:#66d9ef">protocol</span> <span style="color:#a6e22e">Container</span> {
+    associatedtype Item
+    <span style="color:#66d9ef">mutating</span> <span style="color:#66d9ef">func</span> <span style="color:#a6e22e">append</span>(<span style="color:#66d9ef">_</span> item : Item)
+    <span style="color:#66d9ef">var</span> count : Int{<span style="color:#66d9ef">get</span>}
+    <span style="color:#66d9ef">subscript</span>(i:Int)-&gt;Item{<span style="color:#66d9ef">get</span>}
+}
+<span style="color:#75715e">//</span><span style="color:#75715e">定</span><span style="color:#75715e">义</span><span style="color:#75715e">整</span><span style="color:#75715e">型</span><span style="color:#75715e">S</span><span style="color:#75715e">t</span><span style="color:#75715e">a</span><span style="color:#75715e">c</span><span style="color:#75715e">k</span><span style="color:#75715e">类</span><span style="color:#75715e">型</span>
+<span style="color:#66d9ef">struct</span> <span style="color:#a6e22e">IntStack</span> : Container {
+    <span style="color:#66d9ef">var</span> items = [Int]()
+    <span style="color:#66d9ef">mutating</span> <span style="color:#66d9ef">func</span> <span style="color:#a6e22e">push</span>(<span style="color:#66d9ef">_</span> item:Int){
+        items.append(item)
+    }
+    <span style="color:#66d9ef">mutating</span> <span style="color:#66d9ef">func</span> <span style="color:#a6e22e">pop</span>(<span style="color:#66d9ef">_</span> item:Int) -&gt; Int {
+        <span style="color:#66d9ef">return</span> items.removeLast()
+    }
+    <span style="color:#75715e">//</span><span style="color:#75715e">实</span><span style="color:#75715e">现</span><span style="color:#75715e">协</span><span style="color:#75715e">议</span><span style="color:#75715e">时</span><span style="color:#75715e">，</span><span style="color:#75715e">需</span><span style="color:#75715e">要</span><span style="color:#75715e">明</span><span style="color:#75715e">确</span><span style="color:#75715e">关</span><span style="color:#75715e">联</span><span style="color:#75715e">类</span><span style="color:#75715e">型</span><span style="color:#75715e">的</span><span style="color:#75715e">实</span><span style="color:#75715e">际</span><span style="color:#75715e">类</span><span style="color:#75715e">型</span>
+    <span style="color:#66d9ef">typealias</span> Item = Int <span style="color:#75715e">//</span><span style="color:#75715e">!</span><span style="color:#75715e">&lt;</span><span style="color:#75715e"> </span><span style="color:#75715e">①</span>
+
+    <span style="color:#66d9ef">mutating</span> <span style="color:#66d9ef">func</span> <span style="color:#a6e22e">append</span>(<span style="color:#66d9ef">_</span> item: Item) {<span style="color:#75715e">//</span><span style="color:#75715e">!</span><span style="color:#75715e">&lt;</span><span style="color:#75715e"> </span><span style="color:#75715e">①</span><span style="color:#75715e">若</span><span style="color:#75715e">不</span><span style="color:#75715e">存</span><span style="color:#75715e">在</span><span style="color:#75715e">，</span><span style="color:#75715e">此</span><span style="color:#75715e">处</span><span style="color:#75715e">可</span><span style="color:#75715e">直</span><span style="color:#75715e">接</span><span style="color:#75715e"> </span><span style="color:#75715e">I</span><span style="color:#75715e">n</span><span style="color:#75715e">t</span>
+        push(item)
+    }
+    
+    <span style="color:#66d9ef">var</span> count: Int {
+        items.count
+    }
+    <span style="color:#66d9ef">subscript</span>(i: Int) -&gt; Int {
+        items[i]
     }
 }
-</code></pre></div>
+
+</code></pre></div><p><a href="https://juejin.im/post/5ef98e2b5188252e8e651258">摘抄自</a></p>
+
     </div>
     <footer class="post-footer">
         
@@ -295,16 +337,16 @@ code.has-jax {
         <div class="post-nav">
     <div class="post-nav-next post-nav-item">
     
-        <a href="https://iihui.github.io/post/ios-rotate/" rel="next" title="屏幕旋转">
-        <i class="fa fa-chevron-left"></i> 屏幕旋转
+        <a href="https://iihui.github.io/post/hugo-next/" rel="next" title="Hugo Next 主题">
+        <i class="fa fa-chevron-left"></i> Hugo Next 主题
         </a>
     
     </div>
 
     <div class="post-nav-prev post-nav-item">
     
-        <a href="https://iihui.github.io/post/ios-animation-1/" rel="prev" title="CABasicAnimation">
-        CABasicAnimation <i class="fa fa-chevron-right"></i>
+        <a href="https://iihui.github.io/post/swift-defer/" rel="prev" title="Swift defer">
+        Swift defer <i class="fa fa-chevron-right"></i>
         </a>
     
     </div>
@@ -318,10 +360,10 @@ code.has-jax {
         </div>
         <div>
             <p style="margin-top:10px;">
-                标题：WCDB
+                标题：Swift 范型
                 <br />作者：阿呆<a target="_blank" href="https://iihui.github.io/"></a>
                 
-                <br />地址：https://iihui.github.io/post/ios-wcdb/
+                <br />地址：https://iihui.github.io/post/swift-generirs/
                 <br />声明：自由转载-非商用-保持署名（创作共享4.0许可证）
             </p>
         </div>
@@ -444,7 +486,12 @@ code.has-jax {
   <ul>
     <li>
       <ul>
-        <li><a href="#自定义类型入库">自定义类型入库</a></li>
+        <li><a href="#范型类型">范型类型</a>
+          <ul>
+            <li><a href="#类型约束">类型约束</a></li>
+            <li><a href="#关联类型">关联类型</a></li>
+          </ul>
+        </li>
       </ul>
     </li>
   </ul>
