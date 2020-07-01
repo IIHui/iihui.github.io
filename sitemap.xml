@@ -61,7 +61,7 @@ struct Stack { var items = [Int]() mutating func push(_ item:Int){ items.append(
         <tags>
           <tag>iOS</tag>
         </tags>
-        <content type="html">  从语言设计上来说，defer的目的就是进行资源清理和避免重复的返回前需要执行的代码，而不是用来取巧的实现某些功能，这样做只会让代码的可读性降低。
+        <content type="html">  从语言设计上来说，defer的目的是进行资源清理和避免重复返回前需要执行的代码，而不是用来取巧的实现某些功能，这样做只会让代码的可读性降低。
  典型用法 Swift中defer所声明的block会在当前代码执行退出后调用，这种延迟调用特性，一般用来进行资源释放或者销毁。
 func operateOnFile(descriptor: Int32) { let fileHandle = FileHandle(fileDescriptor: descriptor) let data = fileHandle.readDataToEndOfFile() if /*onlyRead*/ { fileHandle.closeFile() return } let shouldWrite = /*是否需要写文件*/ guard shouldWrite else { fileHandle.closeFile() return } fileHandle.seekToEndOfFile() fileHandle.write(someData) fileHandle.closeFile() } 上面代码在不同的地方需要调用fileHandle.closeFile()来关闭文件，更好的方法是使用defer来统一处理。这不仅可以就近在资源申请的地方就声明释放，也减少了未来添加代码时忘记释放资源的可能性。
 func operateOnFile(descriptor: Int32) { let fileHandle = FileHandle(fileDescriptor: descriptor) defer { fileHandle.closeFile() } let data = fileHandle.readDataToEndOfFile() if /*onlyRead*/ { return } let shouldWrite = /*是否需要写文件*/ guard shouldWrite else { return } fileHandle.seekToEndOfFile() fileHandle.write(someData) } 作用域 以前很单纯地认为 defer 是在函数退出的时候调用，并没有注意其实是当前 scope 退出的时候调用这个事实，造成了这个错误。在 if，guard，for，try 这些语句中使用 defer 时，应该要特别注意这一点。
