@@ -36,6 +36,21 @@ katex.html文件的内容如下所示：
     </entry>
     
      <entry>
+        <title>启动页修改</title>
+        <url>https://iihui.github.io/post/ios-lanuch/</url>
+        <categories>
+          <category>iOS</category>
+        </categories>
+        <tags>
+          <tag>iOS</tag>
+        </tags>
+        <content type="html">  最近App改版，启动页也要随之修改，但是修改lanuchScreen.storyboard里的图片和样式之后并未立即生效。解决这个问题，主要分为三个步骤
+ 图片不放xcassets中 启动页用到的图片资源，不要放入到*.xcassets中，应该直接放到工程目录下，如下图所示：
+ 图片需要改名 如果启动页的图片资源需要修改，那应该将图片重命名，不要使用上次的命令，如果使用上次的名字，启动的时候还是会读缓存图片：
+清理启动页缓存 let path = libraryPath.appendingPathComponent(&amp;#34;SplashBoard&amp;#34;).appendingPathComponent(&amp;#34;Snapshots&amp;#34;) do { if FileManager.default.fileExists(atPath: path.path){ try FileManager.default.removeItem(at: path) } } catch let error { printDebug(msg: error.localizedDescription) } </content>
+    </entry>
+    
+     <entry>
         <title>Swift 范型</title>
         <url>https://iihui.github.io/post/swift-generirs/</url>
         <categories>
@@ -61,14 +76,14 @@ struct Stack { var items = [Int]() mutating func push(_ item:Int){ items.append(
         <tags>
           <tag>iOS</tag>
         </tags>
-        <content type="html">  从语言设计上来说，defer的目的是进行资源清理和避免重复返回前需要执行的代码，而不是用来取巧的实现某些功能，这样做只会让代码的可读性降低。
+        <content type="html">  从语言设计上来说，defer是为了进行资源清理和返回前避免重复执行相关的代码，而不是用来取巧的实现某些功能，这样做只会让代码的可读性降低。
  典型用法 Swift中defer声明的block会在当前代码执行退出后调用，这种延迟调用特性，一般用来进行资源释放或者销毁。
-func operateOnFile(descriptor: Int32) { let fileHandle = FileHandle(fileDescriptor: descriptor) let data = fileHandle.readDataToEndOfFile() if /*onlyRead*/ { fileHandle.closeFile() return } let shouldWrite = /*是否需要写文件*/ guard shouldWrite else { fileHandle.closeFile() return } fileHandle.seekToEndOfFile() fileHandle.write(someData) fileHandle.closeFile() } 上面代码在不同的地方需要调用fileHandle.closeFile()来关闭文件，更好的方法是使用defer来统一处理。这不仅可以就近在资源申请的地方就声明释放，也减少了未来添加代码时忘记释放资源的可能性。
-func operateOnFile(descriptor: Int32) { let fileHandle = FileHandle(fileDescriptor: descriptor) defer { fileHandle.closeFile() } let data = fileHandle.readDataToEndOfFile() if /*onlyRead*/ { return } let shouldWrite = /*是否需要写文件*/ guard shouldWrite else { return } fileHandle.seekToEndOfFile() fileHandle.write(someData) } 作用域 以前很单纯地认为defer是在函数退出的时候调用，并没有注意其实是当前scope退出的时候调用这个事实。在 if，guard，for，try这些语句中使用defer时，应该要特别注意这一点。
-defer和闭包 另一个比较有意思的事实是，虽然defer后面跟了一个闭包，但是它更多地像是一个语法糖，和我们所熟知的闭包特性不一样，并不会持有里面的值：
-func foo() { var number = 1 defer { print(&amp;#34;Statement 2: \(number)&amp;#34;) } number = 100 print(&amp;#34;Statement 1: \(number)&amp;#34;) } 将会输出：
-Statement 1: 100 Statement 2: 100 执行时机 defer的执行时机紧接在离开作用域之后，但是是在其他语句之前。这个特性为defer带来了一些很“微妙”的使用方式，比如从0开始的自增：
-class Foo { var num = 0 func foo() -&amp;gt; Int { defer { num &#43;= 1 } return num } //没有`defer`的话我们可能要这么写 //funcfoo()-&amp;gt;Int{ //num&#43;=1 //returnnum-1 //} } let f = Foo() f.foo() //0 f.foo() //1 f.num //2  摘抄自
+func operateOnFile(descriptor: Int32) { let fileHandle = FileHandle(fileDescriptor: descriptor) let data = fileHandle.readDataToEndOfFile() if /*onlyRead*/ { fileHandle.closeFile() return } let shouldWrite = /*是否需要写文件*/ guard shouldWrite else { fileHandle.closeFile() return } fileHandle.seekToEndOfFile() fileHandle.write(someData) fileHandle.closeFile() } 上面代码在不同的地方调用fileHandle.closeFile()来关闭文件，更好的方法是使用defer来统一处理。这不仅可以就近在资源申请的地方就声明释放，也减少了未来添加代码时忘记释放资源的可能性，如下所示：
+func operateOnFile(descriptor: Int32) { let fileHandle = FileHandle(fileDescriptor: descriptor) defer { fileHandle.closeFile() } let data = fileHandle.readDataToEndOfFile() if /*onlyRead*/ { return } let shouldWrite = /*是否需要写文件*/ guard shouldWrite else { return } fileHandle.seekToEndOfFile() fileHandle.write(someData) } 作用域 一般都人defer是在函数退出的时候调用，其实它是在是当前scope退出的时候调用。在 if，guard，for，try这些语句中使用defer时，应该要特别注意这一点。
+defer闭包不持有值 虽然defer后面跟了一个闭包，但是它更多地像是一个语法糖，和我们所熟知的闭包特性不一样，并不会持有里面的值：
+func foo() { var number = 1 defer { print(&amp;#34;Statement 2: \(number)&amp;#34;) } number = 100 print(&amp;#34;Statement 1: \(number)&amp;#34;) } 上面代码将会输出：
+Statement 1: 100 Statement 2: 100 执行时机 defer的执行时机紧接在离开作用域之后，但在其他语句之前。这个特性为defer带来了一些很“微妙”的使用方式，例如下面的代码是先执行返回语句，然后执行自增，所以输出为0，1，2而不是1，2，3：
+class Foo { var num = 0 func foo() -&amp;gt; Int { defer { num &#43;= 1 } return num } } let f = Foo() f.foo() //0 f.foo() //1 f.num //2  摘抄自
 </content>
     </entry>
     
@@ -81,14 +96,16 @@ class Foo { var num = 0 func foo() -&amp;gt; Int { defer { num &#43;= 1 } return
         <tags>
           <tag>iOS</tag>
         </tags>
-        <content type="html"> 多尾闭包 在Swift5.3以前尾闭包的精简写法，仅限于一个函数的最后一个参数为函数。如下所示：
-UIView.animate(withDuration: 0.25, animations: { //animationcode }) //单个尾闭包的精简写法 UIView.animate(withDuration: 0.25) { //animationcode } 在Swift 5.3之前如果一个函数中有多个闭包，只有最后一个闭包能被写成精简形式，即既有在圆括号内的闭包，又有在圆括号外的闭包。
-//写法1（单尾闭包精简写法） UIView.animate(withDuration: 0.25, animations: { //animationcode }) { completed in //completioncode } //写法2（传统写法） UIView.animate(withDuration: 0.25, animations: { //animationcode }, completion: { completed in //completioncode }) 而在Swift 5.3中，多尾闭包有了新的精简模式，如下所示，这种新的写法把最好的连续几个闭包参数都算作是尾闭包，这些闭包都可以放在圆括号外面。
-//写法3（多尾闭包精简写法） UIView.animate(withDuration: 0.25) { //animationcode } completion: { completed in //completioncode } 但是，这些尾闭包中第一个闭包被强制省略标签。苹果给出的解释是：如果允许第一个尾闭包加上标签，那么开发者需要考虑是加好还是不加好，你看这会导致代码风格不一致，那么干脆禁了吧。　除了第一个尾闭包需要省略标签之外，其余的尾闭包都需有标签。
+        <content type="html">  Swift 5.3引入了很多新特性，包括多尾闭包，多模式catch以及Swift Package Manager的一些重要改变。
+ 多尾闭包 在Swift5.3以前尾闭包提供了精简写法，但仅限于函数的最后一个参数为函数时。而当函数y有多个函数类型的参数时，如果该函数类型参数不为最后一个参数时，不能使用精简写法。如下所示，既有在圆括号内的闭包，又有在圆括号外的闭包：
+//写法1（单尾闭包精简写法） UIView.animate(withDuration: 0.25, animations: { //animationcode }) { completed in //completioncode } //写法2（传统写法） UIView.animate(withDuration: 0.25, animations: { //animationcode }, completion: { completed in //completioncode }) 而在Swift 5.3中，多尾闭包有了新的精简模式，如下所示，这种新的写法把最后的连续几个闭包参数都算作是尾闭包，这些闭包都可以放在圆括号外面。
+//写法3（多尾闭包精简写法） UIView.animate(withDuration: 0.25) { //animationcode } completion: { completed in //completioncode } 但是，这些尾闭包中第一个闭包被强制省略标签。苹果的解释是：如果允许第一个尾闭包加上标签，那么开发者需要考虑是加好还是不加好，你看这会导致代码风格不一致，那么干脆禁了吧。也就是除了第一个尾闭包需要省略标签之外，其余的尾闭包都需有标签。
 参考资料
-多模式catch语句 5.3中引入了一个可以在catch块中捕获多个错误的case特性，这个特性可以减少错误处理时的重复代码。具体实例见下面代码：
-enum TemperatureError: Error { case tooCold, tooHot } func getReactorTemperature() -&amp;gt; Int { 90 } func checkReactorOperational() throws -&amp;gt; String { let temp = getReactorTemperature() if temp &amp;lt; 10 { throw TemperatureError.tooCold } else if temp &amp;gt; 90 { throw TemperatureError.tooHot } else { return &amp;#34;OK&amp;#34; } } do { let result = try checkReactorOperational() print(&amp;#34;结果: \(result)&amp;#34;) } catch TemperatureError.tooHot, TemperatureError.tooCold { print(&amp;#34;关闭反应堆&amp;#34;) } catch { print(&amp;#34;未知错误&amp;#34;) }  为枚举自生成Comparable实现 Swift 5.3中可以为枚举生成Comparable实现，同时不要求声明关联值，或者要求关联值本身必须时Comparable的。这个特性使得可以在同类型的枚举之间用&amp;lt;,&amp;gt;和类似的比较操作符来进行比较。
-enum Size: Comparable { case small case medium case large case extraLarge } let shirtSize = Size.small let personSize = Size.large if shirtSize &amp;lt; personSize { print(&amp;#34;T恤 太小了！&amp;#34;) }  参考资料
+ 多模式catch语句 Swift5.3中引入了一个可以在catch块中捕获多个错误的case特性，这个特性可以减少错误处理时的重复代码，如下代码所示：
+enum TemperatureError: Error { case tooCold, tooHot } func getReactorTemperature() -&amp;gt; Int { 90 } func checkReactorOperational() throws -&amp;gt; String { let temp = getReactorTemperature() if temp &amp;lt; 10 { throw TemperatureError.tooCold } else if temp &amp;gt; 90 { throw TemperatureError.tooHot } else { return &amp;#34;OK&amp;#34; } } do { let result = try checkReactorOperational() print(&amp;#34;结果: \(result)&amp;#34;) } catch TemperatureError.tooHot, TemperatureError.tooCold { //捕获多个异常 print(&amp;#34;关闭反应堆&amp;#34;) } catch { print(&amp;#34;未知错误&amp;#34;) }  枚举Comparable Swift 5.3中可以为枚举生成Comparable实现，但不强制要求声明关联值，或者如果有关联之，则要求关联值本身必须是Comparable的。这个特性使得可以在同类型的枚举实例之间用&amp;lt;，&amp;gt;进行比较。
+enum Size: Comparable { case small case medium case large case extraLarge } let shirtSize = Size.small let personSize = Size.large if shirtSize &amp;lt; personSize { print(&amp;#34;T恤 太小了！&amp;#34;) } enum WorldCupResult: Comparable { case neverWon case winner(stars: Int) } let americanMen = WorldCupResult.neverWon let americanWomen = WorldCupResult.winner(stars: 4) let japaneseMen = WorldCupResult.neverWon let japaneseWomen = WorldCupResult.winner(stars: 1) let teams = [americanMen, americanWomen, japaneseMen, japaneseWomen] let sortedByWins = teams.sorted() print(sortedByWins) 在上面的排序过程会把未获得世界杯冠军的队伍放在前面，然后是日本女子队，再然后是美国女子队——两组winner的队被认为是大于两组neverWon的队，而winner(stars: 4)被认为是大于winner(stars: 1)。
+ self的省略 在Swift 5.3之前，在闭包中对当前对象的属性或方法的引用，都要添加self，即便闭包不会产生引用循环时。而在Swift 5.3中没有这样的限制，可以去除self。
+参考资料
 </content>
     </entry>
     
