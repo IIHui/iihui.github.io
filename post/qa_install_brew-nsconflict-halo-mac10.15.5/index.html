@@ -4,13 +4,13 @@
     <meta charset="UTF-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" /> 
-    <title>第三方库放到Cocoapods中 - Keep It Simple</title>
+    <title>macOS 安装Homebrew 报错 - Keep It Simple</title>
     <meta name="keywords" content="博客,思考,读书,笔记,技术,分享">
     
-    <meta property="og:title" content="第三方库放到Cocoapods中">
+    <meta property="og:title" content="macOS 安装Homebrew 报错">
     <meta property="og:site_name" content="Keep It Simple">
     <meta property="og:image" content="/img/author.jpg"> 
-    <meta name="title" content="第三方库放到Cocoapods中 - Keep It Simple" />
+    <meta name="title" content="macOS 安装Homebrew 报错 - Keep It Simple" />
     <meta name="description" content="Swift | Go | C&#43;&#43; "> 
     <link rel="shortcut icon" href="https://iihui.github.io/img/favicon.ico" />
     <link rel="apple-touch-icon" href="https://iihui.github.io/img/apple-touch-icon.png" />
@@ -192,8 +192,8 @@ code.has-jax {
   <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
     <header class="post-header">
       <h1 class="post-title" itemprop="name headline">
-        <a class="post-title-link" href="https://iihui.github.io/post/ios-cocoapods-storage/" itemprop="url">
-        第三方库放到Cocoapods中
+        <a class="post-title-link" href="https://iihui.github.io/post/qa_install_brew-nsconflict-halo-mac10.15.5/" itemprop="url">
+        macOS 安装Homebrew 报错
         </a>
       </h1>
       <div class="post-meta">
@@ -202,8 +202,8 @@ code.has-jax {
     <i class="fa fa-calendar-o"></i>
 </span>
 <span class="post-meta-item-text">创建: </span>
-<time itemprop="dateCreated" datetime="2016-03-22T13:04:35+08:00" content="2019-03-01">
-    2019-03-01
+<time itemprop="dateCreated" datetime="2016-03-22T13:04:35+08:00" content="2020-01-31">
+    2020-01-31
 </time>
 </span>
 &nbsp; | &nbsp;
@@ -212,8 +212,8 @@ code.has-jax {
     <i class="fa fa-calendar-check-o"></i>
 </span>
 <span class="post-meta-item-text">更新: </span>
-<time itemprop="dateUpdated" content="2019-03-01">
-    2019-03-01
+<time itemprop="dateUpdated" content="2020-01-31">
+    2020-01-31
 </time>
 </span> 
       
@@ -226,8 +226,8 @@ code.has-jax {
   <span class="post-meta-item-text">分类: </span>
   
     <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
-      <a href="https://iihui.github.io/categories/code" itemprop="url" rel="index">
-        <span itemprop="name">code</span>
+      <a href="https://iihui.github.io/categories/qa" itemprop="url" rel="index">
+        <span itemprop="name">QA</span>
       </a>
       &nbsp; 
     </span>
@@ -241,7 +241,7 @@ code.has-jax {
     <i class="fa fa-file-word-o"></i>
 </span>
 <span class="post-meta-item-text">字数: </span>
-<span class="leancloud-visitors-count">821</span>
+<span class="leancloud-visitors-count">996</span>
 &nbsp; | &nbsp;
 <span class="post-meta-item-icon">
     <i class="fa fa-coffee"></i>
@@ -253,59 +253,22 @@ code.has-jax {
     </header>
     <div class="post-body" itemprop="articleBody">
     <blockquote>
-<p>项目需要引入百度语音合成<code>SDK</code>，但这个第三方库的<code>.a</code>文件过于庞大，按规定不能直接放到项目中，需要放到<code>Cocoapods</code>仓库中，然后在项目中依赖一下即可。用已有的模板，只要按照要求修改对应文件，然后执行相应命令即可，这一过程可以总结为<code>5</code>步。</p>
+<p>重装了<code>macOS Catalina 10.15.2</code>，但使用<code>/usr/bin/ruby -e &quot;$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)&quot;</code>安装<code>Homebrew</code>时报<code>curl: (7) Failed to connect to raw.githubusercontent.com port 443: Connection refused</code>错误，网上大多数说要设置代理，但于我而言没有任何效果。翻了一圈资料，猜测是系统的curl有问题，按照这个思路，首先应该使用另一种方式安装Homebrew，然后再利用Homebrew安装curl，最后设置Homebrew安装的curl优先级高于系统的curl。</p>
 </blockquote>
-<h1 id="第一步">第一步</h1>
-<p>首先修改<code>.podspec</code>文件。为了修改<code>.podspec</code>文件，<!-- raw HTML omitted -->首先必须创建第三方库目录<!-- raw HTML omitted -->。下图为第三方库存放的目录结构，如需新建一个第三方库目录，则选中任意一个拷贝一份:</p>
-<p><img src="https://i.loli.net/2019/03/02/5c79e1459b2d2.jpg" alt="">
-<img src="https://i.loli.net/2019/03/02/5c79e689d522b.jpg" alt=""></p>
-<p>拷贝完了之后修改下图中长方形内文件或者文件夹(共<code>3</code>处)的名字，然后删除下图椭圆内的文件：</p>
-<p><img src="https://i.loli.net/2019/03/02/5c79e88b56ec3.jpg" alt=""></p>
-<p>这里我将上图的那个副本重命名为<code>BaiduTest</code>，<!-- raw HTML omitted -->修改上面的<code>3</code>个地方和和删除文件后<!-- raw HTML omitted -->如下图所示:</p>
-<p><img src="https://i.loli.net/2019/03/02/5c79ea476a789.jpg" alt=""></p>
-<p>然后修改<code>.podspec</code>文件，这个文件的修改<!-- raw HTML omitted -->必须使用终端文本编辑器<!-- raw HTML omitted -->（我使用<code>vim</code>编辑器），否则可能出错，这个文件也有<!-- raw HTML omitted -->三个地方需要修改<!-- raw HTML omitted -->。</p>
-<h2 id="第一个地方">第一个地方</h2>
-<p>首先修改<code>s.name</code>,<code>s.version</code>,<code>s.summary</code>,<code>s.description</code>这四个地方，其中<code>s.name</code>保持为上面修改的名字，版本号为<code>0.0.1</code>：</p>
-<p><img src="https://i.loli.net/2019/03/02/5c79ebb18a620.jpg" alt="">
-<img src="https://i.loli.net/2019/03/02/5c79ec7e8bd0b.jpg" alt=""></p>
-<h2 id="第二个地方">第二个地方</h2>
-<p>接下来修改<code>s.homepage</code>,只要将最后的名字修改为<code>BaiduTest</code>:</p>
-<p><img src="https://i.loli.net/2019/03/02/5c79ed7470194.jpg" alt="">
-<img src="https://i.loli.net/2019/03/02/5c79edad8af62.jpg" alt=""></p>
-<h2 id="第三个地方">第三个地方</h2>
-<p>最后修改<code>s.source</code>,将后面两项修改即可，这两项的名字要和<code>s.name</code>和<code>s.version</code>保持一致:</p>
-<p><img src="https://i.loli.net/2019/03/02/5c79ee32af6c2.jpg" alt="">
-<img src="https://i.loli.net/2019/03/02/5c79ee6903c24.jpg" alt=""></p>
-<hr>
-<h1 id="第二步">第二步</h1>
-<p>第二步修改<code>push.py</code>,目的是<!-- raw HTML omitted -->将<code>LC10_01_BaiduTest</code>这个目录打包并上传到仓库中<!-- raw HTML omitted -->，这个文件<!-- raw HTML omitted -->要修改两处<!-- raw HTML omitted -->:</p>
-<p><img src="https://i.loli.net/2019/03/02/5c79ef077b3a6.jpg" alt=""></p>
-<h2 id="第一个地方-1">第一个地方</h2>
-<p>将<code>zipCommands</code>后面的名字改为<code>LC10_01_BaiduTest</code>：</p>
-<p><img src="https://i.loli.net/2019/03/02/5c79ef5034e00.jpg" alt="">
-<img src="https://i.loli.net/2019/03/02/5c79efca90662.jpg" alt=""></p>
-<h2 id="第二个地方-1">第二个地方</h2>
-<p>将<code>uploadCommand</code>命令后打包的目录和打包后的文件的名字改成<code>LC10_01_BaiduTest</code>：</p>
-<p><img src="https://i.loli.net/2019/03/02/5c79f040f3b4e.jpg" alt=""></p>
-<hr>
-<h1 id="第三步">第三步</h1>
-<p>第三步执行<code>push.py</code>，即转到<code>push.py</code>脚本所在目录执行<code>./push.py</code>即可。</p>
-<h1 id="第四步">第四步</h1>
-<p>修改工程所使用的<code>podfile</code>，添加<code>LC10_01_BaiduTest</code>：</p>
-<p><img src="https://i.loli.net/2019/03/02/5c79f18d61e27.jpg" alt="-c"></p>
-<p><img src="https://i.loli.net/2019/03/02/5c79f204dd1cf.jpg" alt="-c"></p>
-<hr>
-<h1 id="第五步">第五步</h1>
-<p>第五步是在<!-- raw HTML omitted -->工程目录下<!-- raw HTML omitted -->依次执行下面<code>2</code>条命令:</p>
-<ol>
-<li>
-<p><code>pod repo-art update CocoaPods-cmb</code></p>
-</li>
-<li>
-<p><code>pod update</code></p>
-</li>
-</ol>
-<hr>
+<h1 id="安装homebrew">安装Homebrew</h1>
+<p>首先在浏览器中打开<code>https://raw.githubusercontent.com/Homebrew/install/master/install</code>。若不能打开，就是网络问题；如果能打开就如下图所示：</p>
+<p><img src="https://i.loli.net/2020/01/31/ZzOr2FxXpGh9Sqg.jpg" alt=""></p>
+<p>然后将这个网页的内容复制粘贴保存，并命名为<code>brew_install.rb</code>。再再终端中输入<code>curl</code>命令，如果出现<code>curl: try 'curl --help' or 'curl --manual' for more information</code>则表示<code>curl</code>本身没有问题：</p>
+<p><img src="https://i.loli.net/2020/01/31/UA8294JfdhzuxiP.jpg" alt=""></p>
+<p>接着在终端跳转到保存<code>brew_install.rb</code>的目录下，输入命令<code>ruby brew_install.rb</code>，以完成安装Homebrew。</p>
+<h1 id="安装并启用新curl">安装并启用新curl</h1>
+<p>当上一步提示安装成功之后，则可以通过Homebrew安装curl，即在终端输入<code>brew install curl</code>，安装成功之后，如果在终端通过<code>sh -c &quot;$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)&quot;</code>命令安装<code>oh my zsh</code> 依然会报错<code>curl: (35) Server aborted the SSL handshake</code> 错误，这是因为brew安装的curl的优先级低于系统的。</p>
+<p>接着就需要将Homebrew安装的curl的优先级调高，使其高于系统的curl，使用命令<code> brew link curl --force</code>会提示
+<img src="https://i.loli.net/2020/01/31/FOZis9L8En5qSjz.jpg" alt=""></p>
+<p>按照上面的提示，首先执行<code>echo 'export PATH=&quot;/usr/local/opt/curl/bin:$PATH&quot;' &gt;&gt; ~/.zshrc</code>
+然后将<code>export LDFLAGS=&quot;-L/usr/local/opt/curl/lib&quot;</code>和<code>export CPPFLAGS=&quot;-I/usr/local/opt/curl/include&quot;</code>放到<code>.zshrc</code>（我用的zsh，如果用户的是其他shell则修改对应的配置文件）中，至此问题解决。</p>
+<p><a href="https://www.jianshu.com/go-wild?ac=2&amp;url=http%3A%2F%2Fstackoverflow.com%2Fquestions%2F29910217%2Fhomebrew-installation-on-mac-os-x-failed-to-connect-to-raw-githubusercontent-com">参考资料</a>
+<a href="https://www.jianshu.com/p/68efabd2e32b">参考资料</a></p>
 
     </div>
     <footer class="post-footer">
@@ -313,7 +276,7 @@ code.has-jax {
  
 <div class="post-tags">     
      
-    <a href="https://iihui.github.io/tags/ios" rel="tag" title="iOS">#iOS#</a>
+    <a href="https://iihui.github.io/tags/qa" rel="tag" title="QA">#QA#</a>
     
 </div>
 
@@ -322,16 +285,16 @@ code.has-jax {
         <div class="post-nav">
     <div class="post-nav-next post-nav-item">
     
-        <a href="https://iihui.github.io/post/travel-guizhou/" rel="next" title="贵州之行">
-        <i class="fa fa-chevron-left"></i> 贵州之行
+        <a href="https://iihui.github.io/post/food-2020/" rel="next" title="陈小厨作品集">
+        <i class="fa fa-chevron-left"></i> 陈小厨作品集
         </a>
     
     </div>
 
     <div class="post-nav-prev post-nav-item">
     
-        <a href="https://iihui.github.io/post/ios-synthesizer/" rel="prev" title="引入百度语音合成">
-        引入百度语音合成 <i class="fa fa-chevron-right"></i>
+        <a href="https://iihui.github.io/post/qa_install_brew/" rel="prev" title="macOS 安装Homebrew 报错">
+        macOS 安装Homebrew 报错 <i class="fa fa-chevron-right"></i>
         </a>
     
     </div>
@@ -345,10 +308,10 @@ code.has-jax {
         </div>
         <div>
             <p style="margin-top:10px;">
-                标题：第三方库放到Cocoapods中
+                标题：macOS 安装Homebrew 报错
                 <br />作者：阿呆<a target="_blank" href="https://iihui.github.io/"></a>
                 
-                <br />地址：https://iihui.github.io/post/ios-cocoapods-storage/
+                <br />地址：https://iihui.github.io/post/qa_install_brew-nsconflict-halo-mac10.15.5/
                 <br />声明：自由转载-非商用-保持署名（创作共享4.0许可证）
             </p>
         </div>
@@ -469,22 +432,8 @@ code.has-jax {
     <div class="post-toc">
         <div class="post-toc-content"><nav id="TableOfContents">
   <ul>
-    <li><a href="#第一步">第一步</a>
-      <ul>
-        <li><a href="#第一个地方">第一个地方</a></li>
-        <li><a href="#第二个地方">第二个地方</a></li>
-        <li><a href="#第三个地方">第三个地方</a></li>
-      </ul>
-    </li>
-    <li><a href="#第二步">第二步</a>
-      <ul>
-        <li><a href="#第一个地方-1">第一个地方</a></li>
-        <li><a href="#第二个地方-1">第二个地方</a></li>
-      </ul>
-    </li>
-    <li><a href="#第三步">第三步</a></li>
-    <li><a href="#第四步">第四步</a></li>
-    <li><a href="#第五步">第五步</a></li>
+    <li><a href="#安装homebrew">安装Homebrew</a></li>
+    <li><a href="#安装并启用新curl">安装并启用新curl</a></li>
   </ul>
 </nav></div>
     </div>
