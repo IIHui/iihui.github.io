@@ -36,6 +36,58 @@ katex.html文件的内容如下所示：
     </entry>
     
      <entry>
+        <title>字典</title>
+        <url>https://iihui.github.io/post/ios-dict/</url>
+        <categories>
+          <category>iOS</category>
+        </categories>
+        <tags>
+          <tag>iOS</tag>
+        </tags>
+        <content type="html"> 字典合并 第一个字典先提供一些默认值，对于相同的key如果第二个字典中存在相应的value，则第一个字典的value被第二个字典覆盖掉。
+//默认字段 var defaultInfo: [String: Any] = [ &amp;#34;sys_id&amp;#34;: sysID, &amp;#34;type&amp;#34;: action.rawValue, &amp;#34;ystId&amp;#34;: activeUser.pid, &amp;#34;deviceId&amp;#34;: deviceID, &amp;#34;platform&amp;#34;: platform, &amp;#34;pubVer&amp;#34;: pubVersion, &amp;#34;buildVer&amp;#34;: buildVersion, &amp;#34;deviceModel&amp;#34;: deviceModel, &amp;#34;serverTime&amp;#34;: logTime, &amp;#34;deviceTime&amp;#34;: deviceTimeStr, &amp;#34;startTime&amp;#34;: logTime, &amp;#34;endTime&amp;#34;: logTime, &amp;#34;networkType&amp;#34;: networkInfo._networkType, &amp;#34;networkName&amp;#34;: networkInfo._networkName, &amp;#34;ip&amp;#34;: networkInfo.ip, &amp;#34;inuseId&amp;#34;: inuseID, &amp;#34;gpsLng&amp;#34;: gps.lng, &amp;#34;gpsLat&amp;#34;: gps.lat, ] if let _args = args { defaultInfo.merge(_args, uniquingKeysWith: { $1 }) //注意是用defaultInfo去merge字典_args } </content>
+    </entry>
+    
+     <entry>
+        <title>时间相关</title>
+        <url>https://iihui.github.io/post/ios-date/</url>
+        <categories>
+          <category>iOS</category>
+        </categories>
+        <tags>
+          <tag>iOS</tag>
+        </tags>
+        <content type="html"> 毫秒级时间戳距当前时间 ///将毫秒级别的时间戳转换为约定的格式，0～60秒显示几秒前，1～60分显示xx分钟前，1～24小时显示xx小时前，1～10天显示xx天前，否则显示yyyy-MM-dd ///-ParametertimeStamp:毫秒级别时间戳字符串 ///-Returns:转换后的字符串 private func convertTime(timeStamp: String) -&amp;gt; String { let currentTimeSeconds = Date().timeIntervalSince1970 if let timeDouble = Double(timeStamp) { let timeStampSeconds: TimeInterval = TimeInterval(timeDouble / 1000) let reduceTime: TimeInterval = currentTimeSeconds - timeStampSeconds //时间差小于60秒 if reduceTime &amp;lt; 60 { return &amp;#34;几秒前&amp;#34; } //时间差大于一分钟小于60分钟内 let minutes = Int(reduceTime / 60) if minutes &amp;lt; 60 { return &amp;#34;\(minutes)分钟前&amp;#34; } let hours = Int(reduceTime / 3600) if hours &amp;lt; 24 { return &amp;#34;\(hours)小时前&amp;#34; } let days = Int(reduceTime / 3600 / 24) if days &amp;lt; 10 { return &amp;#34;\(days)天前&amp;#34; } let date = NSDate(timeIntervalSince1970: timeStampSeconds) let dateFormat = DateFormatter() dateFormat.dateFormat = &amp;#34;yyyy-MM-dd&amp;#34; return dateFormat.string(from: date as Date) } else { return &amp;#34;未知时间&amp;#34; } }  </content>
+    </entry>
+    
+     <entry>
+        <title>富文本</title>
+        <url>https://iihui.github.io/post/ios-richtext/</url>
+        <categories>
+          <category>iOS</category>
+        </categories>
+        <tags>
+          <tag>iOS</tag>
+        </tags>
+        <content type="html"> 在文字后面添加红点 ///使用富文本的方式在UILabel文本后面添加红点 ///-Parameteradd:isNeedAdd为true表示要加红点，否则不需要 ///-Returns:处理后的富文本 func addRedDot(isNeedAdd: Bool) -&amp;gt; NSMutableAttributedString { var text: String = (self.text ?? &amp;#34;&amp;#34;) if isNeedAdd { text &#43;= &amp;#34;&amp;#34; let contentText = NSMutableAttributedString(string: text) let attach = NSTextAttachment() let dotImg = UIImage(named: &amp;#34;reddot&amp;#34;) let width: CGFloat = 10 attach.bounds = CGRect(x: 0, y: 0.5, width: width, height: width) attach.image = dotImg let attrText = NSMutableAttributedString(attachment: attach) attrText.insert(contentText, at: 0) return attrText } else { let attrText = NSMutableAttributedString(string: text) return attrText } }  文字前面添加标签 ///标题前面添加红底白字的标签，参考自https://www.jianshu.com/p/ab7ada727606 ///-Parameters: ///-category:标签类别 ///-title:真正的标题 func addCategoryBackground(category: String, title: String) -&amp;gt; NSMutableAttributedString { //设计要求title前面需要有空格 let contentText = NSMutableAttributedString(string: &amp;#34;&amp;#34; &#43; title) let paragraphStyle = NSMutableParagraphStyle() paragraphStyle.lineSpacing = self.lineSpace paragraphStyle.lineBreakMode = .byWordWrapping if #available(iOS 9.0, *) { paragraphStyle.allowsDefaultTighteningForTruncation = true } //设计要求category前后都需要有空格 let text = &amp;#34;&amp;#34; &#43; category &#43; &amp;#34;&amp;#34; let width = calculateWidth(text: text, height: self.categoryHeight, font: UIFont.systemFont(ofSize: self.categoryFontSize, weight: .regular), maxWidth: CGFloat.greatestFiniteMagnitude) let tmpLbl = UILabel(frame: CGRect(x: 0.0, y: 0.0, width: self.multiple * width, height: self.multiple * self.categoryHeight)) tmpLbl.text = text tmpLbl.font = UIFont.systemFont(ofSize: self.multiple * self.categoryFontSize, weight: .regular) tmpLbl.backgroundColor = UIColor.hexColor(&amp;#34;ed534d&amp;#34;) tmpLbl.textColor = .white tmpLbl.clipsToBounds = true tmpLbl.cornerRadius = self.categoryCornerRadius tmpLbl.textAlignment = .center if let image = labelConvertToImage(view: tmpLbl) { let attach = NSTextAttachment() attach.bounds = CGRect(x: 0, y: self.categoryHeightSkewing, width: width, height: self.categoryHeight) attach.image = image let attrText = NSAttributedString(attachment: attach) contentText.insert(attrText, at: 0) let attributes = [NSAttributedString.Key.paragraphStyle: paragraphStyle] contentText.addAttributes(attributes, range: NSRange(location: 0, length: contentText.length)) } return contentText } ///将UIView转换为UIImage，以便AttributedString使用图文混排 ///-Parameterview:待转换的view ///-Returns:转换后的图片 private func labelConvertToImage(view: UIView) -&amp;gt; UIImage? { var image: UIImage? = nil UIGraphicsBeginImageContext(view.bounds.size) if let context = UIGraphicsGetCurrentContext() { view.layer.render(in: context) image = UIGraphicsGetImageFromCurrentImageContext() UIGraphicsEndImageContext() } return image }  自动计算宽度 自动计算宽度分为两种，第一种以一个UILabel作为试探，使用sizeToFit()来计算；另一种是使用字符串的boundingRect来计算，如下代码所示：
+///动态计算给定字符串在固定高度下的宽度，若小于最大宽度则返回实际宽度，否则返回最大宽度 ///-Parameters: ///-text:待计算的字符串 ///-height:固定的高度 ///-font:固定的字体 ///-maxWidth:允许最大的宽度 private func calculateWidth(text: String, height: CGFloat, font: UIFont, maxWidth: CGFloat) -&amp;gt; CGFloat { let tmpLbl = UILabel(frame: CGRect(x: 0, y: 0, width: CGFloat.greatestFiniteMagnitude, height: height)) tmpLbl.numberOfLines = 0 tmpLbl.lineBreakMode = .byCharWrapping tmpLbl.font = font tmpLbl.text = text tmpLbl.sizeToFit() let width = tmpLbl.frame.width &amp;gt; maxWidth ? maxWidth : tmpLbl.frame.width return width } ///根据高度和字体大小计算字符串宽度 func widthWithConstrainedHeight(height: CGFloat, fontSize: CGFloat) -&amp;gt; CGFloat { let constraintRect = CGSize(width: .greatestFiniteMagnitude, height: height) let boundingBox = self.boundingRect(with: constraintRect, options: [.usesLineFragmentOrigin, .usesFontLeading], attributes: [NSAttributedString.Key.font: UIFont.systemFont(ofSize: fontSize)], context: nil) return boundingBox.width }  </content>
+    </entry>
+    
+     <entry>
+        <title>导航栏</title>
+        <url>https://iihui.github.io/post/ios-navigation/</url>
+        <categories>
+          <category>iOS</category>
+        </categories>
+        <tags>
+          <tag>iOS</tag>
+        </tags>
+        <content type="html"> 仿导航栏添加阴影 //设置阴影颜色 navBGView.layer.shadowColor = UIColor.lightGray.cgColor //设置阴影偏移范围 navBGView.layer.shadowOffset = CGSize(width: 0, height: 1.8) //设置阴影颜色的透明度 navBGView.layer.shadowOpacity = 0.2 //设置阴影的半径 navBGView.layer.shadowRadius = 2.5 //设置阴影路径 navBGView.layer.shadowPath = UIBezierPath.init(rect: navBGView.bounds).cgPath 通过设置1.2.3步仿导航栏的阴影就可以出现,如果对阴影有特别的需要,可再设置4.5这两个步骤。
+参考资料
+ </content>
+    </entry>
+    
+     <entry>
         <title>Live JavaScript debug</title>
         <url>https://iihui.github.io/post/safari-debug/</url>
         <categories>
