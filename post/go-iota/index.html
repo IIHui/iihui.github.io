@@ -241,7 +241,7 @@ code.has-jax {
     <i class="fa fa-file-word-o"></i>
 </span>
 <span class="post-meta-item-text">字数: </span>
-<span class="leancloud-visitors-count">407</span>
+<span class="leancloud-visitors-count">445</span>
 &nbsp; | &nbsp;
 <span class="post-meta-item-icon">
     <i class="fa fa-coffee"></i>
@@ -255,7 +255,7 @@ code.has-jax {
     <blockquote>
 <p><code>Go</code>中没明确意义上的<code>enum</code>定义，但是可以<!-- raw HTML omitted -->借助<code>iota</code>来生成一组自增常量值来实现枚举<!-- raw HTML omitted -->，<code>iota</code>是一个比较奇怪的存在，它<!-- raw HTML omitted -->只能用在<code>const</code>的声明中，是一个从<code>0</code>开始的行数索引器<!-- raw HTML omitted -->。</p>
 </blockquote>
-<h2 id="注意">注意</h2>
+<h2 id="iota-按行递增">iota 按行递增</h2>
 <p>首先，<code>iota</code>是一个行数索引器,它是按行递增的。</p>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#66d9ef">const</span> (
 	<span style="color:#a6e22e">x1</span> = <span style="color:#66d9ef">iota</span> <span style="color:#75715e">//x1=0
@@ -264,26 +264,34 @@ code.has-jax {
 </span><span style="color:#75715e"></span>	<span style="color:#a6e22e">x4</span>        <span style="color:#75715e">//x4=3
 </span><span style="color:#75715e"></span>)
 
-<span style="color:#a6e22e">fmt</span>.<span style="color:#a6e22e">Println</span>(<span style="color:#a6e22e">x1</span>, <span style="color:#a6e22e">x2</span>, <span style="color:#a6e22e">x3</span>, <span style="color:#a6e22e">x4</span>) <span style="color:#75715e">//0,1,2,3
-</span><span style="color:#75715e"></span>
-<span style="color:#66d9ef">const</span> (
+<span style="color:#a6e22e">fmt</span>.<span style="color:#a6e22e">Println</span>(<span style="color:#a6e22e">x1</span>, <span style="color:#a6e22e">x2</span>, <span style="color:#a6e22e">x3</span>, <span style="color:#a6e22e">x4</span>) <span style="color:#75715e">//0 1 2 3
+</span></code></pre></div><div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#66d9ef">const</span> (
+	<span style="color:#a6e22e">_</span>, <span style="color:#a6e22e">_</span> = <span style="color:#66d9ef">iota</span>, <span style="color:#66d9ef">iota</span> <span style="color:#f92672">*</span> <span style="color:#ae81ff">10</span>  <span style="color:#75715e">//0 0*10
+</span><span style="color:#75715e"></span>	<span style="color:#a6e22e">a</span>, <span style="color:#a6e22e">b</span>  <span style="color:#75715e">//1  1*10
+</span><span style="color:#75715e"></span>	<span style="color:#a6e22e">c</span>, <span style="color:#a6e22e">d</span>  <span style="color:#75715e">//2  2*10
+</span><span style="color:#75715e"></span>)
+</code></pre></div><div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#66d9ef">const</span> (
 	<span style="color:#a6e22e">_</span>  = <span style="color:#66d9ef">iota</span>             <span style="color:#75715e">//iota 代表0
 </span><span style="color:#75715e"></span>	<span style="color:#a6e22e">KB</span> = <span style="color:#ae81ff">1</span> <span style="color:#f92672">&lt;&lt;</span> (<span style="color:#ae81ff">10</span> <span style="color:#f92672">*</span> <span style="color:#66d9ef">iota</span>) <span style="color:#75715e">//iota 代表1
 </span><span style="color:#75715e"></span>	<span style="color:#a6e22e">MB</span>                    <span style="color:#75715e">//iota 代表2
 </span><span style="color:#75715e"></span>	<span style="color:#a6e22e">GB</span>
 )
-<span style="color:#a6e22e">fmt</span>.<span style="color:#a6e22e">Println</span>(<span style="color:#a6e22e">KB</span>, <span style="color:#a6e22e">MB</span>, <span style="color:#a6e22e">GB</span>) <span style="color:#75715e">//1024 1048576 1073741824
-</span></code></pre></div><p>如果中断<code>iota</code>自增，则必须显式恢复，且<!-- raw HTML omitted -->后续自增按行序递增<!-- raw HTML omitted -->，<!-- raw HTML omitted -->而不是<code>C++</code>语言中的<code>enum</code>那样按上一个取值递增<!-- raw HTML omitted -->。</p>
+println(<span style="color:#a6e22e">KB</span>,<span style="color:#a6e22e">MB</span>,<span style="color:#a6e22e">GB</span>) <span style="color:#75715e">//1024 1048576 1073741824
+</span></code></pre></div><hr>
+<h2 id="iota恢复">iota恢复</h2>
+<p>如果中断<code>iota</code>自增，则必须显式恢复，且<!-- raw HTML omitted -->后续自增按行序递增<!-- raw HTML omitted -->，<!-- raw HTML omitted -->而不是<code>C++</code>语言中的<code>enum</code>那样按上一个取值递增<!-- raw HTML omitted -->。</p>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#66d9ef">const</span> (
 	<span style="color:#a6e22e">a</span> = <span style="color:#66d9ef">iota</span>
-	<span style="color:#a6e22e">b</span>
-	<span style="color:#a6e22e">c</span> = <span style="color:#ae81ff">100</span>  <span style="color:#75715e">//中断iota的计数
-</span><span style="color:#75715e"></span>	<span style="color:#a6e22e">d</span>        <span style="color:#75715e">//100
-</span><span style="color:#75715e"></span>	<span style="color:#a6e22e">e</span> = <span style="color:#66d9ef">iota</span> <span style="color:#75715e">//4，显式恢复，因为是行增，所以得到是4
-</span><span style="color:#75715e"></span>	<span style="color:#a6e22e">f</span>        <span style="color:#75715e">//5
+	<span style="color:#a6e22e">b</span>        <span style="color:#75715e">// 1
+</span><span style="color:#75715e"></span>	<span style="color:#a6e22e">c</span> = <span style="color:#ae81ff">100</span>  <span style="color:#75715e">// 中断iota的计数
+</span><span style="color:#75715e"></span>	<span style="color:#a6e22e">d</span>        <span style="color:#75715e">// 100
+</span><span style="color:#75715e"></span>	<span style="color:#a6e22e">e</span> = <span style="color:#66d9ef">iota</span> <span style="color:#75715e">// 4，显式恢复，因为是行增，所以得到是4
+</span><span style="color:#75715e"></span>	<span style="color:#a6e22e">f</span>        <span style="color:#75715e">// 5
 </span><span style="color:#75715e"></span>)
 <span style="color:#a6e22e">fmt</span>.<span style="color:#a6e22e">Println</span>(<span style="color:#a6e22e">a</span>, <span style="color:#a6e22e">b</span>, <span style="color:#a6e22e">c</span>, <span style="color:#a6e22e">d</span>, <span style="color:#a6e22e">e</span>, <span style="color:#a6e22e">f</span>) <span style="color:#75715e">//0 1 100 100 4 5
-</span></code></pre></div><p>可在多常量中定义中使用多个<code>iota</code>，他们是各自单独计数，只须<!-- raw HTML omitted -->确保组中每行常量的列数量相同<!-- raw HTML omitted -->即可。</p>
+</span></code></pre></div><hr>
+<h2 id="多个iota">多个iota</h2>
+<p>可在多常量中定义中使用多个<code>iota</code>，他们是各自单独计数，只须<!-- raw HTML omitted -->确保组中每行常量的列数量相同<!-- raw HTML omitted -->即可。</p>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#66d9ef">const</span> (
 	<span style="color:#a6e22e">_</span>, <span style="color:#a6e22e">_</span> = <span style="color:#66d9ef">iota</span>, <span style="color:#66d9ef">iota</span>
 	<span style="color:#a6e22e">a</span>, <span style="color:#a6e22e">b</span>
@@ -322,7 +330,7 @@ code.has-jax {
 
     <div class="post-nav-prev post-nav-item">
     
-        <a href="https://iihui.github.io/post/go-let/" rel="prev" title="go常量">
+        <a href="https://iihui.github.io/post/go-const-1/" rel="prev" title="go常量">
         go常量 <i class="fa fa-chevron-right"></i>
         </a>
     
@@ -463,7 +471,9 @@ code.has-jax {
   <ul>
     <li>
       <ul>
-        <li><a href="#注意">注意</a></li>
+        <li><a href="#iota-按行递增">iota 按行递增</a></li>
+        <li><a href="#iota恢复">iota恢复</a></li>
+        <li><a href="#多个iota">多个iota</a></li>
       </ul>
     </li>
   </ul>
