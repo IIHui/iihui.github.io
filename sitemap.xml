@@ -45,7 +45,10 @@ katex.html文件的内容如下所示：
           <tag>go</tag>
         </tags>
         <content type="html">  常量值必须是编译期间可确定的字符、字符串、数字或者布尔值。常量的类型可以指定，或者由编译器通过初始化值推断，不支持C或者C&#43;&#43;数字类型后缀。可在函数代码块中定义常量，不使用的常量不会引发编译错误。
- const x, y int = 12, 0x12 const s = &amp;#34;hello world&amp;#34; const c = &amp;#39;我&amp;#39; const ( i, f = 1, 0.123 b = false ) </content>
+ const x, y int = 12, 0x12 const s = &amp;#34;hello world&amp;#34; const c = &amp;#39;我&amp;#39; const ( i, f = 1, 0.123 b = false ) 在定义常量时，如果显式指定类型，必须确保常量左右值类型一致，需要时可做显式转换。右值不能超出常量类型的取值范围，否则会引发溢出错误。
+const ( x, y int = 99, -999 b byte = byte(x) //x是int类型必须显式转换为byte 	n = uint8(y) //转换溢出，会报错 ) 常量值也可以是某些编译器能够计算出结果的表达式，如unsafe.SizeOf,len,cap等。
+const ( ptrSize = unsafe.Sizeof(uintptr(0)) strSize = len(&amp;#34;hello world&amp;#34;) ) 在常量组中如果不指定类型和初始值，则与上一行非空常量右值（表达式文本）相同。
+const ( x uint16 = 120 y s = &amp;#34;abc&amp;#34; z ) println(x, y, s, z) // 120 120 abc abc </content>
     </entry>
     
      <entry>
