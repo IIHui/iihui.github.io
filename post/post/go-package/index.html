@@ -1,0 +1,598 @@
+<!DOCTYPE HTML>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" /> 
+    <title>Go 包 - Keep It Simple</title>
+    <meta name="keywords" content="博客,思考,读书,笔记,技术,分享">
+    
+    <meta property="og:title" content="Go 包">
+    <meta property="og:site_name" content="Keep It Simple">
+    <meta property="og:image" content="/img/author.jpg"> 
+    <meta name="title" content="Go 包 - Keep It Simple" />
+    <meta name="description" content="Swift | Go | C&#43;&#43; "> 
+    <link rel="shortcut icon" href="https://iihui.github.io/img/favicon.ico" />
+    <link rel="apple-touch-icon" href="https://iihui.github.io/img/apple-touch-icon.png" />
+    <link rel="apple-touch-icon-precomposed" href="https://iihui.github.io/img/apple-touch-icon.png" />
+    <link href="https://iihui.github.io/js/vendor/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+    <link href="https://iihui.github.io/js/vendor/fancybox/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+    <link href="https://iihui.github.io/css/main.css" rel="stylesheet" type="text/css" />
+    <link href="https://iihui.github.io/css/custom.css" rel="stylesheet" type="text/css" />
+    <link href="https://iihui.github.io/css/syntax.css" rel="stylesheet" type="text/css" />
+    <script type="text/javascript" id="hexo.configuration">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    scheme: 'Pisces',
+    sidebar: {"position":"left","display":"post"},
+     fancybox: true, 
+    motion: true
+  };
+</script>
+
+    <link href="https://cdn.bootcss.com/highlight.js/9.12.0/styles/monokai-sublime.min.css" rel="stylesheet">
+    <script src="https://cdn.bootcss.com/highlight.js/9.12.0/highlight.min.js"></script>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/languages/go.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/languages/swift.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.1/languages/objectivec.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.1/languages/clojure.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.1/languages/cpp.min.js"></script>
+    <script>hljs.initHighlightingOnLoad();</script>
+
+
+</head>
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+<div class="container one-collumn sidebar-position-left page-home  ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"> <div class="site-meta  custom-logo ">
+
+  <div class="custom-logo-site-title">
+    <a href="https://iihui.github.io/"  class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <span class="site-title">Keep It Simple</span>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+  <p class="site-subtitle">靡不有初，鲜克有终</p>
+</div>
+
+<div class="site-nav-toggle">
+  <button>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+  </button>
+</div>
+
+<nav class="site-nav">
+    <ul id="menu" class="menu">
+      
+      
+        <li class="menu-item ">
+          <a href="https://iihui.github.io/" rel="section">
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />首页
+          </a>
+        </li>
+      
+        <li class="menu-item ">
+          <a href="https://iihui.github.io/tags/" rel="section">
+              <i class="menu-item-icon fa fa-fw fa-tag"></i> <br />标签
+          </a>
+        </li>
+      
+        <li class="menu-item ">
+          <a href="https://iihui.github.io/post/" rel="section">
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />归档
+          </a>
+        </li>
+      
+        <li class="menu-item ">
+          <a href="https://iihui.github.io/categories/%E7%BE%8E%E9%A3%9F/" rel="section">
+              <i class="menu-item-icon fa fa-fw fa-fire"></i> <br />美食
+          </a>
+        </li>
+      
+        <li class="menu-item ">
+          <a href="https://iihui.github.io/categories/%E5%90%8E%E6%9C%9F/" rel="section">
+              <i class="menu-item-icon fa fa-fw fa-edit"></i> <br />后期
+          </a>
+        </li>
+      
+        <li class="menu-item ">
+          <a href="https://iihui.github.io/categories/%E6%97%85%E8%A1%8C/" rel="section">
+              <i class="menu-item-icon fa fa-fw fa-leaf"></i> <br />旅行
+          </a>
+        </li>
+      
+        <li class="menu-item ">
+          <a href="https://iihui.github.io/about/" rel="section">
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />关于
+          </a>
+        </li>
+      
+      <li class="menu-item menu-item-search">
+        <a href="javascript:;" class="popup-trigger"> <i class="menu-item-icon fa fa-search fa-fw"></i> <br /> 搜索</a>
+      </li>
+    </ul>
+    <div class="site-search">
+      <div class="popup">
+ <span class="search-icon fa fa-search"></span>
+ <input type="text" id="local-search-input">
+ <div id="local-search-result"></div>
+ <span class="popup-btn-close">close</span>
+</div>
+
+    </div>
+</nav>
+<script type="text/javascript"
+        async
+        src="https://cdn.bootcss.com/mathjax/2.7.3/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+		<!-- src = "http://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"> <\!--  -\-> -->
+MathJax.Hub.Config({
+  tex2jax: {
+    inlineMath: [['$','$'], ['\\(','\\)']],
+    displayMath: [['$$','$$'], ['\[\[','\]\]']],
+    processEscapes: true,
+    processEnvironments: true,
+    skipTags: ['script', 'noscript', 'style', 'textarea', 'pre'],
+    TeX: { equationNumbers: { autoNumber: "AMS" },
+         extensions: ["AMSmath.js", "AMSsymbols.js"] }
+  }
+});
+
+MathJax.Hub.Queue(function() {
+    
+    
+    
+    var all = MathJax.Hub.getAllJax(), i;
+    for(i = 0; i < all.length; i += 1) {
+        all[i].SourceElement().parentNode.className += ' has-jax';
+    }
+});
+</script>
+
+<style>
+code.has-jax {
+    font: inherit;
+    font-size: 100%;
+    background: inherit;
+    border: inherit;
+    color: #515151;
+}
+</style>
+
+<!DOCTYPE html>
+<html lang="en">
+
+
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.10.0-rc.1/dist/katex.min.css" integrity="sha384-D+9gmBxUQogRLqvARvNLmA9hS2x//eK1FhVb9PiU86gmcrBrJAQT8okdJ4LMp2uv" crossorigin="anonymous">
+
+    
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.10.0-rc.1/dist/katex.min.js" integrity="sha384-483A6DwYfKeDa0Q52fJmxFXkcPCFfnXMoXblOkJ4JcA8zATN6Tm78UNL72AKk+0O" crossorigin="anonymous"></script>
+</head>
+<body>
+
+</body>
+</html>
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+<section id="posts" class="posts-expand">
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <header class="post-header">
+      <h1 class="post-title" itemprop="name headline">
+        <a class="post-title-link" href="https://iihui.github.io/post/post/go-package/" itemprop="url">
+        Go 包
+        </a>
+      </h1>
+      <div class="post-meta">
+      <span class="post-time">
+<span class="post-meta-item-icon">
+    <i class="fa fa-calendar-o"></i>
+</span>
+<span class="post-meta-item-text">创建: </span>
+<time itemprop="dateCreated" datetime="2016-03-22T13:04:35+08:00" content="2017-07-29">
+    2017-07-29
+</time>
+</span>
+&nbsp; | &nbsp;
+<span class="post-updated-time">
+<span class="post-meta-item-icon">
+    <i class="fa fa-calendar-check-o"></i>
+</span>
+<span class="post-meta-item-text">更新: </span>
+<time itemprop="dateUpdated" content="2017-07-29">
+    2017-07-29
+</time>
+</span> 
+      
+
+  <span class="post-category" >
+  &nbsp; | &nbsp;
+  <span class="post-meta-item-icon">
+    <i class="fa fa-folder-o"></i>
+  </span>
+  <span class="post-meta-item-text">分类: </span>
+  
+    <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
+      <a href="https://iihui.github.io/categories/code" itemprop="url" rel="index">
+        <span itemprop="name">code</span>
+      </a>
+      &nbsp; 
+    </span>
+  
+</span>
+
+
+      <span>
+&nbsp; | &nbsp;
+<span class="post-meta-item-icon">
+    <i class="fa fa-file-word-o"></i>
+</span>
+<span class="post-meta-item-text">字数: </span>
+<span class="leancloud-visitors-count">2449</span>
+&nbsp; | &nbsp;
+<span class="post-meta-item-icon">
+    <i class="fa fa-coffee"></i>
+</span>
+<span class="post-meta-item-text">阅读: </span>
+<span class="leancloud-visitors-count">5 分钟</span>
+</span>
+      </div>
+    </header>
+    <div class="post-body" itemprop="articleBody">
+    <blockquote>
+<p>包是结构化的一种方式,所有<code>Go</code>语言的程序都会组织成若干组文件，每组文件被称为一个包。每个文件都<!-- raw HTML omitted -->属于且仅属于一个包，<!-- raw HTML omitted -->一个包中可以包含许多以<code>.go</code>为扩展名的源文件。</p>
+</blockquote>
+<h2 id="包中源文件">包中源文件</h2>
+<p>源文件都使用<code>UTF-8</code>编码，<!-- raw HTML omitted -->每个源文件都属于包的一部分<!-- raw HTML omitted -->，在文件头部用<code>package</code>声明所属包。</p>
+<p>每一个可独立运行的Go语言程序必定包含一个<code>main</code>包，在这个<code>main</code>包中必定包含一个入口函数<code>main</code>，这个函数没有参数也没有返回值。</p>
+<p>入口<!-- raw HTML omitted -->函数<code>main</code>没有参数，必须放到<code>main</code>包中<!-- raw HTML omitted -->，如果 <code>main</code>函数没有放到<code>main</code>包中，构建工具就不会生成可执行文件。</p>
+<p>如果一个源文件被声明属于<code>main</code>代码包，且该文件代码中包含无参数声明和无返回值声明的<code>main</code>函数，则它是<!-- raw HTML omitted -->命令源码文件<!-- raw HTML omitted -->。命令源文件可以通过<code>go run</code>命令直接启动运行。</p>
+<p>同一个代码包中可以有多个命令源文件，可通过<code>go run</code>命令分别运行，但这会使<code>go build</code>和<code>go install</code>命令无法编译和安装该代码包，因此不应该把多个命令源文件放入到同一个包中。</p>
+<p>库源码文件声明的包名会和它所属的目录名一致（建议这样做），且库源码文件中不包含无参数声明和无返回值声明的<code>main</code>函数。</p>
+<hr>
+<h2 id="工作空间">工作空间</h2>
+<p><code>Go</code>的工作空间就是一个对应于特定工程的目录，它包含<code>3</code>个目录，分别是<code>src、bin、pkg</code>目录。</p>
+<ul>
+<li>
+<p><code>src</code>目录用以代码包的形式组织并保存<code>Go</code>源码文件。</p>
+</li>
+<li>
+<p><code>pkg</code>目录用以保存使用<code>go install</code>命令安装后的代码包的归档文件。归档文件是指那些以<code>.a</code>结尾的文件。该目录与<code>GOROOT</code>目录下的<code>pkg</code>目录的功能类似，区别在于工作区下的<code>pkg</code>目录保存的用户代码的归档文件。</p>
+</li>
+<li>
+<p><code>bin</code>目录，与<code>pkg</code>目录类似，在通过<code>go install</code>命令完成安装后，保存由<code>Go</code>命令源码文件生成的可执行文件。</p>
+</li>
+</ul>
+<p>通常<!-- raw HTML omitted -->需要将工作空间的路径添加<code>GOPATH</code>环境变量列表中，<!-- raw HTML omitted -->工作空间可以有一个或者多个。</p>
+<ul>
+<li>
+<p><code>GOPATH</code>中不要包含<code>Go</code>语言的根目录，以便将<code>Go</code>语言本身的工作空间同用户的工作区严格分开。</p>
+</li>
+<li>
+<p>通过<code>go install</code>命令获取的源码，将会下载到<code>GOPATH</code>中设定的<!-- raw HTML omitted -->第一个工作空间中，并在其中完成编译和安装<!-- raw HTML omitted -->。</p>
+</li>
+<li>
+<p>只有当环境变量<code>GOPATH</code>中只包含一个工作区的目录路径时，<code>go install</code>命令才会把命令的源码文件安装到当前工作区的<code>bin</code>目录下。否则执行<code>go install</code>就会出错，此时需要设置环境变量<code>GOBIN</code>，用于存放所有因安装<code>Go</code>命令源码文件而产生的可执行文件。</p>
+</li>
+</ul>
+<p>在工作空间里，包括子包在内的所有源码文件都保存在<code>src</code>目录下。至于<code>bin、pkg</code>两个目录，其主要影响<code>go install/get</code> 命令，它们<!-- raw HTML omitted -->将编译结果安装到两个目录下，以实现增量编译。<!-- raw HTML omitted --></p>
+<p>使用标准库或第三方包前，须用<code>import</code>导入，参数是工作空间中以<code>src</code>为起始的绝对路径。</p>
+<p>对于一个导入的包，编译器<!-- raw HTML omitted -->首先从标准库开始搜索，如果未找到然后就依次搜索<code>GOPATH</code>列表中的各个工作空间<!-- raw HTML omitted -->。一旦找到了导入的包，即刻停止搜索。</p>
+<p>编译器等相关工具按<code>GOPATH</code>设置的路径搜索目标，导入目标库时，<!-- raw HTML omitted -->排在列表前面的路径比当前工作空间的优先级别更高<!-- raw HTML omitted -->。其中<!-- raw HTML omitted --><code>go get</code>默认将下载的第三方包保存到列表中的第一个工作空间内<!-- raw HTML omitted -->。</p>
+<p>环境变量<code>GOROOT</code>用于<!-- raw HTML omitted -->指示工具链和标准库的存放路径<!-- raw HTML omitted -->。环境变量<code>PATH</code>中也应该添加一项<code>GOROOT/bin</code>，这样就可以在任意目录中使用Go的命令了。</p>
+<hr>
+<h2 id="4种方式导入">4种方式导入</h2>
+<p>使用标准库或第三方包，须用<code>import</code>导入，参数是工作空间中以<code>src</code>目录为起始的绝对路径。</p>
+<p><code>import</code>语句告诉编译器到磁盘的哪里去找想要导入的包，编译器会使用Go环境变量设置的路径，通过引入的相对路径来查找磁盘上的包。</p>
+<p>编译器<!-- raw HTML omitted -->首先会查找Go的安装目录，然后才会按顺序查找<code>GOPATH</code>变量中列出的目录<!-- raw HTML omitted -->。包的导入，总共有四种方式：</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#f92672">import</span>   <span style="color:#e6db74">&#34;study/test&#34;</span> <span style="color:#75715e">//默认方式： test.A
+</span><span style="color:#75715e"></span><span style="color:#f92672">import</span> <span style="color:#a6e22e">X</span> <span style="color:#e6db74">&#34;study/test&#34;</span> <span style="color:#75715e">//别名方式： X.A 
+</span><span style="color:#75715e"></span><span style="color:#f92672">import</span> . <span style="color:#e6db74">&#34;study/test&#34;</span> <span style="color:#75715e">//简便方式：A
+</span><span style="color:#75715e"></span><span style="color:#f92672">import</span> <span style="color:#a6e22e">_</span> <span style="color:#e6db74">&#34;study/test&#34;</span>  <span style="color:#75715e">//初始化方式，无法引用，仅用来初始化目标包，即调用init函数
+</span></code></pre></div><p>在Go中<!-- raw HTML omitted -->未使用的导入(不包括初始化方式)会被编译器视为错误<!-- raw HTML omitted -->，这与<code>C++</code>有很大的区别。</p>
+<hr>
+<h2 id="注意事项">注意事项</h2>
+<p>一个应用程序可以包含不同的包，按照惯例<!-- raw HTML omitted -->所有的包名都应该使用小写字母<!-- raw HTML omitted -->。在Go的安装文件中包含了一些可以直接使用的包——标准库。</p>
+<p>属于<!-- raw HTML omitted -->同一包的源文件必须全部一起被编译，一个包就是编译时的一个单元。<!-- raw HTML omitted -->如果对一个包进行了重新编译，那么使用了这个包的客户端程序必须全部重新编译。</p>
+<p>按照惯例，<!-- raw HTML omitted -->每个目录只包含一个包，包名一般和目录的名字相同，但这不是强制规定<!-- raw HTML omitted -->，包名和目录名可以不一样。</p>
+<p>除了标识符<code>_</code>,包中所有的代码对象的标识符必须是唯一的，以避免名称冲突，但是相同的标识符可以在不同的包中使用，因为可以使用包名来区分它们。</p>
+<p>当标识符<!-- raw HTML omitted -->以一个大写字母开头，那么它就可以被外部包的代码所使用，这种方式称之为包的导出<!-- raw HTML omitted -->。标识符如果以小写字母开头，则对外部包是不可见的，但是它们在内部包中是可见可用的。</p>
+<ul>
+<li>
+<p>处于<!-- raw HTML omitted -->同一文件夹下的代码文件，必须使用同一个包名<!-- raw HTML omitted -->。</p>
+</li>
+<li>
+<p>在Go中<!-- raw HTML omitted -->按照惯例包和文件夹<!-- raw HTML omitted -->同名。实际上，包名和目录名并无关系，不要求保持一致。</p>
+</li>
+<li>
+<p>程序中<!-- raw HTML omitted -->每个代码文件中的<code>init</code>函数都会在<code>main</code>函数之前被执行<!-- raw HTML omitted -->。执行顺序为全局变量的初始化、<code>init</code>函数的执行，<code>main</code>函数的执行。</p>
+</li>
+<li>
+<p>以下几个包被保留，有特殊含义</p>
+<ul>
+<li>
+<p><code>main</code>： 可执行入口（入口函数<code>main.main</code>)。</p>
+</li>
+<li>
+<p><code>all</code>: 标准库以及<code>GOPATH</code>中能找到的所有包。</p>
+</li>
+<li>
+<p><code>std,cmd</code>: 标准库以及工具链。</p>
+</li>
+<li>
+<p><code>documentation</code>: 存储文档信息，无法导入（和目录名无关）。</p>
+</li>
+</ul>
+</li>
+<li>
+<p>所有成员在包内均可访问，无论是否在同一源码文件中；但只有<!-- raw HTML omitted -->名称首字母大写的为可导出成员<!-- raw HTML omitted -->，在包外是可见的。</p>
+</li>
+<li>
+<p>包内每个源码文件<!-- raw HTML omitted -->可定义一到多个初始化<code>init</code>函数，但编译器不保证执行次序<!-- raw HTML omitted -->，实际上所有这些初始化函数（包括标准库和导入第三方包）都由编译器自动生成的一个包装函数进行调用，因此可保证在单一线程上执行，且执行一次。</p>
+</li>
+<li>
+<p>编译器<!-- raw HTML omitted -->首先①确保完成所有全局变量初始化，然后②才执行初始化函数。<!-- raw HTML omitted -->直到这些全部结束后，运行时才正式③进入到<code>main.main</code>入口函数。</p>
+</li>
+<li>
+<p>使用<code>import</code>导入标准库或第三方包，<!-- raw HTML omitted -->必须删除未使用的导入，否则编译器会将其当作错误处理<!-- raw HTML omitted -->。</p>
+</li>
+</ul>
+<hr>
+
+    </div>
+    <footer class="post-footer">
+        
+ 
+<div class="post-tags">     
+     
+    <a href="https://iihui.github.io/tags/go" rel="tag" title="Go">#Go#</a>
+    
+</div>
+
+
+
+        <div class="post-nav">
+    <div class="post-nav-next post-nav-item">
+    
+        <a href="https://iihui.github.io/post/go-package/" rel="next" title="Go 包">
+        <i class="fa fa-chevron-left"></i> Go 包
+        </a>
+    
+    </div>
+
+    <div class="post-nav-prev post-nav-item">
+    
+        <a href="https://iihui.github.io/post/go-data/" rel="prev" title="Go 数据">
+        Go 数据 <i class="fa fa-chevron-right"></i>
+        </a>
+    
+    </div>
+</div>
+      
+        <div class="post-nav">
+    <div style="border: 1px dashed #e0e0e0; padding: 10px 10px 10px 10px; background-color: #fffeee; background-repeat: no-repeat; background-attachment: scroll; background-position: 1% 50%; -moz-background-size: auto auto; -moz-background-clip: -moz-initial; -moz-background-origin: -moz-initial; -moz-background-inline-policy: -moz-initial;">
+        <div style="float:left;margin-top:0px;">
+            <img src="https://i.loli.net/2020/02/09/SvhUdz4XJsOr9Vk.jpg" width="128px" height="128px"/>
+            <div style="text-align:center;">谢谢支持!</div>
+        </div>
+        <div>
+            <p style="margin-top:10px;">
+                标题：Go 包
+                <br />作者：阿呆<a target="_blank" href="https://iihui.github.io/"></a>
+                
+                <br />地址：https://iihui.github.io/post/post/go-package/
+                <br />声明：自由转载-非商用-保持署名（创作共享4.0许可证）
+            </p>
+        </div>
+    </div>
+    <div class="clear"></div>
+</div>
+        
+        
+        
+
+
+
+
+    </footer>
+  </article>
+</section>
+
+          </div>
+        </div>
+        <div class="sidebar-toggle">
+  <div class="sidebar-toggle-line-wrap">
+    <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+    <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+    <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+  </div>
+</div>
+<aside id="sidebar" class="sidebar">
+  <div class="sidebar-inner">
+
+  <ul class="sidebar-nav motion-element">
+    <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+      文章目录
+    </li>
+    <li class="sidebar-nav-overview" data-target="site-overview">
+      站点概览
+    </li>
+  </ul>
+
+    <section class="site-overview sidebar-panel ">
+      <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image"
+        src="https://i.loli.net/2020/02/07/dVFzrvZkHRNq2lL.jpg"
+        alt="" />
+    <p class="site-author-name" itemprop="name"></p>
+    <p class="site-description motion-element" itemprop="description"> 
+        coder &amp; cook</p>
+</div>
+      <nav class="site-state motion-element">
+    <div class="site-state-item site-state-posts">
+      <a href="https://iihui.github.io/post/">
+        <span class="site-state-item-count">272</span>
+        <span class="site-state-item-name">日志</span>
+      </a>
+    </div>
+    <div class="site-state-item site-state-categories">    
+        <a href="https://iihui.github.io/categories/">      
+         
+        <span class="site-state-item-count">15</span>
+        
+        <span class="site-state-item-name">分类</span>
+        
+        </a>
+    </div>
+
+    <div class="site-state-item site-state-tags">
+        <a href="https://iihui.github.io/tags/">
+         
+        <span class="site-state-item-count">29</span>
+        
+        <span class="site-state-item-name">标签</span>
+        </a>
+    </div>
+</nav>
+      
+      
+<div class="links-of-author motion-element">
+    
+        <span class="links-of-author-item">
+        <a href="https://coolshell.cn" target="_blank" title="皓 大">
+            <i class="fa fa-fw fa-globe"></i>
+            皓 大
+        </a>
+        </span>
+    
+        <span class="links-of-author-item">
+        <a href="http://www.ruanyifeng.com" target="_blank" title="阮 大">
+            <i class="fa fa-fw fa-globe"></i>
+            阮 大
+        </a>
+        </span>
+    
+        <span class="links-of-author-item">
+        <a href="https://juejin.im/" target="_blank" title="掘 金">
+            <i class="fa fa-fw fa-globe"></i>
+            掘 金
+        </a>
+        </span>
+    
+        <span class="links-of-author-item">
+        <a href="http://www.ideamsg.com" target="_blank" title="灵 感">
+            <i class="fa fa-fw fa-globe"></i>
+            灵 感
+        </a>
+        </span>
+    
+</div>
+
+
+      
+
+      <div class="links-of-blogroll motion-element inline">
+<script type="text/javascript" src="//rf.revolvermaps.com/0/0/8.js?i=&amp;m=0&amp;s=220&amp;c=ff0000&amp;cr1=ffffff&amp;f=arial&amp;l=33&amp;bv=35" async="async"></script>
+</div>
+
+    </section>
+    
+<section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+    <div class="post-toc">
+        <div class="post-toc-content"><nav id="TableOfContents">
+  <ul>
+    <li>
+      <ul>
+        <li><a href="#包中源文件">包中源文件</a></li>
+        <li><a href="#工作空间">工作空间</a></li>
+        <li><a href="#4种方式导入">4种方式导入</a></li>
+        <li><a href="#注意事项">注意事项</a></li>
+      </ul>
+    </li>
+  </ul>
+</nav></div>
+    </div>
+</section>
+
+  </div>
+</aside>
+
+      </div>
+    </main>
+   
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  <span itemprop="copyrightYear">  &copy; 
+  2017 - 2020</span>
+  <span class="with-love"><i class="fa fa-heart"></i></span>
+  <span class="author" itemprop="copyrightHolder">Keep It Simple</span>
+</div>
+
+
+
+      </div>
+    </footer>
+
+    <div class="back-to-top">
+      <i class="fa fa-arrow-up"></i>
+      <span id="scrollpercent"><span>0</span>%</span>
+    </div>
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+<script type="text/javascript" src="https://iihui.github.io/js/vendor/jquery/index.js?v=2.1.3"></script>
+<script type="text/javascript" src="https://iihui.github.io/js/vendor/fastclick/lib/fastclick.min.js?v=1.0.6"></script> 
+<script type="text/javascript" src="https://iihui.github.io/js/vendor/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+<script type="text/javascript" src="https://iihui.github.io/js/vendor/velocity/velocity.min.js?v=1.2.1"></script>
+<script type="text/javascript" src="https://iihui.github.io/js/vendor/velocity/velocity.ui.min.js?v=1.2.1"></script>
+<script src="https://iihui.github.io/js/vendor/ua-parser-js/dist/ua-parser.min.js?v=0.7.9"></script>
+
+<script src="https://iihui.github.io/js/vendor/fancybox/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+<script type="text/javascript" src="https://iihui.github.io/js/utils.js"></script>
+<script type="text/javascript" src="https://iihui.github.io/js/motion.js"></script>
+<script type="text/javascript" src="https://iihui.github.io/js/affix.js"></script>
+<script type="text/javascript" src="https://iihui.github.io/js/schemes/pisces.js"></script>
+
+<script type="text/javascript" src="https://iihui.github.io/js/scrollspy.js"></script>
+<script type="text/javascript" src="https://iihui.github.io/js/post-details.js"></script>
+<script type="text/javascript" src="https://iihui.github.io/js/toc.js"></script>
+
+<script type="text/javascript" src="https://iihui.github.io/js/bootstrap.js"></script>
+
+<script type="text/javascript" src="https://iihui.github.io/js/search.js"></script>
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+    extensions: ["tex2jax.js"],
+    jax: ["input/TeX", "output/HTML-CSS"],
+    tex2jax: {
+      inlineMath: [ ['$','$'] ],
+      displayMath: [ ['$$','$$'] ],
+      processEscapes: true
+    },
+    "HTML-CSS": { fonts: ["TeX"] }
+  });
+</script>
+<script src='https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-AMS-MML_HTMLorMML' async></script>
+</body>
+</html>

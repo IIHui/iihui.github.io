@@ -1,0 +1,1274 @@
+<!DOCTYPE HTML>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" /> 
+    <title>iOS 启动时长优化 - Keep It Simple</title>
+    <meta name="keywords" content="博客,思考,读书,笔记,技术,分享">
+    
+    <meta property="og:title" content="iOS 启动时长优化">
+    <meta property="og:site_name" content="Keep It Simple">
+    <meta property="og:image" content="/img/author.jpg"> 
+    <meta name="title" content="iOS 启动时长优化 - Keep It Simple" />
+    <meta name="description" content="Swift | Go | C&#43;&#43; "> 
+    <link rel="shortcut icon" href="https://iihui.github.io/img/favicon.ico" />
+    <link rel="apple-touch-icon" href="https://iihui.github.io/img/apple-touch-icon.png" />
+    <link rel="apple-touch-icon-precomposed" href="https://iihui.github.io/img/apple-touch-icon.png" />
+    <link href="https://iihui.github.io/js/vendor/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+    <link href="https://iihui.github.io/js/vendor/fancybox/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+    <link href="https://iihui.github.io/css/main.css" rel="stylesheet" type="text/css" />
+    <link href="https://iihui.github.io/css/syntax.css" rel="stylesheet" type="text/css" />
+
+    <script type="text/javascript" id="hexo.configuration">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    scheme: 'Pisces',
+    sidebar: {"position":"left","display":"post"},
+     fancybox: true, 
+    motion: true
+  };
+</script>
+
+    <link href="https://cdn.bootcss.com/highlight.js/9.12.0/styles/monokai-sublime.min.css" rel="stylesheet">
+    <script src="https://cdn.bootcss.com/highlight.js/9.12.0/highlight.min.js"></script>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/languages/go.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/languages/swift.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.1/languages/objectivec.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.1/languages/clojure.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.1/languages/cpp.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.1/languages/kotlin.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.1/languages/yaml.min.js"></script>
+    <script>hljs.initHighlightingOnLoad();</script>
+</head>
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+<div class="container one-collumn sidebar-position-left page-home  ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"> <div class="site-meta  custom-logo ">
+
+  <div class="custom-logo-site-title">
+    <a href="https://iihui.github.io/"  class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <span class="site-title">Keep It Simple</span>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+  <p class="site-subtitle">靡不有初，鲜克有终</p>
+</div>
+
+<div class="site-nav-toggle">
+  <button>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+  </button>
+</div>
+
+<nav class="site-nav">
+    <ul id="menu" class="menu">
+      
+      
+        <li class="menu-item ">
+          <a href="https://iihui.github.io/" rel="section">
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />首页
+          </a>
+        </li>
+      
+        <li class="menu-item ">
+          <a href="https://iihui.github.io/tags/" rel="section">
+              <i class="menu-item-icon fa fa-fw fa-tag"></i> <br />标签
+          </a>
+        </li>
+      
+        <li class="menu-item ">
+          <a href="https://iihui.github.io/post/" rel="section">
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />归档
+          </a>
+        </li>
+      
+        <li class="menu-item ">
+          <a href="https://iihui.github.io/categories/%E7%BE%8E%E9%A3%9F/" rel="section">
+              <i class="menu-item-icon fa fa-fw fa-fire"></i> <br />美食
+          </a>
+        </li>
+      
+        <li class="menu-item ">
+          <a href="https://iihui.github.io/categories/%E5%90%8E%E6%9C%9F/" rel="section">
+              <i class="menu-item-icon fa fa-fw fa-edit"></i> <br />后期
+          </a>
+        </li>
+      
+        <li class="menu-item ">
+          <a href="https://iihui.github.io/categories/%E6%97%85%E8%A1%8C/" rel="section">
+              <i class="menu-item-icon fa fa-fw fa-leaf"></i> <br />旅行
+          </a>
+        </li>
+      
+        <li class="menu-item ">
+          <a href="https://iihui.github.io/about/" rel="section">
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />关于
+          </a>
+        </li>
+      
+      <li class="menu-item menu-item-search">
+        <a href="javascript:;" class="popup-trigger"> <i class="menu-item-icon fa fa-search fa-fw"></i> <br /> 搜索</a>
+      </li>
+    </ul>
+    <div class="site-search">
+      <div class="popup">
+ <span class="search-icon fa fa-search"></span>
+ <input type="text" id="local-search-input">
+ <div id="local-search-result"></div>
+ <span class="popup-btn-close">close</span>
+</div>
+
+    </div>
+</nav>
+<script type="text/javascript"
+        async
+        src="https://cdn.bootcss.com/mathjax/2.7.3/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+		<!-- src = "http://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"> <\!--  -\-> -->
+MathJax.Hub.Config({
+  tex2jax: {
+    inlineMath: [['$','$'], ['\\(','\\)']],
+    displayMath: [['$$','$$'], ['\[\[','\]\]']],
+    processEscapes: true,
+    processEnvironments: true,
+    skipTags: ['script', 'noscript', 'style', 'textarea', 'pre'],
+    TeX: { equationNumbers: { autoNumber: "AMS" },
+         extensions: ["AMSmath.js", "AMSsymbols.js"] }
+  }
+});
+
+MathJax.Hub.Queue(function() {
+    
+    
+    
+    var all = MathJax.Hub.getAllJax(), i;
+    for(i = 0; i < all.length; i += 1) {
+        all[i].SourceElement().parentNode.className += ' has-jax';
+    }
+});
+</script>
+
+<style>
+code.has-jax {
+    font: inherit;
+    font-size: 100%;
+    background: inherit;
+    border: inherit;
+    color: #515151;
+}
+</style>
+
+<!DOCTYPE html>
+<html lang="en">
+
+
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.10.0-rc.1/dist/katex.min.css" integrity="sha384-D+9gmBxUQogRLqvARvNLmA9hS2x//eK1FhVb9PiU86gmcrBrJAQT8okdJ4LMp2uv" crossorigin="anonymous">
+
+    
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.10.0-rc.1/dist/katex.min.js" integrity="sha384-483A6DwYfKeDa0Q52fJmxFXkcPCFfnXMoXblOkJ4JcA8zATN6Tm78UNL72AKk+0O" crossorigin="anonymous"></script>
+</head>
+<body>
+
+</body>
+</html>
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+<section id="posts" class="posts-expand">
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <header class="post-header">
+      <h1 class="post-title" itemprop="name headline">
+        <a class="post-title-link" href="https://iihui.github.io/post/ios-launch/" itemprop="url">
+        iOS 启动时长优化
+        </a>
+      </h1>
+      <div class="post-meta">
+      <span class="post-time">
+<span class="post-meta-item-icon">
+    <i class="fa fa-calendar-o"></i>
+</span>
+<span class="post-meta-item-text">创建: </span>
+<time itemprop="dateCreated" datetime="2016-03-22T13:04:35+08:00" content="2021-12-08">
+    2021-12-08
+</time>
+</span>
+&nbsp; | &nbsp;
+<span class="post-updated-time">
+<span class="post-meta-item-icon">
+    <i class="fa fa-calendar-check-o"></i>
+</span>
+<span class="post-meta-item-text">更新: </span>
+<time itemprop="dateUpdated" content="2099-12-08">
+    2099-12-08
+</time>
+</span> 
+      
+
+  <span class="post-category" >
+  &nbsp; | &nbsp;
+  <span class="post-meta-item-icon">
+    <i class="fa fa-folder-o"></i>
+  </span>
+  <span class="post-meta-item-text">分类: </span>
+  
+    <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
+      <a href="https://iihui.github.io/categories/ios" itemprop="url" rel="index">
+        <span itemprop="name">iOS</span>
+      </a>
+      &nbsp; 
+    </span>
+  
+</span>
+
+
+      <span>
+&nbsp; | &nbsp;
+<span class="post-meta-item-icon">
+    <i class="fa fa-file-word-o"></i>
+</span>
+<span class="post-meta-item-text">字数: </span>
+<span class="leancloud-visitors-count">4787</span>
+&nbsp; | &nbsp;
+<span class="post-meta-item-icon">
+    <i class="fa fa-coffee"></i>
+</span>
+<span class="post-meta-item-text">阅读: </span>
+<span class="leancloud-visitors-count">10 分钟</span>
+</span>
+      </div>
+    </header>
+    <div class="post-body" itemprop="articleBody">
+    <h2 id="基本概念">基本概念</h2>
+<ul>
+<li><code>Cold Launch</code>: 一般翻译为冷启动。表示杀掉<code>App</code>，然后重启设备（重新启动几分钟后让它冷却），然后再打开<code>App</code>。</li>
+<li><code>Warm Launch</code>：杀掉<code>app</code>，然后再打开<code>App</code>。</li>
+<li><code>Hot Launch</code>：<code>App</code>从后台切到前台。</li>
+</ul>
+<p>在这三种启动方式中，最重要的是冷启动。因为用户对你的应用程序的第一印象将是冷启动，而且也是最耗时的。启动时长的计算是通过两个关键指标来完成的。</p>
+<ul>
+<li><code>Pre-main Time</code>：执行应用程序的第一个函数（<code>main</code>函数）之前的时间。此时间保留给你的应用程序正确启动所需的系统绑定资源。</li>
+<li><code>Post-main Time</code>: 当您的应用程序从 <code>UIApplicationMain</code>（或主函数）控制到呈现给您的用户的第一个可交互屏幕的时间。简单来说，就是从 <code>AppDelegate / Main</code> 开始渲染第一帧所需的时间。</li>
+</ul>
+<p>什么可能导致启动时间变慢？可能有多种原因，但常见的是：</p>
+<ul>
+<li><code>Dynamic linking (dyld)</code></li>
+<li><code>Business logic done before showing the first screen interact-able</code></li>
+</ul>
+<p>动态链接的问题：将许多框架动态链接起来会使 <code>iOS</code> 系统进行许多绑定，从而增加 <code>pre-main</code> 时间。如果你使用 <code>Cocoapods / Carthage</code>，可能会有大量的依赖，然后甚至可能触发传递依赖（基础的依赖包括它们的嵌套的依赖等）。</p>
+<p>这有可能会在启动时积累大量链接，然后影响启动时间。查看动态链接库数目的方法是在目标<code>scheme</code>的环境变量中添加 <code>DYLD_PRINT_LIBRARIES</code>，并将其值置为<code>1</code>。这样就会在控制台打印动态链接库的详细信息：</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift">dyld: loaded: <span style="color:#f92672">/</span><span style="color:#66d9ef">var</span><span style="color:#f92672">/</span>containers<span style="color:#f92672">/</span>Bundle<span style="color:#f92672">/</span>Application<span style="color:#f92672">/</span><span style="color:#ae81ff">970</span>B1D59<span style="color:#f92672">-</span><span style="color:#ae81ff">350</span>C<span style="color:#f92672">-</span><span style="color:#ae81ff">4</span>B85<span style="color:#f92672">-</span>A6AD<span style="color:#f92672">-</span><span style="color:#ae81ff">45</span>C1A069F273<span style="color:#f92672">/</span>xxxxx.app<span style="color:#f92672">/</span>xxxxx
+dyld: loaded: <span style="color:#f92672">/</span>Developer<span style="color:#f92672">/</span>usr<span style="color:#f92672">/</span>lib<span style="color:#f92672">/</span>libBacktraceRecording.dylib
+dyld: loaded: <span style="color:#f92672">/</span>Developer<span style="color:#f92672">/</span>usr<span style="color:#f92672">/</span>lib<span style="color:#f92672">/</span>libMainThreadChecker.dylib
+dyld: loaded: <span style="color:#f92672">/</span>Developer<span style="color:#f92672">/</span>Library<span style="color:#f92672">/</span>PrivateFrameworks<span style="color:#f92672">/</span>MTLToolsDeviceSupport.framework<span style="color:#f92672">/</span>libMTLInterpose.dylib
+dyld: loaded: <span style="color:#f92672">/</span>Developer<span style="color:#f92672">/</span>Library<span style="color:#f92672">/</span>PrivateFrameworks<span style="color:#f92672">/</span>DTDDISupport.framework<span style="color:#f92672">/</span>libViewDebuggerSupport.dylib
+dyld: loaded: <span style="color:#f92672">/</span>usr<span style="color:#f92672">/</span>lib<span style="color:#f92672">/</span>libbz2.<span style="color:#ae81ff">1.0</span>.dylib
+dyld: loaded: <span style="color:#f92672">/</span>usr<span style="color:#f92672">/</span>lib<span style="color:#f92672">/</span>libSystem.B.dylib
+dyld: loaded: <span style="color:#f92672">/</span>usr<span style="color:#f92672">/</span>lib<span style="color:#f92672">/</span>libc<span style="color:#f92672">++</span>.<span style="color:#ae81ff">1.</span>dylib
+dyld: loaded: <span style="color:#f92672">/</span>usr<span style="color:#f92672">/</span>lib<span style="color:#f92672">/</span>libc<span style="color:#f92672">++</span>abi.dylib
+dyld: loaded: <span style="color:#f92672">/</span>usr<span style="color:#f92672">/</span>lib<span style="color:#f92672">/</span>libiconv.<span style="color:#ae81ff">2.</span>dylib
+dyld: loaded: <span style="color:#f92672">/</span>usr<span style="color:#f92672">/</span>lib<span style="color:#f92672">/</span>libicucore.A.dylib
+dyld: loaded: <span style="color:#f92672">/</span>usr<span style="color:#f92672">/</span>lib<span style="color:#f92672">/</span>libresolv.<span style="color:#ae81ff">9.</span>dylib
+dyld: loaded: <span style="color:#f92672">/</span>usr<span style="color:#f92672">/</span>lib<span style="color:#f92672">/</span>libz.<span style="color:#ae81ff">1.</span>dylib
+dyld: loaded: <span style="color:#f92672">/</span>System<span style="color:#f92672">/</span>Library<span style="color:#f92672">/</span>Frameworks<span style="color:#f92672">/</span>AVFoundation.framework<span style="color:#f92672">/</span>AVFoundation
+dyld: loaded: <span style="color:#f92672">/</span>System<span style="color:#f92672">/</span>Library<span style="color:#f92672">/</span>Frameworks<span style="color:#f92672">/</span>AVKit.framework<span style="color:#f92672">/</span>AVKit
+dyld: loaded: <span style="color:#f92672">/</span>System<span style="color:#f92672">/</span>Library<span style="color:#f92672">/</span>Frameworks<span style="color:#f92672">/</span>Accelerate.framework<span style="color:#f92672">/</span>Accelerate
+dyld: loaded: <span style="color:#f92672">/</span>System<span style="color:#f92672">/</span>Library<span style="color:#f92672">/</span>Frameworks<span style="color:#f92672">/</span>AdSupport.framework<span style="color:#f92672">/</span>AdSupport
+dyld: loaded: <span style="color:#f92672">/</span>System<span style="color:#f92672">/</span>Library<span style="color:#f92672">/</span>Frameworks<span style="color:#f92672">/</span>AddressBook.framework<span style="color:#f92672">/</span>AddressBook
+dyld: loaded: <span style="color:#f92672">/</span>System<span style="color:#f92672">/</span>Library<span style="color:#f92672">/</span>Frameworks<span style="color:#f92672">/</span>AddressBookUI.framework<span style="color:#f92672">/</span>AddressBookUI
+dyld: loaded: <span style="color:#f92672">/</span><span style="color:#66d9ef">private</span><span style="color:#f92672">/</span><span style="color:#66d9ef">var</span><span style="color:#f92672">/</span>containers<span style="color:#f92672">/</span>Bundle<span style="color:#f92672">/</span>Application<span style="color:#f92672">/</span><span style="color:#ae81ff">970</span>B1D59<span style="color:#f92672">-</span><span style="color:#ae81ff">350</span>C<span style="color:#f92672">-</span><span style="color:#ae81ff">4</span>B85<span style="color:#f92672">-</span>A6AD<span style="color:#f92672">-</span><span style="color:#ae81ff">45</span>C1A069F273<span style="color:#f92672">/</span>xxxxx.app<span style="color:#f92672">/</span>Frameworks<span style="color:#f92672">/</span>AgoraCore.framework<span style="color:#f92672">/</span>AgoraCore
+dyld: loaded: <span style="color:#f92672">/</span><span style="color:#66d9ef">private</span><span style="color:#f92672">/</span><span style="color:#66d9ef">var</span><span style="color:#f92672">/</span>containers<span style="color:#f92672">/</span>Bundle<span style="color:#f92672">/</span>Application<span style="color:#f92672">/</span><span style="color:#ae81ff">970</span>B1D59<span style="color:#f92672">-</span><span style="color:#ae81ff">350</span>C<span style="color:#f92672">-</span><span style="color:#ae81ff">4</span>B85<span style="color:#f92672">-</span>A6AD<span style="color:#f92672">-</span><span style="color:#ae81ff">45</span>C1A069F273<span style="color:#f92672">/</span>xxxxx.app<span style="color:#f92672">/</span>Frameworks<span style="color:#f92672">/</span>AgoraRtcCryptoLoader.framework<span style="color:#f92672">/</span>AgoraRtcCryptoLoader
+dyld: loaded: <span style="color:#f92672">/</span><span style="color:#66d9ef">private</span><span style="color:#f92672">/</span><span style="color:#66d9ef">var</span><span style="color:#f92672">/</span>containers<span style="color:#f92672">/</span>Bundle<span style="color:#f92672">/</span>Application<span style="color:#f92672">/</span><span style="color:#ae81ff">970</span>B1D59<span style="color:#f92672">-</span><span style="color:#ae81ff">350</span>C<span style="color:#f92672">-</span><span style="color:#ae81ff">4</span>B85<span style="color:#f92672">-</span>A6AD<span style="color:#f92672">-</span><span style="color:#ae81ff">45</span>C1A069F273<span style="color:#f92672">/</span>xxxxx.app<span style="color:#f92672">/</span>Frameworks<span style="color:#f92672">/</span>AgoraRtcKit.framework<span style="color:#f92672">/</span>AgoraRtcKit
+dyld: loaded: <span style="color:#f92672">/</span><span style="color:#66d9ef">private</span><span style="color:#f92672">/</span><span style="color:#66d9ef">var</span><span style="color:#f92672">/</span>containers<span style="color:#f92672">/</span>Bundle<span style="color:#f92672">/</span>Application<span style="color:#f92672">/</span><span style="color:#ae81ff">970</span>B1D59<span style="color:#f92672">-</span><span style="color:#ae81ff">350</span>C<span style="color:#f92672">-</span><span style="color:#ae81ff">4</span>B85<span style="color:#f92672">-</span>A6AD<span style="color:#f92672">-</span><span style="color:#ae81ff">45</span>C1A069F273<span style="color:#f92672">/</span>xxxxx.app<span style="color:#f92672">/</span>Frameworks<span style="color:#f92672">/</span>AgoraRtmKit.framework<span style="color:#f92672">/</span>AgoraRtmKit
+dyld: loaded: <span style="color:#f92672">/</span><span style="color:#66d9ef">private</span><span style="color:#f92672">/</span><span style="color:#66d9ef">var</span><span style="color:#f92672">/</span>containers<span style="color:#f92672">/</span>Bundle<span style="color:#f92672">/</span>Application<span style="color:#f92672">/</span><span style="color:#ae81ff">970</span>B1D59<span style="color:#f92672">-</span><span style="color:#ae81ff">350</span>C<span style="color:#f92672">-</span><span style="color:#ae81ff">4</span>B85<span style="color:#f92672">-</span>A6AD<span style="color:#f92672">-</span><span style="color:#ae81ff">45</span>C1A069F273<span style="color:#f92672">/</span>xxxxx.app<span style="color:#f92672">/</span>Frameworks<span style="color:#f92672">/</span>AgoraSoundTouch.framework<span style="color:#f92672">/</span>AgoraSoundTouch
+dyld: loaded: <span style="color:#f92672">/</span><span style="color:#66d9ef">private</span><span style="color:#f92672">/</span><span style="color:#66d9ef">var</span><span style="color:#f92672">/</span>containers<span style="color:#f92672">/</span>Bundle<span style="color:#f92672">/</span>Application<span style="color:#f92672">/</span><span style="color:#ae81ff">970</span>B1D59<span style="color:#f92672">-</span><span style="color:#ae81ff">350</span>C<span style="color:#f92672">-</span><span style="color:#ae81ff">4</span>B85<span style="color:#f92672">-</span>A6AD<span style="color:#f92672">-</span><span style="color:#ae81ff">45</span>C1A069F273<span style="color:#f92672">/</span>xxxxx.app<span style="color:#f92672">/</span>Frameworks<span style="color:#f92672">/</span>Agorafdkaac.framework<span style="color:#f92672">/</span>Agorafdkaac
+dyld: loaded: <span style="color:#f92672">/</span><span style="color:#66d9ef">private</span><span style="color:#f92672">/</span><span style="color:#66d9ef">var</span><span style="color:#f92672">/</span>containers<span style="color:#f92672">/</span>Bundle<span style="color:#f92672">/</span>Application<span style="color:#f92672">/</span><span style="color:#ae81ff">970</span>B1D59<span style="color:#f92672">-</span><span style="color:#ae81ff">350</span>C<span style="color:#f92672">-</span><span style="color:#ae81ff">4</span>B85<span style="color:#f92672">-</span>A6AD<span style="color:#f92672">-</span><span style="color:#ae81ff">45</span>C1A069F273<span style="color:#f92672">/</span>xxxxx.app<span style="color:#f92672">/</span>Frameworks<span style="color:#f92672">/</span>Agoraffmpeg.framework<span style="color:#f92672">/</span>Agoraffmpeg
+dyld: loaded: <span style="color:#f92672">/</span>System<span style="color:#f92672">/</span>Library<span style="color:#f92672">/</span>Frameworks<span style="color:#f92672">/</span>AssetsLibrary.framework<span style="color:#f92672">/</span>AssetsLibrary
+dyld: loaded: <span style="color:#f92672">/</span>System<span style="color:#f92672">/</span>Library<span style="color:#f92672">/</span>Frameworks<span style="color:#f92672">/</span>AudioToolbox.framework<span style="color:#f92672">/</span>AudioToolbox
+dyld: loaded: <span style="color:#f92672">/</span><span style="color:#66d9ef">private</span><span style="color:#f92672">/</span><span style="color:#66d9ef">var</span><span style="color:#f92672">/</span>containers<span style="color:#f92672">/</span>Bundle<span style="color:#f92672">/</span>Application<span style="color:#f92672">/</span><span style="color:#ae81ff">970</span>B1D59<span style="color:#f92672">-</span><span style="color:#ae81ff">350</span>C<span style="color:#f92672">-</span><span style="color:#ae81ff">4</span>B85<span style="color:#f92672">-</span>A6AD<span style="color:#f92672">-</span><span style="color:#ae81ff">45</span>C1A069F273<span style="color:#f92672">/</span>xxxxx.app<span style="color:#f92672">/</span>Frameworks<span style="color:#f92672">/</span>BizConfSDK.framework<span style="color:#f92672">/</span>BizConfSDK
+dyld: loaded: <span style="color:#f92672">/</span>System<span style="color:#f92672">/</span>Library<span style="color:#f92672">/</span>Frameworks<span style="color:#f92672">/</span>CFNetwork.framework<span style="color:#f92672">/</span>CFNetwork
+dyld: loaded: <span style="color:#f92672">/</span><span style="color:#66d9ef">private</span><span style="color:#f92672">/</span><span style="color:#66d9ef">var</span><span style="color:#f92672">/</span>containers<span style="color:#f92672">/</span>Bundle<span style="color:#f92672">/</span>Application<span style="color:#f92672">/</span><span style="color:#ae81ff">970</span>B1D59<span style="color:#f92672">-</span><span style="color:#ae81ff">350</span>C<span style="color:#f92672">-</span><span style="color:#ae81ff">4</span>B85<span style="color:#f92672">-</span>A6AD<span style="color:#f92672">-</span><span style="color:#ae81ff">45</span>C1A069F273<span style="color:#f92672">/</span>xxxxx.app<span style="color:#f92672">/</span>Frameworks<span style="color:#f92672">/</span>CMBMPGMK.framework<span style="color:#f92672">/</span>CMBMPGMK
+dyld: loaded: <span style="color:#f92672">/</span><span style="color:#66d9ef">private</span><span style="color:#f92672">/</span><span style="color:#66d9ef">var</span><span style="color:#f92672">/</span>containers<span style="color:#f92672">/</span>Bundle<span style="color:#f92672">/</span>Application<span style="color:#f92672">/</span><span style="color:#ae81ff">970</span>B1D59<span style="color:#f92672">-</span><span style="color:#ae81ff">350</span>C<span style="color:#f92672">-</span><span style="color:#ae81ff">4</span>B85<span style="color:#f92672">-</span>A6AD<span style="color:#f92672">-</span><span style="color:#ae81ff">45</span>C1A069F273<span style="color:#f92672">/</span>xxxxx.app<span style="color:#f92672">/</span>Frameworks<span style="color:#f92672">/</span>CMBNSA.framework<span style="color:#f92672">/</span>CMBNSA
+dyld: loaded: <span style="color:#f92672">/</span>System<span style="color:#f92672">/</span>Library<span style="color:#f92672">/</span>Frameworks<span style="color:#f92672">/</span>CallKit.framework<span style="color:#f92672">/</span>CallKit
+dyld: loaded: <span style="color:#f92672">/</span>System<span style="color:#f92672">/</span>Library<span style="color:#f92672">/</span>Frameworks<span style="color:#f92672">/</span>Contacts.framework<span style="color:#f92672">/</span>Contacts
+dyld: loaded: <span style="color:#f92672">/</span>System<span style="color:#f92672">/</span>Library<span style="color:#f92672">/</span>Frameworks<span style="color:#f92672">/</span>ContactsUI.framework<span style="color:#f92672">/</span>ContactsUI
+dyld: loaded: <span style="color:#f92672">/</span>System<span style="color:#f92672">/</span>Library<span style="color:#f92672">/</span>Frameworks<span style="color:#f92672">/</span>CoreFoundation.framework<span style="color:#f92672">/</span>CoreFoundation
+dyld: loaded: <span style="color:#f92672">/</span>System<span style="color:#f92672">/</span>Library<span style="color:#f92672">/</span>Frameworks<span style="color:#f92672">/</span>CoreGraphics.framework<span style="color:#f92672">/</span>CoreGraphics
+dyld: loaded: <span style="color:#f92672">/</span>System<span style="color:#f92672">/</span>Library<span style="color:#f92672">/</span>Frameworks<span style="color:#f92672">/</span>CoreImage.framework<span style="color:#f92672">/</span>CoreImage
+dyld: loaded: <span style="color:#f92672">/</span>System<span style="color:#f92672">/</span>Library<span style="color:#f92672">/</span>Frameworks<span style="color:#f92672">/</span>CoreLocation.framework<span style="color:#f92672">/</span>CoreLocation
+dyld: loaded: <span style="color:#f92672">/</span>System<span style="color:#f92672">/</span>Library<span style="color:#f92672">/</span>Frameworks<span style="color:#f92672">/</span>CoreML.framework<span style="color:#f92672">/</span>CoreML
+dyld: loaded: <span style="color:#f92672">/</span>System<span style="color:#f92672">/</span>Library<span style="color:#f92672">/</span>Frameworks<span style="color:#f92672">/</span>CoreMedia.framework<span style="color:#f92672">/</span>CoreMedia
+dyld: loaded: <span style="color:#f92672">/</span>System<span style="color:#f92672">/</span>Library<span style="color:#f92672">/</span>Frameworks<span style="color:#f92672">/</span>CoreMotion.framework<span style="color:#f92672">/</span>CoreMotion
+dyld: loaded: <span style="color:#f92672">/</span>System<span style="color:#f92672">/</span>Library<span style="color:#f92672">/</span>Frameworks<span style="color:#f92672">/</span>MobileCoreServices.framework<span style="color:#f92672">/</span>MobileCoreServices
+dyld: loaded: <span style="color:#f92672">/</span>System<span style="color:#f92672">/</span>Library<span style="color:#f92672">/</span>Frameworks<span style="color:#f92672">/</span>CoreTelephony.framework<span style="color:#f92672">/</span>CoreTelephony
+dyld: loaded: <span style="color:#f92672">/</span>System<span style="color:#f92672">/</span>Library<span style="color:#f92672">/</span>Frameworks<span style="color:#f92672">/</span>CoreText.framework<span style="color:#f92672">/</span>CoreText
+dyld: loaded: <span style="color:#f92672">/</span>System<span style="color:#f92672">/</span>Library<span style="color:#f92672">/</span>Frameworks<span style="color:#f92672">/</span>CoreVideo.framework<span style="color:#f92672">/</span>CoreVideo
+dyld: loaded: <span style="color:#f92672">/</span>System<span style="color:#f92672">/</span>Library<span style="color:#f92672">/</span>Frameworks<span style="color:#f92672">/</span>ExternalAccessory.framework<span style="color:#f92672">/</span>ExternalAccessory
+dyld: loaded: <span style="color:#f92672">/</span>System<span style="color:#f92672">/</span>Library<span style="color:#f92672">/</span>Frameworks<span style="color:#f92672">/</span>Foundation.framework<span style="color:#f92672">/</span>Foundation
+dyld: loaded: <span style="color:#f92672">/</span>System<span style="color:#f92672">/</span>Library<span style="color:#f92672">/</span>Frameworks<span style="color:#f92672">/</span>GLKit.framework<span style="color:#f92672">/</span>GLKit
+dyld: loaded: <span style="color:#f92672">/</span>System<span style="color:#f92672">/</span>Library<span style="color:#f92672">/</span>Frameworks<span style="color:#f92672">/</span>GameController.framework<span style="color:#f92672">/</span>GameController
+dyld: loaded: <span style="color:#f92672">/</span>System<span style="color:#f92672">/</span>Library<span style="color:#f92672">/</span>Frameworks<span style="color:#f92672">/</span>ImageIO.framework<span style="color:#f92672">/</span>ImageIO
+dyld: loaded: <span style="color:#f92672">/</span><span style="color:#66d9ef">private</span><span style="color:#f92672">/</span><span style="color:#66d9ef">var</span><span style="color:#f92672">/</span>containers<span style="color:#f92672">/</span>Bundle<span style="color:#f92672">/</span>Application<span style="color:#f92672">/</span><span style="color:#ae81ff">970</span>B1D59<span style="color:#f92672">-</span><span style="color:#ae81ff">350</span>C<span style="color:#f92672">-</span><span style="color:#ae81ff">4</span>B85<span style="color:#f92672">-</span>A6AD<span style="color:#f92672">-</span><span style="color:#ae81ff">45</span>C1A069F273<span style="color:#f92672">/</span>xxxxx.app<span style="color:#f92672">/</span>Frameworks<span style="color:#f92672">/</span>IpCall.framework<span style="color:#f92672">/</span>IpCall
+dyld: loaded: <span style="color:#f92672">/</span><span style="color:#66d9ef">private</span><span style="color:#f92672">/</span><span style="color:#66d9ef">var</span><span style="color:#f92672">/</span>containers<span style="color:#f92672">/</span>Bundle<span style="color:#f92672">/</span>Application<span style="color:#f92672">/</span><span style="color:#ae81ff">970</span>B1D59<span style="color:#f92672">-</span><span style="color:#ae81ff">350</span>C<span style="color:#f92672">-</span><span style="color:#ae81ff">4</span>B85<span style="color:#f92672">-</span>A6AD<span style="color:#f92672">-</span><span style="color:#ae81ff">45</span>C1A069F273<span style="color:#f92672">/</span>xxxxx.app<span style="color:#f92672">/</span>Frameworks<span style="color:#f92672">/</span>JMDoodle.framework<span style="color:#f92672">/</span>JMDoodle
+dyld: loaded: <span style="color:#f92672">/</span><span style="color:#66d9ef">private</span><span style="color:#f92672">/</span><span style="color:#66d9ef">var</span><span style="color:#f92672">/</span>containers<span style="color:#f92672">/</span>Bundle<span style="color:#f92672">/</span>Application<span style="color:#f92672">/</span><span style="color:#ae81ff">970</span>B1D59<span style="color:#f92672">-</span><span style="color:#ae81ff">350</span>C<span style="color:#f92672">-</span><span style="color:#ae81ff">4</span>B85<span style="color:#f92672">-</span>A6AD<span style="color:#f92672">-</span><span style="color:#ae81ff">45</span>C1A069F273<span style="color:#f92672">/</span>xxxxx.app<span style="color:#f92672">/</span>Frameworks<span style="color:#f92672">/</span>JMSDK.framework<span style="color:#f92672">/</span>JMSDK
+dyld: loaded: <span style="color:#f92672">/</span>System<span style="color:#f92672">/</span>Library<span style="color:#f92672">/</span>Frameworks<span style="color:#f92672">/</span>MediaPlayer.framework<span style="color:#f92672">/</span>MediaPlayer
+dyld: loaded: <span style="color:#f92672">/</span>System<span style="color:#f92672">/</span>Library<span style="color:#f92672">/</span>Frameworks<span style="color:#f92672">/</span>MessageUI.framework<span style="color:#f92672">/</span>MessageUI
+dyld: loaded: <span style="color:#f92672">/</span><span style="color:#66d9ef">private</span><span style="color:#f92672">/</span><span style="color:#66d9ef">var</span><span style="color:#f92672">/</span>containers<span style="color:#f92672">/</span>Bundle<span style="color:#f92672">/</span>Application<span style="color:#f92672">/</span><span style="color:#ae81ff">970</span>B1D59<span style="color:#f92672">-</span><span style="color:#ae81ff">350</span>C<span style="color:#f92672">-</span><span style="color:#ae81ff">4</span>B85<span style="color:#f92672">-</span>A6AD<span style="color:#f92672">-</span><span style="color:#ae81ff">45</span>C1A069F273<span style="color:#f92672">/</span>xxxxx.app<span style="color:#f92672">/</span>Frameworks<span style="color:#f92672">/</span>MobileRTC.framework<span style="color:#f92672">/</span>MobileRTC
+dyld: loaded: <span style="color:#f92672">/</span>System<span style="color:#f92672">/</span>Library<span style="color:#f92672">/</span>Frameworks<span style="color:#f92672">/</span>OpenAL.framework<span style="color:#f92672">/</span>OpenAL
+dyld: loaded: <span style="color:#f92672">/</span>System<span style="color:#f92672">/</span>Library<span style="color:#f92672">/</span>Frameworks<span style="color:#f92672">/</span>Photos.framework<span style="color:#f92672">/</span>Photos
+dyld: loaded: <span style="color:#f92672">/</span>System<span style="color:#f92672">/</span>Library<span style="color:#f92672">/</span>Frameworks<span style="color:#f92672">/</span>PushKit.framework<span style="color:#f92672">/</span>PushKit
+dyld: loaded: <span style="color:#f92672">/</span>System<span style="color:#f92672">/</span>Library<span style="color:#f92672">/</span>Frameworks<span style="color:#f92672">/</span>QuartzCore.framework<span style="color:#f92672">/</span>QuartzCore
+dyld: loaded: <span style="color:#f92672">/</span>System<span style="color:#f92672">/</span>Library<span style="color:#f92672">/</span>Frameworks<span style="color:#f92672">/</span>ReplayKit.framework<span style="color:#f92672">/</span>ReplayKit
+dyld: loaded: <span style="color:#f92672">/</span>System<span style="color:#f92672">/</span>Library<span style="color:#f92672">/</span>Frameworks<span style="color:#f92672">/</span>Security.framework<span style="color:#f92672">/</span>Security
+dyld: loaded: <span style="color:#f92672">/</span>System<span style="color:#f92672">/</span>Library<span style="color:#f92672">/</span>Frameworks<span style="color:#f92672">/</span>SystemConfiguration.framework<span style="color:#f92672">/</span>SystemConfiguration
+dyld: loaded: <span style="color:#f92672">/</span>System<span style="color:#f92672">/</span>Library<span style="color:#f92672">/</span>Frameworks<span style="color:#f92672">/</span>UIKit.framework<span style="color:#f92672">/</span>UIKit
+dyld: loaded: <span style="color:#f92672">/</span>System<span style="color:#f92672">/</span>Library<span style="color:#f92672">/</span>Frameworks<span style="color:#f92672">/</span>UserNotifications.framework<span style="color:#f92672">/</span>UserNotifications
+dyld: loaded: <span style="color:#f92672">/</span>System<span style="color:#f92672">/</span>Library<span style="color:#f92672">/</span>Frameworks<span style="color:#f92672">/</span>VideoToolbox.framework<span style="color:#f92672">/</span>VideoToolbox
+dyld: loaded: <span style="color:#f92672">/</span>System<span style="color:#f92672">/</span>Library<span style="color:#f92672">/</span>Frameworks<span style="color:#f92672">/</span>WebKit.framework<span style="color:#f92672">/</span>WebKit
+dyld: loaded: <span style="color:#f92672">/</span><span style="color:#66d9ef">private</span><span style="color:#f92672">/</span><span style="color:#66d9ef">var</span><span style="color:#f92672">/</span>containers<span style="color:#f92672">/</span>Bundle<span style="color:#f92672">/</span>Application<span style="color:#f92672">/</span><span style="color:#ae81ff">970</span>B1D59<span style="color:#f92672">-</span><span style="color:#ae81ff">350</span>C<span style="color:#f92672">-</span><span style="color:#ae81ff">4</span>B85<span style="color:#f92672">-</span>A6AD<span style="color:#f92672">-</span><span style="color:#ae81ff">45</span>C1A069F273<span style="color:#f92672">/</span>xxxxx.app<span style="color:#f92672">/</span>Frameworks<span style="color:#f92672">/</span>WebRTC.framework<span style="color:#f92672">/</span>WebRTC
+dyld: loaded: <span style="color:#f92672">/</span>System<span style="color:#f92672">/</span>Library<span style="color:#f92672">/</span>Frameworks<span style="color:#f92672">/</span>LocalAuthentication.framework<span style="color:#f92672">/</span>LocalAuthentication
+dyld: loaded: <span style="color:#f92672">/</span>System<span style="color:#f92672">/</span>Library<span style="color:#f92672">/</span>Frameworks<span style="color:#f92672">/</span>Network.framework<span style="color:#f92672">/</span>Network
+dyld: loaded: <span style="color:#f92672">/</span>usr<span style="color:#f92672">/</span>lib<span style="color:#f92672">/</span>libsqlite3.dylib
+dyld: loaded: <span style="color:#f92672">/</span>System<span style="color:#f92672">/</span>Library<span style="color:#f92672">/</span>Frameworks<span style="color:#f92672">/</span>JavaScriptCore.framework<span style="color:#f92672">/</span>JavaScriptCore
+dyld: loaded: <span style="color:#f92672">/</span>usr<span style="color:#f92672">/</span>lib<span style="color:#f92672">/</span>libobjc.A.dylib
+dyld: loaded: <span style="color:#f92672">/</span>System<span style="color:#f92672">/</span>Library<span style="color:#f92672">/</span>Frameworks<span style="color:#f92672">/</span>CoreBluetooth.framework<span style="color:#f92672">/</span>CoreBluetooth
+dyld: loaded: <span style="color:#f92672">/</span>System<span style="color:#f92672">/</span>Library<span style="color:#f92672">/</span>Frameworks<span style="color:#f92672">/</span>CoreData.framework<span style="color:#f92672">/</span>CoreData
+dyld: loaded: <span style="color:#f92672">/</span>System<span style="color:#f92672">/</span>Library<span style="color:#f92672">/</span>Frameworks<span style="color:#f92672">/</span>Metal.framework<span style="color:#f92672">/</span>Metal
+dyld: loaded: <span style="color:#f92672">/</span>System<span style="color:#f92672">/</span>Library<span style="color:#f92672">/</span>Frameworks<span style="color:#f92672">/</span>OpenGLES.framework<span style="color:#f92672">/</span>OpenGLES
+dyld: loaded: <span style="color:#f92672">/</span><span style="color:#66d9ef">private</span><span style="color:#f92672">/</span><span style="color:#66d9ef">var</span><span style="color:#f92672">/</span>containers<span style="color:#f92672">/</span>Bundle<span style="color:#f92672">/</span>Application<span style="color:#f92672">/</span><span style="color:#ae81ff">970</span>B1D59<span style="color:#f92672">-</span><span style="color:#ae81ff">350</span>C<span style="color:#f92672">-</span><span style="color:#ae81ff">4</span>B85<span style="color:#f92672">-</span>A6AD<span style="color:#f92672">-</span><span style="color:#ae81ff">45</span>C1A069F273<span style="color:#f92672">/</span>xxxxx.app<span style="color:#f92672">/</span>Frameworks<span style="color:#f92672">/</span>libswiftAVFoundation.dylib
+dyld: loaded: <span style="color:#f92672">/</span><span style="color:#66d9ef">private</span><span style="color:#f92672">/</span><span style="color:#66d9ef">var</span><span style="color:#f92672">/</span>containers<span style="color:#f92672">/</span>Bundle<span style="color:#f92672">/</span>Application<span style="color:#f92672">/</span><span style="color:#ae81ff">970</span>B1D59<span style="color:#f92672">-</span><span style="color:#ae81ff">350</span>C<span style="color:#f92672">-</span><span style="color:#ae81ff">4</span>B85<span style="color:#f92672">-</span>A6AD<span style="color:#f92672">-</span><span style="color:#ae81ff">45</span>C1A069F273<span style="color:#f92672">/</span>xxxxx.app<span style="color:#f92672">/</span>Frameworks<span style="color:#f92672">/</span>libswiftAccelerate.dylib
+dyld: loaded: <span style="color:#f92672">/</span><span style="color:#66d9ef">private</span><span style="color:#f92672">/</span><span style="color:#66d9ef">var</span><span style="color:#f92672">/</span>containers<span style="color:#f92672">/</span>Bundle<span style="color:#f92672">/</span>Application<span style="color:#f92672">/</span><span style="color:#ae81ff">970</span>B1D59<span style="color:#f92672">-</span><span style="color:#ae81ff">350</span>C<span style="color:#f92672">-</span><span style="color:#ae81ff">4</span>B85<span style="color:#f92672">-</span>A6AD<span style="color:#f92672">-</span><span style="color:#ae81ff">45</span>C1A069F273<span style="color:#f92672">/</span>xxxxx.app<span style="color:#f92672">/</span>Frameworks<span style="color:#f92672">/</span>libswiftAssetsLibrary.dylib
+dyld: loaded: <span style="color:#f92672">/</span><span style="color:#66d9ef">private</span><span style="color:#f92672">/</span><span style="color:#66d9ef">var</span><span style="color:#f92672">/</span>containers<span style="color:#f92672">/</span>Bundle<span style="color:#f92672">/</span>Application<span style="color:#f92672">/</span><span style="color:#ae81ff">970</span>B1D59<span style="color:#f92672">-</span><span style="color:#ae81ff">350</span>C<span style="color:#f92672">-</span><span style="color:#ae81ff">4</span>B85<span style="color:#f92672">-</span>A6AD<span style="color:#f92672">-</span><span style="color:#ae81ff">45</span>C1A069F273<span style="color:#f92672">/</span>xxxxx.app<span style="color:#f92672">/</span>Frameworks<span style="color:#f92672">/</span>libswiftContacts.dylib
+dyld: loaded: <span style="color:#f92672">/</span><span style="color:#66d9ef">private</span><span style="color:#f92672">/</span><span style="color:#66d9ef">var</span><span style="color:#f92672">/</span>containers<span style="color:#f92672">/</span>Bundle<span style="color:#f92672">/</span>Application<span style="color:#f92672">/</span><span style="color:#ae81ff">970</span>B1D59<span style="color:#f92672">-</span><span style="color:#ae81ff">350</span>C<span style="color:#f92672">-</span><span style="color:#ae81ff">4</span>B85<span style="color:#f92672">-</span>A6AD<span style="color:#f92672">-</span><span style="color:#ae81ff">45</span>C1A069F273<span style="color:#f92672">/</span>xxxxx.app<span style="color:#f92672">/</span>Frameworks<span style="color:#f92672">/</span>libswiftCore.dylib
+dyld: loaded: <span style="color:#f92672">/</span><span style="color:#66d9ef">private</span><span style="color:#f92672">/</span><span style="color:#66d9ef">var</span><span style="color:#f92672">/</span>containers<span style="color:#f92672">/</span>Bundle<span style="color:#f92672">/</span>Application<span style="color:#f92672">/</span><span style="color:#ae81ff">970</span>B1D59<span style="color:#f92672">-</span><span style="color:#ae81ff">350</span>C<span style="color:#f92672">-</span><span style="color:#ae81ff">4</span>B85<span style="color:#f92672">-</span>A6AD<span style="color:#f92672">-</span><span style="color:#ae81ff">45</span>C1A069F273<span style="color:#f92672">/</span>xxxxx.app<span style="color:#f92672">/</span>Frameworks<span style="color:#f92672">/</span>libswiftCoreAudio.dylib
+dyld: loaded: <span style="color:#f92672">/</span><span style="color:#66d9ef">private</span><span style="color:#f92672">/</span><span style="color:#66d9ef">var</span><span style="color:#f92672">/</span>containers<span style="color:#f92672">/</span>Bundle<span style="color:#f92672">/</span>Application<span style="color:#f92672">/</span><span style="color:#ae81ff">970</span>B1D59<span style="color:#f92672">-</span><span style="color:#ae81ff">350</span>C<span style="color:#f92672">-</span><span style="color:#ae81ff">4</span>B85<span style="color:#f92672">-</span>A6AD<span style="color:#f92672">-</span><span style="color:#ae81ff">45</span>C1A069F273<span style="color:#f92672">/</span>xxxxx.app<span style="color:#f92672">/</span>Frameworks<span style="color:#f92672">/</span>libswiftCoreData.dylib
+dyld: loaded: <span style="color:#f92672">/</span><span style="color:#66d9ef">private</span><span style="color:#f92672">/</span><span style="color:#66d9ef">var</span><span style="color:#f92672">/</span>containers<span style="color:#f92672">/</span>Bundle<span style="color:#f92672">/</span>Application<span style="color:#f92672">/</span><span style="color:#ae81ff">970</span>B1D59<span style="color:#f92672">-</span><span style="color:#ae81ff">350</span>C<span style="color:#f92672">-</span><span style="color:#ae81ff">4</span>B85<span style="color:#f92672">-</span>A6AD<span style="color:#f92672">-</span><span style="color:#ae81ff">45</span>C1A069F273<span style="color:#f92672">/</span>xxxxx.app<span style="color:#f92672">/</span>Frameworks<span style="color:#f92672">/</span>libswiftCoreFoundation.dylib
+dyld: loaded: <span style="color:#f92672">/</span><span style="color:#66d9ef">private</span><span style="color:#f92672">/</span><span style="color:#66d9ef">var</span><span style="color:#f92672">/</span>containers<span style="color:#f92672">/</span>Bundle<span style="color:#f92672">/</span>Application<span style="color:#f92672">/</span><span style="color:#ae81ff">970</span>B1D59<span style="color:#f92672">-</span><span style="color:#ae81ff">350</span>C<span style="color:#f92672">-</span><span style="color:#ae81ff">4</span>B85<span style="color:#f92672">-</span>A6AD<span style="color:#f92672">-</span><span style="color:#ae81ff">45</span>C1A069F273<span style="color:#f92672">/</span>xxxxx.app<span style="color:#f92672">/</span>Frameworks<span style="color:#f92672">/</span>libswiftCoreGraphics.dylib
+dyld: loaded: <span style="color:#f92672">/</span><span style="color:#66d9ef">private</span><span style="color:#f92672">/</span><span style="color:#66d9ef">var</span><span style="color:#f92672">/</span>containers<span style="color:#f92672">/</span>Bundle<span style="color:#f92672">/</span>Application<span style="color:#f92672">/</span><span style="color:#ae81ff">970</span>B1D59<span style="color:#f92672">-</span><span style="color:#ae81ff">350</span>C<span style="color:#f92672">-</span><span style="color:#ae81ff">4</span>B85<span style="color:#f92672">-</span>A6AD<span style="color:#f92672">-</span><span style="color:#ae81ff">45</span>C1A069F273<span style="color:#f92672">/</span>xxxxx.app<span style="color:#f92672">/</span>Frameworks<span style="color:#f92672">/</span>libswiftCoreImage.dylib
+dyld: loaded: <span style="color:#f92672">/</span><span style="color:#66d9ef">private</span><span style="color:#f92672">/</span><span style="color:#66d9ef">var</span><span style="color:#f92672">/</span>containers<span style="color:#f92672">/</span>Bundle<span style="color:#f92672">/</span>Application<span style="color:#f92672">/</span><span style="color:#ae81ff">970</span>B1D59<span style="color:#f92672">-</span><span style="color:#ae81ff">350</span>C<span style="color:#f92672">-</span><span style="color:#ae81ff">4</span>B85<span style="color:#f92672">-</span>A6AD<span style="color:#f92672">-</span><span style="color:#ae81ff">45</span>C1A069F273<span style="color:#f92672">/</span>xxxxx.app<span style="color:#f92672">/</span>Frameworks<span style="color:#f92672">/</span>libswiftCoreLocation.dylib
+dyld: loaded: <span style="color:#f92672">/</span><span style="color:#66d9ef">private</span><span style="color:#f92672">/</span><span style="color:#66d9ef">var</span><span style="color:#f92672">/</span>containers<span style="color:#f92672">/</span>Bundle<span style="color:#f92672">/</span>Application<span style="color:#f92672">/</span><span style="color:#ae81ff">970</span>B1D59<span style="color:#f92672">-</span><span style="color:#ae81ff">350</span>C<span style="color:#f92672">-</span><span style="color:#ae81ff">4</span>B85<span style="color:#f92672">-</span>A6AD<span style="color:#f92672">-</span><span style="color:#ae81ff">45</span>C1A069F273<span style="color:#f92672">/</span>xxxxx.app<span style="color:#f92672">/</span>Frameworks<span style="color:#f92672">/</span>libswiftCoreMedia.dylib
+dyld: loaded: <span style="color:#f92672">/</span><span style="color:#66d9ef">private</span><span style="color:#f92672">/</span><span style="color:#66d9ef">var</span><span style="color:#f92672">/</span>containers<span style="color:#f92672">/</span>Bundle<span style="color:#f92672">/</span>Application<span style="color:#f92672">/</span><span style="color:#ae81ff">970</span>B1D59<span style="color:#f92672">-</span><span style="color:#ae81ff">350</span>C<span style="color:#f92672">-</span><span style="color:#ae81ff">4</span>B85<span style="color:#f92672">-</span>A6AD<span style="color:#f92672">-</span><span style="color:#ae81ff">45</span>C1A069F273<span style="color:#f92672">/</span>xxxxx.app<span style="color:#f92672">/</span>Frameworks<span style="color:#f92672">/</span>libswiftDarwin.dylib
+dyld: loaded: <span style="color:#f92672">/</span><span style="color:#66d9ef">private</span><span style="color:#f92672">/</span><span style="color:#66d9ef">var</span><span style="color:#f92672">/</span>containers<span style="color:#f92672">/</span>Bundle<span style="color:#f92672">/</span>Application<span style="color:#f92672">/</span><span style="color:#ae81ff">970</span>B1D59<span style="color:#f92672">-</span><span style="color:#ae81ff">350</span>C<span style="color:#f92672">-</span><span style="color:#ae81ff">4</span>B85<span style="color:#f92672">-</span>A6AD<span style="color:#f92672">-</span><span style="color:#ae81ff">45</span>C1A069F273<span style="color:#f92672">/</span>xxxxx.app<span style="color:#f92672">/</span>Frameworks<span style="color:#f92672">/</span>libswiftDispatch.dylib
+dyld: loaded: <span style="color:#f92672">/</span><span style="color:#66d9ef">private</span><span style="color:#f92672">/</span><span style="color:#66d9ef">var</span><span style="color:#f92672">/</span>containers<span style="color:#f92672">/</span>Bundle<span style="color:#f92672">/</span>Application<span style="color:#f92672">/</span><span style="color:#ae81ff">970</span>B1D59<span style="color:#f92672">-</span><span style="color:#ae81ff">350</span>C<span style="color:#f92672">-</span><span style="color:#ae81ff">4</span>B85<span style="color:#f92672">-</span>A6AD<span style="color:#f92672">-</span><span style="color:#ae81ff">45</span>C1A069F273<span style="color:#f92672">/</span>xxxxx.app<span style="color:#f92672">/</span>Frameworks<span style="color:#f92672">/</span>libswiftFoundation.dylib
+dyld: loaded: <span style="color:#f92672">/</span><span style="color:#66d9ef">private</span><span style="color:#f92672">/</span><span style="color:#66d9ef">var</span><span style="color:#f92672">/</span>containers<span style="color:#f92672">/</span>Bundle<span style="color:#f92672">/</span>Application<span style="color:#f92672">/</span><span style="color:#ae81ff">970</span>B1D59<span style="color:#f92672">-</span><span style="color:#ae81ff">350</span>C<span style="color:#f92672">-</span><span style="color:#ae81ff">4</span>B85<span style="color:#f92672">-</span>A6AD<span style="color:#f92672">-</span><span style="color:#ae81ff">45</span>C1A069F273<span style="color:#f92672">/</span>xxxxx.app<span style="color:#f92672">/</span>Frameworks<span style="color:#f92672">/</span>libswiftMediaPlayer.dylib
+dyld: loaded: <span style="color:#f92672">/</span><span style="color:#66d9ef">private</span><span style="color:#f92672">/</span><span style="color:#66d9ef">var</span><span style="color:#f92672">/</span>containers<span style="color:#f92672">/</span>Bundle<span style="color:#f92672">/</span>Application<span style="color:#f92672">/</span><span style="color:#ae81ff">970</span>B1D59<span style="color:#f92672">-</span><span style="color:#ae81ff">350</span>C<span style="color:#f92672">-</span><span style="color:#ae81ff">4</span>B85<span style="color:#f92672">-</span>A6AD<span style="color:#f92672">-</span><span style="color:#ae81ff">45</span>C1A069F273<span style="color:#f92672">/</span>xxxxx.app<span style="color:#f92672">/</span>Frameworks<span style="color:#f92672">/</span>libswiftMetal.dylib
+dyld: loaded: <span style="color:#f92672">/</span><span style="color:#66d9ef">private</span><span style="color:#f92672">/</span><span style="color:#66d9ef">var</span><span style="color:#f92672">/</span>containers<span style="color:#f92672">/</span>Bundle<span style="color:#f92672">/</span>Application<span style="color:#f92672">/</span><span style="color:#ae81ff">970</span>B1D59<span style="color:#f92672">-</span><span style="color:#ae81ff">350</span>C<span style="color:#f92672">-</span><span style="color:#ae81ff">4</span>B85<span style="color:#f92672">-</span>A6AD<span style="color:#f92672">-</span><span style="color:#ae81ff">45</span>C1A069F273<span style="color:#f92672">/</span>xxxxx.app<span style="color:#f92672">/</span>Frameworks<span style="color:#f92672">/</span>libswiftObjectiveC.dylib
+dyld: loaded: <span style="color:#f92672">/</span><span style="color:#66d9ef">private</span><span style="color:#f92672">/</span><span style="color:#66d9ef">var</span><span style="color:#f92672">/</span>containers<span style="color:#f92672">/</span>Bundle<span style="color:#f92672">/</span>Application<span style="color:#f92672">/</span><span style="color:#ae81ff">970</span>B1D59<span style="color:#f92672">-</span><span style="color:#ae81ff">350</span>C<span style="color:#f92672">-</span><span style="color:#ae81ff">4</span>B85<span style="color:#f92672">-</span>A6AD<span style="color:#f92672">-</span><span style="color:#ae81ff">45</span>C1A069F273<span style="color:#f92672">/</span>xxxxx.app<span style="color:#f92672">/</span>Frameworks<span style="color:#f92672">/</span>libswiftPhotos.dylib
+dyld: loaded: <span style="color:#f92672">/</span><span style="color:#66d9ef">private</span><span style="color:#f92672">/</span><span style="color:#66d9ef">var</span><span style="color:#f92672">/</span>containers<span style="color:#f92672">/</span>Bundle<span style="color:#f92672">/</span>Application<span style="color:#f92672">/</span><span style="color:#ae81ff">970</span>B1D59<span style="color:#f92672">-</span><span style="color:#ae81ff">350</span>C<span style="color:#f92672">-</span><span style="color:#ae81ff">4</span>B85<span style="color:#f92672">-</span>A6AD<span style="color:#f92672">-</span><span style="color:#ae81ff">45</span>C1A069F273<span style="color:#f92672">/</span>xxxxx.app<span style="color:#f92672">/</span>Frameworks<span style="color:#f92672">/</span>libswiftQuartzCore.dylib
+dyld: loaded: <span style="color:#f92672">/</span><span style="color:#66d9ef">private</span><span style="color:#f92672">/</span><span style="color:#66d9ef">var</span><span style="color:#f92672">/</span>containers<span style="color:#f92672">/</span>Bundle<span style="color:#f92672">/</span>Application<span style="color:#f92672">/</span><span style="color:#ae81ff">970</span>B1D59<span style="color:#f92672">-</span><span style="color:#ae81ff">350</span>C<span style="color:#f92672">-</span><span style="color:#ae81ff">4</span>B85<span style="color:#f92672">-</span>A6AD<span style="color:#f92672">-</span><span style="color:#ae81ff">45</span>C1A069F273<span style="color:#f92672">/</span>xxxxx.app<span style="color:#f92672">/</span>Frameworks<span style="color:#f92672">/</span>libswiftUIKit.dylib
+dyld: loaded: <span style="color:#f92672">/</span><span style="color:#66d9ef">private</span><span style="color:#f92672">/</span><span style="color:#66d9ef">var</span><span style="color:#f92672">/</span>containers<span style="color:#f92672">/</span>Bundle<span style="color:#f92672">/</span>Application<span style="color:#f92672">/</span><span style="color:#ae81ff">970</span>B1D59<span style="color:#f92672">-</span><span style="color:#ae81ff">350</span>C<span style="color:#f92672">-</span><span style="color:#ae81ff">4</span>B85<span style="color:#f92672">-</span>A6AD<span style="color:#f92672">-</span><span style="color:#ae81ff">45</span>C1A069F273<span style="color:#f92672">/</span>xxxxx.app<span style="color:#f92672">/</span>Frameworks<span style="color:#f92672">/</span>libswiftos.dylib
+dyld: loaded: <span style="color:#f92672">/</span><span style="color:#66d9ef">private</span><span style="color:#f92672">/</span><span style="color:#66d9ef">var</span><span style="color:#f92672">/</span>containers<span style="color:#f92672">/</span>Bundle<span style="color:#f92672">/</span>Application<span style="color:#f92672">/</span><span style="color:#ae81ff">970</span>B1D59<span style="color:#f92672">-</span><span style="color:#ae81ff">350</span>C<span style="color:#f92672">-</span><span style="color:#ae81ff">4</span>B85<span style="color:#f92672">-</span>A6AD<span style="color:#f92672">-</span><span style="color:#ae81ff">45</span>C1A069F273<span style="color:#f92672">/</span>xxxxx.app<span style="color:#f92672">/</span>Frameworks<span style="color:#f92672">/</span>libswiftsimd.dylib
+dyld: loaded: <span style="color:#f92672">/</span>usr<span style="color:#f92672">/</span>lib<span style="color:#f92672">/</span>system<span style="color:#f92672">/</span>libcache.dylib
+dyld: loaded: <span style="color:#f92672">/</span>usr<span style="color:#f92672">/</span>lib<span style="color:#f92672">/</span>system<span style="color:#f92672">/</span>libcommonCrypto.dylib
+dyld: loaded: <span style="color:#f92672">/</span>usr<span style="color:#f92672">/</span>lib<span style="color:#f92672">/</span>system<span style="color:#f92672">/</span>libcompiler_rt.dylib
+dyld: loaded: <span style="color:#f92672">/</span>usr<span style="color:#f92672">/</span>lib<span style="color:#f92672">/</span>system<span style="color:#f92672">/</span>libcopyfile.dylib
+dyld: loaded: <span style="color:#f92672">/</span>usr<span style="color:#f92672">/</span>lib<span style="color:#f92672">/</span>system<span style="color:#f92672">/</span>libcorecrypto.dylib
+dyld: loaded: <span style="color:#f92672">/</span>usr<span style="color:#f92672">/</span>lib<span style="color:#f92672">/</span>system<span style="color:#f92672">/</span>introspection<span style="color:#f92672">/</span>libdispatch.dylib
+dyld: loaded: <span style="color:#f92672">/</span>usr<span style="color:#f92672">/</span>lib<span style="color:#f92672">/</span>system<span style="color:#f92672">/</span>libdyld.dylib
+dyld: loaded: <span style="color:#f92672">/</span>usr<span style="color:#f92672">/</span>lib<span style="color:#f92672">/</span>system<span style="color:#f92672">/</span>liblaunch.dylib
+dyld: loaded: <span style="color:#f92672">/</span>usr<span style="color:#f92672">/</span>lib<span style="color:#f92672">/</span>system<span style="color:#f92672">/</span>libmacho.dylib
+dyld: loaded: <span style="color:#f92672">/</span>usr<span style="color:#f92672">/</span>lib<span style="color:#f92672">/</span>system<span style="color:#f92672">/</span>libremovefile.dylib
+dyld: loaded: <span style="color:#f92672">/</span>usr<span style="color:#f92672">/</span>lib<span style="color:#f92672">/</span>system<span style="color:#f92672">/</span>libsystem_asl.dylib
+dyld: loaded: <span style="color:#f92672">/</span>usr<span style="color:#f92672">/</span>lib<span style="color:#f92672">/</span>system<span style="color:#f92672">/</span>libsystem_blocks.dylib
+dyld: loaded: <span style="color:#f92672">/</span>usr<span style="color:#f92672">/</span>lib<span style="color:#f92672">/</span>system<span style="color:#f92672">/</span>libsystem_c.dylib
+dyld: loaded: <span style="color:#f92672">/</span>usr<span style="color:#f92672">/</span>lib<span style="color:#f92672">/</span>system<span style="color:#f92672">/</span>libsystem_configuration.dylib
+dyld: loaded: <span style="color:#f92672">/</span>usr<span style="color:#f92672">/</span>lib<span style="color:#f92672">/</span>system<span style="color:#f92672">/</span>libsystem_containermanager.dylib
+dyld: loaded: <span style="color:#f92672">/</span>usr<span style="color:#f92672">/</span>lib<span style="color:#f92672">/</span>system<span style="color:#f92672">/</span>libsystem_coreservices.dylib
+dyld: loaded: <span style="color:#f92672">/</span>usr<span style="color:#f92672">/</span>lib<span style="color:#f92672">/</span>system<span style="color:#f92672">/</span>libsystem_darwin.dylib
+dyld: loaded: <span style="color:#f92672">/</span>usr<span style="color:#f92672">/</span>lib<span style="color:#f92672">/</span>system<span style="color:#f92672">/</span>libsystem_dnssd.dylib
+dyld: loaded: <span style="color:#f92672">/</span>usr<span style="color:#f92672">/</span>lib<span style="color:#f92672">/</span>system<span style="color:#f92672">/</span>libsystem_info.dylib
+dyld: loaded: <span style="color:#f92672">/</span>usr<span style="color:#f92672">/</span>lib<span style="color:#f92672">/</span>system<span style="color:#f92672">/</span>libsystem_m.dylib
+dyld: loaded: <span style="color:#f92672">/</span>usr<span style="color:#f92672">/</span>lib<span style="color:#f92672">/</span>system<span style="color:#f92672">/</span>libsystem_malloc.dylib
+dyld: loaded: <span style="color:#f92672">/</span>usr<span style="color:#f92672">/</span>lib<span style="color:#f92672">/</span>system<span style="color:#f92672">/</span>libsystem_networkextension.dylib
+dyld: loaded: <span style="color:#f92672">/</span>usr<span style="color:#f92672">/</span>lib<span style="color:#f92672">/</span>system<span style="color:#f92672">/</span>libsystem_notify.dylib
+dyld: loaded: <span style="color:#f92672">/</span>usr<span style="color:#f92672">/</span>lib<span style="color:#f92672">/</span>system<span style="color:#f92672">/</span>libsystem_sandbox.dylib
+dyld: loaded: <span style="color:#f92672">/</span>usr<span style="color:#f92672">/</span>lib<span style="color:#f92672">/</span>system<span style="color:#f92672">/</span>libsystem_kernel.dylib
+dyld: loaded: <span style="color:#f92672">/</span>usr<span style="color:#f92672">/</span>lib<span style="color:#f92672">/</span>system<span style="color:#f92672">/</span>libsystem_platform.dylib
+dyld: loaded: <span style="color:#f92672">/</span>usr<span style="color:#f92672">/</span>lib<span style="color:#f92672">/</span>system<span style="color:#f92672">/</span>libsystem_pthread.dylib
+dyld: loaded: <span style="color:#f92672">/</span>usr<span style="color:#f92672">/</span>lib<span style="color:#f92672">/</span>system<span style="color:#f92672">/</span>libsystem_symptoms.dylib
+dyld: loaded: <span style="color:#f92672">/</span>usr<span style="color:#f92672">/</span>lib<span style="color:#f92672">/</span>system<span style="color:#f92672">/</span>libsystem_trace.dylib
+dyld: loaded: <span style="color:#f92672">/</span>usr<span style="color:#f92672">/</span>lib<span style="color:#f92672">/</span>system<span style="color:#f92672">/</span>libunwind.dylib
+dyld: loaded: <span style="color:#f92672">/</span>usr<span style="color:#f92672">/</span>lib<span style="color:#f92672">/</span>system<span style="color:#f92672">/</span>libxpc.dylib
+dyld: loaded: <span style="color:#f92672">/</span>usr<span style="color:#f92672">/</span>lib<span style="color:#f92672">/</span>libcharset.<span style="color:#ae81ff">1.</span>dylib
+dyld: loaded: <span style="color:#f92672">/</span>System<span style="color:#f92672">/</span>Library<span style="color:#f92672">/</span>Frameworks<span style="color:#f92672">/</span>AVFoundation.framework<span style="color:#f92672">/</span>Frameworks<span style="color:#f92672">/</span>AVFAudio.framework<span style="color:#f92672">/</span>AVFAudio
+dyld: loaded: <span style="color:#f92672">/</span>usr<span style="color:#f92672">/</span>lib<span style="color:#f92672">/</span>libCTGreenTeaLogger.dylib
+dyld: loaded: <span style="color:#f92672">/</span>System<span style="color:#f92672">/</span>Library<span style="color:#f92672">/</span>PrivateFrameworks<span style="color:#f92672">/</span>AssertionServices.framework<span style="color:#f92672">/</span>AssertionServices
+dyld: loaded: <span style="color:#f92672">/</span>System<span style="color:#f92672">/</span>Library<span style="color:#f92672">/</span>PrivateFrameworks<span style="color:#f92672">/</span>InternationalSupport.framework<span style="color:#f92672">/</span>InternationalSupport
+dyld: loaded: <span style="color:#f92672">/</span>System<span style="color:#f92672">/</span>Library<span style="color:#f92672">/</span>Frameworks<span style="color:#f92672">/</span>IOKit.framework<span style="color:#f92672">/</span>Versions<span style="color:#f92672">/</span>A<span style="color:#f92672">/</span>IOKit
+dyld: loaded: <span style="color:#f92672">/</span>System<span style="color:#f92672">/</span>Library<span style="color:#f92672">/</span>PrivateFrameworks<span style="color:#f92672">/</span>GraphicsServices.framework<span style="color:#f92672">/</span>GraphicsServices
+dyld: loaded: <span style="color:#f92672">/</span>System<span style="color:#f92672">/</span>Library<span style="color:#f92672">/</span>Frameworks<span style="color:#f92672">/</span>MediaToolbox.framework<span style="color:#f92672">/</span>MediaToolbox
+dyld: loaded: <span style="color:#f92672">/</span>System<span style="color:#f92672">/</span>Library<span style="color:#f92672">/</span>PrivateFrameworks<span style="color:#f92672">/</span>Celestial.framework<span style="color:#f92672">/</span>Celestial
+dyld: loaded: <span style="color:#f92672">/</span>System<span style="color:#f92672">/</span>Library<span style="color:#f92672">/</span>Frameworks<span style="color:#f92672">/</span>IOSurface.framework<span style="color:#f92672">/</span>IOSurface
+dyld: loaded: <span style="color:#f92672">/</span>System<span style="color:#f92672">/</span>Library<span style="color:#f92672">/</span>PrivateFrameworks<span style="color:#f92672">/</span>ManagedConfiguration.framework<span style="color:#f92672">/</span>ManagedConfiguration
+dyld: loaded: <span style="color:#f92672">/</span>usr<span style="color:#f92672">/</span>lib<span style="color:#f92672">/</span>libMobileGestalt.dylib
+dyld: loaded: <span style="color:#f92672">/</span>System<span style="color:#f92672">/</span>Library<span style="color:#f92672">/</span>PrivateFrameworks<span style="color:#f92672">/</span>Quagga.framework<span style="color:#f92672">/</span>Quagga
+dyld: loaded: <span style="color:#f92672">/</span>System<span style="color:#f92672">/</span>Library<span style="color:#f92672">/</span>PrivateFrameworks<span style="color:#f92672">/</span>TCC.framework<span style="color:#f92672">/</span>TCC
+dyld: loaded: <span style="color:#f92672">/</span>System<span style="color:#f92672">/</span>Library<span style="color:#f92672">/</span>Frameworks<span style="color:#f92672">/</span>CoreServices.framework<span style="color:#f92672">/</span>CoreServices
+dyld: loaded: <span style="color:#f92672">/</span>System<span style="color:#f92672">/</span>Library<span style="color:#f92672">/</span>PrivateFrameworks<span style="color:#f92672">/</span>CrashReporterSupport.framework<span style="color:#f92672">/</span>CrashReporterSupport
+dyld: loaded: <span style="color:#f92672">/</span>usr<span style="color:#f92672">/</span>lib<span style="color:#f92672">/</span>libAudioStatistics.dylib
+dyld: loaded: <span style="color:#f92672">/</span>usr<span style="color:#f92672">/</span>lib<span style="color:#f92672">/</span>libenergytrace.dylib
+dyld: loaded: <span style="color:#f92672">/</span>usr<span style="color:#f92672">/</span>lib<span style="color:#f92672">/</span>libbsm.<span style="color:#ae81ff">0.</span>dylib
+dyld: loaded: <span style="color:#f92672">/</span>usr<span style="color:#f92672">/</span>lib<span style="color:#f92672">/</span>libarchive.<span style="color:#ae81ff">2.</span>dylib
+dyld: loaded: <span style="color:#f92672">/</span>usr<span style="color:#f92672">/</span>lib<span style="color:#f92672">/</span>libxml2.<span style="color:#ae81ff">2.</span>dylib
+dyld: loaded: <span style="color:#f92672">/</span>usr<span style="color:#f92672">/</span>lib<span style="color:#f92672">/</span>libCRFSuite.dylib
+dyld: loaded: <span style="color:#f92672">/</span>usr<span style="color:#f92672">/</span>lib<span style="color:#f92672">/</span>liblangid.dylib
+dyld: loaded: <span style="color:#f92672">/</span>usr<span style="color:#f92672">/</span>lib<span style="color:#f92672">/</span>liblzma.<span style="color:#ae81ff">5.</span>dylib
+dyld: loaded: <span style="color:#f92672">/</span>usr<span style="color:#f92672">/</span>lib<span style="color:#f92672">/</span>libnetwork.dylib
+dyld: loaded: <span style="color:#f92672">/</span>usr<span style="color:#f92672">/</span>lib<span style="color:#f92672">/</span>libapple_nghttp2.dylib
+dyld: loaded: <span style="color:#f92672">/</span>usr<span style="color:#f92672">/</span>lib<span style="color:#f92672">/</span>libpcap.A.dylib
+dyld: loaded: <span style="color:#f92672">/</span>usr<span style="color:#f92672">/</span>lib<span style="color:#f92672">/</span>libcoretls.dylib
+dyld: loaded: <span style="color:#f92672">/</span>usr<span style="color:#f92672">/</span>lib<span style="color:#f92672">/</span>libcoretls_cfhelpers.dylib
+dyld: loaded: <span style="color:#f92672">/</span>System<span style="color:#f92672">/</span>Library<span style="color:#f92672">/</span>Frameworks<span style="color:#f92672">/</span>Accelerate.framework<span style="color:#f92672">/</span>Frameworks<span style="color:#f92672">/</span>vImage.framework<span style="color:#f92672">/</span>vImage
+dyld: loaded: <span style="color:#f92672">/</span>System<span style="color:#f92672">/</span>Library<span style="color:#f92672">/</span>Frameworks<span style="color:#f92672">/</span>Accelerate.framework<span style="color:#f92672">/</span>Frameworks<span style="color:#f92672">/</span>vecLib.framework<span style="color:#f92672">/</span>vecLib
+dyld: loaded: <span style="color:#f92672">/</span>usr<span style="color:#f92672">/</span>lib<span style="color:#f92672">/</span>libcompression.dylib
+dyld: loaded: <span style="color:#f92672">/</span>System<span style="color:#f92672">/</span>Library<span style="color:#f92672">/</span>Frameworks<span style="color:#f92672">/</span>Accelerate.framework<span style="color:#f92672">/</span>Frameworks<span style="color:#f92672">/</span>vecLib.framework<span style="color:#f92672">/</span>libvMisc.dylib
+dyld: loaded: <span style="color:#f92672">/</span>System<span style="color:#f92672">/</span>Library<span style="color:#f92672">/</span>Frameworks<span style="color:#f92672">/</span>Accelerate.framework<span style="color:#f92672">/</span>Frameworks<span style="color:#f92672">/</span>vecLib.framework<span style="color:#f92672">/</span>libvDSP.dylib
+dyld: loaded: <span style="color:#f92672">/</span>System<span style="color:#f92672">/</span>Library<span style="color:#f92672">/</span>Frameworks<span style="color:#f92672">/</span>Accelerate.framework<span style="color:#f92672">/</span>Frameworks<span style="color:#f92672">/</span>vecLib.framework<span style="color:#f92672">/</span>libBLAS.dylib
+dyld: loaded: <span style="color:#f92672">/</span>System<span style="color:#f92672">/</span>Library<span style="color:#f92672">/</span>Frameworks<span style="color:#f92672">/</span>Accelerate.framework<span style="color:#f92672">/</span>Frameworks<span style="color:#f92672">/</span>vecLib.framework<span style="color:#f92672">/</span>libLAPACK.dylib
+dyld: loaded: <span style="color:#f92672">/</span>System<span style="color:#f92672">/</span>Library<span style="color:#f92672">/</span>Frameworks<span style="color:#f92672">/</span>Accelerate.framework<span style="color:#f92672">/</span>Frameworks<span style="color:#f92672">/</span>vecLib.framework<span style="color:#f92672">/</span>libLinearAlgebra.dylib
+dyld: loaded: <span style="color:#f92672">/</span>System<span style="color:#f92672">/</span>Library<span style="color:#f92672">/</span>Frameworks<span style="color:#f92672">/</span>Accelerate.framework<span style="color:#f92672">/</span>Frameworks<span style="color:#f92672">/</span>vecLib.framework<span style="color:#f92672">/</span>libSparseBLAS.dylib
+dyld: loaded: <span style="color:#f92672">/</span>System<span style="color:#f92672">/</span>Library<span style="color:#f92672">/</span>Frameworks<span style="color:#f92672">/</span>Accelerate.framework<span style="color:#f92672">/</span>Frameworks<span style="color:#f92672">/</span>vecLib.framework<span style="color:#f92672">/</span>libQuadrature.dylib
+dyld: loaded: <span style="color:#f92672">/</span>System<span style="color:#f92672">/</span>Library<span style="color:#f92672">/</span>Frameworks<span style="color:#f92672">/</span>Accelerate.framework<span style="color:#f92672">/</span>Frameworks<span style="color:#f92672">/</span>vecLib.framework<span style="color:#f92672">/</span>libBNNS.dylib
+dyld: loaded: <span style="color:#f92672">/</span>System<span style="color:#f92672">/</span>Library<span style="color:#f92672">/</span>Frameworks<span style="color:#f92672">/</span>Accelerate.framework<span style="color:#f92672">/</span>Frameworks<span style="color:#f92672">/</span>vecLib.framework<span style="color:#f92672">/</span>libSparse.dylib
+dyld: loaded: <span style="color:#f92672">/</span>System<span style="color:#f92672">/</span>Library<span style="color:#f92672">/</span>PrivateFrameworks<span style="color:#f92672">/</span>AppleSauce.framework<span style="color:#f92672">/</span>AppleSauce
+dyld: loaded: <span style="color:#f92672">/</span>System<span style="color:#f92672">/</span>Library<span style="color:#f92672">/</span>PrivateFrameworks<span style="color:#f92672">/</span>RTCReporting.framework<span style="color:#f92672">/</span>RTCReporting
+dyld: loaded: <span style="color:#f92672">/</span>System<span style="color:#f92672">/</span>Library<span style="color:#f92672">/</span>PrivateFrameworks<span style="color:#f92672">/</span>ProtocolBuffer.framework<span style="color:#f92672">/</span>ProtocolBuffer
+dyld: loaded: <span style="color:#f92672">/</span>System<span style="color:#f92672">/</span>Library<span style="color:#f92672">/</span>PrivateFrameworks<span style="color:#f92672">/</span>WirelessDiagnostics.framework<span style="color:#f92672">/</span>WirelessDiagnostics
+dyld: loaded: <span style="color:#f92672">/</span>System<span style="color:#f92672">/</span>Library<span style="color:#f92672">/</span>PrivateFrameworks<span style="color:#f92672">/</span>PowerLog.framework<span style="color:#f92672">/</span>PowerLog
+dyld: loaded: <span style="color:#f92672">/</span>System<span style="color:#f92672">/</span>Library<span style="color:#f92672">/</span>PrivateFrameworks<span style="color:#f92672">/</span>AggregateDictionary.framework<span style="color:#f92672">/</span>AggregateDictionary
+dyld: loaded: <span style="color:#f92672">/</span>usr<span style="color:#f92672">/</span>lib<span style="color:#f92672">/</span>libAWDSupportFramework.dylib
+dyld: loaded: <span style="color:#f92672">/</span>usr<span style="color:#f92672">/</span>lib<span style="color:#f92672">/</span>libprotobuf<span style="color:#f92672">-</span>lite.dylib
+dyld: loaded: <span style="color:#f92672">/</span>usr<span style="color:#f92672">/</span>lib<span style="color:#f92672">/</span>libTelephonyUtilDynamic.dylib
+dyld: loaded: <span style="color:#f92672">/</span>usr<span style="color:#f92672">/</span>lib<span style="color:#f92672">/</span>libprotobuf.dylib
+dyld: loaded: <span style="color:#f92672">/</span>System<span style="color:#f92672">/</span>Library<span style="color:#f92672">/</span>PrivateFrameworks<span style="color:#f92672">/</span>UserFS.framework<span style="color:#f92672">/</span>UserFS
+dyld: loaded: <span style="color:#f92672">/</span>System<span style="color:#f92672">/</span>Library<span style="color:#f92672">/</span>Frameworks<span style="color:#f92672">/</span>CoreAudio.framework<span style="color:#f92672">/</span>CoreAudio
+dyld: loaded: <span style="color:#f92672">/</span>System<span style="color:#f92672">/</span>Library<span style="color:#f92672">/</span>PrivateFrameworks<span style="color:#f92672">/</span>AppSupport.framework<span style="color:#f92672">/</span>AppSupport
+dyld: loaded: <span style="color:#f92672">/</span>System<span style="color:#f92672">/</span>Library<span style="color:#f92672">/</span>PrivateFrameworks<span style="color:#f92672">/</span>SpringBoardServices.framework<span style="color:#f92672">/</span>SpringBoardServices
+dyld: loaded: <span style="color:#f92672">/</span>System<span style="color:#f92672">/</span>Library<span style="color:#f92672">/</span>PrivateFrameworks<span style="color:#f92672">/</span>IOSurfaceAccelerator.framework<span style="color:#f92672">/</span>IOSurfaceAccelerator
+dyld: loaded: <span style="color:#f92672">/</span>System<span style="color:#f92672">/</span>Library<span style="color:#f92672">/</span>PrivateFrameworks<span style="color:#f92672">/</span>AppleJPEG.framework<span style="color:#f92672">/</span>AppleJPEG
+dyld: loaded: <span style="color:#f92672">/</span>System<span style="color:#f92672">/</span>Library<span style="color:#f92672">/</span>Frameworks<span style="color:#f92672">/</span>OpenGLES.framework<span style="color:#f92672">/</span>libCoreFSCache.dylib
+dyld: loaded: <span style="color:#f92672">/</span>System<span style="color:#f92672">/</span>Library<span style="color:#f92672">/</span>PrivateFrameworks<span style="color:#f92672">/</span>IOAccelerator.framework<span style="color:#f92672">/</span>IOAccelerator
+dyld: loaded: <span style="color:#f92672">/</span>usr<span style="color:#f92672">/</span>lib<span style="color:#f92672">/</span>libtailspin.dylib
+dyld: loaded: <span style="color:#f92672">/</span>System<span style="color:#f92672">/</span>Library<span style="color:#f92672">/</span>PrivateFrameworks<span style="color:#f92672">/</span>SignpostCollection.framework<span style="color:#f92672">/</span>SignpostCollection
+dyld: loaded: <span style="color:#f92672">/</span>System<span style="color:#f92672">/</span>Library<span style="color:#f92672">/</span>PrivateFrameworks<span style="color:#f92672">/</span>ktrace.framework<span style="color:#f92672">/</span>ktrace
+dyld: loaded: <span style="color:#f92672">/</span>System<span style="color:#f92672">/</span>Library<span style="color:#f92672">/</span>PrivateFrameworks<span style="color:#f92672">/</span>SampleAnalysis.framework<span style="color:#f92672">/</span>SampleAnalysis
+dyld: loaded: <span style="color:#f92672">/</span>System<span style="color:#f92672">/</span>Library<span style="color:#f92672">/</span>PrivateFrameworks<span style="color:#f92672">/</span>kperfdata.framework<span style="color:#f92672">/</span>kperfdata
+dyld: loaded: <span style="color:#f92672">/</span>System<span style="color:#f92672">/</span>Library<span style="color:#f92672">/</span>PrivateFrameworks<span style="color:#f92672">/</span>CoreSymbolication.framework<span style="color:#f92672">/</span>CoreSymbolication
+dyld: loaded: <span style="color:#f92672">/</span>usr<span style="color:#f92672">/</span>lib<span style="color:#f92672">/</span>libdscsym.dylib
+dyld: loaded: <span style="color:#f92672">/</span>System<span style="color:#f92672">/</span>Library<span style="color:#f92672">/</span>PrivateFrameworks<span style="color:#f92672">/</span>SignpostNotification.framework<span style="color:#f92672">/</span>SignpostNotification
+dyld: loaded: <span style="color:#f92672">/</span>System<span style="color:#f92672">/</span>Library<span style="color:#f92672">/</span>PrivateFrameworks<span style="color:#f92672">/</span>SignpostSupport.framework<span style="color:#f92672">/</span>SignpostSupport
+dyld: loaded: <span style="color:#f92672">/</span>System<span style="color:#f92672">/</span>Library<span style="color:#f92672">/</span>PrivateFrameworks<span style="color:#f92672">/</span>LoggingSupport.framework<span style="color:#f92672">/</span>LoggingSupport
+dyld: loaded: <span style="color:#f92672">/</span>System<span style="color:#f92672">/</span>Library<span style="color:#f92672">/</span>PrivateFrameworks<span style="color:#f92672">/</span>MobileKeyBag.framework<span style="color:#f92672">/</span>MobileKeyBag
+dyld: loaded: <span style="color:#f92672">/</span>System<span style="color:#f92672">/</span>Library<span style="color:#f92672">/</span>PrivateFrameworks<span style="color:#f92672">/</span>kperf.framework<span style="color:#f92672">/</span>kperf
+dyld: loaded: <span style="color:#f92672">/</span>System<span style="color:#f92672">/</span>Library<span style="color:#f92672">/</span>PrivateFrameworks<span style="color:#f92672">/</span>MobileInstallation.framework<span style="color:#f92672">/</span>MobileInstallation
+dyld: loaded: <span style="color:#f92672">/</span>System<span style="color:#f92672">/</span>Library<span style="color:#f92672">/</span>PrivateFrameworks<span style="color:#f92672">/</span>MobileSystemServices.framework<span style="color:#f92672">/</span>MobileSystemServices
+dyld: loaded: <span style="color:#f92672">/</span>System<span style="color:#f92672">/</span>Library<span style="color:#f92672">/</span>PrivateFrameworks<span style="color:#f92672">/</span>ColorSync.framework<span style="color:#f92672">/</span>ColorSync
+dyld: loaded: <span style="color:#f92672">/</span>System<span style="color:#f92672">/</span>Library<span style="color:#f92672">/</span>PrivateFrameworks<span style="color:#f92672">/</span>IOMobileFramebuffer.framework<span style="color:#f92672">/</span>IOMobileFramebuffer
+dyld: loaded: <span style="color:#f92672">/</span>usr<span style="color:#f92672">/</span>lib<span style="color:#f92672">/</span>libauthinstall.dylib
+dyld: loaded: <span style="color:#f92672">/</span>usr<span style="color:#f92672">/</span>lib<span style="color:#f92672">/</span>libamsupport.dylib
+dyld: loaded: <span style="color:#f92672">/</span>usr<span style="color:#f92672">/</span>lib<span style="color:#f92672">/</span>updaters<span style="color:#f92672">/</span>libSERestoreInfo.dylib
+dyld: loaded: <span style="color:#f92672">/</span>System<span style="color:#f92672">/</span>Library<span style="color:#f92672">/</span>PrivateFrameworks<span style="color:#f92672">/</span>DeviceIdentity.framework<span style="color:#f92672">/</span>DeviceIdentity
+dyld: loaded: <span style="color:#f92672">/</span>System<span style="color:#f92672">/</span>Library<span style="color:#f92672">/</span>PrivateFrameworks<span style="color:#f92672">/</span>DiskImages.framework<span style="color:#f92672">/</span>DiskImages
+dyld: loaded: <span style="color:#f92672">/</span>usr<span style="color:#f92672">/</span>lib<span style="color:#f92672">/</span>libReverseProxyDevice.dylib
+dyld: loaded: <span style="color:#f92672">/</span>System<span style="color:#f92672">/</span>Library<span style="color:#f92672">/</span>PrivateFrameworks<span style="color:#f92672">/</span>MediaKit.framework<span style="color:#f92672">/</span>MediaKit
+dyld: loaded: <span style="color:#f92672">/</span>System<span style="color:#f92672">/</span>Library<span style="color:#f92672">/</span>PrivateFrameworks<span style="color:#f92672">/</span>APFS.framework<span style="color:#f92672">/</span>APFS
+dyld: loaded: <span style="color:#f92672">/</span>usr<span style="color:#f92672">/</span>lib<span style="color:#f92672">/</span>libutil.dylib
+dyld: loaded: <span style="color:#f92672">/</span>System<span style="color:#f92672">/</span>Library<span style="color:#f92672">/</span>Frameworks<span style="color:#f92672">/</span>OpenGLES.framework<span style="color:#f92672">/</span>libGFXShared.dylib
+dyld: loaded: <span style="color:#f92672">/</span>System<span style="color:#f92672">/</span>Library<span style="color:#f92672">/</span>Frameworks<span style="color:#f92672">/</span>OpenGLES.framework<span style="color:#f92672">/</span>libGLImage.dylib
+dyld: loaded: <span style="color:#f92672">/</span>System<span style="color:#f92672">/</span>Library<span style="color:#f92672">/</span>Frameworks<span style="color:#f92672">/</span>OpenGLES.framework<span style="color:#f92672">/</span>libCVMSPluginSupport.dylib
+dyld: loaded: <span style="color:#f92672">/</span>System<span style="color:#f92672">/</span>Library<span style="color:#f92672">/</span>Frameworks<span style="color:#f92672">/</span>OpenGLES.framework<span style="color:#f92672">/</span>libCoreVMClient.dylib
+dyld: loaded: <span style="color:#f92672">/</span>System<span style="color:#f92672">/</span>Library<span style="color:#f92672">/</span>PrivateFrameworks<span style="color:#f92672">/</span>CorePhoneNumbers.framework<span style="color:#f92672">/</span>CorePhoneNumbers
+dyld: loaded: <span style="color:#f92672">/</span>System<span style="color:#f92672">/</span>Library<span style="color:#f92672">/</span>PrivateFrameworks<span style="color:#f92672">/</span>FrontBoardServices.framework<span style="color:#f92672">/</span>FrontBoardServices
+dyld: loaded: <span style="color:#f92672">/</span>System<span style="color:#f92672">/</span>Library<span style="color:#f92672">/</span>PrivateFrameworks<span style="color:#f92672">/</span>BaseBoard.framework<span style="color:#f92672">/</span>BaseBoard
+dyld: loaded: <span style="color:#f92672">/</span>System<span style="color:#f92672">/</span>Library<span style="color:#f92672">/</span>PrivateFrameworks<span style="color:#f92672">/</span>BackBoardServices.framework<span style="color:#f92672">/</span>BackBoardServices
+dyld: loaded: <span style="color:#f92672">/</span>System<span style="color:#f92672">/</span>Library<span style="color:#f92672">/</span>PrivateFrameworks<span style="color:#f92672">/</span>FontServices.framework<span style="color:#f92672">/</span>libGSFontCache.dylib
+dyld: loaded: <span style="color:#f92672">/</span>System<span style="color:#f92672">/</span>Library<span style="color:#f92672">/</span>PrivateFrameworks<span style="color:#f92672">/</span>UIFoundation.framework<span style="color:#f92672">/</span>UIFoundation
+dyld: loaded: <span style="color:#f92672">/</span>usr<span style="color:#f92672">/</span>lib<span style="color:#f92672">/</span>libAccessibility.dylib
+dyld: loaded: <span style="color:#f92672">/</span>System<span style="color:#f92672">/</span>Library<span style="color:#f92672">/</span>PrivateFrameworks<span style="color:#f92672">/</span>OTSVG.framework<span style="color:#f92672">/</span>OTSVG
+dyld: loaded: <span style="color:#f92672">/</span>System<span style="color:#f92672">/</span>Library<span style="color:#f92672">/</span>PrivateFrameworks<span style="color:#f92672">/</span>FontServices.framework<span style="color:#f92672">/</span>FontServices
+dyld: loaded: <span style="color:#f92672">/</span>System<span style="color:#f92672">/</span>Library<span style="color:#f92672">/</span>PrivateFrameworks<span style="color:#f92672">/</span>FontServices.framework<span style="color:#f92672">/</span>libFontParser.dylib
+dyld: loaded: <span style="color:#f92672">/</span>System<span style="color:#f92672">/</span>Library<span style="color:#f92672">/</span>PrivateFrameworks<span style="color:#f92672">/</span>CoreUI.framework<span style="color:#f92672">/</span>CoreUI
+dyld: loaded: <span style="color:#f92672">/</span>System<span style="color:#f92672">/</span>Library<span style="color:#f92672">/</span>PrivateFrameworks<span style="color:#f92672">/</span>TextureIO.framework<span style="color:#f92672">/</span>TextureIO
+dyld: loaded: <span style="color:#f92672">/</span>usr<span style="color:#f92672">/</span>lib<span style="color:#f92672">/</span>libate.dylib
+dyld: loaded: <span style="color:#f92672">/</span>System<span style="color:#f92672">/</span>Library<span style="color:#f92672">/</span>PrivateFrameworks<span style="color:#f92672">/</span>ASEProcessing.framework<span style="color:#f92672">/</span>ASEProcessing
+dyld: loaded: <span style="color:#f92672">/</span>System<span style="color:#f92672">/</span>Library<span style="color:#f92672">/</span>PrivateFrameworks<span style="color:#f92672">/</span>libEDR.framework<span style="color:#f92672">/</span>libEDR
+dyld: loaded: <span style="color:#f92672">/</span>System<span style="color:#f92672">/</span>Library<span style="color:#f92672">/</span>PrivateFrameworks<span style="color:#f92672">/</span>HangTracer.framework<span style="color:#f92672">/</span>HangTracer
+dyld: loaded: <span style="color:#f92672">/</span>System<span style="color:#f92672">/</span>Library<span style="color:#f92672">/</span>PrivateFrameworks<span style="color:#f92672">/</span>CoreBrightness.framework<span style="color:#f92672">/</span>CoreBrightness
+dyld: loaded: <span style="color:#f92672">/</span>System<span style="color:#f92672">/</span>Library<span style="color:#f92672">/</span>PrivateFrameworks<span style="color:#f92672">/</span>AXCoreUtilities.framework<span style="color:#f92672">/</span>AXCoreUtilities
+dyld: loaded: <span style="color:#f92672">/</span>System<span style="color:#f92672">/</span>Library<span style="color:#f92672">/</span>Frameworks<span style="color:#f92672">/</span>MediaAccessibility.framework<span style="color:#f92672">/</span>MediaAccessibility
+dyld: loaded: <span style="color:#f92672">/</span>usr<span style="color:#f92672">/</span>lib<span style="color:#f92672">/</span>libFosl_dynamic.dylib
+dyld: loaded: <span style="color:#f92672">/</span>System<span style="color:#f92672">/</span>Library<span style="color:#f92672">/</span>PrivateFrameworks<span style="color:#f92672">/</span>GraphVisualizer.framework<span style="color:#f92672">/</span>GraphVisualizer
+dyld: loaded: <span style="color:#f92672">/</span>System<span style="color:#f92672">/</span>Library<span style="color:#f92672">/</span>Frameworks<span style="color:#f92672">/</span>MetalPerformanceShaders.framework<span style="color:#f92672">/</span>MetalPerformanceShaders
+dyld: loaded: <span style="color:#f92672">/</span>System<span style="color:#f92672">/</span>Library<span style="color:#f92672">/</span>PrivateFrameworks<span style="color:#f92672">/</span>FaceCore.framework<span style="color:#f92672">/</span>FaceCore
+dyld: loaded: <span style="color:#f92672">/</span>System<span style="color:#f92672">/</span>Library<span style="color:#f92672">/</span>Frameworks<span style="color:#f92672">/</span>MetalPerformanceShaders.framework<span style="color:#f92672">/</span>Frameworks<span style="color:#f92672">/</span>MPSCore.framework<span style="color:#f92672">/</span>MPSCore
+dyld: loaded: <span style="color:#f92672">/</span>System<span style="color:#f92672">/</span>Library<span style="color:#f92672">/</span>Frameworks<span style="color:#f92672">/</span>MetalPerformanceShaders.framework<span style="color:#f92672">/</span>Frameworks<span style="color:#f92672">/</span>MPSImage.framework<span style="color:#f92672">/</span>MPSImage
+dyld: loaded: <span style="color:#f92672">/</span>System<span style="color:#f92672">/</span>Library<span style="color:#f92672">/</span>Frameworks<span style="color:#f92672">/</span>MetalPerformanceShaders.framework<span style="color:#f92672">/</span>Frameworks<span style="color:#f92672">/</span>MPSNeuralNetwork.framework<span style="color:#f92672">/</span>MPSNeuralNetwork
+dyld: loaded: <span style="color:#f92672">/</span>System<span style="color:#f92672">/</span>Library<span style="color:#f92672">/</span>Frameworks<span style="color:#f92672">/</span>MetalPerformanceShaders.framework<span style="color:#f92672">/</span>Frameworks<span style="color:#f92672">/</span>MPSMatrix.framework<span style="color:#f92672">/</span>MPSMatrix
+dyld: loaded: <span style="color:#f92672">/</span>System<span style="color:#f92672">/</span>Library<span style="color:#f92672">/</span>Frameworks<span style="color:#f92672">/</span>MetalPerformanceShaders.framework<span style="color:#f92672">/</span>Frameworks<span style="color:#f92672">/</span>MPSRayIntersector.framework<span style="color:#f92672">/</span>MPSRayIntersector
+dyld: loaded: <span style="color:#f92672">/</span>System<span style="color:#f92672">/</span>Library<span style="color:#f92672">/</span>PrivateFrameworks<span style="color:#f92672">/</span>ConstantClasses.framework<span style="color:#f92672">/</span>ConstantClasses
+dyld: loaded: <span style="color:#f92672">/</span>System<span style="color:#f92672">/</span>Library<span style="color:#f92672">/</span>PrivateFrameworks<span style="color:#f92672">/</span>CoreAUC.framework<span style="color:#f92672">/</span>CoreAUC
+dyld: loaded: <span style="color:#f92672">/</span>System<span style="color:#f92672">/</span>Library<span style="color:#f92672">/</span>PrivateFrameworks<span style="color:#f92672">/</span>IdleTimerServices.framework<span style="color:#f92672">/</span>IdleTimerServices
+dyld: loaded: <span style="color:#f92672">/</span>System<span style="color:#f92672">/</span>Library<span style="color:#f92672">/</span>PrivateFrameworks<span style="color:#f92672">/</span>NetworkStatistics.framework<span style="color:#f92672">/</span>NetworkStatistics
+dyld: loaded: <span style="color:#f92672">/</span>usr<span style="color:#f92672">/</span>lib<span style="color:#f92672">/</span>liblockdown.dylib
+dyld: loaded: <span style="color:#f92672">/</span>usr<span style="color:#f92672">/</span>lib<span style="color:#f92672">/</span>libmis.dylib
+dyld: loaded: <span style="color:#f92672">/</span>System<span style="color:#f92672">/</span>Library<span style="color:#f92672">/</span>PrivateFrameworks<span style="color:#f92672">/</span>Netrb.framework<span style="color:#f92672">/</span>Netrb
+dyld: loaded: <span style="color:#f92672">/</span>System<span style="color:#f92672">/</span>Library<span style="color:#f92672">/</span>PrivateFrameworks<span style="color:#f92672">/</span>DataMigration.framework<span style="color:#f92672">/</span>DataMigration
+dyld: loaded: <span style="color:#f92672">/</span>System<span style="color:#f92672">/</span>Library<span style="color:#f92672">/</span>Frameworks<span style="color:#f92672">/</span>Accounts.framework<span style="color:#f92672">/</span>Accounts
+dyld: loaded: <span style="color:#f92672">/</span>System<span style="color:#f92672">/</span>Library<span style="color:#f92672">/</span>PrivateFrameworks<span style="color:#f92672">/</span>PersistentConnection.framework<span style="color:#f92672">/</span>PersistentConnection
+dyld: loaded: <span style="color:#f92672">/</span>System<span style="color:#f92672">/</span>Library<span style="color:#f92672">/</span>PrivateFrameworks<span style="color:#f92672">/</span>CommonUtilities.framework<span style="color:#f92672">/</span>CommonUtilities
+dyld: loaded: <span style="color:#f92672">/</span>usr<span style="color:#f92672">/</span>lib<span style="color:#f92672">/</span>libcupolicy.dylib
+dyld: loaded: <span style="color:#f92672">/</span>System<span style="color:#f92672">/</span>Library<span style="color:#f92672">/</span>PrivateFrameworks<span style="color:#f92672">/</span>MobileWiFi.framework<span style="color:#f92672">/</span>MobileWiFi
+dyld: loaded: <span style="color:#f92672">/</span>System<span style="color:#f92672">/</span>Library<span style="color:#f92672">/</span>PrivateFrameworks<span style="color:#f92672">/</span>Bom.framework<span style="color:#f92672">/</span>Bom
+dyld: loaded: <span style="color:#f92672">/</span>System<span style="color:#f92672">/</span>Library<span style="color:#f92672">/</span>PrivateFrameworks<span style="color:#f92672">/</span>CaptiveNetwork.framework<span style="color:#f92672">/</span>CaptiveNetwork
+dyld: loaded: <span style="color:#f92672">/</span>System<span style="color:#f92672">/</span>Library<span style="color:#f92672">/</span>PrivateFrameworks<span style="color:#f92672">/</span>EAP8021X.framework<span style="color:#f92672">/</span>EAP8021X
+dyld: loaded: <span style="color:#f92672">/</span>System<span style="color:#f92672">/</span>Library<span style="color:#f92672">/</span>PrivateFrameworks<span style="color:#f92672">/</span>Pegasus.framework<span style="color:#f92672">/</span>Pegasus
+dyld: loaded: <span style="color:#f92672">/</span>System<span style="color:#f92672">/</span>Library<span style="color:#f92672">/</span>PrivateFrameworks<span style="color:#f92672">/</span>MediaRemote.framework<span style="color:#f92672">/</span>MediaRemote
+dyld: loaded: <span style="color:#f92672">/</span>System<span style="color:#f92672">/</span>Library<span style="color:#f92672">/</span>PrivateFrameworks<span style="color:#f92672">/</span>DocumentManager.framework<span style="color:#f92672">/</span>DocumentManager
+dyld: loaded: <span style="color:#f92672">/</span>System<span style="color:#f92672">/</span>Library<span style="color:#f92672">/</span>Frameworks<span style="color:#f92672">/</span>FileProvider.framework<span style="color:#f92672">/</span>FileProvider
+dyld: loaded: <span style="color:#f92672">/</span>System<span style="color:#f92672">/</span>Library<span style="color:#f92672">/</span>PrivateFrameworks<span style="color:#f92672">/</span>UIKitCore.framework<span style="color:#f92672">/</span>UIKitCore
+dyld: loaded: <span style="color:#f92672">/</span>System<span style="color:#f92672">/</span>Library<span style="color:#f92672">/</span>PrivateFrameworks<span style="color:#f92672">/</span>MobileIcons.framework<span style="color:#f92672">/</span>MobileIcons
+dyld: loaded: <span style="color:#f92672">/</span>System<span style="color:#f92672">/</span>Library<span style="color:#f92672">/</span>PrivateFrameworks<span style="color:#f92672">/</span>DocumentManagerCore.framework<span style="color:#f92672">/</span>DocumentManagerCore
+dyld: loaded: <span style="color:#f92672">/</span>System<span style="color:#f92672">/</span>Library<span style="color:#f92672">/</span>PrivateFrameworks<span style="color:#f92672">/</span>PlugInKit.framework<span style="color:#f92672">/</span>PlugInKit
+dyld: loaded: <span style="color:#f92672">/</span>System<span style="color:#f92672">/</span>Library<span style="color:#f92672">/</span>PrivateFrameworks<span style="color:#f92672">/</span>XCTTargetBootstrap.framework<span style="color:#f92672">/</span>XCTTargetBootstrap
+dyld: loaded: <span style="color:#f92672">/</span>System<span style="color:#f92672">/</span>Library<span style="color:#f92672">/</span>PrivateFrameworks<span style="color:#f92672">/</span>WebKitLegacy.framework<span style="color:#f92672">/</span>WebKitLegacy
+dyld: loaded: <span style="color:#f92672">/</span>System<span style="color:#f92672">/</span>Library<span style="color:#f92672">/</span>PrivateFrameworks<span style="color:#f92672">/</span>StudyLog.framework<span style="color:#f92672">/</span>StudyLog
+dyld: loaded: <span style="color:#f92672">/</span>System<span style="color:#f92672">/</span>Library<span style="color:#f92672">/</span>PrivateFrameworks<span style="color:#f92672">/</span>MobileAsset.framework<span style="color:#f92672">/</span>MobileAsset
+dyld: loaded: <span style="color:#f92672">/</span>System<span style="color:#f92672">/</span>Library<span style="color:#f92672">/</span>PrivateFrameworks<span style="color:#f92672">/</span>PhysicsKit.framework<span style="color:#f92672">/</span>PhysicsKit
+dyld: loaded: <span style="color:#f92672">/</span>System<span style="color:#f92672">/</span>Library<span style="color:#f92672">/</span>PrivateFrameworks<span style="color:#f92672">/</span>ProofReader.framework<span style="color:#f92672">/</span>ProofReader
+dyld: loaded: <span style="color:#f92672">/</span>System<span style="color:#f92672">/</span>Library<span style="color:#f92672">/</span>PrivateFrameworks<span style="color:#f92672">/</span>PrototypeTools.framework<span style="color:#f92672">/</span>PrototypeTools
+dyld: loaded: <span style="color:#f92672">/</span>System<span style="color:#f92672">/</span>Library<span style="color:#f92672">/</span>PrivateFrameworks<span style="color:#f92672">/</span>TextInput.framework<span style="color:#f92672">/</span>TextInput
+dyld: loaded: <span style="color:#f92672">/</span>System<span style="color:#f92672">/</span>Library<span style="color:#f92672">/</span>PrivateFrameworks<span style="color:#f92672">/</span>UIKitServices.framework<span style="color:#f92672">/</span>UIKitServices
+dyld: loaded: <span style="color:#f92672">/</span>System<span style="color:#f92672">/</span>Library<span style="color:#f92672">/</span>PrivateFrameworks<span style="color:#f92672">/</span>WebCore.framework<span style="color:#f92672">/</span>WebCore
+dyld: loaded: <span style="color:#f92672">/</span>System<span style="color:#f92672">/</span>Library<span style="color:#f92672">/</span>PrivateFrameworks<span style="color:#f92672">/</span>WebCore.framework<span style="color:#f92672">/</span>Frameworks<span style="color:#f92672">/</span>libwebrtc.dylib
+dyld: loaded: <span style="color:#f92672">/</span>System<span style="color:#f92672">/</span>Library<span style="color:#f92672">/</span>PrivateFrameworks<span style="color:#f92672">/</span>URLFormatting.framework<span style="color:#f92672">/</span>URLFormatting
+dyld: loaded: <span style="color:#f92672">/</span>System<span style="color:#f92672">/</span>Library<span style="color:#f92672">/</span>PrivateFrameworks<span style="color:#f92672">/</span>StreamingZip.framework<span style="color:#f92672">/</span>StreamingZip
+dyld: loaded: <span style="color:#f92672">/</span>System<span style="color:#f92672">/</span>Library<span style="color:#f92672">/</span>PrivateFrameworks<span style="color:#f92672">/</span>Lexicon.framework<span style="color:#f92672">/</span>Lexicon
+dyld: loaded: <span style="color:#f92672">/</span>System<span style="color:#f92672">/</span>Library<span style="color:#f92672">/</span>PrivateFrameworks<span style="color:#f92672">/</span>LanguageModeling.framework<span style="color:#f92672">/</span>LanguageModeling
+dyld: loaded: <span style="color:#f92672">/</span>System<span style="color:#f92672">/</span>Library<span style="color:#f92672">/</span>PrivateFrameworks<span style="color:#f92672">/</span>LinguisticData.framework<span style="color:#f92672">/</span>LinguisticData
+dyld: loaded: <span style="color:#f92672">/</span>System<span style="color:#f92672">/</span>Library<span style="color:#f92672">/</span>PrivateFrameworks<span style="color:#f92672">/</span>CoreEmoji.framework<span style="color:#f92672">/</span>CoreEmoji
+dyld: loaded: <span style="color:#f92672">/</span>usr<span style="color:#f92672">/</span>lib<span style="color:#f92672">/</span>libcmph.dylib
+dyld: loaded: <span style="color:#f92672">/</span>System<span style="color:#f92672">/</span>Library<span style="color:#f92672">/</span>PrivateFrameworks<span style="color:#f92672">/</span>CoreNLP.framework<span style="color:#f92672">/</span>CoreNLP
+dyld: loaded: <span style="color:#f92672">/</span>usr<span style="color:#f92672">/</span>lib<span style="color:#f92672">/</span>libmecab_em.dylib
+dyld: loaded: <span style="color:#f92672">/</span>usr<span style="color:#f92672">/</span>lib<span style="color:#f92672">/</span>libgermantok.dylib
+dyld: loaded: <span style="color:#f92672">/</span>usr<span style="color:#f92672">/</span>lib<span style="color:#f92672">/</span>libThaiTokenizer.dylib
+dyld: loaded: <span style="color:#f92672">/</span>usr<span style="color:#f92672">/</span>lib<span style="color:#f92672">/</span>libChineseTokenizer.dylib
+dyld: loaded: <span style="color:#f92672">/</span>System<span style="color:#f92672">/</span>Library<span style="color:#f92672">/</span>PrivateFrameworks<span style="color:#f92672">/</span>AppleAccount.framework<span style="color:#f92672">/</span>AppleAccount
+dyld: loaded: <span style="color:#f92672">/</span>System<span style="color:#f92672">/</span>Library<span style="color:#f92672">/</span>PrivateFrameworks<span style="color:#f92672">/</span>SymptomDiagnosticReporter.framework<span style="color:#f92672">/</span>SymptomDiagnosticReporter
+dyld: loaded: <span style="color:#f92672">/</span>System<span style="color:#f92672">/</span>Library<span style="color:#f92672">/</span>PrivateFrameworks<span style="color:#f92672">/</span>SetupAssistant.framework<span style="color:#f92672">/</span>SetupAssistant
+dyld: loaded: <span style="color:#f92672">/</span>System<span style="color:#f92672">/</span>Library<span style="color:#f92672">/</span>PrivateFrameworks<span style="color:#f92672">/</span>AppleIDSSOAuthentication.framework<span style="color:#f92672">/</span>AppleIDSSOAuthentication
+dyld: loaded: <span style="color:#f92672">/</span>System<span style="color:#f92672">/</span>Library<span style="color:#f92672">/</span>PrivateFrameworks<span style="color:#f92672">/</span>ApplePushService.framework<span style="color:#f92672">/</span>ApplePushService
+dyld: loaded: <span style="color:#f92672">/</span>System<span style="color:#f92672">/</span>Library<span style="color:#f92672">/</span>PrivateFrameworks<span style="color:#f92672">/</span>AuthKit.framework<span style="color:#f92672">/</span>AuthKit
+dyld: loaded: <span style="color:#f92672">/</span>System<span style="color:#f92672">/</span>Library<span style="color:#f92672">/</span>PrivateFrameworks<span style="color:#f92672">/</span>StoreServices.framework<span style="color:#f92672">/</span>StoreServices
+dyld: loaded: <span style="color:#f92672">/</span>System<span style="color:#f92672">/</span>Library<span style="color:#f92672">/</span>PrivateFrameworks<span style="color:#f92672">/</span>UserManagement.framework<span style="color:#f92672">/</span>UserManagement
+dyld: loaded: <span style="color:#f92672">/</span>System<span style="color:#f92672">/</span>Library<span style="color:#f92672">/</span>PrivateFrameworks<span style="color:#f92672">/</span>SetupAssistantSupport.framework<span style="color:#f92672">/</span>SetupAssistantSupport
+dyld: loaded: <span style="color:#f92672">/</span>System<span style="color:#f92672">/</span>Library<span style="color:#f92672">/</span>PrivateFrameworks<span style="color:#f92672">/</span>CoreFollowUp.framework<span style="color:#f92672">/</span>CoreFollowUp
+dyld: loaded: <span style="color:#f92672">/</span>System<span style="color:#f92672">/</span>Library<span style="color:#f92672">/</span>PrivateFrameworks<span style="color:#f92672">/</span>CoreTime.framework<span style="color:#f92672">/</span>CoreTime
+dyld: loaded: <span style="color:#f92672">/</span>System<span style="color:#f92672">/</span>Library<span style="color:#f92672">/</span>PrivateFrameworks<span style="color:#f92672">/</span>CoreUtils.framework<span style="color:#f92672">/</span>CoreUtils
+dyld: loaded: <span style="color:#f92672">/</span>System<span style="color:#f92672">/</span>Library<span style="color:#f92672">/</span>PrivateFrameworks<span style="color:#f92672">/</span>IntlPreferences.framework<span style="color:#f92672">/</span>IntlPreferences
+dyld: loaded: <span style="color:#f92672">/</span>System<span style="color:#f92672">/</span>Library<span style="color:#f92672">/</span>PrivateFrameworks<span style="color:#f92672">/</span>AppleIDAuthSupport.framework<span style="color:#f92672">/</span>AppleIDAuthSupport
+dyld: loaded: <span style="color:#f92672">/</span>System<span style="color:#f92672">/</span>Library<span style="color:#f92672">/</span>PrivateFrameworks<span style="color:#f92672">/</span>PhoneNumbers.framework<span style="color:#f92672">/</span>PhoneNumbers
+dyld: loaded: <span style="color:#f92672">/</span>System<span style="color:#f92672">/</span>Library<span style="color:#f92672">/</span>PrivateFrameworks<span style="color:#f92672">/</span>ROCKit.framework<span style="color:#f92672">/</span>ROCKit
+dyld: loaded: <span style="color:#f92672">/</span>System<span style="color:#f92672">/</span>Library<span style="color:#f92672">/</span>PrivateFrameworks<span style="color:#f92672">/</span>AccountsDaemon.framework<span style="color:#f92672">/</span>AccountsDaemon
+dyld: loaded: <span style="color:#f92672">/</span>System<span style="color:#f92672">/</span>Library<span style="color:#f92672">/</span>Frameworks<span style="color:#f92672">/</span>GSS.framework<span style="color:#f92672">/</span>GSS
+dyld: loaded: <span style="color:#f92672">/</span>System<span style="color:#f92672">/</span>Library<span style="color:#f92672">/</span>PrivateFrameworks<span style="color:#f92672">/</span>OAuth.framework<span style="color:#f92672">/</span>OAuth
+dyld: loaded: <span style="color:#f92672">/</span>usr<span style="color:#f92672">/</span>lib<span style="color:#f92672">/</span>libheimdal<span style="color:#f92672">-</span>asn1.dylib
+dyld: loaded: <span style="color:#f92672">/</span>System<span style="color:#f92672">/</span>Library<span style="color:#f92672">/</span>PrivateFrameworks<span style="color:#f92672">/</span>Heimdal.framework<span style="color:#f92672">/</span>Heimdal
+
+dyld: loaded: <span style="color:#f92672">/</span>System<span style="color:#f92672">/</span>Library<span style="color:#f92672">/</span>PrivateFrameworks<span style="color:#f92672">/</span>CommonAuth.framework<span style="color:#f92672">/</span>CommonAuth
+dyld: loaded: <span style="color:#f92672">/</span>System<span style="color:#f92672">/</span>Library<span style="color:#f92672">/</span>PrivateFrameworks<span style="color:#f92672">/</span>GeoServices.framework<span style="color:#f92672">/</span>GeoServices
+dyld: loaded: <span style="color:#f92672">/</span>System<span style="color:#f92672">/</span>Library<span style="color:#f92672">/</span>PrivateFrameworks<span style="color:#f92672">/</span>CoreLocationProtobuf.framework<span style="color:#f92672">/</span>CoreLocationProtobuf
+dyld: loaded: <span style="color:#f92672">/</span>System<span style="color:#f92672">/</span>Library<span style="color:#f92672">/</span>PrivateFrameworks<span style="color:#f92672">/</span>CacheDelete.framework<span style="color:#f92672">/</span>CacheDelete
+dyld: loaded: <span style="color:#f92672">/</span>System<span style="color:#f92672">/</span>Library<span style="color:#f92672">/</span>PrivateFrameworks<span style="color:#f92672">/</span>AppleMediaServices.framework<span style="color:#f92672">/</span>AppleMediaServices
+dyld: loaded: <span style="color:#f92672">/</span>System<span style="color:#f92672">/</span>Library<span style="color:#f92672">/</span>PrivateFrameworks<span style="color:#f92672">/</span>iTunesCloud.framework<span style="color:#f92672">/</span>iTunesCloud
+dyld: loaded: <span style="color:#f92672">/</span>System<span style="color:#f92672">/</span>Library<span style="color:#f92672">/</span>PrivateFrameworks<span style="color:#f92672">/</span>MediaPlatform.framework<span style="color:#f92672">/</span>MediaPlatform
+dyld: loaded: <span style="color:#f92672">/</span>System<span style="color:#f92672">/</span>Library<span style="color:#f92672">/</span>PrivateFrameworks<span style="color:#f92672">/</span>MediaLibraryCore.framework<span style="color:#f92672">/</span>MediaLibraryCore
+dyld: loaded: <span style="color:#f92672">/</span>System<span style="color:#f92672">/</span>Library<span style="color:#f92672">/</span>PrivateFrameworks<span style="color:#f92672">/</span>MediaServices.framework<span style="color:#f92672">/</span>MediaServices
+dyld: loaded: <span style="color:#f92672">/</span>System<span style="color:#f92672">/</span>Library<span style="color:#f92672">/</span>PrivateFrameworks<span style="color:#f92672">/</span>iTunesStore.framework<span style="color:#f92672">/</span>iTunesStore
+dyld: loaded: <span style="color:#f92672">/</span>System<span style="color:#f92672">/</span>Library<span style="color:#f92672">/</span>PrivateFrameworks<span style="color:#f92672">/</span>MusicLibrary.framework<span style="color:#f92672">/</span>MusicLibrary
+dyld: loaded: <span style="color:#f92672">/</span>System<span style="color:#f92672">/</span>Library<span style="color:#f92672">/</span>PrivateFrameworks<span style="color:#f92672">/</span>HomeSharing.framework<span style="color:#f92672">/</span>HomeSharing
+dyld: loaded: <span style="color:#f92672">/</span>System<span style="color:#f92672">/</span>Library<span style="color:#f92672">/</span>PrivateFrameworks<span style="color:#f92672">/</span>RemoteTextInput.framework<span style="color:#f92672">/</span>RemoteTextInput
+dyld: loaded: <span style="color:#f92672">/</span>System<span style="color:#f92672">/</span>Library<span style="color:#f92672">/</span>PrivateFrameworks<span style="color:#f92672">/</span>DAAPKit.framework<span style="color:#f92672">/</span>DAAPKit
+dyld: loaded: <span style="color:#f92672">/</span>System<span style="color:#f92672">/</span>Library<span style="color:#f92672">/</span>PrivateFrameworks<span style="color:#f92672">/</span>AddressBookLegacy.framework<span style="color:#f92672">/</span>AddressBookLegacy
+dyld: loaded: <span style="color:#f92672">/</span>System<span style="color:#f92672">/</span>Library<span style="color:#f92672">/</span>PrivateFrameworks<span style="color:#f92672">/</span>DataAccessExpress.framework<span style="color:#f92672">/</span>DataAccessExpress
+dyld: loaded: <span style="color:#f92672">/</span>System<span style="color:#f92672">/</span>Library<span style="color:#f92672">/</span>PrivateFrameworks<span style="color:#f92672">/</span>ContactsFoundation.framework<span style="color:#f92672">/</span>ContactsFoundation
+dyld: loaded: <span style="color:#f92672">/</span>System<span style="color:#f92672">/</span>Library<span style="color:#f92672">/</span>PrivateFrameworks<span style="color:#f92672">/</span>CellularPlanManager.framework<span style="color:#f92672">/</span>CellularPlanManager
+dyld: loaded: <span style="color:#f92672">/</span>System<span style="color:#f92672">/</span>Library<span style="color:#f92672">/</span>PrivateFrameworks<span style="color:#f92672">/</span>vCard.framework<span style="color:#f92672">/</span>vCard
+dyld: loaded: <span style="color:#f92672">/</span>System<span style="color:#f92672">/</span>Library<span style="color:#f92672">/</span>PrivateFrameworks<span style="color:#f92672">/</span>CommunicationsFilter.framework<span style="color:#f92672">/</span>CommunicationsFilter
+dyld: loaded: <span style="color:#f92672">/</span>System<span style="color:#f92672">/</span>Library<span style="color:#f92672">/</span>PrivateFrameworks<span style="color:#f92672">/</span>AppSupportUI.framework<span style="color:#f92672">/</span>AppSupportUI
+dyld: loaded: <span style="color:#f92672">/</span>System<span style="color:#f92672">/</span>Library<span style="color:#f92672">/</span>PrivateFrameworks<span style="color:#f92672">/</span>PersonaKit.framework<span style="color:#f92672">/</span>PersonaKit
+dyld: loaded: <span style="color:#f92672">/</span>System<span style="color:#f92672">/</span>Library<span style="color:#f92672">/</span>PrivateFrameworks<span style="color:#f92672">/</span>PersonaUI.framework<span style="color:#f92672">/</span>PersonaUI
+dyld: loaded: <span style="color:#f92672">/</span>System<span style="color:#f92672">/</span>Library<span style="color:#f92672">/</span>Frameworks<span style="color:#f92672">/</span>CoreSpotlight.framework<span style="color:#f92672">/</span>CoreSpotlight
+dyld: loaded: <span style="color:#f92672">/</span>System<span style="color:#f92672">/</span>Library<span style="color:#f92672">/</span>PrivateFrameworks<span style="color:#f92672">/</span>ContactsDonation.framework<span style="color:#f92672">/</span>ContactsDonation
+dyld: loaded: <span style="color:#f92672">/</span>System<span style="color:#f92672">/</span>Library<span style="color:#f92672">/</span>PrivateFrameworks<span style="color:#f92672">/</span>ContactsUICore.framework<span style="color:#f92672">/</span>ContactsUICore
+dyld: loaded: <span style="color:#f92672">/</span>System<span style="color:#f92672">/</span>Library<span style="color:#f92672">/</span>PrivateFrameworks<span style="color:#f92672">/</span>TelephonyUtilities.framework<span style="color:#f92672">/</span>TelephonyUtilities
+dyld: loaded: <span style="color:#f92672">/</span>System<span style="color:#f92672">/</span>Library<span style="color:#f92672">/</span>PrivateFrameworks<span style="color:#f92672">/</span>MetadataUtilities.framework<span style="color:#f92672">/</span>MetadataUtilities
+dyld: loaded: <span style="color:#f92672">/</span>System<span style="color:#f92672">/</span>Library<span style="color:#f92672">/</span>PrivateFrameworks<span style="color:#f92672">/</span>IMFoundation.framework<span style="color:#f92672">/</span>IMFoundation
+dyld: loaded: <span style="color:#f92672">/</span>usr<span style="color:#f92672">/</span>lib<span style="color:#f92672">/</span>libtidy.A.dylib
+dyld: loaded: <span style="color:#f92672">/</span>System<span style="color:#f92672">/</span>Library<span style="color:#f92672">/</span>PrivateFrameworks<span style="color:#f92672">/</span>CoreDuet.framework<span style="color:#f92672">/</span>CoreDuet
+dyld: loaded: <span style="color:#f92672">/</span>System<span style="color:#f92672">/</span>Library<span style="color:#f92672">/</span>PrivateFrameworks<span style="color:#f92672">/</span>CoreRecents.framework<span style="color:#f92672">/</span>CoreRecents
+dyld: loaded: <span style="color:#f92672">/</span>System<span style="color:#f92672">/</span>Library<span style="color:#f92672">/</span>Frameworks<span style="color:#f92672">/</span>Intents.framework<span style="color:#f92672">/</span>Intents
+dyld: loaded: <span style="color:#f92672">/</span>System<span style="color:#f92672">/</span>Library<span style="color:#f92672">/</span>PrivateFrameworks<span style="color:#f92672">/</span>NanoRegistry.framework<span style="color:#f92672">/</span>NanoRegistry
+dyld: loaded: <span style="color:#f92672">/</span>System<span style="color:#f92672">/</span>Library<span style="color:#f92672">/</span>PrivateFrameworks<span style="color:#f92672">/</span>CoreDuetContext.framework<span style="color:#f92672">/</span>CoreDuetContext
+dyld: loaded: <span style="color:#f92672">/</span>System<span style="color:#f92672">/</span>Library<span style="color:#f92672">/</span>PrivateFrameworks<span style="color:#f92672">/</span>CoreDuetDebugLogging.framework<span style="color:#f92672">/</span>CoreDuetDebugLogging
+dyld: loaded: <span style="color:#f92672">/</span>System<span style="color:#f92672">/</span>Library<span style="color:#f92672">/</span>Frameworks<span style="color:#f92672">/</span>CloudKit.framework<span style="color:#f92672">/</span>CloudKit
+dyld: loaded: <span style="color:#f92672">/</span>System<span style="color:#f92672">/</span>Library<span style="color:#f92672">/</span>PrivateFrameworks<span style="color:#f92672">/</span>CoreDuetDaemonProtocol.framework<span style="color:#f92672">/</span>CoreDuetDaemonProtocol
+dyld: loaded: <span style="color:#f92672">/</span>System<span style="color:#f92672">/</span>Library<span style="color:#f92672">/</span>PrivateFrameworks<span style="color:#f92672">/</span>Rapport.framework<span style="color:#f92672">/</span>Rapport
+dyld: loaded: <span style="color:#f92672">/</span>System<span style="color:#f92672">/</span>Library<span style="color:#f92672">/</span>PrivateFrameworks<span style="color:#f92672">/</span>StatsKit.framework<span style="color:#f92672">/</span>StatsKit
+dyld: loaded: <span style="color:#f92672">/</span>System<span style="color:#f92672">/</span>Library<span style="color:#f92672">/</span>PrivateFrameworks<span style="color:#f92672">/</span>ProtectedCloudStorage.framework<span style="color:#f92672">/</span>ProtectedCloudStorage
+dyld: loaded: <span style="color:#f92672">/</span>System<span style="color:#f92672">/</span>Library<span style="color:#f92672">/</span>PrivateFrameworks<span style="color:#f92672">/</span>IntentsFoundation.framework<span style="color:#f92672">/</span>IntentsFoundation
+dyld: loaded: <span style="color:#f92672">/</span>System<span style="color:#f92672">/</span>Library<span style="color:#f92672">/</span>PrivateFrameworks<span style="color:#f92672">/</span>IDS.framework<span style="color:#f92672">/</span>IDS
+dyld: loaded: <span style="color:#f92672">/</span>System<span style="color:#f92672">/</span>Library<span style="color:#f92672">/</span>PrivateFrameworks<span style="color:#f92672">/</span>IncomingCallFilter.framework<span style="color:#f92672">/</span>IncomingCallFilter
+dyld: loaded: <span style="color:#f92672">/</span>System<span style="color:#f92672">/</span>Library<span style="color:#f92672">/</span>PrivateFrameworks<span style="color:#f92672">/</span>Marco.framework<span style="color:#f92672">/</span>Marco
+dyld: loaded: <span style="color:#f92672">/</span>System<span style="color:#f92672">/</span>Library<span style="color:#f92672">/</span>PrivateFrameworks<span style="color:#f92672">/</span>IDSFoundation.framework<span style="color:#f92672">/</span>IDSFoundation
+dyld: loaded: <span style="color:#f92672">/</span>System<span style="color:#f92672">/</span>Library<span style="color:#f92672">/</span>PrivateFrameworks<span style="color:#f92672">/</span>Engram.framework<span style="color:#f92672">/</span>Engram
+dyld: loaded: <span style="color:#f92672">/</span>System<span style="color:#f92672">/</span>Library<span style="color:#f92672">/</span>PrivateFrameworks<span style="color:#f92672">/</span>DiagnosticLogCollection.framework<span style="color:#f92672">/</span>DiagnosticLogCollection
+dyld: loaded: <span style="color:#f92672">/</span>System<span style="color:#f92672">/</span>Library<span style="color:#f92672">/</span>PrivateFrameworks<span style="color:#f92672">/</span>MessageProtection.framework<span style="color:#f92672">/</span>MessageProtection
+dyld: loaded: <span style="color:#f92672">/</span>System<span style="color:#f92672">/</span>Library<span style="color:#f92672">/</span>PrivateFrameworks<span style="color:#f92672">/</span>Espresso.framework<span style="color:#f92672">/</span>Espresso
+dyld: loaded: <span style="color:#f92672">/</span>System<span style="color:#f92672">/</span>Library<span style="color:#f92672">/</span>PrivateFrameworks<span style="color:#f92672">/</span>AppleCVA.framework<span style="color:#f92672">/</span>AppleCVA
+dyld: loaded: <span style="color:#f92672">/</span>System<span style="color:#f92672">/</span>Library<span style="color:#f92672">/</span>PrivateFrameworks<span style="color:#f92672">/</span>AppleNeuralEngine.framework<span style="color:#f92672">/</span>AppleNeuralEngine
+dyld: loaded: <span style="color:#f92672">/</span>System<span style="color:#f92672">/</span>Library<span style="color:#f92672">/</span>PrivateFrameworks<span style="color:#f92672">/</span>Montreal.framework<span style="color:#f92672">/</span>Montreal
+dyld: loaded: <span style="color:#f92672">/</span>System<span style="color:#f92672">/</span>Library<span style="color:#f92672">/</span>PrivateFrameworks<span style="color:#f92672">/</span>CoreAppleCVA.framework<span style="color:#f92672">/</span>CoreAppleCVA
+dyld: loaded: <span style="color:#f92672">/</span>System<span style="color:#f92672">/</span>Library<span style="color:#f92672">/</span>PrivateFrameworks<span style="color:#f92672">/</span>ANEServices.framework<span style="color:#f92672">/</span>ANEServices
+dyld: loaded: <span style="color:#f92672">/</span>usr<span style="color:#f92672">/</span>lib<span style="color:#f92672">/</span>libsandbox.<span style="color:#ae81ff">1.</span>dylib
+dyld: loaded: <span style="color:#f92672">/</span>usr<span style="color:#f92672">/</span>lib<span style="color:#f92672">/</span>libMatch.<span style="color:#ae81ff">1.</span>dylib
+dyld: loaded: <span style="color:#f92672">/</span>System<span style="color:#f92672">/</span>Library<span style="color:#f92672">/</span>PrivateFrameworks<span style="color:#f92672">/</span>DCIMServices.framework<span style="color:#f92672">/</span>DCIMServices
+dyld: loaded: <span style="color:#f92672">/</span>System<span style="color:#f92672">/</span>Library<span style="color:#f92672">/</span>PrivateFrameworks<span style="color:#f92672">/</span>PhotoLibraryServices.framework<span style="color:#f92672">/</span>PhotoLibraryServices
+dyld: loaded: <span style="color:#f92672">/</span>System<span style="color:#f92672">/</span>Library<span style="color:#f92672">/</span>PrivateFrameworks<span style="color:#f92672">/</span>AssetsLibraryServices.framework<span style="color:#f92672">/</span>AssetsLibraryServices
+dyld: loaded: <span style="color:#f92672">/</span>System<span style="color:#f92672">/</span>Library<span style="color:#f92672">/</span>PrivateFrameworks<span style="color:#f92672">/</span>PhotosFormats.framework<span style="color:#f92672">/</span>PhotosFormats
+dyld: loaded: <span style="color:#f92672">/</span>System<span style="color:#f92672">/</span>Library<span style="color:#f92672">/</span>Frameworks<span style="color:#f92672">/</span>Vision.framework<span style="color:#f92672">/</span>Vision
+dyld: loaded: <span style="color:#f92672">/</span>System<span style="color:#f92672">/</span>Library<span style="color:#f92672">/</span>PrivateFrameworks<span style="color:#f92672">/</span>MMCS.framework<span style="color:#f92672">/</span>MMCS
+dyld: loaded: <span style="color:#f92672">/</span>System<span style="color:#f92672">/</span>Library<span style="color:#f92672">/</span>PrivateFrameworks<span style="color:#f92672">/</span>Futhark.framework<span style="color:#f92672">/</span>Futhark
+dyld: loaded: <span style="color:#f92672">/</span>System<span style="color:#f92672">/</span>Library<span style="color:#f92672">/</span>PrivateFrameworks<span style="color:#f92672">/</span>ChunkingLibrary.framework<span style="color:#f92672">/</span>ChunkingLibrary
+dyld: loaded: <span style="color:#f92672">/</span>System<span style="color:#f92672">/</span>Library<span style="color:#f92672">/</span>PrivateFrameworks<span style="color:#f92672">/</span>C2.framework<span style="color:#f92672">/</span>C2
+dyld: loaded: <span style="color:#f92672">/</span>System<span style="color:#f92672">/</span>Library<span style="color:#f92672">/</span>PrivateFrameworks<span style="color:#f92672">/</span>AssetCacheServices.framework<span style="color:#f92672">/</span>AssetCacheServices
+dyld: loaded: <span style="color:#f92672">/</span>System<span style="color:#f92672">/</span>Library<span style="color:#f92672">/</span>Frameworks<span style="color:#f92672">/</span>NetworkExtension.framework<span style="color:#f92672">/</span>NetworkExtension
+dyld: loaded: <span style="color:#f92672">/</span>System<span style="color:#f92672">/</span>Library<span style="color:#f92672">/</span>PrivateFrameworks<span style="color:#f92672">/</span>NetworkServiceProxy.framework<span style="color:#f92672">/</span>NetworkServiceProxy
+dyld: loaded: <span style="color:#f92672">/</span>usr<span style="color:#f92672">/</span>lib<span style="color:#f92672">/</span>libnetworkextension.dylib
+dyld: loaded: <span style="color:#f92672">/</span>usr<span style="color:#f92672">/</span>lib<span style="color:#f92672">/</span>libboringssl.dylib
+dyld: loaded: <span style="color:#f92672">/</span>usr<span style="color:#f92672">/</span>lib<span style="color:#f92672">/</span>libusrtcp.dylib
+dyld: loaded: <span style="color:#f92672">/</span>System<span style="color:#f92672">/</span>Library<span style="color:#f92672">/</span>PrivateFrameworks<span style="color:#f92672">/</span>MediaStream.framework<span style="color:#f92672">/</span>MediaStream
+dyld: loaded: <span style="color:#f92672">/</span>System<span style="color:#f92672">/</span>Library<span style="color:#f92672">/</span>PrivateFrameworks<span style="color:#f92672">/</span>MobileSpotlightIndex.framework<span style="color:#f92672">/</span>MobileSpotlightIndex
+dyld: loaded: <span style="color:#f92672">/</span>System<span style="color:#f92672">/</span>Library<span style="color:#f92672">/</span>PrivateFrameworks<span style="color:#f92672">/</span>NLP.framework<span style="color:#f92672">/</span>NLP
+dyld: loaded: <span style="color:#f92672">/</span>System<span style="color:#f92672">/</span>Library<span style="color:#f92672">/</span>PrivateFrameworks<span style="color:#f92672">/</span>PhotoFoundation.framework<span style="color:#f92672">/</span>PhotoFoundation
+dyld: loaded: <span style="color:#f92672">/</span>System<span style="color:#f92672">/</span>Library<span style="color:#f92672">/</span>PrivateFrameworks<span style="color:#f92672">/</span>CloudPhotoLibrary.framework<span style="color:#f92672">/</span>CloudPhotoLibrary
+dyld: loaded: <span style="color:#f92672">/</span>System<span style="color:#f92672">/</span>Library<span style="color:#f92672">/</span>PrivateFrameworks<span style="color:#f92672">/</span>CloudPhotoServices.framework<span style="color:#f92672">/</span>CloudPhotoServices
+dyld: loaded: <span style="color:#f92672">/</span>System<span style="color:#f92672">/</span>Library<span style="color:#f92672">/</span>PrivateFrameworks<span style="color:#f92672">/</span>CoreMediaStream.framework<span style="color:#f92672">/</span>CoreMediaStream
+dyld: loaded: <span style="color:#f92672">/</span>System<span style="color:#f92672">/</span>Library<span style="color:#f92672">/</span>PrivateFrameworks<span style="color:#f92672">/</span>XPCKit.framework<span style="color:#f92672">/</span>XPCKit
+dyld: loaded: <span style="color:#f92672">/</span>System<span style="color:#f92672">/</span>Library<span style="color:#f92672">/</span>PrivateFrameworks<span style="color:#f92672">/</span>MobileBackup.framework<span style="color:#f92672">/</span>MobileBackup
+dyld: loaded: <span style="color:#f92672">/</span>System<span style="color:#f92672">/</span>Library<span style="color:#f92672">/</span>PrivateFrameworks<span style="color:#f92672">/</span>MobileDeviceLink.framework<span style="color:#f92672">/</span>MobileDeviceLink
+dyld: loaded: <span style="color:#f92672">/</span>System<span style="color:#f92672">/</span>Library<span style="color:#f92672">/</span>PrivateFrameworks<span style="color:#f92672">/</span>DataDetectorsCore.framework<span style="color:#f92672">/</span>DataDetectorsCore
+dyld: loaded: <span style="color:#f92672">/</span>System<span style="color:#f92672">/</span>Library<span style="color:#f92672">/</span>PrivateFrameworks<span style="color:#f92672">/</span>AppleFSCompression.framework<span style="color:#f92672">/</span>AppleFSCompression
+dyld: loaded: <span style="color:#f92672">/</span>System<span style="color:#f92672">/</span>Library<span style="color:#f92672">/</span>PrivateFrameworks<span style="color:#f92672">/</span>CorePDF.framework<span style="color:#f92672">/</span>CorePDF
+dyld: loaded: <span style="color:#f92672">/</span>System<span style="color:#f92672">/</span>Library<span style="color:#f92672">/</span>PrivateFrameworks<span style="color:#f92672">/</span>CorePrediction.framework<span style="color:#f92672">/</span>CorePrediction
+dyld: loaded: <span style="color:#f92672">/</span>System<span style="color:#f92672">/</span>Library<span style="color:#f92672">/</span>Frameworks<span style="color:#f92672">/</span>PDFKit.framework<span style="color:#f92672">/</span>PDFKit
+dyld: loaded: <span style="color:#f92672">/</span>System<span style="color:#f92672">/</span>Library<span style="color:#f92672">/</span>PrivateFrameworks<span style="color:#f92672">/</span>SafariSafeBrowsing.framework<span style="color:#f92672">/</span>SafariSafeBrowsing
+dyld: loaded: <span style="color:#f92672">/</span>System<span style="color:#f92672">/</span>Library<span style="color:#f92672">/</span>PrivateFrameworks<span style="color:#f92672">/</span>CoreOptimization.framework<span style="color:#f92672">/</span>CoreOptimization
+dyld: loaded: <span style="color:#f92672">/</span>System<span style="color:#f92672">/</span>Library<span style="color:#f92672">/</span>PrivateFrameworks<span style="color:#f92672">/</span>CTCarrierSpace.framework<span style="color:#f92672">/</span>CTCarrierSpace
+dyld: loaded: <span style="color:#f92672">/</span>System<span style="color:#f92672">/</span>Library<span style="color:#f92672">/</span>PrivateFrameworks<span style="color:#f92672">/</span>ImageCapture.framework<span style="color:#f92672">/</span>ImageCapture
+dyld: loaded: <span style="color:#f92672">/</span>System<span style="color:#f92672">/</span>Library<span style="color:#f92672">/</span>PrivateFrameworks<span style="color:#f92672">/</span>PhotosImagingFoundation.framework<span style="color:#f92672">/</span>PhotosImagingFoundation
+dyld: loaded: <span style="color:#f92672">/</span>System<span style="color:#f92672">/</span>Library<span style="color:#f92672">/</span>PrivateFrameworks<span style="color:#f92672">/</span>MobileStorage.framework<span style="color:#f92672">/</span>MobileStorage
+dyld: loaded: <span style="color:#f92672">/</span>System<span style="color:#f92672">/</span>Library<span style="color:#f92672">/</span>Frameworks<span style="color:#f92672">/</span>AuthenticationServices.framework<span style="color:#f92672">/</span>AuthenticationServices
+dyld: loaded: <span style="color:#f92672">/</span>System<span style="color:#f92672">/</span>Library<span style="color:#f92672">/</span>Frameworks<span style="color:#f92672">/</span>EventKitUI.framework<span style="color:#f92672">/</span>EventKitUI
+dyld: loaded: <span style="color:#f92672">/</span>System<span style="color:#f92672">/</span>Library<span style="color:#f92672">/</span>Frameworks<span style="color:#f92672">/</span>SafariServices.framework<span style="color:#f92672">/</span>SafariServices
+dyld: loaded: <span style="color:#f92672">/</span>System<span style="color:#f92672">/</span>Library<span style="color:#f92672">/</span>PrivateFrameworks<span style="color:#f92672">/</span>SafariFoundation.framework<span style="color:#f92672">/</span>SafariFoundation
+dyld: loaded: <span style="color:#f92672">/</span>System<span style="color:#f92672">/</span>Library<span style="color:#f92672">/</span>PrivateFrameworks<span style="color:#f92672">/</span>SharedWebCredentials.framework<span style="color:#f92672">/</span>SharedWebCredentials
+dyld: loaded: <span style="color:#f92672">/</span>System<span style="color:#f92672">/</span>Library<span style="color:#f92672">/</span>PrivateFrameworks<span style="color:#f92672">/</span>SafariCore.framework<span style="color:#f92672">/</span>SafariCore
+dyld: loaded: <span style="color:#f92672">/</span>System<span style="color:#f92672">/</span>Library<span style="color:#f92672">/</span>PrivateFrameworks<span style="color:#f92672">/</span>DifferentialPrivacy.framework<span style="color:#f92672">/</span>DifferentialPrivacy
+dyld: loaded: <span style="color:#f92672">/</span>System<span style="color:#f92672">/</span>Library<span style="color:#f92672">/</span>PrivateFrameworks<span style="color:#f92672">/</span>ProactiveEventTracker.framework<span style="color:#f92672">/</span>ProactiveEventTracker
+dyld: loaded: <span style="color:#f92672">/</span>System<span style="color:#f92672">/</span>Library<span style="color:#f92672">/</span>PrivateFrameworks<span style="color:#f92672">/</span>CalendarDatabase.framework<span style="color:#f92672">/</span>CalendarDatabase
+dyld: loaded: <span style="color:#f92672">/</span>System<span style="color:#f92672">/</span>Library<span style="color:#f92672">/</span>PrivateFrameworks<span style="color:#f92672">/</span>CalendarFoundation.framework<span style="color:#f92672">/</span>CalendarFoundation
+dyld: loaded: <span style="color:#f92672">/</span>System<span style="color:#f92672">/</span>Library<span style="color:#f92672">/</span>PrivateFrameworks<span style="color:#f92672">/</span>CalendarUIKit.framework<span style="color:#f92672">/</span>CalendarUIKit
+dyld: loaded: <span style="color:#f92672">/</span>System<span style="color:#f92672">/</span>Library<span style="color:#f92672">/</span>Frameworks<span style="color:#f92672">/</span>EventKit.framework<span style="color:#f92672">/</span>EventKit
+dyld: loaded: <span style="color:#f92672">/</span>System<span style="color:#f92672">/</span>Library<span style="color:#f92672">/</span>PrivateFrameworks<span style="color:#f92672">/</span>iCalendar.framework<span style="color:#f92672">/</span>iCalendar
+dyld: loaded: <span style="color:#f92672">/</span>System<span style="color:#f92672">/</span>Library<span style="color:#f92672">/</span>PrivateFrameworks<span style="color:#f92672">/</span>CoreDAV.framework<span style="color:#f92672">/</span>CoreDAV
+dyld: loaded: <span style="color:#f92672">/</span>System<span style="color:#f92672">/</span>Library<span style="color:#f92672">/</span>PrivateFrameworks<span style="color:#f92672">/</span>CalendarDaemon.framework<span style="color:#f92672">/</span>CalendarDaemon
+dyld: loaded: <span style="color:#f92672">/</span>System<span style="color:#f92672">/</span>Library<span style="color:#f92672">/</span>Frameworks<span style="color:#f92672">/</span>LocalAuthentication.framework<span style="color:#f92672">/</span>Support<span style="color:#f92672">/</span>SharedUtils.framework<span style="color:#f92672">/</span>SharedUtils
+dyld: loaded: <span style="color:#f92672">/</span>System<span style="color:#f92672">/</span>Library<span style="color:#f92672">/</span>PrivateFrameworks<span style="color:#f92672">/</span>DataAccess.framework<span style="color:#f92672">/</span>DataAccess
+dyld: loaded: <span style="color:#f92672">/</span>System<span style="color:#f92672">/</span>Library<span style="color:#f92672">/</span>PrivateFrameworks<span style="color:#f92672">/</span>EmailAddressing.framework<span style="color:#f92672">/</span>EmailAddressing
+dyld: loaded: <span style="color:#f92672">/</span>System<span style="color:#f92672">/</span>Library<span style="color:#f92672">/</span>PrivateFrameworks<span style="color:#f92672">/</span>FTClientServices.framework<span style="color:#f92672">/</span>FTClientServices
+dyld: loaded: <span style="color:#f92672">/</span>System<span style="color:#f92672">/</span>Library<span style="color:#f92672">/</span>PrivateFrameworks<span style="color:#f92672">/</span>MailServices.framework<span style="color:#f92672">/</span>MailServices
+dyld: loaded: <span style="color:#f92672">/</span>System<span style="color:#f92672">/</span>Library<span style="color:#f92672">/</span>PrivateFrameworks<span style="color:#f92672">/</span>MailSupport.framework<span style="color:#f92672">/</span>MailSupport
+dyld: loaded: <span style="color:#f92672">/</span>System<span style="color:#f92672">/</span>Library<span style="color:#f92672">/</span>Frameworks<span style="color:#f92672">/</span>MapKit.framework<span style="color:#f92672">/</span>MapKit
+dyld: loaded: <span style="color:#f92672">/</span>System<span style="color:#f92672">/</span>Library<span style="color:#f92672">/</span>PrivateFrameworks<span style="color:#f92672">/</span>Message.framework<span style="color:#f92672">/</span>Message
+dyld: loaded: <span style="color:#f92672">/</span>System<span style="color:#f92672">/</span>Library<span style="color:#f92672">/</span>PrivateFrameworks<span style="color:#f92672">/</span>DoNotDisturb.framework<span style="color:#f92672">/</span>DoNotDisturb
+dyld: loaded: <span style="color:#f92672">/</span>System<span style="color:#f92672">/</span>Library<span style="color:#f92672">/</span>PrivateFrameworks<span style="color:#f92672">/</span>ContactsAutocomplete.framework<span style="color:#f92672">/</span>ContactsAutocomplete
+dyld: loaded: <span style="color:#f92672">/</span>System<span style="color:#f92672">/</span>Library<span style="color:#f92672">/</span>PrivateFrameworks<span style="color:#f92672">/</span>MessageSupport.framework<span style="color:#f92672">/</span>MessageSupport
+dyld: loaded: <span style="color:#f92672">/</span>System<span style="color:#f92672">/</span>Library<span style="color:#f92672">/</span>PrivateFrameworks<span style="color:#f92672">/</span>MIME.framework<span style="color:#f92672">/</span>MIME
+dyld: loaded: <span style="color:#f92672">/</span>System<span style="color:#f92672">/</span>Library<span style="color:#f92672">/</span>PrivateFrameworks<span style="color:#f92672">/</span>WebBookmarks.framework<span style="color:#f92672">/</span>WebBookmarks
+dyld: loaded: <span style="color:#f92672">/</span>System<span style="color:#f92672">/</span>Library<span style="color:#f92672">/</span>PrivateFrameworks<span style="color:#f92672">/</span>Notes.framework<span style="color:#f92672">/</span>Notes
+dyld: loaded: <span style="color:#f92672">/</span>System<span style="color:#f92672">/</span>Library<span style="color:#f92672">/</span>PrivateFrameworks<span style="color:#f92672">/</span>CertUI.framework<span style="color:#f92672">/</span>CertUI
+dyld: loaded: <span style="color:#f92672">/</span>System<span style="color:#f92672">/</span>Library<span style="color:#f92672">/</span>PrivateFrameworks<span style="color:#f92672">/</span>FTServices.framework<span style="color:#f92672">/</span>FTServices
+dyld: loaded: <span style="color:#f92672">/</span>System<span style="color:#f92672">/</span>Library<span style="color:#f92672">/</span>PrivateFrameworks<span style="color:#f92672">/</span>FTAWD.framework<span style="color:#f92672">/</span>FTAWD
+dyld: loaded: <span style="color:#f92672">/</span>System<span style="color:#f92672">/</span>Library<span style="color:#f92672">/</span>PrivateFrameworks<span style="color:#f92672">/</span>SearchFoundation.framework<span style="color:#f92672">/</span>SearchFoundation
+dyld: loaded: <span style="color:#f92672">/</span>System<span style="color:#f92672">/</span>Library<span style="color:#f92672">/</span>PrivateFrameworks<span style="color:#f92672">/</span>Navigation.framework<span style="color:#f92672">/</span>Navigation
+dyld: loaded: <span style="color:#f92672">/</span>System<span style="color:#f92672">/</span>Library<span style="color:#f92672">/</span>PrivateFrameworks<span style="color:#f92672">/</span>VectorKit.framework<span style="color:#f92672">/</span>VectorKit
+dyld: loaded: <span style="color:#f92672">/</span>System<span style="color:#f92672">/</span>Library<span style="color:#f92672">/</span>PrivateFrameworks<span style="color:#f92672">/</span>EmailCore.framework<span style="color:#f92672">/</span>EmailCore
+dyld: loaded: <span style="color:#f92672">/</span>System<span style="color:#f92672">/</span>Library<span style="color:#f92672">/</span>PrivateFrameworks<span style="color:#f92672">/</span>CoreSuggestions.framework<span style="color:#f92672">/</span>CoreSuggestions
+dyld: loaded: <span style="color:#f92672">/</span>System<span style="color:#f92672">/</span>Library<span style="color:#f92672">/</span>PrivateFrameworks<span style="color:#f92672">/</span>Sharing.framework<span style="color:#f92672">/</span>Sharing
+dyld: loaded: <span style="color:#f92672">/</span>System<span style="color:#f92672">/</span>Library<span style="color:#f92672">/</span>PrivateFrameworks<span style="color:#f92672">/</span>Preferences.framework<span style="color:#f92672">/</span>Preferences
+dyld: loaded: <span style="color:#f92672">/</span>System<span style="color:#f92672">/</span>Library<span style="color:#f92672">/</span>PrivateFrameworks<span style="color:#f92672">/</span>WebUI.framework<span style="color:#f92672">/</span>WebUI
+dyld: loaded: <span style="color:#f92672">/</span>System<span style="color:#f92672">/</span>Library<span style="color:#f92672">/</span>PrivateFrameworks<span style="color:#f92672">/</span>ProactiveSupport.framework<span style="color:#f92672">/</span>ProactiveSupport
+dyld: loaded: <span style="color:#f92672">/</span>System<span style="color:#f92672">/</span>Library<span style="color:#f92672">/</span>PrivateFrameworks<span style="color:#f92672">/</span>InternationalTextSearch.framework<span style="color:#f92672">/</span>InternationalTextSearch
+dyld: loaded: <span style="color:#f92672">/</span>System<span style="color:#f92672">/</span>Library<span style="color:#f92672">/</span>PrivateFrameworks<span style="color:#f92672">/</span>MobileActivation.framework<span style="color:#f92672">/</span>MobileActivation
+dyld: loaded: <span style="color:#f92672">/</span>System<span style="color:#f92672">/</span>Library<span style="color:#f92672">/</span>PrivateFrameworks<span style="color:#f92672">/</span>BluetoothManager.framework<span style="color:#f92672">/</span>BluetoothManager
+dyld: loaded: <span style="color:#f92672">/</span>System<span style="color:#f92672">/</span>Library<span style="color:#f92672">/</span>PrivateFrameworks<span style="color:#f92672">/</span>MobileBluetooth.framework<span style="color:#f92672">/</span>MobileBluetooth
+dyld: loaded: <span style="color:#f92672">/</span>System<span style="color:#f92672">/</span>Library<span style="color:#f92672">/</span>PrivateFrameworks<span style="color:#f92672">/</span>VoiceServices.framework<span style="color:#f92672">/</span>VoiceServices
+dyld: loaded: <span style="color:#f92672">/</span>System<span style="color:#f92672">/</span>Library<span style="color:#f92672">/</span>PrivateFrameworks<span style="color:#f92672">/</span>BiometricKit.framework<span style="color:#f92672">/</span>BiometricKit
+dyld: loaded: <span style="color:#f92672">/</span>usr<span style="color:#f92672">/</span>lib<span style="color:#f92672">/</span>libtzupdate.dylib
+dyld: loaded: <span style="color:#f92672">/</span>System<span style="color:#f92672">/</span>Library<span style="color:#f92672">/</span>Frameworks<span style="color:#f92672">/</span>MetalKit.framework<span style="color:#f92672">/</span>MetalKit
+dyld: loaded: <span style="color:#f92672">/</span>System<span style="color:#f92672">/</span>Library<span style="color:#f92672">/</span>PrivateFrameworks<span style="color:#f92672">/</span>SiriTTS.framework<span style="color:#f92672">/</span>SiriTTS
+dyld: loaded: <span style="color:#f92672">/</span>System<span style="color:#f92672">/</span>Library<span style="color:#f92672">/</span>PrivateFrameworks<span style="color:#f92672">/</span>SafariShared.framework<span style="color:#f92672">/</span>SafariShared
+dyld: loaded: <span style="color:#f92672">/</span>System<span style="color:#f92672">/</span>Library<span style="color:#f92672">/</span>PrivateFrameworks<span style="color:#f92672">/</span>CoreRecognition.framework<span style="color:#f92672">/</span>CoreRecognition
+dyld: loaded: <span style="color:#f92672">/</span>System<span style="color:#f92672">/</span>Library<span style="color:#f92672">/</span>PrivateFrameworks<span style="color:#f92672">/</span>RemoteManagement.framework<span style="color:#f92672">/</span>RemoteManagement
+dyld: loaded: <span style="color:#f92672">/</span>System<span style="color:#f92672">/</span>Library<span style="color:#f92672">/</span>PrivateFrameworks<span style="color:#f92672">/</span>CoreParsec.framework<span style="color:#f92672">/</span>CoreParsec
+dyld: loaded: <span style="color:#f92672">/</span>System<span style="color:#f92672">/</span>Library<span style="color:#f92672">/</span>PrivateFrameworks<span style="color:#f92672">/</span>ParsecSubscriptionServiceSupport.framework<span style="color:#f92672">/</span>ParsecSubscriptionServiceSupport
+dyld: loaded: <span style="color:#f92672">/</span>System<span style="color:#f92672">/</span>Library<span style="color:#f92672">/</span>Frameworks<span style="color:#f92672">/</span>Social.framework<span style="color:#f92672">/</span>Social
+dyld: loaded: <span style="color:#f92672">/</span>System<span style="color:#f92672">/</span>Library<span style="color:#f92672">/</span>PrivateFrameworks<span style="color:#f92672">/</span>ContextKit.framework<span style="color:#f92672">/</span>ContextKit
+dyld: loaded: <span style="color:#f92672">/</span>System<span style="color:#f92672">/</span>Library<span style="color:#f92672">/</span>PrivateFrameworks<span style="color:#f92672">/</span>DeviceManagement.framework<span style="color:#f92672">/</span>DeviceManagement
+dyld: loaded: <span style="color:#f92672">/</span>System<span style="color:#f92672">/</span>Library<span style="color:#f92672">/</span>PrivateFrameworks<span style="color:#f92672">/</span>UsageTracking.framework<span style="color:#f92672">/</span>UsageTracking
+dyld: loaded: <span style="color:#f92672">/</span>System<span style="color:#f92672">/</span>Library<span style="color:#f92672">/</span>Frameworks<span style="color:#f92672">/</span>VideoSubscriberAccount.framework<span style="color:#f92672">/</span>VideoSubscriberAccount
+dyld: loaded: <span style="color:#f92672">/</span>System<span style="color:#f92672">/</span>Library<span style="color:#f92672">/</span>PrivateFrameworks<span style="color:#f92672">/</span>BulletinBoard.framework<span style="color:#f92672">/</span>BulletinBoard
+dyld: loaded: <span style="color:#f92672">/</span>System<span style="color:#f92672">/</span>Library<span style="color:#f92672">/</span>PrivateFrameworks<span style="color:#f92672">/</span>ToneLibrary.framework<span style="color:#f92672">/</span>ToneLibrary
+dyld: loaded: <span style="color:#f92672">/</span>System<span style="color:#f92672">/</span>Library<span style="color:#f92672">/</span>PrivateFrameworks<span style="color:#f92672">/</span>Catalyst.framework<span style="color:#f92672">/</span>Catalyst
+dyld: loaded: <span style="color:#f92672">/</span>System<span style="color:#f92672">/</span>Library<span style="color:#f92672">/</span>PrivateFrameworks<span style="color:#f92672">/</span>Categories.framework<span style="color:#f92672">/</span>Categories
+dyld: loaded: <span style="color:#f92672">/</span>System<span style="color:#f92672">/</span>Library<span style="color:#f92672">/</span>PrivateFrameworks<span style="color:#f92672">/</span>ConfigurationEngineModel.framework<span style="color:#f92672">/</span>ConfigurationEngineModel
+dyld: loaded: <span style="color:#f92672">/</span>System<span style="color:#f92672">/</span>Library<span style="color:#f92672">/</span>PrivateFrameworks<span style="color:#f92672">/</span>FamilyCircle.framework<span style="color:#f92672">/</span>FamilyCircle
+dyld: loaded: <span style="color:#f92672">/</span>System<span style="color:#f92672">/</span>Library<span style="color:#f92672">/</span>PrivateFrameworks<span style="color:#f92672">/</span>IAP.framework<span style="color:#f92672">/</span>IAP
+dyld: loaded: <span style="color:#f92672">/</span>Developer<span style="color:#f92672">/</span>Library<span style="color:#f92672">/</span>PrivateFrameworks<span style="color:#f92672">/</span>MTLToolsDeviceSupport.framework<span style="color:#f92672">/</span>..<span style="color:#f92672">/</span>GPUToolsCore.framework<span style="color:#f92672">/</span>GPUToolsCore
+dyld: loaded: <span style="color:#f92672">/</span>System<span style="color:#f92672">/</span>Library<span style="color:#f92672">/</span>PrivateFrameworks<span style="color:#f92672">/</span>MetalTools.framework<span style="color:#f92672">/</span>MetalTools
+dyld: loaded: <span style="color:#f92672">/</span>Developer<span style="color:#f92672">/</span>Library<span style="color:#f92672">/</span>PrivateFrameworks<span style="color:#f92672">/</span>MTLToolsDeviceSupport.framework<span style="color:#f92672">/</span>..<span style="color:#f92672">/</span>MTLToolsDeviceSupport.framework<span style="color:#f92672">/</span>MTLToolsDeviceSupport
+dyld: loaded: <span style="color:#f92672">/</span>Developer<span style="color:#f92672">/</span>Library<span style="color:#f92672">/</span>PrivateFrameworks<span style="color:#f92672">/</span>MTLToolsDeviceSupport.framework<span style="color:#f92672">/</span>..<span style="color:#f92672">/</span>GPUTools.framework<span style="color:#f92672">/</span>GPUTools
+dyld: loaded: <span style="color:#f92672">/</span>Developer<span style="color:#f92672">/</span>Library<span style="color:#f92672">/</span>PrivateFrameworks<span style="color:#f92672">/</span>DTDDISupport.framework<span style="color:#f92672">/</span>..<span style="color:#f92672">/</span>DebugHierarchyFoundation.framework<span style="color:#f92672">/</span>DebugHierarchyFoundation
+dyld: loaded: <span style="color:#f92672">/</span>System<span style="color:#f92672">/</span>Library<span style="color:#f92672">/</span>Frameworks<span style="color:#f92672">/</span>SceneKit.framework<span style="color:#f92672">/</span>SceneKit
+dyld: loaded: <span style="color:#f92672">/</span>System<span style="color:#f92672">/</span>Library<span style="color:#f92672">/</span>Frameworks<span style="color:#f92672">/</span>ModelIO.framework<span style="color:#f92672">/</span>ModelIO
+</code></pre></div><p>从上面的列表可以看到工程中使用了哪些动态链接库，重点检查当前所运行<code>scheme</code>中用了哪些第三方库。上面的例子中，属于主工程的第三方库分别为 <code>AgoraCore,AgoraRtcCryptoLoader,AgoraRtcKit,AgoraRtmKit,AgoraSoundTouch,Agorafdkaac,Agoraffmpeg,BizConfSDK,CMBMPGMK,CMBNSA,MoUI,IpCall,JMDoodle,JMSDK,WebRTC</code>。</p>
+<h2 id="影响app冷启动时长的因素">影响App冷启动时长的因素</h2>
+<ul>
+<li>设备类型：设备越老，启动时长越长。</li>
+<li>iOS 版本：<code>iOS 13</code> 做了一些优化，缓存了应用程序的动态依赖项，这显着改善了温启动，之前的 <code>iOS</code> 版本没有受益于这个改进。</li>
+<li>依赖的动态库数目：依赖的动态库越多，冷启动的时间越长。</li>
+<li>在使第一个屏幕可见之前要做的事情：如果正在加载外部依赖项（例如：分析框架）、初始化数据层（例如：<code>CoreData</code>），这将需要一些时间才能让您的用户看到第一个屏幕并可能影响启动。</li>
+</ul>
+<h2 id="获取启动时长">获取启动时长</h2>
+<h3 id="instruments">Instruments</h3>
+<p>从<code>Xcode 11</code>开始，<code>Instruments</code>提供了一个名为<code>App Launch</code>的新模板来收集应用程序启动的指标。在启动<code>Instruments</code>前，需要做的是将的应用程序配置为物理设备。<code>Profile</code> 在发布模式下编译应用程序并利用编译器时间优化。</p>
+<p>首先需要在<code>Xcode</code>的菜单栏，选择<code>Open Developer Tool</code>，然后选择工具<code>Instruments</code>，将会弹出<code>Instruments</code>面板，步骤如下图所示：</p>
+<p><img src="https://s2.loli.net/2021/12/09/4ilB7hmy5vRerUb.jpg" style="zoom:67%;" /></p>
+<p>接着在<code>Instruments</code>面板选择一个真实设备以便输出真实的数据，然后再选择<code>App Launch</code>模板，点击<code>Choose</code>按钮，将会弹出启动时长检测界面，步骤如下图所示：</p>
+<p><img src="https://s2.loli.net/2021/12/09/ftk7sI5SioTQ6Ym.jpg" alt="16390344919027" style="zoom:80%;" /></p>
+<p>接着在弹出的新界面，选择最左侧的<code>Record</code>按钮，等待设备启动，等启动完成之后再点击<code>stop</code>按钮，选择<code>Time Profiler</code>这一行，等待解析完成就可以查看启动时长相关的数据：</p>
+<p><img src="https://s2.loli.net/2021/12/09/h9Jj15dTZkRUy3B.jpg" alt="-c"></p>
+<p>在上面的图中，紫色部分是<code>pre-main</code>阶段的时长，而绿色的部分是<code>post-main</code>阶段的时长</p>
+<h3 id="environment-variables">Environment variables</h3>
+<p>第2种方式是使用环境变量，但这种方式在iOS 15 上已经失效。添加环境变量的方式是<code>scheme &gt; edit &gt; Run &gt; Environment variables &gt; +</code>。这些命令可以使用<code>man dyld</code>命令查看，各个环境变量值的含义如下图所示：</p>
+<p><img src="https://s2.loli.net/2021/12/09/jqtCRGunf75ZB9x.jpg" style="zoom:80%;" /></p>
+<p><img src="https://s2.loli.net/2021/12/13/yoS7iaUGkx8rXtg.png" alt="yoS7iaUGkx8rXtg" style="zoom:67%;" /></p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift">NAME
+       dyld <span style="color:#f92672">-</span> the <span style="color:#66d9ef">dynamic</span> linker
+
+SYNOPSIS
+       DYLD_FRAMEWORK_PATH
+       DYLD_FALLBACK_FRAMEWORK_PATH
+       DYLD_VERSIONED_FRAMEWORK_PATH
+       DYLD_LIBRARY_PATH
+       DYLD_FALLBACK_LIBRARY_PATH
+       DYLD_VERSIONED_LIBRARY_PATH
+       DYLD_IMAGE_SUFFIX
+       DYLD_INSERT_LIBRARIES
+       DYLD_PRINT_TO_FILE
+       DYLD_PRINT_LIBRARIES
+       DYLD_PRINT_LOADERS
+       DYLD_PRINT_SEARCHING
+       DYLD_PRINT_APIS
+       DYLD_PRINT_BINDINGS
+       DYLD_PRINT_INITIALIZERS
+       DYLD_PRINT_SEGMENTS
+       DYLD_PRINT_ENV
+       DYLD_SHARED_REGION
+       DYLD_SHARED_CACHE_DIR
+</code></pre></div><div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift">Total pre<span style="color:#f92672">-</span>main time: <span style="color:#ae81ff">972.26</span> milliseconds (<span style="color:#ae81ff">100.0</span><span style="color:#f92672">%</span>)
+         dylib loading time: <span style="color:#ae81ff">452.52</span> milliseconds (<span style="color:#ae81ff">46.5</span><span style="color:#f92672">%</span>)
+        rebase<span style="color:#f92672">/</span>binding time:  <span style="color:#ae81ff">86.38</span> milliseconds (<span style="color:#ae81ff">8.8</span><span style="color:#f92672">%</span>)
+            ObjC setup time: <span style="color:#ae81ff">113.26</span> milliseconds (<span style="color:#ae81ff">11.6</span><span style="color:#f92672">%</span>)
+           initializer time: <span style="color:#ae81ff">320.07</span> milliseconds (<span style="color:#ae81ff">32.9</span><span style="color:#f92672">%</span>)
+  total time: <span style="color:#ae81ff">3.2</span> seconds (<span style="color:#ae81ff">100.0</span><span style="color:#f92672">%</span>)
+  total images loading time: <span style="color:#ae81ff">2.4</span> seconds (<span style="color:#ae81ff">73.3</span><span style="color:#f92672">%</span>)
+  total load time <span style="color:#66d9ef">in</span> ObjC: <span style="color:#ae81ff">113.26</span> milliseconds (<span style="color:#ae81ff">3.4</span><span style="color:#f92672">%</span>)
+  total debugger pause time: <span style="color:#ae81ff">1.9</span> seconds (<span style="color:#ae81ff">59.5</span><span style="color:#f92672">%</span>)
+  total dtrace DOF registration time:   <span style="color:#ae81ff">0.00</span> milliseconds (<span style="color:#ae81ff">0.0</span><span style="color:#f92672">%</span>)
+  total rebase fixups time:  <span style="color:#ae81ff">82.76</span> milliseconds (<span style="color:#ae81ff">2.5</span><span style="color:#f92672">%</span>)
+  total binding fixups time: <span style="color:#ae81ff">356.08</span> milliseconds (<span style="color:#ae81ff">10.8</span><span style="color:#f92672">%</span>)
+  total <span style="color:#66d9ef">weak</span> binding fixups time:   <span style="color:#ae81ff">5.55</span> milliseconds (<span style="color:#ae81ff">0.1</span><span style="color:#f92672">%</span>)
+  total redo shared cached bindings time: <span style="color:#ae81ff">358.02</span> milliseconds (<span style="color:#ae81ff">10.8</span><span style="color:#f92672">%</span>)
+  total time <span style="color:#66d9ef">in</span> initializers and ObjC <span style="color:#f92672">+</span>load: <span style="color:#ae81ff">320.07</span> milliseconds (<span style="color:#ae81ff">9.7</span><span style="color:#f92672">%</span>)
+</code></pre></div><p><a href="https://juejin.cn/post/6969163142135971853">参考资料</a></p>
+<h4 id="两个重要参数">两个重要参数</h4>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-fallback" data-lang="fallback">DYLD_PRINT_STATISTICS
+
+DYLD_PRINT_STATISTICS_DETAILS
+</code></pre></div><h3 id="firebase">Firebase</h3>
+<p><a href="https://firebase.google.com/docs/perf-mon/get-started-ios">firebase</a></p>
+<h3 id="test">Test</h3>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift"><span style="color:#66d9ef">final</span> <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">AppLaunchTimeTests</span>: XCTestCase {
+
+    <span style="color:#75715e">/// Measure warm launch over 5 iterations (after one throw-away launch)</span>
+    <span style="color:#66d9ef">func</span> <span style="color:#a6e22e">testLaunchPerformance</span>() <span style="color:#66d9ef">throws</span> {
+        <span style="color:#75715e">// This measures how long it takes to launch your application.</span>
+        measure(metrics: [XCTApplicationLaunchMetric(waitUntilResponsive: <span style="color:#66d9ef">true</span>)]) {
+            XCUIApplication().launch()
+        }
+    }
+}
+</code></pre></div><h2 id="pre-main阶段的优化">Pre-main阶段的优化</h2>
+<ul>
+<li>
+<p>将第三方的动态库都改造成静态库。动态库可能是应用程序总启动时间中最长的部分之一。 <code>Apple</code> 建议最多只使用六个非系统<code>framework</code>，但对于包括我们在内的大多数现代应用程序来说，这是不现实的。可以看看是否能通过用静态版本替换动态版本或直接编译它们的源来删除正在使用的任何动态库。</p>
+</li>
+<li>
+<p>如果当前是使用<code>Cocoapods</code>管理库，可以使用名为 <a href="https://github.com/UnsafePointer/cocoapods-amimono">Amimono</a> 的插件显着缩短我们的启动时间，该插件将符号从我们的 <code>pod</code> 复制到主应用程序可执行文件中。</p>
+</li>
+<li>
+<p>如果使用<code>Carthage</code>或手动管理动态库，您可以尝试Eric Horacek描述的这种策略：将单个库转换为静态库，然后通过单个动态框架将它们链接到应用程序中。我没有亲自尝试过，所以我不能保证这是个好主意。</p>
+</li>
+<li>
+<p>使用<code>+initialize</code>替代<code>+load</code>对<code>Objective-C</code>类进行初始化。<a href="https://techblog.izotope.com/2018/03/08/improving-your-ios-apps-launch-time/">参考自</a></p>
+</li>
+<li>
+<p>删除未使用掉的 <code>Objective-C</code> 代码。编译到应用程序中的每个类都会减慢变基/绑定和 <code>Objective-C</code> 初始化时间，因此请删除不再使用的类。</p>
+</li>
+</ul>
+<h2 id="post-main阶段的优化">Post-main阶段的优化</h2>
+<ul>
+<li>
+<p><code>Be Lazy</code>：如果在启动期间正在做一些可能会在以后发生的事情，可以稍后再做。一个简单的例子是等待创建一个特定的视图控制器，用户实际点击一个按钮才需要显示它。在某些情况下，<code>Swift</code> 的<code>lazy</code>属性使这变得非常容易：</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift"><span style="color:#66d9ef">private</span> <span style="color:#66d9ef">lazy</span> <span style="color:#66d9ef">var</span> settingsViewController: MySettingsViewController = {
+    <span style="color:#66d9ef">return</span> MySettingsViewController()
+}()
+  
+<span style="color:#66d9ef">private</span> <span style="color:#66d9ef">func</span> <span style="color:#a6e22e">onSettingsButtonPressed</span>() {
+    present(<span style="color:#66d9ef">self</span>.settingsViewController, animated: <span style="color:#66d9ef">true</span>)
+}
+</code></pre></div></li>
+<li>
+<p>使用后台线程：如果一些事情不需要在主线程操作，可以将其放到后台线程，主线程继续做UI相关操作。但千万要注意线程安全问题。</p>
+</li>
+<li>
+<p>在行为上妥协。归根结底，您的应用程序在启动时尝试执行的操作越多，启动速度就越慢。与您的团队协商，看看您是否愿意更改或删除任何面向用户的内容，以缩短启动时间。也许对你的用户来说，拥有一个快速加载的简单初始 UI 更有价值，而不是一个充满平滑渐变、阴影和有用数据但需要永远显示的用户界面。</p>
+</li>
+</ul>
+<h2 id="查看启动时长">查看启动时长</h2>
+<p><img src="https://s2.loli.net/2021/12/09/PgBnlHYXcR57NbU.png" style="zoom:80%;" /></p>
+<p><a href="https://techblog.izotope.com/2018/03/08/improving-your-ios-apps-launch-time/">参考资料</a></p>
+<h2 id="区分静态库与动态库">区分静态库与动态库</h2>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift">file  filename <span style="color:#75715e">//即使用file命令查看.a文件或者无后缀的二进制文件</span>
+</code></pre></div><p><strong>Showing All Messages</strong></p>
+<p>SWIFT_VERSION &lsquo;3.0&rsquo; is unsupported, supported versions are: 4.0, 4.2, 5.0.</p>
+<p><img src="https://s2.loli.net/2021/12/10/Mo87RYqcy9e2zN1.jpg" alt="16391168323816" style="zoom:70%;" /></p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift"><span style="color:#66d9ef">final</span> <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">AppLaunchTimeTests</span>: XCTestCase {
+
+    <span style="color:#75715e">/// Measure warm launch over 5 iterations (after one throw-away launch)</span>
+    <span style="color:#66d9ef">func</span> <span style="color:#a6e22e">testLaunchPerformance</span>() <span style="color:#66d9ef">throws</span> {
+        <span style="color:#75715e">// This measures how long it takes to launch your application.</span>
+        measure(metrics: [XCTApplicationLaunchMetric(waitUntilResponsive: <span style="color:#66d9ef">true</span>)]) {
+            XCUIApplication().launch()
+        }
+    }
+    
+    <span style="color:#66d9ef">func</span> <span style="color:#a6e22e">testLaunchPerformanceNew</span>() <span style="color:#66d9ef">throws</span> {
+       measure(metrics: [XCTApplicationLaunchMetric()]) {
+           XCUIApplication().launch()
+       }
+    }
+}
+</code></pre></div><div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift">Failed to <span style="color:#66d9ef">import</span> <span style="color:#a6e22e">bridging</span> <span style="color:#a6e22e">header</span> <span style="color:#960050;background-color:#1e0010">&#39;</span><span style="color:#f92672">/</span><span style="color:#a6e22e">Users</span><span style="color:#f92672">/</span><span style="color:#a6e22e">xxx</span><span style="color:#f92672">/</span><span style="color:#a6e22e">Downloads</span><span style="color:#f92672">/</span><span style="color:#a6e22e">xxx</span><span style="color:#f92672">/</span><span style="color:#a6e22e">xxx</span><span style="color:#f92672">/</span><span style="color:#a6e22e">Common</span><span style="color:#f92672">/</span><span style="color:#a6e22e">xxx</span><span style="color:#f92672">-</span><span style="color:#a6e22e">Bridging</span><span style="color:#f92672">-</span><span style="color:#a6e22e">Header</span>.<span style="color:#a6e22e">h</span><span style="color:#960050;background-color:#1e0010">&#39;</span>
+</code></pre></div><h3 id="framework-not-found-aipiflymsc">framework not found AIPIFlyMSC</h3>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-ruby" data-lang="ruby">target <span style="color:#e6db74">&#39;CMBMobileTests&#39;</span> <span style="color:#66d9ef">do</span>
+    inherit! <span style="color:#e6db74">:search_paths</span>
+<span style="color:#66d9ef">end</span>
+<span style="color:#75715e"># https://stackoverflow.com/questions/37060065/what-does-inherit-search-paths-do</span>
+</code></pre></div><p>或者在<code>build setting</code> 中的 <code>framework search path</code>中添加<code>$(inherited)</code>也可以解决问题。</p>
+<h3 id="no-target-application-path-specified">No target application path specified</h3>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift">No target application path specified via test configuration: &lt;XCTestConfiguration: <span style="color:#ae81ff">0x12bf11600</span>&gt;
+</code></pre></div><p>如果出现上面的问题，则说明在scheme设置时设置了错误的</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-fallback" data-lang="fallback">https://www.jianshu.com/p/da1e0dd8296f
+</code></pre></div><p><a href="https://levelup.gitconnected.com/testing-your-app-launch-time-ios-e3d1471dda54">参考资料</a></p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift">BizConfSDK<span style="color:#960050;background-color:#1e0010">，</span>CMBMPGMK<span style="color:#960050;background-color:#1e0010">，</span>CMBNSA<span style="color:#960050;background-color:#1e0010">，</span>IpCall<span style="color:#960050;background-color:#1e0010">，</span>JMDoodle<span style="color:#960050;background-color:#1e0010">，</span>JMSDK<span style="color:#960050;background-color:#1e0010">，</span>MoUI<span style="color:#960050;background-color:#1e0010">，</span>MobileRTC<span style="color:#960050;background-color:#1e0010">，</span>WebRTC<span style="color:#960050;background-color:#1e0010">，</span>AgoraCore<span style="color:#960050;background-color:#1e0010">，</span>AgoraRtcCryptoLoader<span style="color:#960050;background-color:#1e0010">，</span>AgoraRtcKit<span style="color:#960050;background-color:#1e0010">，</span>AgoraRtmKit<span style="color:#960050;background-color:#1e0010">，</span>AgoraSoundTouch<span style="color:#960050;background-color:#1e0010">，</span>Agorafdkaac<span style="color:#960050;background-color:#1e0010">，</span>Agoraffmpeg
+</code></pre></div><h3 id="iphone7-ios-113">iPhone7 iOS 11.3</h3>
+<p>卸载App，关机再重启：</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-fallback" data-lang="fallback">Total pre-main time: 1.7 seconds (100.0%)
+         dylib loading time: 900.42 milliseconds (50.8%)
+        rebase/binding time: 137.06 milliseconds (7.7%)
+            ObjC setup time: 131.64 milliseconds (7.4%)
+           initializer time: 601.68 milliseconds (33.9%)
+           slowest intializers :
+             libSystem.B.dylib :  17.65 milliseconds (0.9%)
+         libMTLInterpose.dylib :  66.05 milliseconds (3.7%)
+                   AgoraRtcKit :  92.29 milliseconds (5.2%)
+                     MobileRTC : 117.61 milliseconds (6.6%)
+                     CMBMobile : 201.28 milliseconds (11.3%)
+
+  total time: 3.0 seconds (100.0%)
+  total images loaded:  472 (423 from dyld shared cache)
+  total segments mapped: 156, into 68104 pages with 2936 pages pre-fetched
+  total images loading time: 1.7 seconds (57.5%)
+  total load time in ObjC: 131.64 milliseconds (4.2%)
+  total debugger pause time: 868.18 milliseconds (28.2%)
+  total dtrace DOF registration time:   0.15 milliseconds (0.0%)
+  total rebase fixups:  1,155,778
+  total rebase fixups time: 128.26 milliseconds (4.1%)
+  total binding fixups: 649,585
+  total binding fixups time: 436.17 milliseconds (14.1%)
+  total weak binding fixups time:   7.71 milliseconds (0.2%)
+  total redo shared cached bindings time: 435.08 milliseconds (14.1%)
+  total bindings lazily fixed up: 0 of 0
+  total time in initializers and ObjC +load: 601.68 milliseconds (19.5%)
+                         libSystem.B.dylib :  17.65 milliseconds (0.5%)
+               libBacktraceRecording.dylib :  15.31 milliseconds (0.4%)
+                libMainThreadChecker.dylib :  26.22 milliseconds (0.8%)
+              libViewDebuggerSupport.dylib :   8.99 milliseconds (0.2%)
+                     libMTLInterpose.dylib :  66.05 milliseconds (2.1%)
+                               AgoraRtcKit :  92.29 milliseconds (3.0%)
+                               AgoraRtmKit :  13.18 milliseconds (0.4%)
+                                 MobileRTC : 117.61 milliseconds (3.8%)
+                                BizConfSDK :   4.51 milliseconds (0.1%)
+                                    IpCall :   9.52 milliseconds (0.3%)
+                                     JMSDK :  20.20 milliseconds (0.6%)
+                        libswiftCore.dylib :   4.20 milliseconds (0.1%)
+                                    WebRTC :   7.93 milliseconds (0.2%)
+                                 CMBMobile : 201.28 milliseconds (6.5%)
+total symbol trie searches:    1449736
+total symbol table binary searches:    0
+total images defining weak symbols:  55
+total images using weak symbols:  124
+</code></pre></div><p>已登录用户，关机再重启：</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-fallback" data-lang="fallback">Total pre-main time: 1.0 seconds (100.0%)
+         dylib loading time: 493.61 milliseconds (45.0%)
+        rebase/binding time: 153.82 milliseconds (14.0%)
+            ObjC setup time:  75.36 milliseconds (6.8%)
+           initializer time: 373.44 milliseconds (34.0%)
+           slowest intializers :
+             libSystem.B.dylib :   8.48 milliseconds (0.7%)
+         libMTLInterpose.dylib :  49.26 milliseconds (4.4%)
+                     MobileRTC :  91.26 milliseconds (8.3%)
+                   CMBMobileST : 164.23 milliseconds (14.9%)
+
+  total time: 1.8 seconds (100.0%)
+  total images loaded:  470 (423 from dyld shared cache)
+  total segments mapped: 149, into 68001 pages with 2928 pages pre-fetched
+  total images loading time: 918.02 milliseconds (48.8%)
+  total load time in ObjC:  75.36 milliseconds (4.0%)
+  total debugger pause time: 424.40 milliseconds (22.5%)
+  total dtrace DOF registration time:   0.09 milliseconds (0.0%)
+  total rebase fixups:  1,165,570
+  total rebase fixups time: 147.84 milliseconds (7.8%)
+  total binding fixups: 650,200
+  total binding fixups time: 358.26 milliseconds (19.0%)
+  total weak binding fixups time:   5.11 milliseconds (0.2%)
+  total redo shared cached bindings time: 357.39 milliseconds (19.0%)
+  total bindings lazily fixed up: 0 of 0
+  total time in initializers and ObjC +load: 373.44 milliseconds (19.8%)
+                         libSystem.B.dylib :   8.48 milliseconds (0.4%)
+               libBacktraceRecording.dylib :   8.23 milliseconds (0.4%)
+                     libMTLInterpose.dylib :  49.26 milliseconds (2.6%)
+                                 AgoraCore :   1.93 milliseconds (0.1%)
+                               AgoraRtcKit :  19.53 milliseconds (1.0%)
+                               AgoraRtmKit :   5.54 milliseconds (0.2%)
+                                 MobileRTC :  91.26 milliseconds (4.8%)
+                                BizConfSDK :   3.03 milliseconds (0.1%)
+                                    IpCall :   5.58 milliseconds (0.2%)
+                                     JMSDK :  14.83 milliseconds (0.7%)
+                                    WebRTC :   5.11 milliseconds (0.2%)
+                        libswiftCore.dylib :   3.16 milliseconds (0.1%)
+                               CMBMobileST : 164.23 milliseconds (8.7%)
+total symbol trie searches:    1448900
+total symbol table binary searches:    0
+total images defining weak symbols:  55
+total images using weak symbols:  124
+</code></pre></div><h2 id="other-c-flags">Other C Flags</h2>
+<p><img src="https://s2.loli.net/2022/01/05/67hb3vAmlPzwJyL.png" alt="67hb3vAmlPzwJyL"></p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-fallback" data-lang="fallback">-fsanitize-coverage=func,trace-pc-guard
+</code></pre></div><p><img src="https://s2.loli.net/2022/01/05/vzVISRW9TZG1H47.png" alt="vzVISRW9TZG1H47"></p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-fallback" data-lang="fallback">-sanitize-coverage=func
+-sanitize=undefined
+</code></pre></div><p>OrderFile</p>
+<p><img src="https://s2.loli.net/2022/01/05/il5WqIeOv2gBF6Z.png" alt="il5WqIeOv2gBF6Z"></p>
+
+    </div>
+    <footer class="post-footer">
+        
+ 
+<div class="post-tags">     
+     
+    <a href="https://iihui.github.io/tags/ios" rel="tag" title="iOS">#iOS#</a>
+    
+</div>
+
+
+
+        <div class="post-nav">
+    <div class="post-nav-next post-nav-item">
+    
+        <a href="https://iihui.github.io/post/ios-solutions/" rel="next" title="一些问题的解决方案">
+        <i class="fa fa-chevron-left"></i> 一些问题的解决方案
+        </a>
+    
+    </div>
+
+    <div class="post-nav-prev post-nav-item">
+    
+        <a href="https://iihui.github.io/post/ios-norm/" rel="prev" title="代码规范">
+        代码规范 <i class="fa fa-chevron-right"></i>
+        </a>
+    
+    </div>
+</div>
+      
+        <div class="post-nav">
+    <div style="border: 1px dashed #e0e0e0; padding: 10px 10px 10px 10px; background-color: #fffeee; background-repeat: no-repeat; background-attachment: scroll; background-position: 1% 50%; -moz-background-size: auto auto; -moz-background-clip: -moz-initial; -moz-background-origin: -moz-initial; -moz-background-inline-policy: -moz-initial;">
+        <div style="float:left;margin-top:0px;">
+            <img src="https://i.loli.net/2020/02/09/SvhUdz4XJsOr9Vk.jpg" width="128px" height="128px"/>
+            <div style="text-align:center;">谢谢支持!</div>
+        </div>
+        <div>
+            <p style="margin-top:10px;">
+                标题：iOS 启动时长优化
+                <br />作者：阿呆<a target="_blank" href="https://iihui.github.io/"></a>
+                
+                <br />地址：https://iihui.github.io/post/ios-launch/
+                <br />声明：自由转载-非商用-保持署名（创作共享4.0许可证）
+            </p>
+        </div>
+    </div>
+    <div class="clear"></div>
+</div>
+        
+        
+        
+
+
+
+
+    </footer>
+  </article>
+</section>
+
+          </div>
+        </div>
+        <div class="sidebar-toggle">
+  <div class="sidebar-toggle-line-wrap">
+    <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+    <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+    <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+  </div>
+</div>
+<aside id="sidebar" class="sidebar">
+  <div class="sidebar-inner">
+
+  <ul class="sidebar-nav motion-element">
+    <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+      文章目录
+    </li>
+    <li class="sidebar-nav-overview" data-target="site-overview">
+      站点概览
+    </li>
+  </ul>
+
+    <section class="site-overview sidebar-panel ">
+      <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image"
+        src="https://i.loli.net/2020/02/07/dVFzrvZkHRNq2lL.jpg"
+        alt="" />
+    <p class="site-author-name" itemprop="name"></p>
+    <p class="site-description motion-element" itemprop="description"> 
+        coder &amp; cook</p>
+</div>
+      <nav class="site-state motion-element">
+    <div class="site-state-item site-state-posts">
+      <a href="https://iihui.github.io/post/">
+        <span class="site-state-item-count">140</span>
+        <span class="site-state-item-name">日志</span>
+      </a>
+    </div>
+    <div class="site-state-item site-state-categories">    
+        <a href="https://iihui.github.io/categories/">      
+         
+        <span class="site-state-item-count">18</span>
+        
+        <span class="site-state-item-name">分类</span>
+        
+        </a>
+    </div>
+
+    <div class="site-state-item site-state-tags">
+        <a href="https://iihui.github.io/tags/">
+         
+        <span class="site-state-item-count">31</span>
+        
+        <span class="site-state-item-name">标签</span>
+        </a>
+    </div>
+</nav>
+      
+      
+<div class="links-of-author motion-element">
+    
+        <span class="links-of-author-item">
+        <a href="https://coolshell.cn" target="_blank" title="皓 大">
+            <i class="fa fa-fw fa-globe"></i>
+            皓 大
+        </a>
+        </span>
+    
+        <span class="links-of-author-item">
+        <a href="http://www.ruanyifeng.com" target="_blank" title="阮 大">
+            <i class="fa fa-fw fa-globe"></i>
+            阮 大
+        </a>
+        </span>
+    
+        <span class="links-of-author-item">
+        <a href="https://juejin.im/" target="_blank" title="掘 金">
+            <i class="fa fa-fw fa-globe"></i>
+            掘 金
+        </a>
+        </span>
+    
+        <span class="links-of-author-item">
+        <a href="http://www.ideamsg.com" target="_blank" title="灵 感">
+            <i class="fa fa-fw fa-globe"></i>
+            灵 感
+        </a>
+        </span>
+    
+</div>
+
+
+      
+
+      <div class="links-of-blogroll motion-element inline">
+<script type="text/javascript" src="//rf.revolvermaps.com/0/0/8.js?i=&amp;m=0&amp;s=220&amp;c=ff0000&amp;cr1=ffffff&amp;f=arial&amp;l=33&amp;bv=35" async="async"></script>
+</div>
+
+    </section>
+    
+<section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+    <div class="post-toc">
+        <div class="post-toc-content"><nav id="TableOfContents">
+  <ul>
+    <li>
+      <ul>
+        <li><a href="#基本概念">基本概念</a></li>
+        <li><a href="#影响app冷启动时长的因素">影响App冷启动时长的因素</a></li>
+        <li><a href="#获取启动时长">获取启动时长</a>
+          <ul>
+            <li><a href="#instruments">Instruments</a></li>
+            <li><a href="#environment-variables">Environment variables</a>
+              <ul>
+                <li><a href="#两个重要参数">两个重要参数</a></li>
+              </ul>
+            </li>
+            <li><a href="#firebase">Firebase</a></li>
+            <li><a href="#test">Test</a></li>
+          </ul>
+        </li>
+        <li><a href="#pre-main阶段的优化">Pre-main阶段的优化</a></li>
+        <li><a href="#post-main阶段的优化">Post-main阶段的优化</a></li>
+        <li><a href="#查看启动时长">查看启动时长</a></li>
+        <li><a href="#区分静态库与动态库">区分静态库与动态库</a>
+          <ul>
+            <li><a href="#framework-not-found-aipiflymsc">framework not found AIPIFlyMSC</a></li>
+            <li><a href="#no-target-application-path-specified">No target application path specified</a></li>
+            <li><a href="#iphone7-ios-113">iPhone7 iOS 11.3</a></li>
+          </ul>
+        </li>
+        <li><a href="#other-c-flags">Other C Flags</a></li>
+      </ul>
+    </li>
+  </ul>
+</nav></div>
+    </div>
+</section>
+
+  </div>
+</aside>
+
+      </div>
+    </main>
+   
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  <span itemprop="copyrightYear">  &copy; 
+  2017 - 2022</span>
+  <span class="with-love"><i class="fa fa-heart"></i></span>
+  <span class="author" itemprop="copyrightHolder">Keep It Simple</span>
+</div>
+
+
+
+
+      </div>
+    </footer>
+
+    <div class="back-to-top">
+      <i class="fa fa-arrow-up"></i>
+      <span id="scrollpercent"><span>0</span>%</span>
+    </div>
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+<script type="text/javascript" src="https://iihui.github.io/js/vendor/jquery/index.js?v=2.1.3"></script>
+<script type="text/javascript" src="https://iihui.github.io/js/vendor/fastclick/lib/fastclick.min.js?v=1.0.6"></script> 
+<script type="text/javascript" src="https://iihui.github.io/js/vendor/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+<script type="text/javascript" src="https://iihui.github.io/js/vendor/velocity/velocity.min.js?v=1.2.1"></script>
+<script type="text/javascript" src="https://iihui.github.io/js/vendor/velocity/velocity.ui.min.js?v=1.2.1"></script>
+<script src="https://iihui.github.io/js/vendor/ua-parser-js/dist/ua-parser.min.js?v=0.7.9"></script>
+
+<script src="https://iihui.github.io/js/vendor/fancybox/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+<script type="text/javascript" src="https://iihui.github.io/js/utils.js"></script>
+<script type="text/javascript" src="https://iihui.github.io/js/motion.js"></script>
+<script type="text/javascript" src="https://iihui.github.io/js/affix.js"></script>
+<script type="text/javascript" src="https://iihui.github.io/js/schemes/pisces.js"></script>
+
+<script type="text/javascript" src="https://iihui.github.io/js/scrollspy.js"></script>
+<script type="text/javascript" src="https://iihui.github.io/js/post-details.js"></script>
+<script type="text/javascript" src="https://iihui.github.io/js/toc.js"></script>
+
+<script type="text/javascript" src="https://iihui.github.io/js/bootstrap.js"></script>
+
+<script type="text/javascript" src="https://iihui.github.io/js/search.js"></script>
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+    extensions: ["tex2jax.js"],
+    jax: ["input/TeX", "output/HTML-CSS"],
+    tex2jax: {
+      inlineMath: [ ['$','$'] ],
+      displayMath: [ ['$$','$$'] ],
+      processEscapes: true
+    },
+    "HTML-CSS": { fonts: ["TeX"] }
+  });
+</script>
+<script src='https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-AMS-MML_HTMLorMML' async></script>
+</body>
+</html>

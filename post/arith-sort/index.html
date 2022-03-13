@@ -1,0 +1,1357 @@
+<!DOCTYPE HTML>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" /> 
+    <title>基本排序算法 - Keep It Simple</title>
+    <meta name="keywords" content="博客,思考,读书,笔记,技术,分享">
+    
+    <meta property="og:title" content="基本排序算法">
+    <meta property="og:site_name" content="Keep It Simple">
+    <meta property="og:image" content="/img/author.jpg"> 
+    <meta name="title" content="基本排序算法 - Keep It Simple" />
+    <meta name="description" content="Swift | Go | C&#43;&#43; "> 
+    <link rel="shortcut icon" href="https://iihui.github.io/img/favicon.ico" />
+    <link rel="apple-touch-icon" href="https://iihui.github.io/img/apple-touch-icon.png" />
+    <link rel="apple-touch-icon-precomposed" href="https://iihui.github.io/img/apple-touch-icon.png" />
+    <link href="https://iihui.github.io/js/vendor/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+    <link href="https://iihui.github.io/js/vendor/fancybox/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+    <link href="https://iihui.github.io/css/main.css" rel="stylesheet" type="text/css" />
+    <link href="https://iihui.github.io/css/syntax.css" rel="stylesheet" type="text/css" />
+
+    <script type="text/javascript" id="hexo.configuration">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    scheme: 'Pisces',
+    sidebar: {"position":"left","display":"post"},
+     fancybox: true, 
+    motion: true
+  };
+</script>
+
+    <link href="https://cdn.bootcss.com/highlight.js/9.12.0/styles/monokai-sublime.min.css" rel="stylesheet">
+    <script src="https://cdn.bootcss.com/highlight.js/9.12.0/highlight.min.js"></script>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/languages/go.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/languages/swift.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.1/languages/objectivec.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.1/languages/clojure.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.1/languages/cpp.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.1/languages/kotlin.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.1/languages/yaml.min.js"></script>
+    <script>hljs.initHighlightingOnLoad();</script>
+</head>
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+<div class="container one-collumn sidebar-position-left page-home  ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"> <div class="site-meta  custom-logo ">
+
+  <div class="custom-logo-site-title">
+    <a href="https://iihui.github.io/"  class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <span class="site-title">Keep It Simple</span>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+  <p class="site-subtitle">靡不有初，鲜克有终</p>
+</div>
+
+<div class="site-nav-toggle">
+  <button>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+  </button>
+</div>
+
+<nav class="site-nav">
+    <ul id="menu" class="menu">
+      
+      
+        <li class="menu-item ">
+          <a href="https://iihui.github.io/" rel="section">
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />首页
+          </a>
+        </li>
+      
+        <li class="menu-item ">
+          <a href="https://iihui.github.io/tags/" rel="section">
+              <i class="menu-item-icon fa fa-fw fa-tag"></i> <br />标签
+          </a>
+        </li>
+      
+        <li class="menu-item ">
+          <a href="https://iihui.github.io/post/" rel="section">
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />归档
+          </a>
+        </li>
+      
+        <li class="menu-item ">
+          <a href="https://iihui.github.io/categories/%E7%BE%8E%E9%A3%9F/" rel="section">
+              <i class="menu-item-icon fa fa-fw fa-fire"></i> <br />美食
+          </a>
+        </li>
+      
+        <li class="menu-item ">
+          <a href="https://iihui.github.io/categories/%E5%90%8E%E6%9C%9F/" rel="section">
+              <i class="menu-item-icon fa fa-fw fa-edit"></i> <br />后期
+          </a>
+        </li>
+      
+        <li class="menu-item ">
+          <a href="https://iihui.github.io/categories/%E6%97%85%E8%A1%8C/" rel="section">
+              <i class="menu-item-icon fa fa-fw fa-leaf"></i> <br />旅行
+          </a>
+        </li>
+      
+        <li class="menu-item ">
+          <a href="https://iihui.github.io/about/" rel="section">
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />关于
+          </a>
+        </li>
+      
+      <li class="menu-item menu-item-search">
+        <a href="javascript:;" class="popup-trigger"> <i class="menu-item-icon fa fa-search fa-fw"></i> <br /> 搜索</a>
+      </li>
+    </ul>
+    <div class="site-search">
+      <div class="popup">
+ <span class="search-icon fa fa-search"></span>
+ <input type="text" id="local-search-input">
+ <div id="local-search-result"></div>
+ <span class="popup-btn-close">close</span>
+</div>
+
+    </div>
+</nav>
+<script type="text/javascript"
+        async
+        src="https://cdn.bootcss.com/mathjax/2.7.3/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+		<!-- src = "http://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"> <\!--  -\-> -->
+MathJax.Hub.Config({
+  tex2jax: {
+    inlineMath: [['$','$'], ['\\(','\\)']],
+    displayMath: [['$$','$$'], ['\[\[','\]\]']],
+    processEscapes: true,
+    processEnvironments: true,
+    skipTags: ['script', 'noscript', 'style', 'textarea', 'pre'],
+    TeX: { equationNumbers: { autoNumber: "AMS" },
+         extensions: ["AMSmath.js", "AMSsymbols.js"] }
+  }
+});
+
+MathJax.Hub.Queue(function() {
+    
+    
+    
+    var all = MathJax.Hub.getAllJax(), i;
+    for(i = 0; i < all.length; i += 1) {
+        all[i].SourceElement().parentNode.className += ' has-jax';
+    }
+});
+</script>
+
+<style>
+code.has-jax {
+    font: inherit;
+    font-size: 100%;
+    background: inherit;
+    border: inherit;
+    color: #515151;
+}
+</style>
+
+<!DOCTYPE html>
+<html lang="en">
+
+
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.10.0-rc.1/dist/katex.min.css" integrity="sha384-D+9gmBxUQogRLqvARvNLmA9hS2x//eK1FhVb9PiU86gmcrBrJAQT8okdJ4LMp2uv" crossorigin="anonymous">
+
+    
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.10.0-rc.1/dist/katex.min.js" integrity="sha384-483A6DwYfKeDa0Q52fJmxFXkcPCFfnXMoXblOkJ4JcA8zATN6Tm78UNL72AKk+0O" crossorigin="anonymous"></script>
+</head>
+<body>
+
+</body>
+</html>
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+<section id="posts" class="posts-expand">
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <header class="post-header">
+      <h1 class="post-title" itemprop="name headline">
+        <a class="post-title-link" href="https://iihui.github.io/post/arith-sort/" itemprop="url">
+        基本排序算法
+        </a>
+      </h1>
+      <div class="post-meta">
+      <span class="post-time">
+<span class="post-meta-item-icon">
+    <i class="fa fa-calendar-o"></i>
+</span>
+<span class="post-meta-item-text">创建: </span>
+<time itemprop="dateCreated" datetime="2016-03-22T13:04:35+08:00" content="2017-05-23">
+    2017-05-23
+</time>
+</span>
+&nbsp; | &nbsp;
+<span class="post-updated-time">
+<span class="post-meta-item-icon">
+    <i class="fa fa-calendar-check-o"></i>
+</span>
+<span class="post-meta-item-text">更新: </span>
+<time itemprop="dateUpdated" content="2017-05-23">
+    2017-05-23
+</time>
+</span> 
+      
+
+  <span class="post-category" >
+  &nbsp; | &nbsp;
+  <span class="post-meta-item-icon">
+    <i class="fa fa-folder-o"></i>
+  </span>
+  <span class="post-meta-item-text">分类: </span>
+  
+    <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
+      <a href="https://iihui.github.io/categories/%E7%AE%97%E6%B3%95" itemprop="url" rel="index">
+        <span itemprop="name">算法</span>
+      </a>
+      &nbsp; 
+    </span>
+  
+</span>
+
+
+      <span>
+&nbsp; | &nbsp;
+<span class="post-meta-item-icon">
+    <i class="fa fa-file-word-o"></i>
+</span>
+<span class="post-meta-item-text">字数: </span>
+<span class="leancloud-visitors-count">7678</span>
+&nbsp; | &nbsp;
+<span class="post-meta-item-icon">
+    <i class="fa fa-coffee"></i>
+</span>
+<span class="post-meta-item-text">阅读: </span>
+<span class="leancloud-visitors-count">16 分钟</span>
+</span>
+      </div>
+    </header>
+    <div class="post-body" itemprop="articleBody">
+    <h1 id="基本概念">基本概念</h1>
+<ul>
+<li>
+<p>排序算法的稳定性：如果待排序的数据中，<font color=blue>存在多个关键字相同的元素，</font>经过排序后这些具有相同关键字的元素之间的<font color=red>相对次序保持不变</font>，则称这种排序算法是稳定的，反之则为不稳定。</p>
+</li>
+<li>
+<p>内排序：排序过程中，<font color=red>整个表都是放在内存中处理，排序时不涉及数据的内、外交换</font>。</p>
+</li>
+<li>
+<p>外排序：指能够处理极大量数据的排序算法，<font color=red>外排序处理的数据不能一次装入内存，</font>只能放在读写较慢的外存储器(通常是硬盘)上，外排序通常采用的是一种 <code>排序-归并</code> 的策略。在排序阶段，先读入能放在内存中的数据量，将其排序结果输出到一个<font color=Blue>临时文件</font>，依此进行，<font color=Blue>将待排序数据组织为多个有序的临时文件</font>。然后在归并阶段将这些临时文件组合为一个大的有序文件，即排序结果。</p>
+</li>
+</ul>
+<hr>
+<h1 id="内排序算法">内排序算法</h1>
+<p>一般说来，内排序算法可以<font color=red>分为<code>7</code>类</font>，分别为：</p>
+<ul>
+<li>
+<p>插入排序</p>
+</li>
+<li>
+<p>交换排序</p>
+</li>
+<li>
+<p>选择排序</p>
+</li>
+<li>
+<p>归并排序</p>
+</li>
+<li>
+<p>基数排序</p>
+</li>
+<li>
+<p>桶排序</p>
+</li>
+<li>
+<p>计数排序</p>
+</li>
+</ul>
+<hr>
+<h2 id="插入类排序">插入类排序</h2>
+<h3 id="直接插入排序">直接插入排序</h3>
+<p>直接插入排序，是在有序的基础上对数据元素进行直接插入，代码如下所示：</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-cpp" data-lang="cpp"><span style="color:#66d9ef">template</span><span style="color:#f92672">&lt;</span><span style="color:#66d9ef">typename</span> T<span style="color:#f92672">&gt;</span>
+<span style="color:#66d9ef">void</span> innerSort<span style="color:#f92672">&lt;</span>T<span style="color:#f92672">&gt;::</span>insertSort(T <span style="color:#f92672">*</span>data, <span style="color:#66d9ef">int</span> length) {
+    assert(length <span style="color:#f92672">&gt;=</span> <span style="color:#ae81ff">0</span>);
+    <span style="color:#66d9ef">int</span> curItem, j;
+    <span style="color:#66d9ef">for</span> (<span style="color:#66d9ef">int</span> i <span style="color:#f92672">=</span> <span style="color:#ae81ff">1</span>; i <span style="color:#f92672">&lt;</span> length; <span style="color:#f92672">++</span>i) {
+        curItem <span style="color:#f92672">=</span> data[i];
+        <span style="color:#66d9ef">for</span> (j <span style="color:#f92672">=</span> i <span style="color:#f92672">-</span> <span style="color:#ae81ff">1</span>; j <span style="color:#f92672">&gt;=</span> <span style="color:#ae81ff">0</span>; <span style="color:#f92672">--</span>j) {
+            <span style="color:#66d9ef">if</span> (curItem <span style="color:#f92672">&lt;</span> data[j]) {
+                data[j <span style="color:#f92672">+</span> <span style="color:#ae81ff">1</span>] <span style="color:#f92672">=</span> data[j];
+            } <span style="color:#66d9ef">else</span> {
+                <span style="color:#66d9ef">break</span>;
+            }
+        }
+        data[j <span style="color:#f92672">+</span> <span style="color:#ae81ff">1</span>] <span style="color:#f92672">=</span> curItem;  <span style="color:#75715e">//j+1是最终位置
+</span><span style="color:#75715e"></span>    }
+}
+</code></pre></div><ul>
+<li>
+<p>最好情况为<font color=Blue>待排序序列是正序</font>的时候，比较次数为$(n-1)$次，移动次数$2(n-1)$次，时间复杂度：$O(n)$。</p>
+</li>
+<li>
+<p>最坏情况为<font color=Blue>待排序序列是逆序的时候</font>，比较次数 $（1+2+3+&hellip;+(n-1))=\frac{n(n-1)}{2}$，移动次数 $(1+2+&hellip;+(n+1))=\frac{n(n+1)}{2}$，时间复杂度：$O(n^2)$。</p>
+</li>
+<li>
+<p>平均时间复杂度：$O(n^2)$。</p>
+</li>
+<li>
+<p>空间复杂度：$O(1)$。</p>
+</li>
+<li>
+<p>直接插入排序<font color=Orange>不能保证一趟之后有一个元素在其最终的位置</font>。</p>
+</li>
+<li>
+<p>直接插入是<font color=red>稳定的排序算法</font>。</p>
+<hr>
+</li>
+</ul>
+<h3 id="折半插入排序">折半插入排序</h3>
+<p>折半插入排序，在<font color=red>查找插入位置的时候使用二分查找</font>，代码如下：</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-cpp" data-lang="cpp"><span style="color:#66d9ef">template</span><span style="color:#f92672">&lt;</span><span style="color:#66d9ef">typename</span> T<span style="color:#f92672">&gt;</span>
+<span style="color:#66d9ef">void</span> innerSort<span style="color:#f92672">&lt;</span>T<span style="color:#f92672">&gt;::</span>binInsertSort(T <span style="color:#f92672">*</span>data, <span style="color:#66d9ef">int</span> length) {
+    assert(length <span style="color:#f92672">&gt;=</span> <span style="color:#ae81ff">0</span>);
+    <span style="color:#66d9ef">int</span> start, mid, end, curItem;
+    <span style="color:#66d9ef">for</span> (<span style="color:#66d9ef">int</span> i <span style="color:#f92672">=</span> <span style="color:#ae81ff">1</span>; i <span style="color:#f92672">&lt;</span> length; <span style="color:#f92672">++</span>i) {
+        start <span style="color:#f92672">=</span> <span style="color:#ae81ff">0</span>;
+        end <span style="color:#f92672">=</span> i <span style="color:#f92672">-</span> <span style="color:#ae81ff">1</span>;
+        curItem <span style="color:#f92672">=</span> data[i];
+        <span style="color:#66d9ef">while</span> (start <span style="color:#f92672">&lt;=</span> end) {
+            mid <span style="color:#f92672">=</span> start <span style="color:#f92672">+</span> (end <span style="color:#f92672">-</span> start) <span style="color:#f92672">/</span> <span style="color:#ae81ff">2</span>; <span style="color:#75715e">//尽可能地避免溢出
+</span><span style="color:#75715e"></span>            <span style="color:#66d9ef">if</span> (data[mid] <span style="color:#f92672">==</span> curItem) {
+                end <span style="color:#f92672">=</span> mid; <span style="color:#75715e">//end+1便是插入位置
+</span><span style="color:#75715e"></span>                <span style="color:#66d9ef">break</span>;
+            } <span style="color:#66d9ef">else</span> <span style="color:#a6e22e">if</span> (data[mid] <span style="color:#f92672">&lt;</span> curItem) {
+                start <span style="color:#f92672">=</span> mid <span style="color:#f92672">+</span> <span style="color:#ae81ff">1</span>;
+            } <span style="color:#66d9ef">else</span> {
+                end <span style="color:#f92672">=</span> mid <span style="color:#f92672">-</span> <span style="color:#ae81ff">1</span>;
+            }
+        }
+        <span style="color:#75715e">//最终的插入位置为end+1,因此需要将end+1所在的元素移开
+</span><span style="color:#75715e"></span>        <span style="color:#66d9ef">for</span> (<span style="color:#66d9ef">int</span> j <span style="color:#f92672">=</span> i <span style="color:#f92672">-</span> <span style="color:#ae81ff">1</span>; j <span style="color:#f92672">&gt;=</span> end <span style="color:#f92672">+</span> <span style="color:#ae81ff">1</span>; <span style="color:#f92672">--</span>j) {
+            data[j <span style="color:#f92672">+</span> <span style="color:#ae81ff">1</span>] <span style="color:#f92672">=</span> data[j];
+        }
+        <span style="color:#75715e">//放到最终的插入位置 end+1
+</span><span style="color:#75715e"></span>        data[end <span style="color:#f92672">+</span> <span style="color:#ae81ff">1</span>] <span style="color:#f92672">=</span> curItem;
+    }
+}
+</code></pre></div><ul>
+<li>
+<p>注意后面的第二个<code>for</code>循环中<code>j &gt;= end + 1</code>，因为最终位置是<code>end+1</code>。</p>
+</li>
+<li>
+<p>从时间上看，折半插入排序<font color=red>只是减少了关键字间的比较次数，而元素的移动次数不变</font>，因为找到位置之后还是要将元素全部移动，因此平均时间复杂度为$O(n^2)$。</p>
+</li>
+<li>
+<p>空间复杂度：$O(1)$，折半插入排序算法<font color=red>不稳定的</font>的内排序算法，例如<code>1，1，1，1</code>进行折半插入排序时。</p>
+</li>
+</ul>
+<hr>
+<h3 id="shell排序">Shell排序</h3>
+<p><code>Shell</code>排序，又称为<font color=red>缩小增量排序方法</font>。其基本思想是：<font color=blue>把记录按下标的某个增量 $d$ 分组，对每组记录采用直接插入排序方法进行排序，</font>随着增量逐渐缩小，所分成的组所包含的记录越来越多，到增量的值减少到$1$时，整个数据合成为一组，构成一组有序记录，则完成排序。</p>
+<ul>
+<li>
+<p>先取一个正整数 $d_1(d_1 \lt n)$，把全部记录分成 $d_1$ 个组，所有距离为 $d_1$ 的倍数的记录看成一组，然后在<font color=red>各组内进行插入排序</font>。</p>
+</li>
+<li>
+<p>然后取 $d_2(d_2 \lt d_1)$重复上述分组和排序操作；直到取 $d_i = 1(i \ge 1)$ 位置，即所有记录成为一个组，最后对这个组进行插入排序。一般选<code>$d_1$</code>约为$\frac{n}{2}$，<code>$d_2$</code>为<code>$\frac{d_1}{2}$</code>， <code>$d_3$</code> 为 <code>$\frac{d_2}{2}$</code> ，&hellip;， <code>$d_i = 1$</code>。</p>
+</li>
+</ul>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-cpp" data-lang="cpp"><span style="color:#66d9ef">template</span><span style="color:#f92672">&lt;</span><span style="color:#66d9ef">typename</span> T<span style="color:#f92672">&gt;</span>
+<span style="color:#66d9ef">void</span> innerSort<span style="color:#f92672">&lt;</span>T<span style="color:#f92672">&gt;::</span>shellSort(T <span style="color:#f92672">*</span>data, <span style="color:#66d9ef">int</span> length) {
+    assert(length <span style="color:#f92672">&gt;=</span> <span style="color:#ae81ff">0</span>);
+    <span style="color:#66d9ef">for</span> (<span style="color:#66d9ef">int</span> step <span style="color:#f92672">=</span> length <span style="color:#f92672">/</span> <span style="color:#ae81ff">2</span>; step <span style="color:#f92672">&gt;</span> <span style="color:#ae81ff">0</span>; step <span style="color:#f92672">/=</span> <span style="color:#ae81ff">2</span>) {
+        assistShellSort(data, length, step);
+    }
+}
+
+<span style="color:#66d9ef">template</span><span style="color:#f92672">&lt;</span><span style="color:#66d9ef">typename</span> T<span style="color:#f92672">&gt;</span>
+<span style="color:#66d9ef">void</span> innerSort<span style="color:#f92672">&lt;</span>T<span style="color:#f92672">&gt;::</span>assistShellSort(T <span style="color:#f92672">*</span>data, <span style="color:#66d9ef">int</span> length, <span style="color:#66d9ef">int</span> step) {
+    assert(length <span style="color:#f92672">&gt;=</span> <span style="color:#ae81ff">1</span> <span style="color:#f92672">&amp;&amp;</span> step <span style="color:#f92672">&gt;=</span> <span style="color:#ae81ff">0</span>);
+    <span style="color:#66d9ef">int</span> j, curItem;
+    <span style="color:#66d9ef">for</span> (<span style="color:#66d9ef">int</span> i <span style="color:#f92672">=</span> step; i <span style="color:#f92672">&lt;</span> length; <span style="color:#f92672">++</span>i) {
+        curItem <span style="color:#f92672">=</span> data[i];
+        <span style="color:#66d9ef">for</span> (j <span style="color:#f92672">=</span> i <span style="color:#f92672">-</span> step; j <span style="color:#f92672">&gt;=</span> <span style="color:#ae81ff">0</span>; j <span style="color:#f92672">-=</span> step) {
+            <span style="color:#66d9ef">if</span> (data[j] <span style="color:#f92672">&gt;</span> curItem) {
+                data[j <span style="color:#f92672">+</span> step] <span style="color:#f92672">=</span> data[j];
+            } <span style="color:#66d9ef">else</span> {
+                <span style="color:#66d9ef">break</span>;
+            }
+        }
+        data[j <span style="color:#f92672">+</span> step] <span style="color:#f92672">=</span> curItem; <span style="color:#75715e">//j+step是最终的位置
+</span><span style="color:#75715e"></span>    }
+}
+</code></pre></div><ul>
+<li>
+<p><code>Shell</code>排序的每趟排序，都会使得整个序列变得更加有序，等整个序列基本有序了，再来一趟直接插入排序，这样会使排序效率更高。</p>
+</li>
+<li>
+<p><code>Shell</code>排序<font color=red>不能保证一趟之后</font>有一个元素在其最终的位置。</p>
+</li>
+<li>
+<p><code>Shell</code>排序是<font color=red>不稳定的排序算法</font>，例如<code>2,2,1(d=2,1)</code>。</p>
+</li>
+<li>
+<p>分析<code>Shell</code>排序是一个复杂的问题，<font color=red>它的时间复杂度是<code>增量</code>序列的函数，</font>到现在为止还未得到数学上的解决。</p>
+</li>
+</ul>
+<hr>
+<h2 id="交换类排序">交换类排序</h2>
+<h3 id="大数沉底冒泡">大数沉底冒泡</h3>
+<p>大数沉底的冒泡排序的基本流程如下：</p>
+<ul>
+<li>
+<p>比较相邻的元素，如果第一个比第二个大，就交换他们两个。</p>
+</li>
+<li>
+<p>对<font color=red>每一对相邻元素做同样的工作</font>，从开始第一对到结尾的最后一对，当交换到最后的时候，最后的一个元素将会是最大的数。</p>
+</li>
+<li>
+<p>除了已经找到的元素，针对所有剩下的元素重复以上的步骤。</p>
+</li>
+<li>
+<p>持续每次对越来越少的元素重复上面的步骤，直到没有任何一对数字需要比较。</p>
+</li>
+</ul>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-cpp" data-lang="cpp"><span style="color:#75715e">//大数沉底的冒泡排序
+</span><span style="color:#75715e"></span><span style="color:#66d9ef">template</span><span style="color:#f92672">&lt;</span><span style="color:#66d9ef">typename</span> T<span style="color:#f92672">&gt;</span>
+<span style="color:#66d9ef">void</span> innerSort<span style="color:#f92672">&lt;</span>T<span style="color:#f92672">&gt;::</span>bubbleSort(T <span style="color:#f92672">*</span>data, <span style="color:#66d9ef">int</span> length) {
+    assert(length <span style="color:#f92672">&gt;=</span> <span style="color:#ae81ff">0</span>);
+    <span style="color:#66d9ef">bool</span> flag;  <span style="color:#75715e">//标识本趟是否有交换
+</span><span style="color:#75715e"></span>    <span style="color:#66d9ef">for</span> (<span style="color:#66d9ef">int</span> i <span style="color:#f92672">=</span> <span style="color:#ae81ff">1</span>; i <span style="color:#f92672">&lt;</span> length; <span style="color:#f92672">++</span>i) {
+        flag <span style="color:#f92672">=</span> false;  <span style="color:#75715e">//赋值为false表示还没有数据交换
+</span><span style="color:#75715e"></span>        <span style="color:#66d9ef">for</span> (<span style="color:#66d9ef">int</span> j <span style="color:#f92672">=</span> <span style="color:#ae81ff">0</span>; j <span style="color:#f92672">&lt;</span> length <span style="color:#f92672">-</span> i; <span style="color:#f92672">++</span>j) {
+            <span style="color:#66d9ef">if</span> (data[j] <span style="color:#f92672">&gt;</span> data[j <span style="color:#f92672">+</span> <span style="color:#ae81ff">1</span>]) {
+                swap(data[j], data[j <span style="color:#f92672">+</span> <span style="color:#ae81ff">1</span>]);
+                flag <span style="color:#f92672">=</span> true;  <span style="color:#75715e">//本论循环中有数据元素进行交换
+</span><span style="color:#75715e"></span>            }
+        }
+        <span style="color:#66d9ef">if</span> (<span style="color:#f92672">!</span>flag) {
+            <span style="color:#66d9ef">break</span>;  <span style="color:#75715e">//本次循环已经没有数据元素进行交换，说明已经排好序
+</span><span style="color:#75715e"></span>        }
+    }
+}
+</code></pre></div><hr>
+<h3 id="小数沉底冒泡">小数沉底冒泡</h3>
+<p>如果要将<font color=Blue>原序列排序成逆序，则只要将小数<code>沉底</code>即可</font>，即每次比较的时候当前元素比下一个元素小的时候将将其交换到后面。</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-cpp" data-lang="cpp"><span style="color:#66d9ef">void</span> <span style="color:#a6e22e">smallBubbleSort</span>(<span style="color:#66d9ef">int</span> <span style="color:#f92672">*</span>data, <span style="color:#66d9ef">int</span> n)  <span style="color:#75715e">//小数下沉，最后得到逆序
+</span><span style="color:#75715e"></span>{
+    <span style="color:#66d9ef">bool</span> flag <span style="color:#f92672">=</span> false;
+
+    <span style="color:#66d9ef">for</span> (<span style="color:#66d9ef">int</span> i <span style="color:#f92672">=</span> <span style="color:#ae81ff">1</span>; i <span style="color:#f92672">&lt;</span> n; <span style="color:#f92672">++</span>i) {
+        flag <span style="color:#f92672">=</span> false;
+        <span style="color:#66d9ef">for</span> (<span style="color:#66d9ef">int</span> j <span style="color:#f92672">=</span> <span style="color:#ae81ff">0</span>; j <span style="color:#f92672">&lt;</span> n <span style="color:#f92672">-</span> i; <span style="color:#f92672">++</span>j) {
+            <span style="color:#66d9ef">if</span> (data[j] <span style="color:#f92672">&lt;</span> data[j <span style="color:#f92672">+</span> <span style="color:#ae81ff">1</span>]) {
+                std<span style="color:#f92672">::</span>swap(data[j], data[j <span style="color:#f92672">+</span> <span style="color:#ae81ff">1</span>]);
+                flag <span style="color:#f92672">=</span> true;
+            }
+        }
+
+        <span style="color:#66d9ef">if</span> (<span style="color:#f92672">!</span>flag)
+            <span style="color:#66d9ef">break</span>;
+    }
+}
+</code></pre></div><ul>
+<li>
+<p>最坏情况：待排序序列逆序，时间复杂度为$O(n^2)$。</p>
+</li>
+<li>
+<p>最好情况：待排序序列有序，时间复杂度为$O(n)$。</p>
+</li>
+<li>
+<p>平均时间复杂度为：$O(n^2)$。</p>
+</li>
+<li>
+<p>空间复杂度为$O(1)$。</p>
+</li>
+<li>
+<p>每次都能保证一个元素在最终位置。</p>
+</li>
+<li>
+<p>冒泡排序<font color=red>是稳定的排序算法</font>。</p>
+</li>
+</ul>
+<hr>
+<h3 id="快速排序">快速排序</h3>
+<p>快速排序: 它采用了<font color=red>一种分治的策略，将原问题分解为若干个规模更小但结构与原问题相似的子问题,</font>然后递归地解这些子问题。最后将这些子问题的解组合为原问题的解。快速排序算法的步骤为：</p>
+<ul>
+<li>
+<p>首先，在数据集之中，选择一个元素作为<code>基准</code>（<code>pivot</code>）, 基准的选择一般有<code>3</code>种</p>
+<ul>
+<li>
+<p>随机选择数据元素作为基准元素</p>
+</li>
+<li>
+<p>选择中间的那个数据元素作为基准元素</p>
+</li>
+<li>
+<p>选择待排序序列的第一个元素作为基准元素</p>
+</li>
+</ul>
+</li>
+<li>
+<p>其次，所有<font color=Orange>小于<code>基准</code>的元素，都移到<code>基准</code>的左边；所有大于<code>基准</code>的元素，都移到<code>基准</code>的右边</font>。</p>
+</li>
+<li>
+<p>最后，<code>基准</code>左边和右边的两个子集，不断重复第一步和第二步，直到所有子集只剩下一个元素为止。</p>
+</li>
+</ul>
+<p>假设数据集为<code>{85, 24, 63, 45, 17, 31, 96, 50}</code>，怎么对其进行排序呢？下面采用每次选择中间的那个元素作为基准元素：</p>
+<ol>
+<li>
+<p>第一步，选择中间的元素<code>45</code>作为基准<code>pivot</code>。</p>
+</li>
+<li>
+<p>第二步，按照顺序将每个元素和<code>pivot</code>进行比较，形成两个子集，一个小于<code>pivot</code>，一个大于<code>pivot</code>：<code>{24，17，31}，45，{85，63，96，50}</code>。</p>
+</li>
+<li>
+<p>第三步，对两个子集不断重复第一步和第二步，直到所有子集只剩下一个元素。<code>17，{24，31}，45，{50}，63，{85，96}。17，24，{31}，45，50，63，85，{96}</code>。最后得到：<code>17，24，31，45，50，63，85，96</code>。</p>
+</li>
+</ol>
+<p>第二种方式是<font color=red>每次选择第一个元素作为基准</font>的算法：</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-cpp" data-lang="cpp"><span style="color:#66d9ef">void</span> <span style="color:#a6e22e">quickHelp</span>(<span style="color:#66d9ef">int</span> <span style="color:#f92672">*</span>data, <span style="color:#66d9ef">int</span> start, <span style="color:#66d9ef">int</span> end) {
+    <span style="color:#66d9ef">if</span> (start <span style="color:#f92672">&lt;</span> end) {
+        <span style="color:#66d9ef">auto</span> pivot <span style="color:#f92672">=</span> adjustByFirst(data, start, end);
+        quickHelp(data, start, pivot <span style="color:#f92672">-</span> <span style="color:#ae81ff">1</span>);
+        quickHelp(data, pivot <span style="color:#f92672">+</span> <span style="color:#ae81ff">1</span>, end);
+    }
+}
+
+<span style="color:#66d9ef">int</span> <span style="color:#a6e22e">adjustByFirst</span>(<span style="color:#66d9ef">int</span> <span style="color:#f92672">*</span>data, <span style="color:#66d9ef">int</span> start, <span style="color:#66d9ef">int</span> end) {
+    <span style="color:#66d9ef">int</span> cur <span style="color:#f92672">=</span> data[start];
+    <span style="color:#66d9ef">int</span> i <span style="color:#f92672">=</span> start, j <span style="color:#f92672">=</span> end;
+    <span style="color:#66d9ef">while</span> (i <span style="color:#f92672">&lt;</span> j) {
+        <span style="color:#66d9ef">while</span> (i <span style="color:#f92672">&lt;</span> j <span style="color:#f92672">&amp;&amp;</span> data[j] <span style="color:#f92672">&gt;=</span> cur) j<span style="color:#f92672">--</span>;
+        <span style="color:#66d9ef">if</span> (i <span style="color:#f92672">&lt;</span> j) {
+            data[i] <span style="color:#f92672">=</span> data[j];
+            i<span style="color:#f92672">++:</span>
+        }
+        <span style="color:#66d9ef">while</span> (i <span style="color:#f92672">&lt;</span> j <span style="color:#f92672">&amp;&amp;</span> data[j] <span style="color:#f92672">&lt;</span> cur) j<span style="color:#f92672">--</span>;
+        <span style="color:#66d9ef">if</span> (i <span style="color:#f92672">&lt;</span> j) {
+            data[j] <span style="color:#f92672">=</span> data[i];
+            j<span style="color:#f92672">--:</span>
+        }
+    }
+    data[i] <span style="color:#f92672">=</span> cur;
+    <span style="color:#66d9ef">return</span> i;
+}
+</code></pre></div><p>借助于栈，可以将上面的递归算法改为非递归算法：</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-cpp" data-lang="cpp"><span style="color:#66d9ef">struct</span> <span style="color:#a6e22e">Region</span> {
+    <span style="color:#66d9ef">int</span> start;
+    <span style="color:#66d9ef">int</span> high;
+};
+<span style="color:#66d9ef">void</span> <span style="color:#a6e22e">noncurQuickSort</span>(<span style="color:#66d9ef">int</span> <span style="color:#f92672">*</span>data, <span style="color:#66d9ef">int</span> length) {
+    Region cur, left, right;
+    Region stack[MAXSIZE];
+    <span style="color:#66d9ef">int</span> index;
+    <span style="color:#66d9ef">int</span> top <span style="color:#f92672">=</span> <span style="color:#f92672">-</span><span style="color:#ae81ff">1</span>;
+    cur.start <span style="color:#f92672">=</span> <span style="color:#ae81ff">0</span>;
+    cur.high <span style="color:#f92672">=</span> length <span style="color:#f92672">-</span> <span style="color:#ae81ff">1</span>;
+
+    stack[top<span style="color:#f92672">++</span>] <span style="color:#f92672">=</span> cur;
+
+    <span style="color:#66d9ef">while</span> (top <span style="color:#f92672">!=</span> <span style="color:#f92672">-</span><span style="color:#ae81ff">1</span>) {
+        cur <span style="color:#f92672">=</span> stack[top<span style="color:#f92672">--</span>];
+        index <span style="color:#f92672">=</span> partition(data, length, cur.start, cur.high); <span style="color:#75715e">//调用随机选择基准的函数
+</span><span style="color:#75715e"></span>
+        <span style="color:#66d9ef">if</span> (index <span style="color:#f92672">&gt;</span> cur.start) {
+            left.start <span style="color:#f92672">=</span> cur.start;
+            left.high <span style="color:#f92672">=</span> index <span style="color:#f92672">-</span> <span style="color:#ae81ff">1</span>;
+            stack[<span style="color:#f92672">++</span>top] <span style="color:#f92672">=</span> left;
+        }
+        <span style="color:#66d9ef">if</span> (index <span style="color:#f92672">&lt;</span> cur.high) {
+            right.start <span style="color:#f92672">=</span> index <span style="color:#f92672">+</span> <span style="color:#ae81ff">1</span>;
+            right.high <span style="color:#f92672">=</span> cur.high;
+            stack[<span style="color:#f92672">++</span>top] <span style="color:#f92672">=</span> right;
+        }
+    }
+}
+</code></pre></div><p>第三个种方式是<font color=red>随机选择一个元素作为基准</font>进行调整算法：</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-cpp" data-lang="cpp"><span style="color:#66d9ef">template</span><span style="color:#f92672">&lt;</span><span style="color:#66d9ef">typename</span> T<span style="color:#f92672">&gt;</span>
+<span style="color:#66d9ef">void</span> innerSort<span style="color:#f92672">&lt;</span>T<span style="color:#f92672">&gt;::</span>quickSort(T <span style="color:#f92672">*</span>data, <span style="color:#66d9ef">int</span> length) {
+    quickSort(data, <span style="color:#ae81ff">0</span>, length <span style="color:#f92672">-</span> <span style="color:#ae81ff">1</span>);
+}
+
+<span style="color:#66d9ef">template</span><span style="color:#f92672">&lt;</span><span style="color:#66d9ef">typename</span> T<span style="color:#f92672">&gt;</span>
+<span style="color:#66d9ef">void</span> innerSort<span style="color:#f92672">&lt;</span>T<span style="color:#f92672">&gt;::</span>quickSort(T <span style="color:#f92672">*</span>data, <span style="color:#66d9ef">int</span> start, <span style="color:#66d9ef">int</span> end) {
+    <span style="color:#66d9ef">if</span> (start <span style="color:#f92672">&gt;=</span> <span style="color:#ae81ff">0</span> <span style="color:#f92672">&amp;&amp;</span> start <span style="color:#f92672">&lt;</span> end) {
+        <span style="color:#66d9ef">int</span> pivot <span style="color:#f92672">=</span> getPivot(data, start, end);
+        <span style="color:#66d9ef">if</span> (pivot <span style="color:#f92672">&gt;</span> start) {
+            quickSort(data, start, pivot <span style="color:#f92672">-</span> <span style="color:#ae81ff">1</span>);
+        }
+
+        <span style="color:#66d9ef">if</span> (end <span style="color:#f92672">&gt;</span> pivot) {
+            quickSort(data, pivot <span style="color:#f92672">+</span> <span style="color:#ae81ff">1</span>, end);
+        }
+    }
+}
+
+<span style="color:#66d9ef">template</span><span style="color:#f92672">&lt;</span><span style="color:#66d9ef">typename</span> T<span style="color:#f92672">&gt;</span>
+<span style="color:#66d9ef">int</span> innerSort<span style="color:#f92672">&lt;</span>T<span style="color:#f92672">&gt;::</span>getPivot(T <span style="color:#f92672">*</span>data, <span style="color:#66d9ef">int</span> start, <span style="color:#66d9ef">int</span> end) {
+    assert(start <span style="color:#f92672">&gt;=</span> <span style="color:#ae81ff">0</span> <span style="color:#f92672">&amp;&amp;</span> start <span style="color:#f92672">&lt;</span> end);
+
+    <span style="color:#66d9ef">int</span> index <span style="color:#f92672">=</span> random(start, end);
+    <span style="color:#66d9ef">int</span> small <span style="color:#f92672">=</span> start <span style="color:#f92672">-</span> <span style="color:#ae81ff">1</span>;
+    swap(data[index], data[end]);
+
+    <span style="color:#66d9ef">for</span> (<span style="color:#66d9ef">int</span> i <span style="color:#f92672">=</span> start; i <span style="color:#f92672">&lt;</span> end; <span style="color:#f92672">++</span>i) {
+        <span style="color:#66d9ef">if</span> (data[i] <span style="color:#f92672">&lt;</span> data[end]) {
+            <span style="color:#f92672">++</span>small;
+            <span style="color:#66d9ef">if</span> (small <span style="color:#f92672">!=</span> i) {
+                swap(data[small], data[i]);
+            }
+        }
+    }
+    <span style="color:#f92672">++</span>small;
+    swap(data[small], data[end]);
+    <span style="color:#66d9ef">return</span> small;
+}
+
+<span style="color:#75715e">//http://notes.maxwi.com/2016/04/10/cpp-random/
+</span><span style="color:#75715e">//https://www.cnblogs.com/byhj/p/4149467.html
+</span><span style="color:#75715e"></span><span style="color:#66d9ef">template</span><span style="color:#f92672">&lt;</span><span style="color:#66d9ef">typename</span> T<span style="color:#f92672">&gt;</span>
+<span style="color:#66d9ef">int</span> innerSort<span style="color:#f92672">&lt;</span>T<span style="color:#f92672">&gt;::</span>random(<span style="color:#66d9ef">int</span> start, <span style="color:#66d9ef">int</span> end) {
+<span style="color:#75715e">//    static std::default_random_engine e;
+</span><span style="color:#75715e">//    static std::uniform_int_distribution&lt;unsigned&gt; u(start, end);
+</span><span style="color:#75715e">//    int result = u(e);
+</span><span style="color:#75715e"></span>    srand(time(<span style="color:#ae81ff">0</span>));
+    <span style="color:#66d9ef">int</span> result <span style="color:#f92672">=</span> std<span style="color:#f92672">::</span>rand() <span style="color:#f92672">%</span> (end <span style="color:#f92672">-</span> start <span style="color:#f92672">+</span> <span style="color:#ae81ff">1</span>) <span style="color:#f92672">+</span> start;
+    <span style="color:#66d9ef">return</span> result;
+}
+</code></pre></div><p>上面这种方法<font color=red>应该注意后面是<code>small++</code>之后再交换，想象一下全部有序就能理解了😂</font>。</p>
+<ul>
+<li>
+<p>快速排序最好情况下的时间复杂度为<code>$O(nlog_2n)$</code>。</p>
+</li>
+<li>
+<p>最坏情况下的时间复杂度为$O(n^2)$。</p>
+</li>
+<li>
+<p>平均时间复杂度为<code>$O(nlog_2n)$</code>,<font color=blue>就平均而言快速排序是所有排序算法中效果最好的,</font> <font color=red>这是快排的名字的由来</font>。</p>
+</li>
+<li>
+<p><font color=red>待排序序列越接近无序，算法效率越高</font>，个人理解应该是无序的时候基点两边平衡的比较好，所以效率比较高,这是针对于以第一个元素为<code>pivot</code>的情况。</p>
+</li>
+<li>
+<p>待排序序列越接近有序，算法效率越低（快速排序反而蜕化为冒泡排序？）。</p>
+</li>
+<li>
+<p>快速排序的趟数和初始序列相关。</p>
+</li>
+<li>
+<p>是<font color=red>不稳定的</font>排序算法<code>2，2，1</code> 。</p>
+</li>
+<li>
+<p>空间复杂度为$O(log_2n)$。</p>
+</li>
+</ul>
+<hr>
+<h2 id="选择类排序">选择类排序</h2>
+<h3 id="简单选择排序">简单选择排序</h3>
+<p>简单选择排序：每一趟在$n-i(i=1,2,&hellip;,n-1)$个数据元素中$R[i],R[i+1],&hellip;,R[n-1]$中选择最小的数据元素作为有序序列中第$i$个数据元素。</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-cpp" data-lang="cpp"><span style="color:#66d9ef">template</span><span style="color:#f92672">&lt;</span><span style="color:#66d9ef">typename</span> T<span style="color:#f92672">&gt;</span>
+<span style="color:#66d9ef">void</span> innerSort<span style="color:#f92672">&lt;</span>T<span style="color:#f92672">&gt;::</span>selectSort(T <span style="color:#f92672">*</span>data, <span style="color:#66d9ef">int</span> length) {
+    assert(length <span style="color:#f92672">&gt;=</span> <span style="color:#ae81ff">0</span>);
+    <span style="color:#66d9ef">int</span> index;
+    <span style="color:#75715e">//从0开始便于index的取值，因为数组下标是从0开始的
+</span><span style="color:#75715e"></span>    <span style="color:#66d9ef">for</span> (<span style="color:#66d9ef">int</span> i <span style="color:#f92672">=</span> <span style="color:#ae81ff">0</span>; i <span style="color:#f92672">&lt;</span> length <span style="color:#f92672">-</span> <span style="color:#ae81ff">1</span>; <span style="color:#f92672">++</span>i) {
+        index <span style="color:#f92672">=</span> i;
+        <span style="color:#66d9ef">for</span> (<span style="color:#66d9ef">int</span> j <span style="color:#f92672">=</span> i <span style="color:#f92672">+</span> <span style="color:#ae81ff">1</span>; j <span style="color:#f92672">&lt;</span> length; <span style="color:#f92672">++</span>j) {
+            <span style="color:#66d9ef">if</span> (data[index] <span style="color:#f92672">&gt;</span> data[j]) {
+                index <span style="color:#f92672">=</span> j;
+            }
+        }
+        <span style="color:#66d9ef">if</span> (index <span style="color:#f92672">!=</span> i) {
+            std<span style="color:#f92672">::</span>swap(data[index], data[i]);
+        }
+    }
+}
+</code></pre></div><ul>
+<li>
+<p>是<font color=Blue>不稳定的</font>排序算法，例如<code>2，2，1</code>。</p>
+</li>
+<li>
+<p>时间复杂度为$O(n^2)$。</p>
+</li>
+<li>
+<p>空间复杂度为$O(1)$。</p>
+<hr>
+</li>
+</ul>
+<h3 id="堆排序">堆排序</h3>
+<p>可以把堆<font color=red> 看成一棵完全二叉树，</font>满足：任何一个非叶子节点的值都不大于(或不小于）其左右孩子节点的值，若父亲大孩子小，则这样的堆叫做大顶堆，若父亲小孩子大，则这样的堆叫做小顶堆。</p>
+<p>根据堆的定义，代表堆的这棵完全二叉树的<font color=red>根节点的值是最大的或者最小的</font>，因此将一个无序的序列调整为一个堆，就可以找出这个序列的最大（最小）值，然后将找出的这个值交换到序列的最后（或最前），这样<font color=Blue>有序序列元素增加<code>1</code>个，无序序列中元素减少<code>1</code>个</font>，对新的无序序列重复这样的操作就可以实现排序。</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-cpp" data-lang="cpp"><span style="color:#66d9ef">template</span><span style="color:#f92672">&lt;</span><span style="color:#66d9ef">typename</span> T<span style="color:#f92672">&gt;</span>
+<span style="color:#66d9ef">void</span> innerSort<span style="color:#f92672">&lt;</span>T<span style="color:#f92672">&gt;::</span>heapSort(T <span style="color:#f92672">*</span>data, <span style="color:#66d9ef">int</span> length) {
+    assert(length <span style="color:#f92672">&gt;=</span> <span style="color:#ae81ff">0</span>);
+    <span style="color:#75715e">//首先从(length-2)/2开始调整，让他成为大顶堆
+</span><span style="color:#75715e"></span>    <span style="color:#75715e">//当数组下标是从0开始的时候i的初始值就为(length-2)/2，下标为1开始时为(length-1)/2
+</span><span style="color:#75715e"></span>    <span style="color:#66d9ef">for</span> (<span style="color:#66d9ef">int</span> i <span style="color:#f92672">=</span> (length <span style="color:#f92672">-</span> <span style="color:#ae81ff">2</span>) <span style="color:#f92672">/</span> <span style="color:#ae81ff">2</span>; i <span style="color:#f92672">&gt;=</span> <span style="color:#ae81ff">0</span>; <span style="color:#f92672">--</span>i) {
+        assistHeapSort(data, i, length <span style="color:#f92672">-</span> <span style="color:#ae81ff">1</span>);
+    }
+
+    <span style="color:#66d9ef">for</span> (<span style="color:#66d9ef">int</span> j <span style="color:#f92672">=</span> length <span style="color:#f92672">-</span> <span style="color:#ae81ff">1</span>; j <span style="color:#f92672">&gt;=</span> <span style="color:#ae81ff">1</span>; <span style="color:#f92672">--</span>j) {
+        std<span style="color:#f92672">::</span>swap(data[<span style="color:#ae81ff">0</span>], data[j]);
+        assistHeapSort(data, <span style="color:#ae81ff">0</span>, j <span style="color:#f92672">-</span> <span style="color:#ae81ff">1</span>);
+    }
+}
+
+<span style="color:#75715e">//构建大顶堆,堆顶元素data[start]
+</span><span style="color:#75715e"></span><span style="color:#66d9ef">template</span><span style="color:#f92672">&lt;</span><span style="color:#66d9ef">typename</span> T<span style="color:#f92672">&gt;</span>
+<span style="color:#66d9ef">void</span> innerSort<span style="color:#f92672">&lt;</span>T<span style="color:#f92672">&gt;::</span>assistHeapSort(T <span style="color:#f92672">*</span>data, <span style="color:#66d9ef">int</span> start, <span style="color:#66d9ef">int</span> end) {
+    assert(start <span style="color:#f92672">&lt;=</span> end <span style="color:#f92672">&amp;&amp;</span> start <span style="color:#f92672">&gt;=</span> <span style="color:#ae81ff">0</span>);
+    <span style="color:#66d9ef">int</span> parent <span style="color:#f92672">=</span> start, child <span style="color:#f92672">=</span> <span style="color:#ae81ff">2</span> <span style="color:#f92672">*</span> start <span style="color:#f92672">+</span> <span style="color:#ae81ff">1</span>;
+    <span style="color:#66d9ef">while</span> (child <span style="color:#f92672">&lt;=</span> end) {
+        <span style="color:#75715e">//注意控制条件是child &lt; end，不越界
+</span><span style="color:#75715e"></span>        <span style="color:#66d9ef">if</span> (child <span style="color:#f92672">&lt;</span> end <span style="color:#f92672">&amp;&amp;</span> data[child] <span style="color:#f92672">&lt;</span> data[child <span style="color:#f92672">+</span> <span style="color:#ae81ff">1</span>]) {
+            child<span style="color:#f92672">++</span>;
+        }
+
+        <span style="color:#66d9ef">if</span> (data[parent] <span style="color:#f92672">&lt;</span> data[child]) {
+            std<span style="color:#f92672">::</span>swap(data[parent], data[child]);
+        }
+        parent <span style="color:#f92672">=</span> child;
+        child <span style="color:#f92672">=</span> <span style="color:#ae81ff">2</span> <span style="color:#f92672">*</span> parent <span style="color:#f92672">+</span> <span style="color:#ae81ff">1</span>;
+    }
+}
+</code></pre></div><ul>
+<li>
+<p>平均时间复杂度为$O(nlog_2(n))$。</p>
+</li>
+<li>
+<p>最坏情况下的时间复杂度也为$O(nlog_2(n))$。</p>
+</li>
+<li>
+<p>其<font color=red>空间复杂度为$O(1)$</font>,空间复杂度是指占用内存大小，每次调用完调整堆的的函数后，所占用的那一个空间都会被释放，不想快速排序那样未排完之前是不会释放辅助空间的。</p>
+</li>
+<li>
+<p>适用于记录数较多的情况。</p>
+</li>
+<li>
+<p>是不稳定排序方法，例如使用<code>2,2,1</code>构造小顶堆时。</p>
+</li>
+</ul>
+<hr>
+<h2 id="归并排序">归并排序</h2>
+<p>二路归并排序：<font color=red>将两个有序的子序列合并成一个新的有序子序列。</font>归并的思想：将序列看成是$n$个有序子序列，每个序列的长度为$1$,然后两两归并，得到$⌈\frac{n}{2}⌉$个长度为$2$,的有序子序列，然后两两归并&hellip;，如此重复，直到得到一个长度为 $n$ 的有序子序列。</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-cpp" data-lang="cpp"><span style="color:#66d9ef">void</span> <span style="color:#a6e22e">mergeSort</span>(<span style="color:#66d9ef">int</span> <span style="color:#f92672">*</span>data, <span style="color:#66d9ef">int</span> length) {
+    assert(length <span style="color:#f92672">&gt;=</span> <span style="color:#ae81ff">0</span> <span style="color:#f92672">||</span> data <span style="color:#f92672">!=</span> <span style="color:#66d9ef">nullptr</span>);
+
+    <span style="color:#66d9ef">auto</span> <span style="color:#f92672">*</span>copy <span style="color:#f92672">=</span> <span style="color:#66d9ef">new</span> <span style="color:#66d9ef">int</span>[length];
+
+    <span style="color:#75715e">/* for (int i = 0; i &lt; length; ++i)
+</span><span style="color:#75715e">     {
+</span><span style="color:#75715e">         copy[i] = data[i];
+</span><span style="color:#75715e">     }*/</span>
+
+    mergeSort(data, copy, <span style="color:#ae81ff">0</span>, length <span style="color:#f92672">-</span> <span style="color:#ae81ff">1</span>);
+    <span style="color:#66d9ef">delete</span>[] copy;
+}
+
+<span style="color:#66d9ef">void</span> <span style="color:#a6e22e">mergeSort</span>(<span style="color:#66d9ef">int</span> <span style="color:#f92672">*</span>data, <span style="color:#66d9ef">int</span> <span style="color:#f92672">*</span>copy, <span style="color:#66d9ef">int</span> start, <span style="color:#66d9ef">int</span> end) {
+    <span style="color:#66d9ef">if</span> (start <span style="color:#f92672">==</span> end) {
+        copy[start] <span style="color:#f92672">=</span> data[start];
+        <span style="color:#66d9ef">return</span>;
+    }
+    <span style="color:#66d9ef">int</span> length <span style="color:#f92672">=</span> (end <span style="color:#f92672">-</span> start) <span style="color:#f92672">/</span> <span style="color:#ae81ff">2</span>;
+    mergeSort(data, copy, start, start <span style="color:#f92672">+</span> length);
+    mergeSort(data, copy, start <span style="color:#f92672">+</span> length <span style="color:#f92672">+</span> <span style="color:#ae81ff">1</span>, end);
+
+    <span style="color:#66d9ef">int</span> i <span style="color:#f92672">=</span> start, j <span style="color:#f92672">=</span> start <span style="color:#f92672">+</span> length <span style="color:#f92672">+</span> <span style="color:#ae81ff">1</span>, k <span style="color:#f92672">=</span> start;
+
+    <span style="color:#66d9ef">while</span> (i <span style="color:#f92672">&lt;=</span> start <span style="color:#f92672">+</span> length <span style="color:#f92672">&amp;&amp;</span> j <span style="color:#f92672">&lt;=</span> end) {
+        <span style="color:#66d9ef">if</span> (data[i] <span style="color:#f92672">&lt;</span> data[j])
+            copy[k<span style="color:#f92672">++</span>] <span style="color:#f92672">=</span> data[i<span style="color:#f92672">++</span>];
+        <span style="color:#66d9ef">else</span>
+            copy[k<span style="color:#f92672">++</span>] <span style="color:#f92672">=</span> data[j<span style="color:#f92672">++</span>];
+    }
+
+    <span style="color:#66d9ef">while</span> (i <span style="color:#f92672">&lt;=</span> start <span style="color:#f92672">+</span> length)
+        copy[k<span style="color:#f92672">++</span>] <span style="color:#f92672">=</span> data[i<span style="color:#f92672">++</span>];
+
+    <span style="color:#66d9ef">while</span> (j <span style="color:#f92672">&lt;=</span> end)
+        copy[k<span style="color:#f92672">++</span>] <span style="color:#f92672">=</span> data[j<span style="color:#f92672">++</span>];
+
+    <span style="color:#66d9ef">for</span> (i <span style="color:#f92672">=</span> start; i <span style="color:#f92672">&lt;=</span> end; <span style="color:#f92672">++</span>i) {
+        data[i] <span style="color:#f92672">=</span> copy[i];
+    }
+}
+</code></pre></div><div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-cpp" data-lang="cpp"><span style="color:#66d9ef">template</span><span style="color:#f92672">&lt;</span><span style="color:#66d9ef">typename</span> T<span style="color:#f92672">&gt;</span>
+<span style="color:#66d9ef">void</span> innerSort<span style="color:#f92672">&lt;</span>T<span style="color:#f92672">&gt;::</span>mergeSort(T <span style="color:#f92672">*</span>data, <span style="color:#66d9ef">int</span> length) {
+    assert(length <span style="color:#f92672">&gt;=</span> <span style="color:#ae81ff">0</span>);
+    <span style="color:#66d9ef">int</span> <span style="color:#f92672">*</span>assist <span style="color:#f92672">=</span> <span style="color:#66d9ef">new</span> <span style="color:#66d9ef">int</span>[length];
+    memcpy(assist, data, length <span style="color:#f92672">*</span> <span style="color:#66d9ef">sizeof</span>(<span style="color:#66d9ef">int</span>));
+    assistMergeSort(data, assist, <span style="color:#ae81ff">0</span>, length <span style="color:#f92672">-</span> <span style="color:#ae81ff">1</span>);
+    <span style="color:#66d9ef">delete</span>[] assist;
+}
+
+<span style="color:#66d9ef">template</span><span style="color:#f92672">&lt;</span><span style="color:#66d9ef">typename</span> T<span style="color:#f92672">&gt;</span>
+<span style="color:#66d9ef">void</span> innerSort<span style="color:#f92672">&lt;</span>T<span style="color:#f92672">&gt;::</span>assistMergeSort(T <span style="color:#f92672">*</span>data, T <span style="color:#f92672">*</span>assist, <span style="color:#66d9ef">int</span> start, <span style="color:#66d9ef">int</span> end) {
+    <span style="color:#66d9ef">if</span> (start <span style="color:#f92672">&lt;</span> end) {
+        <span style="color:#66d9ef">int</span> mid <span style="color:#f92672">=</span> start <span style="color:#f92672">+</span> (end <span style="color:#f92672">-</span> start) <span style="color:#f92672">/</span> <span style="color:#ae81ff">2</span>;
+        assistMergeSort(data, assist, start, mid);
+        assistMergeSort(data, assist, mid <span style="color:#f92672">+</span> <span style="color:#ae81ff">1</span>, end);
+
+        <span style="color:#66d9ef">int</span> i <span style="color:#f92672">=</span> start, j <span style="color:#f92672">=</span> mid <span style="color:#f92672">+</span> <span style="color:#ae81ff">1</span>, k <span style="color:#f92672">=</span> start;
+
+        <span style="color:#66d9ef">while</span> (i <span style="color:#f92672">&lt;=</span> mid <span style="color:#f92672">&amp;&amp;</span> j <span style="color:#f92672">&lt;=</span> end) {
+            <span style="color:#66d9ef">if</span> (data[i] <span style="color:#f92672">&lt;=</span> data[j]) {
+                assist[k<span style="color:#f92672">++</span>] <span style="color:#f92672">=</span> data[i<span style="color:#f92672">++</span>];
+            } <span style="color:#66d9ef">else</span> {
+                assist[k<span style="color:#f92672">++</span>] <span style="color:#f92672">=</span> data[j<span style="color:#f92672">++</span>];
+            }
+        }
+        <span style="color:#66d9ef">while</span> (i <span style="color:#f92672">&lt;=</span> mid) {
+            assist[k<span style="color:#f92672">++</span>] <span style="color:#f92672">=</span> data[i<span style="color:#f92672">++</span>];
+        }
+        <span style="color:#66d9ef">while</span> (j <span style="color:#f92672">&lt;=</span> end) {
+            assist[k<span style="color:#f92672">++</span>] <span style="color:#f92672">=</span> data[j<span style="color:#f92672">++</span>];
+        }
+
+        <span style="color:#66d9ef">for</span> (<span style="color:#66d9ef">int</span> l <span style="color:#f92672">=</span> start; l <span style="color:#f92672">&lt;=</span> end; <span style="color:#f92672">++</span>l) {
+            data[l] <span style="color:#f92672">=</span> assist[l];
+        }
+    }
+}
+</code></pre></div><ul>
+<li>
+<p>排序时间代价不依赖于待排序数组的初始情况。</p>
+</li>
+<li>
+<p>在<font color=red>最好，最坏，平均时间复杂度都为$O(nlog_2n)$ </font>。</p>
+</li>
+<li>
+<p>空间复杂度为$O(n)</p>
+</li>
+<li>
+<p>稳定的排序方法。</p>
+</li>
+<li>
+<p><font color=red>在平均情况下还是快速排序最快（常数因子更小）</font>。</p>
+</li>
+</ul>
+<hr>
+<h2 id="比较排序的最优下界">比较排序的最优下界</h2>
+<h2 id="比较排序算法小结">比较排序算法小结</h2>
+<h2 id="计数排序">计数排序</h2>
+<p>计数排序<font color=red>是一种稳定的线性时间排序算法</font>。计数排序使用一个额外的数组<code>count</code>，其中第<code>i</code>个元素是待排序数组<code>A</code>中值等于<code>i</code>的元素的个数。</p>
+<p>然后根据数组<code>count</code>来将<code>A</code>中的元素排到正确的位置。当输入的元素是<code>n</code>个<code>0</code>到<code>k</code>之间的整数时，它的运行时间是$Θ(n + k)$。</p>
+<p>计数排序<font color=red>不是比较排序，排序的速度快于任何比较排序算法</font>。由于用来计数的数组<code>count</code>的长度取决于待排序数组中数据的范围（<font color=Blue>等于待排序数组的最大值与最小值的差加上<code>1</code></font>），这使得计数排序对于数据范围很大的数组，需要大量内存。</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-cpp" data-lang="cpp"><span style="color:#66d9ef">template</span><span style="color:#f92672">&lt;</span><span style="color:#66d9ef">typename</span> T<span style="color:#f92672">&gt;</span>
+<span style="color:#66d9ef">void</span> innerSort<span style="color:#f92672">&lt;</span>T<span style="color:#f92672">&gt;::</span>countSort(T <span style="color:#f92672">*</span>data, <span style="color:#66d9ef">int</span> length) {
+    assert(length <span style="color:#f92672">&gt;=</span> <span style="color:#ae81ff">0</span>);
+    <span style="color:#66d9ef">int</span> min <span style="color:#f92672">=</span> data[<span style="color:#ae81ff">0</span>], max <span style="color:#f92672">=</span> data[<span style="color:#ae81ff">0</span>];
+
+    <span style="color:#66d9ef">int</span> <span style="color:#f92672">*</span>assistArr <span style="color:#f92672">=</span> <span style="color:#66d9ef">new</span> <span style="color:#66d9ef">int</span>[length]{<span style="color:#ae81ff">0</span>};
+    <span style="color:#66d9ef">int</span> inc <span style="color:#f92672">=</span> <span style="color:#ae81ff">0</span>;
+
+    <span style="color:#75715e">//先找出最大值和最小值
+</span><span style="color:#75715e"></span>    <span style="color:#66d9ef">for</span> (<span style="color:#66d9ef">int</span> i <span style="color:#f92672">=</span> <span style="color:#ae81ff">0</span>; i <span style="color:#f92672">&lt;</span> length; <span style="color:#f92672">++</span>i) {
+        assert(data[i] <span style="color:#f92672">&gt;=</span> <span style="color:#ae81ff">0</span>);
+        <span style="color:#66d9ef">if</span> (data[i] <span style="color:#f92672">&gt;</span> max) {
+            max <span style="color:#f92672">=</span> data[i];
+        }
+
+        <span style="color:#66d9ef">if</span> (data[i] <span style="color:#f92672">&lt;</span> min) {
+            min <span style="color:#f92672">=</span> data[i];
+        }
+    }
+    <span style="color:#66d9ef">if</span> (min <span style="color:#f92672">&lt;</span> <span style="color:#ae81ff">0</span>) {
+        inc <span style="color:#f92672">=</span> abs(min);
+    }
+    <span style="color:#66d9ef">for</span> (<span style="color:#66d9ef">int</span> i <span style="color:#f92672">=</span> <span style="color:#ae81ff">0</span>; i <span style="color:#f92672">&lt;</span> length; <span style="color:#f92672">++</span>i) {
+        data[i] <span style="color:#f92672">+=</span> inc;
+    }
+    <span style="color:#66d9ef">int</span> countLength <span style="color:#f92672">=</span> (max <span style="color:#f92672">+</span> inc <span style="color:#f92672">+</span> <span style="color:#ae81ff">1</span>);
+    <span style="color:#66d9ef">int</span> <span style="color:#f92672">*</span>countArr <span style="color:#f92672">=</span> <span style="color:#66d9ef">new</span> <span style="color:#66d9ef">int</span>[countLength]{<span style="color:#ae81ff">0</span>};
+
+    <span style="color:#66d9ef">for</span> (<span style="color:#66d9ef">int</span> i <span style="color:#f92672">=</span> <span style="color:#ae81ff">0</span>; i <span style="color:#f92672">&lt;</span> length; <span style="color:#f92672">++</span>i) {
+        countArr[data[i]]<span style="color:#f92672">++</span>;
+    }
+
+    <span style="color:#75715e">//注意是计数数组的上界限
+</span><span style="color:#75715e"></span>    <span style="color:#66d9ef">for</span> (<span style="color:#66d9ef">int</span> j <span style="color:#f92672">=</span> <span style="color:#ae81ff">1</span>; j <span style="color:#f92672">&lt;</span> countLength; <span style="color:#f92672">++</span>j) {
+        countArr[j] <span style="color:#f92672">+=</span> countArr[j <span style="color:#f92672">-</span> <span style="color:#ae81ff">1</span>];
+    }
+
+    <span style="color:#66d9ef">for</span> (<span style="color:#66d9ef">int</span> k <span style="color:#f92672">=</span> length <span style="color:#f92672">-</span> <span style="color:#ae81ff">1</span>; k <span style="color:#f92672">&gt;=</span> <span style="color:#ae81ff">0</span>; <span style="color:#f92672">--</span>k) {
+        assistArr[<span style="color:#f92672">--</span>countArr[data[k]]] <span style="color:#f92672">=</span> data[k];
+    }
+
+    <span style="color:#66d9ef">for</span> (<span style="color:#66d9ef">int</span> i <span style="color:#f92672">=</span> <span style="color:#ae81ff">0</span>; i <span style="color:#f92672">&lt;</span> length; <span style="color:#f92672">++</span>i) {
+        data[i] <span style="color:#f92672">=</span> assistArr[i] <span style="color:#f92672">-</span> inc;
+    }
+    <span style="color:#66d9ef">delete</span>[] assistArr;
+    <span style="color:#66d9ef">delete</span>[] countArr;
+}
+</code></pre></div><h2 id="桶排序">桶排序</h2>
+<p>桶排序(<code>Bucket  Sort</code>)的基本思路是：</p>
+<ul>
+<li>
+<p>将待排序元素划分到不同的桶。先扫描一遍序列求出最大值$max$和最小值$min$，设桶的个数为$k$，则把区间$[min, max]$均匀划分成$k$个区间，每个区间就是一个桶。将序列中的元素分配到各自的桶。</p>
+</li>
+<li>
+<p>对每个桶内的元素进行排序。可以选择任意一种排序算法。</p>
+</li>
+<li>
+<p>将各个桶中的元素合并成一个大的有序序列。</p>
+</li>
+</ul>
+<p>复杂度分析：</p>
+<ul>
+<li>
+<p>假设数据是均匀分布的，则每个桶的元素平均个数为$\frac{n}{k}$。</p>
+</li>
+<li>
+<p>假设选择用快速排序对每个桶内的元素进行排序，那么每次排序的时间复杂度为$O(\frac{n}{k}log(\frac{n}{k}))$。</p>
+</li>
+<li>
+<p>$O(n)+O(m)O(\frac{n}{k}log(\frac{n}{k}))=O(n+nlog(\frac{n}{k}))=O(n+nlogn-nlogk)$为总的时间复杂度。<font color=red>当$k$接近于 $n$时，桶排序的时间复杂度就可以近似认为是$O(n)$</font> , 此时近似为计数排序。即桶越多，时间效率就越高，而桶越多，空间就越大。</p>
+</li>
+</ul>
+<hr>
+<h2 id="基数排序">基数排序</h2>
+<p>将所有待比较数值（正整数）<font color=red>统一为同样的数位长度，数位较短的数前面补零。</font>然后，从最低位开始，依次进行一次排序。这样从最低位排序一直到最高位排序完成以后, 数列就变成一个有序序列。</p>
+<p>基数排序法会使用到桶，<font color=red>先进先出的队列</font>，通过将要比较的位（个位、十位、百位…），将要排序的元素分配至$0 \to 9$ 个桶中，借以达到排序的作用，在某些时候，基数排序法的效率高于其它的比较性排序算法。</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-cpp" data-lang="cpp"><span style="color:#66d9ef">void</span> <span style="color:#a6e22e">radixSort</span>(<span style="color:#66d9ef">int</span> <span style="color:#f92672">*</span>data, <span style="color:#66d9ef">int</span> length) {
+    <span style="color:#66d9ef">int</span> max <span style="color:#f92672">=</span> getMax(data, length); <span style="color:#75715e">//找出待排序数组中最大的那个数
+</span><span style="color:#75715e"></span>    <span style="color:#66d9ef">int</span> radix <span style="color:#f92672">=</span> <span style="color:#ae81ff">10</span>;
+
+    <span style="color:#66d9ef">for</span> (<span style="color:#66d9ef">int</span> exp <span style="color:#f92672">=</span> <span style="color:#ae81ff">1</span>; exp <span style="color:#f92672">&lt;=</span> max; exp <span style="color:#f92672">*=</span> <span style="color:#ae81ff">10</span>) {
+        bucketSort(data, length, exp, radix);
+    }
+}
+
+<span style="color:#66d9ef">void</span> <span style="color:#a6e22e">bucketSort</span>(<span style="color:#66d9ef">int</span> <span style="color:#f92672">*</span>data, <span style="color:#66d9ef">int</span> length, <span style="color:#66d9ef">int</span> exp, <span style="color:#66d9ef">int</span> radix) {
+    <span style="color:#66d9ef">auto</span> <span style="color:#f92672">*</span>count <span style="color:#f92672">=</span> <span style="color:#66d9ef">new</span> <span style="color:#66d9ef">int</span>[radix]{<span style="color:#ae81ff">0</span>};
+    <span style="color:#66d9ef">auto</span> <span style="color:#f92672">*</span>result <span style="color:#f92672">=</span> <span style="color:#66d9ef">new</span> <span style="color:#66d9ef">int</span>[length];
+
+    <span style="color:#66d9ef">for</span> (<span style="color:#66d9ef">int</span> i <span style="color:#f92672">=</span> <span style="color:#ae81ff">0</span>; i <span style="color:#f92672">&lt;</span> length; <span style="color:#f92672">++</span>i) {
+        count[(data[i] <span style="color:#f92672">/</span> exp) <span style="color:#f92672">%</span> radix]<span style="color:#f92672">++</span>;  <span style="color:#75715e">//(data[i] / exp) 获取当前位的数值
+</span><span style="color:#75715e"></span>    }
+
+    <span style="color:#66d9ef">for</span> (<span style="color:#66d9ef">int</span> j <span style="color:#f92672">=</span> <span style="color:#ae81ff">1</span>; j <span style="color:#f92672">&lt;</span> radix; <span style="color:#f92672">++</span>j) {
+        count[j] <span style="color:#f92672">+=</span> count[j <span style="color:#f92672">-</span> <span style="color:#ae81ff">1</span>];
+    }
+
+    <span style="color:#66d9ef">for</span> (<span style="color:#66d9ef">int</span> i <span style="color:#f92672">=</span> length <span style="color:#f92672">-</span> <span style="color:#ae81ff">1</span>; i <span style="color:#f92672">&gt;=</span> <span style="color:#ae81ff">0</span>; <span style="color:#f92672">--</span>i) {
+        result[<span style="color:#f92672">--</span>count[(data[i] <span style="color:#f92672">/</span> exp) <span style="color:#f92672">%</span> radix]] <span style="color:#f92672">=</span> data[i];
+    }
+
+    <span style="color:#66d9ef">for</span> (<span style="color:#66d9ef">int</span> i <span style="color:#f92672">=</span> <span style="color:#ae81ff">0</span>; i <span style="color:#f92672">&lt;</span> length; <span style="color:#f92672">++</span>i) {
+        data[i] <span style="color:#f92672">=</span> result[i];
+    }
+    <span style="color:#66d9ef">delete</span>[] result;
+    <span style="color:#66d9ef">delete</span>[] count;
+}
+</code></pre></div><ul>
+<li>
+<p>是稳定的排序方法。</p>
+</li>
+<li>
+<p>时间复杂度：设数组长度为$n$,基数为$r$,关键字位数为$d$,则每趟分配的时间为$O(n)$，每趟收集的时间复杂度为$O(n)$，工序$d$趟分配与收集，所以时间复杂度为$O(d(2n))$,即$O(d \times n)$。</p>
+</li>
+<li>
+<p>空间复杂度为$O(rn)$。</p>
+</li>
+</ul>
+<hr>
+<h1 id="外排序算法">外排序算法</h1>
+<p>所谓外排序，顾名思义，即排序涉及到<font color=red>内存外面的排序</font>。因为当要处理的数据量很大，而不能一次装入内存时，此时只能放在读写较慢的外存储器（通常是硬盘）上。外排序通常采用的是一种<font color=red><code>排序-归并</code></font>的策略。<br /></p>
+<ol>
+<li>
+<p>在排序阶段，先读入能放在内存中的数据量，将其排序输出到一个临时文件，依此进行，将待排序数据组织为多个有序的临时文件；</p>
+</li>
+<li>
+<p>在归并阶段将这些临时文件组合为一个大的有序文件，即排序结果。</p>
+</li>
+</ol>
+<h2 id="例子1">例子1</h2>
+<p>假定现在有<code>20</code>个数据的文件<code>A：{5，11， 0， 18， 4， 14， 9， 7 6， 8， 12， 17 ，16 ，13 ，19 ，10， 2， 1， 3， 15}</code>，但内存一次只能装<code>4</code>个数据，所以，可以每趟先选择<code>4</code>个数据进行排序，然后将排好序的<code>5</code>路数据进行归并，具体步骤如下：</p>
+<ul>
+<li>
+<p>首先把<code>大</code>文件$A$，按顺序分割为<code>$a_1，a_2，a_3，a_4，a_5$</code>等<code>5</code>个小文件，每个小文件<code>4</code>个数据。</p>
+</li>
+<li>
+<p><code>$a_1$</code>文件为：<code>5,11, 0,18</code>。</p>
+</li>
+<li>
+<p><code>$a_2$</code>文件为：<code>4,14,9,7</code>。</p>
+</li>
+<li>
+<p><code>$a_3$</code>文件为：<code>6, 8, 12, 17</code>。</p>
+</li>
+<li>
+<p><code>$a_4$</code>文件为：<code>16,13, 19,10</code>。</p>
+</li>
+<li>
+<p><code>$a_5$</code>文件为：<code>2,1,3,15</code>然后依次对<code>5</code>个小文件分别进行排序。</p>
+</li>
+<li>
+<p>$a_1$文件完成排序后：<code>0,5,11,18</code>。</p>
+</li>
+<li>
+<p>$a_2$文件完成排序后：<code>4,7,9,14</code>。</p>
+</li>
+<li>
+<p>$a_3$文件完成排序后：<code>6,8,12,17</code>。</p>
+</li>
+<li>
+<p>$a_4$文件完成排序后：<code>10,13,16,19</code>。</p>
+</li>
+<li>
+<p>$a_5$文件完成排序后：<code>1,2,3,15</code>。</p>
+</li>
+<li>
+<p>最后进行<code>5</code>路归并，完成排序：<code>0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19</code>。</p>
+</li>
+</ul>
+<hr>
+<h2 id="例子2">例子2</h2>
+<p>要对<code>900MB</code>的数据进行排序，但机器上只有<code>100MB</code>的可用内存时，外部归并排序按如下方法操作：</p>
+<ol>
+<li>
+<p>读入<code>100MB</code>的数据至内存中，用某种常规排序（如：快速排序、堆排序、归并排序等）在内存中完成排序。</p>
+</li>
+<li>
+<p>将排序完成的数据写入磁盘（临时文件）。</p>
+</li>
+<li>
+<p>重复步骤<code>1</code>和步骤<code>2</code>直到所有的数据都存入了不同的<code>100MB</code>的块（临时文件）中。本例中，<code>900MB</code>数据，<code>100MB</code>内存，故产生了<code>9</code>个临时文件。</p>
+</li>
+<li>
+<p>读入每个临时文件（顺串）的前<code>10MB</code>($10=\frac{100}{9+1}$)，在进行多路归并的时候，这里有<code>9</code>路，然后输出缓冲算一个，所以要将内存资源分给<code>10</code>个部分)的数据放入内存中的输入缓冲区（总计<code>90MB</code>），最后的<code>10MB</code>作为输出缓冲区。（实践中，<font color=Blue>将输入缓冲适当调小，而适当增大输出缓冲区能获得比较好的效果</font>）</p>
+</li>
+<li>
+<p>执行<code>9</code>路归并算法，将结果输出到输出缓冲区。一旦输出缓冲区满，将缓冲区中的数据写到目标文件，清空缓冲区。一旦<code>9</code>个输入缓冲区的一个变空，就从这个缓冲区关联的文件中读入下一个<code>10MB</code>数据，除非这个文件已读完。这是<font color=Blue>外部归并排序</font>能在主存外完成排序的关键步骤。因为<font color=Blue>归并算法</font>对每一个大块只是顺序地做一轮访问，<font color=red>每个大块不用完全载入主存</font>。</p>
+</li>
+</ol>
+<hr>
+<h2 id="置换选择">置换选择</h2>
+<p>为了增加每一个有序的临时文件的长度，可以采用<font color=red>置换选择排序</font>——它可以产生大于内存有序序列。具体方法是在内存中使用一个最小堆进行排序，设这个最小堆的大小为<code>M</code>，算法描述如下：</p>
+<ol>
+<li>
+<p>初始时将输入文件读入内存，建立最小堆。</p>
+</li>
+<li>
+<p>将堆顶元素输出至输出缓冲区，然后读入下一个记录。</p>
+</li>
+</ol>
+<ul>
+<li>
+<p>2.1 若该元素的关键码值<font color=red>不小于刚输出的关键码值，将其作为堆顶元素并调整堆，使之满足堆的性质</font>。</p>
+</li>
+<li>
+<p>2.2 若该元素的关键码值<font color=red>小于刚输出的关键码值，将新元素放入堆底位置，将堆的大小减<code>1</code></font>。</p>
+</li>
+</ul>
+<ol start="3">
+<li>
+<p>重复第<code>2</code>步，直至堆大小变为<code>0</code>。</p>
+</li>
+<li>
+<p>此时一个有序序列已经产生，此时将输入缓冲区中剩下的所有元素建立最小堆，开始生成下一个有序序列。</p>
+</li>
+</ol>
+<hr>
+
+    </div>
+    <footer class="post-footer">
+        
+ 
+<div class="post-tags">     
+     
+    <a href="https://iihui.github.io/tags/%e7%ae%97%e6%b3%95" rel="tag" title="算法">#算法#</a>
+    
+</div>
+
+
+
+        <div class="post-nav">
+    <div class="post-nav-next post-nav-item">
+    
+        <a href="https://iihui.github.io/post/cpp-memcpy/" rel="next" title="memcpy 的实现">
+        <i class="fa fa-chevron-left"></i> memcpy 的实现
+        </a>
+    
+    </div>
+
+    <div class="post-nav-prev post-nav-item">
+    
+        <a href="https://iihui.github.io/post/ios-profile/" rel="prev" title="">
+         <i class="fa fa-chevron-right"></i>
+        </a>
+    
+    </div>
+</div>
+      
+        <div class="post-nav">
+    <div style="border: 1px dashed #e0e0e0; padding: 10px 10px 10px 10px; background-color: #fffeee; background-repeat: no-repeat; background-attachment: scroll; background-position: 1% 50%; -moz-background-size: auto auto; -moz-background-clip: -moz-initial; -moz-background-origin: -moz-initial; -moz-background-inline-policy: -moz-initial;">
+        <div style="float:left;margin-top:0px;">
+            <img src="https://i.loli.net/2020/02/09/SvhUdz4XJsOr9Vk.jpg" width="128px" height="128px"/>
+            <div style="text-align:center;">谢谢支持!</div>
+        </div>
+        <div>
+            <p style="margin-top:10px;">
+                标题：基本排序算法
+                <br />作者：阿呆<a target="_blank" href="https://iihui.github.io/"></a>
+                
+                <br />地址：https://iihui.github.io/post/arith-sort/
+                <br />声明：自由转载-非商用-保持署名（创作共享4.0许可证）
+            </p>
+        </div>
+    </div>
+    <div class="clear"></div>
+</div>
+        
+        
+        
+
+
+
+
+    </footer>
+  </article>
+</section>
+
+          </div>
+        </div>
+        <div class="sidebar-toggle">
+  <div class="sidebar-toggle-line-wrap">
+    <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+    <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+    <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+  </div>
+</div>
+<aside id="sidebar" class="sidebar">
+  <div class="sidebar-inner">
+
+  <ul class="sidebar-nav motion-element">
+    <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+      文章目录
+    </li>
+    <li class="sidebar-nav-overview" data-target="site-overview">
+      站点概览
+    </li>
+  </ul>
+
+    <section class="site-overview sidebar-panel ">
+      <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image"
+        src="https://i.loli.net/2020/02/07/dVFzrvZkHRNq2lL.jpg"
+        alt="" />
+    <p class="site-author-name" itemprop="name"></p>
+    <p class="site-description motion-element" itemprop="description"> 
+        coder &amp; cook</p>
+</div>
+      <nav class="site-state motion-element">
+    <div class="site-state-item site-state-posts">
+      <a href="https://iihui.github.io/post/">
+        <span class="site-state-item-count">142</span>
+        <span class="site-state-item-name">日志</span>
+      </a>
+    </div>
+    <div class="site-state-item site-state-categories">    
+        <a href="https://iihui.github.io/categories/">      
+         
+        <span class="site-state-item-count">18</span>
+        
+        <span class="site-state-item-name">分类</span>
+        
+        </a>
+    </div>
+
+    <div class="site-state-item site-state-tags">
+        <a href="https://iihui.github.io/tags/">
+         
+        <span class="site-state-item-count">31</span>
+        
+        <span class="site-state-item-name">标签</span>
+        </a>
+    </div>
+</nav>
+      
+      
+<div class="links-of-author motion-element">
+    
+        <span class="links-of-author-item">
+        <a href="https://coolshell.cn" target="_blank" title="皓 大">
+            <i class="fa fa-fw fa-globe"></i>
+            皓 大
+        </a>
+        </span>
+    
+        <span class="links-of-author-item">
+        <a href="http://www.ruanyifeng.com" target="_blank" title="阮 大">
+            <i class="fa fa-fw fa-globe"></i>
+            阮 大
+        </a>
+        </span>
+    
+        <span class="links-of-author-item">
+        <a href="https://juejin.im/" target="_blank" title="掘 金">
+            <i class="fa fa-fw fa-globe"></i>
+            掘 金
+        </a>
+        </span>
+    
+        <span class="links-of-author-item">
+        <a href="http://www.ideamsg.com" target="_blank" title="灵 感">
+            <i class="fa fa-fw fa-globe"></i>
+            灵 感
+        </a>
+        </span>
+    
+</div>
+
+
+      
+
+      <div class="links-of-blogroll motion-element inline">
+<script type="text/javascript" src="//rf.revolvermaps.com/0/0/8.js?i=&amp;m=0&amp;s=220&amp;c=ff0000&amp;cr1=ffffff&amp;f=arial&amp;l=33&amp;bv=35" async="async"></script>
+</div>
+
+    </section>
+    
+<section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+    <div class="post-toc">
+        <div class="post-toc-content"><nav id="TableOfContents">
+  <ul>
+    <li><a href="#基本概念">基本概念</a></li>
+    <li><a href="#内排序算法">内排序算法</a>
+      <ul>
+        <li><a href="#插入类排序">插入类排序</a>
+          <ul>
+            <li><a href="#直接插入排序">直接插入排序</a></li>
+            <li><a href="#折半插入排序">折半插入排序</a></li>
+            <li><a href="#shell排序">Shell排序</a></li>
+          </ul>
+        </li>
+        <li><a href="#交换类排序">交换类排序</a>
+          <ul>
+            <li><a href="#大数沉底冒泡">大数沉底冒泡</a></li>
+            <li><a href="#小数沉底冒泡">小数沉底冒泡</a></li>
+            <li><a href="#快速排序">快速排序</a></li>
+          </ul>
+        </li>
+        <li><a href="#选择类排序">选择类排序</a>
+          <ul>
+            <li><a href="#简单选择排序">简单选择排序</a></li>
+            <li><a href="#堆排序">堆排序</a></li>
+          </ul>
+        </li>
+        <li><a href="#归并排序">归并排序</a></li>
+        <li><a href="#比较排序的最优下界">比较排序的最优下界</a></li>
+        <li><a href="#比较排序算法小结">比较排序算法小结</a></li>
+        <li><a href="#计数排序">计数排序</a></li>
+        <li><a href="#桶排序">桶排序</a></li>
+        <li><a href="#基数排序">基数排序</a></li>
+      </ul>
+    </li>
+    <li><a href="#外排序算法">外排序算法</a>
+      <ul>
+        <li><a href="#例子1">例子1</a></li>
+        <li><a href="#例子2">例子2</a></li>
+        <li><a href="#置换选择">置换选择</a></li>
+      </ul>
+    </li>
+  </ul>
+</nav></div>
+    </div>
+</section>
+
+  </div>
+</aside>
+
+      </div>
+    </main>
+   
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  <span itemprop="copyrightYear">  &copy; 
+  2017 - 2022</span>
+  <span class="with-love"><i class="fa fa-heart"></i></span>
+  <span class="author" itemprop="copyrightHolder">Keep It Simple</span>
+</div>
+
+
+
+
+      </div>
+    </footer>
+
+    <div class="back-to-top">
+      <i class="fa fa-arrow-up"></i>
+      <span id="scrollpercent"><span>0</span>%</span>
+    </div>
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+<script type="text/javascript" src="https://iihui.github.io/js/vendor/jquery/index.js?v=2.1.3"></script>
+<script type="text/javascript" src="https://iihui.github.io/js/vendor/fastclick/lib/fastclick.min.js?v=1.0.6"></script> 
+<script type="text/javascript" src="https://iihui.github.io/js/vendor/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+<script type="text/javascript" src="https://iihui.github.io/js/vendor/velocity/velocity.min.js?v=1.2.1"></script>
+<script type="text/javascript" src="https://iihui.github.io/js/vendor/velocity/velocity.ui.min.js?v=1.2.1"></script>
+<script src="https://iihui.github.io/js/vendor/ua-parser-js/dist/ua-parser.min.js?v=0.7.9"></script>
+
+<script src="https://iihui.github.io/js/vendor/fancybox/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+<script type="text/javascript" src="https://iihui.github.io/js/utils.js"></script>
+<script type="text/javascript" src="https://iihui.github.io/js/motion.js"></script>
+<script type="text/javascript" src="https://iihui.github.io/js/affix.js"></script>
+<script type="text/javascript" src="https://iihui.github.io/js/schemes/pisces.js"></script>
+
+<script type="text/javascript" src="https://iihui.github.io/js/scrollspy.js"></script>
+<script type="text/javascript" src="https://iihui.github.io/js/post-details.js"></script>
+<script type="text/javascript" src="https://iihui.github.io/js/toc.js"></script>
+
+<script type="text/javascript" src="https://iihui.github.io/js/bootstrap.js"></script>
+
+<script type="text/javascript" src="https://iihui.github.io/js/search.js"></script>
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+    extensions: ["tex2jax.js"],
+    jax: ["input/TeX", "output/HTML-CSS"],
+    tex2jax: {
+      inlineMath: [ ['$','$'] ],
+      displayMath: [ ['$$','$$'] ],
+      processEscapes: true
+    },
+    "HTML-CSS": { fonts: ["TeX"] }
+  });
+</script>
+<script src='https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-AMS-MML_HTMLorMML' async></script>
+</body>
+</html>

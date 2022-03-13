@@ -1,0 +1,516 @@
+<!DOCTYPE HTML>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" /> 
+    <title>使用Visual Code的文件对比功能 - Keep It Simple</title>
+    <meta name="keywords" content="博客,思考,读书,笔记,技术,分享">
+    
+    <meta property="og:title" content="使用Visual Code的文件对比功能">
+    <meta property="og:site_name" content="Keep It Simple">
+    <meta property="og:image" content="/img/author.jpg"> 
+    <meta name="title" content="使用Visual Code的文件对比功能 - Keep It Simple" />
+    <meta name="description" content="Swift | Go | C&#43;&#43; "> 
+    <link rel="shortcut icon" href="https://iihui.github.io/img/favicon.ico" />
+    <link rel="apple-touch-icon" href="https://iihui.github.io/img/apple-touch-icon.png" />
+    <link rel="apple-touch-icon-precomposed" href="https://iihui.github.io/img/apple-touch-icon.png" />
+    <link href="https://iihui.github.io/js/vendor/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+    <link href="https://iihui.github.io/js/vendor/fancybox/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+    <link href="https://iihui.github.io/css/main.css" rel="stylesheet" type="text/css" />
+    <link href="https://iihui.github.io/css/syntax.css" rel="stylesheet" type="text/css" />
+
+    <script type="text/javascript" id="hexo.configuration">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    scheme: 'Pisces',
+    sidebar: {"position":"left","display":"post"},
+     fancybox: true, 
+    motion: true
+  };
+</script>
+
+    <link href="https://cdn.bootcss.com/highlight.js/9.12.0/styles/monokai-sublime.min.css" rel="stylesheet">
+    <script src="https://cdn.bootcss.com/highlight.js/9.12.0/highlight.min.js"></script>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/languages/go.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/languages/swift.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.1/languages/objectivec.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.1/languages/clojure.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.1/languages/cpp.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.1/languages/kotlin.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.1/languages/yaml.min.js"></script>
+    <script>hljs.initHighlightingOnLoad();</script>
+</head>
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+<div class="container one-collumn sidebar-position-left page-home  ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"> <div class="site-meta  custom-logo ">
+
+  <div class="custom-logo-site-title">
+    <a href="https://iihui.github.io/"  class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <span class="site-title">Keep It Simple</span>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+  <p class="site-subtitle">靡不有初，鲜克有终</p>
+</div>
+
+<div class="site-nav-toggle">
+  <button>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+  </button>
+</div>
+
+<nav class="site-nav">
+    <ul id="menu" class="menu">
+      
+      
+        <li class="menu-item ">
+          <a href="https://iihui.github.io/" rel="section">
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />首页
+          </a>
+        </li>
+      
+        <li class="menu-item ">
+          <a href="https://iihui.github.io/tags/" rel="section">
+              <i class="menu-item-icon fa fa-fw fa-tag"></i> <br />标签
+          </a>
+        </li>
+      
+        <li class="menu-item ">
+          <a href="https://iihui.github.io/post/" rel="section">
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />归档
+          </a>
+        </li>
+      
+        <li class="menu-item ">
+          <a href="https://iihui.github.io/categories/%E7%BE%8E%E9%A3%9F/" rel="section">
+              <i class="menu-item-icon fa fa-fw fa-fire"></i> <br />美食
+          </a>
+        </li>
+      
+        <li class="menu-item ">
+          <a href="https://iihui.github.io/categories/%E5%90%8E%E6%9C%9F/" rel="section">
+              <i class="menu-item-icon fa fa-fw fa-edit"></i> <br />后期
+          </a>
+        </li>
+      
+        <li class="menu-item ">
+          <a href="https://iihui.github.io/categories/%E6%97%85%E8%A1%8C/" rel="section">
+              <i class="menu-item-icon fa fa-fw fa-leaf"></i> <br />旅行
+          </a>
+        </li>
+      
+        <li class="menu-item ">
+          <a href="https://iihui.github.io/about/" rel="section">
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />关于
+          </a>
+        </li>
+      
+      <li class="menu-item menu-item-search">
+        <a href="javascript:;" class="popup-trigger"> <i class="menu-item-icon fa fa-search fa-fw"></i> <br /> 搜索</a>
+      </li>
+    </ul>
+    <div class="site-search">
+      <div class="popup">
+ <span class="search-icon fa fa-search"></span>
+ <input type="text" id="local-search-input">
+ <div id="local-search-result"></div>
+ <span class="popup-btn-close">close</span>
+</div>
+
+    </div>
+</nav>
+<script type="text/javascript"
+        async
+        src="https://cdn.bootcss.com/mathjax/2.7.3/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+		<!-- src = "http://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"> <\!--  -\-> -->
+MathJax.Hub.Config({
+  tex2jax: {
+    inlineMath: [['$','$'], ['\\(','\\)']],
+    displayMath: [['$$','$$'], ['\[\[','\]\]']],
+    processEscapes: true,
+    processEnvironments: true,
+    skipTags: ['script', 'noscript', 'style', 'textarea', 'pre'],
+    TeX: { equationNumbers: { autoNumber: "AMS" },
+         extensions: ["AMSmath.js", "AMSsymbols.js"] }
+  }
+});
+
+MathJax.Hub.Queue(function() {
+    
+    
+    
+    var all = MathJax.Hub.getAllJax(), i;
+    for(i = 0; i < all.length; i += 1) {
+        all[i].SourceElement().parentNode.className += ' has-jax';
+    }
+});
+</script>
+
+<style>
+code.has-jax {
+    font: inherit;
+    font-size: 100%;
+    background: inherit;
+    border: inherit;
+    color: #515151;
+}
+</style>
+
+<!DOCTYPE html>
+<html lang="en">
+
+
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.10.0-rc.1/dist/katex.min.css" integrity="sha384-D+9gmBxUQogRLqvARvNLmA9hS2x//eK1FhVb9PiU86gmcrBrJAQT8okdJ4LMp2uv" crossorigin="anonymous">
+
+    
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.10.0-rc.1/dist/katex.min.js" integrity="sha384-483A6DwYfKeDa0Q52fJmxFXkcPCFfnXMoXblOkJ4JcA8zATN6Tm78UNL72AKk+0O" crossorigin="anonymous"></script>
+</head>
+<body>
+
+</body>
+</html>
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+<section id="posts" class="posts-expand">
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <header class="post-header">
+      <h1 class="post-title" itemprop="name headline">
+        <a class="post-title-link" href="https://iihui.github.io/post/qa-compare/" itemprop="url">
+        使用Visual Code的文件对比功能
+        </a>
+      </h1>
+      <div class="post-meta">
+      <span class="post-time">
+<span class="post-meta-item-icon">
+    <i class="fa fa-calendar-o"></i>
+</span>
+<span class="post-meta-item-text">创建: </span>
+<time itemprop="dateCreated" datetime="2016-03-22T13:04:35+08:00" content="2019-01-22">
+    2019-01-22
+</time>
+</span>
+&nbsp; | &nbsp;
+<span class="post-updated-time">
+<span class="post-meta-item-icon">
+    <i class="fa fa-calendar-check-o"></i>
+</span>
+<span class="post-meta-item-text">更新: </span>
+<time itemprop="dateUpdated" content="2019-01-22">
+    2019-01-22
+</time>
+</span> 
+      
+
+  <span class="post-category" >
+  &nbsp; | &nbsp;
+  <span class="post-meta-item-icon">
+    <i class="fa fa-folder-o"></i>
+  </span>
+  <span class="post-meta-item-text">分类: </span>
+  
+    <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
+      <a href="https://iihui.github.io/categories/qa" itemprop="url" rel="index">
+        <span itemprop="name">QA</span>
+      </a>
+      &nbsp; 
+    </span>
+  
+</span>
+
+
+      <span>
+&nbsp; | &nbsp;
+<span class="post-meta-item-icon">
+    <i class="fa fa-file-word-o"></i>
+</span>
+<span class="post-meta-item-text">字数: </span>
+<span class="leancloud-visitors-count">385</span>
+&nbsp; | &nbsp;
+<span class="post-meta-item-icon">
+    <i class="fa fa-coffee"></i>
+</span>
+<span class="post-meta-item-text">阅读: </span>
+<span class="leancloud-visitors-count">1 分钟</span>
+</span>
+      </div>
+    </header>
+    <div class="post-body" itemprop="articleBody">
+    <blockquote>
+<p>在使用坚果云的时候，由于<font color=red>较长时间没有同步，导致本地文件和云端文件冲突</font>，再次同步时，坚果云<font color=Blue>保留了两个版本</font>。为了弄清两个文件的差异，以进行修改，需要一个工具来比对。最初是想下载一个专门的文件对比软件，但转念一想或许<code>Visual Code</code>可以呢，一搜果真<font color=red><code>Visual Code</code>自带文件对比功能</font>。</p>
+</blockquote>
+<p>废话不多说，首先放上动图：</p>
+<p><img src="https://i.loli.net/2019/01/24/5c49a881a24cc.gif" alt="2019-01-22 11.24.58"></p>
+<p>上面动图的操作可以分解为<code>3</code>步，第一步为打开左侧边栏，第二步为打开需要比较的文件，第三步为对比。</p>
+<hr>
+<h1 id="第一步">第一步</h1>
+<p>首先打开<code>SideBar</code>，在菜单栏中依次点击<code>View--&gt;Appearance--&gt;Toggle Side Bar</code>,如下图所示:</p>
+<p><img src="https://i.loli.net/2019/01/24/5c49a9236daed.jpg" alt=""></p>
+<hr>
+<h1 id="第二步">第二步</h1>
+<p>按住<code>Command + o(字母)</code>打开要比较的文件，或者在菜单栏找到<code>File---&gt;Open</code>：
+<img src="https://i.loli.net/2019/01/24/5c49a9832625d.jpg" alt="">
+<img src="https://i.loli.net/2019/01/24/5c49a9bc3e2cb.jpg" alt=""></p>
+<hr>
+<h1 id="第三步">第三步</h1>
+<p>在左侧的<code>Open Editors</code>目录下找到上一步需要比较的文件，然后点击鼠标右键，选中<code>Compare Selected</code>进行比对：
+<img src="https://i.loli.net/2019/01/24/5c49aa1dac78a.jpg" alt="">
+<img src="https://i.loli.net/2019/01/24/5c49aa380530e.jpg" alt=""></p>
+<hr>
+
+    </div>
+    <footer class="post-footer">
+        
+ 
+<div class="post-tags">     
+     
+    <a href="https://iihui.github.io/tags/qa" rel="tag" title="QA">#QA#</a>
+    
+</div>
+
+
+
+        <div class="post-nav">
+    <div class="post-nav-next post-nav-item">
+    
+        <a href="https://iihui.github.io/post/js-event/" rel="next" title="JS事件捕获">
+        <i class="fa fa-chevron-left"></i> JS事件捕获
+        </a>
+    
+    </div>
+
+    <div class="post-nav-prev post-nav-item">
+    
+        <a href="https://iihui.github.io/post/ios-new-target/" rel="prev" title="创建新的Target">
+        创建新的Target <i class="fa fa-chevron-right"></i>
+        </a>
+    
+    </div>
+</div>
+      
+        <div class="post-nav">
+    <div style="border: 1px dashed #e0e0e0; padding: 10px 10px 10px 10px; background-color: #fffeee; background-repeat: no-repeat; background-attachment: scroll; background-position: 1% 50%; -moz-background-size: auto auto; -moz-background-clip: -moz-initial; -moz-background-origin: -moz-initial; -moz-background-inline-policy: -moz-initial;">
+        <div style="float:left;margin-top:0px;">
+            <img src="https://i.loli.net/2020/02/09/SvhUdz4XJsOr9Vk.jpg" width="128px" height="128px"/>
+            <div style="text-align:center;">谢谢支持!</div>
+        </div>
+        <div>
+            <p style="margin-top:10px;">
+                标题：使用Visual Code的文件对比功能
+                <br />作者：阿呆<a target="_blank" href="https://iihui.github.io/"></a>
+                
+                <br />地址：https://iihui.github.io/post/qa-compare/
+                <br />声明：自由转载-非商用-保持署名（创作共享4.0许可证）
+            </p>
+        </div>
+    </div>
+    <div class="clear"></div>
+</div>
+        
+        
+        
+
+
+
+
+    </footer>
+  </article>
+</section>
+
+          </div>
+        </div>
+        <div class="sidebar-toggle">
+  <div class="sidebar-toggle-line-wrap">
+    <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+    <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+    <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+  </div>
+</div>
+<aside id="sidebar" class="sidebar">
+  <div class="sidebar-inner">
+
+  <ul class="sidebar-nav motion-element">
+    <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+      文章目录
+    </li>
+    <li class="sidebar-nav-overview" data-target="site-overview">
+      站点概览
+    </li>
+  </ul>
+
+    <section class="site-overview sidebar-panel ">
+      <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image"
+        src="https://i.loli.net/2020/02/07/dVFzrvZkHRNq2lL.jpg"
+        alt="" />
+    <p class="site-author-name" itemprop="name"></p>
+    <p class="site-description motion-element" itemprop="description"> 
+        coder &amp; cook</p>
+</div>
+      <nav class="site-state motion-element">
+    <div class="site-state-item site-state-posts">
+      <a href="https://iihui.github.io/post/">
+        <span class="site-state-item-count">142</span>
+        <span class="site-state-item-name">日志</span>
+      </a>
+    </div>
+    <div class="site-state-item site-state-categories">    
+        <a href="https://iihui.github.io/categories/">      
+         
+        <span class="site-state-item-count">18</span>
+        
+        <span class="site-state-item-name">分类</span>
+        
+        </a>
+    </div>
+
+    <div class="site-state-item site-state-tags">
+        <a href="https://iihui.github.io/tags/">
+         
+        <span class="site-state-item-count">31</span>
+        
+        <span class="site-state-item-name">标签</span>
+        </a>
+    </div>
+</nav>
+      
+      
+<div class="links-of-author motion-element">
+    
+        <span class="links-of-author-item">
+        <a href="https://coolshell.cn" target="_blank" title="皓 大">
+            <i class="fa fa-fw fa-globe"></i>
+            皓 大
+        </a>
+        </span>
+    
+        <span class="links-of-author-item">
+        <a href="http://www.ruanyifeng.com" target="_blank" title="阮 大">
+            <i class="fa fa-fw fa-globe"></i>
+            阮 大
+        </a>
+        </span>
+    
+        <span class="links-of-author-item">
+        <a href="https://juejin.im/" target="_blank" title="掘 金">
+            <i class="fa fa-fw fa-globe"></i>
+            掘 金
+        </a>
+        </span>
+    
+        <span class="links-of-author-item">
+        <a href="http://www.ideamsg.com" target="_blank" title="灵 感">
+            <i class="fa fa-fw fa-globe"></i>
+            灵 感
+        </a>
+        </span>
+    
+</div>
+
+
+      
+
+      <div class="links-of-blogroll motion-element inline">
+<script type="text/javascript" src="//rf.revolvermaps.com/0/0/8.js?i=&amp;m=0&amp;s=220&amp;c=ff0000&amp;cr1=ffffff&amp;f=arial&amp;l=33&amp;bv=35" async="async"></script>
+</div>
+
+    </section>
+    
+<section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+    <div class="post-toc">
+        <div class="post-toc-content"><nav id="TableOfContents">
+  <ul>
+    <li><a href="#第一步">第一步</a></li>
+    <li><a href="#第二步">第二步</a></li>
+    <li><a href="#第三步">第三步</a></li>
+  </ul>
+</nav></div>
+    </div>
+</section>
+
+  </div>
+</aside>
+
+      </div>
+    </main>
+   
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  <span itemprop="copyrightYear">  &copy; 
+  2017 - 2022</span>
+  <span class="with-love"><i class="fa fa-heart"></i></span>
+  <span class="author" itemprop="copyrightHolder">Keep It Simple</span>
+</div>
+
+
+
+
+      </div>
+    </footer>
+
+    <div class="back-to-top">
+      <i class="fa fa-arrow-up"></i>
+      <span id="scrollpercent"><span>0</span>%</span>
+    </div>
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+<script type="text/javascript" src="https://iihui.github.io/js/vendor/jquery/index.js?v=2.1.3"></script>
+<script type="text/javascript" src="https://iihui.github.io/js/vendor/fastclick/lib/fastclick.min.js?v=1.0.6"></script> 
+<script type="text/javascript" src="https://iihui.github.io/js/vendor/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+<script type="text/javascript" src="https://iihui.github.io/js/vendor/velocity/velocity.min.js?v=1.2.1"></script>
+<script type="text/javascript" src="https://iihui.github.io/js/vendor/velocity/velocity.ui.min.js?v=1.2.1"></script>
+<script src="https://iihui.github.io/js/vendor/ua-parser-js/dist/ua-parser.min.js?v=0.7.9"></script>
+
+<script src="https://iihui.github.io/js/vendor/fancybox/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+<script type="text/javascript" src="https://iihui.github.io/js/utils.js"></script>
+<script type="text/javascript" src="https://iihui.github.io/js/motion.js"></script>
+<script type="text/javascript" src="https://iihui.github.io/js/affix.js"></script>
+<script type="text/javascript" src="https://iihui.github.io/js/schemes/pisces.js"></script>
+
+<script type="text/javascript" src="https://iihui.github.io/js/scrollspy.js"></script>
+<script type="text/javascript" src="https://iihui.github.io/js/post-details.js"></script>
+<script type="text/javascript" src="https://iihui.github.io/js/toc.js"></script>
+
+<script type="text/javascript" src="https://iihui.github.io/js/bootstrap.js"></script>
+
+<script type="text/javascript" src="https://iihui.github.io/js/search.js"></script>
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+    extensions: ["tex2jax.js"],
+    jax: ["input/TeX", "output/HTML-CSS"],
+    tex2jax: {
+      inlineMath: [ ['$','$'] ],
+      displayMath: [ ['$$','$$'] ],
+      processEscapes: true
+    },
+    "HTML-CSS": { fonts: ["TeX"] }
+  });
+</script>
+<script src='https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-AMS-MML_HTMLorMML' async></script>
+</body>
+</html>

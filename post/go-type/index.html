@@ -1,0 +1,699 @@
+<!DOCTYPE HTML>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" /> 
+    <title>Go 基本类型 - Keep It Simple</title>
+    <meta name="keywords" content="博客,思考,读书,笔记,技术,分享">
+    
+    <meta property="og:title" content="Go 基本类型">
+    <meta property="og:site_name" content="Keep It Simple">
+    <meta property="og:image" content="/img/author.jpg"> 
+    <meta name="title" content="Go 基本类型 - Keep It Simple" />
+    <meta name="description" content="Swift | Go | C&#43;&#43; "> 
+    <link rel="shortcut icon" href="https://iihui.github.io/img/favicon.ico" />
+    <link rel="apple-touch-icon" href="https://iihui.github.io/img/apple-touch-icon.png" />
+    <link rel="apple-touch-icon-precomposed" href="https://iihui.github.io/img/apple-touch-icon.png" />
+    <link href="https://iihui.github.io/js/vendor/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+    <link href="https://iihui.github.io/js/vendor/fancybox/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+    <link href="https://iihui.github.io/css/main.css" rel="stylesheet" type="text/css" />
+    <link href="https://iihui.github.io/css/syntax.css" rel="stylesheet" type="text/css" />
+
+    <script type="text/javascript" id="hexo.configuration">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    scheme: 'Pisces',
+    sidebar: {"position":"left","display":"post"},
+     fancybox: true, 
+    motion: true
+  };
+</script>
+
+    <link href="https://cdn.bootcss.com/highlight.js/9.12.0/styles/monokai-sublime.min.css" rel="stylesheet">
+    <script src="https://cdn.bootcss.com/highlight.js/9.12.0/highlight.min.js"></script>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/languages/go.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/languages/swift.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.1/languages/objectivec.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.1/languages/clojure.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.1/languages/cpp.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.1/languages/kotlin.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.1/languages/yaml.min.js"></script>
+    <script>hljs.initHighlightingOnLoad();</script>
+</head>
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+<div class="container one-collumn sidebar-position-left page-home  ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"> <div class="site-meta  custom-logo ">
+
+  <div class="custom-logo-site-title">
+    <a href="https://iihui.github.io/"  class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <span class="site-title">Keep It Simple</span>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+  <p class="site-subtitle">靡不有初，鲜克有终</p>
+</div>
+
+<div class="site-nav-toggle">
+  <button>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+  </button>
+</div>
+
+<nav class="site-nav">
+    <ul id="menu" class="menu">
+      
+      
+        <li class="menu-item ">
+          <a href="https://iihui.github.io/" rel="section">
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />首页
+          </a>
+        </li>
+      
+        <li class="menu-item ">
+          <a href="https://iihui.github.io/tags/" rel="section">
+              <i class="menu-item-icon fa fa-fw fa-tag"></i> <br />标签
+          </a>
+        </li>
+      
+        <li class="menu-item ">
+          <a href="https://iihui.github.io/post/" rel="section">
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />归档
+          </a>
+        </li>
+      
+        <li class="menu-item ">
+          <a href="https://iihui.github.io/categories/%E7%BE%8E%E9%A3%9F/" rel="section">
+              <i class="menu-item-icon fa fa-fw fa-fire"></i> <br />美食
+          </a>
+        </li>
+      
+        <li class="menu-item ">
+          <a href="https://iihui.github.io/categories/%E5%90%8E%E6%9C%9F/" rel="section">
+              <i class="menu-item-icon fa fa-fw fa-edit"></i> <br />后期
+          </a>
+        </li>
+      
+        <li class="menu-item ">
+          <a href="https://iihui.github.io/categories/%E6%97%85%E8%A1%8C/" rel="section">
+              <i class="menu-item-icon fa fa-fw fa-leaf"></i> <br />旅行
+          </a>
+        </li>
+      
+        <li class="menu-item ">
+          <a href="https://iihui.github.io/about/" rel="section">
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />关于
+          </a>
+        </li>
+      
+      <li class="menu-item menu-item-search">
+        <a href="javascript:;" class="popup-trigger"> <i class="menu-item-icon fa fa-search fa-fw"></i> <br /> 搜索</a>
+      </li>
+    </ul>
+    <div class="site-search">
+      <div class="popup">
+ <span class="search-icon fa fa-search"></span>
+ <input type="text" id="local-search-input">
+ <div id="local-search-result"></div>
+ <span class="popup-btn-close">close</span>
+</div>
+
+    </div>
+</nav>
+<script type="text/javascript"
+        async
+        src="https://cdn.bootcss.com/mathjax/2.7.3/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+		<!-- src = "http://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"> <\!--  -\-> -->
+MathJax.Hub.Config({
+  tex2jax: {
+    inlineMath: [['$','$'], ['\\(','\\)']],
+    displayMath: [['$$','$$'], ['\[\[','\]\]']],
+    processEscapes: true,
+    processEnvironments: true,
+    skipTags: ['script', 'noscript', 'style', 'textarea', 'pre'],
+    TeX: { equationNumbers: { autoNumber: "AMS" },
+         extensions: ["AMSmath.js", "AMSsymbols.js"] }
+  }
+});
+
+MathJax.Hub.Queue(function() {
+    
+    
+    
+    var all = MathJax.Hub.getAllJax(), i;
+    for(i = 0; i < all.length; i += 1) {
+        all[i].SourceElement().parentNode.className += ' has-jax';
+    }
+});
+</script>
+
+<style>
+code.has-jax {
+    font: inherit;
+    font-size: 100%;
+    background: inherit;
+    border: inherit;
+    color: #515151;
+}
+</style>
+
+<!DOCTYPE html>
+<html lang="en">
+
+
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.10.0-rc.1/dist/katex.min.css" integrity="sha384-D+9gmBxUQogRLqvARvNLmA9hS2x//eK1FhVb9PiU86gmcrBrJAQT8okdJ4LMp2uv" crossorigin="anonymous">
+
+    
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.10.0-rc.1/dist/katex.min.js" integrity="sha384-483A6DwYfKeDa0Q52fJmxFXkcPCFfnXMoXblOkJ4JcA8zATN6Tm78UNL72AKk+0O" crossorigin="anonymous"></script>
+</head>
+<body>
+
+</body>
+</html>
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+<section id="posts" class="posts-expand">
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <header class="post-header">
+      <h1 class="post-title" itemprop="name headline">
+        <a class="post-title-link" href="https://iihui.github.io/post/go-type/" itemprop="url">
+        Go 基本类型
+        </a>
+      </h1>
+      <div class="post-meta">
+      <span class="post-time">
+<span class="post-meta-item-icon">
+    <i class="fa fa-calendar-o"></i>
+</span>
+<span class="post-meta-item-text">创建: </span>
+<time itemprop="dateCreated" datetime="2016-03-22T13:04:35+08:00" content="2017-07-24">
+    2017-07-24
+</time>
+</span>
+&nbsp; | &nbsp;
+<span class="post-updated-time">
+<span class="post-meta-item-icon">
+    <i class="fa fa-calendar-check-o"></i>
+</span>
+<span class="post-meta-item-text">更新: </span>
+<time itemprop="dateUpdated" content="2017-07-24">
+    2017-07-24
+</time>
+</span> 
+      
+
+  <span class="post-category" >
+  &nbsp; | &nbsp;
+  <span class="post-meta-item-icon">
+    <i class="fa fa-folder-o"></i>
+  </span>
+  <span class="post-meta-item-text">分类: </span>
+  
+    <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
+      <a href="https://iihui.github.io/categories/code" itemprop="url" rel="index">
+        <span itemprop="name">code</span>
+      </a>
+      &nbsp; 
+    </span>
+  
+</span>
+
+
+      <span>
+&nbsp; | &nbsp;
+<span class="post-meta-item-icon">
+    <i class="fa fa-file-word-o"></i>
+</span>
+<span class="post-meta-item-text">字数: </span>
+<span class="leancloud-visitors-count">2352</span>
+&nbsp; | &nbsp;
+<span class="post-meta-item-icon">
+    <i class="fa fa-coffee"></i>
+</span>
+<span class="post-meta-item-text">阅读: </span>
+<span class="leancloud-visitors-count">5 分钟</span>
+</span>
+      </div>
+    </header>
+    <div class="post-body" itemprop="articleBody">
+    <p>Go语言中定义了清晰完备的预定义基本类型<font color=red>（共<code>21</code>类）</font>，使得开发跨平台应用时无须过多考虑符号和长度差异，具体如下表：</p>
+<p>![c600](<a href="http://oqe76o492.bkt.clouddn.com/">http://oqe76o492.bkt.clouddn.com/</a>屏幕快照 2017-12-21 下午2.36.532.jpg)</p>
+<hr>
+<h2 id="整型数据">整型数据</h2>
+<ul>
+<li>
+<p>十进制整数，使用<code>0-9</code>的数字表示且<font color=red>不以<code>0</code>开头</font>。</p>
+</li>
+<li>
+<p>八进制整数，<font color=red>以<code>0</code>开头</font>，<code>0-7</code>的数字表示。</p>
+</li>
+<li>
+<p>十六进制整数，<font color=red>以<code>0X</code>或者是<code>0x</code>开头</font><code>0-9|A-F|a-f</code>组成。</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#a6e22e">a</span>,<span style="color:#a6e22e">b</span>,<span style="color:#a6e22e">c</span><span style="color:#f92672">:=</span><span style="color:#ae81ff">100</span>,<span style="color:#ae81ff">0144</span>,<span style="color:#ae81ff">0x64</span>   
+<span style="color:#a6e22e">fmt</span>.<span style="color:#a6e22e">Println</span>(<span style="color:#a6e22e">a</span>,<span style="color:#a6e22e">b</span>,<span style="color:#a6e22e">c</span>)  <span style="color:#75715e">//100 100 100  //打印的时候默认是10进制
+</span><span style="color:#75715e"></span><span style="color:#a6e22e">fmt</span>.<span style="color:#a6e22e">Printf</span>(<span style="color:#e6db74">&#34;0b%b, %#o,%#x\n&#34;</span>,<span style="color:#a6e22e">a</span>,<span style="color:#a6e22e">a</span>,<span style="color:#a6e22e">a</span>) <span style="color:#75715e">//0b1100100, 0144,0x64  //%#b可以打印二进制，但是为了区分在前面条件0b
+</span><span style="color:#75715e"></span><span style="color:#a6e22e">fmt</span>.<span style="color:#a6e22e">Printf</span>(<span style="color:#e6db74">&#34;0b%#b,0b%b&#34;</span>,<span style="color:#a6e22e">a</span>,<span style="color:#a6e22e">a</span>)
+<span style="color:#a6e22e">fmt</span>.<span style="color:#a6e22e">Println</span>(<span style="color:#a6e22e">math</span>.<span style="color:#a6e22e">MinInt8</span>,<span style="color:#a6e22e">math</span>.<span style="color:#a6e22e">MaxInt8</span>) <span style="color:#75715e">//-128,127
+</span></code></pre></div></li>
+<li>
+<p>标准库<code>strconv</code>可在不同进制（字符串）间转换。</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#a6e22e">x</span>,<span style="color:#a6e22e">_</span><span style="color:#f92672">:=</span><span style="color:#a6e22e">strconv</span>.<span style="color:#a6e22e">ParseInt</span>(<span style="color:#e6db74">&#34;1100100&#34;</span>,<span style="color:#ae81ff">2</span>,<span style="color:#ae81ff">32</span>) <span style="color:#75715e">//解释给定字符，2表示字符串是的基数是2，即以2进制表示，
+</span><span style="color:#75715e">//32表示给出的结果至少要适应32位，返回值的类型为int64
+</span><span style="color:#75715e"></span><span style="color:#a6e22e">y</span>,<span style="color:#a6e22e">_</span><span style="color:#f92672">:=</span><span style="color:#a6e22e">strconv</span>.<span style="color:#a6e22e">ParseInt</span>(<span style="color:#e6db74">&#34;0144&#34;</span>,<span style="color:#ae81ff">8</span>,<span style="color:#ae81ff">32</span>) <span style="color:#75715e">//字符串是8进制
+</span><span style="color:#75715e"></span><span style="color:#a6e22e">z</span>,<span style="color:#a6e22e">_</span><span style="color:#f92672">:=</span><span style="color:#a6e22e">strconv</span>.<span style="color:#a6e22e">ParseInt</span>(<span style="color:#e6db74">&#34;64&#34;</span>,<span style="color:#ae81ff">16</span>,<span style="color:#ae81ff">32</span>)  <span style="color:#75715e">//字符串是16进制
+</span><span style="color:#75715e"></span>
+<span style="color:#a6e22e">fmt</span>.<span style="color:#a6e22e">Println</span>(<span style="color:#a6e22e">x</span>,<span style="color:#a6e22e">y</span>,<span style="color:#a6e22e">z</span>) <span style="color:#75715e">//100 100 100
+</span><span style="color:#75715e"></span>
+<span style="color:#a6e22e">fmt</span>.<span style="color:#a6e22e">Println</span>(<span style="color:#a6e22e">strconv</span>.<span style="color:#a6e22e">FormatInt</span>(<span style="color:#a6e22e">x</span>,<span style="color:#ae81ff">2</span>)) <span style="color:#75715e">//1100100,转换为2进制表示
+</span><span style="color:#75715e"></span><span style="color:#a6e22e">fmt</span>.<span style="color:#a6e22e">Println</span>(<span style="color:#a6e22e">strconv</span>.<span style="color:#a6e22e">FormatInt</span>(<span style="color:#a6e22e">x</span>,<span style="color:#ae81ff">8</span>))  <span style="color:#75715e">//0144，转换为8进制表示
+</span><span style="color:#75715e"></span><span style="color:#a6e22e">fmt</span>.<span style="color:#a6e22e">Println</span>(<span style="color:#a6e22e">strconv</span>.<span style="color:#a6e22e">FormatInt</span>(<span style="color:#a6e22e">x</span>,<span style="color:#ae81ff">16</span>)) <span style="color:#75715e">//64，转换为16进制表示
+</span></code></pre></div></li>
+<li>
+<p>默认整数类型是<code>int</code>，不同类型之间的运算需要进行强制类型转换。</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#a6e22e">a</span> : = <span style="color:#ae81ff">10</span>
+<span style="color:#a6e22e">b</span> <span style="color:#960050;background-color:#1e0010">：</span>= byte(<span style="color:#ae81ff">100</span>) <span style="color:#75715e">//100的默认类型是int，如果要使得b的类型为byte，那么就要用强制类型转换
+</span><span style="color:#75715e"></span><span style="color:#a6e22e">c</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">a</span> <span style="color:#f92672">+</span> int(<span style="color:#a6e22e">b</span>) <span style="color:#75715e">//a 和 b是不同的数据类型，因此要转换成一致的数据类型
+</span></code></pre></div></li>
+</ul>
+<hr>
+<h2 id="浮点型">浮点型</h2>
+<p>浮点数由整数部分、小数点和小数部分组成，<font color=red>整数部分和小数部分可以隐藏其中一种</font>。也可以使用科学计数法表示<font color=Blue>（把一个数表示成$a$（$1\le a \lt 10，n$为整数）与<code>10</code>的幂相乘的形式，这种记数法叫做科学记数法）</font>。</p>
+<ul>
+<li>
+<ol start="0">
+<li></li>
+</ol>
+</li>
+<li>72.40</li>
+<li>072.40 和 72.40一样，这里就不区分8进制与10进制，浮点数的数字就全部是10进制了</li>
+<li>2.71823</li>
+<li>6.67428e-11</li>
+<li>1E6 //这个也是浮点数</li>
+<li>.25</li>
+<li>.12345E+5</li>
+</ul>
+<p>浮点数的默认类型是<code>float64</code>，使用时需要注意小数点的位置。<font color=Blue><code>float32</code>保证7位有效数字「小数点后7位」</font>，<font color=red><code>float64</code>保证15位有效数字「小数点后15位」</font>。具体细节参见<code>IEEE-754</code>标准。</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#66d9ef">var</span> <span style="color:#a6e22e">a</span> <span style="color:#66d9ef">float32</span> = <span style="color:#ae81ff">1.1234567899</span> <span style="color:#75715e">//保证小数点后7位有效数字
+</span><span style="color:#75715e"></span><span style="color:#66d9ef">var</span> <span style="color:#a6e22e">b</span> <span style="color:#66d9ef">float32</span> = <span style="color:#ae81ff">1.12345678</span>   <span style="color:#75715e">//保证小数点后7位有效数字
+</span><span style="color:#75715e"></span><span style="color:#66d9ef">var</span> <span style="color:#a6e22e">c</span> <span style="color:#66d9ef">float32</span> = <span style="color:#ae81ff">1.123456781</span>  <span style="color:#75715e">//保证小数点后7位有效数字
+</span><span style="color:#75715e"></span>
+<span style="color:#a6e22e">fmt</span>.<span style="color:#a6e22e">Println</span>(<span style="color:#a6e22e">a</span>, <span style="color:#a6e22e">b</span>, <span style="color:#a6e22e">c</span>)              <span style="color:#75715e">// 1.1234568 1.1234568 1.1234568
+</span><span style="color:#75715e"></span><span style="color:#a6e22e">fmt</span>.<span style="color:#a6e22e">Println</span>(<span style="color:#a6e22e">a</span> <span style="color:#f92672">==</span> <span style="color:#a6e22e">b</span>, <span style="color:#a6e22e">b</span> <span style="color:#f92672">==</span> <span style="color:#a6e22e">c</span>)       <span style="color:#75715e">//true true 因为保证7位有效数字—小数点后7位
+</span><span style="color:#75715e"></span><span style="color:#a6e22e">fmt</span>.<span style="color:#a6e22e">Printf</span>(<span style="color:#e6db74">&#34;%v %v %v\n&#34;</span>, <span style="color:#a6e22e">a</span>, <span style="color:#a6e22e">b</span>, <span style="color:#a6e22e">c</span>) <span style="color:#75715e">//1.1234568 1.1234568 1.1234568
+</span></code></pre></div><hr>
+<h2 id="复数类型">复数类型</h2>
+<p>由一个整数或者是一个小数加上<code>i</code>表示，在Go中它的默认类型是<code>complex128</code>即<font color=red><code>64</code>位实部分+<code>64</code>位虚部</font>，虚部如下所示：</p>
+<ul>
+<li>0i</li>
+<li>011i //==11i 这里不是八进制了，和浮点数一样，数字均表示10进制</li>
+<li>0.i</li>
+<li>2.71825i</li>
+<li>6.23423-11i</li>
+<li>1E+6i</li>
+<li>.25i</li>
+<li>.1234E+5i</li>
+</ul>
+<hr>
+<h2 id="引用">引用</h2>
+<p>特指<font color=red><code>slice，map，channel</code>这三种预定义类型</font>，引用类型具有更复杂的存储结构，除分配内存外，<font color=LightSeaGreen>还必须初始化一系列属性</font>，诸如指针、长度、甚至包括哈希分布，数据队列等。</p>
+<p>内置函数<code>new</code>按指定类型长度分配零值内存，返回指针，并不关心类型内部构造和初始化方式。而<font color=red>引用类型必须使用<code>make</code>函数创建</font>，编译器会将<code>make</code>转换为目标类型专用的创建函数（指令）以确保完成全部内存分配和相关属性初始化。</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#a6e22e">m</span> <span style="color:#f92672">:=</span> make(<span style="color:#66d9ef">map</span>[<span style="color:#66d9ef">string</span>]<span style="color:#66d9ef">int</span>)
+<span style="color:#a6e22e">m</span>[<span style="color:#e6db74">&#34;a&#34;</span>] = <span style="color:#ae81ff">1</span>
+<span style="color:#a6e22e">fmt</span>.<span style="color:#a6e22e">Println</span>(<span style="color:#a6e22e">m</span>) <span style="color:#75715e">//map[a:1]
+</span><span style="color:#75715e"></span><span style="color:#a6e22e">s</span> <span style="color:#f92672">:=</span> make([]<span style="color:#66d9ef">int</span>, <span style="color:#ae81ff">0</span>, <span style="color:#ae81ff">10</span>)
+<span style="color:#a6e22e">s</span> = append(<span style="color:#a6e22e">s</span>, <span style="color:#ae81ff">100</span>)
+<span style="color:#a6e22e">fmt</span>.<span style="color:#a6e22e">Println</span>(<span style="color:#a6e22e">s</span>) <span style="color:#75715e">//[100]
+</span></code></pre></div><p><code>new</code>函数也可以为引用类型分配内存，但是不完整创建。 以字典为例，<font color=red>它仅分配了字典本身所需的内存，并没有分配键值存储内存</font>，也没有初始化散列桶等内部属性，因此无法正常工作</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#a6e22e">p</span> <span style="color:#f92672">:=</span> new(<span style="color:#66d9ef">map</span>[<span style="color:#66d9ef">string</span>]<span style="color:#66d9ef">int</span>)
+<span style="color:#a6e22e">t</span> <span style="color:#f92672">:=</span> <span style="color:#f92672">*</span><span style="color:#a6e22e">p</span>
+<span style="color:#75715e">//t[&#34;a&#34;] = 100
+</span><span style="color:#75715e">//fmt.Println(t) //panic: assignment to entry in nil map
+</span></code></pre></div><hr>
+<h2 id="别名">别名</h2>
+<p>在官方文档中，专门提到了两个别名<code> byte  alias for unit8</code>以及<code>rune  alias for int32</code></p>
+<ul>
+<li>
+<p>别名类型无需转换，可直接赋值。别名的作用是为了“见型知意”</p>
+</li>
+<li>
+<p>拥有相同底层结构的就不一定是别名，就算<font color=red>在64位平台上<code>int</code>和<code>int64</code>结构完全一致，但是这两个也分属不同类型</font>，<font color=Orange>这两个类型参与运算时须显式转换。</font></p>
+</li>
+</ul>
+<hr>
+<h2 id="未命名类型8种">未命名类型（8种）</h2>
+<p>在Go中 <font color=red>数组、切片、字典、通道</font>类型与<font color=Blue>具体元素类型或长度属性相关，故被称为未命名类型</font>。具有相同声明的未命名类型被称为同一类型。</p>
+<ul>
+<li>
+<p>具有相同基类型的指针</p>
+</li>
+<li>
+<p>具有相同元素类型和长度的数组<code>array</code></p>
+</li>
+<li>
+<p>具有<font color=red>相同元素类型</font>的切片<code>slice</code></p>
+</li>
+<li>
+<p>具有相同键值类型的字典<code>map</code></p>
+</li>
+<li>
+<p>具有<font color=red>相同数据类型以及操作方向</font>的通道<code>channel</code></p>
+</li>
+<li>
+<p>具有相同字段序列（字段名、字段类型、<font color=red>标签以及字段顺序</font>）的结构体<code>struct</code></p>
+</li>
+<li>
+<p>具有相同签名的（参数和返回值列表，<font color=red>不包括参数名</font>）的函数<code>func</code>，其中函数的<font color=red>参数顺序</font>也属于签名的组成部分</p>
+</li>
+<li>
+<p>具有相同方法集（方法名，方法签名，<font color=red>不包括顺序</font>）的接口</p>
+</li>
+</ul>
+<p>容易被忽略的是<font color=red>结构体的标签<code>struct tag</code> 它属于类型组成的一部分</font>，而不仅仅是元数据描述</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#66d9ef">var</span> <span style="color:#a6e22e">a</span> <span style="color:#66d9ef">struct</span> {
+	<span style="color:#a6e22e">x</span> <span style="color:#66d9ef">int</span>    <span style="color:#e6db74">`x`</span>
+	<span style="color:#a6e22e">s</span> <span style="color:#66d9ef">string</span> <span style="color:#e6db74">`s`</span>
+}
+
+<span style="color:#66d9ef">var</span> <span style="color:#a6e22e">b</span> <span style="color:#66d9ef">struct</span> {
+	<span style="color:#a6e22e">x</span> <span style="color:#66d9ef">int</span>
+	<span style="color:#a6e22e">s</span> <span style="color:#66d9ef">string</span>
+}
+
+<span style="color:#a6e22e">b</span> = <span style="color:#a6e22e">a</span> <span style="color:#75715e">//这是错误的，因为一个有标签，另一个没有标签
+</span><span style="color:#75715e"></span><span style="color:#a6e22e">fmt</span>.<span style="color:#a6e22e">Println</span>(<span style="color:#a6e22e">b</span>)
+</code></pre></div><hr>
+<h2 id="指针">指针</h2>
+<p>指针的默认值是<code>nil</code>，<font color=red>不支持加减操作和类型转换，只支持相等判断</font>,这一点与C和C++有很大区别</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#a6e22e">x</span> <span style="color:#f92672">:=</span> <span style="color:#ae81ff">100</span>
+<span style="color:#a6e22e">p</span> <span style="color:#f92672">:=</span> <span style="color:#f92672">&amp;</span><span style="color:#a6e22e">x</span>
+<span style="color:#75715e">//p++  //不能加
+</span><span style="color:#75715e">//p+1  //不能加，只能比较是否相等
+</span><span style="color:#75715e"></span><span style="color:#66d9ef">var</span> <span style="color:#a6e22e">p2</span> = <span style="color:#a6e22e">p</span>
+<span style="color:#a6e22e">fmt</span>.<span style="color:#a6e22e">Println</span>(<span style="color:#a6e22e">p2</span> <span style="color:#f92672">==</span> <span style="color:#a6e22e">p</span>) <span style="color:#75715e">//true
+</span></code></pre></div><p>在指针的比较中，如果两个指针<font color=red>指向同一个地址，或都为<code>nil</code>则相等</font></p>
+<hr>
+<h2 id="接口">接口</h2>
+<p>接口<font color=red>定义了一个函数集合</font>，但是这些方法不包括实现——它们是抽象的，<font color=red>接口里也不能含变量</font>。</p>
+<hr>
+<h2 id="自定义类型">自定义类型</h2>
+<p>使用<font color=red>关键字<code>type</code> 定义用户自定义类型，</font>包括<font color=Blue>基于现有基础类型创建，或者是结构体、函数类型。</font>与<code>const</code>和 <code>var</code>类似，多个<code>type</code>定义可以合并为组，可在函数或者代码块内定义局部类型</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#66d9ef">type</span> (
+	<span style="color:#a6e22e">user</span> <span style="color:#66d9ef">struct</span> {
+		<span style="color:#a6e22e">name</span> <span style="color:#66d9ef">string</span>
+		<span style="color:#a6e22e">age</span>  <span style="color:#66d9ef">uint8</span>
+	}
+	<span style="color:#a6e22e">event</span> <span style="color:#66d9ef">func</span>(<span style="color:#66d9ef">string</span>) <span style="color:#66d9ef">bool</span>
+)
+</code></pre></div><p>当自定义类型指定了基础类型时，也只表明他们具有相同的底层数据结构，<font color=red>两者间不存在任何关系，属于完全不同的两种类型</font>，不能直接进行赋值操作。</p>
+<p>除了<font color=Blue>操作符外</font>，<font color=red>自定义类型不会继承基础类型的其他信息</font>（包括方法），不能视作别名，不能隐式转换，不能直接用于比较表达式。</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#66d9ef">type</span> <span style="color:#a6e22e">X</span> <span style="color:#66d9ef">int</span>
+<span style="color:#66d9ef">var</span> <span style="color:#a6e22e">m</span> <span style="color:#a6e22e">X</span> = <span style="color:#ae81ff">23</span>
+
+<span style="color:#66d9ef">if</span> <span style="color:#a6e22e">m</span> &lt; <span style="color:#ae81ff">100</span> { <span style="color:#75715e">//继承操作符
+</span><span style="color:#75715e"></span>	<span style="color:#a6e22e">fmt</span>.<span style="color:#a6e22e">Println</span>(<span style="color:#e6db74">&#34;Test&#34;</span>)
+}
+</code></pre></div><hr>
+<h2 id="类型转换">类型转换</h2>
+<p>因为隐式转换带来的问题远大于它带来的好处，<font color=Blue>Go中严格按照类型进行操作</font>。当两个变量的类型不一致的时候要做强制类型转换。</p>
+<ul>
+<li>
+<p>除了<font color=Orange>常量、别名类型以及未命名类型</font>外，Go强制要求使用显式类型转换</p>
+</li>
+<li>
+<p>Go中<font color=red>不支持操作符重载</font></p>
+</li>
+<li>
+<p>如果转换的目标类型是<font color=red>指针、单向通道或没有返回值的函数类型，那么必须用括号</font>，以避免造成语法分解错误</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#a6e22e">x</span> <span style="color:#f92672">:=</span> <span style="color:#ae81ff">100</span>
+<span style="color:#a6e22e">p</span> <span style="color:#f92672">:=</span> (<span style="color:#f92672">*</span><span style="color:#66d9ef">int</span>)(<span style="color:#f92672">&amp;</span><span style="color:#a6e22e">x</span>) 
+</code></pre></div></li>
+</ul>
+<hr>
+
+    </div>
+    <footer class="post-footer">
+        
+ 
+<div class="post-tags">     
+     
+    <a href="https://iihui.github.io/tags/go" rel="tag" title="Go">#Go#</a>
+    
+</div>
+
+
+
+        <div class="post-nav">
+    <div class="post-nav-next post-nav-item">
+    
+        <a href="https://iihui.github.io/post/go-const/" rel="next" title="Go 常量">
+        <i class="fa fa-chevron-left"></i> Go 常量
+        </a>
+    
+    </div>
+
+    <div class="post-nav-prev post-nav-item">
+    
+        <a href="https://iihui.github.io/post/cpp-memcpy/" rel="prev" title="memcpy 的实现">
+        memcpy 的实现 <i class="fa fa-chevron-right"></i>
+        </a>
+    
+    </div>
+</div>
+      
+        <div class="post-nav">
+    <div style="border: 1px dashed #e0e0e0; padding: 10px 10px 10px 10px; background-color: #fffeee; background-repeat: no-repeat; background-attachment: scroll; background-position: 1% 50%; -moz-background-size: auto auto; -moz-background-clip: -moz-initial; -moz-background-origin: -moz-initial; -moz-background-inline-policy: -moz-initial;">
+        <div style="float:left;margin-top:0px;">
+            <img src="https://i.loli.net/2020/02/09/SvhUdz4XJsOr9Vk.jpg" width="128px" height="128px"/>
+            <div style="text-align:center;">谢谢支持!</div>
+        </div>
+        <div>
+            <p style="margin-top:10px;">
+                标题：Go 基本类型
+                <br />作者：阿呆<a target="_blank" href="https://iihui.github.io/"></a>
+                
+                <br />地址：https://iihui.github.io/post/go-type/
+                <br />声明：自由转载-非商用-保持署名（创作共享4.0许可证）
+            </p>
+        </div>
+    </div>
+    <div class="clear"></div>
+</div>
+        
+        
+        
+
+
+
+
+    </footer>
+  </article>
+</section>
+
+          </div>
+        </div>
+        <div class="sidebar-toggle">
+  <div class="sidebar-toggle-line-wrap">
+    <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+    <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+    <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+  </div>
+</div>
+<aside id="sidebar" class="sidebar">
+  <div class="sidebar-inner">
+
+  <ul class="sidebar-nav motion-element">
+    <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+      文章目录
+    </li>
+    <li class="sidebar-nav-overview" data-target="site-overview">
+      站点概览
+    </li>
+  </ul>
+
+    <section class="site-overview sidebar-panel ">
+      <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image"
+        src="https://i.loli.net/2020/02/07/dVFzrvZkHRNq2lL.jpg"
+        alt="" />
+    <p class="site-author-name" itemprop="name"></p>
+    <p class="site-description motion-element" itemprop="description"> 
+        coder &amp; cook</p>
+</div>
+      <nav class="site-state motion-element">
+    <div class="site-state-item site-state-posts">
+      <a href="https://iihui.github.io/post/">
+        <span class="site-state-item-count">142</span>
+        <span class="site-state-item-name">日志</span>
+      </a>
+    </div>
+    <div class="site-state-item site-state-categories">    
+        <a href="https://iihui.github.io/categories/">      
+         
+        <span class="site-state-item-count">18</span>
+        
+        <span class="site-state-item-name">分类</span>
+        
+        </a>
+    </div>
+
+    <div class="site-state-item site-state-tags">
+        <a href="https://iihui.github.io/tags/">
+         
+        <span class="site-state-item-count">31</span>
+        
+        <span class="site-state-item-name">标签</span>
+        </a>
+    </div>
+</nav>
+      
+      
+<div class="links-of-author motion-element">
+    
+        <span class="links-of-author-item">
+        <a href="https://coolshell.cn" target="_blank" title="皓 大">
+            <i class="fa fa-fw fa-globe"></i>
+            皓 大
+        </a>
+        </span>
+    
+        <span class="links-of-author-item">
+        <a href="http://www.ruanyifeng.com" target="_blank" title="阮 大">
+            <i class="fa fa-fw fa-globe"></i>
+            阮 大
+        </a>
+        </span>
+    
+        <span class="links-of-author-item">
+        <a href="https://juejin.im/" target="_blank" title="掘 金">
+            <i class="fa fa-fw fa-globe"></i>
+            掘 金
+        </a>
+        </span>
+    
+        <span class="links-of-author-item">
+        <a href="http://www.ideamsg.com" target="_blank" title="灵 感">
+            <i class="fa fa-fw fa-globe"></i>
+            灵 感
+        </a>
+        </span>
+    
+</div>
+
+
+      
+
+      <div class="links-of-blogroll motion-element inline">
+<script type="text/javascript" src="//rf.revolvermaps.com/0/0/8.js?i=&amp;m=0&amp;s=220&amp;c=ff0000&amp;cr1=ffffff&amp;f=arial&amp;l=33&amp;bv=35" async="async"></script>
+</div>
+
+    </section>
+    
+<section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+    <div class="post-toc">
+        <div class="post-toc-content"><nav id="TableOfContents">
+  <ul>
+    <li>
+      <ul>
+        <li><a href="#整型数据">整型数据</a></li>
+        <li><a href="#浮点型">浮点型</a></li>
+        <li><a href="#复数类型">复数类型</a></li>
+        <li><a href="#引用">引用</a></li>
+        <li><a href="#别名">别名</a></li>
+        <li><a href="#未命名类型8种">未命名类型（8种）</a></li>
+        <li><a href="#指针">指针</a></li>
+        <li><a href="#接口">接口</a></li>
+        <li><a href="#自定义类型">自定义类型</a></li>
+        <li><a href="#类型转换">类型转换</a></li>
+      </ul>
+    </li>
+  </ul>
+</nav></div>
+    </div>
+</section>
+
+  </div>
+</aside>
+
+      </div>
+    </main>
+   
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  <span itemprop="copyrightYear">  &copy; 
+  2017 - 2022</span>
+  <span class="with-love"><i class="fa fa-heart"></i></span>
+  <span class="author" itemprop="copyrightHolder">Keep It Simple</span>
+</div>
+
+
+
+
+      </div>
+    </footer>
+
+    <div class="back-to-top">
+      <i class="fa fa-arrow-up"></i>
+      <span id="scrollpercent"><span>0</span>%</span>
+    </div>
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+<script type="text/javascript" src="https://iihui.github.io/js/vendor/jquery/index.js?v=2.1.3"></script>
+<script type="text/javascript" src="https://iihui.github.io/js/vendor/fastclick/lib/fastclick.min.js?v=1.0.6"></script> 
+<script type="text/javascript" src="https://iihui.github.io/js/vendor/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+<script type="text/javascript" src="https://iihui.github.io/js/vendor/velocity/velocity.min.js?v=1.2.1"></script>
+<script type="text/javascript" src="https://iihui.github.io/js/vendor/velocity/velocity.ui.min.js?v=1.2.1"></script>
+<script src="https://iihui.github.io/js/vendor/ua-parser-js/dist/ua-parser.min.js?v=0.7.9"></script>
+
+<script src="https://iihui.github.io/js/vendor/fancybox/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+<script type="text/javascript" src="https://iihui.github.io/js/utils.js"></script>
+<script type="text/javascript" src="https://iihui.github.io/js/motion.js"></script>
+<script type="text/javascript" src="https://iihui.github.io/js/affix.js"></script>
+<script type="text/javascript" src="https://iihui.github.io/js/schemes/pisces.js"></script>
+
+<script type="text/javascript" src="https://iihui.github.io/js/scrollspy.js"></script>
+<script type="text/javascript" src="https://iihui.github.io/js/post-details.js"></script>
+<script type="text/javascript" src="https://iihui.github.io/js/toc.js"></script>
+
+<script type="text/javascript" src="https://iihui.github.io/js/bootstrap.js"></script>
+
+<script type="text/javascript" src="https://iihui.github.io/js/search.js"></script>
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+    extensions: ["tex2jax.js"],
+    jax: ["input/TeX", "output/HTML-CSS"],
+    tex2jax: {
+      inlineMath: [ ['$','$'] ],
+      displayMath: [ ['$$','$$'] ],
+      processEscapes: true
+    },
+    "HTML-CSS": { fonts: ["TeX"] }
+  });
+</script>
+<script src='https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-AMS-MML_HTMLorMML' async></script>
+</body>
+</html>

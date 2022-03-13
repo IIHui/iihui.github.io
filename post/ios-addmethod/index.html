@@ -1,0 +1,612 @@
+<!DOCTYPE HTML>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" /> 
+    <title>Swift 方法交换中的addMethod - Keep It Simple</title>
+    <meta name="keywords" content="博客,思考,读书,笔记,技术,分享">
+    
+    <meta property="og:title" content="Swift 方法交换中的addMethod">
+    <meta property="og:site_name" content="Keep It Simple">
+    <meta property="og:image" content="/img/author.jpg"> 
+    <meta name="title" content="Swift 方法交换中的addMethod - Keep It Simple" />
+    <meta name="description" content="Swift | Go | C&#43;&#43; "> 
+    <link rel="shortcut icon" href="https://iihui.github.io/img/favicon.ico" />
+    <link rel="apple-touch-icon" href="https://iihui.github.io/img/apple-touch-icon.png" />
+    <link rel="apple-touch-icon-precomposed" href="https://iihui.github.io/img/apple-touch-icon.png" />
+    <link href="https://iihui.github.io/js/vendor/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+    <link href="https://iihui.github.io/js/vendor/fancybox/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+    <link href="https://iihui.github.io/css/main.css" rel="stylesheet" type="text/css" />
+    <link href="https://iihui.github.io/css/syntax.css" rel="stylesheet" type="text/css" />
+
+    <script type="text/javascript" id="hexo.configuration">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    scheme: 'Pisces',
+    sidebar: {"position":"left","display":"post"},
+     fancybox: true, 
+    motion: true
+  };
+</script>
+
+    <link href="https://cdn.bootcss.com/highlight.js/9.12.0/styles/monokai-sublime.min.css" rel="stylesheet">
+    <script src="https://cdn.bootcss.com/highlight.js/9.12.0/highlight.min.js"></script>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/languages/go.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/languages/swift.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.1/languages/objectivec.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.1/languages/clojure.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.1/languages/cpp.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.1/languages/kotlin.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.1/languages/yaml.min.js"></script>
+    <script>hljs.initHighlightingOnLoad();</script>
+</head>
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+<div class="container one-collumn sidebar-position-left page-home  ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"> <div class="site-meta  custom-logo ">
+
+  <div class="custom-logo-site-title">
+    <a href="https://iihui.github.io/"  class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <span class="site-title">Keep It Simple</span>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+  <p class="site-subtitle">靡不有初，鲜克有终</p>
+</div>
+
+<div class="site-nav-toggle">
+  <button>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+  </button>
+</div>
+
+<nav class="site-nav">
+    <ul id="menu" class="menu">
+      
+      
+        <li class="menu-item ">
+          <a href="https://iihui.github.io/" rel="section">
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />首页
+          </a>
+        </li>
+      
+        <li class="menu-item ">
+          <a href="https://iihui.github.io/tags/" rel="section">
+              <i class="menu-item-icon fa fa-fw fa-tag"></i> <br />标签
+          </a>
+        </li>
+      
+        <li class="menu-item ">
+          <a href="https://iihui.github.io/post/" rel="section">
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />归档
+          </a>
+        </li>
+      
+        <li class="menu-item ">
+          <a href="https://iihui.github.io/categories/%E7%BE%8E%E9%A3%9F/" rel="section">
+              <i class="menu-item-icon fa fa-fw fa-fire"></i> <br />美食
+          </a>
+        </li>
+      
+        <li class="menu-item ">
+          <a href="https://iihui.github.io/categories/%E5%90%8E%E6%9C%9F/" rel="section">
+              <i class="menu-item-icon fa fa-fw fa-edit"></i> <br />后期
+          </a>
+        </li>
+      
+        <li class="menu-item ">
+          <a href="https://iihui.github.io/categories/%E6%97%85%E8%A1%8C/" rel="section">
+              <i class="menu-item-icon fa fa-fw fa-leaf"></i> <br />旅行
+          </a>
+        </li>
+      
+        <li class="menu-item ">
+          <a href="https://iihui.github.io/about/" rel="section">
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />关于
+          </a>
+        </li>
+      
+      <li class="menu-item menu-item-search">
+        <a href="javascript:;" class="popup-trigger"> <i class="menu-item-icon fa fa-search fa-fw"></i> <br /> 搜索</a>
+      </li>
+    </ul>
+    <div class="site-search">
+      <div class="popup">
+ <span class="search-icon fa fa-search"></span>
+ <input type="text" id="local-search-input">
+ <div id="local-search-result"></div>
+ <span class="popup-btn-close">close</span>
+</div>
+
+    </div>
+</nav>
+<script type="text/javascript"
+        async
+        src="https://cdn.bootcss.com/mathjax/2.7.3/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+		<!-- src = "http://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"> <\!--  -\-> -->
+MathJax.Hub.Config({
+  tex2jax: {
+    inlineMath: [['$','$'], ['\\(','\\)']],
+    displayMath: [['$$','$$'], ['\[\[','\]\]']],
+    processEscapes: true,
+    processEnvironments: true,
+    skipTags: ['script', 'noscript', 'style', 'textarea', 'pre'],
+    TeX: { equationNumbers: { autoNumber: "AMS" },
+         extensions: ["AMSmath.js", "AMSsymbols.js"] }
+  }
+});
+
+MathJax.Hub.Queue(function() {
+    
+    
+    
+    var all = MathJax.Hub.getAllJax(), i;
+    for(i = 0; i < all.length; i += 1) {
+        all[i].SourceElement().parentNode.className += ' has-jax';
+    }
+});
+</script>
+
+<style>
+code.has-jax {
+    font: inherit;
+    font-size: 100%;
+    background: inherit;
+    border: inherit;
+    color: #515151;
+}
+</style>
+
+<!DOCTYPE html>
+<html lang="en">
+
+
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.10.0-rc.1/dist/katex.min.css" integrity="sha384-D+9gmBxUQogRLqvARvNLmA9hS2x//eK1FhVb9PiU86gmcrBrJAQT8okdJ4LMp2uv" crossorigin="anonymous">
+
+    
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.10.0-rc.1/dist/katex.min.js" integrity="sha384-483A6DwYfKeDa0Q52fJmxFXkcPCFfnXMoXblOkJ4JcA8zATN6Tm78UNL72AKk+0O" crossorigin="anonymous"></script>
+</head>
+<body>
+
+</body>
+</html>
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+<section id="posts" class="posts-expand">
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <header class="post-header">
+      <h1 class="post-title" itemprop="name headline">
+        <a class="post-title-link" href="https://iihui.github.io/post/ios-addmethod/" itemprop="url">
+        Swift 方法交换中的addMethod
+        </a>
+      </h1>
+      <div class="post-meta">
+      <span class="post-time">
+<span class="post-meta-item-icon">
+    <i class="fa fa-calendar-o"></i>
+</span>
+<span class="post-meta-item-text">创建: </span>
+<time itemprop="dateCreated" datetime="2016-03-22T13:04:35+08:00" content="2020-02-21">
+    2020-02-21
+</time>
+</span>
+&nbsp; | &nbsp;
+<span class="post-updated-time">
+<span class="post-meta-item-icon">
+    <i class="fa fa-calendar-check-o"></i>
+</span>
+<span class="post-meta-item-text">更新: </span>
+<time itemprop="dateUpdated" content="2020-02-21">
+    2020-02-21
+</time>
+</span> 
+      
+
+  <span class="post-category" >
+  &nbsp; | &nbsp;
+  <span class="post-meta-item-icon">
+    <i class="fa fa-folder-o"></i>
+  </span>
+  <span class="post-meta-item-text">分类: </span>
+  
+    <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
+      <a href="https://iihui.github.io/categories/swift" itemprop="url" rel="index">
+        <span itemprop="name">Swift</span>
+      </a>
+      &nbsp; 
+    </span>
+  
+    <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
+      <a href="https://iihui.github.io/categories/ios" itemprop="url" rel="index">
+        <span itemprop="name">iOS</span>
+      </a>
+      &nbsp; 
+    </span>
+  
+</span>
+
+
+      <span>
+&nbsp; | &nbsp;
+<span class="post-meta-item-icon">
+    <i class="fa fa-file-word-o"></i>
+</span>
+<span class="post-meta-item-text">字数: </span>
+<span class="leancloud-visitors-count">1705</span>
+&nbsp; | &nbsp;
+<span class="post-meta-item-icon">
+    <i class="fa fa-coffee"></i>
+</span>
+<span class="post-meta-item-text">阅读: </span>
+<span class="leancloud-visitors-count">4 分钟</span>
+</span>
+      </div>
+    </header>
+    <div class="post-body" itemprop="articleBody">
+    <blockquote>
+<p><code>Swizzle</code>是<code>OC</code>的黑魔法之一，可以在运行时对两个方法的实现进行交换，也就是s<font color=red>用户可以用自己的方法替换原来的方法实现，做一些其它事情</font>。<code>Swift</code>也可以使用运行时的方法交换，如果要了解<code>Swift</code>的方法交换，首先应该了解<code>class_addMethod</code>这个方法的作用。</p>
+</blockquote>
+<h1 id="class_addmethod">class_addMethod</h1>
+<p>要了解<code>class_addMethod</code>方法的作用，首先看下面的这段代码，在下面的代码中直接交换了<code>originalSelector</code>和<code>swizzledSelector</code></p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift"><span style="color:#66d9ef">extension</span> <span style="color:#a6e22e">NSObject</span> {
+    <span style="color:#66d9ef">static</span> <span style="color:#66d9ef">func</span> <span style="color:#a6e22e">swizzlingForClass</span>(<span style="color:#66d9ef">_</span> forClass: AnyClass, originalSelector: Selector, swizzledSelector: Selector) {
+        <span style="color:#66d9ef">guard</span> <span style="color:#66d9ef">let</span> originalMethod = class_getInstanceMethod(forClass, originalSelector),
+              <span style="color:#66d9ef">let</span> swizzledMethod = class_getInstanceMethod(forClass, swizzledSelector) <span style="color:#66d9ef">else</span> {
+            <span style="color:#66d9ef">return</span>
+        }
+        method_exchangeImplementations(originalMethod, swizzledMethod)
+    }
+}
+</code></pre></div><h2 id="存在的问题">存在的问题</h2>
+<p>假设父类名为<code>method</code>的方法，<font color=red>子类未重写</font>这个<code>method</code>方法，子类的中想要用来交换的方法为<code>swizzledMethod</code>。如果按照上面的方法交换时，因为父类有该方法，而子类未重写该方法，<font color=red>所以调用<code>class_getInstanceMethod</code>得到的是父类的<code>method</code>方法</font>，所以它与子类的<code>swizzledMethod</code>方法进行交换需要分两种情形来讨论：</p>
+<ul>
+<li>
+<p>如果在子类实例中调用<code>method</code>方法时，因为已经与自己的<code>swizzledMethod</code>方法交换，所以实际上调用的自己<code>swizzledMethod</code>，所以能够正常运行。</p>
+</li>
+<li>
+<p>如果在父类的实例中调用<code>method</code>方法，因为已经与子类的<code>swizzledMethod</code>方法交换，所以调用的是子类的<code>swizzledMethod</code>方法。也就是说此时是父类调用子类的方法，所以会崩溃。</p>
+</li>
+</ul>
+<p>根据上面的讨论，首先应该判断子类是否重写了<code>method</code>方法，如果实重写了父类的该方法则直接进行交换。如果没有重写父类的该方法，则应该先在父类中新建一个同名的方法。为了新建一个同名的方法，首先应当了解<code>class_addMethod</code>这个函数。</p>
+<h2 id="完善的方案">完善的方案</h2>
+<p>根据上面的分析，先来看一下<code>class_addMethod</code>的函数原型，如下所示：</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift">@available(iOS <span style="color:#ae81ff">2.0</span>, <span style="color:#f92672">*</span>)
+<span style="color:#66d9ef">public</span> <span style="color:#66d9ef">func</span> <span style="color:#a6e22e">class_addMethod</span>(<span style="color:#66d9ef">_</span> cls: AnyClass?, <span style="color:#66d9ef">_</span> name: Selector, <span style="color:#66d9ef">_</span> imp: IMP, <span style="color:#66d9ef">_</span> types: UnsafePointer&lt;Int8&gt;?) -&gt; Bool
+</code></pre></div><p>这个方法的作用是在一个类中添加一个新方法(名字+实现）,<code>class_addMethod</code>函数中参数的含义为下：</p>
+<ul>
+<li>
+<p><code>cls</code>表示需要添加方法的类</p>
+</li>
+<li>
+<p><code>name</code>表示要添加的方法的<code>selector</code>（方法名，<a href="https://iihui.github.io/post/oc-runtime/#selector">这里的方法名是一个结构体</a>）</p>
+</li>
+<li>
+<p><code>imp</code> 表示要添加的方法的实现的指针<code>IMP</code>（定义在<a href="https://iihui.github.io/post/oc-runtime/#imp">这里</a>)）</p>
+</li>
+<li>
+<p><code>types</code>用来描述方法参数的字符串数组</p>
+</li>
+<li>
+<p>如果<code>cls</code>中含有<code>name</code>则添加失败，返回<code>false</code>。这个方法会重写<code>cls</code>父类中与<code>name</code>同名的方法，但是不会替换<code>cls</code>中已经存在的与<code>cls</code>同名的方法。但是，如果想要替换<code>cls</code>中与<code>name</code>同名的方法，应该调用<code>method_setImplementation</code>。</p>
+</li>
+</ul>
+<p>因此，可以使用<code>class_addMethod</code>方法的返回值来确定当前类中是否存在能够交换的方法，如果存在(添加失败)则直接交换。</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift"><span style="color:#66d9ef">let</span> didAddMethod: Bool = class_addMethod(object, originalSelector, method_getImplementation(swizzledMethod), method_getTypeEncoding(swizzledMethod))
+</code></pre></div><p>上面的代码中如果<code>didAddMethod</code>返回为<code>false</code>，则说明可以直接进行方法交换，如果返回值为<code>true</code>，则说明在子类中添加<code>originalSelector</code>成功，并且<code>originalSelector</code>指向了子类的<code>swizzledMethod</code>的实现。但是<code>swizzledSelector</code>的实现还是它原来的实现，接下来就要将<code>swizzledSelector</code>指向<code>originalMethod</code>的实现。因此，完整的代码应该如下所示：</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift"><span style="color:#66d9ef">static</span> <span style="color:#66d9ef">func</span> <span style="color:#a6e22e">exchangeSelector</span>(object:AnyClass,originalSelector: Selector, swizzledSelector: Selector) {
+    <span style="color:#66d9ef">guard</span> <span style="color:#66d9ef">let</span> originalMethod = class_getInstanceMethod(object, originalSelector) <span style="color:#66d9ef">else</span> {
+        <span style="color:#66d9ef">return</span>
+    }
+    <span style="color:#66d9ef">guard</span> <span style="color:#66d9ef">let</span> swizzledMethod = class_getInstanceMethod(object, swizzledSelector) <span style="color:#66d9ef">else</span> {
+        <span style="color:#66d9ef">return</span>
+    }
+    <span style="color:#66d9ef">let</span> didAddMethod: Bool = class_addMethod(object, originalSelector, method_getImplementation(swizzledMethod), method_getTypeEncoding(swizzledMethod))
+    
+    <span style="color:#66d9ef">if</span> didAddMethod {
+        class_replaceMethod(object, swizzledSelector, method_getImplementation(originalMethod), method_getTypeEncoding(originalMethod))
+    } <span style="color:#66d9ef">else</span> {
+        method_exchangeImplementations(originalMethod, swizzledMethod)
+    }
+}
+</code></pre></div><h1 id="构建工具类">构建工具类</h1>
+<p>因为当前<code>App</code>埋点的时候很多地方需要使用到方法交换，因此决定写一个专门的工具类来实现<code>Swift</code>的方法交换，如下所示：</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift"><span style="color:#66d9ef">class</span> <span style="color:#a6e22e">MethodSwizzlingTools</span> {
+    <span style="color:#66d9ef">static</span> <span style="color:#66d9ef">func</span> <span style="color:#a6e22e">exchangeSelector</span>(object: AnyClass, originalSelector: Selector, swizzledSelector: Selector) {
+        <span style="color:#75715e">//对于class_getInstanceMethod方法，若类没有实现对应的方法，但父类实现了，则这个函数会返回父类的方法</span>
+        <span style="color:#66d9ef">guard</span> <span style="color:#66d9ef">let</span> originalMethod = class_getInstanceMethod(object, originalSelector) <span style="color:#66d9ef">else</span> {
+            <span style="color:#66d9ef">return</span>
+        }
+        <span style="color:#66d9ef">guard</span> <span style="color:#66d9ef">let</span> swizzledMethod = class_getInstanceMethod(object, swizzledSelector) <span style="color:#66d9ef">else</span> {
+            <span style="color:#66d9ef">return</span>
+        }
+
+        <span style="color:#75715e">//参考https://juejin.im/post/5cb6df44e51d456e6f45c6f1</span>
+        <span style="color:#66d9ef">let</span> didAddMethod: Bool = class_addMethod(object, originalSelector, method_getImplementation(swizzledMethod), method_getTypeEncoding(swizzledMethod))
+
+        <span style="color:#66d9ef">if</span> didAddMethod {
+            class_replaceMethod(object, swizzledSelector, method_getImplementation(originalMethod), method_getTypeEncoding(originalMethod))
+        } <span style="color:#66d9ef">else</span> {
+            method_exchangeImplementations(originalMethod, swizzledMethod)
+        }
+    }
+
+    <span style="color:#75715e">//交换两个不同类的方法，这两个类应该满足父子关系</span>
+    <span style="color:#66d9ef">static</span> <span style="color:#66d9ef">func</span> <span style="color:#a6e22e">exchangeSelector</span>(originalClass: AnyClass, originalSelector: Selector, swizzledClass: AnyClass, swizzledSelector: Selector) {
+        <span style="color:#66d9ef">guard</span> <span style="color:#66d9ef">let</span> originalMethod = class_getInstanceMethod(originalClass, originalSelector), <span style="color:#66d9ef">let</span> swizzledMethod = class_getInstanceMethod(swizzledClass, swizzledSelector) <span style="color:#66d9ef">else</span> {
+            <span style="color:#66d9ef">return</span>
+        }
+
+        <span style="color:#66d9ef">let</span> didAddMethod: Bool = class_addMethod(originalClass, originalSelector, method_getImplementation(swizzledMethod), method_getTypeEncoding(swizzledMethod))
+
+        <span style="color:#66d9ef">if</span> didAddMethod {
+            class_replaceMethod(swizzledClass, swizzledSelector, method_getImplementation(originalMethod), method_getTypeEncoding(originalMethod))
+        } <span style="color:#66d9ef">else</span> {
+            method_exchangeImplementations(originalMethod, swizzledMethod)
+        }
+    }
+}
+</code></pre></div><p><a href="https://juejin.im/post/5cb6df44e51d456e6f45c6f1">参考资料</a>
+<a href="https://www.uraimo.com/2015/10/23/effective-method-swizzling-with-swift/">参考资料</a></p>
+
+    </div>
+    <footer class="post-footer">
+        
+ 
+<div class="post-tags">     
+     
+    <a href="https://iihui.github.io/tags/swift" rel="tag" title="Swift">#Swift#</a>
+    
+    <a href="https://iihui.github.io/tags/ios" rel="tag" title="iOS">#iOS#</a>
+    
+</div>
+
+
+
+        <div class="post-nav">
+    <div class="post-nav-next post-nav-item">
+    
+        <a href="https://iihui.github.io/post/ios-where/" rel="next" title="where 关键字">
+        <i class="fa fa-chevron-left"></i> where 关键字
+        </a>
+    
+    </div>
+
+    <div class="post-nav-prev post-nav-item">
+    
+        <a href="https://iihui.github.io/post/ios-any/" rel="prev" title="Any,AnyObject,AnyClass">
+        Any,AnyObject,AnyClass <i class="fa fa-chevron-right"></i>
+        </a>
+    
+    </div>
+</div>
+      
+        <div class="post-nav">
+    <div style="border: 1px dashed #e0e0e0; padding: 10px 10px 10px 10px; background-color: #fffeee; background-repeat: no-repeat; background-attachment: scroll; background-position: 1% 50%; -moz-background-size: auto auto; -moz-background-clip: -moz-initial; -moz-background-origin: -moz-initial; -moz-background-inline-policy: -moz-initial;">
+        <div style="float:left;margin-top:0px;">
+            <img src="https://i.loli.net/2020/02/09/SvhUdz4XJsOr9Vk.jpg" width="128px" height="128px"/>
+            <div style="text-align:center;">谢谢支持!</div>
+        </div>
+        <div>
+            <p style="margin-top:10px;">
+                标题：Swift 方法交换中的addMethod
+                <br />作者：阿呆<a target="_blank" href="https://iihui.github.io/"></a>
+                
+                <br />地址：https://iihui.github.io/post/ios-addmethod/
+                <br />声明：自由转载-非商用-保持署名（创作共享4.0许可证）
+            </p>
+        </div>
+    </div>
+    <div class="clear"></div>
+</div>
+        
+        
+        
+
+
+
+
+    </footer>
+  </article>
+</section>
+
+          </div>
+        </div>
+        <div class="sidebar-toggle">
+  <div class="sidebar-toggle-line-wrap">
+    <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+    <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+    <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+  </div>
+</div>
+<aside id="sidebar" class="sidebar">
+  <div class="sidebar-inner">
+
+  <ul class="sidebar-nav motion-element">
+    <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+      文章目录
+    </li>
+    <li class="sidebar-nav-overview" data-target="site-overview">
+      站点概览
+    </li>
+  </ul>
+
+    <section class="site-overview sidebar-panel ">
+      <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image"
+        src="https://i.loli.net/2020/02/07/dVFzrvZkHRNq2lL.jpg"
+        alt="" />
+    <p class="site-author-name" itemprop="name"></p>
+    <p class="site-description motion-element" itemprop="description"> 
+        coder &amp; cook</p>
+</div>
+      <nav class="site-state motion-element">
+    <div class="site-state-item site-state-posts">
+      <a href="https://iihui.github.io/post/">
+        <span class="site-state-item-count">142</span>
+        <span class="site-state-item-name">日志</span>
+      </a>
+    </div>
+    <div class="site-state-item site-state-categories">    
+        <a href="https://iihui.github.io/categories/">      
+         
+        <span class="site-state-item-count">18</span>
+        
+        <span class="site-state-item-name">分类</span>
+        
+        </a>
+    </div>
+
+    <div class="site-state-item site-state-tags">
+        <a href="https://iihui.github.io/tags/">
+         
+        <span class="site-state-item-count">31</span>
+        
+        <span class="site-state-item-name">标签</span>
+        </a>
+    </div>
+</nav>
+      
+      
+<div class="links-of-author motion-element">
+    
+        <span class="links-of-author-item">
+        <a href="https://coolshell.cn" target="_blank" title="皓 大">
+            <i class="fa fa-fw fa-globe"></i>
+            皓 大
+        </a>
+        </span>
+    
+        <span class="links-of-author-item">
+        <a href="http://www.ruanyifeng.com" target="_blank" title="阮 大">
+            <i class="fa fa-fw fa-globe"></i>
+            阮 大
+        </a>
+        </span>
+    
+        <span class="links-of-author-item">
+        <a href="https://juejin.im/" target="_blank" title="掘 金">
+            <i class="fa fa-fw fa-globe"></i>
+            掘 金
+        </a>
+        </span>
+    
+        <span class="links-of-author-item">
+        <a href="http://www.ideamsg.com" target="_blank" title="灵 感">
+            <i class="fa fa-fw fa-globe"></i>
+            灵 感
+        </a>
+        </span>
+    
+</div>
+
+
+      
+
+      <div class="links-of-blogroll motion-element inline">
+<script type="text/javascript" src="//rf.revolvermaps.com/0/0/8.js?i=&amp;m=0&amp;s=220&amp;c=ff0000&amp;cr1=ffffff&amp;f=arial&amp;l=33&amp;bv=35" async="async"></script>
+</div>
+
+    </section>
+    
+<section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+    <div class="post-toc">
+        <div class="post-toc-content"><nav id="TableOfContents">
+  <ul>
+    <li><a href="#class_addmethod">class_addMethod</a>
+      <ul>
+        <li><a href="#存在的问题">存在的问题</a></li>
+        <li><a href="#完善的方案">完善的方案</a></li>
+      </ul>
+    </li>
+    <li><a href="#构建工具类">构建工具类</a></li>
+  </ul>
+</nav></div>
+    </div>
+</section>
+
+  </div>
+</aside>
+
+      </div>
+    </main>
+   
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  <span itemprop="copyrightYear">  &copy; 
+  2017 - 2022</span>
+  <span class="with-love"><i class="fa fa-heart"></i></span>
+  <span class="author" itemprop="copyrightHolder">Keep It Simple</span>
+</div>
+
+
+
+
+      </div>
+    </footer>
+
+    <div class="back-to-top">
+      <i class="fa fa-arrow-up"></i>
+      <span id="scrollpercent"><span>0</span>%</span>
+    </div>
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+<script type="text/javascript" src="https://iihui.github.io/js/vendor/jquery/index.js?v=2.1.3"></script>
+<script type="text/javascript" src="https://iihui.github.io/js/vendor/fastclick/lib/fastclick.min.js?v=1.0.6"></script> 
+<script type="text/javascript" src="https://iihui.github.io/js/vendor/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+<script type="text/javascript" src="https://iihui.github.io/js/vendor/velocity/velocity.min.js?v=1.2.1"></script>
+<script type="text/javascript" src="https://iihui.github.io/js/vendor/velocity/velocity.ui.min.js?v=1.2.1"></script>
+<script src="https://iihui.github.io/js/vendor/ua-parser-js/dist/ua-parser.min.js?v=0.7.9"></script>
+
+<script src="https://iihui.github.io/js/vendor/fancybox/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+<script type="text/javascript" src="https://iihui.github.io/js/utils.js"></script>
+<script type="text/javascript" src="https://iihui.github.io/js/motion.js"></script>
+<script type="text/javascript" src="https://iihui.github.io/js/affix.js"></script>
+<script type="text/javascript" src="https://iihui.github.io/js/schemes/pisces.js"></script>
+
+<script type="text/javascript" src="https://iihui.github.io/js/scrollspy.js"></script>
+<script type="text/javascript" src="https://iihui.github.io/js/post-details.js"></script>
+<script type="text/javascript" src="https://iihui.github.io/js/toc.js"></script>
+
+<script type="text/javascript" src="https://iihui.github.io/js/bootstrap.js"></script>
+
+<script type="text/javascript" src="https://iihui.github.io/js/search.js"></script>
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+    extensions: ["tex2jax.js"],
+    jax: ["input/TeX", "output/HTML-CSS"],
+    tex2jax: {
+      inlineMath: [ ['$','$'] ],
+      displayMath: [ ['$$','$$'] ],
+      processEscapes: true
+    },
+    "HTML-CSS": { fonts: ["TeX"] }
+  });
+</script>
+<script src='https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-AMS-MML_HTMLorMML' async></script>
+</body>
+</html>

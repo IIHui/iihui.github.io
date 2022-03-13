@@ -1,0 +1,1122 @@
+<!DOCTYPE HTML>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" /> 
+    <title>Objective-C Runtime - Keep It Simple</title>
+    <meta name="keywords" content="博客,思考,读书,笔记,技术,分享">
+    
+    <meta property="og:title" content="Objective-C Runtime">
+    <meta property="og:site_name" content="Keep It Simple">
+    <meta property="og:image" content="/img/author.jpg"> 
+    <meta name="title" content="Objective-C Runtime - Keep It Simple" />
+    <meta name="description" content="Swift | Go | C&#43;&#43; "> 
+    <link rel="shortcut icon" href="https://iihui.github.io/img/favicon.ico" />
+    <link rel="apple-touch-icon" href="https://iihui.github.io/img/apple-touch-icon.png" />
+    <link rel="apple-touch-icon-precomposed" href="https://iihui.github.io/img/apple-touch-icon.png" />
+    <link href="https://iihui.github.io/js/vendor/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+    <link href="https://iihui.github.io/js/vendor/fancybox/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+    <link href="https://iihui.github.io/css/main.css" rel="stylesheet" type="text/css" />
+    <link href="https://iihui.github.io/css/custom.css" rel="stylesheet" type="text/css" />
+    <link href="https://iihui.github.io/css/syntax.css" rel="stylesheet" type="text/css" />
+    <script type="text/javascript" id="hexo.configuration">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    scheme: 'Pisces',
+    sidebar: {"position":"left","display":"post"},
+     fancybox: true, 
+    motion: true
+  };
+</script>
+
+    <link href="https://cdn.bootcss.com/highlight.js/9.12.0/styles/monokai-sublime.min.css" rel="stylesheet">
+    <script src="https://cdn.bootcss.com/highlight.js/9.12.0/highlight.min.js"></script>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/languages/go.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/languages/swift.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.1/languages/objectivec.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.1/languages/clojure.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.1/languages/cpp.min.js"></script>
+    <script>hljs.initHighlightingOnLoad();</script>
+
+
+</head>
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+<div class="container one-collumn sidebar-position-left page-home  ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"> <div class="site-meta  custom-logo ">
+
+  <div class="custom-logo-site-title">
+    <a href="https://iihui.github.io/"  class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <span class="site-title">Keep It Simple</span>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+  <p class="site-subtitle">靡不有初，鲜克有终</p>
+</div>
+
+<div class="site-nav-toggle">
+  <button>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+  </button>
+</div>
+
+<nav class="site-nav">
+    <ul id="menu" class="menu">
+      
+      
+        <li class="menu-item ">
+          <a href="https://iihui.github.io/" rel="section">
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />首页
+          </a>
+        </li>
+      
+        <li class="menu-item ">
+          <a href="https://iihui.github.io/tags/" rel="section">
+              <i class="menu-item-icon fa fa-fw fa-tag"></i> <br />标签
+          </a>
+        </li>
+      
+        <li class="menu-item ">
+          <a href="https://iihui.github.io/post/" rel="section">
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />归档
+          </a>
+        </li>
+      
+        <li class="menu-item ">
+          <a href="https://iihui.github.io/categories/%E7%BE%8E%E9%A3%9F/" rel="section">
+              <i class="menu-item-icon fa fa-fw fa-fire"></i> <br />美食
+          </a>
+        </li>
+      
+        <li class="menu-item ">
+          <a href="https://iihui.github.io/categories/%E5%90%8E%E6%9C%9F/" rel="section">
+              <i class="menu-item-icon fa fa-fw fa-edit"></i> <br />后期
+          </a>
+        </li>
+      
+        <li class="menu-item ">
+          <a href="https://iihui.github.io/categories/%E6%97%85%E8%A1%8C/" rel="section">
+              <i class="menu-item-icon fa fa-fw fa-leaf"></i> <br />旅行
+          </a>
+        </li>
+      
+        <li class="menu-item ">
+          <a href="https://iihui.github.io/about/" rel="section">
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />关于
+          </a>
+        </li>
+      
+      <li class="menu-item menu-item-search">
+        <a href="javascript:;" class="popup-trigger"> <i class="menu-item-icon fa fa-search fa-fw"></i> <br /> 搜索</a>
+      </li>
+    </ul>
+    <div class="site-search">
+      <div class="popup">
+ <span class="search-icon fa fa-search"></span>
+ <input type="text" id="local-search-input">
+ <div id="local-search-result"></div>
+ <span class="popup-btn-close">close</span>
+</div>
+
+    </div>
+</nav>
+<script type="text/javascript"
+        async
+        src="https://cdn.bootcss.com/mathjax/2.7.3/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+		<!-- src = "http://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"> <\!--  -\-> -->
+MathJax.Hub.Config({
+  tex2jax: {
+    inlineMath: [['$','$'], ['\\(','\\)']],
+    displayMath: [['$$','$$'], ['\[\[','\]\]']],
+    processEscapes: true,
+    processEnvironments: true,
+    skipTags: ['script', 'noscript', 'style', 'textarea', 'pre'],
+    TeX: { equationNumbers: { autoNumber: "AMS" },
+         extensions: ["AMSmath.js", "AMSsymbols.js"] }
+  }
+});
+
+MathJax.Hub.Queue(function() {
+    
+    
+    
+    var all = MathJax.Hub.getAllJax(), i;
+    for(i = 0; i < all.length; i += 1) {
+        all[i].SourceElement().parentNode.className += ' has-jax';
+    }
+});
+</script>
+
+<style>
+code.has-jax {
+    font: inherit;
+    font-size: 100%;
+    background: inherit;
+    border: inherit;
+    color: #515151;
+}
+</style>
+
+<!DOCTYPE html>
+<html lang="en">
+
+
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.10.0-rc.1/dist/katex.min.css" integrity="sha384-D+9gmBxUQogRLqvARvNLmA9hS2x//eK1FhVb9PiU86gmcrBrJAQT8okdJ4LMp2uv" crossorigin="anonymous">
+
+    
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.10.0-rc.1/dist/katex.min.js" integrity="sha384-483A6DwYfKeDa0Q52fJmxFXkcPCFfnXMoXblOkJ4JcA8zATN6Tm78UNL72AKk+0O" crossorigin="anonymous"></script>
+</head>
+<body>
+
+</body>
+</html>
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+<section id="posts" class="posts-expand">
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <header class="post-header">
+      <h1 class="post-title" itemprop="name headline">
+        <a class="post-title-link" href="https://iihui.github.io/post/post/oc-runtime/" itemprop="url">
+        Objective-C Runtime
+        </a>
+      </h1>
+      <div class="post-meta">
+      <span class="post-time">
+<span class="post-meta-item-icon">
+    <i class="fa fa-calendar-o"></i>
+</span>
+<span class="post-meta-item-text">创建: </span>
+<time itemprop="dateCreated" datetime="2016-03-22T13:04:35+08:00" content="2020-02-04">
+    2020-02-04
+</time>
+</span>
+&nbsp; | &nbsp;
+<span class="post-updated-time">
+<span class="post-meta-item-icon">
+    <i class="fa fa-calendar-check-o"></i>
+</span>
+<span class="post-meta-item-text">更新: </span>
+<time itemprop="dateUpdated" content="2020-02-04">
+    2020-02-04
+</time>
+</span> 
+      
+
+  <span class="post-category" >
+  &nbsp; | &nbsp;
+  <span class="post-meta-item-icon">
+    <i class="fa fa-folder-o"></i>
+  </span>
+  <span class="post-meta-item-text">分类: </span>
+  
+    <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
+      <a href="https://iihui.github.io/categories/code" itemprop="url" rel="index">
+        <span itemprop="name">code</span>
+      </a>
+      &nbsp; 
+    </span>
+  
+</span>
+
+
+      <span>
+&nbsp; | &nbsp;
+<span class="post-meta-item-icon">
+    <i class="fa fa-file-word-o"></i>
+</span>
+<span class="post-meta-item-text">字数: </span>
+<span class="leancloud-visitors-count">8729</span>
+&nbsp; | &nbsp;
+<span class="post-meta-item-icon">
+    <i class="fa fa-coffee"></i>
+</span>
+<span class="post-meta-item-text">阅读: </span>
+<span class="leancloud-visitors-count">18 分钟</span>
+</span>
+      </div>
+    </header>
+    <div class="post-body" itemprop="articleBody">
+    <blockquote>
+<p><code>Objective-C</code>扩展了<code>C</code>语言，并加入了<!-- raw HTML omitted -->面向对象特性和<code>Smalltalk</code>式的消息传递机制<!-- raw HTML omitted -->。而这个扩展的核心是一个用<code>C</code>写的<code>Runtime</code>库，它是<code>OC</code>面向对象和动态机制的基石。<code>OC</code>的<code>Runtime</code>用于创建类对象、进行消息传递和转发。理解<code>OC</code>的<code>Runtime</code>机制可以更好地了解这个语言，适当的时候还能对语言进行扩展，从系统层面解决项目中的一些设计或技术问题。理解<code>Runtime</code>，首先应该了解它的核心——消息传递（<code>Messaging</code>）机制。</p>
+</blockquote>
+<h1 id="runtime版本">Runtime版本</h1>
+<p><code>Runtime</code>有两个版本: <code>modern</code>和<code>legacy</code>版。现用的<code>Objective-C 2.*</code>是<code>Modern</code> 版，只能运行在<code>iOS</code>和<code>macOS 10.5</code>之后的<code>64</code>位程序中。而<code>macOS</code>较老的<code>32</code>位程序仍采用<code>Objective-C 1.*</code>中的<code>Legacy</code>版本。两个版本最大的区别在于：<!-- raw HTML omitted -->当更改一个类的实例变量布局时，在早期版本中需要重新编译它的子类，而<code>Modern</code>版不需要重新编译子类<!-- raw HTML omitted -->。</p>
+<p>高级编程语言想要成为可执行文件需要先编译为汇编语言，再将汇编语言转换为机器语言（机器语言是计算机能够识别的唯一语言）。但是，<!-- raw HTML omitted --><code>OC</code>并不能直接编译为汇编语言，而是要先转写为纯<code>C</code>语言再进行编译和汇编操作，从<code>OC</code>到<code>C</code>的过渡是由<code>runtime</code>库来实现的<!-- raw HTML omitted -->。因为<code>OC</code>主要进行面向对象开发，而<code>C</code>语言是面向过程开发，这就需要将面向对象的类转变为面向过程的结构体。</p>
+<p><img src="https://i.loli.net/2020/02/05/eF8MSkxbqKYnJ7d.jpg" alt="-c"></p>
+<h1 id="消息传递">消息传递</h1>
+<p>所有的<code>OC</code>方法调用<code>[receiver selector]</code><!-- raw HTML omitted -->在编译时都会转化为对应的<code>C</code>函数<code>objc_msgSend(receiver，selector)</code>的调用。<!-- raw HTML omitted --> 例如一个对象方法调用<code>[obj,foo]</code>，<code>Runtime</code>执行方法调用的过程如下：</p>
+<ul>
+<li>
+<p>首先，通过<code>obj</code>的<code>isa</code>指针找到它的<code>class</code></p>
+</li>
+<li>
+<p>然后，在<code>obj</code>的<code>class</code>的<code>objc_method_list</code>找<code>foo</code></p>
+</li>
+<li>
+<p>如果<code>class</code>的<code>objc_method_list</code>中没到<code>foo</code>，继续往它的<code>super_class</code>中寻找<code>foo</code></p>
+</li>
+<li>
+<p>若找到<code>foo</code>这个函数，就去执行它的实现<code>IMP</code>，否则报错</p>
+</li>
+</ul>
+<p>但上述流程存在效率低的问题：通常一个<code>class</code>只有<code>20%</code>的函数经常被调用，可能占总调用次数的<code>80%</code>，所以每次消息传递的时候都遍历一次<code>objc_method_list</code>并不合理。如果把经常被调用的函数缓存下来，就可以大大提高函数的查询效率。<code>objc_cache</code>就是做这样的事情，当找到<code>selector</code>后，它将<code>selector</code>的<code>method_name</code>作为<code>key</code>，<code>method_imp</code>作为<code>value</code>存储起来，当再次收到<code>selector</code>消息时，可以直接在<code>objc_cache</code>里找到，避免去遍历<code>objc_method_list</code>。</p>
+<h2 id="objc_msgsend定义">objc_msgSend定义</h2>
+<p>在<code>runtime</code>中，<code>objc_msgSend</code>的定义如下：</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-objc" data-lang="objc">OBJC_EXPORT <span style="color:#66d9ef">id</span> objc_msgSend(<span style="color:#66d9ef">id</span> self, <span style="color:#66d9ef">SEL</span> op, ...)
+</code></pre></div><p>要了解消息传递机制，首先需要了解类<code>objc_class</code>、对象<code>objc_object</code>、方法<code>objc_method</code>这几个结构体。</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-objc" data-lang="objc"><span style="color:#75715e">//对象
+</span><span style="color:#75715e"></span><span style="color:#66d9ef">struct</span> objc_object {
+    <span style="color:#66d9ef">Class</span> isa  OBJC_ISA_AVAILABILITY;
+};
+<span style="color:#75715e">//类
+</span><span style="color:#75715e"></span><span style="color:#66d9ef">struct</span> objc_class {
+    <span style="color:#66d9ef">Class</span> isa  OBJC_ISA_AVAILABILITY;
+<span style="color:#75715e">#if !__OBJC2__
+</span><span style="color:#75715e"></span>    <span style="color:#66d9ef">Class</span> super_class                                        OBJC2_UNAVAILABLE;
+    <span style="color:#66d9ef">const</span> <span style="color:#66d9ef">char</span> <span style="color:#f92672">*</span>name                                         OBJC2_UNAVAILABLE;
+    <span style="color:#66d9ef">long</span> version                                             OBJC2_UNAVAILABLE;
+    <span style="color:#66d9ef">long</span> info                                                OBJC2_UNAVAILABLE;
+    <span style="color:#66d9ef">long</span> instance_size                                       OBJC2_UNAVAILABLE;
+    <span style="color:#66d9ef">struct</span> objc_ivar_list <span style="color:#f92672">*</span>ivars                             OBJC2_UNAVAILABLE;
+    <span style="color:#66d9ef">struct</span> objc_method_list <span style="color:#f92672">**</span>methodLists                    OBJC2_UNAVAILABLE;
+    <span style="color:#66d9ef">struct</span> objc_cache <span style="color:#f92672">*</span>cache                                 OBJC2_UNAVAILABLE;
+    <span style="color:#66d9ef">struct</span> objc_protocol_list <span style="color:#f92672">*</span>protocols                     OBJC2_UNAVAILABLE;
+<span style="color:#75715e">#endif
+</span><span style="color:#75715e"></span>} OBJC2_UNAVAILABLE;
+<span style="color:#75715e">//方法列表
+</span><span style="color:#75715e"></span><span style="color:#66d9ef">struct</span> objc_method_list {
+    <span style="color:#66d9ef">struct</span> objc_method_list <span style="color:#f92672">*</span>obsolete                        OBJC2_UNAVAILABLE;
+    <span style="color:#66d9ef">int</span> method_count                                         OBJC2_UNAVAILABLE;
+<span style="color:#75715e">#ifdef __LP64__
+</span><span style="color:#75715e"></span>    <span style="color:#66d9ef">int</span> space                                                OBJC2_UNAVAILABLE;
+<span style="color:#75715e">#endif
+</span><span style="color:#75715e"></span>    <span style="color:#75715e">/* variable length structure */</span>
+    <span style="color:#66d9ef">struct</span> objc_method method_list[<span style="color:#ae81ff">1</span>]                        OBJC2_UNAVAILABLE;
+}                                                            OBJC2_UNAVAILABLE;
+<span style="color:#75715e">//方法
+</span><span style="color:#75715e"></span><span style="color:#66d9ef">struct</span> objc_method {
+    <span style="color:#66d9ef">SEL</span> method_name                                          OBJC2_UNAVAILABLE;
+    <span style="color:#66d9ef">char</span> <span style="color:#f92672">*</span>method_types                                       OBJC2_UNAVAILABLE;
+    <span style="color:#66d9ef">IMP</span> method_imp                                           OBJC2_UNAVAILABLE;
+}
+</code></pre></div><h3 id="类对象objc_class">类对象objc_class</h3>
+<p>在<code>OC</code>中，类是由<code>Class</code>类型来表示的，它实际上是一个指向<code>objc_class</code>结构体的指针：</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-objc" data-lang="objc"><span style="color:#66d9ef">typedef</span> <span style="color:#66d9ef">struct</span> objc_class <span style="color:#f92672">*</span><span style="color:#66d9ef">Class</span>; <span style="color:#75715e">//Class是一个指向objc_class 的指针
+</span></code></pre></div><p>其中<code>objc_class</code>结构体在<code>objc/runtime.h</code>中的定义如下：</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-objc" data-lang="objc"><span style="color:#66d9ef">struct</span> objc_class {
+    <span style="color:#66d9ef">Class</span> _Nonnull isa  OBJC_ISA_AVAILABILITY;
+
+<span style="color:#75715e">#if !__OBJC2__
+</span><span style="color:#75715e"></span>    <span style="color:#66d9ef">Class</span> _Nullable super_class  OBJC2_UNAVAILABLE; <span style="color:#75715e">// 指向父类的指针
+</span><span style="color:#75715e"></span>    <span style="color:#66d9ef">const</span> <span style="color:#66d9ef">char</span> <span style="color:#f92672">*</span> _Nonnull name   OBJC2_UNAVAILABLE; <span style="color:#75715e">// 类的名字
+</span><span style="color:#75715e"></span>    <span style="color:#66d9ef">long</span> version                 OBJC2_UNAVAILABLE; <span style="color:#75715e">// 类的版本信息，默认为 0
+</span><span style="color:#75715e"></span>    <span style="color:#66d9ef">long</span> info                    OBJC2_UNAVAILABLE; <span style="color:#75715e">// 类的信息，供运行期使用的一些位标识
+</span><span style="color:#75715e"></span>
+    <span style="color:#66d9ef">long</span> instance_size           OBJC2_UNAVAILABLE; <span style="color:#75715e">// 该类的实例变量大小;
+</span><span style="color:#75715e"></span>    <span style="color:#66d9ef">struct</span> objc_ivar_list <span style="color:#f92672">*</span> _Nullable ivars OBJC2_UNAVAILABLE; <span style="color:#75715e">// 该类的实例变量列表
+</span><span style="color:#75715e"></span>    <span style="color:#66d9ef">struct</span> objc_method_list <span style="color:#f92672">*</span> _Nullable <span style="color:#f92672">*</span> _Nullable methodLists OBJC2_UNAVAILABLE; <span style="color:#75715e">// 方法定义的列表
+</span><span style="color:#75715e"></span>    <span style="color:#66d9ef">struct</span> objc_cache <span style="color:#f92672">*</span> _Nonnull cache  OBJC2_UNAVAILABLE;  <span style="color:#75715e">// 方法缓存
+</span><span style="color:#75715e"></span>    <span style="color:#66d9ef">struct</span> objc_protocol_list <span style="color:#f92672">*</span> _Nullable protocols OBJC2_UNAVAILABLE; <span style="color:#75715e">// 遵守的协议列表
+</span><span style="color:#75715e"></span><span style="color:#75715e">#endif
+</span><span style="color:#75715e"></span>} OBJC2_UNAVAILABLE;
+</code></pre></div><p>类对象就是一个结构体<code>struct objc_class</code>，这个结构体存放的数据称为元数据(<code>metadata</code>)。该结构体的第一个成员变量也是<code>isa</code>指针，这说明了<code>Class</code>本身其实是一个对象，称之为类对象。类对象在编译期产生用于创建实例对象，是单例。</p>
+<h3 id="实例对象object">实例对象(object)</h3>
+<p>在<code>objc/runtime.h</code>中，对象被定义为指向<code>objc_object</code>结构体的指针，<code>objc_object</code>结构体的定义如下：</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-objc" data-lang="objc"><span style="color:#75715e">//runtime对objc_object结构体的定义
+</span><span style="color:#75715e"></span><span style="color:#66d9ef">struct</span> objc_object {
+    <span style="color:#66d9ef">Class</span> isa  OBJC_ISA_AVAILABILITY; <span style="color:#75715e">//objc_object只有一个成员，就是指向O
+</span><span style="color:#75715e"></span>};
+
+<span style="color:#75715e">//id是一个指向objc_object结构体的指针：
+</span><span style="color:#75715e"></span><span style="color:#66d9ef">typedef</span> <span style="color:#66d9ef">struct</span> objc_object <span style="color:#f92672">*</span><span style="color:#66d9ef">id</span>; <span style="color:#75715e">//id是指向objc_class指针的指针
+</span></code></pre></div><p>类对象中的元数据存储的都是如何创建一个实例的相关信息，那么类对象和类方法应该从哪里创建呢？就是从<code>isa</code>指针指向的结构体创建，类对象的<code>isa</code>指针指向的我们称之为元类(<code>meatclass</code>)，元类中保存了创建类对象以及类方法所需的所有信息，因此整个结构应该如下图所示:</p>
+<p><img src="https://i.loli.net/2020/02/11/aE4sNtSK7gyYZ63.jpg" alt="-c"></p>
+<h3 id="元类meta-class">元类(meta class)</h3>
+<p>通过上图可以看出整个体系构成了一个自闭环，<code>struct objc_object</code>结构体实例的<code>isa</code>指针指向类对象，类对象的<code>isa</code>指针指向了元类，<code>super_class</code>指针指向了父类的类对象，而元类的<code>super_class</code>指针指向了父类的元类，那元类的<code>isa</code>指针又指向了自己(<!-- raw HTML omitted -->还不理解为什么会指向自己<!-- raw HTML omitted -->)。</p>
+<p>元类(<code>Meta Class</code>)是一个类对象的类。在上面我们提到，<!-- raw HTML omitted -->所有的类自身也是一个对象<!-- raw HTML omitted -->，我们可以向这个对象发送消息(即调用类方法)。为了调用类方法，这个类的<code>isa</code>指针必须指向一个包含这些类方法的一个<code>objc_class</code>结构体。这就引出了<code>meta-class</code>的概念，<!-- raw HTML omitted -->元类中保存了创建类对象以及类方法所需的所有信息<!-- raw HTML omitted -->。</p>
+<p><img src="https://i.loli.net/2020/02/11/aE4sNtSK7gyYZ63.jpg" alt="-c"></p>
+<p>任何<code>NSObject</code>继承体系下的<code>meta-class</code>都使用<code>NSObject</code>的<code>meta-class</code>作为自己的所属类，而基类的<code>meta-class</code>的<code>isa</code>指针是指向它自己。</p>
+<h3 id="方法method">方法(method)</h3>
+<p>首先看一下<code>objc_method</code>的定义：</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-objc" data-lang="objc">runtime.h
+<span style="color:#75715e">/// An opaque type that represents a method in a class definition.代表类定义中一个方法的不透明类型
+</span><span style="color:#75715e"></span><span style="color:#66d9ef">typedef</span> <span style="color:#66d9ef">struct</span> objc_method <span style="color:#f92672">*</span>Method;
+<span style="color:#66d9ef">struct</span> objc_method {
+    <span style="color:#66d9ef">SEL</span> method_name    OBJC2_UNAVAILABLE; <span style="color:#75715e">//方法名
+</span><span style="color:#75715e"></span>    <span style="color:#66d9ef">char</span> <span style="color:#f92672">*</span>method_types OBJC2_UNAVAILABLE; <span style="color:#75715e">//方法类型
+</span><span style="color:#75715e"></span>    <span style="color:#66d9ef">IMP</span> method_imp     OBJC2_UNAVAILABLE; <span style="color:#75715e">//方法实现
+</span></code></pre></div><p>在<code>objc_method</code>的定义中，可以看到<code>SEL</code>和<code>IMP</code>，这说明<code>SEL</code>和<code>IMP</code>都是方法的属性:</p>
+<ul>
+<li>
+<p><code>SEL method_name</code>方法名</p>
+</li>
+<li>
+<p><code>char * method_types</code> 方法类型</p>
+</li>
+<li>
+<p><code>IMP method_imp</code> 方法实现</p>
+</li>
+</ul>
+<h3 id="sel方法选择器">SEL方法选择器</h3>
+<p><code>ojbc_msgSend</code>函数第二个参数类型为<code>SEL</code>，可以理解为用于区分方法的<code>ID</code>，这个<code>ID</code>的数据结构就是<code>SEL</code>：</p>
+<p>在<code>objc/runtime.h</code>,<code>SEL</code>被定义为指向<code>objc_selector</code>结构体的指针：</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-objc" data-lang="objc"><span style="color:#75715e">///objc.h
+</span><span style="color:#75715e">/// An opaque type that represents a method selector.代表一个方法的不透明类型
+</span><span style="color:#75715e"></span><span style="color:#66d9ef">typedef</span> <span style="color:#66d9ef">struct</span> objc_selector <span style="color:#f92672">*</span><span style="color:#66d9ef">SEL</span>;
+</code></pre></div><p>而<code>selector</code>是<code>SEL</code>的一个实例：</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-objc" data-lang="objc"><span style="color:#66d9ef">@property</span> <span style="color:#66d9ef">SEL</span> selector;
+</code></pre></div><p><code>selector</code>的解释为：</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-fallback" data-lang="fallback">A method selector is a C string that has been registered (or “mapped“) with the Objective-C runtime. 
+Selectors generated by the compiler are automatically mapped by the runtime when the class is loaded.
+</code></pre></div><p>也就是说<code>selector</code>就是个映射到方法的<code>C字符串</code>，可以用<code>OC</code>编译器命令<code>@selector()</code>或者<code>Runtime</code>系统的<code>sel_registerName</code>函数来获得一个<code>SEL</code>类型的方法选择器。</p>
+<p><code>selector</code>既然是一个字符串，应该类似<code>className+method</code>的组合，命名的规则有两条：</p>
+<ul>
+<li>
+<p>同一个类，<code>selector</code>不能重复</p>
+</li>
+<li>
+<p>不同的类，<code>selector</code>可以重复</p>
+</li>
+</ul>
+<p>这也带来个弊端，就是在写<code>C</code>代码的时候，经常会用到函数重载，就是函数名相同，参数不同。但在<code>OC</code>中行不通，因为<code>selector</code>只记了<code>method</code>的<code>name</code>，没有参数，所以没法区分不同的<code>method</code>。</p>
+<p>比如下面代码在<code>OC</code>中是会报错的：</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-objc" data-lang="objc">- (<span style="color:#66d9ef">void</span>)<span style="color:#a6e22e">caculate</span>(NSInteger)num;
+- (<span style="color:#66d9ef">void</span>)<span style="color:#a6e22e">caculate</span>(CGFloat)num;
+</code></pre></div><p>所以只能通过命名来区分：</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-objc" data-lang="objc">- (<span style="color:#66d9ef">void</span>)<span style="color:#a6e22e">caculateWithInt</span>(NSInteger)num;
+- (<span style="color:#66d9ef">void</span>)<span style="color:#a6e22e">caculateWithFloat</span>(CGFloat)num;
+</code></pre></div><h3 id="imp">IMP</h3>
+<p><code>IMP</code>是指向一个方法实现的指针，实质上就是指向最终实现程序的内存地址的指针，它的定义为：</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-objc" data-lang="objc"><span style="color:#75715e">/// A pointer to the function of a method implementation.  指向一个方法实现的指针
+</span><span style="color:#75715e"></span><span style="color:#66d9ef">typedef</span> <span style="color:#a6e22e">id</span> (<span style="color:#f92672">*</span><span style="color:#66d9ef">IMP</span>)(<span style="color:#66d9ef">id</span>, <span style="color:#66d9ef">SEL</span>, ...); 
+<span style="color:#75715e">#endif
+</span></code></pre></div><p>在<code>iOS</code>的<code>runtime</code>中，方法通过<code>selector</code>和<code>IMP</code>两个属性，实现了快速查询方法及其实现，相对提高了性能，又保持了灵活性。</p>
+<p><code>Objective-C</code>在编译时，会依据每一个方法的名字、参数序列，生成一个唯一的整型标识(Int类型的地址)，这个标识就是SEL</p>
+<h3 id="categoryobjc_catory">Category(objc_catory)</h3>
+<p>当<code>Catrgory</code>表示一个指向分类的结构体的指针，它的定义如下：</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-objc" data-lang="objc"><span style="color:#66d9ef">struct</span> category_t { 
+    <span style="color:#66d9ef">const</span> <span style="color:#66d9ef">char</span> <span style="color:#f92672">*</span>name; 
+    classref_t cls; 
+    <span style="color:#66d9ef">struct</span> method_list_t <span style="color:#f92672">*</span>instanceMethods; 
+    <span style="color:#66d9ef">struct</span> method_list_t <span style="color:#f92672">*</span>classMethods;
+    <span style="color:#66d9ef">struct</span> protocol_list_t <span style="color:#f92672">*</span>protocols;
+    <span style="color:#66d9ef">struct</span> property_list_t <span style="color:#f92672">*</span>instanceProperties;
+};
+</code></pre></div><ul>
+<li>
+<p><code>name</code>是<code>class_name</code>而不是<code>category_name</code>。</p>
+</li>
+<li>
+<p><code>cls</code>表示要扩展的类对象，编译期间是不会定义的，而是在<code>Runtime</code>阶段通过<code>name</code>对应到相应的类对象。</p>
+</li>
+<li>
+<p><code>instanceMethods</code>表示<code>category</code>中所有给类<!-- raw HTML omitted -->添加的实例方法的列表。<!-- raw HTML omitted --></p>
+</li>
+<li>
+<p><code>classMethods</code>表示<code>category</code>中所有<!-- raw HTML omitted -->添加的类方法的列表。<!-- raw HTML omitted --></p>
+</li>
+<li>
+<p><code>protocols</code> 表示<code>category</code>实现的所有协议的列表。</p>
+</li>
+<li>
+<p><code>instanceProperties</code> 表示<code>category</code>里所有的<code>Properties</code>，这就是我们可以通过<code>objc_setAssociatedObject</code>和<code>objc_getAssociatedObject</code>增加实例变量的原因，不过<!-- raw HTML omitted -->这个和一般的实例变量是不一样的<!-- raw HTML omitted -->。</p>
+</li>
+</ul>
+<p>从上面的<code>category_t</code>结构体中可以看出，分类中<!-- raw HTML omitted -->可以添加实例方法，类方法，甚至可以实现协议，添加属性，不可以添加成员变量<!-- raw HTML omitted -->。</p>
+<h2 id="runtime消息转发">Runtime消息转发</h2>
+<p><code>OC</code>在发送消息时会在相关的类对象中搜索方法列表，如果<!-- raw HTML omitted -->找不到则会沿着继承树向上一直搜索直到树根部<!-- raw HTML omitted -->（<code>NSObject</code>），如果还是找不到，那么消息转发就是失败了。此时，会执行<code>doesNotRecognizeSelector:</code>方法，报<code>unrecognized selector</code>错。</p>
+<p><img src="https://i.loli.net/2020/02/11/7evjmzwNfsg4UnJ.jpg" alt=""></p>
+<h3 id="动态方法转发">动态方法转发</h3>
+<p>首先，<code>OC</code>运行时会调用<code>+resolveInstanceMethod:</code>或者 <code>+resolveClassMethod:</code>，让你有机会提供一个函数实现。如果<!-- raw HTML omitted -->添加了函数并返回<code>YES</code>，那运行时系统就会重新启动一次消息发送的过程<!-- raw HTML omitted -->。</p>
+<p>实现一个动态方法解析的例子：</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-objc" data-lang="objc">- (<span style="color:#66d9ef">void</span>)<span style="color:#a6e22e">viewDidLoad</span> {
+    [super viewDidLoad];
+    <span style="color:#75715e">// Do any additional setup after loading the view, typically from a nib.
+</span><span style="color:#75715e"></span>    <span style="color:#75715e">//执行foo函数
+</span><span style="color:#75715e"></span>    [self performSelector:<span style="color:#66d9ef">@selector</span>(foo:)];
+}
+
++ (<span style="color:#66d9ef">BOOL</span>)<span style="color:#a6e22e">resolveInstanceMethod:</span>(<span style="color:#66d9ef">SEL</span>)sel {
+    <span style="color:#66d9ef">if</span> (sel <span style="color:#f92672">==</span> <span style="color:#66d9ef">@selector</span>(foo:)) {<span style="color:#75715e">//如果是执行foo函数，就动态解析，指定新的IMP
+</span><span style="color:#75715e"></span>        class_addMethod([self <span style="color:#66d9ef">class</span>], sel, (<span style="color:#66d9ef">IMP</span>)fooMethod, <span style="color:#e6db74">&#34;v@:&#34;</span>);
+        <span style="color:#66d9ef">return</span> YES;
+    }
+    <span style="color:#66d9ef">return</span> [super resolveInstanceMethod:sel];
+}
+
+<span style="color:#66d9ef">void</span> <span style="color:#a6e22e">fooMethod</span>(<span style="color:#66d9ef">id</span> obj, <span style="color:#66d9ef">SEL</span> _cmd) {
+    NSLog(<span style="color:#e6db74">@&#34;Doing foo&#34;</span>);<span style="color:#75715e">//新的foo函数
+</span><span style="color:#75715e"></span>}
+
+</code></pre></div><p>可以看到虽然没有实现<code>foo:</code>这个函数，但是通过<code>class_addMethod</code>动态添加<code>fooMethod</code>函数，并执行<code>fooMethod</code>这个函数的<code>IMP</code>。但如果<code>resolve</code>方法返回<code>NO</code>，运行时就会移到下一步：<code>forwardingTargetForSelector</code>。</p>
+<h3 id="备用接收者">备用接收者</h3>
+<p>如果目标对象实现了<code>-forwardingTargetForSelector:</code>，<code>Runtime</code>这时就会调用这个方法，给你把这个消息转发给其他对象的机会。</p>
+<p>实现一个备用接收者：</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-objc" data-lang="objc"><span style="color:#75715e">#import &#34;ViewController.h&#34;
+</span><span style="color:#75715e">#import &#34;objc/runtime.h&#34;
+</span><span style="color:#75715e"></span>
+<span style="color:#66d9ef">@interface</span> <span style="color:#a6e22e">Person</span>: <span style="color:#a6e22e">NSObject</span>
+
+<span style="color:#66d9ef">@end</span>
+
+<span style="color:#66d9ef">@implementation</span> <span style="color:#a6e22e">Person</span>
+
+- (<span style="color:#66d9ef">void</span>)<span style="color:#a6e22e">foo</span> {
+    NSLog(<span style="color:#e6db74">@&#34;Doing foo&#34;</span>);<span style="color:#75715e">//Person的foo函数
+</span><span style="color:#75715e"></span>}
+
+<span style="color:#66d9ef">@end</span>
+
+<span style="color:#66d9ef">@interface</span> <span style="color:#a6e22e">ViewController</span> ()
+
+<span style="color:#66d9ef">@end</span>
+
+<span style="color:#66d9ef">@implementation</span> <span style="color:#a6e22e">ViewController</span>
+
+- (<span style="color:#66d9ef">void</span>)<span style="color:#a6e22e">viewDidLoad</span> {
+    [super viewDidLoad];
+    <span style="color:#75715e">// Do any additional setup after loading the view, typically from a nib.
+</span><span style="color:#75715e"></span>    <span style="color:#75715e">//执行foo函数
+</span><span style="color:#75715e"></span>    [self performSelector:<span style="color:#66d9ef">@selector</span>(foo)];
+}
+
++ (<span style="color:#66d9ef">BOOL</span>)<span style="color:#a6e22e">resolveInstanceMethod:</span>(<span style="color:#66d9ef">SEL</span>)sel {
+    <span style="color:#66d9ef">return</span> NO;<span style="color:#75715e">//返回NO，进入下一步转发
+</span><span style="color:#75715e"></span>}
+
+- (<span style="color:#66d9ef">id</span>)<span style="color:#a6e22e">forwardingTargetForSelector:</span>(<span style="color:#66d9ef">SEL</span>)aSelector {
+    <span style="color:#66d9ef">if</span> (aSelector <span style="color:#f92672">==</span> <span style="color:#66d9ef">@selector</span>(foo)) {
+        <span style="color:#66d9ef">return</span> [Person new];<span style="color:#75715e">//返回Person对象，让Person对象接收这个消息
+</span><span style="color:#75715e"></span>    }
+    
+    <span style="color:#66d9ef">return</span> [super forwardingTargetForSelector:aSelector];
+}
+
+<span style="color:#66d9ef">@end</span>
+
+</code></pre></div><h3 id="完整消息转发">完整消息转发</h3>
+<p>如果在上一步还不能处理未知消息，则唯一能做的就是启用完整的消息转发机制了。</p>
+<p>首先它会发送<code>-methodSignatureForSelector:</code>消息获得函数的参数和返回值类型。如果<code>-methodSignatureForSelector:</code>返回<code>nil</code>，则<code>Runtime</code>则会发出<code>-doesNotRecognizeSelector:</code>消息，程序这时也就挂掉了。如果返回了一个函数签名，<code>Runtime</code>就会创建一个<code>NSInvocation</code>对象并发送 <code>-forwardInvocation:</code>消息给目标对象。</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-objc" data-lang="objc"><span style="color:#75715e">#import &#34;ViewController.h&#34;
+</span><span style="color:#75715e">#import &#34;objc/runtime.h&#34;
+</span><span style="color:#75715e"></span>
+<span style="color:#66d9ef">@interface</span> <span style="color:#a6e22e">Person</span>: <span style="color:#a6e22e">NSObject</span>
+
+<span style="color:#66d9ef">@end</span>
+
+<span style="color:#66d9ef">@implementation</span> <span style="color:#a6e22e">Person</span>
+
+- (<span style="color:#66d9ef">void</span>)<span style="color:#a6e22e">foo</span> {
+    NSLog(<span style="color:#e6db74">@&#34;Doing foo&#34;</span>);<span style="color:#75715e">//Person的foo函数
+</span><span style="color:#75715e"></span>}
+
+<span style="color:#66d9ef">@end</span>
+
+<span style="color:#66d9ef">@interface</span> <span style="color:#a6e22e">ViewController</span> ()
+
+<span style="color:#66d9ef">@end</span>
+
+<span style="color:#66d9ef">@implementation</span> <span style="color:#a6e22e">ViewController</span>
+
+- (<span style="color:#66d9ef">void</span>)<span style="color:#a6e22e">viewDidLoad</span> {
+    [super viewDidLoad];
+    <span style="color:#75715e">// Do any additional setup after loading the view, typically from a nib.
+</span><span style="color:#75715e"></span>    <span style="color:#75715e">//执行foo函数
+</span><span style="color:#75715e"></span>    [self performSelector:<span style="color:#66d9ef">@selector</span>(foo)];
+}
+
++ (<span style="color:#66d9ef">BOOL</span>)<span style="color:#a6e22e">resolveInstanceMethod:</span>(<span style="color:#66d9ef">SEL</span>)sel {
+    <span style="color:#66d9ef">return</span> YES;<span style="color:#75715e">//返回YES，进入下一步转发
+</span><span style="color:#75715e"></span>}
+
+- (<span style="color:#66d9ef">id</span>)<span style="color:#a6e22e">forwardingTargetForSelector:</span>(<span style="color:#66d9ef">SEL</span>)aSelector {
+    <span style="color:#66d9ef">return</span> nil;<span style="color:#75715e">//返回nil，进入下一步转发
+</span><span style="color:#75715e"></span>}
+
+- (NSMethodSignature <span style="color:#f92672">*</span>)<span style="color:#a6e22e">methodSignatureForSelector:</span>(<span style="color:#66d9ef">SEL</span>)aSelector {
+    <span style="color:#66d9ef">if</span> ([NSStringFromSelector(aSelector) isEqualToString:<span style="color:#e6db74">@&#34;foo&#34;</span>]) {
+        <span style="color:#66d9ef">return</span> [NSMethodSignature signatureWithObjCTypes:<span style="color:#e6db74">&#34;v@:&#34;</span>];<span style="color:#75715e">//签名，进入forwardInvocation
+</span><span style="color:#75715e"></span>    }
+    
+    <span style="color:#66d9ef">return</span> [super methodSignatureForSelector:aSelector];
+}
+
+- (<span style="color:#66d9ef">void</span>)<span style="color:#a6e22e">forwardInvocation:</span>(NSInvocation <span style="color:#f92672">*</span>)anInvocation {
+    <span style="color:#66d9ef">SEL</span> sel <span style="color:#f92672">=</span> anInvocation.selector;
+
+    Person <span style="color:#f92672">*</span>p <span style="color:#f92672">=</span> [Person new];
+    <span style="color:#66d9ef">if</span>([p respondsToSelector:sel]) {
+        [anInvocation invokeWithTarget:p];
+    }
+    <span style="color:#66d9ef">else</span> {
+        [self doesNotRecognizeSelector:sel];
+    }
+
+}
+
+<span style="color:#66d9ef">@end</span>
+
+</code></pre></div><h2 id="instancetype和id的区别">instancetype和id的区别</h2>
+<p><code>instancetype</code>和<code>id</code>都可以用来表示任意类型，将对象的类型确定往后推迟，用于体现OC语言的动态性，使其声明的对象具有运行时特性。区别是：</p>
+<ul>
+<li>
+<p><code>instancetype</code>只能作为返回值类型，但在编译期<code>instancetype</code>会进行类型检测，因此对于所有返回类的实例的类方法或实例方法，建议返回类型<code>instancetype</code>而不是<code>id</code>。</p>
+</li>
+<li>
+<p><code>id</code>类型既可以作为返回类型，也可以作为参数类型，也可以作为变量类型，但<code>id</code>类型在编译期不会进行类型检测。</p>
+</li>
+</ul>
+<h2 id="selector">selector</h2>
+<p><code>selector</code>是一个方法的名字。基于动态绑定环境下，<code>method</code>是一个组合体，包含了名字和实现。可以理解<code>@selector()</code>就是取类方法的编号，他的行为基本可以等同<code>C</code>语言中的函数指针，只不过C语言中，可以把函数名直接赋值给一个函数指针，而<code>OC</code>的类不能直接应用函数指针，这样只能做一个<code>@selector</code>语法来取，它的结果是一个<code>SEL</code>类型。而这个类型本质是类方法的编号（函数地址）。</p>
+<h2 id="target-action机制">target-action机制</h2>
+<p>目标是动作消息的接收者。例# 目标是动作消息的接收者。例目标是动作消息的接收者。例如一个控件，或者更为常见的是它的单元，以插座变量的形式保有其动作的目标。动作是控件发送给目标的消息，或者从目标的角度看，他是目标为了响应动作而实现的方法。程序需要某些机制来进行实践和指令的翻译，这个机制就是目标-动作机制。</p>
+<h1 id="runtime的应用">Runtime的应用</h1>
+<p><code>Runtime</code>的应用场景有很多，常见的如下：</p>
+<ul>
+<li>
+<p>关联对象<code>(Objective-C Associated Objects)</code>，给分类添加属性</p>
+</li>
+<li>
+<p>方法魔法<code>(Method Swizzling)</code>,添加和替换<code>KVO</code>实现</p>
+</li>
+<li>
+<p>实现<code>NSCoding</code>的自动归档和自动解档</p>
+</li>
+<li>
+<p>实现字典和模型的自动转换<code>(MJExtension)</code></p>
+</li>
+</ul>
+<h2 id="关联对象">关联对象</h2>
+<p>在<code>OC</code>中分类是不能自定义属性和变量的，但是可以通过关联对象实现给分类添加属性。<code>Runtime</code>给关联对象添加了以下几个接口：</p>
+<h3 id="3个接口">3个接口</h3>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-objc" data-lang="objc"><span style="color:#75715e">//关联对象
+</span><span style="color:#75715e"></span><span style="color:#66d9ef">void</span> objc_setAssociatedObject(<span style="color:#66d9ef">id</span> object, <span style="color:#66d9ef">const</span> <span style="color:#66d9ef">void</span> <span style="color:#f92672">*</span>key, <span style="color:#66d9ef">id</span> value, objc_AssociationPolicy policy)
+<span style="color:#75715e">//获取关联的对象
+</span><span style="color:#75715e"></span><span style="color:#66d9ef">id</span> objc_getAssociatedObject(<span style="color:#66d9ef">id</span> object, <span style="color:#66d9ef">const</span> <span style="color:#66d9ef">void</span> <span style="color:#f92672">*</span>key)
+<span style="color:#75715e">//移除关联的对象
+</span><span style="color:#75715e"></span><span style="color:#66d9ef">void</span> objc_removeAssociatedObjects(<span style="color:#66d9ef">id</span> object)
+
+</code></pre></div><h3 id="参数解释">参数解释</h3>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-fallback" data-lang="fallback">id object：被关联的对象
+const void *key：关联的key，要求唯一
+id value：关联的对象
+objc_AssociationPolicy policy：内存管理的策略
+</code></pre></div><p>内存管理策略的定义：</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-objc" data-lang="objc"><span style="color:#66d9ef">typedef</span> <span style="color:#a6e22e">OBJC_ENUM</span>(uintptr_t, objc_AssociationPolicy) {
+    OBJC_ASSOCIATION_ASSIGN <span style="color:#f92672">=</span> <span style="color:#ae81ff">0</span>,           <span style="color:#75715e">/**&lt; Specifies a weak reference to the associated object. */</span>
+    OBJC_ASSOCIATION_RETAIN_NONATOMIC <span style="color:#f92672">=</span> <span style="color:#ae81ff">1</span>, <span style="color:#75715e">/**&lt; Specifies a strong reference to the associated object. 
+</span><span style="color:#75715e">                                            *   The association is not made atomically. */</span>
+    OBJC_ASSOCIATION_COPY_NONATOMIC <span style="color:#f92672">=</span> <span style="color:#ae81ff">3</span>,   <span style="color:#75715e">/**&lt; Specifies that the associated object is copied. 
+</span><span style="color:#75715e">                                            *   The association is not made atomically. */</span>
+    OBJC_ASSOCIATION_RETAIN <span style="color:#f92672">=</span> <span style="color:#ae81ff">01401</span>,       <span style="color:#75715e">/**&lt; Specifies a strong reference to the associated object.
+</span><span style="color:#75715e">                                            *   The association is made atomically. */</span>
+    OBJC_ASSOCIATION_COPY <span style="color:#f92672">=</span> <span style="color:#ae81ff">01403</span>          <span style="color:#75715e">/**&lt; Specifies that the associated object is copied.
+</span><span style="color:#75715e">                                            *   The association is made atomically. */</span>
+};
+
+</code></pre></div><p>内存分配各个值的含义如下所示：
+<img src="https://i.loli.net/2020/02/14/GM4N5cJ9uDeBjq7.jpg" alt="-c"></p>
+<p>下面是<code>OC</code>中下实现一个<code>UIView</code>的<code>Category</code>添加自定义属性<code>defaultColor</code>：</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-objc" data-lang="objc"><span style="color:#75715e">#import &#34;ViewController.h&#34;
+</span><span style="color:#75715e">#import &#34;objc/runtime.h&#34;
+</span><span style="color:#75715e"></span>
+<span style="color:#66d9ef">@interface</span> <span style="color:#a6e22e">UIView</span> (DefaultColor)
+
+<span style="color:#66d9ef">@property</span> (<span style="color:#66d9ef">nonatomic</span>, <span style="color:#66d9ef">strong</span>) UIColor <span style="color:#f92672">*</span>defaultColor;
+
+<span style="color:#66d9ef">@end</span>
+
+<span style="color:#66d9ef">@implementation</span> <span style="color:#a6e22e">UIView</span> (DefaultColor)
+
+<span style="color:#66d9ef">@dynamic</span> defaultColor;
+
+<span style="color:#66d9ef">static</span> <span style="color:#66d9ef">char</span> kDefaultColorKey;
+
+- (<span style="color:#66d9ef">void</span>)<span style="color:#a6e22e">setDefaultColor:</span>(UIColor <span style="color:#f92672">*</span>)defaultColor {
+    objc_setAssociatedObject(self, <span style="color:#f92672">&amp;</span>kDefaultColorKey, defaultColor, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
+}
+
+- (<span style="color:#66d9ef">id</span>)<span style="color:#a6e22e">defaultColor</span> {
+    <span style="color:#66d9ef">return</span> objc_getAssociatedObject(self, <span style="color:#f92672">&amp;</span>kDefaultColorKey);
+}
+
+<span style="color:#66d9ef">@end</span>
+
+<span style="color:#66d9ef">@interface</span> <span style="color:#a6e22e">ViewController</span> ()
+
+<span style="color:#66d9ef">@end</span>
+
+<span style="color:#66d9ef">@implementation</span> <span style="color:#a6e22e">ViewController</span>
+
+- (<span style="color:#66d9ef">void</span>)<span style="color:#a6e22e">viewDidLoad</span> {
+    [super viewDidLoad];
+    <span style="color:#75715e">// Do any additional setup after loading the view, typically from a nib.
+</span><span style="color:#75715e"></span>    
+    UIView <span style="color:#f92672">*</span>test <span style="color:#f92672">=</span> [UIView new];
+    test.defaultColor <span style="color:#f92672">=</span> [UIColor blackColor];
+    NSLog(<span style="color:#e6db74">@&#34;%@&#34;</span>, test.defaultColor);
+}
+
+<span style="color:#66d9ef">@end</span>
+
+</code></pre></div><p>在<code>Swift</code>中是按如下使用方法使用的：</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift"><span style="color:#66d9ef">extension</span> <span style="color:#a6e22e">NSObject</span> {
+    <span style="color:#66d9ef">func</span> <span style="color:#a6e22e">setAssociated</span>&lt;T&gt;(value: T, associatedKey: UnsafeRawPointer, policy: objc_AssociationPolicy = objc_AssociationPolicy.OBJC_ASSOCIATION_RETAIN_NONATOMIC) -&gt; Void {
+        objc_setAssociatedObject(<span style="color:#66d9ef">self</span>, associatedKey, value, policy)
+    }
+
+    <span style="color:#66d9ef">func</span> <span style="color:#a6e22e">getAssociated</span>&lt;T&gt;(associatedKey: UnsafeRawPointer) -&gt; T? {
+        <span style="color:#66d9ef">let</span> value = objc_getAssociatedObject(<span style="color:#66d9ef">self</span>, associatedKey) <span style="color:#66d9ef">as</span>? T
+        <span style="color:#66d9ef">return</span> value
+    }
+}
+</code></pre></div><h2 id="method-swizzling">Method Swizzling</h2>
+<h3 id="方法添加">方法添加</h3>
+<p>添加方法的实际上在上面的消息转发机制中已经提到了，其函数定义为：</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-objc" data-lang="objc"><span style="color:#75715e">//class_addMethod(Class  _Nullable __unsafe_unretained cls, SEL  _Nonnull name, IMP  _Nonnull imp, const char * _Nullable types)
+</span><span style="color:#75715e"></span>class_addMethod([self <span style="color:#66d9ef">class</span>], sel, (<span style="color:#66d9ef">IMP</span>)fooMethod, <span style="color:#e6db74">&#34;v@:&#34;</span>);
+
+</code></pre></div><p>其中，参数的解释如下：</p>
+<ul>
+<li><code>cls</code>表示被添加的类</li>
+<li><code>name</code>添加的方法的名称<code>SEL</code></li>
+<li><code>imp</code>方法的实现，该函数必须至少有两个参数<code>self,_cmd</code></li>
+</ul>
+<h3 id="方法替换">方法替换</h3>
+<p>下面<code>OC</code>代码实现替换<code>ViewController</code>的<code>viewDidLoad</code>方法：</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-objc" data-lang="objc"><span style="color:#66d9ef">@implementation</span> <span style="color:#a6e22e">ViewController</span>
+
++ (<span style="color:#66d9ef">void</span>)<span style="color:#a6e22e">load</span> {
+    <span style="color:#66d9ef">static</span> dispatch_once_t onceToken;
+    dispatch_once(<span style="color:#f92672">&amp;</span>onceToken, <span style="color:#f92672">^</span>{
+        <span style="color:#66d9ef">Class</span> <span style="color:#66d9ef">class</span> <span style="color:#f92672">=</span> [self <span style="color:#66d9ef">class</span>];
+        <span style="color:#66d9ef">SEL</span> originalSelector <span style="color:#f92672">=</span> <span style="color:#66d9ef">@selector</span>(viewDidLoad);
+        <span style="color:#66d9ef">SEL</span> swizzledSelector <span style="color:#f92672">=</span> <span style="color:#66d9ef">@selector</span>(jkviewDidLoad);
+        
+        Method originalMethod <span style="color:#f92672">=</span> class_getInstanceMethod(<span style="color:#66d9ef">class</span>,originalSelector);
+        Method swizzledMethod <span style="color:#f92672">=</span> class_getInstanceMethod(<span style="color:#66d9ef">class</span>,swizzledSelector);
+        
+        <span style="color:#75715e">//judge the method named  swizzledMethod is already existed.
+</span><span style="color:#75715e"></span>        <span style="color:#66d9ef">BOOL</span> didAddMethod <span style="color:#f92672">=</span> class_addMethod(<span style="color:#66d9ef">class</span>, originalSelector, method_getImplementation(swizzledMethod), method_getTypeEncoding(swizzledMethod));
+        <span style="color:#75715e">// if swizzledMethod is already existed.
+</span><span style="color:#75715e"></span>        <span style="color:#66d9ef">if</span> (didAddMethod) {
+            class_replaceMethod(<span style="color:#66d9ef">class</span>, swizzledSelector, method_getImplementation(originalMethod), method_getTypeEncoding(originalMethod));
+        }
+        <span style="color:#66d9ef">else</span> {
+            method_exchangeImplementations(originalMethod, swizzledMethod);
+        }
+    });
+}
+
+- (<span style="color:#66d9ef">void</span>)<span style="color:#a6e22e">jkviewDidLoad</span> {
+    NSLog(<span style="color:#e6db74">@&#34;替换的方法&#34;</span>);
+    
+    [self jkviewDidLoad];
+}
+
+- (<span style="color:#66d9ef">void</span>)<span style="color:#a6e22e">viewDidLoad</span> {
+    NSLog(<span style="color:#e6db74">@&#34;自带的方法&#34;</span>);
+    
+    [super viewDidLoad];
+}
+
+<span style="color:#66d9ef">@end</span>
+
+</code></pre></div><p><code>OC</code>的<code>swizzling</code>应该只在<code>+load</code>中完成。在<code>OC</code>的<code>Runtime</code>中，每个类有两个方法都会自动调用。<code>+load</code>是在一个类被初始装载时调用，<code>+initialize</code>是在应用<!-- raw HTML omitted -->第一次调用该类的类方法或实例方法前调用的<!-- raw HTML omitted -->。<!-- raw HTML omitted -->两个方法都是可选的，并且只有在方法被实现的情况下才会被调用<!-- raw HTML omitted -->。</p>
+<p><code>swizzling</code>应该只在<code>dispatch_once</code>中完成，由于<code>swizzling</code><!-- raw HTML omitted -->改变了全局的状态，所以我们需要确保每个预防措施在运行时都是可用的<!-- raw HTML omitted -->。原子操作就是这样一个用于确保代码只会被执行一次的预防措施，就算是在不同的线程中也能确保代码只执行一次。<code>Grand Central Dispatch</code>的<code>dispatch_once</code>满足了所需要的需求，并且应该被当做使用<code>swizzling</code>的初始化单例方法的标准。</p>
+<p><img src="https://i.loli.net/2020/02/14/jLqMQwgiGkK4aJB.jpg" alt="-c"></p>
+<p>在上图中，通过<code>Swizzling</code>特性，将<code>selectorC</code>的方法实现<code>IMPc</code>与<code>selectorN</code>的方法实现<code>IMPn</code>交换了，当调用<code>selectorC</code>，也就是给对象发送<code>selectorC</code>消息时，所查找到的方法实现就是<code>IMPn</code>而不是<code>IMPc</code>了。</p>
+<h3 id="kvo实现">KVO实现</h3>
+<p><code>KVO</code>的全称是<code>Key-value observing</code>，译为键值观察。提供了一种当其它对象属性被修改的时候能通知当前对象的机制。再<code>MVC</code>大行其道的<code>Cocoa</code>中，<code>KVO</code>机制很适合实现<code>model</code>和<code>controller</code>类之间的通信。</p>
+<p><code>KVO</code>的实现依赖于<code>OC</code>强大的<code>Runtime</code>，当观察某对象<code>A</code>时，<code>KVO</code>机制动态创建一个对象<code>A</code>当前类的子类，并为这个新的子类重写了被观察属性<code>keyPath</code>的<code>setter</code>方法。<code>setter</code>方法随后负责通知观察对象属性的改变状况。</p>
+<p><code>Apple</code>使用了<code>isa-swizzling</code>来实现<code>KVO</code>。当观察对象<code>A</code>时，<code>KVO</code>机制动态创建一个新的名为：<code>NSKVONotifying_A</code>的新类，该类继承自对象<code>A</code>的本类，且<code>KVO</code>为 <code>NSKVONotifying_A</code><!-- raw HTML omitted -->重写观察属性的<code>setter</code>方法<!-- raw HTML omitted -->，<code>setter</code>方法会负责在调用原<code>setter</code>方法之前和之后，通知所有观察对象属性值的更改情况。</p>
+<p><code>NSKVONotifying_A</code>类剖析：</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-objc" data-lang="objc">NSLog(<span style="color:#e6db74">@&#34;self-&gt;isa:%@&#34;</span>,self<span style="color:#f92672">-&gt;</span>isa);  
+NSLog(<span style="color:#e6db74">@&#34;self class:%@&#34;</span>,[self <span style="color:#66d9ef">class</span>]);  
+
+</code></pre></div><p>在建立<code>KVO</code>监听前，打印结果为：</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-objc" data-lang="objc">self<span style="color:#f92672">-&gt;</span>isa:A
+self <span style="color:#66d9ef">class</span><span style="color:#f92672">:</span>A
+</code></pre></div><p>在建立<code>KVO</code>监听之后，打印结果为：</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-objc" data-lang="objc">self<span style="color:#f92672">-&gt;</span>isa:NSKVONotifying_A
+self <span style="color:#66d9ef">class</span><span style="color:#f92672">:</span>A
+</code></pre></div><p>在这个过程，被观察对象的<code>isa</code>指针从指向原来的<code>A</code>类，被<code>KVO</code>机制修改为指向系统新创建的子类<code>NSKVONotifying_A</code>类，来实现当前类属性值改变的监听；</p>
+<p>所以当我们从应用层面上看来，完全没有意识到有新的类出现，这是<!-- raw HTML omitted -->系统隐瞒了对<code>KVO</code>的底层实现过程，让我们误以为还是原来的类。但是此时如果我们创建一个新的名为<code>NSKVONotifying_A</code>的类，就会发现系统运行到注册<code>KVO</code>的那段代码时程序就崩溃，因为系统在注册监听的时候动态创建了名为<code>NSKVONotifying_A</code>的中间类，并指向这个中间类了。</p>
+<p>子类<code>setter</code>方法剖析：</p>
+<p><code>KVO</code>的键值观察通知依赖于<code>NSObject</code>的两个方法<code>willChangeValueForKey:</code>和 <code>didChangeValueForKey:</code>，在存取数值的前后分别调用<code>2</code>个方法：被观察属性发生改变之前，<code>willChangeValueForKey:</code>被调用，通知系统该<code>keyPath</code>的属性值即将变更；
+当改变发生后，<code>didChangeValueForKey:</code>被调用，通知系统该<code>keyPath</code>的属性值已经变更；之后，<code>observeValueForKey:ofObject:change:context:</code>也会被调用。<!-- raw HTML omitted -->且重写观察属性的<code>setter</code>方法这种继承方式的注入是在运行时而不是编译时实现的<!-- raw HTML omitted -->。</p>
+<p><code>KVO</code>为子类的观察者属性重写调用存取方法的工作原理在代码中相当于：</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-objc" data-lang="objc">- (<span style="color:#66d9ef">void</span>)<span style="color:#a6e22e">setName:</span>(NSString <span style="color:#f92672">*</span>)newName { 
+      [self willChangeValueForKey:<span style="color:#e6db74">@&#34;name&#34;</span>];    <span style="color:#75715e">//KVO 在调用存取方法之前总调用 
+</span><span style="color:#75715e"></span>      [super setValue:newName forKey:<span style="color:#e6db74">@&#34;name&#34;</span>]; <span style="color:#75715e">//调用父类的存取方法 
+</span><span style="color:#75715e"></span>      [self didChangeValueForKey:<span style="color:#e6db74">@&#34;name&#34;</span>];     <span style="color:#75715e">//KVO 在调用存取方法之后总调用
+</span><span style="color:#75715e"></span>}
+</code></pre></div><h3 id="热更新jspatch">热更新JSPatch</h3>
+<p><code>JSPatch</code>是一个<code>iOS</code>动态更新框架，只需在项目中引入极小的引擎，就可以使用 <code>JavaScript</code>调用任何<code>OC</code>原生接口，获得脚本语言的优势：为项目动态添加模块，或替换项目原生代码动态修复<code>bug</code>。</p>
+<p>关于消息转发，前面已经讲到过了，消息转发分为三级，我们可以在每级实现替换功能，实现消息转发，从而不会造成崩溃。<code>JSPatch</code><!-- raw HTML omitted -->不仅能够实现消息转发，还可以实现方法添加、替换等一系列功能<!-- raw HTML omitted -->。</p>
+<h3 id="实现nscoding的自动归档和自动解档">实现<code>NSCoding</code>的自动归档和自动解档</h3>
+<p>用<code>Runtime</code>提供的函数遍历<code>Model</code>自身所有属性，并对属性进行<code>encode</code>和<code>decode</code>操作。 核心方法：在<code>Model</code>的基类中重写方法：</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-objc" data-lang="objc">- (<span style="color:#66d9ef">id</span>)<span style="color:#a6e22e">initWithCoder:</span>(NSCoder <span style="color:#f92672">*</span>)aDecoder {
+    <span style="color:#66d9ef">if</span> (self <span style="color:#f92672">=</span> [super init]) {
+        <span style="color:#66d9ef">unsigned</span> <span style="color:#66d9ef">int</span> outCount;
+        Ivar <span style="color:#f92672">*</span> ivars <span style="color:#f92672">=</span> class_copyIvarList([self <span style="color:#66d9ef">class</span>], <span style="color:#f92672">&amp;</span>outCount);
+        <span style="color:#66d9ef">for</span> (<span style="color:#66d9ef">int</span> i <span style="color:#f92672">=</span> <span style="color:#ae81ff">0</span>; i <span style="color:#f92672">&lt;</span> outCount; i <span style="color:#f92672">++</span>) {
+            Ivar ivar <span style="color:#f92672">=</span> ivars[i];
+            NSString <span style="color:#f92672">*</span> key <span style="color:#f92672">=</span> [NSString stringWithUTF8String:ivar_getName(ivar)];
+            [self setValue:[aDecoder decodeObjectForKey:key] forKey:key];
+        }
+    }
+    <span style="color:#66d9ef">return</span> self;
+}
+
+- (<span style="color:#66d9ef">void</span>)<span style="color:#a6e22e">encodeWithCoder:</span>(NSCoder <span style="color:#f92672">*</span>)aCoder {
+    <span style="color:#66d9ef">unsigned</span> <span style="color:#66d9ef">int</span> outCount;
+    Ivar <span style="color:#f92672">*</span> ivars <span style="color:#f92672">=</span> class_copyIvarList([self <span style="color:#66d9ef">class</span>], <span style="color:#f92672">&amp;</span>outCount);
+    <span style="color:#66d9ef">for</span> (<span style="color:#66d9ef">int</span> i <span style="color:#f92672">=</span> <span style="color:#ae81ff">0</span>; i <span style="color:#f92672">&lt;</span> outCount; i <span style="color:#f92672">++</span>) {
+        Ivar ivar <span style="color:#f92672">=</span> ivars[i];
+        NSString <span style="color:#f92672">*</span> key <span style="color:#f92672">=</span> [NSString stringWithUTF8String:ivar_getName(ivar)];
+        [aCoder encodeObject:[self valueForKey:key] forKey:key];
+    }
+}
+
+</code></pre></div><h3 id="实现字典和模型的自动转换mjextension">实现字典和模型的自动转换(MJExtension)</h3>
+<p>用<code>runtime</code>提供的函数遍历<code>Model</code>自身所有属性，如果属性在<code>json</code>中有对应的值，则将其赋值。 核心方法：在<code>NSObject</code>的分类中添加方法。</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-objc" data-lang="objc">- (<span style="color:#66d9ef">instancetype</span>)<span style="color:#a6e22e">initWithDict:</span>(NSDictionary <span style="color:#f92672">*</span>)dict {
+
+    <span style="color:#66d9ef">if</span> (self <span style="color:#f92672">=</span> [self init]) {
+        <span style="color:#75715e">//(1)获取类的属性及属性对应的类型
+</span><span style="color:#75715e"></span>        NSMutableArray <span style="color:#f92672">*</span> keys <span style="color:#f92672">=</span> [NSMutableArray array];
+        NSMutableArray <span style="color:#f92672">*</span> attributes <span style="color:#f92672">=</span> [NSMutableArray array];
+        <span style="color:#75715e">/*
+</span><span style="color:#75715e">         * 例子
+</span><span style="color:#75715e">         * name = value3 attribute = T@&#34;NSString&#34;,C,N,V_value3
+</span><span style="color:#75715e">         * name = value4 attribute = T^i,N,V_value4
+</span><span style="color:#75715e">         */</span>
+        <span style="color:#66d9ef">unsigned</span> <span style="color:#66d9ef">int</span> outCount;
+        objc_property_t <span style="color:#f92672">*</span> properties <span style="color:#f92672">=</span> class_copyPropertyList([self <span style="color:#66d9ef">class</span>], <span style="color:#f92672">&amp;</span>outCount);
+        <span style="color:#66d9ef">for</span> (<span style="color:#66d9ef">int</span> i <span style="color:#f92672">=</span> <span style="color:#ae81ff">0</span>; i <span style="color:#f92672">&lt;</span> outCount; i <span style="color:#f92672">++</span>) {
+            objc_property_t property <span style="color:#f92672">=</span> properties[i];
+            <span style="color:#75715e">//通过property_getName函数获得属性的名字
+</span><span style="color:#75715e"></span>            NSString <span style="color:#f92672">*</span> propertyName <span style="color:#f92672">=</span> [NSString stringWithCString:property_getName(property) encoding:NSUTF8StringEncoding];
+            [keys addObject:propertyName];
+            <span style="color:#75715e">//通过property_getAttributes函数可以获得属性的名字和@encode编码
+</span><span style="color:#75715e"></span>            NSString <span style="color:#f92672">*</span> propertyAttribute <span style="color:#f92672">=</span> [NSString stringWithCString:property_getAttributes(property) encoding:NSUTF8StringEncoding];
+            [attributes addObject:propertyAttribute];
+        }
+        <span style="color:#75715e">//立即释放properties指向的内存
+</span><span style="color:#75715e"></span>        free(properties);
+
+        <span style="color:#75715e">//(2)根据类型给属性赋值
+</span><span style="color:#75715e"></span>        <span style="color:#66d9ef">for</span> (NSString <span style="color:#f92672">*</span> key <span style="color:#66d9ef">in</span> keys) {
+            <span style="color:#66d9ef">if</span> ([dict valueForKey:key] <span style="color:#f92672">==</span> nil) <span style="color:#66d9ef">continue</span>;
+            [self setValue:[dict valueForKey:key] forKey:key];
+        }
+    }
+    <span style="color:#66d9ef">return</span> self;
+
+}
+
+</code></pre></div><p><a href="https://juejin.im/post/5d6bea9651882563e82aff2b">参考资料</a>
+<a href="https://juejin.im/post/5be24b826fb9a04a102ec12b">参考资料</a>
+<a href="https://juejin.im/post/5ac0a6116fb9a028de44d717">参考资料</a></p>
+
+    </div>
+    <footer class="post-footer">
+        
+ 
+<div class="post-tags">     
+     
+    <a href="https://iihui.github.io/tags/oc" rel="tag" title="oc">#oc#</a>
+    
+    <a href="https://iihui.github.io/tags/ios" rel="tag" title="iOS">#iOS#</a>
+    
+</div>
+
+
+
+        <div class="post-nav">
+    <div class="post-nav-next post-nav-item">
+    
+        <a href="https://iihui.github.io/post/oc-runtime/" rel="next" title="Objective-C Runtime">
+        <i class="fa fa-chevron-left"></i> Objective-C Runtime
+        </a>
+    
+    </div>
+
+    <div class="post-nav-prev post-nav-item">
+    
+        <a href="https://iihui.github.io/post/food-2020/" rel="prev" title="陈小厨作品">
+        陈小厨作品 <i class="fa fa-chevron-right"></i>
+        </a>
+    
+    </div>
+</div>
+      
+        <div class="post-nav">
+    <div style="border: 1px dashed #e0e0e0; padding: 10px 10px 10px 10px; background-color: #fffeee; background-repeat: no-repeat; background-attachment: scroll; background-position: 1% 50%; -moz-background-size: auto auto; -moz-background-clip: -moz-initial; -moz-background-origin: -moz-initial; -moz-background-inline-policy: -moz-initial;">
+        <div style="float:left;margin-top:0px;">
+            <img src="https://i.loli.net/2020/02/09/SvhUdz4XJsOr9Vk.jpg" width="128px" height="128px"/>
+            <div style="text-align:center;">谢谢支持!</div>
+        </div>
+        <div>
+            <p style="margin-top:10px;">
+                标题：Objective-C Runtime
+                <br />作者：阿呆<a target="_blank" href="https://iihui.github.io/"></a>
+                
+                <br />地址：https://iihui.github.io/post/post/oc-runtime/
+                <br />声明：自由转载-非商用-保持署名（创作共享4.0许可证）
+            </p>
+        </div>
+    </div>
+    <div class="clear"></div>
+</div>
+        
+        
+        
+
+
+
+
+    </footer>
+  </article>
+</section>
+
+          </div>
+        </div>
+        <div class="sidebar-toggle">
+  <div class="sidebar-toggle-line-wrap">
+    <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+    <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+    <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+  </div>
+</div>
+<aside id="sidebar" class="sidebar">
+  <div class="sidebar-inner">
+
+  <ul class="sidebar-nav motion-element">
+    <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+      文章目录
+    </li>
+    <li class="sidebar-nav-overview" data-target="site-overview">
+      站点概览
+    </li>
+  </ul>
+
+    <section class="site-overview sidebar-panel ">
+      <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image"
+        src="https://i.loli.net/2020/02/07/dVFzrvZkHRNq2lL.jpg"
+        alt="" />
+    <p class="site-author-name" itemprop="name"></p>
+    <p class="site-description motion-element" itemprop="description"> 
+        coder &amp; cook</p>
+</div>
+      <nav class="site-state motion-element">
+    <div class="site-state-item site-state-posts">
+      <a href="https://iihui.github.io/post/">
+        <span class="site-state-item-count">272</span>
+        <span class="site-state-item-name">日志</span>
+      </a>
+    </div>
+    <div class="site-state-item site-state-categories">    
+        <a href="https://iihui.github.io/categories/">      
+         
+        <span class="site-state-item-count">15</span>
+        
+        <span class="site-state-item-name">分类</span>
+        
+        </a>
+    </div>
+
+    <div class="site-state-item site-state-tags">
+        <a href="https://iihui.github.io/tags/">
+         
+        <span class="site-state-item-count">29</span>
+        
+        <span class="site-state-item-name">标签</span>
+        </a>
+    </div>
+</nav>
+      
+      
+<div class="links-of-author motion-element">
+    
+        <span class="links-of-author-item">
+        <a href="https://coolshell.cn" target="_blank" title="皓 大">
+            <i class="fa fa-fw fa-globe"></i>
+            皓 大
+        </a>
+        </span>
+    
+        <span class="links-of-author-item">
+        <a href="http://www.ruanyifeng.com" target="_blank" title="阮 大">
+            <i class="fa fa-fw fa-globe"></i>
+            阮 大
+        </a>
+        </span>
+    
+        <span class="links-of-author-item">
+        <a href="https://juejin.im/" target="_blank" title="掘 金">
+            <i class="fa fa-fw fa-globe"></i>
+            掘 金
+        </a>
+        </span>
+    
+        <span class="links-of-author-item">
+        <a href="http://www.ideamsg.com" target="_blank" title="灵 感">
+            <i class="fa fa-fw fa-globe"></i>
+            灵 感
+        </a>
+        </span>
+    
+</div>
+
+
+      
+
+      <div class="links-of-blogroll motion-element inline">
+<script type="text/javascript" src="//rf.revolvermaps.com/0/0/8.js?i=&amp;m=0&amp;s=220&amp;c=ff0000&amp;cr1=ffffff&amp;f=arial&amp;l=33&amp;bv=35" async="async"></script>
+</div>
+
+    </section>
+    
+<section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+    <div class="post-toc">
+        <div class="post-toc-content"><nav id="TableOfContents">
+  <ul>
+    <li><a href="#runtime版本">Runtime版本</a></li>
+    <li><a href="#消息传递">消息传递</a>
+      <ul>
+        <li><a href="#objc_msgsend定义">objc_msgSend定义</a>
+          <ul>
+            <li><a href="#类对象objc_class">类对象objc_class</a></li>
+            <li><a href="#实例对象object">实例对象(object)</a></li>
+            <li><a href="#元类meta-class">元类(meta class)</a></li>
+            <li><a href="#方法method">方法(method)</a></li>
+            <li><a href="#sel方法选择器">SEL方法选择器</a></li>
+            <li><a href="#imp">IMP</a></li>
+            <li><a href="#categoryobjc_catory">Category(objc_catory)</a></li>
+          </ul>
+        </li>
+        <li><a href="#runtime消息转发">Runtime消息转发</a>
+          <ul>
+            <li><a href="#动态方法转发">动态方法转发</a></li>
+            <li><a href="#备用接收者">备用接收者</a></li>
+            <li><a href="#完整消息转发">完整消息转发</a></li>
+          </ul>
+        </li>
+        <li><a href="#instancetype和id的区别">instancetype和id的区别</a></li>
+        <li><a href="#selector">selector</a></li>
+        <li><a href="#target-action机制">target-action机制</a></li>
+      </ul>
+    </li>
+    <li><a href="#runtime的应用">Runtime的应用</a>
+      <ul>
+        <li><a href="#关联对象">关联对象</a>
+          <ul>
+            <li><a href="#3个接口">3个接口</a></li>
+            <li><a href="#参数解释">参数解释</a></li>
+          </ul>
+        </li>
+        <li><a href="#method-swizzling">Method Swizzling</a>
+          <ul>
+            <li><a href="#方法添加">方法添加</a></li>
+            <li><a href="#方法替换">方法替换</a></li>
+            <li><a href="#kvo实现">KVO实现</a></li>
+            <li><a href="#热更新jspatch">热更新JSPatch</a></li>
+            <li><a href="#实现nscoding的自动归档和自动解档">实现<code>NSCoding</code>的自动归档和自动解档</a></li>
+            <li><a href="#实现字典和模型的自动转换mjextension">实现字典和模型的自动转换(MJExtension)</a></li>
+          </ul>
+        </li>
+      </ul>
+    </li>
+  </ul>
+</nav></div>
+    </div>
+</section>
+
+  </div>
+</aside>
+
+      </div>
+    </main>
+   
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  <span itemprop="copyrightYear">  &copy; 
+  2017 - 2020</span>
+  <span class="with-love"><i class="fa fa-heart"></i></span>
+  <span class="author" itemprop="copyrightHolder">Keep It Simple</span>
+</div>
+
+
+
+      </div>
+    </footer>
+
+    <div class="back-to-top">
+      <i class="fa fa-arrow-up"></i>
+      <span id="scrollpercent"><span>0</span>%</span>
+    </div>
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+<script type="text/javascript" src="https://iihui.github.io/js/vendor/jquery/index.js?v=2.1.3"></script>
+<script type="text/javascript" src="https://iihui.github.io/js/vendor/fastclick/lib/fastclick.min.js?v=1.0.6"></script> 
+<script type="text/javascript" src="https://iihui.github.io/js/vendor/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+<script type="text/javascript" src="https://iihui.github.io/js/vendor/velocity/velocity.min.js?v=1.2.1"></script>
+<script type="text/javascript" src="https://iihui.github.io/js/vendor/velocity/velocity.ui.min.js?v=1.2.1"></script>
+<script src="https://iihui.github.io/js/vendor/ua-parser-js/dist/ua-parser.min.js?v=0.7.9"></script>
+
+<script src="https://iihui.github.io/js/vendor/fancybox/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+<script type="text/javascript" src="https://iihui.github.io/js/utils.js"></script>
+<script type="text/javascript" src="https://iihui.github.io/js/motion.js"></script>
+<script type="text/javascript" src="https://iihui.github.io/js/affix.js"></script>
+<script type="text/javascript" src="https://iihui.github.io/js/schemes/pisces.js"></script>
+
+<script type="text/javascript" src="https://iihui.github.io/js/scrollspy.js"></script>
+<script type="text/javascript" src="https://iihui.github.io/js/post-details.js"></script>
+<script type="text/javascript" src="https://iihui.github.io/js/toc.js"></script>
+
+<script type="text/javascript" src="https://iihui.github.io/js/bootstrap.js"></script>
+
+<script type="text/javascript" src="https://iihui.github.io/js/search.js"></script>
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+    extensions: ["tex2jax.js"],
+    jax: ["input/TeX", "output/HTML-CSS"],
+    tex2jax: {
+      inlineMath: [ ['$','$'] ],
+      displayMath: [ ['$$','$$'] ],
+      processEscapes: true
+    },
+    "HTML-CSS": { fonts: ["TeX"] }
+  });
+</script>
+<script src='https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-AMS-MML_HTMLorMML' async></script>
+</body>
+</html>

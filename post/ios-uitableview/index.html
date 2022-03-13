@@ -1,0 +1,596 @@
+<!DOCTYPE HTML>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" /> 
+    <title>UITableView 使用 - Keep It Simple</title>
+    <meta name="keywords" content="博客,思考,读书,笔记,技术,分享">
+    
+    <meta property="og:title" content="UITableView 使用">
+    <meta property="og:site_name" content="Keep It Simple">
+    <meta property="og:image" content="/img/author.jpg"> 
+    <meta name="title" content="UITableView 使用 - Keep It Simple" />
+    <meta name="description" content="Swift | Go | C&#43;&#43; "> 
+    <link rel="shortcut icon" href="https://iihui.github.io/img/favicon.ico" />
+    <link rel="apple-touch-icon" href="https://iihui.github.io/img/apple-touch-icon.png" />
+    <link rel="apple-touch-icon-precomposed" href="https://iihui.github.io/img/apple-touch-icon.png" />
+    <link href="https://iihui.github.io/js/vendor/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+    <link href="https://iihui.github.io/js/vendor/fancybox/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+    <link href="https://iihui.github.io/css/main.css" rel="stylesheet" type="text/css" />
+    <link href="https://iihui.github.io/css/syntax.css" rel="stylesheet" type="text/css" />
+
+    <script type="text/javascript" id="hexo.configuration">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    scheme: 'Pisces',
+    sidebar: {"position":"left","display":"post"},
+     fancybox: true, 
+    motion: true
+  };
+</script>
+
+    <link href="https://cdn.bootcss.com/highlight.js/9.12.0/styles/monokai-sublime.min.css" rel="stylesheet">
+    <script src="https://cdn.bootcss.com/highlight.js/9.12.0/highlight.min.js"></script>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/languages/go.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/languages/swift.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.1/languages/objectivec.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.1/languages/clojure.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.1/languages/cpp.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.1/languages/kotlin.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.1/languages/yaml.min.js"></script>
+    <script>hljs.initHighlightingOnLoad();</script>
+</head>
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+<div class="container one-collumn sidebar-position-left page-home  ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"> <div class="site-meta  custom-logo ">
+
+  <div class="custom-logo-site-title">
+    <a href="https://iihui.github.io/"  class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <span class="site-title">Keep It Simple</span>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+  <p class="site-subtitle">靡不有初，鲜克有终</p>
+</div>
+
+<div class="site-nav-toggle">
+  <button>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+  </button>
+</div>
+
+<nav class="site-nav">
+    <ul id="menu" class="menu">
+      
+      
+        <li class="menu-item ">
+          <a href="https://iihui.github.io/" rel="section">
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />首页
+          </a>
+        </li>
+      
+        <li class="menu-item ">
+          <a href="https://iihui.github.io/tags/" rel="section">
+              <i class="menu-item-icon fa fa-fw fa-tag"></i> <br />标签
+          </a>
+        </li>
+      
+        <li class="menu-item ">
+          <a href="https://iihui.github.io/post/" rel="section">
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />归档
+          </a>
+        </li>
+      
+        <li class="menu-item ">
+          <a href="https://iihui.github.io/categories/%E7%BE%8E%E9%A3%9F/" rel="section">
+              <i class="menu-item-icon fa fa-fw fa-fire"></i> <br />美食
+          </a>
+        </li>
+      
+        <li class="menu-item ">
+          <a href="https://iihui.github.io/categories/%E5%90%8E%E6%9C%9F/" rel="section">
+              <i class="menu-item-icon fa fa-fw fa-edit"></i> <br />后期
+          </a>
+        </li>
+      
+        <li class="menu-item ">
+          <a href="https://iihui.github.io/categories/%E6%97%85%E8%A1%8C/" rel="section">
+              <i class="menu-item-icon fa fa-fw fa-leaf"></i> <br />旅行
+          </a>
+        </li>
+      
+        <li class="menu-item ">
+          <a href="https://iihui.github.io/about/" rel="section">
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />关于
+          </a>
+        </li>
+      
+      <li class="menu-item menu-item-search">
+        <a href="javascript:;" class="popup-trigger"> <i class="menu-item-icon fa fa-search fa-fw"></i> <br /> 搜索</a>
+      </li>
+    </ul>
+    <div class="site-search">
+      <div class="popup">
+ <span class="search-icon fa fa-search"></span>
+ <input type="text" id="local-search-input">
+ <div id="local-search-result"></div>
+ <span class="popup-btn-close">close</span>
+</div>
+
+    </div>
+</nav>
+<script type="text/javascript"
+        async
+        src="https://cdn.bootcss.com/mathjax/2.7.3/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+		<!-- src = "http://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"> <\!--  -\-> -->
+MathJax.Hub.Config({
+  tex2jax: {
+    inlineMath: [['$','$'], ['\\(','\\)']],
+    displayMath: [['$$','$$'], ['\[\[','\]\]']],
+    processEscapes: true,
+    processEnvironments: true,
+    skipTags: ['script', 'noscript', 'style', 'textarea', 'pre'],
+    TeX: { equationNumbers: { autoNumber: "AMS" },
+         extensions: ["AMSmath.js", "AMSsymbols.js"] }
+  }
+});
+
+MathJax.Hub.Queue(function() {
+    
+    
+    
+    var all = MathJax.Hub.getAllJax(), i;
+    for(i = 0; i < all.length; i += 1) {
+        all[i].SourceElement().parentNode.className += ' has-jax';
+    }
+});
+</script>
+
+<style>
+code.has-jax {
+    font: inherit;
+    font-size: 100%;
+    background: inherit;
+    border: inherit;
+    color: #515151;
+}
+</style>
+
+<!DOCTYPE html>
+<html lang="en">
+
+
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.10.0-rc.1/dist/katex.min.css" integrity="sha384-D+9gmBxUQogRLqvARvNLmA9hS2x//eK1FhVb9PiU86gmcrBrJAQT8okdJ4LMp2uv" crossorigin="anonymous">
+
+    
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.10.0-rc.1/dist/katex.min.js" integrity="sha384-483A6DwYfKeDa0Q52fJmxFXkcPCFfnXMoXblOkJ4JcA8zATN6Tm78UNL72AKk+0O" crossorigin="anonymous"></script>
+</head>
+<body>
+
+</body>
+</html>
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+<section id="posts" class="posts-expand">
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <header class="post-header">
+      <h1 class="post-title" itemprop="name headline">
+        <a class="post-title-link" href="https://iihui.github.io/post/ios-uitableview/" itemprop="url">
+        UITableView 使用
+        </a>
+      </h1>
+      <div class="post-meta">
+      <span class="post-time">
+<span class="post-meta-item-icon">
+    <i class="fa fa-calendar-o"></i>
+</span>
+<span class="post-meta-item-text">创建: </span>
+<time itemprop="dateCreated" datetime="2016-03-22T13:04:35+08:00" content="2019-12-17">
+    2019-12-17
+</time>
+</span>
+&nbsp; | &nbsp;
+<span class="post-updated-time">
+<span class="post-meta-item-icon">
+    <i class="fa fa-calendar-check-o"></i>
+</span>
+<span class="post-meta-item-text">更新: </span>
+<time itemprop="dateUpdated" content="2019-12-17">
+    2019-12-17
+</time>
+</span> 
+      
+
+  <span class="post-category" >
+  &nbsp; | &nbsp;
+  <span class="post-meta-item-icon">
+    <i class="fa fa-folder-o"></i>
+  </span>
+  <span class="post-meta-item-text">分类: </span>
+  
+    <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
+      <a href="https://iihui.github.io/categories/ios" itemprop="url" rel="index">
+        <span itemprop="name">iOS</span>
+      </a>
+      &nbsp; 
+    </span>
+  
+</span>
+
+
+      <span>
+&nbsp; | &nbsp;
+<span class="post-meta-item-icon">
+    <i class="fa fa-file-word-o"></i>
+</span>
+<span class="post-meta-item-text">字数: </span>
+<span class="leancloud-visitors-count">877</span>
+&nbsp; | &nbsp;
+<span class="post-meta-item-icon">
+    <i class="fa fa-coffee"></i>
+</span>
+<span class="post-meta-item-text">阅读: </span>
+<span class="leancloud-visitors-count">2 分钟</span>
+</span>
+      </div>
+    </header>
+    <div class="post-body" itemprop="articleBody">
+    <blockquote>
+<p>在<code>iOS</code>开发中，<code>UITableView</code>的使用频率较高，这篇文章主要用于记录一些常用的使用方法和问题解决方案。</p>
+</blockquote>
+<h1 id="点击cell不变色">点击cell不变色</h1>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift"><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">tableView</span>(<span style="color:#66d9ef">_</span> tableView: UITableView, cellForRowAt indexPath: IndexPath) -&gt; UITableViewCell {
+    <span style="color:#66d9ef">let</span> cell = tableView.dequeueReusableCell(withIdentifier: cellId, <span style="color:#66d9ef">for</span>: indexPath) <span style="color:#66d9ef">as</span>! NoteDetailInfoCell
+    cell.selectionStyle = .<span style="color:#66d9ef">none</span>  <span style="color:#75715e">//点击该cell不变色</span>
+    <span style="color:#66d9ef">return</span> cell
+}
+</code></pre></div><hr>
+<h1 id="cell异步更新">Cell异步更新</h1>
+<p>在<code>UITableView</code>中经常要使用到异步请求，请求回来之后要更新相应<code>cell</code>的外观，由于<code>UITableView</code>中的<code>cell</code>存在复用问题，因此异步请求返回之后要特别小心处理。目前个人总结可以有三种方式。</p>
+<h2 id="使用内存缓存">使用内存缓存</h2>
+<p>在<code>presenter</code>中增加缓存，一般使用<code>map</code>来实现，然后一般以<code>indexPath</code>作为<code>key</code>（也可以其他具有唯一性的<code>id</code>作为<code>key</code>），以异步请求之后返回的某项数据作为<code>value</code>。异步返回之后，更新缓存，然后再在<font color=red>主线程中</font>调用<code>reload</code>方法。</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift"><span style="color:#66d9ef">override</span> <span style="color:#66d9ef">func</span> <span style="color:#a6e22e">tableView</span>(<span style="color:#66d9ef">_</span> tableView: UITableView, cellForRowAt indexPath: IndexPath) -&gt; UITableViewCell {
+    <span style="color:#66d9ef">let</span> cell = tableView.dequeueReusableCell(withIdentifier: <span style="color:#66d9ef">self</span>.zhGroupCellIdentifier, <span style="color:#66d9ef">for</span>: indexPath)
+    <span style="color:#66d9ef">let</span> model = <span style="color:#66d9ef">self</span>.presenter.dataSource[indexPath.row]
+    <span style="color:#66d9ef">if</span> <span style="color:#66d9ef">let</span> groupCell: ZHGroupCell = cell <span style="color:#66d9ef">as</span>? ZHGroupCell {
+        groupCell.nameLbl.text = model.sessionName
+        <span style="color:#66d9ef">if</span> <span style="color:#66d9ef">let</span> image = <span style="color:#66d9ef">self</span>.presenter.headCache[model.sessionID] {
+            groupCell.imgView.image = image
+        } <span style="color:#66d9ef">else</span> {
+            <span style="color:#66d9ef">self</span>.presenter.requestImage(id: model.sessionID,indexPath: indexPath) { [<span style="color:#66d9ef">weak</span> <span style="color:#66d9ef">self</span>] index <span style="color:#66d9ef">in</span>
+                DispatchQueue.main.async { [<span style="color:#66d9ef">weak</span> <span style="color:#66d9ef">self</span>] <span style="color:#66d9ef">in</span>
+                     tableView.reloadRows(at: [index], with: .<span style="color:#66d9ef">none</span>)
+                    }
+                }
+            }
+        }
+    }
+    <span style="color:#66d9ef">return</span> cell
+}
+</code></pre></div><div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift"><span style="color:#75715e">/// 从服务端获取用户头像</span>
+<span style="color:#66d9ef">private</span> <span style="color:#66d9ef">func</span> <span style="color:#a6e22e">getHeaderImageFromRemote</span>(user: ContactsUser, indexPath: IndexPath) {
+    <span style="color:#66d9ef">self</span>.contactsHeadPhotoService.getServerImage(user: user) { [<span style="color:#66d9ef">weak</span> <span style="color:#66d9ef">self</span>] <span style="color:#66d9ef">_</span> <span style="color:#66d9ef">in</span>
+        DispatchQueue.main.async { [<span style="color:#66d9ef">weak</span> <span style="color:#66d9ef">self</span>] <span style="color:#66d9ef">in</span>
+            <span style="color:#66d9ef">if</span> <span style="color:#66d9ef">self</span>?.tableView.cellForRow(at: indexPath) <span style="color:#f92672">!=</span> <span style="color:#66d9ef">nil</span> {
+                <span style="color:#66d9ef">if</span> <span style="color:#66d9ef">self</span>?.isSearching == <span style="color:#66d9ef">true</span> {
+                    <span style="color:#66d9ef">self</span>?.tableView.reloadRows(at: [indexPath], with: .<span style="color:#66d9ef">none</span>)
+                } <span style="color:#66d9ef">else</span> {
+                    <span style="color:#75715e">//非搜索状态时有可能有相同的联系人在不同的分组，所以选择全部reload</span>
+                    <span style="color:#66d9ef">self</span>?.tableView.reloadData()
+                }
+            }
+        }
+    }
+}
+</code></pre></div><h2 id="使用prepareforreuse">使用prepareForReuse()</h2>
+<p>使用<code>KingFisher</code>请求图片资源时，由于有些图片返回较慢，因为<code>cell</code>复用，可能会导致图片出现错乱，此时可以在<code>prepareForReuse</code>先取消相应的网络请求。</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift"><span style="color:#75715e">/// 因为使用kingfisher进行图片下载为异步的，所以要解决复用问题</span>
+<span style="color:#66d9ef">override</span> <span style="color:#66d9ef">func</span> <span style="color:#a6e22e">prepareForReuse</span>() {
+    <span style="color:#66d9ef">super</span>.prepareForReuse()
+    <span style="color:#66d9ef">self</span>.headerImageView.kf.cancelDownloadTask()
+    <span style="color:#66d9ef">self</span>.dkImageView.kf.cancelDownloadTask()
+}
+</code></pre></div><h2 id="设置对应cell">设置对应cell</h2>
+<p>首先异步请求时多加一个<code>indexPath</code>参数，异步返回时把返回的数据和<code>indexPath</code>作为回调参数，然后根据<code>indexPath</code>找到对应的<code>cell</code>，最后更新<code>cell</code>的外观。</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift"><span style="color:#66d9ef">override</span> <span style="color:#66d9ef">func</span> <span style="color:#a6e22e">tableView</span>(<span style="color:#66d9ef">_</span> tableView: UITableView, cellForRowAt indexPath: IndexPath) -&gt; UITableViewCell {
+    <span style="color:#66d9ef">let</span> cell = tableView.dequeueReusableCell(withIdentifier: <span style="color:#66d9ef">self</span>.zhGroupCellIdentifier, <span style="color:#66d9ef">for</span>: indexPath)
+    <span style="color:#66d9ef">let</span> model = <span style="color:#66d9ef">self</span>.presenter.dataSource[indexPath.row]
+    <span style="color:#66d9ef">if</span> <span style="color:#66d9ef">let</span> groupCell: ZHGroupCell = cell <span style="color:#66d9ef">as</span>? ZHGroupCell {
+        groupCell.nameLbl.text = model.sessionName
+        <span style="color:#66d9ef">if</span> <span style="color:#66d9ef">let</span> image = <span style="color:#66d9ef">self</span>.presenter.headCache[model.sessionID] {
+            groupCell.imgView.image = image
+        } <span style="color:#66d9ef">else</span> {
+            <span style="color:#66d9ef">self</span>.presenter.requestImage(id: model.sessionID,indexPath: indexPath) { [<span style="color:#66d9ef">weak</span> <span style="color:#66d9ef">self</span>] index <span style="color:#66d9ef">in</span>
+                DispatchQueue.main.async { [<span style="color:#66d9ef">weak</span> <span style="color:#66d9ef">self</span>] <span style="color:#66d9ef">in</span>
+                    <span style="color:#66d9ef">if</span> <span style="color:#66d9ef">let</span> cell = tableView.cellForRow(at: index) <span style="color:#66d9ef">as</span>? ZHGroupCell,<span style="color:#66d9ef">let</span> model = <span style="color:#66d9ef">self</span>?.presenter.dataSource[index.row] {
+                        cell.imgView?.image = <span style="color:#66d9ef">self</span>?.presenter.headCache[model.sessionID]
+                    }
+                }
+            }
+        }
+    }
+    <span style="color:#66d9ef">return</span> cell
+}
+</code></pre></div><h1 id="分组显示">分组显示</h1>
+<p><a href="http://www.hackmz.com">链接</a></p>
+<p><a href="https://juejin.im/entry/582a73880ce463006cd1f5b9">range</a></p>
+<h1 id="动态调整footer高度">动态调整footer高度</h1>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift"><span style="color:#66d9ef">override</span> <span style="color:#66d9ef">func</span> <span style="color:#a6e22e">viewDidLayoutSubviews</span>() {
+  <span style="color:#66d9ef">super</span>.viewDidLayoutSubviews()
+  <span style="color:#66d9ef">guard</span> <span style="color:#66d9ef">let</span> footerView = <span style="color:#66d9ef">self</span>.tableView.tableFooterView <span style="color:#66d9ef">else</span> {
+    <span style="color:#66d9ef">return</span>
+  }
+  <span style="color:#66d9ef">let</span> width = <span style="color:#66d9ef">self</span>.tableView.bounds.size.width
+  <span style="color:#66d9ef">let</span> size = footerView.systemLayoutSizeFitting(CGSize(width: width, height: UIView.layoutFittingCompressedSize.height))
+  <span style="color:#66d9ef">if</span> footerView.frame.size.height <span style="color:#f92672">!=</span> size.height {
+    footerView.frame.size.height = size.height
+    <span style="color:#66d9ef">self</span>.tableView.tableFooterView = footerView
+  }
+}
+</code></pre></div><p><a href="https://medium.com/better-programming/dynamic-height-uitableview-footer-e99e8c04484a">参考</a></p>
+<hr>
+
+    </div>
+    <footer class="post-footer">
+        
+ 
+<div class="post-tags">     
+     
+    <a href="https://iihui.github.io/tags/ios" rel="tag" title="iOS">#iOS#</a>
+    
+</div>
+
+
+
+        <div class="post-nav">
+    <div class="post-nav-next post-nav-item">
+    
+        <a href="https://iihui.github.io/post/ios-alamofire/" rel="next" title="Almofire的使用">
+        <i class="fa fa-chevron-left"></i> Almofire的使用
+        </a>
+    
+    </div>
+
+    <div class="post-nav-prev post-nav-item">
+    
+        <a href="https://iihui.github.io/post/travel-guizhou/" rel="prev" title="贵州之行">
+        贵州之行 <i class="fa fa-chevron-right"></i>
+        </a>
+    
+    </div>
+</div>
+      
+        <div class="post-nav">
+    <div style="border: 1px dashed #e0e0e0; padding: 10px 10px 10px 10px; background-color: #fffeee; background-repeat: no-repeat; background-attachment: scroll; background-position: 1% 50%; -moz-background-size: auto auto; -moz-background-clip: -moz-initial; -moz-background-origin: -moz-initial; -moz-background-inline-policy: -moz-initial;">
+        <div style="float:left;margin-top:0px;">
+            <img src="https://i.loli.net/2020/02/09/SvhUdz4XJsOr9Vk.jpg" width="128px" height="128px"/>
+            <div style="text-align:center;">谢谢支持!</div>
+        </div>
+        <div>
+            <p style="margin-top:10px;">
+                标题：UITableView 使用
+                <br />作者：阿呆<a target="_blank" href="https://iihui.github.io/"></a>
+                
+                <br />地址：https://iihui.github.io/post/ios-uitableview/
+                <br />声明：自由转载-非商用-保持署名（创作共享4.0许可证）
+            </p>
+        </div>
+    </div>
+    <div class="clear"></div>
+</div>
+        
+        
+        
+
+
+
+
+    </footer>
+  </article>
+</section>
+
+          </div>
+        </div>
+        <div class="sidebar-toggle">
+  <div class="sidebar-toggle-line-wrap">
+    <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+    <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+    <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+  </div>
+</div>
+<aside id="sidebar" class="sidebar">
+  <div class="sidebar-inner">
+
+  <ul class="sidebar-nav motion-element">
+    <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+      文章目录
+    </li>
+    <li class="sidebar-nav-overview" data-target="site-overview">
+      站点概览
+    </li>
+  </ul>
+
+    <section class="site-overview sidebar-panel ">
+      <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image"
+        src="https://i.loli.net/2020/02/07/dVFzrvZkHRNq2lL.jpg"
+        alt="" />
+    <p class="site-author-name" itemprop="name"></p>
+    <p class="site-description motion-element" itemprop="description"> 
+        coder &amp; cook</p>
+</div>
+      <nav class="site-state motion-element">
+    <div class="site-state-item site-state-posts">
+      <a href="https://iihui.github.io/post/">
+        <span class="site-state-item-count">142</span>
+        <span class="site-state-item-name">日志</span>
+      </a>
+    </div>
+    <div class="site-state-item site-state-categories">    
+        <a href="https://iihui.github.io/categories/">      
+         
+        <span class="site-state-item-count">18</span>
+        
+        <span class="site-state-item-name">分类</span>
+        
+        </a>
+    </div>
+
+    <div class="site-state-item site-state-tags">
+        <a href="https://iihui.github.io/tags/">
+         
+        <span class="site-state-item-count">31</span>
+        
+        <span class="site-state-item-name">标签</span>
+        </a>
+    </div>
+</nav>
+      
+      
+<div class="links-of-author motion-element">
+    
+        <span class="links-of-author-item">
+        <a href="https://coolshell.cn" target="_blank" title="皓 大">
+            <i class="fa fa-fw fa-globe"></i>
+            皓 大
+        </a>
+        </span>
+    
+        <span class="links-of-author-item">
+        <a href="http://www.ruanyifeng.com" target="_blank" title="阮 大">
+            <i class="fa fa-fw fa-globe"></i>
+            阮 大
+        </a>
+        </span>
+    
+        <span class="links-of-author-item">
+        <a href="https://juejin.im/" target="_blank" title="掘 金">
+            <i class="fa fa-fw fa-globe"></i>
+            掘 金
+        </a>
+        </span>
+    
+        <span class="links-of-author-item">
+        <a href="http://www.ideamsg.com" target="_blank" title="灵 感">
+            <i class="fa fa-fw fa-globe"></i>
+            灵 感
+        </a>
+        </span>
+    
+</div>
+
+
+      
+
+      <div class="links-of-blogroll motion-element inline">
+<script type="text/javascript" src="//rf.revolvermaps.com/0/0/8.js?i=&amp;m=0&amp;s=220&amp;c=ff0000&amp;cr1=ffffff&amp;f=arial&amp;l=33&amp;bv=35" async="async"></script>
+</div>
+
+    </section>
+    
+<section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+    <div class="post-toc">
+        <div class="post-toc-content"><nav id="TableOfContents">
+  <ul>
+    <li><a href="#点击cell不变色">点击cell不变色</a></li>
+    <li><a href="#cell异步更新">Cell异步更新</a>
+      <ul>
+        <li><a href="#使用内存缓存">使用内存缓存</a></li>
+        <li><a href="#使用prepareforreuse">使用prepareForReuse()</a></li>
+        <li><a href="#设置对应cell">设置对应cell</a></li>
+      </ul>
+    </li>
+    <li><a href="#分组显示">分组显示</a></li>
+    <li><a href="#动态调整footer高度">动态调整footer高度</a></li>
+  </ul>
+</nav></div>
+    </div>
+</section>
+
+  </div>
+</aside>
+
+      </div>
+    </main>
+   
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  <span itemprop="copyrightYear">  &copy; 
+  2017 - 2022</span>
+  <span class="with-love"><i class="fa fa-heart"></i></span>
+  <span class="author" itemprop="copyrightHolder">Keep It Simple</span>
+</div>
+
+
+
+
+      </div>
+    </footer>
+
+    <div class="back-to-top">
+      <i class="fa fa-arrow-up"></i>
+      <span id="scrollpercent"><span>0</span>%</span>
+    </div>
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+<script type="text/javascript" src="https://iihui.github.io/js/vendor/jquery/index.js?v=2.1.3"></script>
+<script type="text/javascript" src="https://iihui.github.io/js/vendor/fastclick/lib/fastclick.min.js?v=1.0.6"></script> 
+<script type="text/javascript" src="https://iihui.github.io/js/vendor/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+<script type="text/javascript" src="https://iihui.github.io/js/vendor/velocity/velocity.min.js?v=1.2.1"></script>
+<script type="text/javascript" src="https://iihui.github.io/js/vendor/velocity/velocity.ui.min.js?v=1.2.1"></script>
+<script src="https://iihui.github.io/js/vendor/ua-parser-js/dist/ua-parser.min.js?v=0.7.9"></script>
+
+<script src="https://iihui.github.io/js/vendor/fancybox/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+<script type="text/javascript" src="https://iihui.github.io/js/utils.js"></script>
+<script type="text/javascript" src="https://iihui.github.io/js/motion.js"></script>
+<script type="text/javascript" src="https://iihui.github.io/js/affix.js"></script>
+<script type="text/javascript" src="https://iihui.github.io/js/schemes/pisces.js"></script>
+
+<script type="text/javascript" src="https://iihui.github.io/js/scrollspy.js"></script>
+<script type="text/javascript" src="https://iihui.github.io/js/post-details.js"></script>
+<script type="text/javascript" src="https://iihui.github.io/js/toc.js"></script>
+
+<script type="text/javascript" src="https://iihui.github.io/js/bootstrap.js"></script>
+
+<script type="text/javascript" src="https://iihui.github.io/js/search.js"></script>
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+    extensions: ["tex2jax.js"],
+    jax: ["input/TeX", "output/HTML-CSS"],
+    tex2jax: {
+      inlineMath: [ ['$','$'] ],
+      displayMath: [ ['$$','$$'] ],
+      processEscapes: true
+    },
+    "HTML-CSS": { fonts: ["TeX"] }
+  });
+</script>
+<script src='https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-AMS-MML_HTMLorMML' async></script>
+</body>
+</html>
