@@ -241,7 +241,7 @@ code.has-jax {
     <i class="fa fa-file-word-o"></i>
 </span>
 <span class="post-meta-item-text">字数: </span>
-<span class="leancloud-visitors-count">15325</span>
+<span class="leancloud-visitors-count">15354</span>
 &nbsp; | &nbsp;
 <span class="post-meta-item-icon">
     <i class="fa fa-coffee"></i>
@@ -256,7 +256,7 @@ code.has-jax {
 <p>在开发过程中，会遇到各种问题，有时候某个问题当时已经找到了解决方案，但过了一段时间又可能会忘记。这篇文章记录一些问题的解决方案，以便后续查找。</p>
 </blockquote>
 <h1 id="强制竖屏">强制竖屏</h1>
-<p>最近在使用其它<code>SDK</code>，业务方要求打开其中的某个页面时强制竖屏，但发现按对方要求传了对应参数，依然未生效，依然能够进行横竖屏切换。解决方案是首先在工程的<code>info.plist</code>中添加<a href="https://stackoverflow.com/questions/34608826/what-is-the-impact-of-the-requires-full-screen-option-in-xcode-for-an-iphone-o">Require Full Screen</a>，并将其值置为<code>YES</code>，然后在需要强制竖屏的<code>ViewController</code>中添加如下代码：</p>
+<p>最近在使用其它<code>SDK</code>，业务方要求打开其中的某个页面时强制竖屏，但发现按对方要求传了相应参数，依然未生效，仍然能够自有横竖屏切换。解决方案是首先在工程<code>info.plist</code>中添加<a href="https://stackoverflow.com/questions/34608826/what-is-the-impact-of-the-requires-full-screen-option-in-xcode-for-an-iphone-o">Require Full Screen</a>项，并将其值置为<code>YES</code>，然后在需要强制竖屏的<code>ViewController</code>中添加如下代码：</p>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift"><span style="color:#66d9ef">class</span> <span style="color:#a6e22e">ViewController</span>: UIViewController {
     <span style="color:#66d9ef">override</span> <span style="color:#66d9ef">func</span> <span style="color:#a6e22e">viewDidLoad</span>() {
         <span style="color:#66d9ef">super</span>.viewDidLoad()
@@ -274,7 +274,7 @@ code.has-jax {
 }
 </code></pre></div><p><img src="https://i.loli.net/2021/07/17/7EDrCNhBZT6SAa2.jpg" alt="-c"></p>
 <h1 id="keywindow变化">keyWindow变化</h1>
-<p>系统升级到<code>iOS 14.5.1</code>后，发现使用<code>UIApplication.shared.keyWindow</code>获取到的<code>rootViewController</code>为<code>nil</code>。排查发现，在创建并使用新<code>window</code>后导致<code>keyWindow</code>发生了变化。为了防止这种变化，在显示新的<code>window</code>前，先保存原来的<code>keyWindow</code>，在释放新建的<code>window</code>后再还原<code>keyWindow</code>：</p>
+<p>系统升级到<code>iOS 14.5.1</code>后，发现使用<code>UIApplication.shared.keyWindow</code>获取到的<code>rootViewController</code>为<code>nil</code>。排查发现，在创建并使用新<code>window</code>后导致<code>keyWindow</code>发生了变化。为了防止这种变化，在显示新的<code>window</code>前，先保存原来的<code>keyWindow</code>，释放新建的<code>window</code>后再还原<code>keyWindow</code>：</p>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift"><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">show</span>() {
     <span style="color:#66d9ef">if</span> <span style="color:#66d9ef">self</span>.showTimes == <span style="color:#ae81ff">0</span> {
         <span style="color:#75715e">// iOS 14.5.1上如果不记录keyWindow，调用self.dismissVC()后会导致dismiss后keyWindow发生变化</span>
@@ -297,7 +297,7 @@ code.has-jax {
     <span style="color:#66d9ef">self</span>.keyWindow?.makeKeyAndVisible()
 }
 </code></pre></div><h1 id="uialertview-deprecated-for-uiscene-based-applications">UIAlertView deprecated for UIScene based applications</h1>
-<p>测试<a href="https://github.com/kstenerud/KSCrash">KSCrash</a>组件时使用<code>XCode 12.3</code>新建了一个工程，写了相关代码之后出现错误：<code>UIAlertView is deprecated and unavailable for UIScene based applications, please use UIAlertController</code>，参照<a href="https://stackoverflow.com/questions/58188069/uialertview-is-deprecated-and-unavailable-for-uiscene-based-applications-please">Stack Overflow</a>上的回答，解决了报错问题。</p>
+<p>测试<a href="https://github.com/kstenerud/KSCrash">KSCrash</a>组件时使用<code>XCode 12.3</code>新建了一个工程，写了相关代码之后出现：<code>UIAlertView is deprecated and unavailable for UIScene based applications, please use UIAlertController</code>错误，参照<a href="https://stackoverflow.com/questions/58188069/uialertview-is-deprecated-and-unavailable-for-uiscene-based-applications-please">Stack Overflow</a>上的回答，解决了报错问题。</p>
 <p>解决这个问题的核心是要删除<code>UIScene</code>相关代码，让工程恢复到旧的<code>window</code>架构。这个过程主要分为四步，首先需要删除工程中的<code>SceneDelegate.swift</code>文件：</p>
 <p><img src="https://i.loli.net/2020/12/26/i2yRd81MkAP5347.jpg" style="zoom:60%;" /></p>
 <p>然后在<code>AppDelegate.swift</code>文件中删除<code>UIScene</code>中相关的代码，即<code>application(_ application: UIApplication, configurationForConnecting connectingSceneSession: UISceneSession, options: UIScene.ConnectionOptions)</code>和<code> application(_ application: UIApplication, didDiscardSceneSessions sceneSessions: Set&lt;UISceneSession&gt;)</code>两个函数：</p>
@@ -322,10 +322,10 @@ code.has-jax {
     }
 
 }
-</code></pre></div><p>最后在工程的<code>Info.plist</code>文件中删除<code>Application Scene Manifest</code>这一行，重新编译即可。如果编译后依然报错，需要清除工程的缓存（可以使用<code>Shift+Command+K</code>快捷键），然后再编译：</p>
+</code></pre></div><p>最后在工程的<code>Info.plist</code>文件中删除<code>Application Scene Manifest</code>这一行，重新编译即可。如果编译依然报错，需要清除工程的缓存（可以使用<code>Shift+Command+K</code>快捷键），然后再编译：</p>
 <p><img src="https://i.loli.net/2020/12/26/8BwLCWr7XYesEv4.jpg" alt="-c" style="zoom:80%;" /></p>
 <h1 id="禁用push页面边缘返回手势">禁用push页面边缘返回手势</h1>
-<p>对于以<code>push</code>方式打开的页面，该页面默认将自动拥有系统提供的<font color=red>「边缘返回」</font>手势。但如果要禁止系统的「边缘返回」手势，可以为<code>UIViewController</code>写一个扩展方法：</p>
+<p>对于以<code>push</code>方式打开的页面，该页面默认自动拥有系统提供的<font color=red>「边缘返回」</font>手势。如果要禁止系统的「边缘返回」手势，可以为<code>UIViewController</code>写一个如下的扩展方法：</p>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift"><span style="color:#75715e">// 参考自https://juejin.cn/post/6860656306630590477</span>
 <span style="color:#66d9ef">extension</span> <span style="color:#a6e22e">UIViewController</span> {
     <span style="color:#75715e">// 禁止系统的边缘返回手势</span>
@@ -336,7 +336,7 @@ code.has-jax {
     }
 }
 </code></pre></div><h1 id="uiwebview特殊字符">UIWebView特殊字符</h1>
-<p>如果使用<code>UIWebView</code>加载的<code>html</code>文件中包含<code>\n</code>,<code>'</code>等特殊字符时，<font color=red>不做任何处理直接加载的话，将会出现白屏</font>。因此，加载这种含有特殊字符的<code>html</code>文件时要特殊处理:</p>
+<p>如果使用<code>UIWebView</code>加载的<code>html</code>文件中包含<code>\n</code>,<code>'</code>等特殊字符时，<font color=red>不做任何处理直接加载的话，将会出现白屏</font>，此时没有任何提示。因此，加载这种含有特殊字符的<code>html</code>文件时要特殊处理:</p>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-Swift" data-lang="Swift"><span style="color:#66d9ef">class</span> <span style="color:#a6e22e">HTMLUtils</span> {
     <span style="color:#66d9ef">static</span> <span style="color:#66d9ef">func</span> <span style="color:#a6e22e">escapsedHTML</span>(html: String) -&gt; String{
         <span style="color:#66d9ef">var</span> result = html
@@ -351,7 +351,7 @@ code.has-jax {
     }
 }
 </code></pre></div><h1 id="允许http请求">允许http请求</h1>
-<p>自<code>iOS 9</code>开始，苹果<font color=Blue>默认要求<code>App</code>访问的<code>url</code>均为<code>https</code></font>。为了能在项目中支持<code>http</code>，需在项目中的<code>Info.plist</code>文件中将<code>App Transport Security Settings</code>下的<code>Allow Arbitrary Loads</code>设置为<code>YES</code>。如果没有这两项的话，则需在<code>Info.plist</code>文件中添加:</p>
+<p>自<code>iOS 9.0</code>开始，苹果<font color=Blue>默认要求<code>App</code>访问的<code>url</code>均为<code>https</code></font>。为了能在项目中支持<code>http</code>，需在项目中的<code>Info.plist</code>文件中将<code>App Transport Security Settings</code>下的<code>Allow Arbitrary Loads</code>设置为<code>YES</code>。如果没有这两项的话，则需在<code>Info.plist</code>文件中添加:</p>
 <p><img src="https://i.loli.net/2018/12/29/5c26e4944a70d.jpg" alt="-c"></p>
 <h1 id="仿导航栏添加阴影">仿导航栏添加阴影</h1>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift"><span style="color:#75715e">// 设置阴影颜色</span>
@@ -399,10 +399,12 @@ navBGView.layer.shadowPath = UIBezierPath.<span style="color:#66d9ef">init</span
         <span style="color:#66d9ef">if</span> minutes <span style="color:#f92672">&lt;</span> <span style="color:#ae81ff">60</span> {
             <span style="color:#66d9ef">return</span> <span style="color:#e6db74">&#34;</span><span style="color:#e6db74">\(</span>minutes<span style="color:#e6db74">)</span><span style="color:#e6db74">分钟前&#34;</span>
         }
+        <span style="color:#75715e">// 时间差小于24小时</span>
         <span style="color:#66d9ef">let</span> hours = Int(reduceTime <span style="color:#f92672">/</span> <span style="color:#ae81ff">3600</span>)
         <span style="color:#66d9ef">if</span> hours <span style="color:#f92672">&lt;</span> <span style="color:#ae81ff">24</span> {
             <span style="color:#66d9ef">return</span> <span style="color:#e6db74">&#34;</span><span style="color:#e6db74">\(</span>hours<span style="color:#e6db74">)</span><span style="color:#e6db74">小时前&#34;</span>
         }
+        <span style="color:#75715e">// 时间差小于10 天</span>
         <span style="color:#66d9ef">let</span> days = Int(reduceTime <span style="color:#f92672">/</span> <span style="color:#ae81ff">3600</span> <span style="color:#f92672">/</span> <span style="color:#ae81ff">24</span>)
         <span style="color:#66d9ef">if</span> days <span style="color:#f92672">&lt;</span> <span style="color:#ae81ff">10</span> {
             <span style="color:#66d9ef">return</span> <span style="color:#e6db74">&#34;</span><span style="color:#e6db74">\(</span>days<span style="color:#e6db74">)</span><span style="color:#e6db74">天前&#34;</span>
