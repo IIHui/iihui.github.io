@@ -276,92 +276,91 @@ code.has-jax {
 <p>接着填写相关信息，要注意的是语音包名要与<font color=red>测试工程的<code>Bundle Identifier</code>一致（称为绑定），才可以使用百度语音合成的离在线模式</font>:</p>
 <p><img src="https://i.loli.net/2019/03/02/5c79fdf4665af.jpg" alt=""></p>
 <h1 id="测试代码">测试代码</h1>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-Swift" data-lang="Swift"><span style="color:#66d9ef">import</span> <span style="color:#a6e22e">UIKit</span>
-
-<span style="color:#66d9ef">let</span> APP_ID = <span style="color:#e6db74">&#34;XXXXX&#34;</span>
-<span style="color:#66d9ef">let</span> API_KEY = <span style="color:#e6db74">&#34;XXXXX&#34;</span>
-<span style="color:#66d9ef">let</span> SECRET_KEY = <span style="color:#e6db74">&#34;XXXXX&#34;</span> 
-
-<span style="color:#66d9ef">class</span> <span style="color:#a6e22e">ViewController</span>: UIViewController, BDSSpeechSynthesizerDelegate {
-
-    fileprivate <span style="color:#66d9ef">var</span> synthesiser: BDSSpeechSynthesizer = BDSSpeechSynthesizer.sharedInstance()
-    <span style="color:#66d9ef">@IBOutlet</span> <span style="color:#66d9ef">weak</span> <span style="color:#66d9ef">var</span> synthesisButton: UIButton!
-    <span style="color:#66d9ef">@IBOutlet</span> <span style="color:#66d9ef">weak</span> <span style="color:#66d9ef">var</span> textView: UITextView!
-    <span style="color:#66d9ef">@IBOutlet</span> <span style="color:#66d9ef">weak</span> <span style="color:#66d9ef">var</span> offlineSwitch: UISwitch!
-
-    <span style="color:#66d9ef">override</span> <span style="color:#66d9ef">func</span> <span style="color:#a6e22e">viewDidLoad</span>() {
-        <span style="color:#66d9ef">super</span>.viewDidLoad()
-        BDSSpeechSynthesizer.setLogLevel(BDS_PUBLIC_LOG_VERBOSE)
-        <span style="color:#66d9ef">self</span>.synthesiser.setSynthesizerDelegate(<span style="color:#66d9ef">self</span>)
-        <span style="color:#66d9ef">self</span>.textView.delegate = <span style="color:#66d9ef">self</span>
-        <span style="color:#66d9ef">self</span>.configOffline()
-    }
-
-    <span style="color:#66d9ef">@IBAction</span> <span style="color:#66d9ef">func</span> <span style="color:#a6e22e">clickedSynthesis</span>(<span style="color:#66d9ef">_</span> sender: UIButton) {
-        <span style="color:#66d9ef">if</span> <span style="color:#66d9ef">let</span> sentence = <span style="color:#66d9ef">self</span>.textView.text {
-            <span style="color:#66d9ef">self</span>.synthesiser.speakSentence(sentence, withError: <span style="color:#66d9ef">nil</span>)
-        }
-    }
-
-    <span style="color:#66d9ef">@IBAction</span> <span style="color:#66d9ef">func</span> <span style="color:#a6e22e">offlineSwitchClicked</span>(<span style="color:#66d9ef">_</span> sender: UISwitch) {
-        <span style="color:#66d9ef">if</span> sender.isOn {
-            <span style="color:#66d9ef">self</span>.configOffline()
-        } <span style="color:#66d9ef">else</span> {
-            <span style="color:#66d9ef">self</span>.configOnline()
-        }
-    }
-
-    <span style="color:#66d9ef">func</span> <span style="color:#a6e22e">configOnline</span>() {
-        <span style="color:#66d9ef">self</span>.synthesiser.setApiKey(API_KEY, withSecretKey: SECRET_KEY)
-        <span style="color:#66d9ef">var</span> error = <span style="color:#66d9ef">self</span>.synthesiser.setSynthParam(<span style="color:#ae81ff">4</span>, <span style="color:#66d9ef">for</span>: BDS_SYNTHESIZER_PARAM_PITCH)
-        <span style="color:#66d9ef">if</span> <span style="color:#66d9ef">let</span> err = error {
-            print(err.localizedDescription)
-        }
-        error = <span style="color:#66d9ef">self</span>.synthesiser.setSynthParam(<span style="color:#ae81ff">5</span>, <span style="color:#66d9ef">for</span>: BDS_SYNTHESIZER_PARAM_SPEED)
-        <span style="color:#66d9ef">if</span> <span style="color:#66d9ef">let</span> err = error {
-            print(err.localizedDescription)
-        }
-        error = <span style="color:#66d9ef">self</span>.synthesiser.setSynthParam(<span style="color:#ae81ff">9</span>, <span style="color:#66d9ef">for</span>: BDS_SYNTHESIZER_PARAM_VOLUME)
-        <span style="color:#66d9ef">if</span> <span style="color:#66d9ef">let</span> err = error {
-            print(err.localizedDescription)
-        }
-        <span style="color:#66d9ef">self</span>.synthesiser.unloadDomainDataFromOfflineEngine()
-    }
-
-    <span style="color:#66d9ef">func</span> <span style="color:#a6e22e">configOffline</span>() {
-        <span style="color:#66d9ef">let</span> offlineEngineSpeechData = Bundle.main.path(forResource: <span style="color:#e6db74">&#34;Chinese_And_English_Speech_Female&#34;</span>, ofType: <span style="color:#e6db74">&#34;dat&#34;</span>)
-        <span style="color:#66d9ef">let</span> offlineChineseAndEnglishTextData = Bundle.main.path(forResource: <span style="color:#e6db74">&#34;Chinese_And_English_Text&#34;</span>, ofType: <span style="color:#e6db74">&#34;dat&#34;</span>)
-
-        <span style="color:#66d9ef">let</span> error = <span style="color:#66d9ef">self</span>.synthesiser.loadOfflineEngine(offlineChineseAndEnglishTextData, speechDataPath: offlineEngineSpeechData, licenseFilePath: <span style="color:#66d9ef">nil</span>, withAppCode: APP_ID)
-        <span style="color:#66d9ef">if</span> <span style="color:#66d9ef">let</span> err = error {
-            print(err.localizedDescription)
-        }
-    }
-
-    <span style="color:#66d9ef">func</span> <span style="color:#a6e22e">synthesizerNewDataArrived</span>(<span style="color:#66d9ef">_</span> newData: Data!, dataFormat fmt: BDSAudioFormat, characterCount newLength: Int32, sentenceNumber SynthesizeSentence: Int) {
-        
-    }
-    
-    <span style="color:#66d9ef">func</span> <span style="color:#a6e22e">synthesizerErrorOccurred</span>(<span style="color:#66d9ef">_</span> error: Error!, speaking SpeakSentence: Int, synthesizing SynthesizeSentence: Int) {
-       print(error.localizedDescription)
-    }
-    
-    <span style="color:#66d9ef">override</span> <span style="color:#66d9ef">func</span> <span style="color:#a6e22e">viewDidDisappear</span>(<span style="color:#66d9ef">_</span> animated: Bool) {
-        <span style="color:#66d9ef">super</span>.viewDidDisappear(animated)
-        <span style="color:#66d9ef">self</span>.synthesiser.speakSentence(<span style="color:#e6db74">&#34;进入后台&#34;</span>, withError: <span style="color:#66d9ef">nil</span>)
-    }
-}
-
-<span style="color:#66d9ef">extension</span> <span style="color:#a6e22e">ViewController</span>: UITextViewDelegate {
-    <span style="color:#66d9ef">func</span> <span style="color:#a6e22e">textViewDidChange</span>(<span style="color:#66d9ef">_</span> textView: UITextView) {
-        <span style="color:#66d9ef">if</span> <span style="color:#66d9ef">let</span> text = textView.text {
-            <span style="color:#75715e">//self.synthesiser?.speakSentence(text, withError: nil)</span>
-            print(text)
-        }
-    }
-}
-
-</code></pre></div><hr>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-Swift" data-lang="Swift"><span style="display:flex;"><span><span style="color:#66d9ef">import</span> <span style="color:#a6e22e">UIKit</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">let</span> APP_ID = <span style="color:#e6db74">&#34;XXXXX&#34;</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">let</span> API_KEY = <span style="color:#e6db74">&#34;XXXXX&#34;</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">let</span> SECRET_KEY = <span style="color:#e6db74">&#34;XXXXX&#34;</span> 
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">class</span> <span style="color:#a6e22e">ViewController</span>: UIViewController, BDSSpeechSynthesizerDelegate {
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    fileprivate <span style="color:#66d9ef">var</span> synthesiser: BDSSpeechSynthesizer = BDSSpeechSynthesizer.sharedInstance()
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">@IBOutlet</span> <span style="color:#66d9ef">weak</span> <span style="color:#66d9ef">var</span> synthesisButton: UIButton!
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">@IBOutlet</span> <span style="color:#66d9ef">weak</span> <span style="color:#66d9ef">var</span> textView: UITextView!
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">@IBOutlet</span> <span style="color:#66d9ef">weak</span> <span style="color:#66d9ef">var</span> offlineSwitch: UISwitch!
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">override</span> <span style="color:#66d9ef">func</span> <span style="color:#a6e22e">viewDidLoad</span>() {
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">super</span>.viewDidLoad()
+</span></span><span style="display:flex;"><span>        BDSSpeechSynthesizer.setLogLevel(BDS_PUBLIC_LOG_VERBOSE)
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">self</span>.synthesiser.setSynthesizerDelegate(<span style="color:#66d9ef">self</span>)
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">self</span>.textView.delegate = <span style="color:#66d9ef">self</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">self</span>.configOffline()
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">@IBAction</span> <span style="color:#66d9ef">func</span> <span style="color:#a6e22e">clickedSynthesis</span>(<span style="color:#66d9ef">_</span> sender: UIButton) {
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">if</span> <span style="color:#66d9ef">let</span> sentence = <span style="color:#66d9ef">self</span>.textView.text {
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">self</span>.synthesiser.speakSentence(sentence, withError: <span style="color:#66d9ef">nil</span>)
+</span></span><span style="display:flex;"><span>        }
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">@IBAction</span> <span style="color:#66d9ef">func</span> <span style="color:#a6e22e">offlineSwitchClicked</span>(<span style="color:#66d9ef">_</span> sender: UISwitch) {
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">if</span> sender.isOn {
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">self</span>.configOffline()
+</span></span><span style="display:flex;"><span>        } <span style="color:#66d9ef">else</span> {
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">self</span>.configOnline()
+</span></span><span style="display:flex;"><span>        }
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">func</span> <span style="color:#a6e22e">configOnline</span>() {
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">self</span>.synthesiser.setApiKey(API_KEY, withSecretKey: SECRET_KEY)
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">var</span> error = <span style="color:#66d9ef">self</span>.synthesiser.setSynthParam(<span style="color:#ae81ff">4</span>, <span style="color:#66d9ef">for</span>: BDS_SYNTHESIZER_PARAM_PITCH)
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">if</span> <span style="color:#66d9ef">let</span> err = error {
+</span></span><span style="display:flex;"><span>            print(err.localizedDescription)
+</span></span><span style="display:flex;"><span>        }
+</span></span><span style="display:flex;"><span>        error = <span style="color:#66d9ef">self</span>.synthesiser.setSynthParam(<span style="color:#ae81ff">5</span>, <span style="color:#66d9ef">for</span>: BDS_SYNTHESIZER_PARAM_SPEED)
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">if</span> <span style="color:#66d9ef">let</span> err = error {
+</span></span><span style="display:flex;"><span>            print(err.localizedDescription)
+</span></span><span style="display:flex;"><span>        }
+</span></span><span style="display:flex;"><span>        error = <span style="color:#66d9ef">self</span>.synthesiser.setSynthParam(<span style="color:#ae81ff">9</span>, <span style="color:#66d9ef">for</span>: BDS_SYNTHESIZER_PARAM_VOLUME)
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">if</span> <span style="color:#66d9ef">let</span> err = error {
+</span></span><span style="display:flex;"><span>            print(err.localizedDescription)
+</span></span><span style="display:flex;"><span>        }
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">self</span>.synthesiser.unloadDomainDataFromOfflineEngine()
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">func</span> <span style="color:#a6e22e">configOffline</span>() {
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">let</span> offlineEngineSpeechData = Bundle.main.path(forResource: <span style="color:#e6db74">&#34;Chinese_And_English_Speech_Female&#34;</span>, ofType: <span style="color:#e6db74">&#34;dat&#34;</span>)
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">let</span> offlineChineseAndEnglishTextData = Bundle.main.path(forResource: <span style="color:#e6db74">&#34;Chinese_And_English_Text&#34;</span>, ofType: <span style="color:#e6db74">&#34;dat&#34;</span>)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">let</span> error = <span style="color:#66d9ef">self</span>.synthesiser.loadOfflineEngine(offlineChineseAndEnglishTextData, speechDataPath: offlineEngineSpeechData, licenseFilePath: <span style="color:#66d9ef">nil</span>, withAppCode: APP_ID)
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">if</span> <span style="color:#66d9ef">let</span> err = error {
+</span></span><span style="display:flex;"><span>            print(err.localizedDescription)
+</span></span><span style="display:flex;"><span>        }
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">func</span> <span style="color:#a6e22e">synthesizerNewDataArrived</span>(<span style="color:#66d9ef">_</span> newData: Data!, dataFormat fmt: BDSAudioFormat, characterCount newLength: Int32, sentenceNumber SynthesizeSentence: Int) {
+</span></span><span style="display:flex;"><span>        
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>    
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">func</span> <span style="color:#a6e22e">synthesizerErrorOccurred</span>(<span style="color:#66d9ef">_</span> error: Error!, speaking SpeakSentence: Int, synthesizing SynthesizeSentence: Int) {
+</span></span><span style="display:flex;"><span>       print(error.localizedDescription)
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>    
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">override</span> <span style="color:#66d9ef">func</span> <span style="color:#a6e22e">viewDidDisappear</span>(<span style="color:#66d9ef">_</span> animated: Bool) {
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">super</span>.viewDidDisappear(animated)
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">self</span>.synthesiser.speakSentence(<span style="color:#e6db74">&#34;进入后台&#34;</span>, withError: <span style="color:#66d9ef">nil</span>)
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">extension</span> <span style="color:#a6e22e">ViewController</span>: UITextViewDelegate {
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">func</span> <span style="color:#a6e22e">textViewDidChange</span>(<span style="color:#66d9ef">_</span> textView: UITextView) {
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">if</span> <span style="color:#66d9ef">let</span> text = textView.text {
+</span></span><span style="display:flex;"><span>            <span style="color:#75715e">//self.synthesiser?.speakSentence(text, withError: nil)</span>
+</span></span><span style="display:flex;"><span>            print(text)
+</span></span><span style="display:flex;"><span>        }
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><hr>
 <p><a href="https://blog.csdn.net/Feng512275/article/details/78056198">参考资料</a></p>
 
     </div>

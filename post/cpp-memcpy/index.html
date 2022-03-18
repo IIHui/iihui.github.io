@@ -235,9 +235,9 @@ code.has-jax {
     </header>
     <div class="post-body" itemprop="articleBody">
     <h1 id="地址重叠">地址重叠</h1>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-cpp" data-lang="cpp"><span style="color:#66d9ef">void</span> <span style="color:#f92672">*</span><span style="color:#a6e22e">memcpy</span>(<span style="color:#66d9ef">void</span> <span style="color:#f92672">*</span>dst, <span style="color:#66d9ef">const</span> <span style="color:#66d9ef">void</span> <span style="color:#f92672">*</span>src, size_t n);
-<span style="color:#75715e">//If copying takes place between objects that overlap, the behavior is undefined.
-</span></code></pre></div><ul>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-cpp" data-lang="cpp"><span style="display:flex;"><span><span style="color:#66d9ef">void</span> <span style="color:#f92672">*</span><span style="color:#a6e22e">memcpy</span>(<span style="color:#66d9ef">void</span> <span style="color:#f92672">*</span>dst, <span style="color:#66d9ef">const</span> <span style="color:#66d9ef">void</span> <span style="color:#f92672">*</span>src, size_t n);
+</span></span><span style="display:flex;"><span><span style="color:#75715e">//If copying takes place between objects that overlap, the behavior is undefined.
+</span></span></span></code></pre></div><ul>
 <li>
 <p>注意注释，<font color=red>对于地址重叠的情况，该函数的行为是未定义的</font>。事实上所说的陷阱也在于此，自己动手实现<code>memcpy</code>时就需要考虑地址重叠的情况。</p>
 </li>
@@ -250,45 +250,45 @@ code.has-jax {
 </ul>
 <h1 id="自实现版本">自实现版本</h1>
 <p>当可能<font color=LightSeaGreen>会发生重叠时，应该从后往前拷贝，</font>类似于<code>vector</code>的插入时当插入点的元素大于要插入的元素个数时。</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-cpp" data-lang="cpp"><span style="color:#75715e">#include</span> <span style="color:#75715e">&lt;stdio.h&gt;</span><span style="color:#75715e">
-</span><span style="color:#75715e">#include</span> <span style="color:#75715e">&lt;stdlib.h&gt;</span><span style="color:#75715e">
-</span><span style="color:#75715e">#include</span> <span style="color:#75715e">&lt;string.h&gt;</span><span style="color:#75715e">
-</span><span style="color:#75715e"></span>
-<span style="color:#66d9ef">void</span> <span style="color:#f92672">*</span><span style="color:#a6e22e">Memcpy</span>(<span style="color:#66d9ef">void</span> <span style="color:#f92672">*</span>dst, <span style="color:#66d9ef">const</span> <span style="color:#66d9ef">void</span> <span style="color:#f92672">*</span>src, size_t size);
-
-<span style="color:#66d9ef">int</span> <span style="color:#a6e22e">main</span>(<span style="color:#66d9ef">int</span> argc, <span style="color:#66d9ef">char</span> <span style="color:#f92672">*</span>argv[]) {
-  <span style="color:#66d9ef">char</span> buf[<span style="color:#ae81ff">100</span>] <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;abcdefghijk&#34;</span>;
-  <span style="color:#75715e">// memcpy(buf+2, buf, 5);
-</span><span style="color:#75715e"></span>  Memcpy(buf <span style="color:#f92672">+</span> <span style="color:#ae81ff">2</span>, buf, <span style="color:#ae81ff">5</span>);
-  printf(<span style="color:#e6db74">&#34;%s</span><span style="color:#ae81ff">\n</span><span style="color:#e6db74">&#34;</span>, buf <span style="color:#f92672">+</span> <span style="color:#ae81ff">2</span>);
-}
-
-<span style="color:#66d9ef">void</span> <span style="color:#f92672">*</span><span style="color:#a6e22e">Memcpy</span>(<span style="color:#66d9ef">void</span> <span style="color:#f92672">*</span>dst, <span style="color:#66d9ef">const</span> <span style="color:#66d9ef">void</span> <span style="color:#f92672">*</span>src, size_t size) {
-  <span style="color:#66d9ef">char</span> <span style="color:#f92672">*</span>psrc;
-  <span style="color:#66d9ef">char</span> <span style="color:#f92672">*</span>pdst;
-
-  <span style="color:#66d9ef">if</span> (NULL <span style="color:#f92672">==</span> dst <span style="color:#f92672">||</span> NULL <span style="color:#f92672">==</span> src) {
-    <span style="color:#66d9ef">return</span> NULL;
-  }
-
-  <span style="color:#66d9ef">if</span> ((src <span style="color:#f92672">&lt;</span> dst) <span style="color:#f92672">&amp;&amp;</span> (<span style="color:#66d9ef">char</span> <span style="color:#f92672">*</span>)src <span style="color:#f92672">+</span> size <span style="color:#f92672">&gt;</span> (<span style="color:#66d9ef">char</span> <span style="color:#f92672">*</span>)dst)  <span style="color:#75715e">// 自后向前拷贝
-</span><span style="color:#75715e"></span>  {
-    psrc <span style="color:#f92672">=</span> (<span style="color:#66d9ef">char</span> <span style="color:#f92672">*</span>)src <span style="color:#f92672">+</span> size <span style="color:#f92672">-</span> <span style="color:#ae81ff">1</span>;
-    pdst <span style="color:#f92672">=</span> (<span style="color:#66d9ef">char</span> <span style="color:#f92672">*</span>)dst <span style="color:#f92672">+</span> size <span style="color:#f92672">-</span> <span style="color:#ae81ff">1</span>;
-    <span style="color:#66d9ef">while</span> (size<span style="color:#f92672">--</span>) {
-      <span style="color:#f92672">*</span>pdst<span style="color:#f92672">--</span> <span style="color:#f92672">=</span> <span style="color:#f92672">*</span>psrc<span style="color:#f92672">--</span>;
-    }
-  } <span style="color:#66d9ef">else</span> {
-    psrc <span style="color:#f92672">=</span> (<span style="color:#66d9ef">char</span> <span style="color:#f92672">*</span>)src;
-    pdst <span style="color:#f92672">=</span> (<span style="color:#66d9ef">char</span> <span style="color:#f92672">*</span>)dst;
-    <span style="color:#66d9ef">while</span> (size<span style="color:#f92672">--</span>) {
-      <span style="color:#f92672">*</span>pdst<span style="color:#f92672">++</span> <span style="color:#f92672">=</span> <span style="color:#f92672">*</span>psrc<span style="color:#f92672">++</span>;
-    }
-  }
-
-  <span style="color:#66d9ef">return</span> dst;
-}
-</code></pre></div><hr>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-cpp" data-lang="cpp"><span style="display:flex;"><span><span style="color:#75715e">#include</span> <span style="color:#75715e">&lt;stdio.h&gt;</span><span style="color:#75715e">
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">#include</span> <span style="color:#75715e">&lt;stdlib.h&gt;</span><span style="color:#75715e">
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">#include</span> <span style="color:#75715e">&lt;string.h&gt;</span><span style="color:#75715e">
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">void</span> <span style="color:#f92672">*</span><span style="color:#a6e22e">Memcpy</span>(<span style="color:#66d9ef">void</span> <span style="color:#f92672">*</span>dst, <span style="color:#66d9ef">const</span> <span style="color:#66d9ef">void</span> <span style="color:#f92672">*</span>src, size_t size);
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">int</span> <span style="color:#a6e22e">main</span>(<span style="color:#66d9ef">int</span> argc, <span style="color:#66d9ef">char</span> <span style="color:#f92672">*</span>argv[]) {
+</span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">char</span> buf[<span style="color:#ae81ff">100</span>] <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;abcdefghijk&#34;</span>;
+</span></span><span style="display:flex;"><span>  <span style="color:#75715e">// memcpy(buf+2, buf, 5);
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>  Memcpy(buf <span style="color:#f92672">+</span> <span style="color:#ae81ff">2</span>, buf, <span style="color:#ae81ff">5</span>);
+</span></span><span style="display:flex;"><span>  printf(<span style="color:#e6db74">&#34;%s</span><span style="color:#ae81ff">\n</span><span style="color:#e6db74">&#34;</span>, buf <span style="color:#f92672">+</span> <span style="color:#ae81ff">2</span>);
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">void</span> <span style="color:#f92672">*</span><span style="color:#a6e22e">Memcpy</span>(<span style="color:#66d9ef">void</span> <span style="color:#f92672">*</span>dst, <span style="color:#66d9ef">const</span> <span style="color:#66d9ef">void</span> <span style="color:#f92672">*</span>src, size_t size) {
+</span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">char</span> <span style="color:#f92672">*</span>psrc;
+</span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">char</span> <span style="color:#f92672">*</span>pdst;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">if</span> (NULL <span style="color:#f92672">==</span> dst <span style="color:#f92672">||</span> NULL <span style="color:#f92672">==</span> src) {
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">return</span> NULL;
+</span></span><span style="display:flex;"><span>  }
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">if</span> ((src <span style="color:#f92672">&lt;</span> dst) <span style="color:#f92672">&amp;&amp;</span> (<span style="color:#66d9ef">char</span> <span style="color:#f92672">*</span>)src <span style="color:#f92672">+</span> size <span style="color:#f92672">&gt;</span> (<span style="color:#66d9ef">char</span> <span style="color:#f92672">*</span>)dst)  <span style="color:#75715e">// 自后向前拷贝
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>  {
+</span></span><span style="display:flex;"><span>    psrc <span style="color:#f92672">=</span> (<span style="color:#66d9ef">char</span> <span style="color:#f92672">*</span>)src <span style="color:#f92672">+</span> size <span style="color:#f92672">-</span> <span style="color:#ae81ff">1</span>;
+</span></span><span style="display:flex;"><span>    pdst <span style="color:#f92672">=</span> (<span style="color:#66d9ef">char</span> <span style="color:#f92672">*</span>)dst <span style="color:#f92672">+</span> size <span style="color:#f92672">-</span> <span style="color:#ae81ff">1</span>;
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">while</span> (size<span style="color:#f92672">--</span>) {
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">*</span>pdst<span style="color:#f92672">--</span> <span style="color:#f92672">=</span> <span style="color:#f92672">*</span>psrc<span style="color:#f92672">--</span>;
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>  } <span style="color:#66d9ef">else</span> {
+</span></span><span style="display:flex;"><span>    psrc <span style="color:#f92672">=</span> (<span style="color:#66d9ef">char</span> <span style="color:#f92672">*</span>)src;
+</span></span><span style="display:flex;"><span>    pdst <span style="color:#f92672">=</span> (<span style="color:#66d9ef">char</span> <span style="color:#f92672">*</span>)dst;
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">while</span> (size<span style="color:#f92672">--</span>) {
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">*</span>pdst<span style="color:#f92672">++</span> <span style="color:#f92672">=</span> <span style="color:#f92672">*</span>psrc<span style="color:#f92672">++</span>;
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>  }
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">return</span> dst;
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><hr>
 
     </div>
     <footer class="post-footer">

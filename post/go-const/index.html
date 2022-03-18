@@ -260,68 +260,68 @@ code.has-jax {
 <p>从属类型待定的常量共有<code>6</code>种，分别是：<font color=LightSeaGreen>①无类型布尔；②无类型整数；③无类型文字符号(例如<code>'a'</code>)；④无类型浮点数；⑤无类型复数；⑥无类型字符串</font>。</p>
 <p>借助<font color=Blue>推迟确定从属类型，无类型常量不仅能够暂时维持更高的精度</font>，与类型已确定的常量相比，还能写进更多的表达式无需类型转换。</p>
 <p>在Go中<font color=red>只有常量才可以是无类型的</font>。如果将无类型的常量声明为变量或者在类型明确的变量赋值的右方出现无类型的常量，则常量会被<font color=Blue>隐式转换</font>为该变量的类型：</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#66d9ef">var</span> <span style="color:#a6e22e">f</span> <span style="color:#66d9ef">float64</span>=<span style="color:#ae81ff">3</span><span style="color:#f92672">+</span><span style="color:#ae81ff">0i</span> <span style="color:#75715e">//无类型复数-&gt;float64
-</span><span style="color:#75715e"></span><span style="color:#a6e22e">f</span>=<span style="color:#ae81ff">2</span>      <span style="color:#75715e">//无类型整数-&gt;float64
-</span><span style="color:#75715e"></span><span style="color:#a6e22e">f</span>=<span style="color:#ae81ff">1e123</span>  <span style="color:#75715e">//无类型浮点数-&gt;float64
-</span><span style="color:#75715e"></span><span style="color:#a6e22e">f</span>=<span style="color:#e6db74">&#39;a&#39;</span>    <span style="color:#75715e">//无类型文字符号-&gt;float64
-</span></code></pre></div><p>不论隐式转换还是显式转换，<font color=Blue>常量从一种类型转换为另一种类型，都要求目标类型能够表示原值，实数和复数允许舍入取整</font>。</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#66d9ef">const</span> (
-    <span style="color:#a6e22e">x</span> =<span style="color:#ae81ff">0xdeadbeef</span> <span style="color:#75715e">//无类型整数，值为3735928559
-</span><span style="color:#75715e"></span>    <span style="color:#a6e22e">a</span> = uint32(<span style="color:#a6e22e">x</span>) <span style="color:#75715e">//unit32,值为3735928559没有超出范围
-</span><span style="color:#75715e"></span>    <span style="color:#a6e22e">b</span> = float32(<span style="color:#a6e22e">x</span>)<span style="color:#75715e">//float32,值为3735928559
-</span><span style="color:#75715e"></span>    <span style="color:#a6e22e">c</span> = int32(<span style="color:#a6e22e">x</span>)  <span style="color:#75715e">//编译错误，溢出
-</span><span style="color:#75715e"></span>    <span style="color:#a6e22e">d</span> = float64(<span style="color:#ae81ff">1e309</span>) <span style="color:#75715e">//编译错误，溢出
-</span><span style="color:#75715e"></span>    <span style="color:#a6e22e">f</span> = uint(<span style="color:#f92672">-</span><span style="color:#ae81ff">1</span>)  <span style="color:#75715e">//编译错误，溢出，unit无法容纳-1
-</span><span style="color:#75715e"></span>    )
-</code></pre></div><p>变量声明时（包括简短声明）中，<font color=Blue>假如没有显式指定类型，无类型常量会隐式转换为该变量的默认类型。</font>对于<code>bool</code>型来说为<code>false</code>，对于整型、浮点、复数来说为<code>0</code>，字符串为<code>“”</code>，引用类型为<code>nil</code>，复合类型为其基础类型的零值。</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#a6e22e">i</span><span style="color:#f92672">:=</span><span style="color:#ae81ff">0</span> <span style="color:#75715e">//无类型整数，隐式int(0）
-</span><span style="color:#75715e"></span><span style="color:#a6e22e">r</span><span style="color:#f92672">:=</span><span style="color:#e6db74">&#39;\000&#39;</span> <span style="color:#75715e">//无类型文字常量，隐式rune(&#39;\000&#39;)，这个要记住
-</span><span style="color:#75715e"></span><span style="color:#a6e22e">f</span><span style="color:#f92672">:=</span><span style="color:#ae81ff">0.0</span> <span style="color:#75715e">//无类型浮点数，隐式float64(0.0)
-</span><span style="color:#75715e"></span><span style="color:#a6e22e">c</span><span style="color:#f92672">:=</span><span style="color:#ae81ff">0i</span> <span style="color:#75715e">//无类型整数，隐式complex128(0i)
-</span></code></pre></div><hr>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-go" data-lang="go"><span style="display:flex;"><span><span style="color:#66d9ef">var</span> <span style="color:#a6e22e">f</span> <span style="color:#66d9ef">float64</span>=<span style="color:#ae81ff">3</span><span style="color:#f92672">+</span><span style="color:#ae81ff">0i</span> <span style="color:#75715e">//无类型复数-&gt;float64
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#a6e22e">f</span>=<span style="color:#ae81ff">2</span>      <span style="color:#75715e">//无类型整数-&gt;float64
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#a6e22e">f</span>=<span style="color:#ae81ff">1e123</span>  <span style="color:#75715e">//无类型浮点数-&gt;float64
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#a6e22e">f</span>=<span style="color:#e6db74">&#39;a&#39;</span>    <span style="color:#75715e">//无类型文字符号-&gt;float64
+</span></span></span></code></pre></div><p>不论隐式转换还是显式转换，<font color=Blue>常量从一种类型转换为另一种类型，都要求目标类型能够表示原值，实数和复数允许舍入取整</font>。</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-go" data-lang="go"><span style="display:flex;"><span><span style="color:#66d9ef">const</span> (
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">x</span> =<span style="color:#ae81ff">0xdeadbeef</span> <span style="color:#75715e">//无类型整数，值为3735928559
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#a6e22e">a</span> = uint32(<span style="color:#a6e22e">x</span>) <span style="color:#75715e">//unit32,值为3735928559没有超出范围
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#a6e22e">b</span> = float32(<span style="color:#a6e22e">x</span>)<span style="color:#75715e">//float32,值为3735928559
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#a6e22e">c</span> = int32(<span style="color:#a6e22e">x</span>)  <span style="color:#75715e">//编译错误，溢出
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#a6e22e">d</span> = float64(<span style="color:#ae81ff">1e309</span>) <span style="color:#75715e">//编译错误，溢出
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#a6e22e">f</span> = uint(<span style="color:#f92672">-</span><span style="color:#ae81ff">1</span>)  <span style="color:#75715e">//编译错误，溢出，unit无法容纳-1
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    )
+</span></span></code></pre></div><p>变量声明时（包括简短声明）中，<font color=Blue>假如没有显式指定类型，无类型常量会隐式转换为该变量的默认类型。</font>对于<code>bool</code>型来说为<code>false</code>，对于整型、浮点、复数来说为<code>0</code>，字符串为<code>“”</code>，引用类型为<code>nil</code>，复合类型为其基础类型的零值。</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-go" data-lang="go"><span style="display:flex;"><span><span style="color:#a6e22e">i</span><span style="color:#f92672">:=</span><span style="color:#ae81ff">0</span> <span style="color:#75715e">//无类型整数，隐式int(0）
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#a6e22e">r</span><span style="color:#f92672">:=</span><span style="color:#e6db74">&#39;\000&#39;</span> <span style="color:#75715e">//无类型文字常量，隐式rune(&#39;\000&#39;)，这个要记住
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#a6e22e">f</span><span style="color:#f92672">:=</span><span style="color:#ae81ff">0.0</span> <span style="color:#75715e">//无类型浮点数，隐式float64(0.0)
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#a6e22e">c</span><span style="color:#f92672">:=</span><span style="color:#ae81ff">0i</span> <span style="color:#75715e">//无类型整数，隐式complex128(0i)
+</span></span></span></code></pre></div><hr>
 <h2 id="注意事项">注意事项</h2>
 <p>常量必须是<font color=red>编译期可确定</font>的字符、字符串、数字或布尔值。可指定常量类型，或由编译器通过初始化值推导，<font color=Blue>不支持<code>C/C++</code>的数字类型后缀</font>。</p>
 <p>定义常量的时候<font color=red>必须初始化</font>，否则编译错误。不同于<font color=Blue>未使用的局部变量</font>，<font color=red>不使用的常量不会引起编译错误。</font></p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#66d9ef">const</span> <span style="color:#a6e22e">x</span> = <span style="color:#ae81ff">123</span>
-<span style="color:#a6e22e">fmt</span>.<span style="color:#a6e22e">Println</span>(<span style="color:#a6e22e">x</span>)
-<span style="color:#66d9ef">const</span> <span style="color:#a6e22e">y</span> = <span style="color:#ae81ff">1.23</span>
-{
-	<span style="color:#66d9ef">const</span> <span style="color:#a6e22e">x</span> = <span style="color:#e6db74">&#34;abc&#34;</span>
-	<span style="color:#a6e22e">fmt</span>.<span style="color:#a6e22e">Println</span>(<span style="color:#a6e22e">x</span>)
-}
-</code></pre></div><p>对于<font color=Blue>常量操作数，所有数学运算、逻辑运算和比较运算的结果依然是常量</font>。常量的类型转换结果和某些内置函数的返回值，例如<code>len,cap,real,imag,complex,unsafe.Sizeof</code>同样是常量，因此可以将这些函数作用于常量用于常量的初始化。</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-go" data-lang="go"><span style="display:flex;"><span><span style="color:#66d9ef">const</span> <span style="color:#a6e22e">x</span> = <span style="color:#ae81ff">123</span>
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">fmt</span>.<span style="color:#a6e22e">Println</span>(<span style="color:#a6e22e">x</span>)
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">const</span> <span style="color:#a6e22e">y</span> = <span style="color:#ae81ff">1.23</span>
+</span></span><span style="display:flex;"><span>{
+</span></span><span style="display:flex;"><span>	<span style="color:#66d9ef">const</span> <span style="color:#a6e22e">x</span> = <span style="color:#e6db74">&#34;abc&#34;</span>
+</span></span><span style="display:flex;"><span>	<span style="color:#a6e22e">fmt</span>.<span style="color:#a6e22e">Println</span>(<span style="color:#a6e22e">x</span>)
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p>对于<font color=Blue>常量操作数，所有数学运算、逻辑运算和比较运算的结果依然是常量</font>。常量的类型转换结果和某些内置函数的返回值，例如<code>len,cap,real,imag,complex,unsafe.Sizeof</code>同样是常量，因此可以将这些函数作用于常量用于常量的初始化。</p>
 <p>在常量组中，如果不指定类型和初始化值，则与<font color=red>上一行非空常量右值（表达式文本）相同</font></p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#66d9ef">const</span> (
-	<span style="color:#a6e22e">x</span> <span style="color:#66d9ef">uint16</span> = <span style="color:#ae81ff">120</span>
-	<span style="color:#a6e22e">y</span>
-	<span style="color:#a6e22e">s</span> = <span style="color:#e6db74">&#34;abc&#34;</span>
-	<span style="color:#a6e22e">z</span>
-)
-<span style="color:#a6e22e">fmt</span>.<span style="color:#a6e22e">Println</span>(<span style="color:#a6e22e">x</span>, <span style="color:#a6e22e">y</span>, <span style="color:#a6e22e">s</span>, <span style="color:#a6e22e">z</span>) <span style="color:#75715e">//120,120,abc,abc
-</span></code></pre></div><p>数字常量在预处理阶段<font color=red>直接展开</font>，作为指令数据使用，<font color=red>不分配内存</font>，<font color=Blue>因此无法获取地址</font></p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#f92672">package</span> <span style="color:#a6e22e">main</span>
-
-<span style="color:#66d9ef">const</span> <span style="color:#a6e22e">y</span> = <span style="color:#ae81ff">0x200</span>
-
-<span style="color:#66d9ef">func</span> <span style="color:#a6e22e">main</span>() {
-	println(<span style="color:#a6e22e">y</span>)
-	<span style="color:#75715e">//println(&amp;y)  // 错误，不能获取地址，这与C++有很大的区别
-</span><span style="color:#75715e"></span>}
-<span style="color:#66d9ef">const</span> <span style="color:#a6e22e">t</span> = <span style="color:#a6e22e">y</span> <span style="color:#75715e">//同样无法获取t的地址
-</span></code></pre></div><div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#66d9ef">const</span> <span style="color:#a6e22e">x</span> = <span style="color:#ae81ff">100</span>    <span style="color:#75715e">//x没有明确指定类型，也就是前面说的待定类型
-</span><span style="color:#75715e"></span><span style="color:#66d9ef">const</span> <span style="color:#a6e22e">y</span> <span style="color:#66d9ef">byte</span> = <span style="color:#a6e22e">x</span> <span style="color:#75715e">//直接展开x，相当于const y byte = 100
-</span></code></pre></div><p>如果显式指定类型，<font color=Orange>必须确定常量左右值类型一致</font>，需要时可做显式转换，<font color=red>右值不能超出常量类型取值范围，否则会引起溢出错误。</font></p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#66d9ef">const</span> (
-	<span style="color:#a6e22e">t1</span>, <span style="color:#a6e22e">t2</span> <span style="color:#66d9ef">int</span>  = <span style="color:#ae81ff">99</span>, <span style="color:#f92672">-</span><span style="color:#ae81ff">999</span>
-	<span style="color:#a6e22e">t3</span>     <span style="color:#66d9ef">byte</span> = byte(<span style="color:#a6e22e">t1</span>) <span style="color:#75715e">//t1 指定为int型，需显式转换为byte类型，注意于上一个例子的区别
-</span><span style="color:#75715e"></span>	<span style="color:#75715e">//t4 = uint8(t2)  // 常量-999,超出了unit8的范围，会报溢出错误
-</span><span style="color:#75715e"></span>)
-</code></pre></div><p>常量值可以是某些编译器能计算出结果的表达式，如 <code>unsafe.Sizeof、len、cap</code>，<font color=red>不能是运行时才能计算出结果的表达式</font>。因此<code>len</code>，<code>cap</code>等内置函数用于定义常量时，不能作用于变量。</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#66d9ef">const</span> (
-	<span style="color:#a6e22e">ptrSize</span> = <span style="color:#a6e22e">unsafe</span>.<span style="color:#a6e22e">Sizeof</span>(uintptr(<span style="color:#ae81ff">0</span>)) <span style="color:#75715e">//8
-</span><span style="color:#75715e"></span>	<span style="color:#a6e22e">strSize</span> = len(<span style="color:#e6db74">&#34;hello world!&#34;</span>)       <span style="color:#75715e">//12
-</span><span style="color:#75715e"></span>	)
-</code></pre></div><hr>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-go" data-lang="go"><span style="display:flex;"><span><span style="color:#66d9ef">const</span> (
+</span></span><span style="display:flex;"><span>	<span style="color:#a6e22e">x</span> <span style="color:#66d9ef">uint16</span> = <span style="color:#ae81ff">120</span>
+</span></span><span style="display:flex;"><span>	<span style="color:#a6e22e">y</span>
+</span></span><span style="display:flex;"><span>	<span style="color:#a6e22e">s</span> = <span style="color:#e6db74">&#34;abc&#34;</span>
+</span></span><span style="display:flex;"><span>	<span style="color:#a6e22e">z</span>
+</span></span><span style="display:flex;"><span>)
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">fmt</span>.<span style="color:#a6e22e">Println</span>(<span style="color:#a6e22e">x</span>, <span style="color:#a6e22e">y</span>, <span style="color:#a6e22e">s</span>, <span style="color:#a6e22e">z</span>) <span style="color:#75715e">//120,120,abc,abc
+</span></span></span></code></pre></div><p>数字常量在预处理阶段<font color=red>直接展开</font>，作为指令数据使用，<font color=red>不分配内存</font>，<font color=Blue>因此无法获取地址</font></p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-go" data-lang="go"><span style="display:flex;"><span><span style="color:#f92672">package</span> <span style="color:#a6e22e">main</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">const</span> <span style="color:#a6e22e">y</span> = <span style="color:#ae81ff">0x200</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">main</span>() {
+</span></span><span style="display:flex;"><span>	println(<span style="color:#a6e22e">y</span>)
+</span></span><span style="display:flex;"><span>	<span style="color:#75715e">//println(&amp;y)  // 错误，不能获取地址，这与C++有很大的区别
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>}
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">const</span> <span style="color:#a6e22e">t</span> = <span style="color:#a6e22e">y</span> <span style="color:#75715e">//同样无法获取t的地址
+</span></span></span></code></pre></div><div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-go" data-lang="go"><span style="display:flex;"><span><span style="color:#66d9ef">const</span> <span style="color:#a6e22e">x</span> = <span style="color:#ae81ff">100</span>    <span style="color:#75715e">//x没有明确指定类型，也就是前面说的待定类型
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">const</span> <span style="color:#a6e22e">y</span> <span style="color:#66d9ef">byte</span> = <span style="color:#a6e22e">x</span> <span style="color:#75715e">//直接展开x，相当于const y byte = 100
+</span></span></span></code></pre></div><p>如果显式指定类型，<font color=Orange>必须确定常量左右值类型一致</font>，需要时可做显式转换，<font color=red>右值不能超出常量类型取值范围，否则会引起溢出错误。</font></p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-go" data-lang="go"><span style="display:flex;"><span><span style="color:#66d9ef">const</span> (
+</span></span><span style="display:flex;"><span>	<span style="color:#a6e22e">t1</span>, <span style="color:#a6e22e">t2</span> <span style="color:#66d9ef">int</span>  = <span style="color:#ae81ff">99</span>, <span style="color:#f92672">-</span><span style="color:#ae81ff">999</span>
+</span></span><span style="display:flex;"><span>	<span style="color:#a6e22e">t3</span>     <span style="color:#66d9ef">byte</span> = byte(<span style="color:#a6e22e">t1</span>) <span style="color:#75715e">//t1 指定为int型，需显式转换为byte类型，注意于上一个例子的区别
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>	<span style="color:#75715e">//t4 = uint8(t2)  // 常量-999,超出了unit8的范围，会报溢出错误
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>)
+</span></span></code></pre></div><p>常量值可以是某些编译器能计算出结果的表达式，如 <code>unsafe.Sizeof、len、cap</code>，<font color=red>不能是运行时才能计算出结果的表达式</font>。因此<code>len</code>，<code>cap</code>等内置函数用于定义常量时，不能作用于变量。</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-go" data-lang="go"><span style="display:flex;"><span><span style="color:#66d9ef">const</span> (
+</span></span><span style="display:flex;"><span>	<span style="color:#a6e22e">ptrSize</span> = <span style="color:#a6e22e">unsafe</span>.<span style="color:#a6e22e">Sizeof</span>(uintptr(<span style="color:#ae81ff">0</span>)) <span style="color:#75715e">//8
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>	<span style="color:#a6e22e">strSize</span> = len(<span style="color:#e6db74">&#34;hello world!&#34;</span>)       <span style="color:#75715e">//12
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>	)
+</span></span></code></pre></div><hr>
 
     </div>
     <footer class="post-footer">

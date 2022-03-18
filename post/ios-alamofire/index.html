@@ -256,159 +256,159 @@ code.has-jax {
 <p>如果使用过<code>OC</code>进行开发，那么知道<code>AFNetworking</code>这个网络操作库。<code>Mattt Thompson</code>作为<code>AFNetworking</code>的发起人，又基于<code>Swift</code>语言开发了一个新的网络操作库 <code>Alamofire</code>。<code>Alamofire</code>的优雅之处在于它完完全全是由Swift写成的，并且没有从<code>AFNetworking</code>那里继承任何特性。<code>Alamofire</code>网络库适用于<code>iOS</code>和<code>macOS</code>，它提供了链式<code>request/response</code>方法，<code>JSON</code>的传参和响应序列化，身份认证和其他特性。</p>
 </blockquote>
 <h1 id="上传">上传</h1>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift"><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">upLoadStaticsFile</span>(){
-    <span style="color:#66d9ef">do</span> {
-        <span style="color:#66d9ef">guard</span> <span style="color:#66d9ef">let</span> sessionID = userInfoService.activeUser?.sessionID, <span style="color:#66d9ef">let</span> sessionIDSM = userInfoService.activeUse
-            <span style="color:#66d9ef">return</span>
-        }
-        <span style="color:#66d9ef">let</span> parameters = [<span style="color:#e6db74">&#34;sessionID&#34;</span>: sessionID]
-        <span style="color:#66d9ef">let</span> formatter = DateFormatter()
-        formatter.dateFormat = <span style="color:#e6db74">&#34;yyyy-MM-dd HH:mm:ss&#34;</span>
-        <span style="color:#66d9ef">let</span> temName = <span style="color:#e6db74">&#34;</span><span style="color:#e6db74">\(</span>formatter.string<span style="color:#e6db74">(</span>from: Date<span style="color:#e6db74">()))</span><span style="color:#e6db74">-</span><span style="color:#e6db74">\(</span>deviceID<span style="color:#e6db74">)</span><span style="color:#e6db74">.txt&#34;</span>
-        <span style="color:#66d9ef">let</span> temPath = <span style="color:#66d9ef">self</span>.statisticsDir.path.stringByAppendingPathComponent(temName)
-        <span style="color:#66d9ef">let</span> path = <span style="color:#66d9ef">self</span>.statisticsDir.path.stringByAppendingPathComponent(fileName)
-        <span style="color:#66d9ef">try</span> FileManager.<span style="color:#66d9ef">default</span>.moveItem(atPath: path, toPath: temPath)
-        <span style="color:#75715e">// 遍历埋点文件夹下的埋点数据文件,以获取</span>
-        <span style="color:#66d9ef">let</span> fileList = <span style="color:#66d9ef">try</span> FileManager.<span style="color:#66d9ef">default</span>.contentsOfDirectory(atPath: statisticsDir.path)
-        <span style="color:#66d9ef">let</span> needUploadFileList = fileList.filter {
-            $0 <span style="color:#f92672">!=</span> <span style="color:#66d9ef">self</span>.fileName
-        }
-        <span style="color:#66d9ef">for</span> file <span style="color:#66d9ef">in</span> needUploadFileList {
-            <span style="color:#66d9ef">let</span> path = <span style="color:#66d9ef">self</span>.statisticsDir.path.stringByAppendingPathComponent(file)
-            <span style="color:#66d9ef">let</span> dataURL = URL(fileURLWithPath: path)
-            <span style="color:#66d9ef">let</span> data = <span style="color:#66d9ef">try</span> Data(contentsOf: dataURL)
-            <span style="color:#66d9ef">self</span>.uploadFile(data: data, parameters: parameters, file: file, path: path)
-        }
-    } <span style="color:#66d9ef">catch</span> <span style="color:#66d9ef">let</span> error <span style="color:#66d9ef">as</span> NSError {
-        log.error(error.localizedDescription)
-    }
-}
-<span style="color:#66d9ef">private</span> <span style="color:#66d9ef">func</span> <span style="color:#a6e22e">uploadFile</span>(data: Data, parameters: [String: String], file: String, path: String) {
-    Alamofire.upload(multipartFormData: { multipartFormData <span style="color:#66d9ef">in</span>
-        multipartFormData.append(data, withName: <span style="color:#e6db74">&#34;file&#34;</span>, fileName: file, mimeType: <span style="color:#e6db74">&#34;text/plain&#34;</span>)
-        <span style="color:#66d9ef">for</span> (key, value) <span style="color:#66d9ef">in</span> parameters {
-            <span style="color:#66d9ef">if</span> <span style="color:#66d9ef">let</span> valueData = value.data(using: .utf8) {
-                multipartFormData.append(valueData, withName: key)
-            }
-        }
-    }, to: addreess, method: .post) { result <span style="color:#66d9ef">in</span>
-        <span style="color:#66d9ef">switch</span> result {
-        <span style="color:#66d9ef">case</span> .success:
-            <span style="color:#66d9ef">do</span> {
-                <span style="color:#66d9ef">try</span> FileManager.<span style="color:#66d9ef">default</span>.removeItem(atPath: path)
-            } <span style="color:#66d9ef">catch</span> <span style="color:#66d9ef">let</span> error <span style="color:#66d9ef">as</span> NSError {
-                log.error(error.localizedDescription)
-            }
-        <span style="color:#66d9ef">case</span> <span style="color:#66d9ef">let</span> .failure(error):
-            log.error(error.localizedDescription)
-        }
-    }
-}
-</code></pre></div><h1 id="下载">下载</h1>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift"><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">requestScreenImage</span>(url:String,completionHandler:@escaping (<span style="color:#66d9ef">_</span> :Data?) -&gt;Void){
-    Alamofire.request(url, method: .<span style="color:#66d9ef">get</span>).response { response <span style="color:#66d9ef">in</span>
-        <span style="color:#66d9ef">if</span> response.error == <span style="color:#66d9ef">nil</span>{
-            completionHandler(response.data)
-        }<span style="color:#66d9ef">else</span>{
-            completionHandler(<span style="color:#66d9ef">nil</span>)
-        }
-    }
-}
-</code></pre></div><div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift"><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">requestImage</span>(url: String, completionHandler: @escaping (<span style="color:#66d9ef">_</span> image: UIImage?) -&gt; Void) {
-    <span style="color:#66d9ef">self</span>.tokenHttpController.requestLoginDataAndToken(type: .base64, success: { (data, token) <span style="color:#66d9ef">in</span>
-        <span style="color:#66d9ef">let</span> data = data?.extStringByUrlEncode ?? <span style="color:#e6db74">&#34;&#34;</span>
-        <span style="color:#66d9ef">let</span> token = token?.extStringByUrlEncode ?? <span style="color:#e6db74">&#34;&#34;</span>
-        <span style="color:#66d9ef">let</span> header: HTTPHeaders = [
-            <span style="color:#e6db74">&#34;data&#34;</span>: data,
-            <span style="color:#e6db74">&#34;token&#34;</span>: token
-        ]
-        Alamofire.request(url, method: .<span style="color:#66d9ef">get</span>, headers: header).response { (response) <span style="color:#66d9ef">in</span>
-            <span style="color:#66d9ef">if</span> <span style="color:#66d9ef">let</span> data = response.data {
-                <span style="color:#66d9ef">let</span> image = UIImage(data: data)
-                completionHandler(image)
-            }<span style="color:#66d9ef">else</span>{
-                completionHandler(<span style="color:#66d9ef">nil</span>)
-            }
-        }
-    }) {
-        completionHandler(<span style="color:#66d9ef">nil</span>)
-    }
-}
-</code></pre></div><div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift"><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">requestScreenADConfigInfo</span>(completionHandler:@escaping (JSON) -&gt; Void){
-    <span style="color:#66d9ef">let</span> url = ConfigRequestUrl
-    <span style="color:#66d9ef">let</span> op = ConfigRequestAction.getScreenPictureInfo
-    <span style="color:#66d9ef">let</span> meta = getDefaultMetaData(op)
-    <span style="color:#66d9ef">var</span> data = [String:String]()
-    <span style="color:#66d9ef">if</span> <span style="color:#66d9ef">let</span> model = ScreenADConfigDBRepository.Instance.getScreenConfigModel(),<span style="color:#66d9ef">let</span> jsonStr = model.screenConfigJsonStr{
-        <span style="color:#66d9ef">if</span> <span style="color:#66d9ef">let</span> dataJson = jsonStr.data(using: String.Encoding.utf8) {
-            <span style="color:#66d9ef">do</span>{
-                <span style="color:#66d9ef">let</span> json = <span style="color:#66d9ef">try</span> JSON(data:dataJson)
-                data[<span style="color:#e6db74">&#34;configHash&#34;</span>] = json[<span style="color:#e6db74">&#34;configHash&#34;</span>].stringValue
-            }<span style="color:#66d9ef">catch</span>{
-                data[<span style="color:#e6db74">&#34;configHash&#34;</span>] = <span style="color:#e6db74">&#34;&#34;</span>
-            }
-        }
-    }<span style="color:#66d9ef">else</span>{
-        data[<span style="color:#e6db74">&#34;configHash&#34;</span>] = <span style="color:#e6db74">&#34;&#34;</span>
-    }
-    
-    <span style="color:#66d9ef">switch</span> UIDevice.current.userInterfaceIdiom{
-    <span style="color:#66d9ef">case</span> .pad: data[<span style="color:#e6db74">&#34;type&#34;</span>] = <span style="color:#e6db74">&#34;Pad&#34;</span>
-    <span style="color:#66d9ef">case</span> .phone: data[<span style="color:#e6db74">&#34;type&#34;</span>] = <span style="color:#e6db74">&#34;Phone&#34;</span>
-    <span style="color:#66d9ef">default</span>:<span style="color:#66d9ef">break</span>
-    }
-    
-    <span style="color:#66d9ef">var</span> bodyData = [String:Any]()
-    bodyData[<span style="color:#e6db74">&#34;meta&#34;</span>] = meta
-    bodyData[<span style="color:#e6db74">&#34;data&#34;</span>] = data
-        
-    Alamofire.request(url, method: .post, parameters: bodyData,encoding: JSONEncoding.<span style="color:#66d9ef">default</span>).responseJSON{ response <span style="color:#66d9ef">in</span>
-        <span style="color:#66d9ef">switch</span> response.result{
-        <span style="color:#66d9ef">case</span> .success(<span style="color:#66d9ef">let</span> value):            
-            <span style="color:#66d9ef">let</span> json = JSON(value)
-            <span style="color:#66d9ef">let</span> subJSON = json[<span style="color:#e6db74">&#34;data&#34;</span>]
-            <span style="color:#66d9ef">let</span> retCode = subJSON[<span style="color:#e6db74">&#34;retCode&#34;</span>].stringValue
-            <span style="color:#75715e">//retCode 为1表示有更新，0表示没有更新，其它表示出错</span>
-            <span style="color:#66d9ef">switch</span> retCode{
-            <span style="color:#66d9ef">case</span> <span style="color:#e6db74">&#34;1&#34;</span>:
-                completionHandler(subJSON)
-            <span style="color:#66d9ef">case</span> <span style="color:#e6db74">&#34;0&#34;</span>: <span style="color:#66d9ef">break</span>
-            <span style="color:#66d9ef">default</span>:
-                <span style="color:#66d9ef">let</span> msg = subJSON[<span style="color:#e6db74">&#34;retMsg&#34;</span>].stringValue
-                DPrint(msg)
-            }
-        <span style="color:#66d9ef">case</span> .failure(<span style="color:#66d9ef">let</span> error):
-             Dprint(error.localizedDescription)
-        }
-    }
-}
-</code></pre></div><div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift"><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">bindUserDevice</span>(with model: LoginUserModel, and existUsers: ExistUsers, block: @escaping (<span style="color:#66d9ef">_</span> model: UserInfoModel?, <span style="color:#66d9ef">_</span> errorMsg: String?) -&gt; Void) {
-    <span style="color:#66d9ef">var</span> dataDic = Dictionary&lt;String, String&gt;()
-    dataDic[<span style="color:#e6db74">&#34;rand&#34;</span>] = UUID().uuidString
-    
-    <span style="color:#66d9ef">var</span> metaDic = <span style="color:#66d9ef">self</span>.getDefaultMetaDic(forAction: ConfigRequestAction.bindUserDeviceV2)
-    metaDic[<span style="color:#e6db74">&#34;ystID&#34;</span>] = model.ystId
-    metaDic[<span style="color:#e6db74">&#34;sapID&#34;</span>] = model.sapId
-    metaDic[<span style="color:#e6db74">&#34;inuseID&#34;</span>] = model.inUseId
-    
-    <span style="color:#66d9ef">let</span> parameters = <span style="color:#66d9ef">self</span>.getRequestPostParameters(metaDic: metaDic, dataDic: dataDic)
-    
-    Alamofire.request(ConfigRequestMoUrl, method: .post, parameters: parameters, encoding: JSONEncoding.<span style="color:#66d9ef">default</span>, headers: <span style="color:#66d9ef">nil</span>).responseJSON { (response) <span style="color:#66d9ef">in</span>
-        <span style="color:#66d9ef">switch</span> response.result {
-        <span style="color:#66d9ef">case</span> .success(<span style="color:#66d9ef">let</span> value):
-            <span style="color:#66d9ef">let</span> json = JSON(value)
-            <span style="color:#66d9ef">if</span> <span style="color:#66d9ef">let</span> retCode = json[<span style="color:#e6db74">&#34;data&#34;</span>][<span style="color:#e6db74">&#34;retCode&#34;</span>].string, retCode == <span style="color:#e6db74">&#34;0&#34;</span> {
-                <span style="color:#66d9ef">let</span> model = UserInfoModel(from: json[<span style="color:#e6db74">&#34;data&#34;</span>])
-                block(model, <span style="color:#66d9ef">nil</span>)
-            } <span style="color:#66d9ef">else</span> {
-                block(<span style="color:#66d9ef">nil</span>, json[<span style="color:#e6db74">&#34;data&#34;</span>][<span style="color:#e6db74">&#34;retMsg&#34;</span>].stringValue)
-            }
-        <span style="color:#66d9ef">case</span> .failure(<span style="color:#66d9ef">_</span>):
-            block(<span style="color:#66d9ef">nil</span>, <span style="color:#e6db74">&#34;network is poor&#34;</span>)
-        }
-    }
-}
-</code></pre></div><hr>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">upLoadStaticsFile</span>(){
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">do</span> {
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">guard</span> <span style="color:#66d9ef">let</span> sessionID = userInfoService.activeUser?.sessionID, <span style="color:#66d9ef">let</span> sessionIDSM = userInfoService.activeUse
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">return</span>
+</span></span><span style="display:flex;"><span>        }
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">let</span> parameters = [<span style="color:#e6db74">&#34;sessionID&#34;</span>: sessionID]
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">let</span> formatter = DateFormatter()
+</span></span><span style="display:flex;"><span>        formatter.dateFormat = <span style="color:#e6db74">&#34;yyyy-MM-dd HH:mm:ss&#34;</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">let</span> temName = <span style="color:#e6db74">&#34;</span><span style="color:#e6db74">\(</span>formatter.string<span style="color:#e6db74">(</span>from: Date<span style="color:#e6db74">()))</span><span style="color:#e6db74">-</span><span style="color:#e6db74">\(</span>deviceID<span style="color:#e6db74">)</span><span style="color:#e6db74">.txt&#34;</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">let</span> temPath = <span style="color:#66d9ef">self</span>.statisticsDir.path.stringByAppendingPathComponent(temName)
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">let</span> path = <span style="color:#66d9ef">self</span>.statisticsDir.path.stringByAppendingPathComponent(fileName)
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">try</span> FileManager.<span style="color:#66d9ef">default</span>.moveItem(atPath: path, toPath: temPath)
+</span></span><span style="display:flex;"><span>        <span style="color:#75715e">// 遍历埋点文件夹下的埋点数据文件,以获取</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">let</span> fileList = <span style="color:#66d9ef">try</span> FileManager.<span style="color:#66d9ef">default</span>.contentsOfDirectory(atPath: statisticsDir.path)
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">let</span> needUploadFileList = fileList.filter {
+</span></span><span style="display:flex;"><span>            $0 <span style="color:#f92672">!=</span> <span style="color:#66d9ef">self</span>.fileName
+</span></span><span style="display:flex;"><span>        }
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">for</span> file <span style="color:#66d9ef">in</span> needUploadFileList {
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">let</span> path = <span style="color:#66d9ef">self</span>.statisticsDir.path.stringByAppendingPathComponent(file)
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">let</span> dataURL = URL(fileURLWithPath: path)
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">let</span> data = <span style="color:#66d9ef">try</span> Data(contentsOf: dataURL)
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">self</span>.uploadFile(data: data, parameters: parameters, file: file, path: path)
+</span></span><span style="display:flex;"><span>        }
+</span></span><span style="display:flex;"><span>    } <span style="color:#66d9ef">catch</span> <span style="color:#66d9ef">let</span> error <span style="color:#66d9ef">as</span> NSError {
+</span></span><span style="display:flex;"><span>        log.error(error.localizedDescription)
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">private</span> <span style="color:#66d9ef">func</span> <span style="color:#a6e22e">uploadFile</span>(data: Data, parameters: [String: String], file: String, path: String) {
+</span></span><span style="display:flex;"><span>    Alamofire.upload(multipartFormData: { multipartFormData <span style="color:#66d9ef">in</span>
+</span></span><span style="display:flex;"><span>        multipartFormData.append(data, withName: <span style="color:#e6db74">&#34;file&#34;</span>, fileName: file, mimeType: <span style="color:#e6db74">&#34;text/plain&#34;</span>)
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">for</span> (key, value) <span style="color:#66d9ef">in</span> parameters {
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">if</span> <span style="color:#66d9ef">let</span> valueData = value.data(using: .utf8) {
+</span></span><span style="display:flex;"><span>                multipartFormData.append(valueData, withName: key)
+</span></span><span style="display:flex;"><span>            }
+</span></span><span style="display:flex;"><span>        }
+</span></span><span style="display:flex;"><span>    }, to: addreess, method: .post) { result <span style="color:#66d9ef">in</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">switch</span> result {
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">case</span> .success:
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">do</span> {
+</span></span><span style="display:flex;"><span>                <span style="color:#66d9ef">try</span> FileManager.<span style="color:#66d9ef">default</span>.removeItem(atPath: path)
+</span></span><span style="display:flex;"><span>            } <span style="color:#66d9ef">catch</span> <span style="color:#66d9ef">let</span> error <span style="color:#66d9ef">as</span> NSError {
+</span></span><span style="display:flex;"><span>                log.error(error.localizedDescription)
+</span></span><span style="display:flex;"><span>            }
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">case</span> <span style="color:#66d9ef">let</span> .failure(error):
+</span></span><span style="display:flex;"><span>            log.error(error.localizedDescription)
+</span></span><span style="display:flex;"><span>        }
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><h1 id="下载">下载</h1>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">requestScreenImage</span>(url:String,completionHandler:@escaping (<span style="color:#66d9ef">_</span> :Data?) -&gt;Void){
+</span></span><span style="display:flex;"><span>    Alamofire.request(url, method: .<span style="color:#66d9ef">get</span>).response { response <span style="color:#66d9ef">in</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">if</span> response.error == <span style="color:#66d9ef">nil</span>{
+</span></span><span style="display:flex;"><span>            completionHandler(response.data)
+</span></span><span style="display:flex;"><span>        }<span style="color:#66d9ef">else</span>{
+</span></span><span style="display:flex;"><span>            completionHandler(<span style="color:#66d9ef">nil</span>)
+</span></span><span style="display:flex;"><span>        }
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">requestImage</span>(url: String, completionHandler: @escaping (<span style="color:#66d9ef">_</span> image: UIImage?) -&gt; Void) {
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">self</span>.tokenHttpController.requestLoginDataAndToken(type: .base64, success: { (data, token) <span style="color:#66d9ef">in</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">let</span> data = data?.extStringByUrlEncode ?? <span style="color:#e6db74">&#34;&#34;</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">let</span> token = token?.extStringByUrlEncode ?? <span style="color:#e6db74">&#34;&#34;</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">let</span> header: HTTPHeaders = [
+</span></span><span style="display:flex;"><span>            <span style="color:#e6db74">&#34;data&#34;</span>: data,
+</span></span><span style="display:flex;"><span>            <span style="color:#e6db74">&#34;token&#34;</span>: token
+</span></span><span style="display:flex;"><span>        ]
+</span></span><span style="display:flex;"><span>        Alamofire.request(url, method: .<span style="color:#66d9ef">get</span>, headers: header).response { (response) <span style="color:#66d9ef">in</span>
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">if</span> <span style="color:#66d9ef">let</span> data = response.data {
+</span></span><span style="display:flex;"><span>                <span style="color:#66d9ef">let</span> image = UIImage(data: data)
+</span></span><span style="display:flex;"><span>                completionHandler(image)
+</span></span><span style="display:flex;"><span>            }<span style="color:#66d9ef">else</span>{
+</span></span><span style="display:flex;"><span>                completionHandler(<span style="color:#66d9ef">nil</span>)
+</span></span><span style="display:flex;"><span>            }
+</span></span><span style="display:flex;"><span>        }
+</span></span><span style="display:flex;"><span>    }) {
+</span></span><span style="display:flex;"><span>        completionHandler(<span style="color:#66d9ef">nil</span>)
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">requestScreenADConfigInfo</span>(completionHandler:@escaping (JSON) -&gt; Void){
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">let</span> url = ConfigRequestUrl
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">let</span> op = ConfigRequestAction.getScreenPictureInfo
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">let</span> meta = getDefaultMetaData(op)
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">var</span> data = [String:String]()
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">if</span> <span style="color:#66d9ef">let</span> model = ScreenADConfigDBRepository.Instance.getScreenConfigModel(),<span style="color:#66d9ef">let</span> jsonStr = model.screenConfigJsonStr{
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">if</span> <span style="color:#66d9ef">let</span> dataJson = jsonStr.data(using: String.Encoding.utf8) {
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">do</span>{
+</span></span><span style="display:flex;"><span>                <span style="color:#66d9ef">let</span> json = <span style="color:#66d9ef">try</span> JSON(data:dataJson)
+</span></span><span style="display:flex;"><span>                data[<span style="color:#e6db74">&#34;configHash&#34;</span>] = json[<span style="color:#e6db74">&#34;configHash&#34;</span>].stringValue
+</span></span><span style="display:flex;"><span>            }<span style="color:#66d9ef">catch</span>{
+</span></span><span style="display:flex;"><span>                data[<span style="color:#e6db74">&#34;configHash&#34;</span>] = <span style="color:#e6db74">&#34;&#34;</span>
+</span></span><span style="display:flex;"><span>            }
+</span></span><span style="display:flex;"><span>        }
+</span></span><span style="display:flex;"><span>    }<span style="color:#66d9ef">else</span>{
+</span></span><span style="display:flex;"><span>        data[<span style="color:#e6db74">&#34;configHash&#34;</span>] = <span style="color:#e6db74">&#34;&#34;</span>
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>    
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">switch</span> UIDevice.current.userInterfaceIdiom{
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">case</span> .pad: data[<span style="color:#e6db74">&#34;type&#34;</span>] = <span style="color:#e6db74">&#34;Pad&#34;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">case</span> .phone: data[<span style="color:#e6db74">&#34;type&#34;</span>] = <span style="color:#e6db74">&#34;Phone&#34;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">default</span>:<span style="color:#66d9ef">break</span>
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>    
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">var</span> bodyData = [String:Any]()
+</span></span><span style="display:flex;"><span>    bodyData[<span style="color:#e6db74">&#34;meta&#34;</span>] = meta
+</span></span><span style="display:flex;"><span>    bodyData[<span style="color:#e6db74">&#34;data&#34;</span>] = data
+</span></span><span style="display:flex;"><span>        
+</span></span><span style="display:flex;"><span>    Alamofire.request(url, method: .post, parameters: bodyData,encoding: JSONEncoding.<span style="color:#66d9ef">default</span>).responseJSON{ response <span style="color:#66d9ef">in</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">switch</span> response.result{
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">case</span> .success(<span style="color:#66d9ef">let</span> value):            
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">let</span> json = JSON(value)
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">let</span> subJSON = json[<span style="color:#e6db74">&#34;data&#34;</span>]
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">let</span> retCode = subJSON[<span style="color:#e6db74">&#34;retCode&#34;</span>].stringValue
+</span></span><span style="display:flex;"><span>            <span style="color:#75715e">//retCode 为1表示有更新，0表示没有更新，其它表示出错</span>
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">switch</span> retCode{
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">case</span> <span style="color:#e6db74">&#34;1&#34;</span>:
+</span></span><span style="display:flex;"><span>                completionHandler(subJSON)
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">case</span> <span style="color:#e6db74">&#34;0&#34;</span>: <span style="color:#66d9ef">break</span>
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">default</span>:
+</span></span><span style="display:flex;"><span>                <span style="color:#66d9ef">let</span> msg = subJSON[<span style="color:#e6db74">&#34;retMsg&#34;</span>].stringValue
+</span></span><span style="display:flex;"><span>                DPrint(msg)
+</span></span><span style="display:flex;"><span>            }
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">case</span> .failure(<span style="color:#66d9ef">let</span> error):
+</span></span><span style="display:flex;"><span>             Dprint(error.localizedDescription)
+</span></span><span style="display:flex;"><span>        }
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">bindUserDevice</span>(with model: LoginUserModel, and existUsers: ExistUsers, block: @escaping (<span style="color:#66d9ef">_</span> model: UserInfoModel?, <span style="color:#66d9ef">_</span> errorMsg: String?) -&gt; Void) {
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">var</span> dataDic = Dictionary&lt;String, String&gt;()
+</span></span><span style="display:flex;"><span>    dataDic[<span style="color:#e6db74">&#34;rand&#34;</span>] = UUID().uuidString
+</span></span><span style="display:flex;"><span>    
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">var</span> metaDic = <span style="color:#66d9ef">self</span>.getDefaultMetaDic(forAction: ConfigRequestAction.bindUserDeviceV2)
+</span></span><span style="display:flex;"><span>    metaDic[<span style="color:#e6db74">&#34;ystID&#34;</span>] = model.ystId
+</span></span><span style="display:flex;"><span>    metaDic[<span style="color:#e6db74">&#34;sapID&#34;</span>] = model.sapId
+</span></span><span style="display:flex;"><span>    metaDic[<span style="color:#e6db74">&#34;inuseID&#34;</span>] = model.inUseId
+</span></span><span style="display:flex;"><span>    
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">let</span> parameters = <span style="color:#66d9ef">self</span>.getRequestPostParameters(metaDic: metaDic, dataDic: dataDic)
+</span></span><span style="display:flex;"><span>    
+</span></span><span style="display:flex;"><span>    Alamofire.request(ConfigRequestMoUrl, method: .post, parameters: parameters, encoding: JSONEncoding.<span style="color:#66d9ef">default</span>, headers: <span style="color:#66d9ef">nil</span>).responseJSON { (response) <span style="color:#66d9ef">in</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">switch</span> response.result {
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">case</span> .success(<span style="color:#66d9ef">let</span> value):
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">let</span> json = JSON(value)
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">if</span> <span style="color:#66d9ef">let</span> retCode = json[<span style="color:#e6db74">&#34;data&#34;</span>][<span style="color:#e6db74">&#34;retCode&#34;</span>].string, retCode == <span style="color:#e6db74">&#34;0&#34;</span> {
+</span></span><span style="display:flex;"><span>                <span style="color:#66d9ef">let</span> model = UserInfoModel(from: json[<span style="color:#e6db74">&#34;data&#34;</span>])
+</span></span><span style="display:flex;"><span>                block(model, <span style="color:#66d9ef">nil</span>)
+</span></span><span style="display:flex;"><span>            } <span style="color:#66d9ef">else</span> {
+</span></span><span style="display:flex;"><span>                block(<span style="color:#66d9ef">nil</span>, json[<span style="color:#e6db74">&#34;data&#34;</span>][<span style="color:#e6db74">&#34;retMsg&#34;</span>].stringValue)
+</span></span><span style="display:flex;"><span>            }
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">case</span> .failure(<span style="color:#66d9ef">_</span>):
+</span></span><span style="display:flex;"><span>            block(<span style="color:#66d9ef">nil</span>, <span style="color:#e6db74">&#34;network is poor&#34;</span>)
+</span></span><span style="display:flex;"><span>        }
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><hr>
 <p><a href="https://www.jianshu.com/p/3aceaeae7a9d">参考资料</a>
 <a href="https://www.jianshu.com/p/ab246881efa9">参考资料</a>
 <a href="https://stackoverflow.com/questions/32988412/swift-alamofire-vs-afnetworking">对比</a></p>

@@ -368,40 +368,40 @@ code.has-jax {
 <p>每个视图均有<code>superview</code>和<code>subviews</code>属性，使用这两个属性可以<font color=Blue>追踪视图的层次结构</font>。使用视图的<code>isDescendant(of:)</code>方法可以判断一个视图是否是另一个视图的子视图（任意深度）。</p>
 <p>如果想要<font color=red>引用特定的某个视图</font>，可能需要为视图事先安排一个标记，<font color=red>可以是<code>outlet</code></font>；也可以为视图<font color=Blue>事先设置<code>tag</code>属性值</font>，然后通过调用<code>viewWithTag(_:)</code>来获取该特定的视图。</p>
 <p>视图的添加、删除和移动等都有相应的事件，<font color=Blue>这些事件的响应需要子类化</font>。然后通过覆盖如下的方法便可以看到对应的调用：</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift">willRemoveSubview(<span style="color:#66d9ef">_</span>:)
-didAddSubview(<span style="color:#66d9ef">_</span>:)
-willMove(toSuperview:)
-didMoveToSuperview
-willMove(toWindow:)
-didMoveToWindow
-</code></pre></div><p>如果<code>addSubview(_:)</code>被调用，则视图将放在父视图的所有子视图的最后边「即最上边」，也就是最后才绘制，这意味着<font color=red>它将出现在最前面</font>。</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span>willRemoveSubview(<span style="color:#66d9ef">_</span>:)
+</span></span><span style="display:flex;"><span>didAddSubview(<span style="color:#66d9ef">_</span>:)
+</span></span><span style="display:flex;"><span>willMove(toSuperview:)
+</span></span><span style="display:flex;"><span>didMoveToSuperview
+</span></span><span style="display:flex;"><span>willMove(toWindow:)
+</span></span><span style="display:flex;"><span>didMoveToWindow
+</span></span></code></pre></div><p>如果<code>addSubview(_:)</code>被调用，则视图将放在父视图的所有子视图的最后边「即最上边」，也就是最后才绘制，这意味着<font color=red>它将出现在最前面</font>。</p>
 <p>视图的<font color=Blue>子视图是有索引的</font>，从0开始。可以在给定的索引或特定视图的下面（后面）或上面（前面）插入一个子视图；也可以通过索引交换两个同级视图；还可以将一个子视图一直移动到其同级的前面或后面。</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift">insertSubview(<span style="color:#66d9ef">_</span>:at:)
-insertSubview(<span style="color:#66d9ef">_</span>:belowSubview:)
-insertSubview(<span style="color:#66d9ef">_</span>:aboveSubview:)
-exchangeSubview(at:withSubviewAt:)
-bringSubviewToFront(<span style="color:#66d9ef">_</span>:)
-sendSubviewToBack(<span style="color:#66d9ef">_</span>:)
-</code></pre></div><p>但是，<font color=Blue>没有提供一次性删除一个视图的所有子视图的方法</font>。一个视图的子视图数组是内部子视图列表的一个不可变的副本。因此，需要使用<code>for</code>循环来删除所有子视图：</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift">myView.subviews.forEach {$0.removeFromSuperview()}
-</code></pre></div><h2 id="color">color</h2>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span>insertSubview(<span style="color:#66d9ef">_</span>:at:)
+</span></span><span style="display:flex;"><span>insertSubview(<span style="color:#66d9ef">_</span>:belowSubview:)
+</span></span><span style="display:flex;"><span>insertSubview(<span style="color:#66d9ef">_</span>:aboveSubview:)
+</span></span><span style="display:flex;"><span>exchangeSubview(at:withSubviewAt:)
+</span></span><span style="display:flex;"><span>bringSubviewToFront(<span style="color:#66d9ef">_</span>:)
+</span></span><span style="display:flex;"><span>sendSubviewToBack(<span style="color:#66d9ef">_</span>:)
+</span></span></code></pre></div><p>但是，<font color=Blue>没有提供一次性删除一个视图的所有子视图的方法</font>。一个视图的子视图数组是内部子视图列表的一个不可变的副本。因此，需要使用<code>for</code>循环来删除所有子视图：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span>myView.subviews.forEach {$0.removeFromSuperview()}
+</span></span></code></pre></div><h2 id="color">color</h2>
 <p>视图可以通过其<code>backgroundColor</code>属性设置一个背景色，<font color=LightSeaGreen>如果<code>backgroundColor</code>属性值为<code>nil</code>，则视图的背景色为透明</font>。<code>backgroundColor</code>即是<code>UIColor</code>的实例，通常使用<code>red,blue,green</code>和<code>alpha</code>（其值为<code>0~1</code>）来定义：</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift">v.backgroundColor = UIColor(red: <span style="color:#ae81ff">0</span>, green: <span style="color:#ae81ff">0.1</span>, blue: <span style="color:#ae81ff">0.1</span>, alpha: <span style="color:#ae81ff">1</span>)
-</code></pre></div><p>自<code>iOS 13</code>开始出现了深色模式，为了适配需要使用<font color=Blue>动态颜色</font>，即使用<code>UIColor</code>的初始化函数<code>init(dynamicProvider:)</code>来进行适配，下面是创建一个自定义的动态颜色：</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift">v1.backgroundColor = UIColor { tc <span style="color:#66d9ef">in</span>
-    <span style="color:#66d9ef">switch</span> tc.userInterfaceStyle {
-    <span style="color:#66d9ef">case</span> .dark:
-        <span style="color:#66d9ef">return</span> UIColor(red: <span style="color:#ae81ff">0.3</span>, green: <span style="color:#ae81ff">0.4</span>, blue: <span style="color:#ae81ff">0.4</span>, alpha: <span style="color:#ae81ff">1</span>)
-    <span style="color:#66d9ef">case</span> .light:
-        <span style="color:#66d9ef">return</span> UIColor(red: <span style="color:#ae81ff">0</span>, green: <span style="color:#ae81ff">0.1</span>, blue: <span style="color:#ae81ff">0.1</span>, alpha: <span style="color:#ae81ff">1</span>)
-    }
-}
-</code></pre></div><p>从<code>iOS 13</code>开始，系统提供了许多预置的动态颜色，其中大部分的名称都是以<code>.system</code>开头的，比如<code>.systemYellow</code>，其它的则是描述其作用的语义名称，比如<code>.label</code>。</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span>v.backgroundColor = UIColor(red: <span style="color:#ae81ff">0</span>, green: <span style="color:#ae81ff">0.1</span>, blue: <span style="color:#ae81ff">0.1</span>, alpha: <span style="color:#ae81ff">1</span>)
+</span></span></code></pre></div><p>自<code>iOS 13</code>开始出现了深色模式，为了适配需要使用<font color=Blue>动态颜色</font>，即使用<code>UIColor</code>的初始化函数<code>init(dynamicProvider:)</code>来进行适配，下面是创建一个自定义的动态颜色：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span>v1.backgroundColor = UIColor { tc <span style="color:#66d9ef">in</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">switch</span> tc.userInterfaceStyle {
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">case</span> .dark:
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">return</span> UIColor(red: <span style="color:#ae81ff">0.3</span>, green: <span style="color:#ae81ff">0.4</span>, blue: <span style="color:#ae81ff">0.4</span>, alpha: <span style="color:#ae81ff">1</span>)
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">case</span> .light:
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">return</span> UIColor(red: <span style="color:#ae81ff">0</span>, green: <span style="color:#ae81ff">0.1</span>, blue: <span style="color:#ae81ff">0.1</span>, alpha: <span style="color:#ae81ff">1</span>)
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p>从<code>iOS 13</code>开始，系统提供了许多预置的动态颜色，其中大部分的名称都是以<code>.system</code>开头的，比如<code>.systemYellow</code>，其它的则是描述其作用的语义名称，比如<code>.label</code>。</p>
 <p>现在可以在资产目录中设计一个自定义命名的颜色。当创建一个新的颜色集时，属性检查器中的 「外观」弹出菜单显示为「任意」、「暗色」，并且有两个颜色色块，一个用于深色模式，另一个用于其它一切；依次选择每个色块并在属性检查器中设计颜色：</p>
 <p><img src="https://i.loli.net/2021/06/27/knrG5zj296RLqmD.jpg" alt="-c"></p>
 <p>上面自定义命名的颜色，就是动态的。比方说，我们在资产目录中的颜色集被称为<code>myDarkColor</code>，那么可以使用如下方式使用:</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift">v.backgroundColor = UIColor(named: <span style="color:#e6db74">&#34;myDarkColor&#34;</span>)
-</code></pre></div><p>当你选择一个视图时，资产目录中的自定义命名颜色也会出现在库中和属性检查器中的颜色弹出菜单中，如下图所示：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span>v.backgroundColor = UIColor(named: <span style="color:#e6db74">&#34;myDarkColor&#34;</span>)
+</span></span></code></pre></div><p>当你选择一个视图时，资产目录中的自定义命名颜色也会出现在库中和属性检查器中的颜色弹出菜单中，如下图所示：</p>
 <p><img src="https://i.loli.net/2021/06/27/6S3L2ejsEcHtanC.jpg" alt="-c"></p>
 <h1 id="可见性和透明度">可见性和透明度</h1>
 <p>视图的可见性和不透明度与<code>3</code>个属性相关，它们分别是<code>isHidden</code>，<code>alpha</code>和<code>isOpaque</code>，下面开始逐个介绍。</p>
@@ -428,77 +428,77 @@ sendSubviewToBack(<span style="color:#66d9ef">_</span>:)
 <p><img src="https://i.loli.net/2021/06/13/QWCVUiwYv8MarSI.jpg" alt="-c"></p>
 <p><code>CGRect</code>有个<code>insetBy(dx:dy:)</code>方法可以从一个矩形中衍生出另一个矩形并嵌入。但是应该从哪个矩形中嵌入呢？不是从父视图的<code>frame</code>，因为<code>frame</code>代表一个视图在其父视图中的位置，并且是父视图的坐标系中的位置。</p>
 <p>应当找一个用来描述在其自身坐标中与父视图矩形相关的<code>CGRect</code>，因为这是子视图的<code>frame</code>所要表达的坐标。描述视图在其自身坐标中的矩形<code>CGRect</code>是视图的<code>bounds</code>属性。</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift"><span style="color:#66d9ef">let</span> v1 = UIView(frame:CGRect(<span style="color:#ae81ff">113</span>, <span style="color:#ae81ff">111</span>, <span style="color:#ae81ff">132</span>, <span style="color:#ae81ff">194</span>)) 
-v1.backgroundColor = UIColor(red: <span style="color:#ae81ff">1</span>, green: <span style="color:#ae81ff">0.4</span>, blue: <span style="color:#ae81ff">1</span>, alpha: <span style="color:#ae81ff">1</span>) 
-<span style="color:#66d9ef">let</span> v2 = UIView(frame:v1.bounds.insetBy(dx: <span style="color:#ae81ff">10</span>, dy: <span style="color:#ae81ff">10</span>)) 
-v2.backgroundColor = UIColor(red: <span style="color:#ae81ff">0.5</span>, green: <span style="color:#ae81ff">1</span>, blue: <span style="color:#ae81ff">0</span>, alpha: <span style="color:#ae81ff">1</span>)
-<span style="color:#66d9ef">self</span>.view.addSubview(v1) 
-v1.addSubview(v2) 
-</code></pre></div><p><img src="https://i.loli.net/2021/06/13/QWCVUiwYv8MarSI.jpg" alt="-c"></p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span><span style="color:#66d9ef">let</span> v1 = UIView(frame:CGRect(<span style="color:#ae81ff">113</span>, <span style="color:#ae81ff">111</span>, <span style="color:#ae81ff">132</span>, <span style="color:#ae81ff">194</span>)) 
+</span></span><span style="display:flex;"><span>v1.backgroundColor = UIColor(red: <span style="color:#ae81ff">1</span>, green: <span style="color:#ae81ff">0.4</span>, blue: <span style="color:#ae81ff">1</span>, alpha: <span style="color:#ae81ff">1</span>) 
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">let</span> v2 = UIView(frame:v1.bounds.insetBy(dx: <span style="color:#ae81ff">10</span>, dy: <span style="color:#ae81ff">10</span>)) 
+</span></span><span style="display:flex;"><span>v2.backgroundColor = UIColor(red: <span style="color:#ae81ff">0.5</span>, green: <span style="color:#ae81ff">1</span>, blue: <span style="color:#ae81ff">0</span>, alpha: <span style="color:#ae81ff">1</span>)
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">self</span>.view.addSubview(v1) 
+</span></span><span style="display:flex;"><span>v1.addSubview(v2) 
+</span></span></code></pre></div><p><img src="https://i.loli.net/2021/06/13/QWCVUiwYv8MarSI.jpg" alt="-c"></p>
 <p>如果改变一个视图的<code>bounds</code>的<code>size</code>，那么它的<code>frame</code>也会发生变化。视图的<code>frame</code>的变化是围绕其<code>center</code>来的&mdash;<font color=red>中心点不变</font>。下面的代码只出现一个矩形，子视图完全覆盖父视图：</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift"><span style="color:#66d9ef">let</span> v1 = UIView(frame:CGRect(<span style="color:#ae81ff">113</span>, <span style="color:#ae81ff">111</span>, <span style="color:#ae81ff">132</span>, <span style="color:#ae81ff">194</span>)) 
-v1.backgroundColor = UIColor(red: <span style="color:#ae81ff">1</span>, green: <span style="color:#ae81ff">0.4</span>, blue: <span style="color:#ae81ff">1</span>, alpha: <span style="color:#ae81ff">1</span>) 
-<span style="color:#66d9ef">let</span> v2 = UIView(frame:v1.bounds.insetBy(dx: <span style="color:#ae81ff">10</span>, dy: <span style="color:#ae81ff">10</span>)) 
-v2.backgroundColor = UIColor(red: <span style="color:#ae81ff">0.5</span>, green: <span style="color:#ae81ff">1</span>, blue: <span style="color:#ae81ff">0</span>, alpha: <span style="color:#ae81ff">1</span>)
-<span style="color:#66d9ef">self</span>.view.addSubview(v1) 
-v1.addSubview(v2) 
-v2.bounds.size.height <span style="color:#f92672">+=</span> <span style="color:#ae81ff">20</span> 
-v2.bounds.size.width <span style="color:#f92672">+=</span> <span style="color:#ae81ff">20</span>
-</code></pre></div><p><img src="https://i.loli.net/2021/06/13/HMi89mERjtUOfIZ.jpg" alt="-c"></p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span><span style="color:#66d9ef">let</span> v1 = UIView(frame:CGRect(<span style="color:#ae81ff">113</span>, <span style="color:#ae81ff">111</span>, <span style="color:#ae81ff">132</span>, <span style="color:#ae81ff">194</span>)) 
+</span></span><span style="display:flex;"><span>v1.backgroundColor = UIColor(red: <span style="color:#ae81ff">1</span>, green: <span style="color:#ae81ff">0.4</span>, blue: <span style="color:#ae81ff">1</span>, alpha: <span style="color:#ae81ff">1</span>) 
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">let</span> v2 = UIView(frame:v1.bounds.insetBy(dx: <span style="color:#ae81ff">10</span>, dy: <span style="color:#ae81ff">10</span>)) 
+</span></span><span style="display:flex;"><span>v2.backgroundColor = UIColor(red: <span style="color:#ae81ff">0.5</span>, green: <span style="color:#ae81ff">1</span>, blue: <span style="color:#ae81ff">0</span>, alpha: <span style="color:#ae81ff">1</span>)
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">self</span>.view.addSubview(v1) 
+</span></span><span style="display:flex;"><span>v1.addSubview(v2) 
+</span></span><span style="display:flex;"><span>v2.bounds.size.height <span style="color:#f92672">+=</span> <span style="color:#ae81ff">20</span> 
+</span></span><span style="display:flex;"><span>v2.bounds.size.width <span style="color:#f92672">+=</span> <span style="color:#ae81ff">20</span>
+</span></span></code></pre></div><p><img src="https://i.loli.net/2021/06/13/HMi89mERjtUOfIZ.jpg" alt="-c"></p>
 <p>如果改变一个视图的<code>bounds</code>原点，就会移动其内部坐标系的原点。当创建一个<code>UIView</code>时，它的边界坐标系的原点<code>(0.0,0.0)</code>就在它的左上方。因为一个子视图是相对于它的父视图的坐标系定位的，所以父视图的边界原点的改变也会改变子视图的显示位置，如下代码会导致父视图的大小和位置没有发生任何变化，但是子视图已经向左上角移动了：</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift"><span style="color:#66d9ef">let</span> v1 = UIView(frame:CGRect(<span style="color:#ae81ff">113</span>, <span style="color:#ae81ff">111</span>, <span style="color:#ae81ff">132</span>, <span style="color:#ae81ff">194</span>)) 
-v1.backgroundColor = UIColor(red: <span style="color:#ae81ff">1</span>, green: <span style="color:#ae81ff">0.4</span>, blue: <span style="color:#ae81ff">1</span>, alpha: <span style="color:#ae81ff">1</span>) 
-<span style="color:#66d9ef">let</span> v2 = UIView(frame:v1.bounds.insetBy(dx: <span style="color:#ae81ff">10</span>, dy: <span style="color:#ae81ff">10</span>)) 
-v2.backgroundColor = UIColor(red: <span style="color:#ae81ff">0.5</span>, green: <span style="color:#ae81ff">1</span>, blue: <span style="color:#ae81ff">0</span>, alpha: <span style="color:#ae81ff">1</span>) 
-<span style="color:#66d9ef">self</span>.view.addSubview(v1) 
-v1.addSubview(v2) 
-v1.bounds.origin.x <span style="color:#f92672">+=</span> <span style="color:#ae81ff">10</span> 
-v1.bounds.origin.y <span style="color:#f92672">+=</span> <span style="color:#ae81ff">10</span>
-</code></pre></div><p><img src="https://i.loli.net/2021/06/13/9wZkBVegPQyscpd.jpg" alt="-c"></p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span><span style="color:#66d9ef">let</span> v1 = UIView(frame:CGRect(<span style="color:#ae81ff">113</span>, <span style="color:#ae81ff">111</span>, <span style="color:#ae81ff">132</span>, <span style="color:#ae81ff">194</span>)) 
+</span></span><span style="display:flex;"><span>v1.backgroundColor = UIColor(red: <span style="color:#ae81ff">1</span>, green: <span style="color:#ae81ff">0.4</span>, blue: <span style="color:#ae81ff">1</span>, alpha: <span style="color:#ae81ff">1</span>) 
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">let</span> v2 = UIView(frame:v1.bounds.insetBy(dx: <span style="color:#ae81ff">10</span>, dy: <span style="color:#ae81ff">10</span>)) 
+</span></span><span style="display:flex;"><span>v2.backgroundColor = UIColor(red: <span style="color:#ae81ff">0.5</span>, green: <span style="color:#ae81ff">1</span>, blue: <span style="color:#ae81ff">0</span>, alpha: <span style="color:#ae81ff">1</span>) 
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">self</span>.view.addSubview(v1) 
+</span></span><span style="display:flex;"><span>v1.addSubview(v2) 
+</span></span><span style="display:flex;"><span>v1.bounds.origin.x <span style="color:#f92672">+=</span> <span style="color:#ae81ff">10</span> 
+</span></span><span style="display:flex;"><span>v1.bounds.origin.y <span style="color:#f92672">+=</span> <span style="color:#ae81ff">10</span>
+</span></span></code></pre></div><p><img src="https://i.loli.net/2021/06/13/9wZkBVegPQyscpd.jpg" alt="-c"></p>
 <h2 id="center">center</h2>
 <p>同样地，<font color=LightSeaGreen>若改变一个视图的<code>frame</code>属性的<code>size</code>值，也会改变其<code>bounds</code>属性的<code>size</code>值</font>。但是，改变<code>bounds</code>的<code>size</code>大小时，不会改变其<code>center</code>属性。</p>
 <p><font color=red><code>center</code>代表子视图在父视图坐标系中的位置</font>，确切地说，它表示子视图的<code>bounds center</code>在父视图中的位置：</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift"><span style="color:#66d9ef">let</span> c = CGPoint(theView.bounds.midX, theView.bounds.midY)
-</code></pre></div><p>改变视图的<code>bounds</code>不会改变的它的<code>center</code>，相应地改变视图的<code>center</code>不会改变<code>bounds</code>。即视图的<code>center</code>和<code>bounds</code>是<font color=Blue>相互独立的</font>。<code>bounds</code>用于描述视图的大小，<code>center</code>用于描述视图在父视图中的位置。</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span><span style="color:#66d9ef">let</span> c = CGPoint(theView.bounds.midX, theView.bounds.midY)
+</span></span></code></pre></div><p>改变视图的<code>bounds</code>不会改变的它的<code>center</code>，相应地改变视图的<code>center</code>不会改变<code>bounds</code>。即视图的<code>center</code>和<code>bounds</code>是<font color=Blue>相互独立的</font>。<code>bounds</code>用于描述视图的大小，<code>center</code>用于描述视图在父视图中的位置。</p>
 <p>实际上<font color=red>视图的<code>frame</code>属性是<code>bounds</code>和<code>center</code>的简便形式</font>。当改变视图的<code>frame</code>属性时，<code>bounds</code>和<code>center</code>也会随之发生变化，当改变<code>bounds</code>和<code>center</code>时，视图的<code>frame</code>也会随之发生改变。尽管如此，调整一个视图在父视图中的<font color=red>可靠方式是使用<code>bounds</code>和<code>center</code>属性</font>。</p>
 <p>每个视图都有自己的坐标系统（使用<code>bounds</code>来表达），并且一个视图坐标系统的与它的父视图的坐标系统有一个明确的关系，即<code>center</code>属性。因此，可以在同一窗口中的任何两个视图的坐标之间进行转换：</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift">open <span style="color:#66d9ef">func</span> <span style="color:#a6e22e">convert</span>(<span style="color:#66d9ef">_</span> point: CGPoint, to view: UIView?) -&gt; CGPoint
-open <span style="color:#66d9ef">func</span> <span style="color:#a6e22e">convert</span>(<span style="color:#66d9ef">_</span> point: CGPoint, from view: UIView?) -&gt; CGPoint
-open <span style="color:#66d9ef">func</span> <span style="color:#a6e22e">convert</span>(<span style="color:#66d9ef">_</span> rect: CGRect, to view: UIView?) -&gt; CGRect
-open <span style="color:#66d9ef">func</span> <span style="color:#a6e22e">convert</span>(<span style="color:#66d9ef">_</span> rect: CGRect, from view: UIView?) -&gt; CGRect
-</code></pre></div><p>在<code>convert</code>方法中，第一个参数既可以是<code>CGPoint</code>也可以是<code>CGRect</code>，第二个参数是<code>UIView</code>，如果第二个参数为<code>nil</code>，则会认为是<code>window</code>。下面的例子是将<code>v2</code>放到<code>v1</code>的中心：</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift">v2.center = v1.convert(v1.center, from:v1.superview)
-</code></pre></div><p>另外一种更常见的方式是将子视图的中心放在父视图<code>bounds</code>的中心位置，如下所示：</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift">v2.center = CGPoint(v1.bounds.midX,v1.bounds.midY)
-</code></pre></div><h1 id="transform">transform</h1>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span>open <span style="color:#66d9ef">func</span> <span style="color:#a6e22e">convert</span>(<span style="color:#66d9ef">_</span> point: CGPoint, to view: UIView?) -&gt; CGPoint
+</span></span><span style="display:flex;"><span>open <span style="color:#66d9ef">func</span> <span style="color:#a6e22e">convert</span>(<span style="color:#66d9ef">_</span> point: CGPoint, from view: UIView?) -&gt; CGPoint
+</span></span><span style="display:flex;"><span>open <span style="color:#66d9ef">func</span> <span style="color:#a6e22e">convert</span>(<span style="color:#66d9ef">_</span> rect: CGRect, to view: UIView?) -&gt; CGRect
+</span></span><span style="display:flex;"><span>open <span style="color:#66d9ef">func</span> <span style="color:#a6e22e">convert</span>(<span style="color:#66d9ef">_</span> rect: CGRect, from view: UIView?) -&gt; CGRect
+</span></span></code></pre></div><p>在<code>convert</code>方法中，第一个参数既可以是<code>CGPoint</code>也可以是<code>CGRect</code>，第二个参数是<code>UIView</code>，如果第二个参数为<code>nil</code>，则会认为是<code>window</code>。下面的例子是将<code>v2</code>放到<code>v1</code>的中心：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span>v2.center = v1.convert(v1.center, from:v1.superview)
+</span></span></code></pre></div><p>另外一种更常见的方式是将子视图的中心放在父视图<code>bounds</code>的中心位置，如下所示：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span>v2.center = CGPoint(v1.bounds.midX,v1.bounds.midY)
+</span></span></code></pre></div><h1 id="transform">transform</h1>
 <h2 id="transform-1">transform</h2>
 <p>视图的<code>transform</code>属性可以改变视图的绘制方式，显示大小，位置和方向，<font color=red>但不会改变<code>bounds</code>和<code>center</code>属性</font>。<code>transform</code>属性值是一个<code>CGAffineTransform</code>结构体，代表代表3×3变换矩阵9个值中的6个（另外3个值是常数，所以没有必要在结构中表示它们）：</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift"><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">struct</span> <span style="color:#a6e22e">CGAffineTransform</span> {
-
-    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">var</span> a: CGFloat
-
-    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">var</span> b: CGFloat
-
-    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">var</span> c: CGFloat
-
-    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">var</span> d: CGFloat
-
-    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">var</span> tx: CGFloat
-
-    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">var</span> ty: CGFloat
-
-    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">init</span>()
-
-    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">init</span>(a: CGFloat, b: CGFloat, c: CGFloat, d: CGFloat, tx: CGFloat, ty: CGFloat)
-}
-</code></pre></div><p>默认情况下，一个视图的变换矩阵是<code>CGAffineTransform.identity</code>，即同一变换，它没有可见的效果，所以你不知道它的存在。任何变换都是<font color=red>围绕视图的中心进行的，这个中心点一定是保持不变的</font>。</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift"><span style="color:#66d9ef">let</span> v1 = UIView(frame:CGRect(<span style="color:#ae81ff">113</span>, <span style="color:#ae81ff">111</span>, <span style="color:#ae81ff">132</span>, <span style="color:#ae81ff">194</span>)) 
-v1.backgroundColor = UIColor(red: <span style="color:#ae81ff">1</span>, green: <span style="color:#ae81ff">0.4</span>, blue: <span style="color:#ae81ff">1</span>, alpha: <span style="color:#ae81ff">1</span>) 
-<span style="color:#66d9ef">let</span> v2 = UIView(frame:v1.bounds.insetBy(dx: <span style="color:#ae81ff">10</span>, dy: <span style="color:#ae81ff">10</span>)) 
-v2.backgroundColor = UIColor(red: <span style="color:#ae81ff">0.5</span>, green: <span style="color:#ae81ff">1</span>, blue: <span style="color:#ae81ff">0</span>, alpha: <span style="color:#ae81ff">1</span>) <span style="color:#66d9ef">self</span>.view.addSubview(v1) 
-v1.addSubview(v2) 
-v1.transform = CGAffineTransform(rotationAngle: <span style="color:#ae81ff">45</span> <span style="color:#f92672">*</span> .pi<span style="color:#f92672">/</span><span style="color:#ae81ff">180</span>) print(v1.frame)
-</code></pre></div><h2 id="transform3d">transform3D</h2>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">struct</span> <span style="color:#a6e22e">CGAffineTransform</span> {
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">var</span> a: CGFloat
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">var</span> b: CGFloat
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">var</span> c: CGFloat
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">var</span> d: CGFloat
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">var</span> tx: CGFloat
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">var</span> ty: CGFloat
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">init</span>()
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">init</span>(a: CGFloat, b: CGFloat, c: CGFloat, d: CGFloat, tx: CGFloat, ty: CGFloat)
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p>默认情况下，一个视图的变换矩阵是<code>CGAffineTransform.identity</code>，即同一变换，它没有可见的效果，所以你不知道它的存在。任何变换都是<font color=red>围绕视图的中心进行的，这个中心点一定是保持不变的</font>。</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span><span style="color:#66d9ef">let</span> v1 = UIView(frame:CGRect(<span style="color:#ae81ff">113</span>, <span style="color:#ae81ff">111</span>, <span style="color:#ae81ff">132</span>, <span style="color:#ae81ff">194</span>)) 
+</span></span><span style="display:flex;"><span>v1.backgroundColor = UIColor(red: <span style="color:#ae81ff">1</span>, green: <span style="color:#ae81ff">0.4</span>, blue: <span style="color:#ae81ff">1</span>, alpha: <span style="color:#ae81ff">1</span>) 
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">let</span> v2 = UIView(frame:v1.bounds.insetBy(dx: <span style="color:#ae81ff">10</span>, dy: <span style="color:#ae81ff">10</span>)) 
+</span></span><span style="display:flex;"><span>v2.backgroundColor = UIColor(red: <span style="color:#ae81ff">0.5</span>, green: <span style="color:#ae81ff">1</span>, blue: <span style="color:#ae81ff">0</span>, alpha: <span style="color:#ae81ff">1</span>) <span style="color:#66d9ef">self</span>.view.addSubview(v1) 
+</span></span><span style="display:flex;"><span>v1.addSubview(v2) 
+</span></span><span style="display:flex;"><span>v1.transform = CGAffineTransform(rotationAngle: <span style="color:#ae81ff">45</span> <span style="color:#f92672">*</span> .pi<span style="color:#f92672">/</span><span style="color:#ae81ff">180</span>) print(v1.frame)
+</span></span></code></pre></div><h2 id="transform3d">transform3D</h2>
 <p>从<code>iOS 13</code>开始，视图有一个新的<code>transform3D</code>属性。这个属性其实是底层<code>layer</code>的<code>transform</code>属性，现在通过视图暴露出来了。</p>
 <h1 id="window坐标和屏幕座标">Window坐标和屏幕座标</h1>
 <p>设备的屏幕没有<code>frame</code>，但有<code>bounds</code>。<code>window</code>没有父视图，但是<font color=red>它的<code>frame</code>是自动和设备屏幕的<code>bounds</code>相匹配的</font>。<code>window</code>一般一开始就填满屏幕，并且通常会继续填满屏幕，因此<font color=LightSeaGreen>大多数情况下，窗口坐标就是屏幕坐标</font>。</p>
@@ -510,38 +510,38 @@ v1.transform = CGAffineTransform(rotationAngle: <span style="color:#ae81ff">45</
 <p><code>traitCollection</code>是<code>UITraitCollection</code>类型，属于值类型，它带有相当数量的描述环境的属性。例如，<code>displayScale</code>能告诉你屏幕分辨率，<code>userInterfaceIdiom</code>说明设备类型&ndash;<code>iPhone</code>或<code>iPad</code>，它还能报告诸如设备的强制触摸能力和显示色域等等。</p>
 <p>当<code>app</code>运行时，如果<code>traitCollection</code>的任何属性发生变化，<code>traitCollectionDidChange(_:)</code>消息就会在<code>UITraitEnvironments</code>的层次结构中传播，旧的特性集合（如果有的话）被作为参数提供，新的特性集合可以作为<code>self.traitCollection</code>被检索。</p>
 <p>如果要实现<code>traitCollectionDidChange(_:)</code>方法，首先应该调用<code>super</code>的方法，对于一个初学者来说，很容易忘记调用对应的<code>super</code>方法：</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift"><span style="color:#66d9ef">override</span> <span style="color:#66d9ef">func</span> <span style="color:#a6e22e">traitCollectionDidChange</span>(<span style="color:#66d9ef">_</span> previousTraitCollection: UITraitCollection?) {
-    <span style="color:#66d9ef">super</span>.traitCollectionDidChange(previousTraitCollection)
-}
-</code></pre></div><p>我们也可以构造自己的<code>traitCollection</code>，但<font color=red>不能直接</font>设置任何<code>traitCollection</code>的属性值。可以通过<code>init</code>方法构造一个<code>traitCollection</code>，但是<font color=red>初始化器每次只能确定一个属性</font>。如果想进一步增加属性值，可以通过调用<code>init(traitsFrom:)</code>初始化器，将一个<code>traitCollection</code>数组传入以组合成新的<code>traitCollection</code>，如下所示：</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift"><span style="color:#66d9ef">let</span> tcdisp = UITraitCollection(displayScale: UIScreen.main.scale)
-<span style="color:#66d9ef">let</span> tcphone = UITraitCollection(userInterfaceIdiom: .phone)
-<span style="color:#66d9ef">let</span> tc1 = UITraitCollection(traitsFrom: [tcdisp, tcphone])
-</code></pre></div><p>初始化器<code>init(traitsFrom:)</code>中<font color=red>数组的工作方式与继承类似——进行有序的交叉</font>。如果两个<code>traitCollection</code>被合并，并且它们都设置了相同的属性，那么<font color=Blue>获胜者是出现在数组后面或继承层次结构中更远的<code>traitCollection</code></font>。如果一个设置了一个属性，而另一个没有，那么设置该属性的那个就获胜。如果你创建了一个<code>traitCollection</code>，如果<code>traitCollection</code>在继承层次中，任何未指定的属性的值都将被继承。</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span><span style="color:#66d9ef">override</span> <span style="color:#66d9ef">func</span> <span style="color:#a6e22e">traitCollectionDidChange</span>(<span style="color:#66d9ef">_</span> previousTraitCollection: UITraitCollection?) {
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">super</span>.traitCollectionDidChange(previousTraitCollection)
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p>我们也可以构造自己的<code>traitCollection</code>，但<font color=red>不能直接</font>设置任何<code>traitCollection</code>的属性值。可以通过<code>init</code>方法构造一个<code>traitCollection</code>，但是<font color=red>初始化器每次只能确定一个属性</font>。如果想进一步增加属性值，可以通过调用<code>init(traitsFrom:)</code>初始化器，将一个<code>traitCollection</code>数组传入以组合成新的<code>traitCollection</code>，如下所示：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span><span style="color:#66d9ef">let</span> tcdisp = UITraitCollection(displayScale: UIScreen.main.scale)
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">let</span> tcphone = UITraitCollection(userInterfaceIdiom: .phone)
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">let</span> tc1 = UITraitCollection(traitsFrom: [tcdisp, tcphone])
+</span></span></code></pre></div><p>初始化器<code>init(traitsFrom:)</code>中<font color=red>数组的工作方式与继承类似——进行有序的交叉</font>。如果两个<code>traitCollection</code>被合并，并且它们都设置了相同的属性，那么<font color=Blue>获胜者是出现在数组后面或继承层次结构中更远的<code>traitCollection</code></font>。如果一个设置了一个属性，而另一个没有，那么设置该属性的那个就获胜。如果你创建了一个<code>traitCollection</code>，如果<code>traitCollection</code>在继承层次中，任何未指定的属性的值都将被继承。</p>
 <p>如果需要比较<code>traitCollection</code>，可以调用<code>containsTraits(in:)</code>方法。如果参数<code>traitCollection</code>的每个属性的值与待比较的<code>traitCollection</code>中的属性值相匹配，则返回<code>true</code>。</p>
 <p>对于<code>UIViews</code>来说，主要关注的<code>traitCollection</code>属性是是<code>interface style</code>和<code>size class</code>，所以接下来将会介绍这两者。</p>
 <h1 id="interface-style">Interface Style</h1>
 <p>使用<code>trait collection</code>中的属性值<code>userInterfaceStyle</code>来报告大环境是<code>light</code>模式还是<code>dark</code>模式。如果界面上使用的颜色是<font color=Blue>动态颜色</font>，切换<code>userInterfaceStyle</code>时，则界面会自动更改颜色。</p>
 <p>然而，在某些情况下，你可能会手动管理一些颜色，你会想知道什么时候<code>userInterfaceStyle</code>发生了变化，这样就可以改变颜色作为回应。</p>
 <p>假如我们要把资产目录中一个自定义的动态颜色应用到视图的<code>borader</code>上。这实际上是在视图的<code>layer</code>上完成的，要求我们使用该颜色的<code>cgColor</code>属性:</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift"><span style="color:#66d9ef">self</span>.otherView.layer.borderWidth = <span style="color:#ae81ff">4</span> 
-<span style="color:#66d9ef">self</span>.otherView.layer.borderColor = UIColor(named: <span style="color:#e6db74">&#34;myDarkColor&#34;</span>)?.cgColor
-</code></pre></div><p>上面代码的问题是，无论是<code>layer</code>上还是颜色的<code>cgColor</code>都不知道任何关于<code>trait collection</code>的信息。所以这就需要我们监听<code>trait collection</code>的变化，并在知道<code>userInterfaceStyle</code>发生变化后再次使用我们的动态颜色。多亏了<code>trait collection</code>的<code>hasDifferentColorAppearance</code>方法，可以避免做不必要的工作：</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift"><span style="color:#66d9ef">override</span> <span style="color:#66d9ef">func</span> <span style="color:#a6e22e">traitCollectionDidChange</span>(<span style="color:#66d9ef">_</span> prevtc: UITraitCollection?) {
-    <span style="color:#66d9ef">super</span>.traitCollectionDidChange(prevtc)
-    <span style="color:#66d9ef">if</span> prevtc?.hasDifferentColorAppearance(comparedTo: traitCollection) ?? <span style="color:#66d9ef">true</span> {
-        otherView.layer.borderColor = UIColor(named: <span style="color:#e6db74">&#34;myDarkColor&#34;</span>)?.cgColor
-    }
-}
-</code></pre></div><p>请注意，在上面的代码中不必知道<code>userInterfaceStyle</code>目前到底取什么值，只需要把动态颜色的<code>cgColor</code>取出来使用即可。这是因为从<code>asset</code>目录中<code>UIColor(named: &quot;myDarkColor&quot;)</code><font color=red>访问动态颜色的行为是在先访问一个全局值<code>UITraitCollection.current</code>的情况下发生的</font>。</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span><span style="color:#66d9ef">self</span>.otherView.layer.borderWidth = <span style="color:#ae81ff">4</span> 
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">self</span>.otherView.layer.borderColor = UIColor(named: <span style="color:#e6db74">&#34;myDarkColor&#34;</span>)?.cgColor
+</span></span></code></pre></div><p>上面代码的问题是，无论是<code>layer</code>上还是颜色的<code>cgColor</code>都不知道任何关于<code>trait collection</code>的信息。所以这就需要我们监听<code>trait collection</code>的变化，并在知道<code>userInterfaceStyle</code>发生变化后再次使用我们的动态颜色。多亏了<code>trait collection</code>的<code>hasDifferentColorAppearance</code>方法，可以避免做不必要的工作：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span><span style="color:#66d9ef">override</span> <span style="color:#66d9ef">func</span> <span style="color:#a6e22e">traitCollectionDidChange</span>(<span style="color:#66d9ef">_</span> prevtc: UITraitCollection?) {
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">super</span>.traitCollectionDidChange(prevtc)
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">if</span> prevtc?.hasDifferentColorAppearance(comparedTo: traitCollection) ?? <span style="color:#66d9ef">true</span> {
+</span></span><span style="display:flex;"><span>        otherView.layer.borderColor = UIColor(named: <span style="color:#e6db74">&#34;myDarkColor&#34;</span>)?.cgColor
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p>请注意，在上面的代码中不必知道<code>userInterfaceStyle</code>目前到底取什么值，只需要把动态颜色的<code>cgColor</code>取出来使用即可。这是因为从<code>asset</code>目录中<code>UIColor(named: &quot;myDarkColor&quot;)</code><font color=red>访问动态颜色的行为是在先访问一个全局值<code>UITraitCollection.current</code>的情况下发生的</font>。</p>
 <p>在<code>traitCollectionDidChange</code>方法中和其他各种运行时正在绘制或执行布局的地方，这个值为我们自动设置，因此我们的动态颜色会在<code>userInterfaceStyle</code>变动时正确的取到，同时<code>cgColor</code>也能取到正确的值。在<code>UITraitCollection.current</code>没有被自动设置的情况下，我们可以自由地手动设置它，确保涉及动态颜色的后续操作将在正确的环境中进行。</p>
 <p>同时，<code>trait collection</code>也是理解一个动态颜色到底是什么颜色的关键。<code>.systemYellow</code>是什么颜色？这取决于<code>trait collection</code>。所以要想知道动态颜色目前到底是怎么值，必须提供一个<code>trait collection</code>。这很容易，因为你可以创建一个<code>trait collection</code>，之后再调用 <code>resolvedColor</code>即可:</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift"><span style="color:#66d9ef">let</span> yellow = UIColor.systemYellow
-<span style="color:#66d9ef">let</span> light = UITraitCollection(userInterfaceStyle: .light)
-<span style="color:#66d9ef">let</span> dark = UITraitCollection(userInterfaceStyle: .dark)
-<span style="color:#66d9ef">let</span> yellowLight = yellow.resolvedColor(with: light) <span style="color:#75715e">// 1 0.8 0 1</span>
-<span style="color:#66d9ef">let</span> yellowDark = yellow.resolvedColor(with: dark) <span style="color:#75715e">// 1 0.839216 0.0392157 1</span>
-</code></pre></div><p>除了<code>userInterfaceStyle</code>之外，<code>trait collection</code>还有一个<code>userInterfaceLevel</code>属性，它的取值为<code>.base</code>或<code>.elevated</code>。这个属性会影响到动态背景颜色，通常只有主界面前面的有限区域会受到影响。每个<code>Alert</code>都有一个<code>.elevated</code>界面级别，即使<code>Alert</code>后面的主界面没有。</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span><span style="color:#66d9ef">let</span> yellow = UIColor.systemYellow
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">let</span> light = UITraitCollection(userInterfaceStyle: .light)
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">let</span> dark = UITraitCollection(userInterfaceStyle: .dark)
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">let</span> yellowLight = yellow.resolvedColor(with: light) <span style="color:#75715e">// 1 0.8 0 1</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">let</span> yellowDark = yellow.resolvedColor(with: dark) <span style="color:#75715e">// 1 0.839216 0.0392157 1</span>
+</span></span></code></pre></div><p>除了<code>userInterfaceStyle</code>之外，<code>trait collection</code>还有一个<code>userInterfaceLevel</code>属性，它的取值为<code>.base</code>或<code>.elevated</code>。这个属性会影响到动态背景颜色，通常只有主界面前面的有限区域会受到影响。每个<code>Alert</code>都有一个<code>.elevated</code>界面级别，即使<code>Alert</code>后面的主界面没有。</p>
 <h1 id="size-classes">Size Classes</h1>
 <p>关于应用程序旋转和类似旋转，最重要的事实不是旋转本身，而是应用程序的<font color=red>尺寸比例</font>的变化。想象一下，<code>root view</code>的一个子视图，当设备处于纵向时位于屏幕的右下方。如果根视图的边界宽度和边界高度被改变，那么这个子视图就会在边界高度之外，从而离开屏幕&ndash;除非你的应用程序以某种方式对这种变化做出反应，重新定位它（这样的反应被称为布局，这个主题将占据本章的大部分篇幅）。</p>
 <p>环境的维度特征体现在一对<code>size classes</code>中，这对尺寸亦是<code>trait collection</code>属性值:<code>horizontalSizeClass</code>和<code>verticalSizeClass</code>：</p>
@@ -556,10 +556,10 @@ v1.transform = CGAffineTransform(rotationAngle: <span style="color:#ae81ff">45</
 <h1 id="overriding-trait-collections">Overriding Trait Collections</h1>
 <p>在某些情况下，隔断部分的<code>UITraitEnvironment</code>，并且谎报<code>trait collection</code>的内容是很有用的。因为，我们可能想让层次结构的一部分相信我们是在一个横向的<code>iPhone</code>上，而实际上我们是在一个纵向的<code>iPhone</code>上，或者你的应用程序的<font color=red>某些区域不应该对明暗模式之间的变化做出反应</font>。</p>
 <p>你不能仅仅通过设置视图的<code>trait collection</code>来直接将<code>trait collection</code>插入继承层次中，因为<code>traitCollection</code>不是一个可设置的属性。但是，在<code>UIViewController</code>中，你可以通过:</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift"><span style="color:#66d9ef">override</span> <span style="color:#66d9ef">func</span> <span style="color:#a6e22e">overrideTraitCollection</span>(forChild childViewController: UIViewController) -&gt; UITraitCollection? {
-    <span style="color:#75715e">//</span>
-}
-</code></pre></div><p>来注入你自己的<code>trait collection</code>。同样的<code>UIPresentationController</code>也有一个类似的方法。</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span><span style="color:#66d9ef">override</span> <span style="color:#66d9ef">func</span> <span style="color:#a6e22e">overrideTraitCollection</span>(forChild childViewController: UIViewController) -&gt; UITraitCollection? {
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">//</span>
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p>来注入你自己的<code>trait collection</code>。同样的<code>UIPresentationController</code>也有一个类似的方法。</p>
 <p>对于<code>user interface style</code>,<code>UIViewController</code>和<code>UIView</code>有一个更简单的方式，即使用<code>override var overrideUserInterfaceStyle: UIUserInterfaceStyle</code>。其中<code>overrideUserInterfaceStyle</code>是一个<code>UIUserInterfaceStyle</code>实例，默认值是<code>.unspecified</code>，含义为<code>interface style</code>应该是按层次结构向下传递的。但是你一旦将它设置为<code>.light</code>或<code>.dark</code>，就会阻止从层次结构中的那一点开始，将原本只继承<code>trait collection</code>的<code>userInterfaceStyle</code>属性，替代成自定义设置。</p>
 <h1 id="layout">layout</h1>
 <p>当一个父视图的边界原点改变时，子视图会随着移动。但是，当父视图的尺寸改变时，子视图会发生什么变化呢？</p>

@@ -254,26 +254,26 @@ code.has-jax {
     <div class="post-body" itemprop="articleBody">
     <h1 id="关键帧动画">关键帧动画</h1>
 <p>所谓关键帧动画，就是将<code>Layer</code>的属性作为<code>KeyPath</code>来注册，<font color=Blue>只要指定动画的起始帧和结束帧</font>，然后<font color=red>自动计算和实现中间的过度</font>的一种动画方式。</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-Swift" data-lang="Swift"><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">recordingButtonAnimation</span>(){
-    <span style="color:#66d9ef">let</span> animation = CABasicAnimation(keyPath: <span style="color:#e6db74">&#34;opacity&#34;</span>)
-    animation.fromValue = <span style="color:#ae81ff">1.0</span>
-    animation.toValue = <span style="color:#ae81ff">0.3</span>
-    animation.fillMode = kCAFillModeForwards
-    animation.isRemovedOnCompletion = <span style="color:#66d9ef">false</span>
-    animation.duration = <span style="color:#66d9ef">self</span>.animationDuration
-    <span style="color:#66d9ef">self</span>.recordButton.layer.add(animation, forKey: <span style="color:#66d9ef">nil</span>)
-}
-
-<span style="color:#75715e">//添加定时器</span>
-<span style="color:#66d9ef">if</span> recordingAnimationTimer == <span style="color:#66d9ef">nil</span>{
-    recordingAnimationTimer = Timer.scheduledTimer(timeInterval: <span style="color:#66d9ef">self</span>.animationDuration, target: <span style="color:#66d9ef">self</span>, selector: <span style="color:#66d9ef">#selector</span>(recordingButtonAnimation), userInfo: <span style="color:#66d9ef">nil</span>, repeats: <span style="color:#66d9ef">true</span>)
-}
-
-<span style="color:#75715e">//销毁定时器</span>
-<span style="color:#66d9ef">self</span>.recordingAnimationTimer?.invalidate()
-<span style="color:#75715e">//移除动画层</span>
-<span style="color:#66d9ef">self</span>.recordButton.layer.removeAllAnimations()
-</code></pre></div><p>属性说明：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-Swift" data-lang="Swift"><span style="display:flex;"><span><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">recordingButtonAnimation</span>(){
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">let</span> animation = CABasicAnimation(keyPath: <span style="color:#e6db74">&#34;opacity&#34;</span>)
+</span></span><span style="display:flex;"><span>    animation.fromValue = <span style="color:#ae81ff">1.0</span>
+</span></span><span style="display:flex;"><span>    animation.toValue = <span style="color:#ae81ff">0.3</span>
+</span></span><span style="display:flex;"><span>    animation.fillMode = kCAFillModeForwards
+</span></span><span style="display:flex;"><span>    animation.isRemovedOnCompletion = <span style="color:#66d9ef">false</span>
+</span></span><span style="display:flex;"><span>    animation.duration = <span style="color:#66d9ef">self</span>.animationDuration
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">self</span>.recordButton.layer.add(animation, forKey: <span style="color:#66d9ef">nil</span>)
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">//添加定时器</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">if</span> recordingAnimationTimer == <span style="color:#66d9ef">nil</span>{
+</span></span><span style="display:flex;"><span>    recordingAnimationTimer = Timer.scheduledTimer(timeInterval: <span style="color:#66d9ef">self</span>.animationDuration, target: <span style="color:#66d9ef">self</span>, selector: <span style="color:#66d9ef">#selector</span>(recordingButtonAnimation), userInfo: <span style="color:#66d9ef">nil</span>, repeats: <span style="color:#66d9ef">true</span>)
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">//销毁定时器</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">self</span>.recordingAnimationTimer?.invalidate()
+</span></span><span style="display:flex;"><span><span style="color:#75715e">//移除动画层</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">self</span>.recordButton.layer.removeAllAnimations()
+</span></span></code></pre></div><p>属性说明：</p>
 <ol>
 <li><code>duration</code>动画时长，默认为<code>0</code>,不设置的话会快速执行完动画</li>
 <li><code>speed</code> 执行速度，默认为<code>1</code>倍速度，如果设置了该属性，则执行时长为$\frac{duration}{speed}$</li>
@@ -283,21 +283,21 @@ code.has-jax {
 <li><code>toValue</code> 结束值</li>
 </ol>
 <p>当<code>CABasicAnimation</code>执行完动画后<font color=red>会回归动画开始的状态</font>，如果想要让它变成动画执行最后的状态，设置一下两个属性：</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift">animation.removedOnCompletion = <span style="color:#66d9ef">false</span>
-animation.fillMode = kCAFillModeForwards
-</code></pre></div><p>如果要设置永久重复，则需要将<code>repeatCount</code>的值置为<code>HUGE</code>或者<code>.greatestFiniteMagnitude</code>。</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift"><span style="color:#66d9ef">let</span> animation = CABasicAnimation(keyPath: <span style="color:#e6db74">&#34;opacity&#34;</span>)
-animation.duration = <span style="color:#ae81ff">1.0</span>
-animation.repeatCount = .greatestFiniteMagnitude<span style="color:#75715e">//HUGE</span>
-animation.autoreverses = <span style="color:#66d9ef">true</span>
-animation.fromValue = <span style="color:#ae81ff">1.0</span>
-animation.toValue = <span style="color:#ae81ff">0.0</span>
-testButton.layer.add(animation, forKey: <span style="color:#66d9ef">nil</span>)
-</code></pre></div><p>当给一个<code>CALayer</code>添加动画时，动画其实并没有改变这个<code>Layer</code>的实质属性，取而代之，<font color=red>系统会创建一个原始<code>Layer</code>的拷贝</font>。苹果称这个原始<code>Layer</code>为<code>Model Layer</code>，而这个复制的<code>Layer</code>被称为<code>Presentation Layer</code>。</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span>animation.removedOnCompletion = <span style="color:#66d9ef">false</span>
+</span></span><span style="display:flex;"><span>animation.fillMode = kCAFillModeForwards
+</span></span></code></pre></div><p>如果要设置永久重复，则需要将<code>repeatCount</code>的值置为<code>HUGE</code>或者<code>.greatestFiniteMagnitude</code>。</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span><span style="color:#66d9ef">let</span> animation = CABasicAnimation(keyPath: <span style="color:#e6db74">&#34;opacity&#34;</span>)
+</span></span><span style="display:flex;"><span>animation.duration = <span style="color:#ae81ff">1.0</span>
+</span></span><span style="display:flex;"><span>animation.repeatCount = .greatestFiniteMagnitude<span style="color:#75715e">//HUGE</span>
+</span></span><span style="display:flex;"><span>animation.autoreverses = <span style="color:#66d9ef">true</span>
+</span></span><span style="display:flex;"><span>animation.fromValue = <span style="color:#ae81ff">1.0</span>
+</span></span><span style="display:flex;"><span>animation.toValue = <span style="color:#ae81ff">0.0</span>
+</span></span><span style="display:flex;"><span>testButton.layer.add(animation, forKey: <span style="color:#66d9ef">nil</span>)
+</span></span></code></pre></div><p>当给一个<code>CALayer</code>添加动画时，动画其实并没有改变这个<code>Layer</code>的实质属性，取而代之，<font color=red>系统会创建一个原始<code>Layer</code>的拷贝</font>。苹果称这个原始<code>Layer</code>为<code>Model Layer</code>，而这个复制的<code>Layer</code>被称为<code>Presentation Layer</code>。</p>
 <p><font color=Blue><code>Presentation Layer</code>的属性会随着动画的进度实时改变，而<code>Model Layer</code>中对应的属性不会发生变化。</font> 默认情况下，系统会在<code>duration</code>时间后自动移除<code>CAKeyframeAnimation</code>。当移除某个动画后，系统会自动销毁这个<code>Layer</code>的<code>Presentation Layer</code>，只留下<code>Model Layer</code>。因为<code>Model Layer</code>的属性没有发生变化，所以视图一瞬间就回到了动画的初始状态。要解决这种状态需要先把<code>removeOnCompletion</code>设置为<code>false</code>,然后设置<code>fillMode</code>为<code>kCAFillModeForwards</code>。</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift">animation.removedOnCompletion = <span style="color:#66d9ef">false</span>
-animation.fillMode = kCAFillModeForwards
-</code></pre></div><p>关于<code>fillMode</code>它有四个值：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span>animation.removedOnCompletion = <span style="color:#66d9ef">false</span>
+</span></span><span style="display:flex;"><span>animation.fillMode = kCAFillModeForwards
+</span></span></code></pre></div><p>关于<code>fillMode</code>它有四个值：</p>
 <ol>
 <li><code>KCAFillModelRemoved</code> 这个是默认值，表示动画开始前和结束后对<code>Model Layer</code>没有影响，动画结束会回到视图的初始状态。</li>
 <li><code>kCAFillModeForwards</code> 当动画结束后，<code>Model Layer</code>会保持动画的最后状态。</li>
@@ -306,114 +306,114 @@ animation.fillMode = kCAFillModeForwards
 </ol>
 <hr>
 <h2 id="添加引导动画">添加引导动画</h2>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift">fileprivate <span style="color:#66d9ef">var</span> guideImageView:UIImageView?
-<span style="color:#66d9ef">private</span> <span style="color:#66d9ef">let</span> guideKey = <span style="color:#e6db74">&#34;GUIDE_NOTE_SPEECH_KEY&#34;</span>  <span style="color:#75715e">//应用级别的引导，如果增加用户的id，则是用户级别的引导</span>
-<span style="color:#66d9ef">func</span> <span style="color:#a6e22e">showGuide</span>(){
-    <span style="color:#66d9ef">let</span> isShowed = UserDefaults.standard.value(forKey: <span style="color:#66d9ef">self</span>.guideKey)
-    <span style="color:#66d9ef">if</span> isShowed == <span style="color:#66d9ef">nil</span> {
-        <span style="color:#66d9ef">let</span> guideImage = UIImage(named: <span style="color:#e6db74">&#34;guide_note_speech&#34;</span>)
-        <span style="color:#66d9ef">if</span> <span style="color:#66d9ef">self</span>.guideImageView == <span style="color:#66d9ef">nil</span>{
-            <span style="color:#66d9ef">self</span>.guideImageView = UIImageView(image: guideImage)
-            <span style="color:#66d9ef">let</span> width:CGFloat = <span style="color:#ae81ff">132</span>
-            <span style="color:#66d9ef">let</span> height:CGFloat = <span style="color:#ae81ff">100</span>
-            <span style="color:#66d9ef">let</span> x = bottomView.bounds.width<span style="color:#f92672">/</span><span style="color:#ae81ff">2</span> <span style="color:#f92672">+</span> <span style="color:#ae81ff">15</span>
-            <span style="color:#66d9ef">let</span> y = topView.bounds.size.height <span style="color:#f92672">+</span> centerView.bounds.size.height <span style="color:#f92672">+</span> soundWaveView.bounds.size.height <span style="color:#f92672">-</span> height <span style="color:#f92672">+</span> <span style="color:#ae81ff">20</span>
-            
-            <span style="color:#66d9ef">if</span> <span style="color:#66d9ef">let</span> guideView = <span style="color:#66d9ef">self</span>.guideImageView{
-                <span style="color:#66d9ef">self</span>.guideImageView?.frame = CGRect(x: x, y: y, width: width, height: height)
-                <span style="color:#66d9ef">self</span>.view.addSubview(guideView)
-                
-                <span style="color:#66d9ef">let</span> startPoint = CGPoint(x: <span style="color:#ae81ff">0</span>, y: <span style="color:#ae81ff">1</span>)
-                setAnchorPoint(point: startPoint, view: guideView)
-                
-                UIView.animate(withDuration: <span style="color:#ae81ff">1.2</span>, delay: <span style="color:#ae81ff">0</span>, options: [.<span style="color:#66d9ef">repeat</span>, .autoreverse], animations: {
-                    guideView.transform = CGAffineTransform(scaleX: <span style="color:#ae81ff">0.8</span>, y: <span style="color:#ae81ff">0.8</span>)
-                }, completion:<span style="color:#66d9ef">nil</span>)
-            }
-        }
-    }
-}
-</code></pre></div><p>需要注意的是：<font color=red>因为上面的函数涉及到<code>bounds</code>的计算，因此<code>guideShow</code>函数应当放到<code>viewDidLayoutSubviews()</code>中，或者<code>viewDidAppear(_ animated: Bool)</code>中</font>，经过试验，发现如果放到<code>viewDidLayoutSubviews()</code>中，图片会变黑很多。</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift"><span style="color:#66d9ef">override</span> <span style="color:#66d9ef">func</span> <span style="color:#a6e22e">viewDidLayoutSubviews</span>() {
-    <span style="color:#66d9ef">super</span>.viewDidLayoutSubviews()
-    showGuide()
-}
-<span style="color:#66d9ef">override</span> <span style="color:#66d9ef">func</span> <span style="color:#a6e22e">viewDidAppear</span>(<span style="color:#66d9ef">_</span> animated: Bool) {
-    <span style="color:#66d9ef">super</span>.viewDidAppear(animated)
-    showGuide()
-}
-</code></pre></div><p>取消引导动画时，首先应当移除引导的<code>imageview</code>，并将<code>key</code>记录到<code>plist</code>文件中。如果设置时用户点击某个按钮时移除引导，则将如下代码添加到相应<code>UIButton</code>的响应函数中：</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift"><span style="color:#66d9ef">if</span> <span style="color:#66d9ef">let</span> guideView = <span style="color:#66d9ef">self</span>.guideImageView{
-    <span style="color:#66d9ef">self</span>.removeGuide(view: guideView)
-}
-<span style="color:#66d9ef">func</span> <span style="color:#a6e22e">removeGuide</span>(view:UIView) {
-    view.removeFromSuperview()
-    UserDefaults.standard.setValue(<span style="color:#66d9ef">true</span>, forKey: <span style="color:#66d9ef">self</span>.guideKey)
-}
-</code></pre></div><p>如果是用户点击<code>imageView</code>的任何地方，移除引导，则应先在<code>imageView</code>里添加手势，如下所示：</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift"><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">tapGuide</span>(gesture: UITapGestureRecognizer) {
-    gesture.view?.removeFromSuperview()
-    UserDefaults.standard.setValue(<span style="color:#66d9ef">true</span>, forKey: <span style="color:#66d9ef">self</span>.guideKey)
-}
-</code></pre></div><div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift">guideImageView.isUserInteractionEnabled = <span style="color:#66d9ef">true</span>
-<span style="color:#66d9ef">let</span> tapGesture = UITapGestureRecognizer(target: <span style="color:#66d9ef">self</span>, action: <span style="color:#66d9ef">#selector</span>(tapGuide(gesture:)))
-guideImageView.addGestureRecognizer(tapGesture)
-</code></pre></div><p>适配<code>iPad</code>添加横竖屏的支持</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift"><span style="color:#66d9ef">private</span> <span style="color:#66d9ef">let</span> guideKey = <span style="color:#e6db74">&#34;GUIDE_NOTE_SPEECH_KEY12&#34;</span>
-<span style="color:#66d9ef">func</span> <span style="color:#a6e22e">showGuide</span>(){
-    <span style="color:#66d9ef">let</span> isShowed = UserDefaults.standard.value(forKey: <span style="color:#66d9ef">self</span>.guideKey)
-    <span style="color:#66d9ef">if</span> isShowed == <span style="color:#66d9ef">nil</span> {
-        <span style="color:#66d9ef">self</span>.guideImageView?.removeFromSuperview()
-        <span style="color:#66d9ef">let</span> guideImage = UIImage(named: <span style="color:#e6db74">&#34;guide_note_speech&#34;</span>)
-        <span style="color:#66d9ef">self</span>.guideImageView = UIImageView(image: guideImage)
-        
-        <span style="color:#66d9ef">let</span> width:CGFloat = <span style="color:#ae81ff">132</span>
-        <span style="color:#66d9ef">let</span> height:CGFloat = <span style="color:#ae81ff">100</span>
-        <span style="color:#66d9ef">let</span> bounds = UIScreen.main.bounds
-        <span style="color:#66d9ef">let</span> x = bounds.size.width<span style="color:#f92672">/</span><span style="color:#ae81ff">2</span> <span style="color:#f92672">+</span> <span style="color:#ae81ff">20</span>
-        
-        <span style="color:#66d9ef">var</span> y = bounds.size.height <span style="color:#f92672">-</span> <span style="color:#66d9ef">self</span>.bottomView.bounds.size.height <span style="color:#f92672">-</span> height
-        <span style="color:#66d9ef">if</span> <span style="color:#66d9ef">let</span> navHeight = <span style="color:#66d9ef">self</span>.navigationController?.navigationBar.bounds.size.height{
-            y <span style="color:#f92672">-=</span> navHeight
-        }
-        
-        <span style="color:#66d9ef">if</span> <span style="color:#66d9ef">let</span> guideView = <span style="color:#66d9ef">self</span>.guideImageView{
-            <span style="color:#66d9ef">self</span>.guideImageView?.frame = CGRect(x: x, y: y, width: width, height: height)
-            guideView.alpha = <span style="color:#ae81ff">0.8</span>
-            <span style="color:#66d9ef">self</span>.view.addSubview(guideView)
-            <span style="color:#66d9ef">let</span> startPoint = CGPoint(x: <span style="color:#ae81ff">0</span>, y: <span style="color:#ae81ff">1</span>)
-            setAnchorPoint(point: startPoint, view: guideView)
-            
-            UIView.animate(withDuration: <span style="color:#ae81ff">1.6</span>, delay: <span style="color:#ae81ff">0</span>, options: [.<span style="color:#66d9ef">repeat</span>, .autoreverse], animations: {
-                guideView.transform = CGAffineTransform(scaleX: <span style="color:#ae81ff">0.8</span>, y: <span style="color:#ae81ff">0.8</span>)
-            }, completion:<span style="color:#66d9ef">nil</span>)
-        }
-    }
-}
-</code></pre></div><p><a href="https://blog.csdn.net/yunyuan_/article/details/48085667">参考资料</a>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span>fileprivate <span style="color:#66d9ef">var</span> guideImageView:UIImageView?
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">private</span> <span style="color:#66d9ef">let</span> guideKey = <span style="color:#e6db74">&#34;GUIDE_NOTE_SPEECH_KEY&#34;</span>  <span style="color:#75715e">//应用级别的引导，如果增加用户的id，则是用户级别的引导</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">showGuide</span>(){
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">let</span> isShowed = UserDefaults.standard.value(forKey: <span style="color:#66d9ef">self</span>.guideKey)
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">if</span> isShowed == <span style="color:#66d9ef">nil</span> {
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">let</span> guideImage = UIImage(named: <span style="color:#e6db74">&#34;guide_note_speech&#34;</span>)
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">if</span> <span style="color:#66d9ef">self</span>.guideImageView == <span style="color:#66d9ef">nil</span>{
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">self</span>.guideImageView = UIImageView(image: guideImage)
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">let</span> width:CGFloat = <span style="color:#ae81ff">132</span>
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">let</span> height:CGFloat = <span style="color:#ae81ff">100</span>
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">let</span> x = bottomView.bounds.width<span style="color:#f92672">/</span><span style="color:#ae81ff">2</span> <span style="color:#f92672">+</span> <span style="color:#ae81ff">15</span>
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">let</span> y = topView.bounds.size.height <span style="color:#f92672">+</span> centerView.bounds.size.height <span style="color:#f92672">+</span> soundWaveView.bounds.size.height <span style="color:#f92672">-</span> height <span style="color:#f92672">+</span> <span style="color:#ae81ff">20</span>
+</span></span><span style="display:flex;"><span>            
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">if</span> <span style="color:#66d9ef">let</span> guideView = <span style="color:#66d9ef">self</span>.guideImageView{
+</span></span><span style="display:flex;"><span>                <span style="color:#66d9ef">self</span>.guideImageView?.frame = CGRect(x: x, y: y, width: width, height: height)
+</span></span><span style="display:flex;"><span>                <span style="color:#66d9ef">self</span>.view.addSubview(guideView)
+</span></span><span style="display:flex;"><span>                
+</span></span><span style="display:flex;"><span>                <span style="color:#66d9ef">let</span> startPoint = CGPoint(x: <span style="color:#ae81ff">0</span>, y: <span style="color:#ae81ff">1</span>)
+</span></span><span style="display:flex;"><span>                setAnchorPoint(point: startPoint, view: guideView)
+</span></span><span style="display:flex;"><span>                
+</span></span><span style="display:flex;"><span>                UIView.animate(withDuration: <span style="color:#ae81ff">1.2</span>, delay: <span style="color:#ae81ff">0</span>, options: [.<span style="color:#66d9ef">repeat</span>, .autoreverse], animations: {
+</span></span><span style="display:flex;"><span>                    guideView.transform = CGAffineTransform(scaleX: <span style="color:#ae81ff">0.8</span>, y: <span style="color:#ae81ff">0.8</span>)
+</span></span><span style="display:flex;"><span>                }, completion:<span style="color:#66d9ef">nil</span>)
+</span></span><span style="display:flex;"><span>            }
+</span></span><span style="display:flex;"><span>        }
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p>需要注意的是：<font color=red>因为上面的函数涉及到<code>bounds</code>的计算，因此<code>guideShow</code>函数应当放到<code>viewDidLayoutSubviews()</code>中，或者<code>viewDidAppear(_ animated: Bool)</code>中</font>，经过试验，发现如果放到<code>viewDidLayoutSubviews()</code>中，图片会变黑很多。</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span><span style="color:#66d9ef">override</span> <span style="color:#66d9ef">func</span> <span style="color:#a6e22e">viewDidLayoutSubviews</span>() {
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">super</span>.viewDidLayoutSubviews()
+</span></span><span style="display:flex;"><span>    showGuide()
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">override</span> <span style="color:#66d9ef">func</span> <span style="color:#a6e22e">viewDidAppear</span>(<span style="color:#66d9ef">_</span> animated: Bool) {
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">super</span>.viewDidAppear(animated)
+</span></span><span style="display:flex;"><span>    showGuide()
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p>取消引导动画时，首先应当移除引导的<code>imageview</code>，并将<code>key</code>记录到<code>plist</code>文件中。如果设置时用户点击某个按钮时移除引导，则将如下代码添加到相应<code>UIButton</code>的响应函数中：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span><span style="color:#66d9ef">if</span> <span style="color:#66d9ef">let</span> guideView = <span style="color:#66d9ef">self</span>.guideImageView{
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">self</span>.removeGuide(view: guideView)
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">removeGuide</span>(view:UIView) {
+</span></span><span style="display:flex;"><span>    view.removeFromSuperview()
+</span></span><span style="display:flex;"><span>    UserDefaults.standard.setValue(<span style="color:#66d9ef">true</span>, forKey: <span style="color:#66d9ef">self</span>.guideKey)
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p>如果是用户点击<code>imageView</code>的任何地方，移除引导，则应先在<code>imageView</code>里添加手势，如下所示：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">tapGuide</span>(gesture: UITapGestureRecognizer) {
+</span></span><span style="display:flex;"><span>    gesture.view?.removeFromSuperview()
+</span></span><span style="display:flex;"><span>    UserDefaults.standard.setValue(<span style="color:#66d9ef">true</span>, forKey: <span style="color:#66d9ef">self</span>.guideKey)
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span>guideImageView.isUserInteractionEnabled = <span style="color:#66d9ef">true</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">let</span> tapGesture = UITapGestureRecognizer(target: <span style="color:#66d9ef">self</span>, action: <span style="color:#66d9ef">#selector</span>(tapGuide(gesture:)))
+</span></span><span style="display:flex;"><span>guideImageView.addGestureRecognizer(tapGesture)
+</span></span></code></pre></div><p>适配<code>iPad</code>添加横竖屏的支持</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span><span style="color:#66d9ef">private</span> <span style="color:#66d9ef">let</span> guideKey = <span style="color:#e6db74">&#34;GUIDE_NOTE_SPEECH_KEY12&#34;</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">showGuide</span>(){
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">let</span> isShowed = UserDefaults.standard.value(forKey: <span style="color:#66d9ef">self</span>.guideKey)
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">if</span> isShowed == <span style="color:#66d9ef">nil</span> {
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">self</span>.guideImageView?.removeFromSuperview()
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">let</span> guideImage = UIImage(named: <span style="color:#e6db74">&#34;guide_note_speech&#34;</span>)
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">self</span>.guideImageView = UIImageView(image: guideImage)
+</span></span><span style="display:flex;"><span>        
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">let</span> width:CGFloat = <span style="color:#ae81ff">132</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">let</span> height:CGFloat = <span style="color:#ae81ff">100</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">let</span> bounds = UIScreen.main.bounds
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">let</span> x = bounds.size.width<span style="color:#f92672">/</span><span style="color:#ae81ff">2</span> <span style="color:#f92672">+</span> <span style="color:#ae81ff">20</span>
+</span></span><span style="display:flex;"><span>        
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">var</span> y = bounds.size.height <span style="color:#f92672">-</span> <span style="color:#66d9ef">self</span>.bottomView.bounds.size.height <span style="color:#f92672">-</span> height
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">if</span> <span style="color:#66d9ef">let</span> navHeight = <span style="color:#66d9ef">self</span>.navigationController?.navigationBar.bounds.size.height{
+</span></span><span style="display:flex;"><span>            y <span style="color:#f92672">-=</span> navHeight
+</span></span><span style="display:flex;"><span>        }
+</span></span><span style="display:flex;"><span>        
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">if</span> <span style="color:#66d9ef">let</span> guideView = <span style="color:#66d9ef">self</span>.guideImageView{
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">self</span>.guideImageView?.frame = CGRect(x: x, y: y, width: width, height: height)
+</span></span><span style="display:flex;"><span>            guideView.alpha = <span style="color:#ae81ff">0.8</span>
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">self</span>.view.addSubview(guideView)
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">let</span> startPoint = CGPoint(x: <span style="color:#ae81ff">0</span>, y: <span style="color:#ae81ff">1</span>)
+</span></span><span style="display:flex;"><span>            setAnchorPoint(point: startPoint, view: guideView)
+</span></span><span style="display:flex;"><span>            
+</span></span><span style="display:flex;"><span>            UIView.animate(withDuration: <span style="color:#ae81ff">1.6</span>, delay: <span style="color:#ae81ff">0</span>, options: [.<span style="color:#66d9ef">repeat</span>, .autoreverse], animations: {
+</span></span><span style="display:flex;"><span>                guideView.transform = CGAffineTransform(scaleX: <span style="color:#ae81ff">0.8</span>, y: <span style="color:#ae81ff">0.8</span>)
+</span></span><span style="display:flex;"><span>            }, completion:<span style="color:#66d9ef">nil</span>)
+</span></span><span style="display:flex;"><span>        }
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p><a href="https://blog.csdn.net/yunyuan_/article/details/48085667">参考资料</a>
 <a href="https://www.cnblogs.com/mgbert/p/3874766.html">参考资料</a>
 <a href="http://kittenyang.com/anchorpoint/">参考资料</a>
 <a href="https://www.cnblogs.com/graphics/archive/2012/08/08/2609005.html">参考资料</a></p>
 <hr>
 <h2 id="两个效果">两个效果</h2>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift"><span style="color:#66d9ef">let</span> transformA = CGAffineTransform(scaleX: <span style="color:#ae81ff">0.5</span>, y: <span style="color:#ae81ff">0.5</span>)
-<span style="color:#66d9ef">let</span> transformB = CGAffineTransform(translationX:<span style="color:#ae81ff">100</span>, y<span style="color:#960050;background-color:#1e0010">：</span><span style="color:#ae81ff">100</span>)
-guideImageView.transform = transformA.concatenating(transformB)
-</code></pre></div><p><a href="https://www.jianshu.com/p/bb0b1e627baf">参考资料</a></p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span><span style="color:#66d9ef">let</span> transformA = CGAffineTransform(scaleX: <span style="color:#ae81ff">0.5</span>, y: <span style="color:#ae81ff">0.5</span>)
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">let</span> transformB = CGAffineTransform(translationX:<span style="color:#ae81ff">100</span>, y<span style="color:#960050;background-color:#1e0010">：</span><span style="color:#ae81ff">100</span>)
+</span></span><span style="display:flex;"><span>guideImageView.transform = transformA.concatenating(transformB)
+</span></span></code></pre></div><p><a href="https://www.jianshu.com/p/bb0b1e627baf">参考资料</a></p>
 <h2 id="cabasicanimation">CABasicAnimation</h2>
 <blockquote>
 <p>使用<code>CABasicAnimation</code>做旋转动画时，发现切到后台之后，再切回到前台时，动画停止了。查阅相关资料，发现切到后台之后，<code>CABasicAnimation</code>被移除了，为此，需要将<code>isRemovedOnCompletion</code>属性置为<code>false</code>。</p>
 </blockquote>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift"><span style="color:#66d9ef">private</span> <span style="color:#66d9ef">func</span> <span style="color:#a6e22e">addAnimation</span>() {
-    <span style="color:#66d9ef">let</span> rotationAnimation = CABasicAnimation(keyPath: <span style="color:#e6db74">&#34;transform.rotation&#34;</span>)
-    rotationAnimation.fromValue = <span style="color:#ae81ff">0.0</span>
-    rotationAnimation.toValue = <span style="color:#ae81ff">2</span> <span style="color:#f92672">*</span> Double.pi
-    rotationAnimation.dutation = <span style="color:#ae81ff">1.0</span>
-    rotationAnimation.repeatCount = .infinity
-    rotationAnimation.isRemovedOnCompletion = <span style="color:#66d9ef">false</span>
-    <span style="color:#66d9ef">self</span>.imageView.layer.add(rotationAnimation, forKey: <span style="color:#66d9ef">nil</span>)
-}
-</code></pre></div><hr>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span><span style="color:#66d9ef">private</span> <span style="color:#66d9ef">func</span> <span style="color:#a6e22e">addAnimation</span>() {
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">let</span> rotationAnimation = CABasicAnimation(keyPath: <span style="color:#e6db74">&#34;transform.rotation&#34;</span>)
+</span></span><span style="display:flex;"><span>    rotationAnimation.fromValue = <span style="color:#ae81ff">0.0</span>
+</span></span><span style="display:flex;"><span>    rotationAnimation.toValue = <span style="color:#ae81ff">2</span> <span style="color:#f92672">*</span> Double.pi
+</span></span><span style="display:flex;"><span>    rotationAnimation.dutation = <span style="color:#ae81ff">1.0</span>
+</span></span><span style="display:flex;"><span>    rotationAnimation.repeatCount = .infinity
+</span></span><span style="display:flex;"><span>    rotationAnimation.isRemovedOnCompletion = <span style="color:#66d9ef">false</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">self</span>.imageView.layer.add(rotationAnimation, forKey: <span style="color:#66d9ef">nil</span>)
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><hr>
 
     </div>
     <footer class="post-footer">

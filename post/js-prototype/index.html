@@ -259,28 +259,28 @@ code.has-jax {
 <h2 id="缘由">缘由</h2>
 <p><code>Brendan Eich</code>在设计<code>JS</code>时，将所有的数据类型都设计为<font color=red>对象</font>，因此需要有一种机制将这些对象都联系起来。但他只想设计一种<font color=Orange>简易的脚本语言</font>，所以<font color=Blue>没有引入类的概念</font>，因为一旦有了类的概念，<code>JS</code>就是一种完整的面向对象的编程语言。</p>
 <p>借鉴了<code>Java</code>和<code>C++</code>使用<code>new</code>来生成实例，<code>Brendan Eich</code>利用<code>new</code>后面跟构造函数「<font color=Blue>因为没有类的概念</font>」生成对象。</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-js" data-lang="js"><span style="color:#66d9ef">function</span> <span style="color:#a6e22e">DOG</span>(<span style="color:#a6e22e">name</span>) {
-  <span style="color:#66d9ef">this</span>.<span style="color:#a6e22e">name</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">name</span>;
-  <span style="color:#66d9ef">this</span>.<span style="color:#a6e22e">species</span> <span style="color:#f92672">=</span> <span style="color:#e6db74">&#39;犬科&#39;</span>;
-}
-<span style="color:#66d9ef">var</span> <span style="color:#a6e22e">dogA</span> <span style="color:#f92672">=</span> <span style="color:#66d9ef">new</span> <span style="color:#a6e22e">DOG</span>(<span style="color:#e6db74">&#34;大毛&#34;</span>);
-<span style="color:#66d9ef">var</span> <span style="color:#a6e22e">dogB</span> <span style="color:#f92672">=</span> <span style="color:#66d9ef">new</span> <span style="color:#a6e22e">DOG</span>(<span style="color:#e6db74">&#34;二毛&#34;</span>);
-</code></pre></div><p>上面这两个对象的<code>species</code>属性都是<font color=red>独立的，修改其中一个，不会影响到另外一个</font>，即每一个实例对象都有自己属性和方法的副本，通过这种方式无法达到数据共享。</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-js" data-lang="js"><span style="display:flex;"><span><span style="color:#66d9ef">function</span> <span style="color:#a6e22e">DOG</span>(<span style="color:#a6e22e">name</span>) {
+</span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">this</span>.<span style="color:#a6e22e">name</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">name</span>;
+</span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">this</span>.<span style="color:#a6e22e">species</span> <span style="color:#f92672">=</span> <span style="color:#e6db74">&#39;犬科&#39;</span>;
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">var</span> <span style="color:#a6e22e">dogA</span> <span style="color:#f92672">=</span> <span style="color:#66d9ef">new</span> <span style="color:#a6e22e">DOG</span>(<span style="color:#e6db74">&#34;大毛&#34;</span>);
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">var</span> <span style="color:#a6e22e">dogB</span> <span style="color:#f92672">=</span> <span style="color:#66d9ef">new</span> <span style="color:#a6e22e">DOG</span>(<span style="color:#e6db74">&#34;二毛&#34;</span>);
+</span></span></code></pre></div><p>上面这两个对象的<code>species</code>属性都是<font color=red>独立的，修改其中一个，不会影响到另外一个</font>，即每一个实例对象都有自己属性和方法的副本，通过这种方式无法达到数据共享。</p>
 <hr>
 <h2 id="引入">引入</h2>
 <p>考虑到数据共享的需要，<code>Brendan Eich</code>打算为构造函数设置一个<code>prototype</code>属性，这个属性包含一个对象，<font color=red>所有实例对象需要共享的属性和方法，都放在这个对象里面</font>；<font color=Orange>那些不需要共享的属性和方法，就放在构造函数中</font>。</p>
 <p>实例对象一旦创建，将自动引用<code>prototype</code>对象的属性和方法。即实例对象的属性和方法，分为两种，<font color=Blue>一种是本地的，另一种是引用的</font>。</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-js" data-lang="js"><span style="color:#66d9ef">function</span> <span style="color:#a6e22e">DOG</span>(<span style="color:#a6e22e">name</span>) {
-  <span style="color:#66d9ef">this</span>.<span style="color:#a6e22e">name</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">name</span>;
-}
-<span style="color:#a6e22e">DOG</span>.<span style="color:#a6e22e">prototype</span> <span style="color:#f92672">=</span> { <span style="color:#a6e22e">species</span><span style="color:#f92672">:</span> <span style="color:#e6db74">&#34;犬科&#34;</span> };
-
-<span style="color:#66d9ef">var</span> <span style="color:#a6e22e">dogA</span> <span style="color:#f92672">=</span> <span style="color:#66d9ef">new</span> <span style="color:#a6e22e">DOG</span>(<span style="color:#e6db74">&#34;大毛&#34;</span>);
-<span style="color:#66d9ef">var</span> <span style="color:#a6e22e">dogB</span> <span style="color:#f92672">=</span> <span style="color:#66d9ef">new</span> <span style="color:#a6e22e">DOG</span>(<span style="color:#e6db74">&#34;二毛&#34;</span>);
-
-<span style="color:#a6e22e">alert</span>(<span style="color:#a6e22e">dogA</span>.<span style="color:#a6e22e">species</span>); <span style="color:#75715e">// 犬科
-</span><span style="color:#75715e"></span><span style="color:#a6e22e">alert</span>(<span style="color:#a6e22e">dogB</span>.<span style="color:#a6e22e">species</span>); <span style="color:#75715e">// 犬科
-</span></code></pre></div><hr>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-js" data-lang="js"><span style="display:flex;"><span><span style="color:#66d9ef">function</span> <span style="color:#a6e22e">DOG</span>(<span style="color:#a6e22e">name</span>) {
+</span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">this</span>.<span style="color:#a6e22e">name</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">name</span>;
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">DOG</span>.<span style="color:#a6e22e">prototype</span> <span style="color:#f92672">=</span> { <span style="color:#a6e22e">species</span><span style="color:#f92672">:</span> <span style="color:#e6db74">&#34;犬科&#34;</span> };
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">var</span> <span style="color:#a6e22e">dogA</span> <span style="color:#f92672">=</span> <span style="color:#66d9ef">new</span> <span style="color:#a6e22e">DOG</span>(<span style="color:#e6db74">&#34;大毛&#34;</span>);
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">var</span> <span style="color:#a6e22e">dogB</span> <span style="color:#f92672">=</span> <span style="color:#66d9ef">new</span> <span style="color:#a6e22e">DOG</span>(<span style="color:#e6db74">&#34;二毛&#34;</span>);
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">alert</span>(<span style="color:#a6e22e">dogA</span>.<span style="color:#a6e22e">species</span>); <span style="color:#75715e">// 犬科
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#a6e22e">alert</span>(<span style="color:#a6e22e">dogB</span>.<span style="color:#a6e22e">species</span>); <span style="color:#75715e">// 犬科
+</span></span></span></code></pre></div><hr>
 <h2 id="总结">总结</h2>
 <p>由于所有的实例对象共享一个<code>prototype</code>对象，因此在外界看起来，<code>prototype</code>就好像是实例对象的原型，而实例对象则好像继承了<code>prototype</code>对象一样。</p>
 <hr>

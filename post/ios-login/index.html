@@ -256,192 +256,192 @@ code.has-jax {
 <p>验证码绑定，包括个人账户，和虚拟账户。之前写的验证码绑定界面扩展性太差，这次决定尝试使用<code>tableView</code>实现验证码绑定界面，主要是为了增加可扩展性，便于当需要增加新的验证信息时，可以不大动原界面。这篇文章是对应的<code>ViewController</code>的代码和最终的界面。</p>
 </blockquote>
 <h2 id="vc代码">VC代码</h2>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift"><span style="color:#66d9ef">import</span> <span style="color:#a6e22e">UIKit</span>
-
-<span style="color:#66d9ef">enum</span> <span style="color:#a6e22e">SMSLoginType</span> {
-    <span style="color:#66d9ef">case</span> Personal
-    <span style="color:#66d9ef">case</span> Virtual
-}
-
-<span style="color:#66d9ef">class</span> <span style="color:#a6e22e">NewSMSViewController</span>: UIViewController, UITableViewDelegate, UITableViewDataSource {
-    <span style="color:#66d9ef">@IBOutlet</span> <span style="color:#66d9ef">weak</span> <span style="color:#66d9ef">var</span> personalAccountBtn: UIButton!
-    <span style="color:#66d9ef">@IBOutlet</span> <span style="color:#66d9ef">weak</span> <span style="color:#66d9ef">var</span> personalAccountUnderline: UILabel!
-    <span style="color:#66d9ef">@IBOutlet</span> <span style="color:#66d9ef">weak</span> <span style="color:#66d9ef">var</span> virtualAccountBtn: UIButton!
-    <span style="color:#66d9ef">@IBOutlet</span> <span style="color:#66d9ef">weak</span> <span style="color:#66d9ef">var</span> virtualAccountUnderline: UILabel!
-    <span style="color:#66d9ef">@IBOutlet</span> <span style="color:#66d9ef">weak</span> <span style="color:#66d9ef">var</span> tableView: UITableView!
-    <span style="color:#66d9ef">private</span> <span style="color:#66d9ef">let</span> defaultColor = UIColor(hex: <span style="color:#e6db74">&#34;#4B5169&#34;</span>)
-    <span style="color:#66d9ef">private</span> <span style="color:#66d9ef">let</span> hiddenColor = UIColor(hex: <span style="color:#e6db74">&#34;#9294A6&#34;</span>)
-    <span style="color:#66d9ef">private</span> <span style="color:#66d9ef">var</span> imageAndText: [(image: String, tip: String)] = [(<span style="color:#e6db74">&#34;virtualid&#34;</span>, <span style="color:#e6db74">&#34;请输入虚拟账号ID&#34;</span>), (<span style="color:#e6db74">&#34;no&#34;</span>, <span style="color:#e6db74">&#34;请输入一事通ID或员工编号&#34;</span>), (<span style="color:#e6db74">&#34;idcard_small&#34;</span>, <span style="color:#e6db74">&#34;请输入身份证后六位&#34;</span>)]
-    <span style="color:#66d9ef">private</span> <span style="color:#66d9ef">var</span> _loginType: SMSLoginType = .Personal
-    <span style="color:#66d9ef">private</span> <span style="color:#66d9ef">var</span> loginType: SMSLoginType {
-        <span style="color:#66d9ef">get</span> {
-            <span style="color:#66d9ef">return</span> _loginType
-        }
-        <span style="color:#66d9ef">set</span> {
-            <span style="color:#66d9ef">switch</span> newValue {
-            <span style="color:#66d9ef">case</span> .Personal:
-                <span style="color:#66d9ef">self</span>.personalAccountUnderline.isHidden = <span style="color:#66d9ef">false</span>
-                <span style="color:#66d9ef">self</span>.virtualAccountUnderline.isHidden = <span style="color:#66d9ef">true</span>
-                <span style="color:#66d9ef">self</span>.personalAccountBtn.setTitleColor(<span style="color:#66d9ef">self</span>.defaultColor, <span style="color:#66d9ef">for</span>: .normal)
-                <span style="color:#66d9ef">self</span>.virtualAccountBtn.setTitleColor(<span style="color:#66d9ef">self</span>.hiddenColor, <span style="color:#66d9ef">for</span>: .normal)
-            <span style="color:#66d9ef">case</span> .Virtual:
-                <span style="color:#66d9ef">self</span>.personalAccountUnderline.isHidden = <span style="color:#66d9ef">true</span>
-                <span style="color:#66d9ef">self</span>.virtualAccountUnderline.isHidden = <span style="color:#66d9ef">false</span>
-                <span style="color:#66d9ef">self</span>.personalAccountBtn.setTitleColor(<span style="color:#66d9ef">self</span>.hiddenColor, <span style="color:#66d9ef">for</span>: .normal)
-                <span style="color:#66d9ef">self</span>.virtualAccountBtn.setTitleColor(<span style="color:#66d9ef">self</span>.defaultColor, <span style="color:#66d9ef">for</span>: .normal)
-            }
-            _loginType = newValue
-
-            <span style="color:#66d9ef">self</span>.tableView.reloadData()
-        }
-    }
-
-    <span style="color:#66d9ef">override</span> <span style="color:#66d9ef">func</span> <span style="color:#a6e22e">viewDidLoad</span>() {
-        <span style="color:#66d9ef">super</span>.viewDidLoad()
-        <span style="color:#66d9ef">self</span>.tableView.delegate = <span style="color:#66d9ef">self</span>
-        <span style="color:#66d9ef">self</span>.tableView.dataSource = <span style="color:#66d9ef">self</span>
-        <span style="color:#66d9ef">self</span>.tableView.tableFooterView = UIView()
-        <span style="color:#66d9ef">self</span>.tableView.separatorColor = UIColor.gray
-        <span style="color:#66d9ef">self</span>.tableView.separatorInset = UIEdgeInsets(top: <span style="color:#ae81ff">0</span>, <span style="color:#66d9ef">left</span>: <span style="color:#f92672">-</span><span style="color:#ae81ff">10</span>, bottom: <span style="color:#ae81ff">0</span>, <span style="color:#66d9ef">right</span>: <span style="color:#ae81ff">0</span>)
-    }
-
-    <span style="color:#66d9ef">@IBAction</span> <span style="color:#66d9ef">func</span> <span style="color:#a6e22e">back</span>(<span style="color:#66d9ef">_</span> sender: Any) {
-        <span style="color:#66d9ef">self</span>.navigationController?.popViewController(animated: <span style="color:#66d9ef">true</span>)
-    }
-
-    <span style="color:#66d9ef">@IBAction</span> <span style="color:#66d9ef">func</span> <span style="color:#a6e22e">showPersonalAccountUI</span>(<span style="color:#66d9ef">_</span> sender: Any) {
-        <span style="color:#66d9ef">self</span>.loginType = .Personal
-    }
-
-    <span style="color:#66d9ef">@IBAction</span> <span style="color:#66d9ef">func</span> <span style="color:#a6e22e">showVirtualAccountUI</span>(<span style="color:#66d9ef">_</span> sender: Any) {
-        <span style="color:#66d9ef">self</span>.loginType = .Virtual
-    }
-
-    <span style="color:#66d9ef">func</span> <span style="color:#a6e22e">numberOfSections</span>(<span style="color:#66d9ef">in</span> tableView: UITableView) -&gt; Int {
-        <span style="color:#66d9ef">return</span> <span style="color:#ae81ff">3</span>
-    }
-
-    <span style="color:#66d9ef">func</span> <span style="color:#a6e22e">tableView</span>(<span style="color:#66d9ef">_</span> tableView: UITableView, heightForRowAt indexPath: IndexPath) -&gt; CGFloat {
-        <span style="color:#66d9ef">return</span> <span style="color:#ae81ff">48</span>
-    }
-
-    <span style="color:#66d9ef">func</span> <span style="color:#a6e22e">tableView</span>(<span style="color:#66d9ef">_</span> tableView: UITableView, numberOfRowsInSection section: Int) -&gt; Int {
-        <span style="color:#66d9ef">switch</span> section {
-        <span style="color:#66d9ef">case</span> <span style="color:#ae81ff">0</span>:
-            <span style="color:#66d9ef">switch</span> _loginType {
-            <span style="color:#66d9ef">case</span> .Personal:
-                <span style="color:#66d9ef">return</span> <span style="color:#ae81ff">2</span>
-            <span style="color:#66d9ef">case</span> .Virtual:
-                <span style="color:#66d9ef">return</span> <span style="color:#ae81ff">3</span>
-            }
-        <span style="color:#66d9ef">default</span>:
-            <span style="color:#66d9ef">return</span> <span style="color:#ae81ff">1</span>
-        }
-    }
-
-    <span style="color:#66d9ef">func</span> <span style="color:#a6e22e">tableView</span>(<span style="color:#66d9ef">_</span> tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
-        cell.selectionStyle = .<span style="color:#66d9ef">none</span>
-    }
-
-    <span style="color:#66d9ef">func</span> <span style="color:#a6e22e">tableView</span>(<span style="color:#66d9ef">_</span> tableView: UITableView, heightForHeaderInSection section: Int) -&gt; CGFloat {
-        <span style="color:#66d9ef">if</span> section == <span style="color:#ae81ff">2</span> {
-            <span style="color:#66d9ef">return</span> <span style="color:#ae81ff">60</span>
-        }
-        <span style="color:#66d9ef">return</span> <span style="color:#ae81ff">0</span>
-    }
-
-    <span style="color:#66d9ef">func</span> <span style="color:#a6e22e">tableView</span>(<span style="color:#66d9ef">_</span> tableView: UITableView, heightForFooterInSection section: Int) -&gt; CGFloat {
-        <span style="color:#66d9ef">switch</span> section {
-        <span style="color:#66d9ef">case</span> <span style="color:#ae81ff">0</span>, <span style="color:#ae81ff">1</span>:
-            <span style="color:#66d9ef">return</span> <span style="color:#ae81ff">0.5</span>
-        <span style="color:#66d9ef">default</span>:
-            <span style="color:#66d9ef">return</span> <span style="color:#ae81ff">0</span>
-        }
-    }
-
-    <span style="color:#66d9ef">func</span> <span style="color:#a6e22e">tableView</span>(<span style="color:#66d9ef">_</span> tableView: UITableView, viewForFooterInSection section: Int) -&gt; UIView? {
-        <span style="color:#66d9ef">let</span> headerView = UIView()
-        headerView.backgroundColor = UIColor.gray
-        <span style="color:#66d9ef">return</span> headerView
-    }
-
-    <span style="color:#66d9ef">func</span> <span style="color:#a6e22e">tableView</span>(<span style="color:#66d9ef">_</span> tableView: UITableView, viewForHeaderInSection section: Int) -&gt; UIView? {
-        <span style="color:#66d9ef">let</span> footerView = UIView()
-        footerView.backgroundColor = UIColor.clear
-        <span style="color:#66d9ef">return</span> footerView
-    }
-
-
-    <span style="color:#66d9ef">func</span> <span style="color:#a6e22e">tableView</span>(<span style="color:#66d9ef">_</span> tableView: UITableView, cellForRowAt indexPath: IndexPath) -&gt; UITableViewCell {
-        <span style="color:#66d9ef">switch</span> indexPath.section {
-        <span style="color:#66d9ef">case</span> <span style="color:#ae81ff">0</span>:
-            <span style="color:#66d9ef">let</span> cell = tableView.dequeueReusableCell(withIdentifier: <span style="color:#e6db74">&#34;SMSNormalCell&#34;</span>, <span style="color:#66d9ef">for</span>: indexPath)
-            <span style="color:#66d9ef">if</span> <span style="color:#66d9ef">let</span> norCell = cell <span style="color:#66d9ef">as</span>? SMSNormalCell {
-                <span style="color:#66d9ef">var</span> index = indexPath.row
-                <span style="color:#66d9ef">switch</span> loginType {
-                <span style="color:#66d9ef">case</span> .Personal:
-                    index = index <span style="color:#f92672">+</span> <span style="color:#ae81ff">1</span>
-                <span style="color:#66d9ef">default</span>:
-                    <span style="color:#66d9ef">break</span>
-                }
-                norCell.iconImageView.image = UIImage(named: imageAndText[index].image)
-                norCell.textField.placeholder = imageAndText[index].tip
-                norCell.textField.clearButtonMode = .whileEditing
-            }
-            <span style="color:#66d9ef">return</span> cell
-        <span style="color:#66d9ef">case</span> <span style="color:#ae81ff">1</span>:
-            <span style="color:#66d9ef">let</span> cell = tableView.dequeueReusableCell(withIdentifier: <span style="color:#e6db74">&#34;SMSCodeCell&#34;</span>, <span style="color:#66d9ef">for</span>: indexPath)
-            <span style="color:#66d9ef">if</span> <span style="color:#66d9ef">let</span> codeCell = cell <span style="color:#66d9ef">as</span>? SMSCodeCell {
-                codeCell.iconImageView.image = UIImage(named: <span style="color:#e6db74">&#34;authcode&#34;</span>)
-                codeCell.textField.placeholder = <span style="color:#e6db74">&#34;请输入手机验证码&#34;</span>
-                codeCell.textField.clearButtonMode = .whileEditing
-                codeCell.codeBtn.layer.cornerRadius = <span style="color:#ae81ff">18.0</span>
-                codeCell.codeBtn.layer.borderColor = UIColor.black.cgColor
-                codeCell.codeBtn.layer.borderWidth = <span style="color:#ae81ff">1.0</span>
-            }
-            cell.separatorInset = UIEdgeInsets(top: <span style="color:#ae81ff">0</span>, <span style="color:#66d9ef">left</span>: <span style="color:#ae81ff">0</span>, bottom: <span style="color:#ae81ff">12</span>, <span style="color:#66d9ef">right</span>: <span style="color:#ae81ff">0</span>)
-            <span style="color:#66d9ef">return</span> cell
-        <span style="color:#66d9ef">default</span>:
-            <span style="color:#66d9ef">let</span> cell = tableView.dequeueReusableCell(withIdentifier: <span style="color:#e6db74">&#34;SMSBindCell&#34;</span>, <span style="color:#66d9ef">for</span>: indexPath)
-            <span style="color:#66d9ef">return</span> cell
-        }
-    }
-}
-</code></pre></div><h2 id="绑定界面">绑定界面</h2>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span><span style="color:#66d9ef">import</span> <span style="color:#a6e22e">UIKit</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">enum</span> <span style="color:#a6e22e">SMSLoginType</span> {
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">case</span> Personal
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">case</span> Virtual
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">class</span> <span style="color:#a6e22e">NewSMSViewController</span>: UIViewController, UITableViewDelegate, UITableViewDataSource {
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">@IBOutlet</span> <span style="color:#66d9ef">weak</span> <span style="color:#66d9ef">var</span> personalAccountBtn: UIButton!
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">@IBOutlet</span> <span style="color:#66d9ef">weak</span> <span style="color:#66d9ef">var</span> personalAccountUnderline: UILabel!
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">@IBOutlet</span> <span style="color:#66d9ef">weak</span> <span style="color:#66d9ef">var</span> virtualAccountBtn: UIButton!
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">@IBOutlet</span> <span style="color:#66d9ef">weak</span> <span style="color:#66d9ef">var</span> virtualAccountUnderline: UILabel!
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">@IBOutlet</span> <span style="color:#66d9ef">weak</span> <span style="color:#66d9ef">var</span> tableView: UITableView!
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">private</span> <span style="color:#66d9ef">let</span> defaultColor = UIColor(hex: <span style="color:#e6db74">&#34;#4B5169&#34;</span>)
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">private</span> <span style="color:#66d9ef">let</span> hiddenColor = UIColor(hex: <span style="color:#e6db74">&#34;#9294A6&#34;</span>)
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">private</span> <span style="color:#66d9ef">var</span> imageAndText: [(image: String, tip: String)] = [(<span style="color:#e6db74">&#34;virtualid&#34;</span>, <span style="color:#e6db74">&#34;请输入虚拟账号ID&#34;</span>), (<span style="color:#e6db74">&#34;no&#34;</span>, <span style="color:#e6db74">&#34;请输入一事通ID或员工编号&#34;</span>), (<span style="color:#e6db74">&#34;idcard_small&#34;</span>, <span style="color:#e6db74">&#34;请输入身份证后六位&#34;</span>)]
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">private</span> <span style="color:#66d9ef">var</span> _loginType: SMSLoginType = .Personal
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">private</span> <span style="color:#66d9ef">var</span> loginType: SMSLoginType {
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">get</span> {
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">return</span> _loginType
+</span></span><span style="display:flex;"><span>        }
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">set</span> {
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">switch</span> newValue {
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">case</span> .Personal:
+</span></span><span style="display:flex;"><span>                <span style="color:#66d9ef">self</span>.personalAccountUnderline.isHidden = <span style="color:#66d9ef">false</span>
+</span></span><span style="display:flex;"><span>                <span style="color:#66d9ef">self</span>.virtualAccountUnderline.isHidden = <span style="color:#66d9ef">true</span>
+</span></span><span style="display:flex;"><span>                <span style="color:#66d9ef">self</span>.personalAccountBtn.setTitleColor(<span style="color:#66d9ef">self</span>.defaultColor, <span style="color:#66d9ef">for</span>: .normal)
+</span></span><span style="display:flex;"><span>                <span style="color:#66d9ef">self</span>.virtualAccountBtn.setTitleColor(<span style="color:#66d9ef">self</span>.hiddenColor, <span style="color:#66d9ef">for</span>: .normal)
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">case</span> .Virtual:
+</span></span><span style="display:flex;"><span>                <span style="color:#66d9ef">self</span>.personalAccountUnderline.isHidden = <span style="color:#66d9ef">true</span>
+</span></span><span style="display:flex;"><span>                <span style="color:#66d9ef">self</span>.virtualAccountUnderline.isHidden = <span style="color:#66d9ef">false</span>
+</span></span><span style="display:flex;"><span>                <span style="color:#66d9ef">self</span>.personalAccountBtn.setTitleColor(<span style="color:#66d9ef">self</span>.hiddenColor, <span style="color:#66d9ef">for</span>: .normal)
+</span></span><span style="display:flex;"><span>                <span style="color:#66d9ef">self</span>.virtualAccountBtn.setTitleColor(<span style="color:#66d9ef">self</span>.defaultColor, <span style="color:#66d9ef">for</span>: .normal)
+</span></span><span style="display:flex;"><span>            }
+</span></span><span style="display:flex;"><span>            _loginType = newValue
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">self</span>.tableView.reloadData()
+</span></span><span style="display:flex;"><span>        }
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">override</span> <span style="color:#66d9ef">func</span> <span style="color:#a6e22e">viewDidLoad</span>() {
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">super</span>.viewDidLoad()
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">self</span>.tableView.delegate = <span style="color:#66d9ef">self</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">self</span>.tableView.dataSource = <span style="color:#66d9ef">self</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">self</span>.tableView.tableFooterView = UIView()
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">self</span>.tableView.separatorColor = UIColor.gray
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">self</span>.tableView.separatorInset = UIEdgeInsets(top: <span style="color:#ae81ff">0</span>, <span style="color:#66d9ef">left</span>: <span style="color:#f92672">-</span><span style="color:#ae81ff">10</span>, bottom: <span style="color:#ae81ff">0</span>, <span style="color:#66d9ef">right</span>: <span style="color:#ae81ff">0</span>)
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">@IBAction</span> <span style="color:#66d9ef">func</span> <span style="color:#a6e22e">back</span>(<span style="color:#66d9ef">_</span> sender: Any) {
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">self</span>.navigationController?.popViewController(animated: <span style="color:#66d9ef">true</span>)
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">@IBAction</span> <span style="color:#66d9ef">func</span> <span style="color:#a6e22e">showPersonalAccountUI</span>(<span style="color:#66d9ef">_</span> sender: Any) {
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">self</span>.loginType = .Personal
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">@IBAction</span> <span style="color:#66d9ef">func</span> <span style="color:#a6e22e">showVirtualAccountUI</span>(<span style="color:#66d9ef">_</span> sender: Any) {
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">self</span>.loginType = .Virtual
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">func</span> <span style="color:#a6e22e">numberOfSections</span>(<span style="color:#66d9ef">in</span> tableView: UITableView) -&gt; Int {
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">return</span> <span style="color:#ae81ff">3</span>
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">func</span> <span style="color:#a6e22e">tableView</span>(<span style="color:#66d9ef">_</span> tableView: UITableView, heightForRowAt indexPath: IndexPath) -&gt; CGFloat {
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">return</span> <span style="color:#ae81ff">48</span>
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">func</span> <span style="color:#a6e22e">tableView</span>(<span style="color:#66d9ef">_</span> tableView: UITableView, numberOfRowsInSection section: Int) -&gt; Int {
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">switch</span> section {
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">case</span> <span style="color:#ae81ff">0</span>:
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">switch</span> _loginType {
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">case</span> .Personal:
+</span></span><span style="display:flex;"><span>                <span style="color:#66d9ef">return</span> <span style="color:#ae81ff">2</span>
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">case</span> .Virtual:
+</span></span><span style="display:flex;"><span>                <span style="color:#66d9ef">return</span> <span style="color:#ae81ff">3</span>
+</span></span><span style="display:flex;"><span>            }
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">default</span>:
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">return</span> <span style="color:#ae81ff">1</span>
+</span></span><span style="display:flex;"><span>        }
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">func</span> <span style="color:#a6e22e">tableView</span>(<span style="color:#66d9ef">_</span> tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
+</span></span><span style="display:flex;"><span>        cell.selectionStyle = .<span style="color:#66d9ef">none</span>
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">func</span> <span style="color:#a6e22e">tableView</span>(<span style="color:#66d9ef">_</span> tableView: UITableView, heightForHeaderInSection section: Int) -&gt; CGFloat {
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">if</span> section == <span style="color:#ae81ff">2</span> {
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">return</span> <span style="color:#ae81ff">60</span>
+</span></span><span style="display:flex;"><span>        }
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">return</span> <span style="color:#ae81ff">0</span>
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">func</span> <span style="color:#a6e22e">tableView</span>(<span style="color:#66d9ef">_</span> tableView: UITableView, heightForFooterInSection section: Int) -&gt; CGFloat {
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">switch</span> section {
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">case</span> <span style="color:#ae81ff">0</span>, <span style="color:#ae81ff">1</span>:
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">return</span> <span style="color:#ae81ff">0.5</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">default</span>:
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">return</span> <span style="color:#ae81ff">0</span>
+</span></span><span style="display:flex;"><span>        }
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">func</span> <span style="color:#a6e22e">tableView</span>(<span style="color:#66d9ef">_</span> tableView: UITableView, viewForFooterInSection section: Int) -&gt; UIView? {
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">let</span> headerView = UIView()
+</span></span><span style="display:flex;"><span>        headerView.backgroundColor = UIColor.gray
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">return</span> headerView
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">func</span> <span style="color:#a6e22e">tableView</span>(<span style="color:#66d9ef">_</span> tableView: UITableView, viewForHeaderInSection section: Int) -&gt; UIView? {
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">let</span> footerView = UIView()
+</span></span><span style="display:flex;"><span>        footerView.backgroundColor = UIColor.clear
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">return</span> footerView
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">func</span> <span style="color:#a6e22e">tableView</span>(<span style="color:#66d9ef">_</span> tableView: UITableView, cellForRowAt indexPath: IndexPath) -&gt; UITableViewCell {
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">switch</span> indexPath.section {
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">case</span> <span style="color:#ae81ff">0</span>:
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">let</span> cell = tableView.dequeueReusableCell(withIdentifier: <span style="color:#e6db74">&#34;SMSNormalCell&#34;</span>, <span style="color:#66d9ef">for</span>: indexPath)
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">if</span> <span style="color:#66d9ef">let</span> norCell = cell <span style="color:#66d9ef">as</span>? SMSNormalCell {
+</span></span><span style="display:flex;"><span>                <span style="color:#66d9ef">var</span> index = indexPath.row
+</span></span><span style="display:flex;"><span>                <span style="color:#66d9ef">switch</span> loginType {
+</span></span><span style="display:flex;"><span>                <span style="color:#66d9ef">case</span> .Personal:
+</span></span><span style="display:flex;"><span>                    index = index <span style="color:#f92672">+</span> <span style="color:#ae81ff">1</span>
+</span></span><span style="display:flex;"><span>                <span style="color:#66d9ef">default</span>:
+</span></span><span style="display:flex;"><span>                    <span style="color:#66d9ef">break</span>
+</span></span><span style="display:flex;"><span>                }
+</span></span><span style="display:flex;"><span>                norCell.iconImageView.image = UIImage(named: imageAndText[index].image)
+</span></span><span style="display:flex;"><span>                norCell.textField.placeholder = imageAndText[index].tip
+</span></span><span style="display:flex;"><span>                norCell.textField.clearButtonMode = .whileEditing
+</span></span><span style="display:flex;"><span>            }
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">return</span> cell
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">case</span> <span style="color:#ae81ff">1</span>:
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">let</span> cell = tableView.dequeueReusableCell(withIdentifier: <span style="color:#e6db74">&#34;SMSCodeCell&#34;</span>, <span style="color:#66d9ef">for</span>: indexPath)
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">if</span> <span style="color:#66d9ef">let</span> codeCell = cell <span style="color:#66d9ef">as</span>? SMSCodeCell {
+</span></span><span style="display:flex;"><span>                codeCell.iconImageView.image = UIImage(named: <span style="color:#e6db74">&#34;authcode&#34;</span>)
+</span></span><span style="display:flex;"><span>                codeCell.textField.placeholder = <span style="color:#e6db74">&#34;请输入手机验证码&#34;</span>
+</span></span><span style="display:flex;"><span>                codeCell.textField.clearButtonMode = .whileEditing
+</span></span><span style="display:flex;"><span>                codeCell.codeBtn.layer.cornerRadius = <span style="color:#ae81ff">18.0</span>
+</span></span><span style="display:flex;"><span>                codeCell.codeBtn.layer.borderColor = UIColor.black.cgColor
+</span></span><span style="display:flex;"><span>                codeCell.codeBtn.layer.borderWidth = <span style="color:#ae81ff">1.0</span>
+</span></span><span style="display:flex;"><span>            }
+</span></span><span style="display:flex;"><span>            cell.separatorInset = UIEdgeInsets(top: <span style="color:#ae81ff">0</span>, <span style="color:#66d9ef">left</span>: <span style="color:#ae81ff">0</span>, bottom: <span style="color:#ae81ff">12</span>, <span style="color:#66d9ef">right</span>: <span style="color:#ae81ff">0</span>)
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">return</span> cell
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">default</span>:
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">let</span> cell = tableView.dequeueReusableCell(withIdentifier: <span style="color:#e6db74">&#34;SMSBindCell&#34;</span>, <span style="color:#66d9ef">for</span>: indexPath)
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">return</span> cell
+</span></span><span style="display:flex;"><span>        }
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><h2 id="绑定界面">绑定界面</h2>
 <p><img src="https://i.loli.net/2020/03/27/joNHcJ73mCsvTt8.jpg" alt="-c"></p>
 <p><img src="https://i.loli.net/2020/03/27/yS9o8jmgsIQVUBp.jpg" alt="-c"></p>
 <hr>
 <p><a href="https://blog.csdn.net/gaomingyangc/article/details/54912633">按钮圆角设置</a></p>
 <p>自定义</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift"><span style="color:#75715e">//        if let navBarHeight = self.navigationController?.navigationBar.frame.height {</span>
-<span style="color:#75715e">//            navHeight += navBarHeight</span>
-<span style="color:#75715e">//        }</span>
-
-        navBGView.alpha = <span style="color:#ae81ff">0</span>
-        navBGView.backgroundColor = UIColor.white
-        navBGView.frame = CGRect(x: <span style="color:#ae81ff">0</span>, y: <span style="color:#ae81ff">0</span>, width: <span style="color:#66d9ef">self</span>.view.bounds.size.width, height: navHeight)
-<span style="color:#75715e">//        navBGView.layer.shadowColor = UIColor.lightGray.cgColor</span>
-<span style="color:#75715e">//        navBGView.layer.shadowOffset = CGSize(width: 0, height: 1.8)</span>
-<span style="color:#75715e">//        navBGView.layer.shadowOpacity = 0.2</span>
-<span style="color:#75715e">//        navBGView.layer.shadowRadius = 2.5</span>
-<span style="color:#75715e">//        navBGView.layer.shadowPath = UIBezierPath.init(rect: navBGView.bounds).cgPath</span>
-
-<span style="color:#75715e">//</span>
-<span style="color:#75715e">//        let topSafeMargin = UIApplication.shared.keyWindow!.pagingLayoutInsets().top</span>
-<span style="color:#75715e">//        let navTitleLbl = UILabel()</span>
-<span style="color:#75715e">//        navTitleLbl.text = &#34;资讯&#34;</span>
-<span style="color:#75715e">//        navTitleLbl.font = UIFont.systemFont(ofSize: 17.5, weight: .medium)</span>
-<span style="color:#75715e">//        navTitleLbl.textAlignment = .center</span>
-<span style="color:#75715e">//        navTitleLbl.frame = CGRect(x: 0, y: topSafeMargin, width: self.view.bounds.size.width, height: 44)</span>
-<span style="color:#75715e">//        navBGView.addSubview(navTitleLbl)</span>
-<span style="color:#75715e">//        navBGView.isHidden = false</span>
-
-<span style="color:#66d9ef">let</span> model = <span style="color:#66d9ef">self</span>.ePaperPresenter.ePapersModels[indexPath.row]
-        <span style="color:#66d9ef">var</span> url = <span style="color:#66d9ef">self</span>.ePaperPresenter.webConfig.webUrl 
-        <span style="color:#66d9ef">if</span> <span style="color:#66d9ef">let</span> lowerBound = url.range(of: action)?.lowerBound {
-            url = String(url.<span style="color:#66d9ef">prefix</span>(upTo: lowerBound))
-        }
-</code></pre></div>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span><span style="color:#75715e">//        if let navBarHeight = self.navigationController?.navigationBar.frame.height {</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">//            navHeight += navBarHeight</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">//        }</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>        navBGView.alpha = <span style="color:#ae81ff">0</span>
+</span></span><span style="display:flex;"><span>        navBGView.backgroundColor = UIColor.white
+</span></span><span style="display:flex;"><span>        navBGView.frame = CGRect(x: <span style="color:#ae81ff">0</span>, y: <span style="color:#ae81ff">0</span>, width: <span style="color:#66d9ef">self</span>.view.bounds.size.width, height: navHeight)
+</span></span><span style="display:flex;"><span><span style="color:#75715e">//        navBGView.layer.shadowColor = UIColor.lightGray.cgColor</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">//        navBGView.layer.shadowOffset = CGSize(width: 0, height: 1.8)</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">//        navBGView.layer.shadowOpacity = 0.2</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">//        navBGView.layer.shadowRadius = 2.5</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">//        navBGView.layer.shadowPath = UIBezierPath.init(rect: navBGView.bounds).cgPath</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">//</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">//        let topSafeMargin = UIApplication.shared.keyWindow!.pagingLayoutInsets().top</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">//        let navTitleLbl = UILabel()</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">//        navTitleLbl.text = &#34;资讯&#34;</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">//        navTitleLbl.font = UIFont.systemFont(ofSize: 17.5, weight: .medium)</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">//        navTitleLbl.textAlignment = .center</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">//        navTitleLbl.frame = CGRect(x: 0, y: topSafeMargin, width: self.view.bounds.size.width, height: 44)</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">//        navBGView.addSubview(navTitleLbl)</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">//        navBGView.isHidden = false</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">let</span> model = <span style="color:#66d9ef">self</span>.ePaperPresenter.ePapersModels[indexPath.row]
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">var</span> url = <span style="color:#66d9ef">self</span>.ePaperPresenter.webConfig.webUrl 
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">if</span> <span style="color:#66d9ef">let</span> lowerBound = url.range(of: action)?.lowerBound {
+</span></span><span style="display:flex;"><span>            url = String(url.<span style="color:#66d9ef">prefix</span>(upTo: lowerBound))
+</span></span><span style="display:flex;"><span>        }
+</span></span></code></pre></div>
     </div>
     <footer class="post-footer">
         

@@ -254,140 +254,140 @@ code.has-jax {
     <div class="post-body" itemprop="articleBody">
     <h1 id="判断是否为2的n次方">判断是否为2的n次方</h1>
 <p>对于整数来说，如果一个数为$x=2^n$,那么必然有一位为<code>1</code>，右边其它位全为<code>0</code>。那么$(x-1)$在其对应为<code>1</code>的位置上为<code>0</code>，<font color=red>对应位右边全部为1</font>。因此，<code>x&amp;(x-1)</code>的值则为<code>0</code>。</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-cpp" data-lang="cpp"><span style="color:#75715e">// 要求x是正整数
-</span><span style="color:#75715e"></span>(x<span style="color:#f92672">&amp;</span>(x<span style="color:#f92672">-</span><span style="color:#ae81ff">1</span>) <span style="color:#f92672">==</span> <span style="color:#ae81ff">0</span>)  
-</code></pre></div><h1 id="位运算实现加法">位运算实现加法</h1>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-cpp" data-lang="cpp"><span style="display:flex;"><span><span style="color:#75715e">// 要求x是正整数
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>(x<span style="color:#f92672">&amp;</span>(x<span style="color:#f92672">-</span><span style="color:#ae81ff">1</span>) <span style="color:#f92672">==</span> <span style="color:#ae81ff">0</span>)  
+</span></span></code></pre></div><h1 id="位运算实现加法">位运算实现加法</h1>
 <p>对于二进制加法，如果<font color=red>不考虑相加时的进位</font>，则有：<code>1+1=0</code>，<code>0+1=1</code>，<code>1+0=1</code>，<code>0+0=0</code>，这是二进制的异或。再考虑相加时有进位时的情况：<code>1+1=1</code>，<code>1+0=0</code>，<code>0+1=0</code>，<code>0+0=0</code>，这是二进制的与运算。</p>
 <p>因此，二进制可以按照如下的方式进行：①首先不考虑进位的情况时，计算各位的累加得到值<code>a</code>；②然后考虑有进位的情况，先计算进位并将其左移得到<code>b</code>，如果<code>b</code>的值为<code>0</code>，那么<code>a</code>的值就是最后的计算结果，如果<code>b</code>的值不为<code>0</code>，则<code>a+b</code>是最后的结果。</p>
 <h2 id="非递归实现">非递归实现</h2>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-cpp" data-lang="cpp"><span style="color:#66d9ef">int</span> <span style="color:#a6e22e">add</span>(<span style="color:#66d9ef">int</span> x,<span style="color:#66d9ef">int</span> y) {
-   <span style="color:#66d9ef">int</span> result<span style="color:#f92672">=</span>x,carray<span style="color:#f92672">=</span>y,tmp;
-   <span style="color:#66d9ef">while</span>(carray<span style="color:#f92672">!=</span><span style="color:#ae81ff">0</span>)
-   {
-      tmp <span style="color:#f92672">=</span> (result <span style="color:#f92672">&amp;</span> carray) <span style="color:#f92672">&lt;&lt;</span><span style="color:#ae81ff">1</span>;
-      result <span style="color:#f92672">^=</span> carray;
-      carray <span style="color:#f92672">=</span> tmp;
-   }
-   <span style="color:#66d9ef">return</span> result;
-}
-</code></pre></div><div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift"><span style="color:#75715e">/// 位运算加法</span>
-<span style="color:#75715e">/// - Parameters:</span>
-<span style="color:#75715e">///   - x: 被加数</span>
-<span style="color:#75715e">///   - y: 加数</span>
-<span style="color:#75715e">/// - Returns: x + y 的和</span>
-
-<span style="color:#66d9ef">public</span> <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">Arithmetic</span> {
-    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">static</span> <span style="color:#66d9ef">func</span> <span style="color:#a6e22e">add</span>(x:Int ,y:Int) -&gt; Int {
-        <span style="color:#66d9ef">var</span> sum = x
-        <span style="color:#66d9ef">var</span> carry = y
-        <span style="color:#66d9ef">while</span> carry <span style="color:#f92672">!=</span> <span style="color:#ae81ff">0</span> {
-            <span style="color:#66d9ef">let</span> tmp = (sum <span style="color:#f92672">&amp;</span> carry) <span style="color:#f92672">&lt;&lt;</span> <span style="color:#ae81ff">1</span>
-            sum <span style="color:#f92672">^=</span> carry
-            carry = tmp
-        }
-        <span style="color:#66d9ef">return</span> sum
-    }
-}
-
-<span style="color:#66d9ef">func</span> <span style="color:#a6e22e">testArith</span>() <span style="color:#66d9ef">throws</span> {
-    XCTAssert(Arithmetic.add(x:<span style="color:#ae81ff">23</span>,y:<span style="color:#ae81ff">23</span>) == <span style="color:#ae81ff">46</span>)
-}
-</code></pre></div><h2 id="递归方式实现">递归方式实现</h2>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-cpp" data-lang="cpp"><span style="color:#66d9ef">int</span> <span style="color:#a6e22e">recAddNoArithm</span>(<span style="color:#66d9ef">int</span> a, <span style="color:#66d9ef">int</span> b) {
-    <span style="color:#66d9ef">if</span> (b <span style="color:#f92672">==</span> <span style="color:#ae81ff">0</span>)
-        <span style="color:#66d9ef">return</span> a;
-    <span style="color:#66d9ef">int</span> sum <span style="color:#f92672">=</span> a <span style="color:#f92672">^</span> b;
-    <span style="color:#66d9ef">int</span> carry <span style="color:#f92672">=</span> (a <span style="color:#f92672">&amp;</span> b) <span style="color:#f92672">&lt;&lt;</span> <span style="color:#ae81ff">1</span>;
-    
-    <span style="color:#66d9ef">return</span> recAddNoArithm(sum, carry);
-}
-</code></pre></div><h1 id="位运算实现减法">位运算实现减法</h1>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-cpp" data-lang="cpp"><span style="display:flex;"><span><span style="color:#66d9ef">int</span> <span style="color:#a6e22e">add</span>(<span style="color:#66d9ef">int</span> x,<span style="color:#66d9ef">int</span> y) {
+</span></span><span style="display:flex;"><span>   <span style="color:#66d9ef">int</span> result<span style="color:#f92672">=</span>x,carray<span style="color:#f92672">=</span>y,tmp;
+</span></span><span style="display:flex;"><span>   <span style="color:#66d9ef">while</span>(carray<span style="color:#f92672">!=</span><span style="color:#ae81ff">0</span>)
+</span></span><span style="display:flex;"><span>   {
+</span></span><span style="display:flex;"><span>      tmp <span style="color:#f92672">=</span> (result <span style="color:#f92672">&amp;</span> carray) <span style="color:#f92672">&lt;&lt;</span><span style="color:#ae81ff">1</span>;
+</span></span><span style="display:flex;"><span>      result <span style="color:#f92672">^=</span> carray;
+</span></span><span style="display:flex;"><span>      carray <span style="color:#f92672">=</span> tmp;
+</span></span><span style="display:flex;"><span>   }
+</span></span><span style="display:flex;"><span>   <span style="color:#66d9ef">return</span> result;
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span><span style="color:#75715e">/// 位运算加法</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">/// - Parameters:</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">///   - x: 被加数</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">///   - y: 加数</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">/// - Returns: x + y 的和</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">Arithmetic</span> {
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">static</span> <span style="color:#66d9ef">func</span> <span style="color:#a6e22e">add</span>(x:Int ,y:Int) -&gt; Int {
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">var</span> sum = x
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">var</span> carry = y
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">while</span> carry <span style="color:#f92672">!=</span> <span style="color:#ae81ff">0</span> {
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">let</span> tmp = (sum <span style="color:#f92672">&amp;</span> carry) <span style="color:#f92672">&lt;&lt;</span> <span style="color:#ae81ff">1</span>
+</span></span><span style="display:flex;"><span>            sum <span style="color:#f92672">^=</span> carry
+</span></span><span style="display:flex;"><span>            carry = tmp
+</span></span><span style="display:flex;"><span>        }
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">return</span> sum
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">testArith</span>() <span style="color:#66d9ef">throws</span> {
+</span></span><span style="display:flex;"><span>    XCTAssert(Arithmetic.add(x:<span style="color:#ae81ff">23</span>,y:<span style="color:#ae81ff">23</span>) == <span style="color:#ae81ff">46</span>)
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><h2 id="递归方式实现">递归方式实现</h2>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-cpp" data-lang="cpp"><span style="display:flex;"><span><span style="color:#66d9ef">int</span> <span style="color:#a6e22e">recAddNoArithm</span>(<span style="color:#66d9ef">int</span> a, <span style="color:#66d9ef">int</span> b) {
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">if</span> (b <span style="color:#f92672">==</span> <span style="color:#ae81ff">0</span>)
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">return</span> a;
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">int</span> sum <span style="color:#f92672">=</span> a <span style="color:#f92672">^</span> b;
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">int</span> carry <span style="color:#f92672">=</span> (a <span style="color:#f92672">&amp;</span> b) <span style="color:#f92672">&lt;&lt;</span> <span style="color:#ae81ff">1</span>;
+</span></span><span style="display:flex;"><span>    
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">return</span> recAddNoArithm(sum, carry);
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><h1 id="位运算实现减法">位运算实现减法</h1>
 <p>减法可以转换为加法，例如<code>a-b</code>可以写成<code>a+(-b)</code>。因此，只要先通过<code>b</code>的值，求得<code>-b</code>的值，然后再利用上面的加法实现就可以得到<code>a-b</code>的值。由<code>b</code>求<code>-b</code>的快捷方式是<font color=red>按位取反，然后末位加<code>1</code></font>，因此位运算的减法如下所示：</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-cpp" data-lang="cpp"><span style="color:#66d9ef">int</span> <span style="color:#a6e22e">subNoArithm</span>(<span style="color:#66d9ef">int</span> a, <span style="color:#66d9ef">int</span> b) {
-    <span style="color:#66d9ef">auto</span> sub <span style="color:#f92672">=</span> nonRecAddNoArithm(<span style="color:#f92672">~</span>b, <span style="color:#ae81ff">1</span>);
-    <span style="color:#66d9ef">return</span> nonRecAddNoArithm(a, sub);
-}
-</code></pre></div><h1 id="交换两个数的值">交换两个数的值</h1>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-cpp" data-lang="cpp"><span style="display:flex;"><span><span style="color:#66d9ef">int</span> <span style="color:#a6e22e">subNoArithm</span>(<span style="color:#66d9ef">int</span> a, <span style="color:#66d9ef">int</span> b) {
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">auto</span> sub <span style="color:#f92672">=</span> nonRecAddNoArithm(<span style="color:#f92672">~</span>b, <span style="color:#ae81ff">1</span>);
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">return</span> nonRecAddNoArithm(a, sub);
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><h1 id="交换两个数的值">交换两个数的值</h1>
 <p>在异或运算中，<font color=red>偶数个相同的数异或的结果为<code>0</code></font>；<font color=Blue>奇数个相同的数的异或的结果为还是当前数</font>；<font color=Orange>某个数和<code>0</code>进行异或的结果仍为原数</font>，并且<font color=Blue>异或运算是支持交换律</font>的：</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-cpp" data-lang="cpp">a <span style="color:#f92672">=</span> a <span style="color:#f92672">^</span> b;
-b <span style="color:#f92672">=</span> a <span style="color:#f92672">^</span> b;
-a <span style="color:#f92672">=</span> a <span style="color:#f92672">^</span> b;
-</code></pre></div><p>上面是<code>a</code>在公式左边出现两次，或者<code>b</code>在公式左边出现两次，<font color=red>这两次是最开始和最后出现</font>：</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-cpp" data-lang="cpp">b <span style="color:#f92672">=</span> a <span style="color:#f92672">^</span> b;
-a <span style="color:#f92672">=</span> a <span style="color:#f92672">^</span> b;
-b <span style="color:#f92672">=</span> a <span style="color:#f92672">^</span> b;
-</code></pre></div><h1 id="两个数较大者">两个数较大者</h1>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-cpp" data-lang="cpp"><span style="display:flex;"><span>a <span style="color:#f92672">=</span> a <span style="color:#f92672">^</span> b;
+</span></span><span style="display:flex;"><span>b <span style="color:#f92672">=</span> a <span style="color:#f92672">^</span> b;
+</span></span><span style="display:flex;"><span>a <span style="color:#f92672">=</span> a <span style="color:#f92672">^</span> b;
+</span></span></code></pre></div><p>上面是<code>a</code>在公式左边出现两次，或者<code>b</code>在公式左边出现两次，<font color=red>这两次是最开始和最后出现</font>：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-cpp" data-lang="cpp"><span style="display:flex;"><span>b <span style="color:#f92672">=</span> a <span style="color:#f92672">^</span> b;
+</span></span><span style="display:flex;"><span>a <span style="color:#f92672">=</span> a <span style="color:#f92672">^</span> b;
+</span></span><span style="display:flex;"><span>b <span style="color:#f92672">=</span> a <span style="color:#f92672">^</span> b;
+</span></span></code></pre></div><h1 id="两个数较大者">两个数较大者</h1>
 <p>主要运用异或的特点：<font color=red>偶数个相同的数异或的结果为<code>0</code></font>；<font color=Blue>奇数个相同数异或结果还是当前数</font>；<font color=Orange>某个数和<code>0</code>进行异或的结果仍为原数</font>，并且异或运算是支持交换律的，对于<code>-1</code>来说其二进制位全部为<code>1</code>。</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-cpp" data-lang="cpp">y <span style="color:#f92672">^</span> ((x <span style="color:#f92672">^</span> y) <span style="color:#f92672">&amp;</span> (<span style="color:#f92672">-</span>(x <span style="color:#f92672">&gt;=</span> y)) <span style="color:#75715e">//快速记忆：y 在前则找较大者
-</span></code></pre></div><h1 id="两个数较小者">两个数较小者</h1>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-cpp" data-lang="cpp">x <span style="color:#f92672">^</span> ((x <span style="color:#f92672">^</span> y) <span style="color:#f92672">&amp;</span> (<span style="color:#f92672">-</span>( x <span style="color:#f92672">&gt;=</span> y)) <span style="color:#75715e">//快速记忆：x 在前则找较小者
-</span></code></pre></div><h1 id="两个数的平均值">两个数的平均值</h1>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-cpp" data-lang="cpp"> (x <span style="color:#f92672">&amp;</span> y) <span style="color:#f92672">+</span> (x <span style="color:#f92672">^</span> y <span style="color:#f92672">&gt;&gt;</span> <span style="color:#ae81ff">1</span>);
-</code></pre></div><h1 id="二进制中1的个数">二进制中1的个数</h1>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-cpp" data-lang="cpp"><span style="display:flex;"><span>y <span style="color:#f92672">^</span> ((x <span style="color:#f92672">^</span> y) <span style="color:#f92672">&amp;</span> (<span style="color:#f92672">-</span>(x <span style="color:#f92672">&gt;=</span> y)) <span style="color:#75715e">//快速记忆：y 在前则找较大者
+</span></span></span></code></pre></div><h1 id="两个数较小者">两个数较小者</h1>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-cpp" data-lang="cpp"><span style="display:flex;"><span>x <span style="color:#f92672">^</span> ((x <span style="color:#f92672">^</span> y) <span style="color:#f92672">&amp;</span> (<span style="color:#f92672">-</span>( x <span style="color:#f92672">&gt;=</span> y)) <span style="color:#75715e">//快速记忆：x 在前则找较小者
+</span></span></span></code></pre></div><h1 id="两个数的平均值">两个数的平均值</h1>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-cpp" data-lang="cpp"><span style="display:flex;"><span> (x <span style="color:#f92672">&amp;</span> y) <span style="color:#f92672">+</span> (x <span style="color:#f92672">^</span> y <span style="color:#f92672">&gt;&gt;</span> <span style="color:#ae81ff">1</span>);
+</span></span></code></pre></div><h1 id="二进制中1的个数">二进制中1的个数</h1>
 <h2 id="利用n--n-1">利用n &amp; (n-1)</h2>
 <p>第一种方式<font color=red>每次使用公式<code>n&amp;(n-1)</code>可以去除二进制表示中的<code>1</code>位<code>1</code></font>，当所有位置的<code>1</code>都被去除之后，结果为<code>0</code>，这就是终止条件。</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-cpp" data-lang="cpp"><span style="color:#66d9ef">int</span> <span style="color:#a6e22e">getBinary1Bits1</span>(<span style="color:#66d9ef">int</span> n) {
-    <span style="color:#66d9ef">int</span> count <span style="color:#f92672">=</span> <span style="color:#ae81ff">0</span>;
-    <span style="color:#66d9ef">while</span> (n <span style="color:#f92672">!=</span> <span style="color:#ae81ff">0</span>)
-    {
-        n <span style="color:#f92672">=</span> n <span style="color:#f92672">&amp;</span> (n <span style="color:#f92672">-</span> <span style="color:#ae81ff">1</span>); <span style="color:#75715e">//n &amp; （n-1)每次可以去除二进制表示中的一个1
-</span><span style="color:#75715e"></span>        count<span style="color:#f92672">++</span>;
-    }
-    <span style="color:#66d9ef">return</span> count;
-}
-
-<span style="color:#75715e">//注意参数的变化
-</span><span style="color:#75715e"></span><span style="color:#66d9ef">int</span> <span style="color:#a6e22e">getBinary1Bits2</span>(<span style="color:#66d9ef">unsigned</span> <span style="color:#66d9ef">int</span> n) {
-    <span style="color:#66d9ef">int</span> count <span style="color:#f92672">=</span> <span style="color:#ae81ff">0</span>;
-    <span style="color:#66d9ef">while</span> (n <span style="color:#f92672">&gt;</span> <span style="color:#ae81ff">0</span>) <span style="color:#75715e">//终止条件是 n&gt;0,因为 n 总是&gt;=0
-</span><span style="color:#75715e"></span>    {
-        n <span style="color:#f92672">=</span> n <span style="color:#f92672">&amp;</span> (n <span style="color:#f92672">-</span> <span style="color:#ae81ff">1</span>);
-        count<span style="color:#f92672">++</span>;
-    }
-    <span style="color:#66d9ef">return</span> count;
-}
-</code></pre></div><h2 id="利用标识位">利用标识位</h2>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-cpp" data-lang="cpp"><span style="display:flex;"><span><span style="color:#66d9ef">int</span> <span style="color:#a6e22e">getBinary1Bits1</span>(<span style="color:#66d9ef">int</span> n) {
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">int</span> count <span style="color:#f92672">=</span> <span style="color:#ae81ff">0</span>;
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">while</span> (n <span style="color:#f92672">!=</span> <span style="color:#ae81ff">0</span>)
+</span></span><span style="display:flex;"><span>    {
+</span></span><span style="display:flex;"><span>        n <span style="color:#f92672">=</span> n <span style="color:#f92672">&amp;</span> (n <span style="color:#f92672">-</span> <span style="color:#ae81ff">1</span>); <span style="color:#75715e">//n &amp; （n-1)每次可以去除二进制表示中的一个1
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>        count<span style="color:#f92672">++</span>;
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">return</span> count;
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">//注意参数的变化
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">int</span> <span style="color:#a6e22e">getBinary1Bits2</span>(<span style="color:#66d9ef">unsigned</span> <span style="color:#66d9ef">int</span> n) {
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">int</span> count <span style="color:#f92672">=</span> <span style="color:#ae81ff">0</span>;
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">while</span> (n <span style="color:#f92672">&gt;</span> <span style="color:#ae81ff">0</span>) <span style="color:#75715e">//终止条件是 n&gt;0,因为 n 总是&gt;=0
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    {
+</span></span><span style="display:flex;"><span>        n <span style="color:#f92672">=</span> n <span style="color:#f92672">&amp;</span> (n <span style="color:#f92672">-</span> <span style="color:#ae81ff">1</span>);
+</span></span><span style="display:flex;"><span>        count<span style="color:#f92672">++</span>;
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">return</span> count;
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><h2 id="利用标识位">利用标识位</h2>
 <p>第二种方式，使用一个标识数，其初始值设置为<code>1</code>。然后，使用这次标识数与当前数进行位与运算，便可得到当前位是否为<code>1</code>；接着，使标识数向左移动一位，然后重复上一步，最终得到<code>1</code>的个数。</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-cpp" data-lang="cpp"><span style="color:#66d9ef">int</span> <span style="color:#a6e22e">getBinary1Bits3</span>(<span style="color:#66d9ef">int</span> n) {
-    <span style="color:#66d9ef">int</span> count <span style="color:#f92672">=</span> <span style="color:#ae81ff">0</span>;
-    <span style="color:#66d9ef">unsigned</span> <span style="color:#66d9ef">int</span> flag <span style="color:#f92672">=</span> <span style="color:#ae81ff">1</span>;  <span style="color:#75715e">//标识数应该声明为无符号数
-</span><span style="color:#75715e"></span>
-    <span style="color:#66d9ef">while</span> (flag <span style="color:#f92672">!=</span> <span style="color:#ae81ff">0</span>)
-    {
-        <span style="color:#66d9ef">if</span> (flag <span style="color:#f92672">&amp;</span> n)
-        {
-            count<span style="color:#f92672">++</span>;
-        }
-        flag <span style="color:#f92672">=</span> flag <span style="color:#f92672">&lt;&lt;</span> <span style="color:#ae81ff">1</span>;
-    }
-    <span style="color:#66d9ef">return</span> count;
-}
-</code></pre></div><h2 id="利用汉明编码">利用汉明编码</h2>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-cpp" data-lang="cpp"><span style="display:flex;"><span><span style="color:#66d9ef">int</span> <span style="color:#a6e22e">getBinary1Bits3</span>(<span style="color:#66d9ef">int</span> n) {
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">int</span> count <span style="color:#f92672">=</span> <span style="color:#ae81ff">0</span>;
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">unsigned</span> <span style="color:#66d9ef">int</span> flag <span style="color:#f92672">=</span> <span style="color:#ae81ff">1</span>;  <span style="color:#75715e">//标识数应该声明为无符号数
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">while</span> (flag <span style="color:#f92672">!=</span> <span style="color:#ae81ff">0</span>)
+</span></span><span style="display:flex;"><span>    {
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">if</span> (flag <span style="color:#f92672">&amp;</span> n)
+</span></span><span style="display:flex;"><span>        {
+</span></span><span style="display:flex;"><span>            count<span style="color:#f92672">++</span>;
+</span></span><span style="display:flex;"><span>        }
+</span></span><span style="display:flex;"><span>        flag <span style="color:#f92672">=</span> flag <span style="color:#f92672">&lt;&lt;</span> <span style="color:#ae81ff">1</span>;
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">return</span> count;
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><h2 id="利用汉明编码">利用汉明编码</h2>
 <p>第三种方式使用<font color=red>汉明</font>：</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-cpp" data-lang="cpp"><span style="color:#66d9ef">typedef</span> <span style="color:#66d9ef">unsigned</span> int64 uint64;  <span style="color:#75715e">//assume this gives 64-bits
-</span><span style="color:#75715e"></span><span style="color:#66d9ef">const</span> uint64 m1 <span style="color:#f92672">=</span> <span style="color:#ae81ff">0x5555555555555555</span>; <span style="color:#75715e">//binary: 0101...
-</span><span style="color:#75715e"></span><span style="color:#66d9ef">const</span> uint64 m2 <span style="color:#f92672">=</span> <span style="color:#ae81ff">0x3333333333333333</span>; <span style="color:#75715e">//binary: 00110011..
-</span><span style="color:#75715e"></span><span style="color:#66d9ef">const</span> uint64 m4 <span style="color:#f92672">=</span> <span style="color:#ae81ff">0x0f0f0f0f0f0f0f0f</span>; <span style="color:#75715e">//binary:  4 zeros,  4 ones ...
-</span><span style="color:#75715e"></span><span style="color:#66d9ef">const</span> uint64 m8 <span style="color:#f92672">=</span> <span style="color:#ae81ff">0x00ff00ff00ff00ff</span>; <span style="color:#75715e">//binary:  8 zeros,  8 ones ...
-</span><span style="color:#75715e"></span><span style="color:#66d9ef">const</span> uint64 m16 <span style="color:#f92672">=</span> <span style="color:#ae81ff">0x0000ffff0000ffff</span>; <span style="color:#75715e">//binary: 16 zeros, 16 ones ...
-</span><span style="color:#75715e"></span><span style="color:#66d9ef">const</span> uint64 m32 <span style="color:#f92672">=</span> <span style="color:#ae81ff">0x00000000ffffffff</span>; <span style="color:#75715e">//binary: 32 zeros, 32 ones ...
-</span><span style="color:#75715e"></span><span style="color:#66d9ef">const</span> uint64 hff <span style="color:#f92672">=</span> <span style="color:#ae81ff">0xffffffffffffffff</span>; <span style="color:#75715e">//binary: all ones
-</span><span style="color:#75715e"></span><span style="color:#66d9ef">const</span> uint64 h01 <span style="color:#f92672">=</span> <span style="color:#ae81ff">0x0101010101010101</span>; <span style="color:#75715e">//the sum of 256 to the power of 0,1,2,3...
-</span><span style="color:#75715e"></span>
-<span style="color:#75715e">//This is a naive implementation, shown for comparison,
-</span><span style="color:#75715e">//and to help in understanding the better functions.
-</span><span style="color:#75715e">//It uses 24 arithmetic operations (shift, add, and).
-</span><span style="color:#75715e"></span><span style="color:#66d9ef">int</span> <span style="color:#a6e22e">popcount_1</span>(uint64 x) 
-{
-    x <span style="color:#f92672">=</span> (x <span style="color:#f92672">&amp;</span> m1 ) <span style="color:#f92672">+</span> ((x <span style="color:#f92672">&gt;&gt;</span> <span style="color:#ae81ff">1</span>) <span style="color:#f92672">&amp;</span> m1 ); <span style="color:#75715e">//put count of each  2 bits into those  2 bits 
-</span><span style="color:#75715e"></span>    x <span style="color:#f92672">=</span> (x <span style="color:#f92672">&amp;</span> m2 ) <span style="color:#f92672">+</span> ((x <span style="color:#f92672">&gt;&gt;</span> <span style="color:#ae81ff">2</span>) <span style="color:#f92672">&amp;</span> m2 ); <span style="color:#75715e">//put count of each  4 bits into those  4 bits 
-</span><span style="color:#75715e"></span>    x <span style="color:#f92672">=</span> (x <span style="color:#f92672">&amp;</span> m4 ) <span style="color:#f92672">+</span> ((x <span style="color:#f92672">&gt;&gt;</span> <span style="color:#ae81ff">4</span>) <span style="color:#f92672">&amp;</span> m4 ); <span style="color:#75715e">//put count of each  8 bits into those  8 bits 
-</span><span style="color:#75715e"></span>    x <span style="color:#f92672">=</span> (x <span style="color:#f92672">&amp;</span> m8 ) <span style="color:#f92672">+</span> ((x <span style="color:#f92672">&gt;&gt;</span> <span style="color:#ae81ff">8</span>) <span style="color:#f92672">&amp;</span> m8 ); <span style="color:#75715e">//put count of each 16 bits into those 16 bits 
-</span><span style="color:#75715e"></span>    x <span style="color:#f92672">=</span> (x <span style="color:#f92672">&amp;</span> m16) <span style="color:#f92672">+</span> ((x <span style="color:#f92672">&gt;&gt;</span> <span style="color:#ae81ff">16</span>) <span style="color:#f92672">&amp;</span> m16); <span style="color:#75715e">//put count of each 32 bits into those 32 bits 
-</span><span style="color:#75715e"></span>    x <span style="color:#f92672">=</span> (x <span style="color:#f92672">&amp;</span> m32) <span style="color:#f92672">+</span> ((x <span style="color:#f92672">&gt;&gt;</span> <span style="color:#ae81ff">32</span>) <span style="color:#f92672">&amp;</span> m32); <span style="color:#75715e">//put count of each 64 bits into those 64 bits 
-</span><span style="color:#75715e"></span>    <span style="color:#66d9ef">return</span> x;
-}
-</code></pre></div><hr>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-cpp" data-lang="cpp"><span style="display:flex;"><span><span style="color:#66d9ef">typedef</span> <span style="color:#66d9ef">unsigned</span> int64 uint64;  <span style="color:#75715e">//assume this gives 64-bits
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">const</span> uint64 m1 <span style="color:#f92672">=</span> <span style="color:#ae81ff">0x5555555555555555</span>; <span style="color:#75715e">//binary: 0101...
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">const</span> uint64 m2 <span style="color:#f92672">=</span> <span style="color:#ae81ff">0x3333333333333333</span>; <span style="color:#75715e">//binary: 00110011..
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">const</span> uint64 m4 <span style="color:#f92672">=</span> <span style="color:#ae81ff">0x0f0f0f0f0f0f0f0f</span>; <span style="color:#75715e">//binary:  4 zeros,  4 ones ...
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">const</span> uint64 m8 <span style="color:#f92672">=</span> <span style="color:#ae81ff">0x00ff00ff00ff00ff</span>; <span style="color:#75715e">//binary:  8 zeros,  8 ones ...
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">const</span> uint64 m16 <span style="color:#f92672">=</span> <span style="color:#ae81ff">0x0000ffff0000ffff</span>; <span style="color:#75715e">//binary: 16 zeros, 16 ones ...
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">const</span> uint64 m32 <span style="color:#f92672">=</span> <span style="color:#ae81ff">0x00000000ffffffff</span>; <span style="color:#75715e">//binary: 32 zeros, 32 ones ...
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">const</span> uint64 hff <span style="color:#f92672">=</span> <span style="color:#ae81ff">0xffffffffffffffff</span>; <span style="color:#75715e">//binary: all ones
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">const</span> uint64 h01 <span style="color:#f92672">=</span> <span style="color:#ae81ff">0x0101010101010101</span>; <span style="color:#75715e">//the sum of 256 to the power of 0,1,2,3...
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">//This is a naive implementation, shown for comparison,
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">//and to help in understanding the better functions.
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">//It uses 24 arithmetic operations (shift, add, and).
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">int</span> <span style="color:#a6e22e">popcount_1</span>(uint64 x) 
+</span></span><span style="display:flex;"><span>{
+</span></span><span style="display:flex;"><span>    x <span style="color:#f92672">=</span> (x <span style="color:#f92672">&amp;</span> m1 ) <span style="color:#f92672">+</span> ((x <span style="color:#f92672">&gt;&gt;</span> <span style="color:#ae81ff">1</span>) <span style="color:#f92672">&amp;</span> m1 ); <span style="color:#75715e">//put count of each  2 bits into those  2 bits 
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    x <span style="color:#f92672">=</span> (x <span style="color:#f92672">&amp;</span> m2 ) <span style="color:#f92672">+</span> ((x <span style="color:#f92672">&gt;&gt;</span> <span style="color:#ae81ff">2</span>) <span style="color:#f92672">&amp;</span> m2 ); <span style="color:#75715e">//put count of each  4 bits into those  4 bits 
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    x <span style="color:#f92672">=</span> (x <span style="color:#f92672">&amp;</span> m4 ) <span style="color:#f92672">+</span> ((x <span style="color:#f92672">&gt;&gt;</span> <span style="color:#ae81ff">4</span>) <span style="color:#f92672">&amp;</span> m4 ); <span style="color:#75715e">//put count of each  8 bits into those  8 bits 
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    x <span style="color:#f92672">=</span> (x <span style="color:#f92672">&amp;</span> m8 ) <span style="color:#f92672">+</span> ((x <span style="color:#f92672">&gt;&gt;</span> <span style="color:#ae81ff">8</span>) <span style="color:#f92672">&amp;</span> m8 ); <span style="color:#75715e">//put count of each 16 bits into those 16 bits 
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    x <span style="color:#f92672">=</span> (x <span style="color:#f92672">&amp;</span> m16) <span style="color:#f92672">+</span> ((x <span style="color:#f92672">&gt;&gt;</span> <span style="color:#ae81ff">16</span>) <span style="color:#f92672">&amp;</span> m16); <span style="color:#75715e">//put count of each 32 bits into those 32 bits 
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    x <span style="color:#f92672">=</span> (x <span style="color:#f92672">&amp;</span> m32) <span style="color:#f92672">+</span> ((x <span style="color:#f92672">&gt;&gt;</span> <span style="color:#ae81ff">32</span>) <span style="color:#f92672">&amp;</span> m32); <span style="color:#75715e">//put count of each 64 bits into those 64 bits 
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#66d9ef">return</span> x;
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><hr>
 
     </div>
     <footer class="post-footer">

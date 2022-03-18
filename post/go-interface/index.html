@@ -314,105 +314,104 @@ code.has-jax {
 <hr>
 <h2 id="接口嵌套接口">接口嵌套接口</h2>
 <p>一个接口可以包含一个或多个其他的接口，这<font color=red>相当于直接将这些内嵌接口的方法列举在外层接口中一样。</font></p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#66d9ef">type</span> <span style="color:#a6e22e">ReadWrite</span> <span style="color:#66d9ef">interface</span>{
- <span style="color:#a6e22e">Read</span>(<span style="color:#a6e22e">b</span> <span style="color:#a6e22e">buffer</span>) <span style="color:#66d9ef">bool</span>
- <span style="color:#a6e22e">Write</span>(<span style="color:#a6e22e">b</span> <span style="color:#a6e22e">buffer</span>) <span style="color:#66d9ef">bool</span>
-}
-
-<span style="color:#66d9ef">type</span> <span style="color:#a6e22e">Lock</span> <span style="color:#66d9ef">interface</span>{
- <span style="color:#a6e22e">Lock</span>()
- <span style="color:#a6e22e">Unlock</span>()
-}
-
-<span style="color:#66d9ef">type</span> <span style="color:#a6e22e">File</span> <span style="color:#66d9ef">interface</span>{
- <span style="color:#a6e22e">ReadWrite</span>  <span style="color:#75715e">//嵌入接口
-</span><span style="color:#75715e"></span> <span style="color:#a6e22e">Lock</span>
- <span style="color:#a6e22e">Close</span>()  <span style="color:#75715e">//自己的方法
-</span><span style="color:#75715e"></span>}
-</code></pre></div><hr>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-go" data-lang="go"><span style="display:flex;"><span><span style="color:#66d9ef">type</span> <span style="color:#a6e22e">ReadWrite</span> <span style="color:#66d9ef">interface</span>{
+</span></span><span style="display:flex;"><span> <span style="color:#a6e22e">Read</span>(<span style="color:#a6e22e">b</span> <span style="color:#a6e22e">buffer</span>) <span style="color:#66d9ef">bool</span>
+</span></span><span style="display:flex;"><span> <span style="color:#a6e22e">Write</span>(<span style="color:#a6e22e">b</span> <span style="color:#a6e22e">buffer</span>) <span style="color:#66d9ef">bool</span>
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">type</span> <span style="color:#a6e22e">Lock</span> <span style="color:#66d9ef">interface</span>{
+</span></span><span style="display:flex;"><span> <span style="color:#a6e22e">Lock</span>()
+</span></span><span style="display:flex;"><span> <span style="color:#a6e22e">Unlock</span>()
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">type</span> <span style="color:#a6e22e">File</span> <span style="color:#66d9ef">interface</span>{
+</span></span><span style="display:flex;"><span> <span style="color:#a6e22e">ReadWrite</span>  <span style="color:#75715e">//嵌入接口
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span> <span style="color:#a6e22e">Lock</span>
+</span></span><span style="display:flex;"><span> <span style="color:#a6e22e">Close</span>()  <span style="color:#75715e">//自己的方法
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>}
+</span></span></code></pre></div><hr>
 <h2 id="检测和转换接口变量">检测和转换接口变量</h2>
 <p>一个接口变量可以被任何实现了该接口的类型的变量赋值，即接口变量在运行时存在多态行为。因此需要一种方法来检测某个时刻一个接口变量是否是某个类型<code>T</code>。</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#a6e22e">v</span><span style="color:#f92672">:=</span><span style="color:#a6e22e">x</span>.(<span style="color:#a6e22e">T</span>)  <span style="color:#75715e">//未检测类型断言
-</span><span style="color:#75715e"></span>
-<span style="color:#66d9ef">if</span> <span style="color:#a6e22e">v</span>,<span style="color:#a6e22e">ok</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">x</span>.(<span style="color:#a6e22e">T</span>); <span style="color:#a6e22e">ok</span>{ <span style="color:#75715e">//检测类型断言
-</span><span style="color:#75715e"></span>    <span style="color:#a6e22e">do</span> <span style="color:#a6e22e">something</span>
-    <span style="color:#66d9ef">return</span> 
-}
-</code></pre></div><p>其中<code>x</code>表示<font color=red>接口类型的变量，且必须是接口类型变量，否则编译器会报错</font>。而<code>T</code>表示需要被检测的目标类型。在检测类型断言中，如果转换合法，那么<code>v</code>是<code>x</code>转换到<code>T</code>类型的值，<code>ok</code>为<code>true</code>，否则<code>v</code>是<code>T</code>类型的零值，<code>ok</code>的值为<code>false</code>，此时不会有运行时错误发生。</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-go" data-lang="go"><span style="display:flex;"><span><span style="color:#a6e22e">v</span><span style="color:#f92672">:=</span><span style="color:#a6e22e">x</span>.(<span style="color:#a6e22e">T</span>)  <span style="color:#75715e">//未检测类型断言
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">if</span> <span style="color:#a6e22e">v</span>,<span style="color:#a6e22e">ok</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">x</span>.(<span style="color:#a6e22e">T</span>); <span style="color:#a6e22e">ok</span>{ <span style="color:#75715e">//检测类型断言
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#a6e22e">do</span> <span style="color:#a6e22e">something</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">return</span> 
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p>其中<code>x</code>表示<font color=red>接口类型的变量，且必须是接口类型变量，否则编译器会报错</font>。而<code>T</code>表示需要被检测的目标类型。在检测类型断言中，如果转换合法，那么<code>v</code>是<code>x</code>转换到<code>T</code>类型的值，<code>ok</code>为<code>true</code>，否则<code>v</code>是<code>T</code>类型的零值，<code>ok</code>的值为<code>false</code>，此时不会有运行时错误发生。</p>
 <p>当需要检测的类型较多时，建议使用<code>type-switch</code>，<font color=red>但是在<code>type-switch</code>不允许有<code>fallthrough</code>。</font></p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#66d9ef">switch</span> <span style="color:#a6e22e">t</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">areaIntf</span>.(<span style="color:#66d9ef">type</span>) { 
-    <span style="color:#66d9ef">case</span> <span style="color:#f92672">*</span><span style="color:#a6e22e">Square</span>:
-        <span style="color:#a6e22e">fmt</span>.<span style="color:#a6e22e">Printf</span>(<span style="color:#e6db74">&#34;Type Square %T with value %v\n&#34;</span>, <span style="color:#a6e22e">t</span>, <span style="color:#a6e22e">t</span>) 
-    <span style="color:#66d9ef">case</span> <span style="color:#f92672">*</span><span style="color:#a6e22e">Circle</span>:
-        <span style="color:#a6e22e">fmt</span>.<span style="color:#a6e22e">Printf</span>(<span style="color:#e6db74">&#34;Type Circle %T with value %v\n&#34;</span>, <span style="color:#a6e22e">t</span>, <span style="color:#a6e22e">t</span>) 
-    <span style="color:#66d9ef">case</span> <span style="color:#66d9ef">nil</span>:
-        <span style="color:#a6e22e">fmt</span>.<span style="color:#a6e22e">Printf</span>(<span style="color:#e6db74">&#34;nil value: nothing to check?\n&#34;</span>)    
-    <span style="color:#66d9ef">default</span>:
-        <span style="color:#a6e22e">fmt</span>.<span style="color:#a6e22e">Printf</span>(<span style="color:#e6db74">&#34;Unexpected type %T\n&#34;</span>, <span style="color:#a6e22e">t</span>) 
-}
-</code></pre></div><p>但是<font color=red>所有的<code>case</code>语句中列举的类型(<code>nil</code>除外)都必须实现对应的接口，</font>如果被检测类型没有匹配<code>case</code>语句列举的类型，就会执行<code>default</code>语句。</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-go" data-lang="go"><span style="display:flex;"><span><span style="color:#66d9ef">switch</span> <span style="color:#a6e22e">t</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">areaIntf</span>.(<span style="color:#66d9ef">type</span>) { 
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">case</span> <span style="color:#f92672">*</span><span style="color:#a6e22e">Square</span>:
+</span></span><span style="display:flex;"><span>        <span style="color:#a6e22e">fmt</span>.<span style="color:#a6e22e">Printf</span>(<span style="color:#e6db74">&#34;Type Square %T with value %v\n&#34;</span>, <span style="color:#a6e22e">t</span>, <span style="color:#a6e22e">t</span>) 
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">case</span> <span style="color:#f92672">*</span><span style="color:#a6e22e">Circle</span>:
+</span></span><span style="display:flex;"><span>        <span style="color:#a6e22e">fmt</span>.<span style="color:#a6e22e">Printf</span>(<span style="color:#e6db74">&#34;Type Circle %T with value %v\n&#34;</span>, <span style="color:#a6e22e">t</span>, <span style="color:#a6e22e">t</span>) 
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">case</span> <span style="color:#66d9ef">nil</span>:
+</span></span><span style="display:flex;"><span>        <span style="color:#a6e22e">fmt</span>.<span style="color:#a6e22e">Printf</span>(<span style="color:#e6db74">&#34;nil value: nothing to check?\n&#34;</span>)    
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">default</span>:
+</span></span><span style="display:flex;"><span>        <span style="color:#a6e22e">fmt</span>.<span style="color:#a6e22e">Printf</span>(<span style="color:#e6db74">&#34;Unexpected type %T\n&#34;</span>, <span style="color:#a6e22e">t</span>) 
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p>但是<font color=red>所有的<code>case</code>语句中列举的类型(<code>nil</code>除外)都必须实现对应的接口，</font>如果被检测类型没有匹配<code>case</code>语句列举的类型，就会执行<code>default</code>语句。</p>
 <hr>
 <h2 id="空接口">空接口</h2>
 <p>空接口是<font color=red>不包含任何方法</font>，它对实现不做任何要求。任何类型都实现了空接口，<code>any</code>或<code>Any</code>是空接口一个很好的别名或者缩写。</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#66d9ef">type</span> <span style="color:#a6e22e">any</span> <span style="color:#66d9ef">interface</span>{}
-</code></pre></div><p>可以给一个空接口类型的变量<code>var val interface{}</code> 赋任何类型的值。</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-go" data-lang="go"><span style="display:flex;"><span><span style="color:#66d9ef">type</span> <span style="color:#a6e22e">any</span> <span style="color:#66d9ef">interface</span>{}
+</span></span></code></pre></div><p>可以给一个空接口类型的变量<code>var val interface{}</code> 赋任何类型的值。</p>
 <p>每个<font color=red>空接口变量在内存中占据两个字节</font>，一个用来存储它包含的类型，另一个用来存储它包含的数据或者指向数据的指针。</p>
 <hr>
 <h2 id="执行机制">执行机制</h2>
 <p>接口是一种契约，实现类型必须满足它，它描述了类型的行为，规定类型可以做什么。接口<font color=red>将类型能做什么和如何做分离开来，使得相同接口变量在不同时刻表现出不同的行为，这就是多态的本质</font>。</p>
 <p>从内部实现上来看，<font color=Blue>接口自身也是一种结构体，只是编译器会对其作出很多限制。</font>接口使用一个名为<code>itab</code>的结构体存储运行期所需的相关类型信息。</p>
 <p>![c600](<a href="http://oqe76o492.bkt.clouddn.com/">http://oqe76o492.bkt.clouddn.com/</a>屏幕快照 2017-12-18 上午8.54.39.png)</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#66d9ef">type</span> <span style="color:#a6e22e">iface</span> <span style="color:#66d9ef">struct</span>{
-    <span style="color:#a6e22e">tab</span> <span style="color:#f92672">*</span> <span style="color:#a6e22e">itab</span>  <span style="color:#75715e">//类型信息
-</span><span style="color:#75715e"></span>    <span style="color:#a6e22e">data</span> <span style="color:#a6e22e">unsafe</span>.<span style="color:#a6e22e">Pointer</span> <span style="color:#75715e">//实际对象指针
-</span><span style="color:#75715e"></span>}
-
-<span style="color:#66d9ef">type</span> <span style="color:#a6e22e">itab</span> <span style="color:#66d9ef">struct</span>{
-    <span style="color:#a6e22e">inter</span> <span style="color:#f92672">*</span><span style="color:#a6e22e">interfacetype</span> <span style="color:#75715e">//接口类型
-</span><span style="color:#75715e"></span>    <span style="color:#a6e22e">_type</span> <span style="color:#f92672">*</span><span style="color:#a6e22e">_type</span>   <span style="color:#75715e">//实际对象类型
-</span><span style="color:#75715e"></span>    <span style="color:#a6e22e">fun</span> [<span style="color:#ae81ff">1</span>]<span style="color:#66d9ef">uintptr</span> <span style="color:#75715e">//实际对象方法地址
-</span><span style="color:#75715e"></span>}
-</code></pre></div><p>接口有一个重要的特性：<font color=red>将对象赋值给接口变量时，会复制该对象</font>。我们甚至无法修改接口存储的复制品，因为它是<code>unaddreable</code>，即使将其复制出来，使用本地变量修改后，依然无法对<code>iface.data</code>赋值。<font color=red>解决的方法是将对象指针赋值给接口，那么接口内存储的就是指针的复制品。</font></p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-go" data-lang="go"><span style="display:flex;"><span><span style="color:#66d9ef">type</span> <span style="color:#a6e22e">iface</span> <span style="color:#66d9ef">struct</span>{
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">tab</span> <span style="color:#f92672">*</span> <span style="color:#a6e22e">itab</span>  <span style="color:#75715e">//类型信息
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#a6e22e">data</span> <span style="color:#a6e22e">unsafe</span>.<span style="color:#a6e22e">Pointer</span> <span style="color:#75715e">//实际对象指针
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">type</span> <span style="color:#a6e22e">itab</span> <span style="color:#66d9ef">struct</span>{
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">inter</span> <span style="color:#f92672">*</span><span style="color:#a6e22e">interfacetype</span> <span style="color:#75715e">//接口类型
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#a6e22e">_type</span> <span style="color:#f92672">*</span><span style="color:#a6e22e">_type</span>   <span style="color:#75715e">//实际对象类型
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#a6e22e">fun</span> [<span style="color:#ae81ff">1</span>]<span style="color:#66d9ef">uintptr</span> <span style="color:#75715e">//实际对象方法地址
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>}
+</span></span></code></pre></div><p>接口有一个重要的特性：<font color=red>将对象赋值给接口变量时，会复制该对象</font>。我们甚至无法修改接口存储的复制品，因为它是<code>unaddreable</code>，即使将其复制出来，使用本地变量修改后，依然无法对<code>iface.data</code>赋值。<font color=red>解决的方法是将对象指针赋值给接口，那么接口内存储的就是指针的复制品。</font></p>
 <p>只有当接口变量的内部的两<font color=red>个指针<code>(itab,data)</code>都为<code>nil</code>时，接口才等于<code>nil</code></font>。因此造成的错误并不少见，尤其是在函数返回<code>error</code>时，详见Go学习笔记P149。</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#66d9ef">var</span> <span style="color:#a6e22e">a</span> <span style="color:#66d9ef">interface</span>{}=<span style="color:#66d9ef">nil</span>
-<span style="color:#66d9ef">var</span> <span style="color:#a6e22e">b</span> <span style="color:#66d9ef">interface</span>{}=(<span style="color:#f92672">*</span><span style="color:#66d9ef">int</span>)(<span style="color:#66d9ef">nil</span>)
-println(<span style="color:#a6e22e">a</span><span style="color:#f92672">==</span><span style="color:#66d9ef">nil</span>,<span style="color:#a6e22e">b</span><span style="color:#f92672">==</span><span style="color:#66d9ef">nil</span>) <span style="color:#75715e">//true false
-</span></code></pre></div><p>类型推断可将接口变量还原为原始类型，或者用来判断是否实现了某个更具体的接口类型</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#66d9ef">type</span> <span style="color:#a6e22e">data</span> <span style="color:#66d9ef">int</span>
-<span style="color:#66d9ef">func</span> (<span style="color:#a6e22e">d</span> <span style="color:#a6e22e">data</span>) <span style="color:#a6e22e">String</span>() <span style="color:#66d9ef">string</span>{
-    <span style="color:#66d9ef">return</span> <span style="color:#a6e22e">fmt</span>.<span style="color:#a6e22e">Sprintf</span>(<span style="color:#e6db74">&#34;data:&#34;</span><span style="color:#f92672">%</span><span style="color:#a6e22e">d</span><span style="color:#960050;background-color:#1e0010">&#34;</span>,<span style="color:#a6e22e">d</span>)
-}
-
-<span style="color:#66d9ef">var</span> <span style="color:#a6e22e">d</span> <span style="color:#a6e22e">data</span>=<span style="color:#ae81ff">16</span>
-<span style="color:#66d9ef">if</span> <span style="color:#a6e22e">n</span>,<span style="color:#a6e22e">ok</span><span style="color:#f92672">:=</span><span style="color:#a6e22e">x</span>.(<span style="color:#a6e22e">fmt</span>.<span style="color:#a6e22e">Stringer</span>); <span style="color:#a6e22e">ok</span>{ <span style="color:#75715e">//转换为更具体的接口类型
-</span><span style="color:#75715e"></span>    <span style="color:#a6e22e">fmt</span>.<span style="color:#a6e22e">Println</span>(<span style="color:#a6e22e">n</span>)
-}
-
-<span style="color:#66d9ef">if</span> <span style="color:#a6e22e">d2</span>,<span style="color:#a6e22e">ok</span><span style="color:#f92672">:=</span><span style="color:#a6e22e">x</span>.(<span style="color:#a6e22e">data</span>); <span style="color:#a6e22e">ok</span>{ <span style="color:#75715e">//转换为原始类型
-</span><span style="color:#75715e"></span>    <span style="color:#a6e22e">fmt</span>.<span style="color:#a6e22e">Println</span>(<span style="color:#a6e22e">d2</span>)
-}
-
-<span style="color:#a6e22e">e</span><span style="color:#f92672">:=</span><span style="color:#a6e22e">x</span>.(<span style="color:#66d9ef">error</span>)  <span style="color:#75715e">//错误，main.data is not error
-</span><span style="color:#75715e"></span><span style="color:#a6e22e">fmt</span>.<span style="color:#a6e22e">Println</span>(<span style="color:#a6e22e">e</span>)
-
-</code></pre></div><p>使用<code>ok-idiom</code>模式，即使转换失败也不会引发<code>panic</code>。还可以用<code>switch</code>语句在多种类型间作出推断匹配，这样接口就能有更多的发挥空间。</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#66d9ef">var</span> <span style="color:#a6e22e">x</span> <span style="color:#66d9ef">interface</span>{}=<span style="color:#66d9ef">func</span>(<span style="color:#a6e22e">x</span> <span style="color:#66d9ef">int</span>)<span style="color:#66d9ef">string</span>{
-    <span style="color:#66d9ef">return</span> <span style="color:#a6e22e">fmt</span>.<span style="color:#a6e22e">Sprintf</span>(<span style="color:#e6db74">&#34;d:%d&#34;</span>,<span style="color:#a6e22e">x</span>)
-}
-
-<span style="color:#66d9ef">switch</span> <span style="color:#a6e22e">v</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">x</span>.<span style="color:#66d9ef">type</span>{
-    <span style="color:#66d9ef">case</span> <span style="color:#66d9ef">nil</span>: 
-            println(<span style="color:#e6db74">&#34;nil&#34;</span>)
-    <span style="color:#66d9ef">case</span> <span style="color:#f92672">*</span><span style="color:#66d9ef">int</span>:
-            println(<span style="color:#f92672">*</span><span style="color:#a6e22e">v</span>)
-    <span style="color:#66d9ef">case</span> <span style="color:#66d9ef">func</span>(<span style="color:#66d9ef">int</span>)<span style="color:#66d9ef">string</span>:
-            println(<span style="color:#a6e22e">v</span>(<span style="color:#ae81ff">100</span>)
-    <span style="color:#66d9ef">case</span> <span style="color:#a6e22e">fmt</span>.<span style="color:#a6e22e">Stringer</span>:
-            <span style="color:#a6e22e">fmt</span>.println(<span style="color:#a6e22e">v</span>)
-    <span style="color:#66d9ef">default</span>:
-            <span style="color:#a6e22e">fmt</span>.println(<span style="color:#e6db74">&#34;unknown&#34;</span>)
-}
-</code></pre></div><p>如上所示的<font color=Orange><code>type switch</code>中不支持<code>fallthrought</code></font>。</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-go" data-lang="go"><span style="display:flex;"><span><span style="color:#66d9ef">var</span> <span style="color:#a6e22e">a</span> <span style="color:#66d9ef">interface</span>{}=<span style="color:#66d9ef">nil</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">var</span> <span style="color:#a6e22e">b</span> <span style="color:#66d9ef">interface</span>{}=(<span style="color:#f92672">*</span><span style="color:#66d9ef">int</span>)(<span style="color:#66d9ef">nil</span>)
+</span></span><span style="display:flex;"><span>println(<span style="color:#a6e22e">a</span><span style="color:#f92672">==</span><span style="color:#66d9ef">nil</span>,<span style="color:#a6e22e">b</span><span style="color:#f92672">==</span><span style="color:#66d9ef">nil</span>) <span style="color:#75715e">//true false
+</span></span></span></code></pre></div><p>类型推断可将接口变量还原为原始类型，或者用来判断是否实现了某个更具体的接口类型</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-go" data-lang="go"><span style="display:flex;"><span><span style="color:#66d9ef">type</span> <span style="color:#a6e22e">data</span> <span style="color:#66d9ef">int</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">func</span> (<span style="color:#a6e22e">d</span> <span style="color:#a6e22e">data</span>) <span style="color:#a6e22e">String</span>() <span style="color:#66d9ef">string</span>{
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">return</span> <span style="color:#a6e22e">fmt</span>.<span style="color:#a6e22e">Sprintf</span>(<span style="color:#e6db74">&#34;data:&#34;</span><span style="color:#f92672">%</span><span style="color:#a6e22e">d</span><span style="color:#960050;background-color:#1e0010">&#34;</span>,<span style="color:#a6e22e">d</span>)
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">var</span> <span style="color:#a6e22e">d</span> <span style="color:#a6e22e">data</span>=<span style="color:#ae81ff">16</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">if</span> <span style="color:#a6e22e">n</span>,<span style="color:#a6e22e">ok</span><span style="color:#f92672">:=</span><span style="color:#a6e22e">x</span>.(<span style="color:#a6e22e">fmt</span>.<span style="color:#a6e22e">Stringer</span>); <span style="color:#a6e22e">ok</span>{ <span style="color:#75715e">//转换为更具体的接口类型
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#a6e22e">fmt</span>.<span style="color:#a6e22e">Println</span>(<span style="color:#a6e22e">n</span>)
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">if</span> <span style="color:#a6e22e">d2</span>,<span style="color:#a6e22e">ok</span><span style="color:#f92672">:=</span><span style="color:#a6e22e">x</span>.(<span style="color:#a6e22e">data</span>); <span style="color:#a6e22e">ok</span>{ <span style="color:#75715e">//转换为原始类型
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#a6e22e">fmt</span>.<span style="color:#a6e22e">Println</span>(<span style="color:#a6e22e">d2</span>)
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">e</span><span style="color:#f92672">:=</span><span style="color:#a6e22e">x</span>.(<span style="color:#66d9ef">error</span>)  <span style="color:#75715e">//错误，main.data is not error
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#a6e22e">fmt</span>.<span style="color:#a6e22e">Println</span>(<span style="color:#a6e22e">e</span>)
+</span></span></code></pre></div><p>使用<code>ok-idiom</code>模式，即使转换失败也不会引发<code>panic</code>。还可以用<code>switch</code>语句在多种类型间作出推断匹配，这样接口就能有更多的发挥空间。</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-go" data-lang="go"><span style="display:flex;"><span><span style="color:#66d9ef">var</span> <span style="color:#a6e22e">x</span> <span style="color:#66d9ef">interface</span>{}=<span style="color:#66d9ef">func</span>(<span style="color:#a6e22e">x</span> <span style="color:#66d9ef">int</span>)<span style="color:#66d9ef">string</span>{
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">return</span> <span style="color:#a6e22e">fmt</span>.<span style="color:#a6e22e">Sprintf</span>(<span style="color:#e6db74">&#34;d:%d&#34;</span>,<span style="color:#a6e22e">x</span>)
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">switch</span> <span style="color:#a6e22e">v</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">x</span>.<span style="color:#66d9ef">type</span>{
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">case</span> <span style="color:#66d9ef">nil</span>: 
+</span></span><span style="display:flex;"><span>            println(<span style="color:#e6db74">&#34;nil&#34;</span>)
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">case</span> <span style="color:#f92672">*</span><span style="color:#66d9ef">int</span>:
+</span></span><span style="display:flex;"><span>            println(<span style="color:#f92672">*</span><span style="color:#a6e22e">v</span>)
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">case</span> <span style="color:#66d9ef">func</span>(<span style="color:#66d9ef">int</span>)<span style="color:#66d9ef">string</span>:
+</span></span><span style="display:flex;"><span>            println(<span style="color:#a6e22e">v</span>(<span style="color:#ae81ff">100</span>)
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">case</span> <span style="color:#a6e22e">fmt</span>.<span style="color:#a6e22e">Stringer</span>:
+</span></span><span style="display:flex;"><span>            <span style="color:#a6e22e">fmt</span>.println(<span style="color:#a6e22e">v</span>)
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">default</span>:
+</span></span><span style="display:flex;"><span>            <span style="color:#a6e22e">fmt</span>.println(<span style="color:#e6db74">&#34;unknown&#34;</span>)
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p>如上所示的<font color=Orange><code>type switch</code>中不支持<code>fallthrought</code></font>。</p>
 <hr>
 
     </div>

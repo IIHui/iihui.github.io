@@ -257,55 +257,55 @@ code.has-jax {
 </blockquote>
 <h2 id="第一种方式">第一种方式</h2>
 <p>利用<code>Swift</code>中全局变量的<font color=Blue>懒加载</font>和全局变量初始化时<font color=LightSeaGreen>默认使用<a href="https://xiaozhuanlan.com/topic/7916538240">dispatch_once</a></font>以保证全局变量的构造器<font color=red>只会被调用一次</font>:</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift"><span style="color:#66d9ef">let</span> sharedManager = MyManager(string: someString) <span style="color:#75715e">//定义全局变量</span>
-<span style="color:#66d9ef">class</span> <span style="color:#a6e22e">MyManager</span> {
-    <span style="color:#66d9ef">let</span> string: String
-    <span style="color:#75715e">//初始化器</span>
-    <span style="color:#66d9ef">init</span>(string: String) {
-        <span style="color:#66d9ef">self</span>.string = string
-    }
-}
-</code></pre></div><hr>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span><span style="color:#66d9ef">let</span> sharedManager = MyManager(string: someString) <span style="color:#75715e">//定义全局变量</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">class</span> <span style="color:#a6e22e">MyManager</span> {
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">let</span> string: String
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">//初始化器</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">init</span>(string: String) {
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">self</span>.string = string
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><hr>
 <h2 id="第二种方式">第二种方式</h2>
 <p>利用<code>static</code>和<code>private</code>两个关键字,<code>static</code>关键字说明该变量是<font color=red>类变量而不是实例变量</font>；而<code>private</code>保证了该类变量为单例：</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift"><span style="color:#66d9ef">class</span> <span style="color:#a6e22e">MyManager</span> {
-    <span style="color:#75715e">// 全局变量</span>
-    <span style="color:#66d9ef">static</span> <span style="color:#66d9ef">let</span> shared = MyManager(string: someString)
-
-    <span style="color:#75715e">// 属性</span>
-    <span style="color:#66d9ef">let</span> string: String
-    <span style="color:#75715e">// 初始化器</span>
-    <span style="color:#66d9ef">private</span> <span style="color:#66d9ef">init</span>(string: String) {
-        <span style="color:#66d9ef">self</span>.string = string
-    }
-}
-<span style="color:#75715e">// 使用</span>
-print(MyManager.shared)
-</code></pre></div><hr>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span><span style="color:#66d9ef">class</span> <span style="color:#a6e22e">MyManager</span> {
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">// 全局变量</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">static</span> <span style="color:#66d9ef">let</span> shared = MyManager(string: someString)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">// 属性</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">let</span> string: String
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">// 初始化器</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">private</span> <span style="color:#66d9ef">init</span>(string: String) {
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">self</span>.string = string
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span><span style="color:#75715e">// 使用</span>
+</span></span><span style="display:flex;"><span>print(MyManager.shared)
+</span></span></code></pre></div><hr>
 <h2 id="第三种方式">第三种方式</h2>
 <p>第三种方式是让<font color=Blue>单例在闭包中初始化</font>，同时加入类方法以获取单例。这种方式的好处是<font color=red>可以在闭包中做一些额外的配置</font>：</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift"><span style="color:#66d9ef">class</span> <span style="color:#a6e22e">MyManager</span> {
-    <span style="color:#75715e">// private 修饰</span>
-    <span style="color:#66d9ef">private</span> <span style="color:#66d9ef">static</span> <span style="color:#66d9ef">let</span> sharedManager: MyManager = {
-        <span style="color:#66d9ef">let</span> shared = MyManager(string: someString) 
-        <span style="color:#75715e">// 可以做一些其他的配置</span>
-        <span style="color:#75715e">// ...</span>
-        <span style="color:#66d9ef">return</span> shared
-    }()
-    <span style="color:#75715e">// Properties</span>
-    <span style="color:#66d9ef">let</span> string: String
-    <span style="color:#75715e">// 构造函数，由private修饰</span>
-    <span style="color:#66d9ef">private</span> <span style="color:#66d9ef">init</span>(string: String) {
-        <span style="color:#66d9ef">self</span>.string = string
-    }
-    <span style="color:#75715e">// 访问器</span>
-    <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">func</span> shared() -&gt; MyManager {
-        <span style="color:#66d9ef">return</span> sharedManager
-    }
-}
-<span style="color:#75715e">//使用</span>
-print(MyManager.shared())
-</code></pre></div><h2 id="单例的缺陷">单例的缺陷</h2>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span><span style="color:#66d9ef">class</span> <span style="color:#a6e22e">MyManager</span> {
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">// private 修饰</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">private</span> <span style="color:#66d9ef">static</span> <span style="color:#66d9ef">let</span> sharedManager: MyManager = {
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">let</span> shared = MyManager(string: someString) 
+</span></span><span style="display:flex;"><span>        <span style="color:#75715e">// 可以做一些其他的配置</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#75715e">// ...</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">return</span> shared
+</span></span><span style="display:flex;"><span>    }()
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">// Properties</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">let</span> string: String
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">// 构造函数，由private修饰</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">private</span> <span style="color:#66d9ef">init</span>(string: String) {
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">self</span>.string = string
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">// 访问器</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">func</span> shared() -&gt; MyManager {
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">return</span> sharedManager
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span><span style="color:#75715e">//使用</span>
+</span></span><span style="display:flex;"><span>print(MyManager.shared())
+</span></span></code></pre></div><h2 id="单例的缺陷">单例的缺陷</h2>
 <ul>
 <li>
 <p>由于单例是共享的，因此程序员无法预测单例当前的状态。</p>

@@ -257,17 +257,17 @@ code.has-jax {
 </blockquote>
 <h2 id="普通指针">普通指针</h2>
 <p>对于普通指针，当有多个指针指向同一个基础对象时，如果某个指针delete了该基础对象，对这个指针来说已经明确说明它所指的对象被释放掉了，所以它不会再对所指对象进行操作。但是，<font color=red>对于剩下的指向同一个基础对象的指针来说，它们依然指向已经被删除的基础对象并随时准备对它进行操作</font>，于是悬垂指针就形成了。</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-cpp" data-lang="cpp"><span style="color:#66d9ef">int</span> <span style="color:#f92672">*</span> ptr1 <span style="color:#f92672">=</span> <span style="color:#66d9ef">new</span> <span style="color:#66d9ef">int</span> (<span style="color:#ae81ff">1</span>);
-<span style="color:#66d9ef">int</span> <span style="color:#f92672">*</span> ptr2 <span style="color:#f92672">=</span> ptr1;
-<span style="color:#66d9ef">int</span> <span style="color:#f92672">*</span> ptr3 <span style="color:#f92672">=</span> prt2;
-        
-cout <span style="color:#f92672">&lt;&lt;</span> <span style="color:#f92672">*</span>ptr1 <span style="color:#f92672">&lt;&lt;</span> endl;
-cout <span style="color:#f92672">&lt;&lt;</span> <span style="color:#f92672">*</span>ptr2 <span style="color:#f92672">&lt;&lt;</span> endl;
-cout <span style="color:#f92672">&lt;&lt;</span> <span style="color:#f92672">*</span>ptr3 <span style="color:#f92672">&lt;&lt;</span> endl;
-
-<span style="color:#66d9ef">delete</span> ptr1;
-cout <span style="color:#f92672">&lt;&lt;</span> <span style="color:#f92672">*</span>ptr2 <span style="color:#f92672">&lt;&lt;</span> endl;
-</code></pre></div><p>![c600](<a href="http://oqe76o492.bkt.clouddn.com/">http://oqe76o492.bkt.clouddn.com/</a>屏幕快照 2017-08-13 下午4.12.02.png)</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-cpp" data-lang="cpp"><span style="display:flex;"><span><span style="color:#66d9ef">int</span> <span style="color:#f92672">*</span> ptr1 <span style="color:#f92672">=</span> <span style="color:#66d9ef">new</span> <span style="color:#66d9ef">int</span> (<span style="color:#ae81ff">1</span>);
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">int</span> <span style="color:#f92672">*</span> ptr2 <span style="color:#f92672">=</span> ptr1;
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">int</span> <span style="color:#f92672">*</span> ptr3 <span style="color:#f92672">=</span> prt2;
+</span></span><span style="display:flex;"><span>        
+</span></span><span style="display:flex;"><span>cout <span style="color:#f92672">&lt;&lt;</span> <span style="color:#f92672">*</span>ptr1 <span style="color:#f92672">&lt;&lt;</span> endl;
+</span></span><span style="display:flex;"><span>cout <span style="color:#f92672">&lt;&lt;</span> <span style="color:#f92672">*</span>ptr2 <span style="color:#f92672">&lt;&lt;</span> endl;
+</span></span><span style="display:flex;"><span>cout <span style="color:#f92672">&lt;&lt;</span> <span style="color:#f92672">*</span>ptr3 <span style="color:#f92672">&lt;&lt;</span> endl;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">delete</span> ptr1;
+</span></span><span style="display:flex;"><span>cout <span style="color:#f92672">&lt;&lt;</span> <span style="color:#f92672">*</span>ptr2 <span style="color:#f92672">&lt;&lt;</span> endl;
+</span></span></code></pre></div><p>![c600](<a href="http://oqe76o492.bkt.clouddn.com/">http://oqe76o492.bkt.clouddn.com/</a>屏幕快照 2017-08-13 下午4.12.02.png)</p>
 <p>![c600](<a href="http://oqe76o492.bkt.clouddn.com/">http://oqe76o492.bkt.clouddn.com/</a>屏幕快照 2017-08-13 下午4.12.12.png)</p>
 <p>![c600](<a href="http://oqe76o492.bkt.clouddn.com/">http://oqe76o492.bkt.clouddn.com/</a>屏幕快照 2017-08-13 下午4.12.32.png)</p>
 <p>从图可以看出，错误的产生来自于<code>ptr1</code>的“无知”：它并不知道还有其他指针共享着它指向的对象。如果有个办法让<code>ptr1</code>知道，除了它自己外还有两个指针指向基础对象，而它不应该删除基础对象，那么悬垂指针的问题就得以解决了。</p>
@@ -287,33 +287,33 @@ cout <span style="color:#f92672">&lt;&lt;</span> <span style="color:#f92672">*</
 <h2 id="智能指针实现">智能指针实现</h2>
 <p>智能指针的实现策略有两种：辅助类与句柄类，这里介绍辅助类实现</p>
 <h3 id="基础类">基础类</h3>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-cpp" data-lang="cpp"><span style="color:#66d9ef">class</span> <span style="color:#a6e22e">Point</span>                                       
-{
-<span style="color:#66d9ef">public</span><span style="color:#f92672">:</span>
-    Point(<span style="color:#66d9ef">int</span> xVal <span style="color:#f92672">=</span> <span style="color:#ae81ff">0</span>, <span style="color:#66d9ef">int</span> yVal <span style="color:#f92672">=</span> <span style="color:#ae81ff">0</span>) <span style="color:#f92672">:</span>x(xVal), y(yVal) { }
-    <span style="color:#66d9ef">int</span> <span style="color:#a6e22e">getX</span>() <span style="color:#66d9ef">const</span> { <span style="color:#66d9ef">return</span> x; }
-    <span style="color:#66d9ef">int</span> <span style="color:#a6e22e">getY</span>() <span style="color:#66d9ef">const</span> { <span style="color:#66d9ef">return</span> y; }
-    <span style="color:#66d9ef">void</span> <span style="color:#a6e22e">setX</span>(<span style="color:#66d9ef">int</span> xVal) { x <span style="color:#f92672">=</span> xVal; }
-    <span style="color:#66d9ef">void</span> <span style="color:#a6e22e">setY</span>(<span style="color:#66d9ef">int</span> yVal) { y <span style="color:#f92672">=</span> yVal; }
-
-<span style="color:#66d9ef">private</span><span style="color:#f92672">:</span>
-    <span style="color:#66d9ef">int</span> x, y;
-};
-</code></pre></div><hr>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-cpp" data-lang="cpp"><span style="display:flex;"><span><span style="color:#66d9ef">class</span> <span style="color:#a6e22e">Point</span>                                       
+</span></span><span style="display:flex;"><span>{
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">public</span><span style="color:#f92672">:</span>
+</span></span><span style="display:flex;"><span>    Point(<span style="color:#66d9ef">int</span> xVal <span style="color:#f92672">=</span> <span style="color:#ae81ff">0</span>, <span style="color:#66d9ef">int</span> yVal <span style="color:#f92672">=</span> <span style="color:#ae81ff">0</span>) <span style="color:#f92672">:</span>x(xVal), y(yVal) { }
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">int</span> <span style="color:#a6e22e">getX</span>() <span style="color:#66d9ef">const</span> { <span style="color:#66d9ef">return</span> x; }
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">int</span> <span style="color:#a6e22e">getY</span>() <span style="color:#66d9ef">const</span> { <span style="color:#66d9ef">return</span> y; }
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">void</span> <span style="color:#a6e22e">setX</span>(<span style="color:#66d9ef">int</span> xVal) { x <span style="color:#f92672">=</span> xVal; }
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">void</span> <span style="color:#a6e22e">setY</span>(<span style="color:#66d9ef">int</span> yVal) { y <span style="color:#f92672">=</span> yVal; }
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">private</span><span style="color:#f92672">:</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">int</span> x, y;
+</span></span><span style="display:flex;"><span>};
+</span></span></code></pre></div><hr>
 <h3 id="辅助类">辅助类</h3>
 <p>在创建智能指针类之前，我们先创建一个辅助类。<font color=red>这个类的所有成员皆为私有类型，因为它不被普通用户所使用</font>。为了只为智能指针使用，还需要把智能指针类声明为<font color=Blue>辅助类的友元</font>。这个辅助类含有两个数据成员：计数<code>count</code>与基础对象指针。</font>也即辅助类用以封装使用计数与基础对象指针。</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-cpp" data-lang="cpp"><span style="color:#66d9ef">class</span> <span style="color:#a6e22e">U_Ptr</span>                                  
-{
-<span style="color:#66d9ef">private</span><span style="color:#f92672">:</span>
-    
-    <span style="color:#66d9ef">friend</span> <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">SmartPtr</span>;      
-    U_Ptr(Point <span style="color:#f92672">*</span>ptr) <span style="color:#f92672">:</span>p(ptr), count(<span style="color:#ae81ff">1</span>) { }
-    <span style="color:#f92672">~</span>U_Ptr() { <span style="color:#66d9ef">delete</span> p; }
-    
-    <span style="color:#66d9ef">int</span> count;   
-    Point <span style="color:#f92672">*</span>p;                                                      
-};
-</code></pre></div><hr>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-cpp" data-lang="cpp"><span style="display:flex;"><span><span style="color:#66d9ef">class</span> <span style="color:#a6e22e">U_Ptr</span>                                  
+</span></span><span style="display:flex;"><span>{
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">private</span><span style="color:#f92672">:</span>
+</span></span><span style="display:flex;"><span>    
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">friend</span> <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">SmartPtr</span>;      
+</span></span><span style="display:flex;"><span>    U_Ptr(Point <span style="color:#f92672">*</span>ptr) <span style="color:#f92672">:</span>p(ptr), count(<span style="color:#ae81ff">1</span>) { }
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">~</span>U_Ptr() { <span style="color:#66d9ef">delete</span> p; }
+</span></span><span style="display:flex;"><span>    
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">int</span> count;   
+</span></span><span style="display:flex;"><span>    Point <span style="color:#f92672">*</span>p;                                                      
+</span></span><span style="display:flex;"><span>};
+</span></span></code></pre></div><hr>
 <h3 id="智能指针类">智能指针类</h3>
 <p>引用计数是实现智能指针的一种通用方法。智能指针将一个计数器与类指向的对象相关联，引用计数跟踪共有多少个类对象共享同一指针。它的具体做法如下：</p>
 <ul>
@@ -330,140 +330,140 @@ cout <span style="color:#f92672">&lt;&lt;</span> <span style="color:#f92672">*</
 <p>析构函数：调用析构函数时，析构函数先使引用计数减<code>1</code>，如果减至<code>0</code>则<code>delete</code>对象。</p>
 </li>
 </ul>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-cpp" data-lang="cpp"><span style="color:#66d9ef">class</span> <span style="color:#a6e22e">SmartPtr</span> {
- <span style="color:#66d9ef">public</span><span style="color:#f92672">:</span>
-  SmartPtr(Point <span style="color:#f92672">*</span>ptr) <span style="color:#f92672">:</span> rp(<span style="color:#66d9ef">new</span> U_Ptr(ptr)) {}
-  SmartPtr(<span style="color:#66d9ef">const</span> SmartPtr <span style="color:#f92672">&amp;</span>sp) <span style="color:#f92672">:</span> rp(sp.rp) { <span style="color:#f92672">++</span>rp<span style="color:#f92672">-&gt;</span>count; }
-  SmartPtr <span style="color:#f92672">&amp;</span><span style="color:#66d9ef">operator</span><span style="color:#f92672">=</span>(<span style="color:#66d9ef">const</span> SmartPtr <span style="color:#f92672">&amp;</span>rhs) {
-    <span style="color:#f92672">++</span>rhs.rp<span style="color:#f92672">-&gt;</span>count;
-    <span style="color:#66d9ef">if</span> (<span style="color:#f92672">--</span>rp<span style="color:#f92672">-&gt;</span>count <span style="color:#f92672">==</span> <span style="color:#ae81ff">0</span>) <span style="color:#66d9ef">delete</span> rp;
-    rp <span style="color:#f92672">=</span> rhs.rp;
-    <span style="color:#66d9ef">return</span> <span style="color:#f92672">*</span><span style="color:#66d9ef">this</span>;
-  }
-  <span style="color:#f92672">~</span>SmartPtr() {
-    <span style="color:#66d9ef">if</span> (<span style="color:#f92672">--</span>rp<span style="color:#f92672">-&gt;</span>count <span style="color:#f92672">==</span> <span style="color:#ae81ff">0</span>)
-      <span style="color:#66d9ef">delete</span> rp;
-    <span style="color:#66d9ef">else</span>
-      cout <span style="color:#f92672">&lt;&lt;</span> <span style="color:#e6db74">&#34;还有&#34;</span> <span style="color:#f92672">&lt;&lt;</span> rp<span style="color:#f92672">-&gt;</span>count <span style="color:#f92672">&lt;&lt;</span> <span style="color:#e6db74">&#34;个指针指向基础对象&#34;</span> <span style="color:#f92672">&lt;&lt;</span> endl;
-  }
-
- <span style="color:#66d9ef">private</span><span style="color:#f92672">:</span>
-  U_Ptr <span style="color:#f92672">*</span>rp;  
-};
-</code></pre></div><hr>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-cpp" data-lang="cpp"><span style="display:flex;"><span><span style="color:#66d9ef">class</span> <span style="color:#a6e22e">SmartPtr</span> {
+</span></span><span style="display:flex;"><span> <span style="color:#66d9ef">public</span><span style="color:#f92672">:</span>
+</span></span><span style="display:flex;"><span>  SmartPtr(Point <span style="color:#f92672">*</span>ptr) <span style="color:#f92672">:</span> rp(<span style="color:#66d9ef">new</span> U_Ptr(ptr)) {}
+</span></span><span style="display:flex;"><span>  SmartPtr(<span style="color:#66d9ef">const</span> SmartPtr <span style="color:#f92672">&amp;</span>sp) <span style="color:#f92672">:</span> rp(sp.rp) { <span style="color:#f92672">++</span>rp<span style="color:#f92672">-&gt;</span>count; }
+</span></span><span style="display:flex;"><span>  SmartPtr <span style="color:#f92672">&amp;</span><span style="color:#66d9ef">operator</span><span style="color:#f92672">=</span>(<span style="color:#66d9ef">const</span> SmartPtr <span style="color:#f92672">&amp;</span>rhs) {
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">++</span>rhs.rp<span style="color:#f92672">-&gt;</span>count;
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">if</span> (<span style="color:#f92672">--</span>rp<span style="color:#f92672">-&gt;</span>count <span style="color:#f92672">==</span> <span style="color:#ae81ff">0</span>) <span style="color:#66d9ef">delete</span> rp;
+</span></span><span style="display:flex;"><span>    rp <span style="color:#f92672">=</span> rhs.rp;
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">return</span> <span style="color:#f92672">*</span><span style="color:#66d9ef">this</span>;
+</span></span><span style="display:flex;"><span>  }
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">~</span>SmartPtr() {
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">if</span> (<span style="color:#f92672">--</span>rp<span style="color:#f92672">-&gt;</span>count <span style="color:#f92672">==</span> <span style="color:#ae81ff">0</span>)
+</span></span><span style="display:flex;"><span>      <span style="color:#66d9ef">delete</span> rp;
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">else</span>
+</span></span><span style="display:flex;"><span>      cout <span style="color:#f92672">&lt;&lt;</span> <span style="color:#e6db74">&#34;还有&#34;</span> <span style="color:#f92672">&lt;&lt;</span> rp<span style="color:#f92672">-&gt;</span>count <span style="color:#f92672">&lt;&lt;</span> <span style="color:#e6db74">&#34;个指针指向基础对象&#34;</span> <span style="color:#f92672">&lt;&lt;</span> endl;
+</span></span><span style="display:flex;"><span>  }
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span> <span style="color:#66d9ef">private</span><span style="color:#f92672">:</span>
+</span></span><span style="display:flex;"><span>  U_Ptr <span style="color:#f92672">*</span>rp;  
+</span></span><span style="display:flex;"><span>};
+</span></span></code></pre></div><hr>
 <h3 id="使用与测试">使用与测试</h3>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-cpp" data-lang="cpp"><span style="color:#66d9ef">int</span> <span style="color:#a6e22e">main</span>() {
-  Point <span style="color:#f92672">*</span>pa <span style="color:#f92672">=</span> <span style="color:#66d9ef">new</span> Point(<span style="color:#ae81ff">10</span>, <span style="color:#ae81ff">20</span>);  <span style="color:#75715e">//定义一个基础对象类指针
-</span><span style="color:#75715e"></span>  <span style="color:#75715e">//定义三个智能指针类对象，对象都指向基础类对象pa
-</span><span style="color:#75715e"></span>  <span style="color:#75715e">//使用花括号控制三个指针指针的生命期，观察计数的变化
-</span><span style="color:#75715e"></span>  {
-    SmartPtr sptr1(pa);  <span style="color:#75715e">//此时计数count=1
-</span><span style="color:#75715e"></span>    {
-      SmartPtr sptr2(sptr1);  <span style="color:#75715e">//调用复制构造函数，此时计数为count=2
-</span><span style="color:#75715e"></span>      {
-        SmartPtr sptr3 <span style="color:#f92672">=</span> sptr1;  <span style="color:#75715e">//调用赋值操作符，此时计数为conut=3
-</span><span style="color:#75715e"></span>      }                          <span style="color:#75715e">//此时count=2
-</span><span style="color:#75715e"></span>    }                            <span style="color:#75715e">//此时count=1；
-</span><span style="color:#75715e"></span>  }                              <span style="color:#75715e">//此时count=0；pa对象被delete掉
-</span><span style="color:#75715e"></span>  cout <span style="color:#f92672">&lt;&lt;</span> pa<span style="color:#f92672">-&gt;</span>getX() <span style="color:#f92672">&lt;&lt;</span> endl;
-  
-  <span style="color:#66d9ef">return</span> <span style="color:#ae81ff">0</span>;
-}
-</code></pre></div><hr>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-cpp" data-lang="cpp"><span style="display:flex;"><span><span style="color:#66d9ef">int</span> <span style="color:#a6e22e">main</span>() {
+</span></span><span style="display:flex;"><span>  Point <span style="color:#f92672">*</span>pa <span style="color:#f92672">=</span> <span style="color:#66d9ef">new</span> Point(<span style="color:#ae81ff">10</span>, <span style="color:#ae81ff">20</span>);  <span style="color:#75715e">//定义一个基础对象类指针
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>  <span style="color:#75715e">//定义三个智能指针类对象，对象都指向基础类对象pa
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>  <span style="color:#75715e">//使用花括号控制三个指针指针的生命期，观察计数的变化
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>  {
+</span></span><span style="display:flex;"><span>    SmartPtr sptr1(pa);  <span style="color:#75715e">//此时计数count=1
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    {
+</span></span><span style="display:flex;"><span>      SmartPtr sptr2(sptr1);  <span style="color:#75715e">//调用复制构造函数，此时计数为count=2
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>      {
+</span></span><span style="display:flex;"><span>        SmartPtr sptr3 <span style="color:#f92672">=</span> sptr1;  <span style="color:#75715e">//调用赋值操作符，此时计数为conut=3
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>      }                          <span style="color:#75715e">//此时count=2
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    }                            <span style="color:#75715e">//此时count=1；
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>  }                              <span style="color:#75715e">//此时count=0；pa对象被delete掉
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>  cout <span style="color:#f92672">&lt;&lt;</span> pa<span style="color:#f92672">-&gt;</span>getX() <span style="color:#f92672">&lt;&lt;</span> endl;
+</span></span><span style="display:flex;"><span>  
+</span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">return</span> <span style="color:#ae81ff">0</span>;
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><hr>
 <h3 id="改进一">改进一</h3>
 <p>虽然此时的<code>SmartPtr</code>类称为智能指针，但它目前并不能像真正的指针那样有-&gt;、*等操作符，为了使它看起来更像一个指针，我们来为它重载这些操作符。代码如下所示：</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-cpp" data-lang="cpp"><span style="color:#66d9ef">class</span> <span style="color:#a6e22e">SmartPtr</span>
-{
-<span style="color:#66d9ef">public</span><span style="color:#f92672">:</span>
-    SmartPtr(Point <span style="color:#f92672">*</span>ptr) <span style="color:#f92672">:</span>rp(<span style="color:#66d9ef">new</span> U_Ptr(ptr)) { }    
-    SmartPtr(<span style="color:#66d9ef">const</span> SmartPtr <span style="color:#f92672">&amp;</span>sp) <span style="color:#f92672">:</span>rp(sp.rp) { <span style="color:#f92672">++</span>rp<span style="color:#f92672">-&gt;</span>count; }
-    SmartPtr<span style="color:#f92672">&amp;</span> <span style="color:#66d9ef">operator</span><span style="color:#f92672">=</span>(<span style="color:#66d9ef">const</span> SmartPtr<span style="color:#f92672">&amp;</span> rhs) {    
-        <span style="color:#f92672">++</span>rhs.rp<span style="color:#f92672">-&gt;</span>count;    
-        <span style="color:#66d9ef">if</span> (<span style="color:#f92672">--</span>rp<span style="color:#f92672">-&gt;</span>count <span style="color:#f92672">==</span> <span style="color:#ae81ff">0</span>)    
-            <span style="color:#66d9ef">delete</span> rp;
-        rp <span style="color:#f92672">=</span> rhs.rp;
-        <span style="color:#66d9ef">return</span> <span style="color:#f92672">*</span><span style="color:#66d9ef">this</span>;
-    }
-    <span style="color:#f92672">~</span>SmartPtr() {       
-        <span style="color:#66d9ef">if</span> (<span style="color:#f92672">--</span>rp<span style="color:#f92672">-&gt;</span>count <span style="color:#f92672">==</span> <span style="color:#ae81ff">0</span>)   
-            <span style="color:#66d9ef">delete</span> rp;
-        <span style="color:#66d9ef">else</span> 
-        cout <span style="color:#f92672">&lt;&lt;</span> <span style="color:#e6db74">&#34;还有&#34;</span> <span style="color:#f92672">&lt;&lt;</span> rp<span style="color:#f92672">-&gt;</span>count <span style="color:#f92672">&lt;&lt;</span> <span style="color:#e6db74">&#34;个指针指向基础对象&#34;</span> <span style="color:#f92672">&lt;&lt;</span> endl;
-    }
-    
-    Point <span style="color:#f92672">&amp;</span> <span style="color:#66d9ef">operator</span> <span style="color:#f92672">*</span>()        <span style="color:#75715e">//重载*操作符  
-</span><span style="color:#75715e"></span>    {
-        <span style="color:#66d9ef">return</span> <span style="color:#f92672">*</span>(rp<span style="color:#f92672">-&gt;</span>p);
-    }
-    Point<span style="color:#f92672">*</span> <span style="color:#66d9ef">operator</span> <span style="color:#f92672">-&gt;</span>()       <span style="color:#75715e">//重载-&gt;操作符  
-</span><span style="color:#75715e"></span>    {
-        <span style="color:#66d9ef">return</span> rp<span style="color:#f92672">-&gt;</span>p;
-    }
-<span style="color:#66d9ef">private</span><span style="color:#f92672">:</span>
-    U_Ptr <span style="color:#f92672">*</span>rp;  
-};
-</code></pre></div><hr>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-cpp" data-lang="cpp"><span style="display:flex;"><span><span style="color:#66d9ef">class</span> <span style="color:#a6e22e">SmartPtr</span>
+</span></span><span style="display:flex;"><span>{
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">public</span><span style="color:#f92672">:</span>
+</span></span><span style="display:flex;"><span>    SmartPtr(Point <span style="color:#f92672">*</span>ptr) <span style="color:#f92672">:</span>rp(<span style="color:#66d9ef">new</span> U_Ptr(ptr)) { }    
+</span></span><span style="display:flex;"><span>    SmartPtr(<span style="color:#66d9ef">const</span> SmartPtr <span style="color:#f92672">&amp;</span>sp) <span style="color:#f92672">:</span>rp(sp.rp) { <span style="color:#f92672">++</span>rp<span style="color:#f92672">-&gt;</span>count; }
+</span></span><span style="display:flex;"><span>    SmartPtr<span style="color:#f92672">&amp;</span> <span style="color:#66d9ef">operator</span><span style="color:#f92672">=</span>(<span style="color:#66d9ef">const</span> SmartPtr<span style="color:#f92672">&amp;</span> rhs) {    
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">++</span>rhs.rp<span style="color:#f92672">-&gt;</span>count;    
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">if</span> (<span style="color:#f92672">--</span>rp<span style="color:#f92672">-&gt;</span>count <span style="color:#f92672">==</span> <span style="color:#ae81ff">0</span>)    
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">delete</span> rp;
+</span></span><span style="display:flex;"><span>        rp <span style="color:#f92672">=</span> rhs.rp;
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">return</span> <span style="color:#f92672">*</span><span style="color:#66d9ef">this</span>;
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">~</span>SmartPtr() {       
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">if</span> (<span style="color:#f92672">--</span>rp<span style="color:#f92672">-&gt;</span>count <span style="color:#f92672">==</span> <span style="color:#ae81ff">0</span>)   
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">delete</span> rp;
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">else</span> 
+</span></span><span style="display:flex;"><span>        cout <span style="color:#f92672">&lt;&lt;</span> <span style="color:#e6db74">&#34;还有&#34;</span> <span style="color:#f92672">&lt;&lt;</span> rp<span style="color:#f92672">-&gt;</span>count <span style="color:#f92672">&lt;&lt;</span> <span style="color:#e6db74">&#34;个指针指向基础对象&#34;</span> <span style="color:#f92672">&lt;&lt;</span> endl;
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>    
+</span></span><span style="display:flex;"><span>    Point <span style="color:#f92672">&amp;</span> <span style="color:#66d9ef">operator</span> <span style="color:#f92672">*</span>()        <span style="color:#75715e">//重载*操作符  
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    {
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">return</span> <span style="color:#f92672">*</span>(rp<span style="color:#f92672">-&gt;</span>p);
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>    Point<span style="color:#f92672">*</span> <span style="color:#66d9ef">operator</span> <span style="color:#f92672">-&gt;</span>()       <span style="color:#75715e">//重载-&gt;操作符  
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    {
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">return</span> rp<span style="color:#f92672">-&gt;</span>p;
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">private</span><span style="color:#f92672">:</span>
+</span></span><span style="display:flex;"><span>    U_Ptr <span style="color:#f92672">*</span>rp;  
+</span></span><span style="display:flex;"><span>};
+</span></span></code></pre></div><hr>
 <h3 id="改进二">改进二</h3>
 <p>目前这个智能指针智能用于管理<code>Point</code>类的基础对象，如果此时定义了个矩阵的基础对象类，那不是还得重新写一个属于矩阵类的智能指针类吗？但是矩阵类的智能指针类设计思想和<code>Point</code>类一样啊，就不能借用吗？答案当然是能，那就是使用模板技术。</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-cpp" data-lang="cpp"><span style="color:#75715e">//模板类作为友元时要先有声明
-</span><span style="color:#75715e"></span><span style="color:#66d9ef">template</span> <span style="color:#f92672">&lt;</span><span style="color:#66d9ef">typename</span> T<span style="color:#f92672">&gt;</span>
-<span style="color:#66d9ef">class</span> <span style="color:#a6e22e">SmartPtr</span>;
-
-<span style="color:#66d9ef">template</span> <span style="color:#f92672">&lt;</span><span style="color:#66d9ef">typename</span> T<span style="color:#f92672">&gt;</span>
-<span style="color:#66d9ef">class</span> <span style="color:#a6e22e">U_Ptr</span>  <span style="color:#75715e">//辅助类
-</span><span style="color:#75715e"></span>{
- <span style="color:#66d9ef">private</span><span style="color:#f92672">:</span>
-  <span style="color:#75715e">//该类成员访问权限全部为private，因为不想让用户直接使用该类
-</span><span style="color:#75715e"></span>  <span style="color:#66d9ef">friend</span> <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">SmartPtr</span><span style="color:#f92672">&lt;</span>
-      T<span style="color:#f92672">&gt;</span>;  <span style="color:#75715e">//定义智能指针类为友元，因为智能指针类需要直接操纵辅助类
-</span><span style="color:#75715e"></span>
-  <span style="color:#75715e">//构造函数的参数为基础对象的指针
-</span><span style="color:#75715e"></span>  U_Ptr(T <span style="color:#f92672">*</span>ptr) <span style="color:#f92672">:</span> p(ptr), count(<span style="color:#ae81ff">1</span>) {}
-
-  <span style="color:#75715e">//析构函数
-</span><span style="color:#75715e"></span>  <span style="color:#f92672">~</span>U_Ptr() { <span style="color:#66d9ef">delete</span> p; }
-  <span style="color:#75715e">//引用计数
-</span><span style="color:#75715e"></span>  <span style="color:#66d9ef">int</span> count;
-
-  <span style="color:#75715e">//基础对象指针
-</span><span style="color:#75715e"></span>  T <span style="color:#f92672">*</span>p;
-};
-
-<span style="color:#66d9ef">template</span> <span style="color:#f92672">&lt;</span><span style="color:#66d9ef">typename</span> T<span style="color:#f92672">&gt;</span>
-<span style="color:#66d9ef">class</span> <span style="color:#a6e22e">SmartPtr</span>  <span style="color:#75715e">//智能指针类
-</span><span style="color:#75715e"></span>{
- <span style="color:#66d9ef">public</span><span style="color:#f92672">:</span>
-  SmartPtr(T <span style="color:#f92672">*</span>ptr) <span style="color:#f92672">:</span> rp(<span style="color:#66d9ef">new</span> U_Ptr<span style="color:#f92672">&lt;</span>T<span style="color:#f92672">&gt;</span>(ptr)) {}                   <span style="color:#75715e">//构造函数
-</span><span style="color:#75715e"></span>  SmartPtr(<span style="color:#66d9ef">const</span> SmartPtr<span style="color:#f92672">&lt;</span>T<span style="color:#f92672">&gt;</span> <span style="color:#f92672">&amp;</span>sp) <span style="color:#f92672">:</span> rp(sp.rp) { <span style="color:#f92672">++</span>rp<span style="color:#f92672">-&gt;</span>count; }  <span style="color:#75715e">//复制构造函数
-</span><span style="color:#75715e"></span>  SmartPtr <span style="color:#f92672">&amp;</span><span style="color:#66d9ef">operator</span><span style="color:#f92672">=</span>(<span style="color:#66d9ef">const</span> SmartPtr<span style="color:#f92672">&lt;</span>T<span style="color:#f92672">&gt;</span> <span style="color:#f92672">&amp;</span>rhs) {  <span style="color:#75715e">//重载赋值操作符
-</span><span style="color:#75715e"></span>    <span style="color:#f92672">++</span>rhs.rp<span style="color:#f92672">-&gt;</span>count;       <span style="color:#75715e">//首先将右操作数引用计数加1，
-</span><span style="color:#75715e"></span>    <span style="color:#66d9ef">if</span> (<span style="color:#f92672">--</span>rp<span style="color:#f92672">-&gt;</span>count <span style="color:#f92672">==</span> <span style="color:#ae81ff">0</span>)  <span style="color:#75715e">//然后将引用计数减1，可以应对自赋值
-</span><span style="color:#75715e"></span>      <span style="color:#66d9ef">delete</span> rp;
-    rp <span style="color:#f92672">=</span> rhs.rp;
-    <span style="color:#66d9ef">return</span> <span style="color:#f92672">*</span><span style="color:#66d9ef">this</span>;
-  }
-
-  T <span style="color:#f92672">&amp;</span><span style="color:#66d9ef">operator</span><span style="color:#f92672">*</span>()  <span style="color:#75715e">//重载*操作符
-</span><span style="color:#75715e"></span>  {
-    <span style="color:#66d9ef">return</span> <span style="color:#f92672">*</span>(rp<span style="color:#f92672">-&gt;</span>p);
-  }
-  T <span style="color:#f92672">*</span><span style="color:#66d9ef">operator</span><span style="color:#f92672">-&gt;</span>()  <span style="color:#75715e">//重载-&gt;操作符
-</span><span style="color:#75715e"></span>  {
-    <span style="color:#66d9ef">return</span> rp<span style="color:#f92672">-&gt;</span>p;
-  }
-
-  <span style="color:#f92672">~</span>SmartPtr() {  <span style="color:#75715e">//析构函数
-</span><span style="color:#75715e"></span>    <span style="color:#66d9ef">if</span> (<span style="color:#f92672">--</span>rp<span style="color:#f92672">-&gt;</span>count <span style="color:#f92672">==</span>
-        <span style="color:#ae81ff">0</span>)  <span style="color:#75715e">//当引用计数减为0时，删除辅助类对象指针，从而删除基础对象
-</span><span style="color:#75715e"></span>      <span style="color:#66d9ef">delete</span> rp;
-    <span style="color:#66d9ef">else</span>
-      cout <span style="color:#f92672">&lt;&lt;</span> <span style="color:#e6db74">&#34;还有&#34;</span> <span style="color:#f92672">&lt;&lt;</span> rp<span style="color:#f92672">-&gt;</span>count <span style="color:#f92672">&lt;&lt;</span> <span style="color:#e6db74">&#34;个指针指向基础对象&#34;</span> <span style="color:#f92672">&lt;&lt;</span> endl;
-  }
-
- <span style="color:#66d9ef">private</span><span style="color:#f92672">:</span>
-  U_Ptr<span style="color:#f92672">&lt;</span>T<span style="color:#f92672">&gt;</span> <span style="color:#f92672">*</span>rp;  <span style="color:#75715e">//辅助类对象指针
-</span><span style="color:#75715e"></span>};
-</code></pre></div><hr>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-cpp" data-lang="cpp"><span style="display:flex;"><span><span style="color:#75715e">//模板类作为友元时要先有声明
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">template</span> <span style="color:#f92672">&lt;</span><span style="color:#66d9ef">typename</span> T<span style="color:#f92672">&gt;</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">class</span> <span style="color:#a6e22e">SmartPtr</span>;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">template</span> <span style="color:#f92672">&lt;</span><span style="color:#66d9ef">typename</span> T<span style="color:#f92672">&gt;</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">class</span> <span style="color:#a6e22e">U_Ptr</span>  <span style="color:#75715e">//辅助类
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>{
+</span></span><span style="display:flex;"><span> <span style="color:#66d9ef">private</span><span style="color:#f92672">:</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#75715e">//该类成员访问权限全部为private，因为不想让用户直接使用该类
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>  <span style="color:#66d9ef">friend</span> <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">SmartPtr</span><span style="color:#f92672">&lt;</span>
+</span></span><span style="display:flex;"><span>      T<span style="color:#f92672">&gt;</span>;  <span style="color:#75715e">//定义智能指针类为友元，因为智能指针类需要直接操纵辅助类
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>
+</span></span><span style="display:flex;"><span>  <span style="color:#75715e">//构造函数的参数为基础对象的指针
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>  U_Ptr(T <span style="color:#f92672">*</span>ptr) <span style="color:#f92672">:</span> p(ptr), count(<span style="color:#ae81ff">1</span>) {}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>  <span style="color:#75715e">//析构函数
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>  <span style="color:#f92672">~</span>U_Ptr() { <span style="color:#66d9ef">delete</span> p; }
+</span></span><span style="display:flex;"><span>  <span style="color:#75715e">//引用计数
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>  <span style="color:#66d9ef">int</span> count;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>  <span style="color:#75715e">//基础对象指针
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>  T <span style="color:#f92672">*</span>p;
+</span></span><span style="display:flex;"><span>};
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">template</span> <span style="color:#f92672">&lt;</span><span style="color:#66d9ef">typename</span> T<span style="color:#f92672">&gt;</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">class</span> <span style="color:#a6e22e">SmartPtr</span>  <span style="color:#75715e">//智能指针类
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>{
+</span></span><span style="display:flex;"><span> <span style="color:#66d9ef">public</span><span style="color:#f92672">:</span>
+</span></span><span style="display:flex;"><span>  SmartPtr(T <span style="color:#f92672">*</span>ptr) <span style="color:#f92672">:</span> rp(<span style="color:#66d9ef">new</span> U_Ptr<span style="color:#f92672">&lt;</span>T<span style="color:#f92672">&gt;</span>(ptr)) {}                   <span style="color:#75715e">//构造函数
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>  SmartPtr(<span style="color:#66d9ef">const</span> SmartPtr<span style="color:#f92672">&lt;</span>T<span style="color:#f92672">&gt;</span> <span style="color:#f92672">&amp;</span>sp) <span style="color:#f92672">:</span> rp(sp.rp) { <span style="color:#f92672">++</span>rp<span style="color:#f92672">-&gt;</span>count; }  <span style="color:#75715e">//复制构造函数
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>  SmartPtr <span style="color:#f92672">&amp;</span><span style="color:#66d9ef">operator</span><span style="color:#f92672">=</span>(<span style="color:#66d9ef">const</span> SmartPtr<span style="color:#f92672">&lt;</span>T<span style="color:#f92672">&gt;</span> <span style="color:#f92672">&amp;</span>rhs) {  <span style="color:#75715e">//重载赋值操作符
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#f92672">++</span>rhs.rp<span style="color:#f92672">-&gt;</span>count;       <span style="color:#75715e">//首先将右操作数引用计数加1，
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#66d9ef">if</span> (<span style="color:#f92672">--</span>rp<span style="color:#f92672">-&gt;</span>count <span style="color:#f92672">==</span> <span style="color:#ae81ff">0</span>)  <span style="color:#75715e">//然后将引用计数减1，可以应对自赋值
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>      <span style="color:#66d9ef">delete</span> rp;
+</span></span><span style="display:flex;"><span>    rp <span style="color:#f92672">=</span> rhs.rp;
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">return</span> <span style="color:#f92672">*</span><span style="color:#66d9ef">this</span>;
+</span></span><span style="display:flex;"><span>  }
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>  T <span style="color:#f92672">&amp;</span><span style="color:#66d9ef">operator</span><span style="color:#f92672">*</span>()  <span style="color:#75715e">//重载*操作符
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>  {
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">return</span> <span style="color:#f92672">*</span>(rp<span style="color:#f92672">-&gt;</span>p);
+</span></span><span style="display:flex;"><span>  }
+</span></span><span style="display:flex;"><span>  T <span style="color:#f92672">*</span><span style="color:#66d9ef">operator</span><span style="color:#f92672">-&gt;</span>()  <span style="color:#75715e">//重载-&gt;操作符
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>  {
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">return</span> rp<span style="color:#f92672">-&gt;</span>p;
+</span></span><span style="display:flex;"><span>  }
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">~</span>SmartPtr() {  <span style="color:#75715e">//析构函数
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#66d9ef">if</span> (<span style="color:#f92672">--</span>rp<span style="color:#f92672">-&gt;</span>count <span style="color:#f92672">==</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#ae81ff">0</span>)  <span style="color:#75715e">//当引用计数减为0时，删除辅助类对象指针，从而删除基础对象
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>      <span style="color:#66d9ef">delete</span> rp;
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">else</span>
+</span></span><span style="display:flex;"><span>      cout <span style="color:#f92672">&lt;&lt;</span> <span style="color:#e6db74">&#34;还有&#34;</span> <span style="color:#f92672">&lt;&lt;</span> rp<span style="color:#f92672">-&gt;</span>count <span style="color:#f92672">&lt;&lt;</span> <span style="color:#e6db74">&#34;个指针指向基础对象&#34;</span> <span style="color:#f92672">&lt;&lt;</span> endl;
+</span></span><span style="display:flex;"><span>  }
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span> <span style="color:#66d9ef">private</span><span style="color:#f92672">:</span>
+</span></span><span style="display:flex;"><span>  U_Ptr<span style="color:#f92672">&lt;</span>T<span style="color:#f92672">&gt;</span> <span style="color:#f92672">*</span>rp;  <span style="color:#75715e">//辅助类对象指针
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>};
+</span></span></code></pre></div><hr>
 
     </div>
     <footer class="post-footer">
