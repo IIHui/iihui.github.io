@@ -175,20 +175,22 @@ public extension WKWebView {   static func cleanCache(url: URL) {   HTTPCookieSt
         <title>Parallels Desktop 使用</title>
         <url>https://iihui.github.io/post/tool-parallel/</url>
         <categories>
-          <category>iOS</category>
+          <category>tool</category>
         </categories>
         <tags>
-          <tag>iOS</tag>
+          <tag>tool</tag>
         </tags>
-        <content type="html"> Parallels Desktop 17.1.1 使用Parallels Desktop安装Windows 10虚拟机时出现报错信息：NetWork initialization failed...，具体信息如下图所示：
+        <content type="html"> 安装Windows 使用Parallels Desktop 17.1.1安装Windows 10虚拟机时出现报错信息：NetWork initialization failed...，具体信息如下图所示：
 参考这篇文章，此时需要以管理员身份修改/Library/Preferences/Parallels/network.desktop.xml文件。即将文件中的UseKextless对应的值改为0:
 按照上面方法改完之后，亲测不会再出现上面所示的报错。但在安装过程中又出现了Operation Failed. Failed to execute the operation.错误信息。参考这个视频，首先需要在菜单栏选中Action---&amp;gt;Configure，如下图所示：
 然后依次选中Hardware---&amp;gt;CPU &amp;amp; Memory---&amp;gt;Advanced，最后在弹出的设置框中将Hypevisor中更改为Parallels，步骤如下图所示：
-IIS部署应用 使用IIS部署Web应用时，首先应当创建一个应用池，以免需要重启时影响其它的应用。如下图所示，先添加一个YY应用池，然后在Default Web Site下新建一个应用，如下图第2和第3步所示：
-重启Default Web Site后如果点击某个目录，出现如下图所示的错误，那大概率就是IIS的设置不对。需要将World Wide Web Services目录下的Application Development Features下的ASP勾选：
+虚拟网络 Parallels里的桥接模式下，虚拟机可以和宿主机通信，可以和与宿主机同一局域网内且同一网段的其它设备通信，多个虚拟机之间也可以相互通信，也可以连接互联网，等于为虚拟机新分配了一个局域网地。
+但是这种模式下有一个问题，如果用的是笔记本电脑，当笔记本的网络环境变了以后，虚拟机ip地址也会改变。虽然可以在虚拟机内设置固定ip，但宿主机的网段一旦改变，之前虚拟机设置的固定ip如果和宿主机不处于同一网段下的话，还是无法实现通信。
+网段发生变更的时候，如果虚拟机不固定ip，每次开机都需要先查看虚拟机的ip地址，然后才能远程连接，这样太麻烦了。固定ip的话，因为宿主机的网段会变，而且不固定，又无法实现通信。所以这种模式显然不适合宿主机ip不固定的情况。
+先来整理一下需求：
+ 宿主机和虚拟机之间可以正常通信。 多个虚拟机之间可以正常通信。 宿主机同一局域网下且网段相同的设备可以和虚拟机之间实现通信。 虚拟机可以正常连接互联网。  解决方案。首先在Parallels的Prefrences–-&amp;gt;Network中，勾选Enable IPv4 DHCP，设置好起始地址和结束地址：
+设置完好之后，就可以使用ifconfig命令查看虚拟机的ip地址:
 参考资料
-重启之后访问一下网站，最后以管理员身份运行Rider后在菜单栏选择Run---&amp;gt;Attach to Process选项，并在弹出的窗口中选择w3wp ... YY，然后打个断点，如果断点是变成了实心，则说明是成功的，否则失败:
-如果Attach失败，需要先清理工程，然后重现编译，并且将Default Web Site重启一下，最后再打开(访问)一下部署的网页，回到Rider后再重新使用Attach to Process即可。
 </content>
     </entry>
     
@@ -203,10 +205,15 @@ IIS部署应用 使用IIS部署Web应用时，首先应当创建一个应用池�
         </tags>
         <content type="html"> CrossOver 苹果上的CrossOver软件可以安装Windows软件，按理来说可以在CrossOver安装Rider 2021.3.3。因为Rider 2021.3.3只支持64位，如果要在CrossOver安装Rider，首先需要安装64位的Win7 Bottle或者64位的Win 10 Bottle。
 因为Rider 2021.3.3依赖.NET Framework，所以需要在新安装的Bottle中安装.NET Framework 4.7.2，这样才能正常安装Rider 2021.3.3。安装完.NET Framework 4.7.2后，就能正常安装Rider 2021.3.3：
-IISExpress 如果想把Rider中的工程发布到IIS Express，可以参考这篇文章。若下载安装IISExpress后出现Cannot open assembly &#39;C:/Program Files (x86)/IIS Express/iisexpress.exe&#39;: File does not contain a valid CIL image错误。
+IIS Express 如果想把Rider中的工程发布到IIS Express，可以参考这篇文章。若下载安装IISExpress后出现Cannot open assembly &#39;C:/Program Files (x86)/IIS Express/iisexpress.exe&#39;: File does not contain a valid CIL image错误。
 如果发布的时候出现：IIS express请求已结束: http://localhost:52915/，且HTTP状态码为403.14，那么就要按照这篇文章操作。
 未能从程序集“System.ServiceModel..加载 如果发布.Net应用后出现如下所示的报错，可以参考这篇文章解决：
 离线安装数据库驱动 因为在内网无法安装数据库驱动，因此需要先从互联网下载驱动jar文件，然后在Data Sources and Drivers中选中某个数据库，再在Driver Files下面选中Custom JARs，导入下载的驱动文件即可：
+IIS部署应用 使用IIS部署Web应用时，首先应当创建一个应用池，以免需要重启时影响其它的应用。如下图所示，先添加一个YY应用池，然后在Default Web Site下新建一个应用，如下图第2和第3步所示：
+重启Default Web Site后如果点击某个目录，出现如下图所示的错误，那大概率就是IIS的设置不对。需要将World Wide Web Services目录下的Application Development Features下的ASP勾选：
+参考资料
+重启之后访问一下网站，最后以管理员身份运行Rider后在菜单栏选择Run---&amp;gt;Attach to Process选项，并在弹出的窗口中选择w3wp ... YY，然后打个断点，如果断点是变成了实心，则说明是成功的，否则失败:
+如果Attach失败，需要先清理工程，然后重现编译，并且将Default Web Site重启一下，最后再打开(访问)一下部署的网页，回到Rider后再重新使用Attach to Process即可。
 </content>
     </entry>
     
