@@ -188,9 +188,8 @@ public extension WKWebView {   static func cleanCache(url: URL) {   HTTPCookieSt
 但是这种模式下有一个问题，如果用的是笔记本电脑，当笔记本的网络环境变了以后，虚拟机ip地址也会改变。虽然可以在虚拟机内设置固定ip，但宿主机的网段一旦改变，之前虚拟机设置的固定ip如果和宿主机不处于同一网段下的话，还是无法实现通信。
 网段发生变更的时候，如果虚拟机不固定ip，每次开机都需要先查看虚拟机的ip地址，然后才能远程连接，这样太麻烦了。固定ip的话，因为宿主机的网段会变，而且不固定，又无法实现通信。所以这种模式显然不适合宿主机ip不固定的情况。
 先来整理一下需求：
- 宿主机和虚拟机之间可以正常通信。 多个虚拟机之间可以正常通信。 宿主机同一局域网下且网段相同的设备可以和虚拟机之间实现通信。 虚拟机可以正常连接互联网。  解决方案。首先在Parallels的Prefrences–-&amp;gt;Network中，勾选Enable IPv4 DHCP，设置好起始地址和结束地址：
+ 宿主机和虚拟机之间可以正常通信。 多个虚拟机之间可以正常通信。 宿主机同一局域网下且网段相同的设备可以和虚拟机之间实现通信。 虚拟机可以正常连接互联网。  参考资料这篇文章的解决方案，首先在Parallels的Prefrences–-&amp;gt;Network中勾选Enable IPv4 DHCP，设置好起始地址和结束地址：
 设置完好之后，就可以使用ifconfig命令查看虚拟机的ip地址:
-参考资料
 </content>
     </entry>
     
@@ -1313,6 +1312,19 @@ extension ContactsRequestAPI: GB2312Convertor {  var responseDataIsGB2312Data: B
  Service Works 对于iOS来说Service Workers &#43; Web App Manifest = PWA
 PWA 参考资料 参考资料 参考资料 传闻即将支持 支持
 </content>
+    </entry>
+    
+     <entry>
+        <title>Programming for Beginners</title>
+        <url>https://iihui.github.io/post/ios-beginner/</url>
+        <categories>
+          <category>iOS</category>
+        </categories>
+        <tags>
+          <tag>iOS</tag>
+        </tags>
+        <content type="html"> 无线连接设备 将iOS设备拔出并重新插入Mac会变得相当麻烦，通过配置Xcode以通过WiFi连接到iOS设备可以实现调试功能。
+ 首先确保iOS设备已经插入到Mac电脑，并且Mac和iOS设备在同一局域网内 在Xcode菜单栏选择Window--&amp;gt;Device and Simulators。 选中Connect via network  </content>
     </entry>
     
      <entry>
@@ -2859,15 +2871,15 @@ range
         <tags>
           <tag>iOS</tag>
         </tags>
-        <content type="html">  项目中需要用百度语音合成SDK，因此自己先建了一个工程作为引入测试一下，总结下来为准备&amp;ndash;&amp;gt;导入&amp;ndash;&amp;gt;创建应用&amp;ndash;&amp;gt;测试。
+        <content type="html">  项目中需要用百度语音合成SDK，因此自己先建了一个Demo工程作为测试，总结下来为准备--&amp;gt; 导入 --&amp;gt; 创建应用 --&amp;gt; 测试。
  准备 首先从百度官网下载百度语音合成的SDK,如下图所示首先在左边选择语音合成，然后在右边选择iOS版的离在线融合SDK:
 导入 有两部分需要导入，第一部分是导入百度语音合成所需的文件，第二部分是导入百度语音合成依赖的框架，下面分别讲解：
 导入文件夹 接着新建一个测试工程，并将下载到的SDK解压，将下面的3个文件夹导入到项目中，3个文件夹的名称如下图所示:
 导入框架 百度语音依赖如下红框里标识的framework，因此需要在TARGETS--&amp;gt;Build Phases-&amp;gt;LikBinary With Libraries中将这些framework导入到项目中：
 创建应用 要使用百度语音合成，首先需要创建相关的应用，而创建应用的前提是有百度云帐号。注册好百度云帐号之后登录，在控制台选择百度语音：
 然后选择创建百度语音应用：
-接着填写相关信息，要注意的是语音包名要与测试工程的Bundle Identifier一致（称为绑定），才可以使用百度语音合成的离在线模式:
-测试代码 import UIKit  let APP_ID = &amp;#34;XXXXX&amp;#34; let API_KEY = &amp;#34;XXXXX&amp;#34; let SECRET_KEY = &amp;#34;XXXXX&amp;#34;  class ViewController: UIViewController, BDSSpeechSynthesizerDelegate {   fileprivate var synthesiser: BDSSpeechSynthesizer = BDSSpeechSynthesizer.sharedInstance()  @IBOutlet weak var synthesisButton: UIButton!  @IBOutlet weak var textView: UITextView!  @IBOutlet weak var offlineSwitch: UISwitch!   override func viewDidLoad() {  super.viewDidLoad()  BDSSpeechSynthesizer.setLogLevel(BDS_PUBLIC_LOG_VERBOSE)  self.synthesiser.setSynthesizerDelegate(self)  self.textView.delegate = self  self.configOffline()  }   @IBAction func clickedSynthesis(_ sender: UIButton) {  if let sentence = self.textView.text {  self.synthesiser.speakSentence(sentence, withError: nil)  }  }   @IBAction func offlineSwitchClicked(_ sender: UISwitch) {  if sender.isOn {  self.configOffline()  } else {  self.configOnline()  }  }   func configOnline() {  self.synthesiser.setApiKey(API_KEY, withSecretKey: SECRET_KEY)  var error = self.synthesiser.setSynthParam(4, for: BDS_SYNTHESIZER_PARAM_PITCH)  if let err = error {  print(err.localizedDescription)  }  error = self.synthesiser.setSynthParam(5, for: BDS_SYNTHESIZER_PARAM_SPEED)  if let err = error {  print(err.localizedDescription)  }  error = self.synthesiser.setSynthParam(9, for: BDS_SYNTHESIZER_PARAM_VOLUME)  if let err = error {  print(err.localizedDescription)  }  self.synthesiser.unloadDomainDataFromOfflineEngine()  }   func configOffline() {  let offlineEngineSpeechData = Bundle.main.path(forResource: &amp;#34;Chinese_And_English_Speech_Female&amp;#34;, ofType: &amp;#34;dat&amp;#34;)  let offlineChineseAndEnglishTextData = Bundle.main.path(forResource: &amp;#34;Chinese_And_English_Text&amp;#34;, ofType: &amp;#34;dat&amp;#34;)   let error = self.synthesiser.loadOfflineEngine(offlineChineseAndEnglishTextData, speechDataPath: offlineEngineSpeechData, licenseFilePath: nil, withAppCode: APP_ID)  if let err = error {  print(err.localizedDescription)  }  }   func synthesizerNewDataArrived(_ newData: Data!, dataFormat fmt: BDSAudioFormat, characterCount newLength: Int32, sentenceNumber SynthesizeSentence: Int) {   }   func synthesizerErrorOccurred(_ error: Error!, speaking SpeakSentence: Int, synthesizing SynthesizeSentence: Int) {  print(error.localizedDescription)  }   override func viewDidDisappear(_ animated: Bool) {  super.viewDidDisappear(animated)  self.synthesiser.speakSentence(&amp;#34;进入后台&amp;#34;, withError: nil)  } }  extension ViewController: UITextViewDelegate {  func textViewDidChange(_ textView: UITextView) {  if let text = textView.text {  //self.synthesiser?.speakSentence(text, withError: nil)  print(text)  }  } }  参考资料
+接着填写相关信息，要注意的是语音包名要与测试工程的Bundle identifier一致（称为绑定），才可以使用百度语音合成的离在线模式:
+测试代码 import UIKit  let APP_ID = &amp;#34;XXXXX&amp;#34; let API_KEY = &amp;#34;XXXXX&amp;#34; let SECRET_KEY = &amp;#34;XXXXX&amp;#34;  class ViewController: UIViewController, BDSSpeechSynthesizerDelegate {   fileprivate var synthesiser: BDSSpeechSynthesizer = BDSSpeechSynthesizer.sharedInstance()  @IBOutlet weak var synthesisButton: UIButton!  @IBOutlet weak var textView: UITextView!  @IBOutlet weak var offlineSwitch: UISwitch!   override func viewDidLoad() {  super.viewDidLoad()  BDSSpeechSynthesizer.setLogLevel(BDS_PUBLIC_LOG_VERBOSE)  self.synthesiser.setSynthesizerDelegate(self)  self.textView.delegate = self  self.configOffline()  }   @IBAction func clickedSynthesis(_ sender: UIButton) {  if let sentence = self.textView.text {  self.synthesiser.speakSentence(sentence, withError: nil)  }  }   @IBAction func offlineSwitchClicked(_ sender: UISwitch) {  if sender.isOn {  self.configOffline()  } else {  self.configOnline()  }  }   func configOnline() {  self.synthesiser.setApiKey(API_KEY, withSecretKey: SECRET_KEY)  var error = self.synthesiser.setSynthParam(4, for: BDS_SYNTHESIZER_PARAM_PITCH)  if let err = error {  print(err.localizedDescription)  }  error = self.synthesiser.setSynthParam(5, for: BDS_SYNTHESIZER_PARAM_SPEED)  if let err = error {  print(err.localizedDescription)  }  error = self.synthesiser.setSynthParam(9, for: BDS_SYNTHESIZER_PARAM_VOLUME)  if let err = error {  print(err.localizedDescription)  }  self.synthesiser.unloadDomainDataFromOfflineEngine()  }   func configOffline() {  let offlineEngineSpeechData = Bundle.main.path(forResource: &amp;#34;Chinese_And_English_Speech_Female&amp;#34;, ofType: &amp;#34;dat&amp;#34;)  let offlineChineseAndEnglishTextData = Bundle.main.path(forResource: &amp;#34;Chinese_And_English_Text&amp;#34;, ofType: &amp;#34;dat&amp;#34;)   let error = self.synthesiser.loadOfflineEngine(offlineChineseAndEnglishTextData, speechDataPath: offlineEngineSpeechData, licenseFilePath: nil, withAppCode: APP_ID)  if let err = error {  print(err.localizedDescription)  }  }   func synthesizerNewDataArrived(_ newData: Data!, dataFormat fmt: BDSAudioFormat, characterCount newLength: Int32, sentenceNumber SynthesizeSentence: Int) {   }   func synthesizerErrorOccurred(_ error: Error!, speaking SpeakSentence: Int, synthesizing SynthesizeSentence: Int) {  print(error.localizedDescription)  }   override func viewDidDisappear(_ animated: Bool) {  super.viewDidDisappear(animated)  self.synthesiser.speakSentence(&amp;#34;进入后台&amp;#34;, withError: nil)  } }  extension ViewController: UITextViewDelegate {  func textViewDidChange(_ textView: UITextView) {  if let text = textView.text {  //self.synthesiser?.speakSentence(text, withError: nil)  print(text)  }  } } 参考资料
 </content>
     </entry>
     
