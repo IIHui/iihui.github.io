@@ -259,17 +259,16 @@ func silly() {  if true {  class Cat {  // Cat实现  }  var one = 1  one = one 
 Object Members 在对象类型（类，结构体和枚举）的声明中，顶层声明的常量和变量被称为属性，顶层声明的函数叫做方法。在一个对象类型声明时，顶层声明的属性和方法以及任何在顶层声明的对象统称对象成员。成员具有特殊的意义，因为它定义了可以向该对象发送的消息：
 class Manny {  let name = &amp;#34;manny&amp;#34;   func sayName() {  debugPrint(name)  }   class Klass {  //  }   struct Struct {  //  }   enum Enum {  //  } } Namespaces 命名空间是指程序的一个命名区域。对于命名空间外的事物，如果想访问命名空间内的事物，如果不先使用该命名区域的名字，以破除该区域的障碍，就不能被在它以外的事物所访问。这是一件好事，因为这样允许相同名字的事物在不同的地方使用而不发生冲突。显然，命名空间和作用域是密切相关的概念。
 命名空间有助于解释在一个对象的顶层声明内嵌另一个对象声明的意义。下面的代码在Manny以内嵌的方式声明了Klass，它有效地将Klass隐藏在Manny中：
-class Manny {  let name = &amp;#34;manny&amp;#34;   func sayName() {  debugPrint(name)  }   class Klass {  // 内部类实现  }   struct Struct {  // 内部结构体实现  }   enum Enum {  // 内部枚举实现  } } 类Manny是一个命名空间，类Klass包含在其中，在类Manny内部的代码可以直接看到类Klass，但在Manny之外的代码不能看到Klass。
-如果想要能够直接看到Klass，必须明确地使用命名空间，以解除命名空间所代表的障碍。要做到这一点，必须先使用Manny的名字（代表命名空间），然后是一个点，最后是Klass。简而言之，现在必须使用Manny.Klass来访问类Manny中声明的Klass类。
-class Manny {  let name = &amp;#34;manny&amp;#34;   func sayName() {  debugPrint(name)  }   class Klass {  func test() {  // test实现  }  }   struct Struct {  // 内部结构体实现  }   enum Enum {  // 内部枚举实现  } }  struct Moe {  let name = &amp;#34;moe&amp;#34;   func sayName() {  debugPrint(name)  }   class Klass {  func test() {  Manny.Klass().test() //使用命名空间来访问Klass  }  }   struct Struct {  // 内部结构体实现  }   enum Enum {  // 内部枚举实现  } } 命名空间本身不提供秘密和隐私，它只是一种便利。在上面的代码中，类Manny中定义了Klass类，同时在结构体Moe中也定义了Klass类。但它们并不冲突，因为它们是定义在不同的命名空间中的，如果有必要，可以使用Manny.Klass和Moe.Klass来进行区分。
+class Manny {  let name = &amp;#34;manny&amp;#34;   func sayName() {  // print name  debugPrint(name)  }   class Klass {  // 内部类实现  }   struct Struct {  // 内部结构体实现  }   enum Enum {  // 内部枚举实现  } } 类Manny是一个命名空间，类Klass声明在其中，在类Manny内部的代码可以直接看到类Klass，但在Manny之外的代码不能看到Klass。
+如果想要能够看到Klass，必须明确地使用命名空间的名字，以解除命名空间所代表的障碍。要做到这一点，必须先使用Manny的名字（代表命名空间），然后是一个点，最后是Klass。简而言之，现在必须使用Manny.Klass来访问类Manny中声明的Klass类：
+class Manny {  let name = &amp;#34;manny&amp;#34;   func sayName() {  debugPrint(name)  }   class Klass {  func test() {  // test实现  }  }   struct Struct {  // 内部结构体实现  }   enum Enum {  // 内部枚举实现  } }  struct Moe {  let name = &amp;#34;moe&amp;#34;   func sayName() {  debugPrint(name)  }   class Klass {  func test() {  Manny.Klass().test() //使用命名空间来访问Klass  }  }   struct Struct {  // 内部结构体实现  }   enum Enum {  // 内部枚举实现  } } 命名空间本身不提供秘密和隐私，它只提供一种便利性。在上面的代码中，类Manny中定义了一个Klass类，同时在结构体Moe中也定义了一个Klass类。但它们并不冲突，因为它们是定义在不同的命名空间中的，如果有必要，可以使用Manny.Klass和Moe.Klass来进行区分。
 默认情况下，类Moe里面的代码不能直接看到Manny里面声明的Klass，但可以通过一个简单的步骤看到它，即Manny.Klass。这是因为Moe里的代码能看到类Manny，因为Manny是在Moe内部代码能看到的层次上声明的。
-class Klass {  func test() {  Manny.Klass().test()  } } Modules 顶层的命名空间是module（模块）。App本身是一个module，该命名空间的名称默认为应用程序的名字。若应用程序的名称为MyApp，并且在文件顶层声明一个类Manny，这个类的真实名字其实是MyApp.Manny。但通常不需要使用这个带前缀的真实名字，因为应用程序中的代码已经在同一个命名空间内，可以直接看到类Manny。
-在当前文件中导入一个模块后，该模块的所有顶层声明对于当前文件的所有代码都是可见的，因此不必明确地（显式地）使用模块的命名空间来引用它们。
-例如，Cocoa的Foundation框架是一个module，NSString是在Foundation顶层声明的。因此，当导入Foundation后，可以直接使用NSString而不必使用Foundation.NSString这样带命名空间的真实名字。
-实际上Swift本身也是在一个模块中定义的，即Swift module。但不必手动导入它，因为编译器总是隐含地导入了Swift module。也可以在文件中加入import Swift来显式导入Swift module，但没必要这样做，因为编译器会提示module swift is already imported。
-上面这个事实非常重要，因为它解释了一个重要的谜题：像debugPrint这样的函数到底是从哪里来的，为什么在任何地方都可以使用它们。debugPrint实际上是在Swift module顶层声明的一个函数，因为代码中已经隐含地导入了Swift模块，所以我们的代码可以直接看到Swift module所有的顶层声明，当然也包括debugPrint。
-因此，debugPrint函数变成了一个普通的顶层函数，它对我们的代码来说是全局的。所以，可以直接使用它而不需要指定命名空间，也可以在使用的时候明确指定它的命名空间，即使用Swift.debugPrint(&amp;quot;hello&amp;quot;)，但通常不这样做，因为这样看起来很冗余。
-如果声明一个与导入模块中同名的东西，就会失去直接使用导入的东西而不用指定命名空间的神奇能力。假如在代码中声明一个同名的debugPrint函数，那么编译器将会自动隐藏Swift module中的debugPrint函数，即自定义代码中声明的debugPrint函数具有更高的优先级，为了调用Swift的debugPrint函数，现在必须明确地使用有命名空间，即Swift.debugPrint。
+class Klass {  func test() {  Manny.Klass().test()  } } Modules 顶层的命名空间是module（模块）。App是一个module，因此也是一个命名空间，该命名空间的名称默认为应用程序的名字。若应用程序的名称为MyApp，并且在文件顶层声明一个类Manny，这个类的真实名字其是MyApp.Manny。但通常不需要使用这个带前缀的真实名字，因为应用程序中的代码已经在同一个命名空间内，可以直接看到类Manny。
+在当前文件中导入一个模块后，该模块内的所有顶层声明对于当前文件的代码都是可见的，因此不必显式地使用模块的名字来引用。例如，Cocoa的Foundation框架是一个module，NSString就是在Foundation顶层声明的。因此，当在代码中使用import Foundation后，可以直接使用NSString而不必使用Foundation.NSString这样带命名空间的真实名字。
+实际上Swift本身也是在一个模块中定义的，即Swift module。但我们不必手动导入它，因为编译器总是隐含地导入了Swift module。也可以在文件中加入import Swift来显式导入Swift module，但没必要这样做，因为编译器会提示module swift is already imported。
+上面这个事实非常重要，因为它解释了一个重要的谜题：像debugPrint和print这样的函数到底是从哪里来的，为什么在任何地方都可以使用它们。debugPrint实际上是在Swift module顶层声明的一个函数，因为已经隐含地导入了Swift模块，所以我们的代码可以直接看到Swift module所有的顶层声明，当然也包括debugPrint和print。
+因此，debugPrint函数如同当前文件的其它顶层函数一样，也变成了一个普通的顶层函数，它对我们的代码来说是全局的。因此，可以直接使用它而不需要指定命名空间，也可以在使用的时候明确指定它的命名空间，即使用Swift.debugPrint(&amp;quot;hello&amp;quot;)，但通常不这样做，因为这样很冗余。
+但是，你自己应用程序模块会掩盖导入的任何其它模块。也就是说，如果声明一个与导入模块中同名的东西，就会失去直接使用导入的东西而不用指定命名空间的神奇能力。假如在代码中声明一个同名的debugPrint函数，那么编译器将会自动隐藏Swift module中的debugPrint函数，即自定义代码中声明的debugPrint函数具有更高的优先级，为了调用Swift的debugPrint函数，现在必须明确地使用有命名空间，即Swift.debugPrint。
 Instances 对象类型（类、结构和枚举）有一个重要的共同特点：它们可以被实例化。实际上，声明一个对象类型时，只是定义了一个类型，实例化是为了生成该类型的实例。
 class Dog {  func bark() {  debugPrint(&amp;#34;woof&amp;#34;)  } } 上面的代码只是声明了Dog类型，实际上还没有任何Dog的实例。该类型描述了如果有一只Dog的话，应该会是什么样的。为了得到一个真正的Dog，必须制造一只，而制造一只Dog的过程就是实例化Dog的过程。
 在Swift中，实例的生成可以通过使用对象类型的名称作为函数名并调用该函数来实现（被称为初始化器）。当在一个对象类型的名称上加上圆括号时，就是在向该对象类型发送一种非常特殊的信息———生成一个该类型的实例。
