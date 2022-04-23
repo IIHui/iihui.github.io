@@ -162,9 +162,10 @@ UIView.performWithoutAnimation {  self.tableView.reloadRows(at: [indexPath], wit
 /// 流畅版reloadData，避免闪烁和动画 func reloadDataSmoothly() {  UIView.setAnimationsEnabled(false)  CATransaction.begin()  CATransaction.setCompletionBlock {  UIView.setAnimationsEnabled(true)  }  reloadData()  beginUpdates()  endUpdates()  CATransaction.commit() } 参考资料
 清除WK缓存和Cookie private func clearAllCookies() {  URLCache.shared.removeAllCachedResponses()  HTTPCookieStorage.shared.cookies?.forEach(HTTPCookieStorage.shared.deleteCookie)  let types = Set([WKWebsiteDataTypeDiskCache,  WKWebsiteDataTypeMemoryCache,  WKWebsiteDataTypeOfflineWebApplicationCache,  WKWebsiteDataTypeCookies,  WKWebsiteDataTypeSessionStorage,  WKWebsiteDataTypeLocalStorage,  WKWebsiteDataTypeWebSQLDatabases,  WKWebsiteDataTypeIndexedDBDatabases])  WKWebsiteDataStore.default().fetchDataRecords(ofTypes: types) { (records) in  WKWebsiteDataStore.default().removeData(ofTypes: types, for: records) {  debugPrint(&amp;#34;WK domain cleaned cache&amp;#34;)  }  } } 如果要按照域名来清除WKWebView的缓存和Cookie，可以使用如下代码：
 public extension WKWebView {   static func cleanCache(url: URL) {   HTTPCookieStorage.shared.cookies?.forEach({ (cookie) in  guard let url = url.host else {  return  }  // domain前面带.表示子域发送http请求时会自动带上  if cookie.domain == url || cookie.domain == &amp;#34;.&amp;#34; &#43; url {  HTTPCookieStorage.shared.deleteCookie(cookie)  }  })   let types = Set([WKWebsiteDataTypeDiskCache,  WKWebsiteDataTypeMemoryCache,  WKWebsiteDataTypeOfflineWebApplicationCache,  WKWebsiteDataTypeCookies,  WKWebsiteDataTypeSessionStorage,  WKWebsiteDataTypeLocalStorage,  WKWebsiteDataTypeWebSQLDatabases,  WKWebsiteDataTypeIndexedDBDatabases])  WKWebsiteDataStore.default().fetchDataRecords(ofTypes: types) { (records) in  let tmpRecord = records.filter({ url.host?.hasSuffix($0.displayName) ?? false })  WKWebsiteDataStore.default().removeData(ofTypes: types, for: tmpRecord) {  debugPrint(&amp;#34;WK domain cleaned cache&amp;#34;)  }  }  URLCache.shared.removeCachedResponse(for: URLRequest(url: url))  } } failed to parse error: expression failed to parse: error: Couldn&amp;#39;t realize type of self. 互斥单选 如果要实现UITableView中的cell互斥单选，并且至少有一个cell被选中时，可以使用如下代码实现：
- override func setSelected(_ selected: Bool, animated: Bool) {  super.setSelected(selected, animated: animated)  if selected {  self.checkImgView.image = UIImage(named: checekedImgName)  } else {  self.checkImgView.image = UIImage(named: uncheckedImgName)  }  } x86_64-apple-ios-simulator Could not find module for target &amp;lsquo;x86_64-apple-ios-simulator&amp;rsquo; TLS10 is not accepted 使用IntelliJ IDEA连接Microsoft SQL Server时会提示The server selected protocol version TLS10 is not accepted by client preferences [TLS13, TLS12]：
+ override func setSelected(_ selected: Bool, animated: Bool) {  super.setSelected(selected, animated: animated)  if selected {  self.checkImgView.image = UIImage(named: checekedImgName)  } else {  self.checkImgView.image = UIImage(named: uncheckedImgName)  }  } x86_64-apple-ios-simulator Could not find module for target &amp;lsquo;x86_64-apple-ios-simulator&amp;rsquo;
+TLS10 is not accepted 使用IntelliJ IDEA连接Microsoft SQL Server时会提示The server selected protocol version TLS10 is not accepted by client preferences [TLS13, TLS12]：
 [08S01] The driver could not establish a secure connection to SQL Server by using Secure Sockets Layer (SSL) encryption. Error: &amp;#34;The server selected protocol version TLS10 is not accepted by client preferences [TLS13, TLS12]&amp;#34;. ClientConnectionId:a8fbe132-f476-412f-ad23-4f53516c5007 The server selected protocol version TLS10 is not accepted by client preferences [TLS13, TLS12]. 查资料发现，这是因为版本升级后，自带的jdk也升级了，所以需要删除自带的jdk对应的java.security中的对应内容。java.security对应的路径为/Applications/IntelliJ IDEA.app/Contents/jbr/Contents/Home/conf/security/java.security，大约在731行注释即可：
-# jdk.tls.disabledAlgorithms=SSLv3, TLSv1, TLSv1.1, RC4, DES, MD5withRSA, \  DH keySize &amp;lt; 1024, EC keySize &amp;lt; 224, 3DES_EDE_CBC, anon, NULL, \ iOS 14&#43;以上无法安装企业App 最近自动化部署改造将ipa文件挪到其它位置，使用iOS 14以上系统验证的时候发现无法安装，但没有任何提示。测试发现，ipa的链接能够正常下载，也能够单独安装。后来服务端排查发现，虽然plist文件是放在https服务器的，但是ipa却存放在http的域名下，因此无法正常安装。
+# jdk.tls.disabledAlgorithms=SSLv3, TLSv1, TLSv1.1, RC4, DES, MD5withRSA, \  DH keySize &amp;lt; 1024, EC keySize &amp;lt; 224, 3DES_EDE_CBC, anon, NULL, \ iOS 14&#43;以上无法安装企业App 最近自动化部署改造，将待安装的ipa文件挪到其它位置，使用iOS 14以上系统验证的时候发现无法安装，但没有任何提示。测试发现，ipa的链接能够正常下载，也能够单独安装。后来服务端排查发现，虽然plist文件是放在https服务器的，但是ipa却存放在http的域名下，因此无法正常安装。
   plist文件必须是放在https服务器
   主要是对于ipa是否要放在https服务器，两种办法: 如果是域名访问ipa,必须是https服务器。如果是ip访问ipa，https和http服务器都是可以的。
 参考资料
@@ -5069,6 +5070,18 @@ void radixSort(int *data, int length) {  int max = getMax(data, length); //找�
    重复第2步，直至堆大小变为0。
   此时一个有序序列已经产生，此时将输入缓冲区中剩下的所有元素建立最小堆，开始生成下一个有序序列。
    </content>
+    </entry>
+    
+     <entry>
+        <title></title>
+        <url>https://iihui.github.io/post//</url>
+        <categories>
+          
+        </categories>
+        <tags>
+          
+        </tags>
+        <content type="html"> </content>
     </entry>
     
      <entry>
