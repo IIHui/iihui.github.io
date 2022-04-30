@@ -241,7 +241,7 @@ code.has-jax {
     <i class="fa fa-file-word-o"></i>
 </span>
 <span class="post-meta-item-text">字数: </span>
-<span class="leancloud-visitors-count">15696</span>
+<span class="leancloud-visitors-count">15685</span>
 &nbsp; | &nbsp;
 <span class="post-meta-item-icon">
     <i class="fa fa-coffee"></i>
@@ -256,12 +256,11 @@ code.has-jax {
 <p>在开发过程中，会遇到各种问题，有时候某个问题当时已经找到了解决方案，但过了一段时间又可能会忘记。这篇文章记录一些问题的解决方案，以便后续查找。</p>
 </blockquote>
 <h1 id="强制竖屏">强制竖屏</h1>
-<p>最近在使用其它<code>SDK</code>，业务方要求打开其中的某个页面时强制竖屏，但发现按对方要求传了相应参数，依然未生效，仍然能够自有横竖屏切换。解决方案是首先在工程<code>info.plist</code>中添加<a href="https://stackoverflow.com/questions/34608826/what-is-the-impact-of-the-requires-full-screen-option-in-xcode-for-an-iphone-o">Require Full Screen</a>项，并将其值置为<code>YES</code>，然后在需要强制竖屏的<code>ViewController</code>中添加如下代码：</p>
+<p>最近在使用其它<code>SDK</code>，业务方要求打开其中的某个页面时强制竖屏，但发现按对方要求传了相应参数，依然未生效，仍然能够横竖屏切换。解决方案是首先在工程<code>info.plist</code>中添加<a href="https://stackoverflow.com/questions/34608826/what-is-the-impact-of-the-requires-full-screen-option-in-xcode-for-an-iphone-o">Require Full Screen</a>项，并将其值置为<code>YES</code>，然后在需要强制竖屏的<code>ViewController</code>中添加如下代码：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span><span style="color:#66d9ef">class</span> <span style="color:#a6e22e">ViewController</span>: UIViewController {
 </span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">override</span> <span style="color:#66d9ef">func</span> <span style="color:#a6e22e">viewDidLoad</span>() {
 </span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">super</span>.viewDidLoad()
-</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">let</span> value = UIInterfaceOrientation.portrait.rawValue
-</span></span><span style="display:flex;"><span>        UIDevice.current.setValue(value, forKey: <span style="color:#e6db74">&#34;orientation&#34;</span>)
+</span></span><span style="display:flex;"><span>        UIDevice.current.setValue(UIInterfaceOrientation.portrait.rawValue, forKey: <span style="color:#e6db74">&#34;orientation&#34;</span>)
 </span></span><span style="display:flex;"><span>    }
 </span></span><span style="display:flex;"><span>    
 </span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">override</span> <span style="color:#66d9ef">var</span> supportedInterfaceOrientations: UIInterfaceOrientationMask {
@@ -322,9 +321,9 @@ code.has-jax {
 </span></span><span style="display:flex;"><span>    }
 </span></span><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span>}
-</span></span></code></pre></div><p>最后在工程的<code>Info.plist</code>文件中删除<code>Application Scene Manifest</code>这一行，重新编译即可。如果编译依然报错，需要清除工程的缓存（可以使用<code>Shift+Command+K</code>快捷键），然后再编译：</p>
+</span></span></code></pre></div><p>最后在工程的<code>Info.plist</code>文件中删除<code>Application Scene Manifest</code>这一行，重新编译即可。如果编译依然报错，需要清除工程的缓存（使用<code>Shift+Command+K</code>快捷键即可），然后再编译：</p>
 <img src="https://i.loli.net/2020/12/26/8BwLCWr7XYesEv4.jpg" alt="-c" style="zoom:80%;" />
-<h1 id="禁用push页面边缘返回手势">禁用push页面边缘返回手势</h1>
+<h1 id="禁用边缘返回手势">禁用边缘返回手势</h1>
 <p>对于以<code>push</code>方式打开的页面，该页面默认自动拥有系统提供的<font color=red>「边缘返回」</font>手势。如果要禁止系统的「边缘返回」手势，可以为<code>UIViewController</code>写一个如下的扩展方法：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span><span style="color:#75715e">// 参考自https://juejin.cn/post/6860656306630590477</span>
 </span></span><span style="display:flex;"><span><span style="color:#66d9ef">extension</span> <span style="color:#a6e22e">UIViewController</span> {
@@ -336,7 +335,7 @@ code.has-jax {
 </span></span><span style="display:flex;"><span>    }
 </span></span><span style="display:flex;"><span>}
 </span></span></code></pre></div><h1 id="uiwebview特殊字符">UIWebView特殊字符</h1>
-<p>如果使用<code>UIWebView</code>加载的<code>html</code>文件中包含<code>\n</code>,<code>'</code>等特殊字符时，<font color=red>不做任何处理直接加载的话，将会出现白屏</font>，此时没有任何提示。因此，加载这种含有特殊字符的<code>html</code>文件时要特殊处理:</p>
+<p>如果使用<code>UIWebView</code>加载的<code>html</code>文件中包含<code>\n</code>，<code>'</code>等特殊字符时，<font color=red>不做任何处理直接加载的话，将会出现白屏</font>，此时没有任何提示。因此，加载这种含有特殊字符的<code>html</code>文件时要特殊处理:</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-Swift" data-lang="Swift"><span style="display:flex;"><span><span style="color:#66d9ef">class</span> <span style="color:#a6e22e">HTMLUtils</span> {
 </span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">static</span> <span style="color:#66d9ef">func</span> <span style="color:#a6e22e">escapsedHTML</span>(html: String) -&gt; String{
 </span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">var</span> result = html
@@ -351,7 +350,7 @@ code.has-jax {
 </span></span><span style="display:flex;"><span>    }
 </span></span><span style="display:flex;"><span>}
 </span></span></code></pre></div><h1 id="允许http请求">允许http请求</h1>
-<p>自<code>iOS 9.0</code>开始，苹果<font color=Blue>默认要求<code>App</code>访问的<code>url</code>均为<code>https</code></font>。为了能在项目中支持<code>http</code>，需在项目中的<code>Info.plist</code>文件中将<code>App Transport Security Settings</code>下的<code>Allow Arbitrary Loads</code>设置为<code>YES</code>。如果没有这两项的话，则需在<code>Info.plist</code>文件中添加:</p>
+<p>自<code>iOS 9.0</code>开始，苹果<font color=Blue>默认要求<code>App</code>访问的<code>url</code>均为<code>https</code></font>。为了能在项目中支持<code>http</code>，需在项目中的<code>Info.plist</code>文件中将<code>App Transport Security Settings</code>下的<code>Allow Arbitrary Loads</code>设置为<code>YES</code>。如果没有这两项的话，则需先在<code>Info.plist</code>文件中添加:</p>
 <p><img src="https://i.loli.net/2018/12/29/5c26e4944a70d.jpg" alt="-c"></p>
 <h1 id="仿导航栏添加阴影">仿导航栏添加阴影</h1>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span><span style="color:#75715e">// 设置阴影颜色</span>
@@ -1934,7 +1933,7 @@ code.has-jax {
     <li><a href="#强制竖屏">强制竖屏</a></li>
     <li><a href="#keywindow变化">keyWindow变化</a></li>
     <li><a href="#uialertview-deprecated">UIAlertView deprecated</a></li>
-    <li><a href="#禁用push页面边缘返回手势">禁用push页面边缘返回手势</a></li>
+    <li><a href="#禁用边缘返回手势">禁用边缘返回手势</a></li>
     <li><a href="#uiwebview特殊字符">UIWebView特殊字符</a></li>
     <li><a href="#允许http请求">允许http请求</a></li>
     <li><a href="#仿导航栏添加阴影">仿导航栏添加阴影</a></li>
