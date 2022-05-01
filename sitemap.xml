@@ -333,10 +333,11 @@ func newTest(completion: @escaping () -&amp;gt; ()) {  completion() }  func newT
 func echoString(_ s: String, times: Int) -&amp;gt; String {  var result = &amp;#34;&amp;#34;  for _ in 1...times {  result &#43;= s  }  return result } 上面的函数中，第一个参数只有内部名称，第二个参数既有内部名称也有外部名称，并且他们的名称相同，即times。
   外部名称的存在并不意味着调用可以使用与声明不同的参数顺序。下面的echo(string:times:)需要一个String参数和一个Int参数，必须按此顺序调用：
 func echo(string s: String, times n: Int) -&amp;gt; String {  var result = &amp;#34;&amp;#34;  for _ in 1...n {  result &#43;= s  }  return result } 函数重载 在Swift中函数重载是合法的，这意味着两个函数具有相同的名字（包括相同的外部参数名称），但有着不同的函数签名是可以共存的。需要注意的是，两个基本名称（函数名）相同但外部参数名称不同的函数并不构成重载，它们是两个名称不同的函数「有些地方说这也是一种重载，个人看来也是合理的」。
-重载之所以有效是因为Swift进行严格的类型区分。Swift可以在函数声明和函数调用时把重载函数区分开。因此，Swift清楚地知道say(&amp;quot;what&amp;quot;)和say(1)是不同的。
+重载之所以有效是因为Swift进行严格的类型区分。Swift可以在函数声明和函数调用时把重载函数区分出来。因此，Swift清楚地知道say(&amp;quot;what&amp;quot;)和say(1)是不同的。
 需要注意的是重载也适用于函数的返回类型。两个具有相同名称和参数的函数可以有不同的返回类型。但调用时的上下文必须明确，即必须清楚调用者期望的返回类型，否则编译器会报错。下面两个重载函数是可以并存的：
 func say() -&amp;gt; String {  return &amp;#34;one&amp;#34; }  func say() -&amp;gt; Int {  return 1 } 如果在调用的时候直接使用let result = say()会发生编译错误，因为编译器还不知道要调用哪个函数。因此，如果有返回类型重载的函数调用时必须明确指定返回类型：
-let result: String = say() let test: Int = say() 也可以在函数调用时使用方法名和关键字as以及所需方法的签名来明确区分重载。这个语法看起来有点奇怪，因为整个表达式必须用两对圆括号括起来，其中第一对圆括号表示类型转换，最后的一对圆括号表明这是一个函数调用:
+let result: String = say() let test: Int = say() 上下文本身可能会消除歧义。假设有另一个没有重载的函数，它需要一个字符串参数，那么就可以直接使用giveMeAString(say())：
+func giveMeAString(_ s: String) {  print(&amp;#34;thanks!&amp;#34;) } giveMeAString(say()) let result = say() &#43; &amp;#34;two&amp;#34; 在say() &#43; &amp;quot;two&amp;quot;中，因为只有字符串才能和字符串添加，所以此时say()只能返回字符串。也可以在函数调用时使用方法名和关键字as以及所需方法的签名来明确区分重载。这个语法看起来有点奇怪，因为整个表达式必须用两对圆括号括起来，其中第一对圆括号表示类型转换，最后的一对圆括号表明这是一个函数调用:
 let result = (say as () -&amp;gt; String)() 默认值 参数可以有默认值（缺省值），这意味着对于有默认值的参数调用者可以完全省略该参数，不提供任何值。如果有默认值的参数在调用时省略该参数，表示使用默认值。如果要在函数声明中指定一个缺省值，只需在参数类型后面加上=和缺省值即可：
 class Dog {  func say(_ s: String, times: Int = 1) {  for _ in 1 ... times {  debugPrint(s)  }  } } 实际上，上面的say相当于两个函数。其中一个只有一个未标记的参数func say(_ s: String)，并且在函数体中times=1；另一个既有未标记的参数也有一个times参数func say(_ s: String, times: Int)。
 可变参数 在函数中同类型的参数个数可以是可变的，即调用者可以根据需要提供该参数类型的多个值，用逗号隔开。实际上，函数体将以数组形式接收这些值。要在函数声明中表明一个参数是可变的，需要在类型后面加上三个点：
