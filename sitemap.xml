@@ -268,26 +268,26 @@ class Manny {  let name = &amp;#34;manny&amp;#34;   func sayName() {  debugPrint
 默认情况下，类Moe里面的代码不能直接看到Manny里面声明的Klass，但可以通过一个简单的步骤看到它，即Manny.Klass。这是因为Moe里的代码能看到类Manny，因为Manny是在Moe内部代码能看到的层次上声明的。
 class Klass {  func test() {  Manny.Klass().test()  } } Modules 顶层的命名空间是module（模块）。App是一个module，因此也是一个命名空间，该命名空间的名称默认为应用程序的名字。若应用程序的名称为MyApp，并且在文件顶层声明一个类Manny，这个类的真实名字其是MyApp.Manny。但通常不需要使用这个带前缀的真实名字，因为应用程序中的代码已经在同一个命名空间内，可以直接看到类Manny。
 在当前文件中导入一个模块后，该模块内的所有顶层声明对于当前文件的代码都是可见的，因此不必显式地使用模块的名字来引用。例如，Cocoa的Foundation框架是一个module，NSString就是在Foundation顶层声明的。因此，当在代码中使用import Foundation后，可以直接使用NSString而不必使用Foundation.NSString这样带命名空间的真实名字。
-实际上Swift本身也是在一个模块中定义的，即Swift module。但我们不必手动导入它，因为编译器总是隐含地导入了Swift module。也可以在文件中加入import Swift来显式导入Swift module，但没必要这样做，因为编译器会提示module swift is already imported。
-上面这个事实非常重要，因为它解释了一个重要的谜题：像debugPrint和print这样的函数到底是从哪里来的，为什么在任何地方都可以使用它们。debugPrint实际上是在Swift module顶层声明的一个函数，因为已经隐含地导入了Swift模块，所以我们的代码可以直接看到Swift module所有的顶层声明，当然也包括debugPrint和print。
+实际上Swift本身也是在一个模块中定义的，即Swift module。但我们不必手动导入它，因为编译器总是隐含地导入了Swift module。也可以在文件中加入import Swift来显式地导入，但没必要这样做，因为编译器会提示module swift is already imported。
+上面这个事实非常重要，因为它解释了一个重要的谜题：像debugPrint和print这样的函数到底是从哪里来的，为什么在任何地方都可以使用它们。debugPrint和print实际上是在Swift module顶层声明的一个函数，因为已经隐含地导入了Swift模块，所以我们的代码可以直接看到Swift module所有的顶层声明，当然也包括debugPrint和print。
 因此，debugPrint函数如同当前文件的其它顶层函数一样，也变成了一个普通的顶层函数，它对我们的代码来说是全局的。因此，可以直接使用它而不需要指定命名空间，也可以在使用的时候明确指定它的命名空间，即使用Swift.debugPrint(&amp;quot;hello&amp;quot;)，但通常不这样做，因为这样很冗余。
 但是，你自己应用程序模块会掩盖导入的任何其它模块。也就是说，如果声明一个与导入模块中同名的东西，就会失去直接使用导入的东西而不用指定命名空间的神奇能力。假如在代码中声明一个同名的debugPrint函数，那么编译器将会自动隐藏Swift module中的debugPrint函数，即自定义代码中声明的debugPrint函数具有更高的优先级，为了调用Swift的debugPrint函数，现在必须明确地使用有命名空间，即Swift.debugPrint。
-Instances 对象类型（类、结构和枚举）有一个重要的共同特点：它们可以被实例化。实际上，声明一个对象类型时，只是定义了一个类型，实例化是为了生成该类型的实例。
+Swift.debugPrint(&amp;#34;test&amp;#34;) Instances 对象类型（类、结构和枚举）有一个重要的共同特点：它们可以被实例化。实际上，声明一个对象类型时，只是定义了一个类型，实例化是为了生成该类型的实例。
 class Dog {  func bark() {  debugPrint(&amp;#34;woof&amp;#34;)  } } 上面的代码只是声明了Dog类型，即描述了如果有一只狗，它应该是什么样的，实际上还没有任何Dog对象。为了得到一个真正的Dog，必须制造一只，而制造一只真正的Dog对象过程就是实例化Dog的过程。
 在Swift中，实例的生成可以通过使用对象类型的名称作为函数名并调用该函数来实现（被称为初始化器）。当在一个对象类型的名称上加上圆括号时，就是在向该对象类型发送一种非常特殊的信息———实例化你自己（生成一个该类型的实例）。
 let fido = Dog() 上面这段代码做了两件事，首先是实例化了Dog，得到了一个Dog实例。同时还把这个实例放到了一个名叫fido的盒子中（声明了一个变量，并通过把Dog的实例分配给它来初始化这个变量，现在fido是一个Dog的实例）。
 现在有一个Dog的实例，可以向它发送instance messages（实例消息），实例消息包括实例属性和方法。在对象类型的声明中，属性和方法默认都是实例属性和方法，不能把它们作为该对象类型的消息来使用。如果想要发送实例消息，就必须先有一个实例：
-let fido = Dog() fido.bark() 如果想要发送类型消息，则需要声明static函数或class函数，或者是static属性或者class属性。下面代码中声明static和class属性和方法：
+let fido = Dog() fido.bark() 如果想要发送类型消息，则需要声明static或class函数，或者是static或class属性。下面代码中声明static和class属性和方法：
 class Test {  // static属性  static var test = &amp;#34;test&amp;#34;  // class属性，不能为存储属性  class var name: String {  return &amp;#34;name&amp;#34;  }   // static方法  static func testFunc() {  //  }   // class 方法  class func nameFunc() {  //  }  } 在上面代码中用class声明name属性时只能为计算属性，不能声明为存储属性，否则会出现报错：Class stored properties not supported in classes; did you mean &#39;static&#39;?。
-即使没有实例这样的东西，对象类型本身也是一个对象，因为可以向对象类型发送消息（Manny.Klass就是一个很好的例子）。为什么会需要实例呢？这主要与实例的属性的性质有关，实例属性的值是针对特定实例定义的，这就是实例真正有用和强大的地方。
+即使没有实例这样的东西，对象类型本身也是一个对象，因为可以向对象类型发送消息（Manny.Klass就是一个很好的例子）。为什么会需要实例呢？这主要与实例属性的性质有关，实例属性的值是针对特定实例定义的，这就是实例真正有用和强大的地方。
 class Dog {  var name = &amp;#34;&amp;#34;   func bark() {  debugPrint(&amp;#34;woof&amp;#34;)  } } 对于上面的声明，我们可以生成多个Dog实例，每一个Dog实例都有自己的name值。但多个实例的行为是相似的，它们都可以调用bark方法。
 let dog1 = Dog() dog1.name = &amp;#34;Fido&amp;#34; var dog2 = Dog() dog2.name = &amp;#34;Rover&amp;#34;  print(dog1.name) // &amp;#34;Fido&amp;#34; print(dog2.name) // &amp;#34;Rover&amp;#34;  dog2 = dog1 print(dog2.name) // &amp;#34;Fido&amp;#34; 一个实例不仅对其属性的值负责，而且对其属性的生命周期负责。假设创建了一个Dog实例，并为它的name属性赋值为Fido。只要不将属性name的值替换为其它值，并且此实例一直存在，这个实例就会使字符串Fido保持活跃状态。
 也就是说一个实例既是代码又是数据。实例的代码指的是它的类型声明，与该类型的所有实例共享。但数据只属于实例，只要实例持续存在，数据就可以持续存在，实例在每个时刻都有一个状态，即实例属性值完整集合。
 一个类的声明实际上定义了一个命名空间。这个命名空间要求其它对象使用额外的点标记来引用该空间内的内容。命名空间本身并没有关闭任何可见性的大门，但访问权限private关键字可以。
-The Keyword self 一个实例是一个对象，而对象是消息的接收者。因此，一个实例需要一种向自己发送消息的方法，这可以通过使用关键字self来实现：
+The Keyword self 一个实例是一个对象，而对象是消息的接收者。因此，一个实例需要一种向自己发送消息的方法，这通过使用关键字self来实现。self关键字可以用在预期有适当类型实例的地方：
 class Dog {  var name = &amp;#34;name&amp;#34;  var whatADogSays = &amp;#34;woof&amp;#34;   func bark() {  debugPrint(self.whatADogSays)  }   func speak() {  self.bark()  } } 上面代码中self仅出现在实例方法中，当在一个实例的代码中使用self时，它指的是当前这个实例。如果表达式self.name出现在Dog实例方法中，它意味着当前这个Dog实例的name，也就是此时代码正在运行的那个。
 在实例方法中使用self是可选的，即是可以省略的。如果省略了信息接收者，要发送的信息又可以发送给self，那么编译器默认会把self作为信息的接收者。
-作为一个风格问题，明确地使用self或许是一个好习惯，因为省略self的代码更难阅读和理解。而且在有些情况下，必须显式使用self。
+作为一个编码风格问题，明确地使用self或许是一个好习惯，因为省略self的代码更难阅读和理解。而且在有些情况下，必须显式使用self。
 Privacy 命名空间本身并未关闭任何可见性的大门，但这种可见性屏障有时是需要的。因为并非所有由实例存储的数据都是为了被另一个实例改变，甚至有时要求对其它实例是不可见的。
 也不是每个实例的方法都想要被其它实例调用。基于对象的编程语言通常都需要一种方法来赋予其对象成员以隐私&amp;ndash;一种使其他对象更难看到这些成员的方法。
 class Dog {  var name = &amp;#34;name&amp;#34;  var whatADogSays = &amp;#34;woof&amp;#34;   func bark() {  debugPrint(self.whatADogSays)  }   func speak() {  debugPrint(self.whatADogSays)  } } 在上面的声明中，其它对象都可以更改实例属性whatADogSays。并且bark和speak方法都使用该属性，一旦改变属性whatADogSays的值，则bark和speak使用的值也会跟着变化。为了避免whatADogSays被随意更改，可以将其用private限定只能方法能够修改，不能被实例直接修改。
