@@ -241,7 +241,7 @@ code.has-jax {
     <i class="fa fa-file-word-o"></i>
 </span>
 <span class="post-meta-item-text">字数: </span>
-<span class="leancloud-visitors-count">51164</span>
+<span class="leancloud-visitors-count">51540</span>
 &nbsp; | &nbsp;
 <span class="post-meta-item-icon">
     <i class="fa fa-coffee"></i>
@@ -713,7 +713,14 @@ code.has-jax {
 <p>在<code>Swift 5.1</code>前，在有返回值的函数体中<font color=red>即使只有一条语句也必须显式使用<code>return</code>语句。但从<code>Swift 5.1</code>开始，有返回值的函数体中只有一条语句时可以省略<code>return</code>关键字</font>，这个特性主要是方便<code>SwiftUI</code>。</p>
 <p>在<font color=red>函数声明花括号前的那一部分可以看成是一种契约，即约定当前函数的输入和输出是怎么样的</font>。根据这个契约，该函数期望有一定数量的入参，每个参数都有特定的类型，并产生一定类型的结果。因此，在函数调用时必须遵守这个契约。</p>
 <p>花括号内的函数体将函数参数作为局部变量使用，关键字<code>return</code>后面的返回值类型必须与函数声明时的返回类型一致，否则会出现编译错误。</p>
-<h2 id="空返回值和参数">空返回值和参数</h2>
+<p>如果想要忽略函数的返回值，可以将函数调用的返回值分配给<code>_</code>（没有名称的变量）来消除编译器警告。例如，上面的sum调用可以如下使用：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span><span style="color:#66d9ef">_</span> = sum(<span style="color:#ae81ff">4</span>,<span style="color:#ae81ff">5</span>)
+</span></span></code></pre></div><p>或者，如果被调用的函数是你自己的，可以通过使用<code>@discardableResult</code>标记函数声明来防止警告：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span>@discardableResult  <span style="color:#66d9ef">func</span> <span style="color:#a6e22e">sum</span>(<span style="color:#66d9ef">_</span> x: Int, <span style="color:#66d9ef">_</span> y: Int) -&gt; Int {
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">let</span> result = x <span style="color:#f92672">+</span> y
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">return</span> result
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><h2 id="空返回值和参数">空返回值和参数</h2>
 <p>函数定义时<font color=LightSeaGreen>没有规定一定需要返回值</font>，如果一个函数定义时没有返回值，下面<code>3</code>种写法都是可行的，但是<font color=red>推荐使用第三种写法，即去掉<code>Void</code>或者<code>()</code></font>：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">say1</span>(<span style="color:#66d9ef">_</span> s: String) -&gt; Void {
 </span></span><span style="display:flex;"><span>    debugPrint(s)
@@ -728,8 +735,23 @@ code.has-jax {
 </span></span><span style="display:flex;"><span>}
 </span></span></code></pre></div><p>若一个函数没有返回值，那么它的函数体中就不需要包含<code>return</code>语句。如果包含了<code>return</code>语句，那么它只能由<code>return</code>这个词单独组成，其目的<font color=Blue>纯粹是在当前位置上结束函数的执行</font>。</p>
 <p>函数定义时也没有规定一定需要参数。<font color=LightSeaGreen>如果函数没有参数则参数列表为空，但此时也不能省略参数列表括号并且在函数调用时也不能省略括号</font>（实际上<font color=Blue>有一种特殊情况可以省略函数调用时的圆括号</font>）。</p>
-<h2 id="函数签名">函数签名</h2>
-<p>如果函数声明的时候忽略外部参数名和内部参数名，<font color=red>可以通过输入和输出类型来完全描述一个函数的特征</font>。为此，把参数类型写在括号里，后面是箭头运算符和输出类型，像下面这样：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">greet</span>() -&gt; String {
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">return</span> <span style="color:#e6db74">&#34;howdy&#34;</span>
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p>因此，函数声明的时候可以同时没有参数和返回值：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">greet1</span>() -&gt; Void {
+</span></span><span style="display:flex;"><span>    print(<span style="color:#e6db74">&#34;howdy&#34;</span>)
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">greet2</span>() -&gt; () {
+</span></span><span style="display:flex;"><span>    print(<span style="color:#e6db74">&#34;howdy&#34;</span>)
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">greet3</span>() {
+</span></span><span style="display:flex;"><span>    print(<span style="color:#e6db74">&#34;howdy&#34;</span>)
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><h2 id="函数签名">函数签名</h2>
+<p>如果函数声明的时候忽略外部参数名和内部参数名，<font color=red>可以通过输入和输出类型来完全描述一个函数的特征</font>。为此，把参数类型写在参数列表括号里，后面是箭头运算符和输出类型，像下面这样：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span>(Int, Int) -&gt; Int
 </span></span></code></pre></div><p>上面是一个合法的表达式，表示接收两个<code>Int</code>类型参数并返回一个<code>Int</code>类型函数的签名。这个签名描述了<font color=Blue>所有具有这种顺序和数量的参数、类型、并返回这种类型的结果的函数</font>。<font color=LightSeaGreen>一个函数的签名实际上就是它的类型&mdash;函数的类型</font>。</p>
 <p>一个函数的签名必须包括参数列表（不带参数名，只有参数类型）和返回类型，其中的参数列表和返回值都可以为空。一个不带参数和没有返回值的函数签名可以写成<code>()-&gt; Void</code>或<code>()-&gt;()</code>：</p>
@@ -744,7 +766,7 @@ code.has-jax {
 <p>一个函数可以<font color=red>外化其参数名称，在调用函数的时候使用这个参数名称，这个名称被称为外部参数名或外部参数标签</font>。<font color=Blue>外部参数名称也是函数名称的一部分</font>，并且必须作为参数的标签出现在对该函数的调用中。外部参数标签有如下作用：</p>
 <ul>
 <li>
-<p>它澄清了每个参数的目的，<font color=Blue>一个参数标签（外部参数）可以提供一个线索，说明该参数对函数的行为有什么贡献</font>。</p>
+<p>它阐明了每个参数的目的，<font color=Blue>一个参数标签（外部参数）可以提供一个线索，说明该参数如何影响该函数</font>。</p>
 </li>
 <li>
 <p>它将一个函数与另一个函数区分开来：<font color=red>两个在圆括号前具有相同名称和相同签名的函数，但具有不同的外部参数名称，是两个不同的函数</font>「这个有待考证😂」。</p>
@@ -760,9 +782,25 @@ code.has-jax {
 </li>
 <li>
 <p>如果需要去除一个参数的外部名称，则需要<font color=LightSeaGreen>在内部名称前加上下划线和一个空格</font>，此表示不使用外部参数，调用该函数时可以省略该参数名。</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">echoString</span>(<span style="color:#66d9ef">_</span> s: String, times: Int) -&gt; String {
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">var</span> result = <span style="color:#e6db74">&#34;&#34;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">for</span> <span style="color:#66d9ef">_</span> <span style="color:#66d9ef">in</span> <span style="color:#ae81ff">1.</span>..times {
+</span></span><span style="display:flex;"><span>        result <span style="color:#f92672">+=</span> s
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">return</span> result
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p>上面的函数中，第一个参数只有内部名称，第二个参数既有内部名称也有外部名称，并且他们的名称相同，即<code>times</code>。</p>
 </li>
 </ul>
-<h2 id="函数重载">函数重载</h2>
+<p>外部名称的存在<font color=red>并不意味着调用可以使用与声明不同的参数顺序</font>。下面的<code>echo(string:times:)</code>需要一个<code>String</code>参数和一个<code>Int</code>参数，必须按此顺序调用：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">echo</span>(string s: String, times n: Int) -&gt; String {
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">var</span> result = <span style="color:#e6db74">&#34;&#34;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">for</span> <span style="color:#66d9ef">_</span> <span style="color:#66d9ef">in</span> <span style="color:#ae81ff">1.</span>..n {
+</span></span><span style="display:flex;"><span>        result <span style="color:#f92672">+=</span> s
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">return</span> result
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><h2 id="函数重载">函数重载</h2>
 <p>在<code>Swift</code>中函数重载是合法的，这意味着两个函数具有相同的名字（<font color=Blue>包括相同的外部参数名称</font>），但有着不同的函数签名是可以共存的。需要注意的是，<font color=red>两个基本名称（函数名）相同但外部参数名称不同的函数并不构成重载，它们是两个名称不同的函数</font>「有些地方说这也是一种重载，个人看来也是合理的」。</p>
 <p>重载之所以有效是因为<code>Swift</code>进行严格的类型区分。<code>Swift</code>可以在函数声明和函数调用时把重载函数区分开。因此，<code>Swift</code>清楚地知道<code>say(&quot;what&quot;)</code>和<code>say(1)</code>是不同的。</p>
 <p>需要注意的是<font color=red>重载也适用于函数的返回类型</font>。两个具有相同名称和参数的函数可以有不同的返回类型。但调用时的上下文必须明确，即<font color=red>必须清楚调用者期望的返回类型</font>，否则编译器会报错。下面两个重载函数是可以并存的：</p>
