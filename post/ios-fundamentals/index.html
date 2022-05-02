@@ -241,7 +241,7 @@ code.has-jax {
     <i class="fa fa-file-word-o"></i>
 </span>
 <span class="post-meta-item-text">字数: </span>
-<span class="leancloud-visitors-count">51681</span>
+<span class="leancloud-visitors-count">52020</span>
 &nbsp; | &nbsp;
 <span class="post-meta-item-icon">
     <i class="fa fa-coffee"></i>
@@ -833,15 +833,17 @@ code.has-jax {
 </span></span><span style="display:flex;"><span>}
 </span></span></code></pre></div><p>实际上，上面的<code>say</code>相当于两个函数。其中一个只有一个未标记的参数<code>func say(_ s: String)</code>，并且在函数体中<code>times=1</code>；另一个既有未标记的参数也有一个<code>times</code>参数<code>func say(_ s: String, times: Int)</code>。</p>
 <h2 id="可变参数">可变参数</h2>
-<p>在函数中同类型的参数个数可以是可变的，即调用者可以根据需要提供<font color=LightSeaGreen>该参数类型的多个值，用逗号隔开</font>。实际上，<font color=red>函数体将以数组形式接收这些值</font>。要在函数声明中表明一个参数是可变的，需要在类型后面加上三个点：</p>
+<p>在函数中同类型的参数个数可以是可变的，即调用者可以根据需要提供<font color=LightSeaGreen>该参数类型的多个值，用逗号隔开</font>。实际上，<font color=red>函数体将以数组形式接收这些值</font>。要在函数声明中表明一个参数是可变的，只需要在类型后面加上三个点：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">sayStrings</span>(<span style="color:#66d9ef">_</span> arrayOfStrings: String ...) {
 </span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">for</span> s <span style="color:#66d9ef">in</span> arrayOfStrings {
 </span></span><span style="display:flex;"><span>        debugPrint(s)
 </span></span><span style="display:flex;"><span>    }
 </span></span><span style="display:flex;"><span>}
-</span></span></code></pre></div><p>全局的<code>debugPrint</code>函数第一个参数实际上是可变的，所以可以一次打印多个值。<code>debugPrint</code>函数中还有一些默认参数，这些参数确定了输出的细节：默认的分隔符(输出多个值时的分隔符号)是一个空格，默认的终止符是一个换行符，可以在调用的时候改变其中之一或全部：</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">func</span> <span style="color:#a6e22e">debugPrint</span>(<span style="color:#66d9ef">_</span> items: Any..., separator: String = <span style="color:#e6db74">&#34; &#34;</span>, terminator: String = <span style="color:#e6db74">&#34;</span><span style="color:#ae81ff">\n</span><span style="color:#e6db74">&#34;</span>)
-</span></span></code></pre></div><p>一个函数<font color=red>可以有多个可变参数</font>，下面的<code>testVariadicParameters</code>有<code>4</code>个可变参数。因为每个可变参数在函数内部都以数组的形式接受的，所以打印出来的是数组形式：</p>
+</span></span><span style="display:flex;"><span>sayStrings(<span style="color:#e6db74">&#34;34&#34;</span>,<span style="color:#e6db74">&#34;456&#34;</span>,<span style="color:#e6db74">&#34;678&#34;</span>,<span style="color:#e6db74">&#34;9899&#34;</span>)
+</span></span></code></pre></div><p>其它参数可以可以跟在可变参数后面，但它必须有一个外部标签来标识可变参数在调用中的结束位置。全局的<code>print</code>和<code>debugPrint</code>函数第一个参数实际上是可变的，所以可以一次打印多个值。<code>debugPrint</code>函数中还有一些默认参数，这些参数确定了输出的细节：默认的分隔符(输出多个值时的分隔符号)是一个空格，默认的终止符是一个换行符，可以在调用的时候改变其中之一或全部：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">func</span> <span style="color:#a6e22e">print</span>(<span style="color:#66d9ef">_</span> items: Any..., separator: String = <span style="color:#e6db74">&#34; &#34;</span>, terminator: String = <span style="color:#e6db74">&#34;</span><span style="color:#ae81ff">\n</span><span style="color:#e6db74">&#34;</span>)
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">func</span> <span style="color:#a6e22e">debugPrint</span>(<span style="color:#66d9ef">_</span> items: Any..., separator: String = <span style="color:#e6db74">&#34; &#34;</span>, terminator: String = <span style="color:#e6db74">&#34;</span><span style="color:#ae81ff">\n</span><span style="color:#e6db74">&#34;</span>)
+</span></span></code></pre></div><p>在<code>Swift 5.3</code>之前，一个函数至多可以声明一个可变参数，但从<code>Swift 5.4</code>开始这个限制被移除了。一个函数<font color=red>可以有多个可变参数</font>，下面的<code>testVariadicParameters</code>有<code>4</code>个可变参数。因为每个可变参数在函数内部都以数组的形式接受的，所以打印出来的是数组形式：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">testVariadicParameters</span>(first: String..., second: String..., third: Int..., forth: [String]...) {
 </span></span><span style="display:flex;"><span>    debugPrint(first)
 </span></span><span style="display:flex;"><span>    debugPrint(second)
@@ -855,7 +857,19 @@ code.has-jax {
 </span></span><span style="display:flex;"><span>[<span style="color:#e6db74">&#34;name&#34;</span>, <span style="color:#e6db74">&#34;This&#34;</span>, <span style="color:#e6db74">&#34;true&#34;</span>]
 </span></span><span style="display:flex;"><span>[<span style="color:#ae81ff">1</span>, <span style="color:#ae81ff">2</span>, <span style="color:#ae81ff">45</span>, <span style="color:#ae81ff">89</span>]
 </span></span><span style="display:flex;"><span>[[<span style="color:#e6db74">&#34;TT&#34;</span>], [<span style="color:#e6db74">&#34;KK&#34;</span>]]
-</span></span></code></pre></div><h2 id="忽略的参数">忽略的参数</h2>
+</span></span></code></pre></div><p>如果第2个可变参数没有和第一个可变参数相邻，那么可以不需要外部参数名：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">sayStrings</span>(<span style="color:#66d9ef">_</span> array: String..., other: String, <span style="color:#66d9ef">_</span> array2: String...) {
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">for</span> s <span style="color:#66d9ef">in</span> array {
+</span></span><span style="display:flex;"><span>        print(s)
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>    print(other)
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">for</span> s <span style="color:#66d9ef">in</span> array2 {
+</span></span><span style="display:flex;"><span>        print(s)
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>sayStrings(<span style="color:#e6db74">&#34;Manny&#34;</span>, <span style="color:#e6db74">&#34;Moe&#34;</span>, <span style="color:#e6db74">&#34;Jack&#34;</span>, other: <span style="color:#e6db74">&#34;Matt&#34;</span>, <span style="color:#e6db74">&#34;Groucho&#34;</span>, <span style="color:#e6db74">&#34;Harpo&#34;</span>, <span style="color:#e6db74">&#34;Chico&#34;</span>)
+</span></span></code></pre></div><p>不幸的是，<code>Swift</code>语言中存在一个漏洞：无法将数组转换为以逗号分隔的参数列表（类似于<code>Ruby</code>中的 <code>splatting</code>）。如果开始使用的是某种类型的数组，那么不能在需要该类型的可变参数的地方使用它。</p>
+<h2 id="忽略的参数">忽略的参数</h2>
 <p>如同外部参数一样，如果<font color=Blue>内部参数名称为下划线，则说明该内部参数名称会被忽略</font>。即使省略了内部参数，函数调用者也必须提供实参，但它在函数体中没有内部名字。在下面的例子中，内部参数名字已经省略，也就是说无法使用这个参数，因此使用外部参数名会出现编译错误：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">say</span>(<span style="color:#66d9ef">_</span> s: String, test times: Int, loudly <span style="color:#66d9ef">_</span>: Bool) {
 </span></span><span style="display:flex;"><span>    debugPrint(s)
@@ -892,7 +906,8 @@ code.has-jax {
 </span></span><span style="display:flex;"><span>}
 </span></span><span style="display:flex;"><span><span style="color:#66d9ef">var</span> loudly = <span style="color:#66d9ef">false</span>
 </span></span><span style="display:flex;"><span>say(<span style="color:#e6db74">&#34;test&#34;</span>, times: <span style="color:#ae81ff">1</span>, loudly: &amp;loudly)
-</span></span></code></pre></div><p>有一种常见的情况是，在函数体中可以修改参数的值而不必把它声明为<code>inout</code>。当<font color=LightSeaGreen>参数是一个类的实例时，可以直接修改实例的值，这是类的一个特殊功能，与其他两种对象类型（枚举和结构体）不同</font>。</p>
+</span></span></code></pre></div><p>当调用带有<code>inout</code>参数的函数时，始终设置其地址作为参数传递给该参数的变量，即使该函数没有对该参数进行任何更改。</p>
+<p>有一种常见的情况是，在函数体中可以修改参数的值而不必把它声明为<code>inout</code>。当<font color=LightSeaGreen>参数是一个类的实例时，可以直接修改实例的值，这是类的一个特殊功能，与其他两种对象类型（枚举和结构体）不同</font>。</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span><span style="color:#66d9ef">class</span> <span style="color:#a6e22e">Dog</span> {
 </span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">var</span> name = <span style="color:#e6db74">&#34;&#34;</span>
 </span></span><span style="display:flex;"><span>}
