@@ -241,13 +241,13 @@ code.has-jax {
     <i class="fa fa-file-word-o"></i>
 </span>
 <span class="post-meta-item-text">字数: </span>
-<span class="leancloud-visitors-count">56240</span>
+<span class="leancloud-visitors-count">57089</span>
 &nbsp; | &nbsp;
 <span class="post-meta-item-icon">
     <i class="fa fa-coffee"></i>
 </span>
 <span class="post-meta-item-text">阅读: </span>
-<span class="leancloud-visitors-count">113 分钟</span>
+<span class="leancloud-visitors-count">114 分钟</span>
 </span>
       </div>
     </header>
@@ -1360,7 +1360,48 @@ code.has-jax {
 </span></span><span style="display:flex;"><span>        f()
 </span></span><span style="display:flex;"><span>    }
 </span></span><span style="display:flex;"><span>}
-</span></span></code></pre></div><h2 id="curried-function">curried function</h2>
+</span></span></code></pre></div><p>上面的函数<code>countAdder</code>接受一个函数参数，并且返回一个函数值。它返回的函数调用它接受的函数，并添加一点：它增加一个变量并报告结果。所以现在试着猜测当我们运行这段代码时会发生什么：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">greet</span>() {
+</span></span><span style="display:flex;"><span>    print(<span style="color:#e6db74">&#34;howdy&#34;</span>)
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">let</span> countedGreet = countAdder(greet)
+</span></span><span style="display:flex;"><span>countedGreet() <span style="color:#75715e">// count is 1</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>countedGreet() <span style="color:#75715e">// count is 2</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>countedGreet() <span style="color:#75715e">// count is 3</span>
+</span></span></code></pre></div><p>函数<code>countAdder</code>返回一个新函数，我们将其命名为<code>countedGreet</code>。然后我们调用<code>countedGreet</code> 三次。以下是控制台中显示的内容：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span>count <span style="color:#66d9ef">is</span> <span style="color:#ae81ff">1</span>
+</span></span><span style="display:flex;"><span>howdy
+</span></span><span style="display:flex;"><span>count <span style="color:#66d9ef">is</span> <span style="color:#ae81ff">2</span>
+</span></span><span style="display:flex;"><span>howdy
+</span></span><span style="display:flex;"><span>count <span style="color:#66d9ef">is</span> <span style="color:#ae81ff">3</span>
+</span></span><span style="display:flex;"><span>howdy
+</span></span></code></pre></div><p>显然，<code>countAdder</code>已经为传递给它的函数添加了报告调用次数的能力。维持这个计数的变量到底在哪里？在<code>countAdder</code>中，<code>ct</code>是一个局部变量，它并未声明在匿名函数中，这是故意的。如果它是在匿名函数中声明的，那么每次调用<code>countedGreet</code>时我们都会将<code>ct</code>设置为<code>0</code>——我们不会计数。相反，<code>ct</code>被初始化为<code>0</code>一次，然后被匿名函数捕获。</p>
+<p>这个变量作为<code>countedGreet</code>环境的一部分被保留下来&ndash;它在<code>countedGreet</code>之外的某个神秘的环境保护世界中，所以每次<code>countedGreet</code>被调用时它都能被递增。</p>
+<h2 id="escaping-closures">Escaping Closures</h2>
+<p>如果作为值传递的函数将被保留以供以后执行，而不是直接调用，它是一个随时间捕获并保留其环境的闭包。这被称为逃逸闭包(<code>escaping closure</code>)。在某些场景下，函数的类型必须标记为<code>escaping</code>。编译器会检测到对这一规则的违反，所以如果你觉得这一规则令人困惑，不用担心，只要让编译器为你执行就可以了。</p>
+<p>下面这个函数是合法的，因为它接受一个函数作为参数，并且直接调用：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">funcCaller</span>(f: () -&gt; ()) {
+</span></span><span style="display:flex;"><span>    f()
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p>而下面这个函数是合法的，即使它返回一个稍后执行的函数，因为它也在内部创建了那个函数。它返回的函数是一个逃逸闭包，但函数返回值的类型不必标记为<code>@escaping</code>：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">funcMaker</span>() -&gt; () -&gt; () {
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">return</span> {
+</span></span><span style="display:flex;"><span>        print(<span style="color:#e6db74">&#34;hello world&#34;</span>)
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p>但是，下面的函数是违法的。它接受了一个函数参数，并且随后返回了这个函数：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">funcPasser</span>(f: () -&gt; ()) -&gt; () -&gt; () { <span style="color:#75715e">// compile error</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">return</span> f
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p>解决的方案是将函数参数标记为<code>@escaping</code>：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">funcPasser</span>(f: @escaping () -&gt; ()) -&gt; () -&gt; () { 
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">return</span> f
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p>逃逸闭包的第二个</p>
+<h2 id="curried-function">curried function</h2>
 <p>当一个函数<font color=red>返回一个带参数的函数</font>，那么它被称为<code>curried</code>函数（以计算机科学家<code>Haskell Curry</code>命名）。下面是一个简单的<code>curried</code>函数：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">makeRoundedRectangleMaker</span>(<span style="color:#66d9ef">_</span> sz: CGSize) -&gt; (CGFloat) -&gt; UIImage {
 </span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">return</span> { r <span style="color:#66d9ef">in</span>
@@ -4074,6 +4115,7 @@ code.has-jax {
         <li><a href="#function-returning-function">Function Returning Function</a></li>
         <li><a href="#closure-setting-a-captured-variable">Closure Setting a Captured Variable</a></li>
         <li><a href="#closure-preserving-captured-environment">Closure Preserving Captured Environment</a></li>
+        <li><a href="#escaping-closures">Escaping Closures</a></li>
         <li><a href="#curried-function">curried function</a></li>
         <li><a href="#函数引用">函数引用</a></li>
         <li><a href="#函数引用的作用域">函数引用的作用域</a></li>

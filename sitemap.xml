@@ -412,7 +412,17 @@ func makeRoundedRectangleMaker(_ sz: CGSize) -&amp;gt; () -&amp;gt; UIImage {  f
 func makeRoundedRectangleMaker(_ sz: CGSize) -&amp;gt; () -&amp;gt; UIImage {  return {  imageOfSize(sz) {  let p = UIBezierPath(roundedRect: CGRect(origin: CGPoint.zero, size: sz), cornerRadius: 8)  p.stroke()   }  } } Closure Setting a Captured Variable 闭包通过其捕捉环境的能力所获得的力量甚至比我到目前为止所展示的还要大。如果闭包能够捕获一个自身外部变量的引用，并且该变量是可设置的，则闭包可以设置该变量。
 func pass100(_ f: (Int) -&amp;gt; ()) {  f(100) }  var x = 0 print(x) // 0 func setX(newX: Int) {  x = newX }  pass100(setX) print(x) // 100 在上面的代码中，因为传入到pass100中的函数setX包含了引用x，不仅包含它，而且捕获它，并且修改了x的值。函数pass100函数能够像直接调用setX一样轻松地设置x。
 Closure Preserving Captured Environment 当一个闭包捕获它所在的环境，它会保留该环境，即使没有其他方法。这是一个让你大吃一惊的例子——一个修改函数的函数：
-func countAdder(_ f: @escaping () -&amp;gt; ()) -&amp;gt; () -&amp;gt; () {  var ct = 0  return {  ct = ct &#43; 1  print(&amp;#34;count is \(ct)&amp;#34;)  f()  } } curried function 当一个函数返回一个带参数的函数，那么它被称为curried函数（以计算机科学家Haskell Curry命名）。下面是一个简单的curried函数：
+func countAdder(_ f: @escaping () -&amp;gt; ()) -&amp;gt; () -&amp;gt; () {  var ct = 0  return {  ct = ct &#43; 1  print(&amp;#34;count is \(ct)&amp;#34;)  f()  } } 上面的函数countAdder接受一个函数参数，并且返回一个函数值。它返回的函数调用它接受的函数，并添加一点：它增加一个变量并报告结果。所以现在试着猜测当我们运行这段代码时会发生什么：
+func greet() {  print(&amp;#34;howdy&amp;#34;) }  let countedGreet = countAdder(greet) countedGreet() // count is 1  countedGreet() // count is 2  countedGreet() // count is 3 函数countAdder返回一个新函数，我们将其命名为countedGreet。然后我们调用countedGreet 三次。以下是控制台中显示的内容：
+count is 1 howdy count is 2 howdy count is 3 howdy 显然，countAdder已经为传递给它的函数添加了报告调用次数的能力。维持这个计数的变量到底在哪里？在countAdder中，ct是一个局部变量，它并未声明在匿名函数中，这是故意的。如果它是在匿名函数中声明的，那么每次调用countedGreet时我们都会将ct设置为0——我们不会计数。相反，ct被初始化为0一次，然后被匿名函数捕获。
+这个变量作为countedGreet环境的一部分被保留下来&amp;ndash;它在countedGreet之外的某个神秘的环境保护世界中，所以每次countedGreet被调用时它都能被递增。
+Escaping Closures 如果作为值传递的函数将被保留以供以后执行，而不是直接调用，它是一个随时间捕获并保留其环境的闭包。这被称为逃逸闭包(escaping closure)。在某些场景下，函数的类型必须标记为escaping。编译器会检测到对这一规则的违反，所以如果你觉得这一规则令人困惑，不用担心，只要让编译器为你执行就可以了。
+下面这个函数是合法的，因为它接受一个函数作为参数，并且直接调用：
+func funcCaller(f: () -&amp;gt; ()) {  f() } 而下面这个函数是合法的，即使它返回一个稍后执行的函数，因为它也在内部创建了那个函数。它返回的函数是一个逃逸闭包，但函数返回值的类型不必标记为@escaping：
+func funcMaker() -&amp;gt; () -&amp;gt; () {  return {  print(&amp;#34;hello world&amp;#34;)  } } 但是，下面的函数是违法的。它接受了一个函数参数，并且随后返回了这个函数：
+func funcPasser(f: () -&amp;gt; ()) -&amp;gt; () -&amp;gt; () { // compile error  return f } 解决的方案是将函数参数标记为@escaping：
+func funcPasser(f: @escaping () -&amp;gt; ()) -&amp;gt; () -&amp;gt; () {  return f } 逃逸闭包的第二个
+curried function 当一个函数返回一个带参数的函数，那么它被称为curried函数（以计算机科学家Haskell Curry命名）。下面是一个简单的curried函数：
 func makeRoundedRectangleMaker(_ sz: CGSize) -&amp;gt; (CGFloat) -&amp;gt; UIImage {  return { r in  imageOfSize(sz) {  let p = UIBezierPath(roundedRect: CGRect(origin: CGPoint.zero, size: sz), cornerRadius: r)  p.stroke()  }  } } 函数引用 如果通过名字引用一个函数（或传递给另外一个函数作为参数），通常可以使用函数的bare name（裸名）。函数的bare name指的是函数的名字（只包括函数名字不包含其它）。下面代码中whatToAnimate和whatToDoLater都是函数的bare name：
 func whatToAnimate() {  debugPrint(&amp;#34;animations&amp;#34;) }  func whatToDoLater(finished: Bool) {  debugPrint(&amp;#34;finished: \(finished)&amp;#34;) }  UIView.animate(withDuration: 0.4, animations: whatToAnimate, completion: whatToDoLater) 在上面的代码中whatToAnimate和whatToDoLater也是函数的引用。它只由函数的名字组成，也就是func关键字后，参数列表括号前的那个函数名。没有圆括号表明这是一个引用，而不是一个调用。
 在没有歧义的情况下，使用bare name作为函数的引用是合法的。上面的代码中，在这个特定的上下文中只有一个叫whatToDoLater的函数，因此能在一个参数类型已知的函数调用中使用bare name作为参数。
