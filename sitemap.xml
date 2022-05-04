@@ -421,8 +421,16 @@ Escaping Closures 如果作为值传递的函数将被保留以供以后执行�
 func funcCaller(f: () -&amp;gt; ()) {  f() } 而下面这个函数是合法的，即使它返回一个稍后执行的函数，因为它也在内部创建了那个函数。它返回的函数是一个逃逸闭包，但函数返回值的类型不必标记为@escaping：
 func funcMaker() -&amp;gt; () -&amp;gt; () {  return {  print(&amp;#34;hello world&amp;#34;)  } } 但是，下面的函数是违法的。它接受了一个函数参数，并且随后返回了这个函数：
 func funcPasser(f: () -&amp;gt; ()) -&amp;gt; () -&amp;gt; () { // compile error  return f } 解决的方案是将函数参数标记为@escaping：
-func funcPasser(f: @escaping () -&amp;gt; ()) -&amp;gt; () -&amp;gt; () {  return f } 逃逸闭包的第二个
-curried function 当一个函数返回一个带参数的函数，那么它被称为curried函数（以计算机科学家Haskell Curry命名）。下面是一个简单的curried函数：
+func funcPasser(f: @escaping () -&amp;gt; ()) -&amp;gt; () -&amp;gt; () {  return f } 逃逸闭包的第二个特点是当你在函数体内引用self的属性或方法时，编译器可能会坚持要明确地使用self。那是因为这样的引用捕获了self，编译器希望你通过说self来承认这个事实：
+let f1 = funcPasser {  print(view.bounds) // compile error, because self.view is implied } let f2 = funcPasser {  print(self.view.bounds) // ok } Capture Lists 有时，可能希望函数引用自身外部的变量，只是为了获取其值，但不捕获该变量。Swift提供了一种巧妙的语法来做到这一点——但仅限于函数是匿名函数时。在匿名函数体的开头，放置方括号，其中包含对周围环境中变量的引用的逗号分隔列表，这称为捕获列表。
+如果你有一个捕获列表，你必须在它后面加上关键字in。如果已经存在in表达式，则捕获列表位于任何参数名称之前。
+结果就好像该值已作为参数而不是通过闭包捕获传递给匿名函数，就像参数一样。它的行为就像是用let声明的一样：
+var x1 = 0 let f1: () -&amp;gt; () = {  print(x1) } f1() // 0  x1 = 1  f1() // 1 在上面的函数中，由于捕获到了变量的值，那么打印的值分别是0和1。而在下面的代码中，因为添加了捕获列表，两次打印的值均为0:
+var x1 = 0 let f1: () -&amp;gt; () = { [x1] in  print(x1) } f1() // 0  x1 = 1  f1() // 0 由于捕获列表，f在声明时已经将x的值捕获为0。实际上，x的行为类似于传递给f的普通参数，这是一个常数。另一种理解方式是，如果f尝试设置x的值，编译器会报错：“无法分配给值：x是不可变的捕获。”
+将捕获列表表达式分配给另一个名称也是合法的。例如，捕获列表可以使用[y=x1]，这种方式好像将x1作为参数传递给匿名函数，但现在该参数称为y。当原始名称有问题时，或者当要传入的值是需要在赋值时计算时，这很有用。这是代码中的一个示例（不解释上下文）：
+self.undoer.registerUndo(withTarget: self) {  [oldCenter = self.center] myself in  myself.setCenterUndoably(oldCenter) } 作为参数传递给registerUndo的匿名函数是一个逃逸函数。捕获列表声明了一个常量oldCenter并将其值设置为 self.center。因此，self.center的值现在在调用registerUndo时进行求值，而不是稍后在调用匿名函数本身时进行评估（此时 self.center的值可能已更改）。
+let f2 = funcPasser {  print(self.view.bounds) } 捕获列表的另一个用途是解决在逃逸闭包中明确表示self的要求。下面的代码中，需要明确地使用self，因为这是一个逃逸闭包。但是很多人不喜欢明确地使用self，如果这个匿名函数多次隐含的使用self，则可能需要多次明确地使用self。从Swift 5.3开始，有一个风格上的替代方案：如果你把self放在捕获列表中，这会满足编译器的要求，并且你不必将self写为函数体中的隐式目标：
+let f2 = funcPasser { [self] in  print(view.bounds) // ok  } curried function 当一个函数返回一个带参数的函数，那么它被称为curried函数（以计算机科学家Haskell Curry命名）。下面是一个简单的curried函数：
 func makeRoundedRectangleMaker(_ sz: CGSize) -&amp;gt; (CGFloat) -&amp;gt; UIImage {  return { r in  imageOfSize(sz) {  let p = UIBezierPath(roundedRect: CGRect(origin: CGPoint.zero, size: sz), cornerRadius: r)  p.stroke()  }  } } 函数引用 如果通过名字引用一个函数（或传递给另外一个函数作为参数），通常可以使用函数的bare name（裸名）。函数的bare name指的是函数的名字（只包括函数名字不包含其它）。下面代码中whatToAnimate和whatToDoLater都是函数的bare name：
 func whatToAnimate() {  debugPrint(&amp;#34;animations&amp;#34;) }  func whatToDoLater(finished: Bool) {  debugPrint(&amp;#34;finished: \(finished)&amp;#34;) }  UIView.animate(withDuration: 0.4, animations: whatToAnimate, completion: whatToDoLater) 在上面的代码中whatToAnimate和whatToDoLater也是函数的引用。它只由函数的名字组成，也就是func关键字后，参数列表括号前的那个函数名。没有圆括号表明这是一个引用，而不是一个调用。
 在没有歧义的情况下，使用bare name作为函数的引用是合法的。上面的代码中，在这个特定的上下文中只有一个叫whatToDoLater的函数，因此能在一个参数类型已知的函数调用中使用bare name作为参数。
