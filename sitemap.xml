@@ -765,7 +765,8 @@ class NewDog {  var name: String   required init(name: String) {  self.name = na
 func dogMakerAndNamer(_ whatType: NewDog.Type) -&amp;gt; NewDog {  let d = whatType(name: &amp;#34;Fido&amp;#34;) // compile error: Initializing from a metatype value must reference &amp;#39;init&amp;#39; explicitly  return d }  func dogMakerAndNamer(_ whatType: NewDog.Type) -&amp;gt; NewDog {  let d = whatType.init(name: &amp;#34;Fido&amp;#34;)  return d }  let d11 = dogMakerAndNamer(NewDog.self) // d11 is a Dog named Fido  let d12 = dogMakerAndNamer(NewNoisyDog.self) // d12 is a NoisyDog named Fido 不幸的是，即使底层的真正类型是NewNoisyDog，全局工厂函数dogMakerAndNamer返回的也是一个NewDog对象。因为是全局函数，这里不能使用Self来解决这个问题，但是可以使用泛型。
  type(of:)应用于一个对象：对象的多态（内部）类型，与引用的类型无关。 Self：在方法主体中，或者在方法声明中指定返回类型时，这个类型或这个实例的类型，多态性。 .Type：附加在类型声明中的一个类型上，以指定该类型本身（或一个子类型）被期望。 .self：发送给一个类型以生成一个元类型，适合于传递一个类型（.Type）被期望的地方。  Comparing Types 类型引用之间可以相互比较。在==比较符的右边，可以用.self来表示一个类型的名称。而在is关键字的右边，可以用.Type来表示一个类型的名称。区别在于：==操作符测试的是绝对相同的类型，而is则允许子类型。
 func dogTypeExpecter(_ whatType: NewDog.Type) {  debugPrint(whatType)  let equality = whatType == NewDog.self  let typology = whatType is NewDog.Type  debugPrint(equality,typology) }  dogTypeExpecter(NewDog.self) // true,true let dog = NewDog(name: &amp;#34;test&amp;#34;) dogTypeExpecter(type(of: dog)) // true,true dogTypeExpecter(NewNoisyDog.self) // false, true 在上面的例子中，whatType放在比较操作符的左边，它可能被type(of:)替换，或者.self替换。同时==操作符右边的NewDog.self也可能被whatType和type(of:)替换。但是is关键字的右边不能出现whatType和type(of:)。
-debugPrint(type(of: dog) == NewDog.self, type(of: dog) == NewNoisyDog.self) // true,false </content>
+debugPrint(type(of: dog) == NewDog.self, type(of: dog) == NewNoisyDog.self) // true,false [](// 全局变量 static let shared = MyManager(string: someString))
+</content>
     </entry>
     
      <entry>
