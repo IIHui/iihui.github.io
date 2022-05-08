@@ -515,7 +515,7 @@ var newStr: String = &amp;#34;new&amp;#34; {  willSet {  debugPrint(newValue)  n
   单例 Lazy Initialization常用于实现单例。单例是一种设计模式，所有的代码都能够访问某个类的单一共享实例。下面代码就是一个简单的单例实现：
 class MyClass {  static let shared = MyClass()  private init() {  //  } } 通常，我们希望实例属性是Lazy Initialization的。因为实例属性初始值的生成所花费的代价可能是昂贵的，所以除非确实需要用到的时候，一般会避免提前生成。但还有另一个原因更重要，懒初始化可以做普通初始化器不能做的事情。
 最重要的是懒初始化器可以访问实例本身，而正常的初始化器是不能这样做的，因为在正常初始化器需要运行的时候，实例尚未生成。在下面的代码中，如果arrow属性不声明为lazy，将会出现编译错误：
-class MyView: UIView {  lazy var arrow = self.arrowImage() // legal  func arrowImage() -&amp;gt; UIImage {  // ... big image-generating code goes here ...  } } 一个常见的场景是定义和调用匿名函数来初始化一个lazy的实例属性。因为一旦加上lazy，那么在这个匿名函数中是可以引用实例本身的：
+class MyView: UIView {  lazy var arrow = self.arrowImage() // legal  func arrowImage() -&amp;gt; UIImage {  // ... big image-generating code goes here ...  } } 一个常见的场景是定义和调用匿名函数来初始化一个lazy的实例属性。一旦加上lazy，那么在这个匿名函数中是可以引用实例本身的：
 class MyView: UIView {  lazy var prog: UIProgressView = {  let p = UIProgressView(progressViewStyle: .default)  p.alpha = 0.7  p.trackTintColor = UIColor.clear  p.progressTintColor = UIColor.black  p.frame = CGRect(x: 0, y: 0, width: self.view.bounds.size.width, height: 20) // legal   p.progress = 1.0  return p  }() } 因为不能将lazy加在let声明的属性上，所以不要让一个lazy的实例属性成为只读的。与自动lazy的全局变量和静态变量不同，标记为lazy的实例属性是线程不安全的。当在多线程环境中使用时，lazy的实例属性可能会导致多次初始化，甚至闪退。
 内置简单类型 每一个变量和每一个字面量都必须有一个类型。Swift内置的简单类型有Bool,Numbers，String，Character，Range，Tuple等。
 与许多计算机语言不同，Swift中没有任何其它东西能被隐含地转换为Bool。例如，在C语言中，布尔值实际上是一个数字，0代表false，非0代表true。而在Swift中，只有false是false，true为true。
