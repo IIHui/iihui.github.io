@@ -241,7 +241,7 @@ code.has-jax {
     <i class="fa fa-file-word-o"></i>
 </span>
 <span class="post-meta-item-text">字数: </span>
-<span class="leancloud-visitors-count">58148</span>
+<span class="leancloud-visitors-count">58153</span>
 &nbsp; | &nbsp;
 <span class="post-meta-item-icon">
     <i class="fa fa-coffee"></i>
@@ -540,10 +540,10 @@ code.has-jax {
 </span></span><span style="display:flex;"><span>    }
 </span></span><span style="display:flex;"><span>}
 </span></span></code></pre></div><h2 id="modules">Modules</h2>
-<p>顶层的命名空间是<code>module</code>（模块）。<code>App</code>是一个<code>module</code>，因此也是一个命名空间，该命名空间的名称<font color=LightSeaGreen>默认为应用程序的名字</font>。若应用程序的名称为<code>MyApp</code>，并且在文件顶层声明一个类<code>Manny</code>，这个类真实名字是<code>MyApp.Manny</code>。但通常不需要使用这个带前缀的真实名字，因为应用程序中的代码<font color=Blue>已经在同一个命名空间内，可以直接看到类</font><code>Manny</code>。</p>
-<p>在当前文件中导入一个模块后，<font color=red>该模块内的所有顶层声明对于当前文件的代码都是可见的</font>，因此不必显式地使用模块的名字来引用。例如，<code>Cocoa</code>的<code>Foundation</code>框架是一个<code>module</code>，<code>NSString</code>就是在<code>Foundation</code>顶层声明的。因此，当在代码中使用<code>import Foundation</code>后，可以直接使用<code>NSString</code>而不必使用<code>Foundation.NSString</code>这样带命名空间的真实名字。</p>
+<p>顶层的命名空间是<code>module</code>（模块）。<code>App</code>是一个<code>module</code>，因此也是一个命名空间，该命名空间的名称<font color=LightSeaGreen>默认为应用程序的名字</font>。若应用程序的名称为<code>MyApp</code>，并且在文件顶层声明一个类<code>Manny</code>，这个类的真实名字是<code>MyApp.Manny</code>。但通常不需要使用这个带前缀的真实名字，因为应用程序中的代码<font color=Blue>已经在同一个命名空间内，可以直接看到类</font><code>Manny</code>。</p>
+<p>在当前文件中导入一个模块后，<font color=red>该模块内的所有顶层声明对于当前文件的代码都是可见的</font>，因此不必显式地使用模块的名字来引用。例如，<code>Cocoa</code>的<code>Foundation</code>框架是一个<code>module</code>，<code>NSString</code>是在<code>Foundation</code>顶层声明的。因此，当在代码中<code>import Foundation</code>后，可以直接使用<code>NSString</code>而不必使用<code>Foundation.NSString</code>这样带命名空间的真实名字。</p>
 <p>实际上<code>Swift</code>本身也是在一个模块中定义的，即<code>Swift module</code>。但我们不必手动导入它，因为编译器总是<font color=red>隐含地导入</font>了<code>Swift module</code>。也可以在文件中加入<code>import Swift</code>来显式地导入，但没必要这样做，因为编译器会提示<code>module swift is already imported</code>。</p>
-<p>上面这个事实非常重要，因为它解释了一个重要的谜题：像<code>debugPrint</code>和<code>print</code>这样的函数到底是从哪里来的，为什么在任何地方都可以使用它们。<code>debugPrint</code>和<code>print</code>实际上是在<code>Swift module</code>顶层声明的一个函数，因为已经隐含地导入了<code>Swift</code>模块，所以我们的代码可以直接看到<code>Swift module</code>所有的顶层声明，当然也包括<code>debugPrint</code>和<code>print</code>。</p>
+<p>上面这个事实非常重要，因为它解释了一个重要的谜题：像<code>debugPrint</code>和<code>print</code>这样的函数到底是从哪里来的，为什么在任何地方都可以使用它们。<code>debugPrint</code>和<code>print</code>实际上是在<code>Swift module</code>顶层声明的一个函数，因为编译器已经隐含地导入了<code>Swift</code>模块，所以我们的代码可以直接看到<code>Swift module</code>所有的顶层声明，当然也包括<code>debugPrint</code>和<code>print</code>。</p>
 <p>因此，<code>debugPrint</code>函数如同当前文件的其它顶层函数一样，也<font color=Blue>变成了一个普通的顶层函数</font>，它对我们的代码来说是全局的。因此，可以直接使用它而不需要指定命名空间，也可以在使用的时候明确指定它的命名空间，即使用<code>Swift.debugPrint(&quot;hello&quot;)</code>，但通常不这样做，因为这样很冗余。</p>
 <p>但是，你自己应用程序模块会掩盖导入的任何其它模块。也就是说，如果声明一个与导入模块中同名的东西，就<font color=red>会失去直接使用导入的东西而不用指定命名空间的神奇能力</font>。假如在代码中声明一个同名的<code>debugPrint</code>函数，那么编译器将会自动隐藏<code>Swift module</code>中的<code>debugPrint</code>函数，即自定义代码中声明的<code>debugPrint</code>函数<font color=red>具有更高的优先级</font>，为了调用<code>Swift</code>的<code>debugPrint</code>函数，现在<font color=LightSeaGreen>必须明确地使用有命名空间</font>，即<code>Swift.debugPrint</code>。</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span>Swift.debugPrint(<span style="color:#e6db74">&#34;test&#34;</span>)
@@ -558,10 +558,10 @@ code.has-jax {
 <p>在<code>Swift</code>中，实例的生成可以通过<font color=red>使用对象类型的名称作为函数名并调用该函数来实现（被称为初始化器）</font>。当在一个对象类型的名称上加上圆括号时，就是在<font color=Blue>向该对象类型发送一种非常特殊的信息———实例化你自己（生成一个该类型的实例）</font>。</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span><span style="color:#66d9ef">let</span> fido = Dog()
 </span></span></code></pre></div><p>上面这段代码做了两件事，首先是实例化了<code>Dog</code>，得到了一个<code>Dog</code>实例。同时还把这个实例放到了一个名叫<code>fido</code>的盒子中（声明了一个变量，并通过把<code>Dog</code>的实例分配给它来初始化这个变量，现在<code>fido</code>是一个<code>Dog</code>的实例）。</p>
-<p>现在有一个<code>Dog</code>的实例，可以向它发送<code>instance messages</code>（实例消息），实例消息包括<font color=LightSeaGreen>实例属性和方法</font>。<font color=red>在对象类型的声明中，属性和方法默认都是实例属性和方法，不能把它们作为该对象类型的消息来使用</font>。如果想要发送实例消息，就必须先有一个实例：</p>
+<p>现在有一个<code>Dog</code>的实例，可以向它发送<code>instance messages</code>（实例消息），实例消息包括<font color=LightSeaGreen>实例属性和方法</font>。<font color=red>在对象类型的声明中，属性和方法默认都是实例属性和方法，不能把它们作为该对象类型的消息来使用</font>。如果想要发送实例消息，就必须先生成一个实例：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span><span style="color:#66d9ef">let</span> fido = Dog()
 </span></span><span style="display:flex;"><span>fido.bark()
-</span></span></code></pre></div><p>如果想要发送类型消息，则需要声明<code>static</code>或<code>class</code>函数，或者是<code>static</code>或<code>class</code>属性。下面代码中声明<code>static</code>和<code>class</code>属性和方法：</p>
+</span></span></code></pre></div><p>如果想要发送类型消息，则需要声明为<code>static</code>或<code>class</code>函数，或者声明<code>static</code>或<code>class</code>属性。下面代码中声明了<code>static</code>和<code>class</code>属性和方法：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span><span style="color:#66d9ef">class</span> <span style="color:#a6e22e">Test</span> {
 </span></span><span style="display:flex;"><span>    <span style="color:#75715e">// static属性</span>
 </span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">static</span> <span style="color:#66d9ef">var</span> test = <span style="color:#e6db74">&#34;test&#34;</span>
