@@ -291,11 +291,11 @@ let dog1 = Dog() dog1.name = &amp;#34;Fido&amp;#34; var dog2 = Dog() dog2.name =
 也就是说一个实例既是代码又是数据。实例的代码指的是它的类型声明，与该类型的所有实例共享。但数据只属于实例，只要实例持续存在，数据就可以持续存在，实例在每个时刻都有一个状态，即实例属性值完整集合。
 一个类的声明实际上定义了一个命名空间。这个命名空间要求其它对象使用额外的点标记来引用该空间内的内容。命名空间本身并没有关闭任何可见性的大门，但访问权限private关键字可以。
 The Keyword self 一个实例是一个对象，而对象是消息的接收者。因此，一个实例需要一种向自己发送消息的方法，通过使用关键字self来实现，self关键字可以用在预期有适当类型实例的地方：
-class Dog {  var name = &amp;#34;name&amp;#34;  var whatADogSays = &amp;#34;woof&amp;#34;   func bark() {  debugPrint(self.whatADogSays)  }   func speak() {  self.bark()  } } 上面代码中self仅出现在实例方法中，当在一个实例的代码中使用self时，它指的是当前这个实例。如果表达式self.name出现在Dog实例方法中，它意味着当前这个Dog实例的name，也就是此时代码正在运行的那个。
+class Dog {  var name = &amp;#34;name&amp;#34;  var whatADogSays = &amp;#34;woof&amp;#34;   func bark() {  debugPrint(self.whatADogSays)  }   func speak() {  self.bark()  } } 上面代码中self仅出现在实例方法中，当在一个实例代码中使用self时，它指的是当前这个实例。如果表达式self.name出现在Dog实例方法中，它意味着当前Dog实例的name，也就是此时代码正在运行的那个。
 在实例方法中使用self是可选的，即是可以省略的。如果省略了信息接收者，要发送的信息又可以发送给self，那么编译器默认会把self作为信息的接收者。
 作为一个编码风格问题，明确地使用self或许是一个好习惯，因为省略self的代码更难阅读和理解。而且在有些情况下，必须显式使用self。
 Privacy 命名空间本身并未关闭任何可见性的大门，但这种可见性屏障有时是需要的。因为并非所有由实例存储的数据都是为了被另一个实例改变，甚至有时要求对其它实例是不可见的。
-也不是每个实例的方法都想要被其它实例调用。基于对象的编程语言通常都需要一种方法来赋予其对象成员以隐私&amp;ndash;一种使其他对象更难看到这些成员的方法。
+也不是每个实例的方法都想要被其它实例调用。基于对象的编程语言通常都需要一种方法来赋予其对象成员以隐私&amp;ndash;一种使其它对象更难看到这些成员的方法。
 class Dog {  var name = &amp;#34;name&amp;#34;  var whatADogSays = &amp;#34;woof&amp;#34;   func bark() {  debugPrint(self.whatADogSays)  }   func speak() {  debugPrint(self.whatADogSays)  } } 在上面的声明中，其它对象都可以更改实例属性whatADogSays。并且bark和speak方法都使用该属性，一旦改变属性whatADogSays的值，则bark和speak使用的值也会跟着变化。为了避免whatADogSays被随意更改，可以将其用private限定只能方法能够修改，不能被实例直接修改。
 一个类声明定义了一个命名空间。这个命名空间要求其他对象使用额外的点符号来引用命名空间内的内容，命名空间本身并不会关闭任何可见性之门。private关键字可以关闭这些可见性大门。
 在上面的代码中，其它的实例也能够访问和修改属性whatADogSays。因为方法bark和speak都访问属性whatADogSays，因此很容易得到一个Dog，当它被告知要bark时，它说meow，这似乎有点不可取：
