@@ -241,7 +241,7 @@ code.has-jax {
     <i class="fa fa-file-word-o"></i>
 </span>
 <span class="post-meta-item-text">字数: </span>
-<span class="leancloud-visitors-count">58155</span>
+<span class="leancloud-visitors-count">58154</span>
 &nbsp; | &nbsp;
 <span class="post-meta-item-icon">
     <i class="fa fa-coffee"></i>
@@ -3088,7 +3088,7 @@ code.has-jax {
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">otherFunction</span>(<span style="color:#66d9ef">_</span> f: @escaping ()-&gt;()) { 
 </span></span><span style="display:flex;"><span>   	<span style="color:#75715e">//</span>
 </span></span><span style="display:flex;"><span>}
-</span></span></code></pre></div><p>现在 <code>otherFunction</code>是逃逸的，这意味着存在威胁：可能在以后的某个时间点改变捕获的<code>self</code>。<code>Digit</code>是一个结构体，所以这将涉及到用一个不同的<code>Digit</code>实例来替换捕获的<code>self</code>。如果<code>Digit</code>是一个类，就不会出现这样的问题，因为捕获的<code>self</code>可以被<code>就地改变</code>。</p>
+</span></span></code></pre></div><p>现在<code>otherFunction</code>是逃逸的，这意味着存在威胁：可能在以后的某个时间点改变捕获的<code>self</code>。<code>Digit</code>是一个结构体，所以这将涉及到用一个不同的<code>Digit</code>实例来替换捕获的<code>self</code>。如果<code>Digit</code>是一个类，就不会出现这样的问题，因为捕获的<code>self</code>可以被<code>就地改变</code>。</p>
 <h2 id="类引用是指针">类引用是指针</h2>
 <p>在引用类型中，在对<font color=LightSeaGreen>实例的引用和实例本身之间有一个隐蔽的层次</font>。引用实际上持有一个指向实例的指针，这意味着当一个类的实例被分配给一个变量或作为一个函数的参数或作为一个函数的结果传递时，可能会出现对同一个对象的多个引用，而结构体和枚举则不是这样的。</p>
 <p>在枚举或者结构体实例被赋值或者传递时，本质上是被赋值或者被传递的是该实例的副本。而类实例被赋值或传递时是实例本身，下面的代码能说明这种区别：</p>
@@ -3150,7 +3150,7 @@ code.has-jax {
 </span></span><span style="display:flex;"><span>fido.walk()
 </span></span><span style="display:flex;"><span>fido.bark()
 </span></span><span style="display:flex;"><span>fido.walkAndBark()
-</span></span></code></pre></div><p>在<code>Swift</code>中允许对从父类继承的方法进行重定义（也被称为覆写，重写），需要在重定义的方法前添加<code>override</code>关键字。下面代码对对<code>Dog</code>继承了<code>Quadruped</code>的<code>walk</code>方法进行了重写：</p>
+</span></span></code></pre></div><p>在<code>Swift</code>中允许对从父类继承的方法进行重定义（也被称为覆写，重写），需要在重定义的方法前添加<code>override</code>关键字。下面代码对<code>Dog</code>继承了<code>Quadruped</code>的<code>walk</code>方法进行了重写：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span><span style="color:#66d9ef">class</span> <span style="color:#a6e22e">Quadruped</span> {
 </span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">func</span> <span style="color:#a6e22e">walk</span>() {
 </span></span><span style="display:flex;"><span>        debugPrint(<span style="color:#e6db74">&#34;walk walk walk&#34;</span>)
@@ -3230,8 +3230,8 @@ code.has-jax {
 </span></span><span style="display:flex;"><span>}
 </span></span></code></pre></div><p>一个下标函数是一个方法。如果一个父类声明了一个下标，子类可以声明一个具有相同签名的下标，只要它用<code>override</code>关键字来指定它。为了调用父类的下标实现，子类可以在关键字<code>super</code>后面使用方括号（例如：<code>super[3]</code>）。</p>
 <h2 id="class-initializers">class initializers</h2>
-<p>由于类的继承性，类实例的初始化比结构或枚举实例的初始化要复杂得多。初始化器的主要任务是确保所有的属性都有一个初始值。初始化器可能还有其他任务要执行，这些任务对这个实例的初始状态和完整性至关重要。</p>
-<p>然而，一个类可能有一个父类，它可能有自己的属性和初始化器。因此，必须以某种方式确保当一个子类被初始化时，其父类的属性被初始化，除了子类本身的任务外，其初始化器的任务也被按部就班地执行。</p>
+<p>由于类的继承性，类实例的初始化比结构或枚举实例的初始化要复杂得多。<font color=red>初始化器的主要任务是确保所有的属性都有一个初始值</font>。初始化器可能还有其他任务要执行，这些任务对这个实例的初始状态和完整性至关重要。</p>
+<p>然而，一个类可能有一个父类，它可能有自己的属性和初始化器。因此，<font color=LightSeaGreen>必须以某种方式确保当一个子类被初始化时，其父类的属性被初始化</font>，除了子类本身的任务外，其初始化器的任务也被按部就班地执行。</p>
 <p>类的初始化分为两类：<code>Designated initializer</code>和<code>Convenience initializer</code>。类的初始化器默认为<code>Designated initializer</code>。<code>Designated initializer</code>初始化器必须保证所有的存储属性都被初始化。它不能委托给同一个类中的另一个初始化器，<font color=red>一个指定的初始化器使用<code>self.init(...)</code>是非法的</font>。</p>
 <p>一个有任何存储属性的类，如果没有作为其声明的一部分被初始化，必须至少有一个明确的指定初始化器。一个没有存储属性的类，或者所有存储属性都作为声明的一部分被初始化的类，如果没有显式指定的初始化器，就有一个隐式的指定初始化器<code>init()</code>。</p>
 <p>如果类的初始化器在声明的时候使用关键字<code>convenience</code>标记，那么它就是<code>Convenience initializer</code>。一个便利初始化器是一个委托初始化器，它<font color=red>必须包含<code>self.init(...)</code>，它必须调用同一个类中的指定初始化器</font>。或者如果它调用同一个类中的另一个便利初始化器，便利初始化器链必须以调用同一个类中的指定初始化器结束。</p>
