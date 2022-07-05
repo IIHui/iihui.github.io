@@ -643,7 +643,7 @@ init 如果结构体没有存储属性或者全部的存储属性在声明的时
 struct Digit {  var number = 42 } 一旦在代码中增加了新的初始化器，编译器将不会自动生成无参的初始化器。在下面的代码中，已经在Digit增加一个有参的初始化器，则无参的初始化器Digit()将会失效：
 struct Digit {  var number = 42  init(number: Int) {  self.number = number  } } 此时，如果想要使用Digit()进行初始化，会出现编译报错。需要手动声明一个无参的初始化器，才能通过编译：
 struct Digit {  var number = 42   init() {  //  }   init(number: Int) {  self.number = number  } } 有存储属性且没有显式初始化器的结构体会自动获得一个从其实例属性派生的隐式初始化器，这称为memberwise initializer(成员式初始化器)：
-struct Test {  var number = 42  var name: String  let age: Int  let greeting = &amp;#34;Hello&amp;#34; } 上面的代码是合法，虽然看起来没有履行在声明或者初始化器中初始化所有储存属性的契约。但实际上，因为没有自定义的初始化器，这个结构体会自动生成一个memberwise initializer(成员式初始化器)，在这个memberwise initializer初始化了所有未初始化的属性：
+struct Test {  var number = 42  var name: String  let age: Int  let greeting = &amp;#34;Hello&amp;#34; } 上面的代码是合法，虽然看起来没有履行在声明或者初始化器中初始化所有储存属性的契约。但实际上，因为没有自定义的初始化器，这个结构体会自动生成一个ˇ initializer(成员式初始化器)，在这个memberwise initializer初始化了所有未初始化的属性：
 struct Test {  var number = 42  var name: String  let age: Int  let greeting = &amp;#34;Hello&amp;#34; }  let t1 = Test(number: 42, name: &amp;#34;matt&amp;#34;, age: 65) let t2 = Test(name: &amp;#34;matt&amp;#34;, age: 65) 上面自动生成的memberwise initializer包含了number,name,age，不包括greeting。这是因为greeting是使用let声明的，在声明的时候已经初始化了。
 因为number使用var声明，并且在声明的同时已经被初始化了，因此从Swift 5.1后在调用memberwise initializer时可以省略这种用var声明并且同时已经初始化属性：
 let t2 = Test(name: &amp;#34;matt&amp;#34;, age: 65) 如果在结构体声明的时候，有自定义的初始化器或者属性声明为private(使用let声明并且已经初始化的属性除外)，则编译器不会自动生成的memberwise initializer。
