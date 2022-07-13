@@ -241,7 +241,7 @@ code.has-jax {
     <i class="fa fa-file-word-o"></i>
 </span>
 <span class="post-meta-item-text">字数: </span>
-<span class="leancloud-visitors-count">58169</span>
+<span class="leancloud-visitors-count">58250</span>
 &nbsp; | &nbsp;
 <span class="post-meta-item-icon">
     <i class="fa fa-coffee"></i>
@@ -3770,10 +3770,10 @@ code.has-jax {
 </span></span><span style="display:flex;"><span><span style="color:#66d9ef">let</span> test = ud.object(forKey:<span style="color:#e6db74">&#34;greeting&#34;</span>) <span style="color:#66d9ef">as</span>! String
 </span></span></code></pre></div><p>当调用<code>ud.object(forKey:)</code>时，<code>Swift</code>并不知道真正的底层类型信息，因为结果是一个<code>Any</code>（实际上是一个包裹<code>Any</code>的<code>Optional</code>）。但是我们知道这个特定的调用应该产生一个字符串&ndash;因为那是一开始就输入的东西。所以我们可以把这个值强行转换为一个字符串&ndash;而且它还能工作。然而，如果<code>ud.object(forKey: &quot;greeting&quot;)</code>不是一个字符串（或者它是<code>nil</code>），就会发生崩溃。如果你不确定你的立场，为了安全起见，使用<code>is</code>或<code>as?</code>。</p>
 <h2 id="type-references">Type References</h2>
-<p>有时我们获取到了一个实例，此时并知道这个实例的类型，可能只是出于信息或调试目的将其类型记录到控制台，或者可能需要使用类型作为值。此时，可以使用全局函数<code>type(of:)</code>：</p>
+<p>有时我们获取到了一个实例，此时并知道这个实例的类型，可能只是出于调试目的将其类型记录到控制台，或者可能需要使用类型作为值。此时，可以使用全局函数<code>type(of:)</code>：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span><span style="color:#66d9ef">let</span> dogTest: Dog = NoisyDog()
 </span></span><span style="display:flex;"><span>debugPrint(type(of: dogTest)) <span style="color:#75715e">// xxx.NoisyDog</span>
-</span></span></code></pre></div><p>对于一个实例来说，能够引用它自己的类型尤为重要。通常，这是为了向该类型发送消息。例如，假设一个实例想要向它的类发送一个类消息。在前面的例子中，<code>Dog</code>实例方法通过向<code>Dog</code>类型发送消息来获取<code>Dog</code>类属性，实际上就是使用<code>Dog</code>这个词：</p>
+</span></span></code></pre></div><p>对于一个实例来说，能够引用它自己的类型尤为重要。通常，<font color=LightSeaGreen>这是为了向该类型发送消息</font>。例如，假设一个实例想要向它的类发送一个类消息。在前面的例子中，<code>Dog</code>实例方法通过向<code>Dog</code>类型发送消息来获取<code>Dog</code>类属性，实际上就是使用<code>Dog</code>这个词：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span><span style="color:#66d9ef">class</span> <span style="color:#a6e22e">Dog</span> {
 </span></span><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">var</span> whatDogsSay: String {
@@ -3784,7 +3784,7 @@ code.has-jax {
 </span></span><span style="display:flex;"><span>        debugPrint(Dog.whatDogsSay)
 </span></span><span style="display:flex;"><span>    }
 </span></span><span style="display:flex;"><span>}
-</span></span></code></pre></div><p>表达式<code>Dog.whatDogsSay</code>看起来笨拙并且不灵活，它有一个类型；它应该只知道它是什么。可以使用关键字<code>Self</code>（带大写字母）来引用当前类型——<code>self</code>的类型:</p>
+</span></span></code></pre></div><p>表达式<code>Dog.whatDogsSay</code>看起来笨拙并且不灵活，它在一个类型当中，按理说应该知道它是什么。可以使用关键字<code>Self</code>（首字母大写大）来引用当前类型——<code>self</code>的类型:</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span><span style="color:#66d9ef">class</span> <span style="color:#a6e22e">Dog</span> {
 </span></span><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">var</span> whatDogsSay: String {
@@ -3944,9 +3944,16 @@ code.has-jax {
 </span></span><span style="display:flex;"><span>dogTypeExpecter(NewNoisyDog.<span style="color:#66d9ef">self</span>) <span style="color:#75715e">// false, true</span>
 </span></span></code></pre></div><p>在上面的例子中，<code>whatType</code>放在比较操作符的左边，它可能被<code>type(of:)</code>替换，或者<code>.self</code>替换。同时<code>==</code>操作符右边的<code>NewDog.self</code>也可能被<code>whatType</code>和<code>type(of:)</code>替换。但是<code>is</code>关键字的右边不能出现<code>whatType</code>和<code>type(of:)</code>。</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span>debugPrint(type(of: dog) == NewDog.<span style="color:#66d9ef">self</span>, type(of: dog) == NewNoisyDog.<span style="color:#66d9ef">self</span>) <span style="color:#75715e">// true,false</span>
-</span></span></code></pre></div><p>[](// 全局变量
-static let shared = MyManager(string: someString))</p>
-
+</span></span></code></pre></div><h2 id="available属性">available属性</h2>
+<p>有个类涉及到的属性只能在<code>iOS 13.0</code>以上系统使用，为了将该类定义为其它类的属性，必须加上<code>available</code>和<code>lazy</code>：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span>@available(iOS <span style="color:#ae81ff">13.0</span>, <span style="color:#f92672">*</span>)
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">class</span> <span style="color:#a6e22e">HapticManager</span> {
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span><span style="color:#66d9ef">class</span> <span style="color:#a6e22e">VibrationService</span> {
+</span></span><span style="display:flex;"><span>    @available(iOS <span style="color:#ae81ff">13.0</span>, <span style="color:#f92672">*</span>)
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">private</span>(<span style="color:#66d9ef">set</span>) <span style="color:#66d9ef">lazy</span> <span style="color:#66d9ef">var</span> hapticManager = HapticManager()
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div>
     </div>
     <footer class="post-footer">
         
@@ -4236,6 +4243,7 @@ static let shared = MyManager(string: someString))</p>
         <li><a href="#casting">Casting</a></li>
         <li><a href="#type-references">Type References</a></li>
         <li><a href="#comparing-types">Comparing Types</a></li>
+        <li><a href="#available属性">available属性</a></li>
       </ul>
     </li>
   </ul>

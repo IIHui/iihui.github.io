@@ -752,9 +752,9 @@ let name = &amp;#34;MyNib&amp;#34; // Swift String  let vc = ViewController(nibN
  public init(nibName nibNameOrNil: String?, bundle nibBundleOrNil: Bundle?) 在下面的代码中，不必通过强制转换来帮助Swift String类型的s桥接，因为set(_:forKey:)的第一个参数为Swift的Any类型（实际上是一个Optional包装的Any）：
 let ud = UserDefaults.standard let s = &amp;#34;howdy&amp;#34; ud.set(s, forKey: &amp;#34;greeting&amp;#34;) 反过来说，你有可能从Objective-C收到一个值，而Swift并不了解这个值的真正底层类型。在这种情况下，你可能希望显式转换为底层类型：
 let ud = UserDefaults.standard let test = ud.object(forKey:&amp;#34;greeting&amp;#34;) as! String 当调用ud.object(forKey:)时，Swift并不知道真正的底层类型信息，因为结果是一个Any（实际上是一个包裹Any的Optional）。但是我们知道这个特定的调用应该产生一个字符串&amp;ndash;因为那是一开始就输入的东西。所以我们可以把这个值强行转换为一个字符串&amp;ndash;而且它还能工作。然而，如果ud.object(forKey: &amp;quot;greeting&amp;quot;)不是一个字符串（或者它是nil），就会发生崩溃。如果你不确定你的立场，为了安全起见，使用is或as?。
-Type References 有时我们获取到了一个实例，此时并知道这个实例的类型，可能只是出于信息或调试目的将其类型记录到控制台，或者可能需要使用类型作为值。此时，可以使用全局函数type(of:)：
+Type References 有时我们获取到了一个实例，此时并知道这个实例的类型，可能只是出于调试目的将其类型记录到控制台，或者可能需要使用类型作为值。此时，可以使用全局函数type(of:)：
 let dogTest: Dog = NoisyDog() debugPrint(type(of: dogTest)) // xxx.NoisyDog 对于一个实例来说，能够引用它自己的类型尤为重要。通常，这是为了向该类型发送消息。例如，假设一个实例想要向它的类发送一个类消息。在前面的例子中，Dog实例方法通过向Dog类型发送消息来获取Dog类属性，实际上就是使用Dog这个词：
-class Dog {   class var whatDogsSay: String {  return &amp;#34;woof&amp;#34;  }   func bark() {  debugPrint(Dog.whatDogsSay)  } } 表达式Dog.whatDogsSay看起来笨拙并且不灵活，它有一个类型；它应该只知道它是什么。可以使用关键字Self（带大写字母）来引用当前类型——self的类型:
+class Dog {   class var whatDogsSay: String {  return &amp;#34;woof&amp;#34;  }   func bark() {  debugPrint(Dog.whatDogsSay)  } } 表达式Dog.whatDogsSay看起来笨拙并且不灵活，它在一个类型当中，按理说应该知道它是什么。可以使用关键字Self（首字母大写大）来引用当前类型——self的类型:
 class Dog {   class var whatDogsSay: String {  return &amp;#34;woof&amp;#34;  }   func bark() {  debugPrint(Self.whatDogsSay)  } } 在代码中使用Self而不是具体的类型名字，不仅是因为更简单，而且它更强大，因为Self和self一样，也遵循多态性。在下面的代码中，当NoisyDog类型的实例调用bark时，它的Self就是NoisyDog。因此，取到的whatDogsSay就是&amp;quot;woof woof woof&amp;quot;。
 class NoisyDog: Dog {  override class var whatDogsSay: String {  return &amp;#34;woof woof woof&amp;#34;  } }  let dogTest: Dog = NoisyDog() debugPrint(type(of: dogTest)) // xxx.NoisyDog debugPrint(dogTest.bark()) // &amp;#34;woof woof woof&amp;#34; Self是Swift 5.1引入的，在那之前只能使用type(of:self)。多态Self的另一个重要用途是作为返回类型。为了说明为什么这很有价值，将介绍工厂方法的概念。
 class NewDog {  var name: String   init(name: String) {  self.name = name  }  class func makeAndName() -&amp;gt; NewDog {  let d = Self(name: &amp;#34;Fido&amp;#34;) // compile error   return d  } } 上面的代码会发生编译错误，这是因为编译器怀疑init(name:)初始化器对于NewDog的每个可能的子类型实现。为了让它放心，我们必须使用required关键字声明该初始化器：
@@ -768,8 +768,8 @@ class NewDog {  var name: String   required init(name: String) {  self.name = na
 func dogMakerAndNamer(_ whatType: NewDog.Type) -&amp;gt; NewDog {  let d = whatType(name: &amp;#34;Fido&amp;#34;) // compile error: Initializing from a metatype value must reference &amp;#39;init&amp;#39; explicitly  return d }  func dogMakerAndNamer(_ whatType: NewDog.Type) -&amp;gt; NewDog {  let d = whatType.init(name: &amp;#34;Fido&amp;#34;)  return d }  let d11 = dogMakerAndNamer(NewDog.self) // d11 is a Dog named Fido  let d12 = dogMakerAndNamer(NewNoisyDog.self) // d12 is a NoisyDog named Fido 不幸的是，即使底层的真正类型是NewNoisyDog，全局工厂函数dogMakerAndNamer返回的也是一个NewDog对象。因为是全局函数，这里不能使用Self来解决这个问题，但是可以使用泛型。
  type(of:)应用于一个对象：对象的多态（内部）类型，与引用的类型无关。 Self：在方法主体中，或者在方法声明中指定返回类型时，这个类型或这个实例的类型，多态性。 .Type：附加在类型声明中的一个类型上，以指定该类型本身（或一个子类型）被期望。 .self：发送给一个类型以生成一个元类型，适合于传递一个类型（.Type）被期望的地方。  Comparing Types 类型引用之间可以相互比较。在==比较符的右边，可以用.self来表示一个类型的名称。而在is关键字的右边，可以用.Type来表示一个类型的名称。区别在于：==操作符测试的是绝对相同的类型，而is则允许子类型。
 func dogTypeExpecter(_ whatType: NewDog.Type) {  debugPrint(whatType)  let equality = whatType == NewDog.self  let typology = whatType is NewDog.Type  debugPrint(equality,typology) }  dogTypeExpecter(NewDog.self) // true,true let dog = NewDog(name: &amp;#34;test&amp;#34;) dogTypeExpecter(type(of: dog)) // true,true dogTypeExpecter(NewNoisyDog.self) // false, true 在上面的例子中，whatType放在比较操作符的左边，它可能被type(of:)替换，或者.self替换。同时==操作符右边的NewDog.self也可能被whatType和type(of:)替换。但是is关键字的右边不能出现whatType和type(of:)。
-debugPrint(type(of: dog) == NewDog.self, type(of: dog) == NewNoisyDog.self) // true,false [](// 全局变量 static let shared = MyManager(string: someString))
-</content>
+debugPrint(type(of: dog) == NewDog.self, type(of: dog) == NewNoisyDog.self) // true,false available属性 有个类涉及到的属性只能在iOS 13.0以上系统使用，为了将该类定义为其它类的属性，必须加上available和lazy：
+@available(iOS 13.0, *) class HapticManager { } class VibrationService {  @available(iOS 13.0, *)  private(set) lazy var hapticManager = HapticManager() } </content>
     </entry>
     
      <entry>
@@ -2484,8 +2484,10 @@ nothing to commit, working tree clean remote: Support for password authenticatio
 git remote -v git remote set-url origin git@github.com:username/repo.git 修改commit时间 有时需要自定义或者修改commit的时间，如果想要修改当前本地待提交commit的时间，可以使用如下命令：
 git commit --amend --date=&amp;#34;2022-01-01T00:00:00&#43;0800&amp;#34; -am &amp;#34;update&amp;#34; 如果需要修改之前提交的某次commit时间，首先通过git log获取提交的id，然后执行如下命令：
 git commit --amend --date=&amp;#34;2022-01-01T00:00:00&#43;0800&amp;#34; -C 02219d93287a939c4fd7b4678c7e87b369ae0961 对于之前已经提交到远程仓库的提交，需要再执行一次git push推送到远程仓库。
-exited with 128 =&amp;gt; Tapping homebrew/core Cloning into &amp;#39;/usr/local/Homebrew/Library/Taps/homebrew/homebrew-core&amp;#39;... fatal: unable to access &amp;#39;https://github.com/Homebrew/homebrew-core/&amp;#39;: HTTP/2 stream 1 was not closed cleanly before end of the underlying stream Error: Failure while executing; `git clone https://github.com/Homebrew/homebrew-core /usr/local/Homebrew/Library/Taps/homebrew/homebrew-core --origin=origin --template=` exited with 128 在配置文件中的.bash_profile文件中添加export PATH=/opt/homebrew/bin:$PATH即可解决。
-参考资料
+exited with 128 执行 brew tap homebrew/core命令时出现如下报错，需要用户主目录下的.bash_profile文件中添加export PATH=/opt/homebrew/bin:$PATH才能解决：
+=&amp;gt; Tapping homebrew/core Cloning into &amp;#39;/usr/local/Homebrew/Library/Taps/homebrew/homebrew-core&amp;#39;... fatal: unable to access &amp;#39;https://github.com/Homebrew/homebrew-core/&amp;#39;: HTTP/2 stream 1 was not closed cleanly before end of the underlying stream Error: Failure while executing; `git clone https://github.com/Homebrew/homebrew-core /usr/local/Homebrew/Library/Taps/homebrew/homebrew-core --origin=origin --template=` exited with 128 参考资料
+homebrew/core 使用 brew tap homebrew/core命令修复时出现Cannot tap homebrew/core: invalid syntax in tap
+Cloning into &amp;#39;/usr/local/Homebrew/Library/Taps/homebrew/homebrew-core&amp;#39;... remote: Enumerating objects: 1227237, done. remote: Counting objects: 100% (67/67), done. remote: Compressing objects: 100% (38/38), done. remote: Total 1227237 (delta 37), reused 58 (delta 29), pack-reused 1227170 Receiving objects: 100% (1227237/1227237), 499.01 MiB | 1.23 MiB/s, done. Resolving deltas: 100% (847288/847288), done. Error: Invalid formula: /usr/local/Homebrew/Library/Taps/homebrew/homebrew-core/Formula/libgccjit.rb libgccjit: undefined method `on_arm&amp;#39; for #&amp;lt;Class:0x00007fdaadec9110&amp;gt; Error: Cannot tap homebrew/core: invalid syntax in tap! 参考资料
 </content>
     </entry>
     
