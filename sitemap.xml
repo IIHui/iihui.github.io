@@ -172,6 +172,10 @@ FINE - #c.j.c.e.debugger - LLDBFrontend: E0505 14:41:25.368477 338892288 TCPClie
 127.0.0.1 localhost 互斥单选 如果要实现UITableView中的cell互斥单选，并且至少有一个cell被选中时，可以使用如下代码实现：
  override func setSelected(_ selected: Bool, animated: Bool) {  super.setSelected(selected, animated: animated)  if selected {  self.checkImgView.image = UIImage(named: checekedImgName)  } else {  self.checkImgView.image = UIImage(named: uncheckedImgName)  }  } iOS simulator 如果在模拟器上编译代码时出现Could not find module for target &#39;x86_64-apple-ios-simulator&#39;，那就是编译架构没有选择x86_64:
 参考资料
+didFailProvisionalLoadForFrame ST环境App出现帧框加载已中断的提示，复现步骤为编译安装ST包，但网络切到外网。拿到的报错信息如下所示：
+2022-07-14 14:35:36.725525&#43;0800 CMBMobileST[83366:5125532] [Process] 0x113199c18 - [pageProxyID=18, webPageID=19, PID=83370] WebPageProxy::didFailProvisionalLoadForFrame: frameID=3, domain=WebKitErrorDomain, code=102, isMainFrame=1 调试发现是热点轻应用导致的报错，按照网上的资料，说是四种情况会出现这个，分别是：
+ url未添加scheme 使用webview打开本地文件时未正确设置contentType 服务端未正确响应 重定向导致  前面两种情况可以排除，通过排查其他应用，基本也可以排除第3种情况，怀疑是第4种情况。使用下面代码临时规避：
+let err = (error as NSError) switch (err.code, err.domain) { case (NSURLErrorCancelled, _), (102, &amp;#34;WebKitErrorDomain&amp;#34;):  printDebug(msg: err.localizedDescription) default:  FlashAlertView(message: error.localizedDescription, delegate: nil).show() } 参考资料
 TLS10 is not accepted 使用IntelliJ IDEA连接Microsoft SQL Server时会提示The server selected protocol version TLS10 is not accepted by client preferences [TLS13, TLS12]：
 [08S01] The driver could not establish a secure connection to SQL Server by using Secure Sockets Layer (SSL) encryption. Error: &amp;#34;The server selected protocol version TLS10 is not accepted by client preferences [TLS13, TLS12]&amp;#34;. ClientConnectionId:a8fbe132-f476-412f-ad23-4f53516c5007 The server selected protocol version TLS10 is not accepted by client preferences [TLS13, TLS12]. 查资料发现，这是因为IDEA版本升级后，自带的jdk版本也升级了，所以需要删除自带的jdk对应的java.security中的对应内容。java.security对应的路径为/Applications/IntelliJ IDEA.app/Contents/jbr/Contents/Home/conf/security/java.security，大约在731行注释即可：
 # jdk.tls.disabledAlgorithms=SSLv3, TLSv1, TLSv1.1, RC4, DES, MD5withRSA, \  DH keySize &amp;lt; 1024, EC keySize &amp;lt; 224, 3DES_EDE_CBC, anon, NULL, \ iOS 14&#43;以上无法安装企业App 最近自动化部署改造，将待安装的ipa文件挪到其它位置，使用iOS 14以上系统验证的时候发现无法安装，但没有任何提示。测试发现，ipa的链接能够正常下载，也能够单独安装。后来服务端排查发现，虽然plist文件是放在https服务器的，但是ipa却存放在http的域名下，因此无法正常安装。
@@ -661,10 +665,10 @@ Classes 虽然类和结构体有些相似，但类和结构体还是有一些关
   当一个给定的类的实例被分配给多个变量或作为参数传递给一个函数时，你会得到对一个相同对象的多个引用。
     一个类可以有一个父类，它继承其父类的成员，类的继承层次可以形成一个分层的树结构。而结构体不能继承。
   在Objective-C中，类是唯一的对象类型。一些内置的Swift结构类型可以神奇地与Objective-C的类类型衔接，但自定义结构类型却没有这种魔力。因此，在用Swift进行iOS编程时，声明类而不是结构的一个原因是作为一种与Objective-C和Cocoa的互换形式。
-Value Types and Reference Types 在Swift中，结构体和枚举类型都是值类型，类是引用类型。值类型不能就地可变，而类的实例是就地可变的。在下面的例子中，因为结构体是值类型，所以更改结构体实例的属性时，要将结构体实例用var声明，而不能用let声明：
-struct Digit {  var number: Int   init(_ n: Int) {  self.number = n  } }  var d = Digit(23) d.number = 45 实际上，当改变一个值类型的实例时，是在用一个不同的实例替换该实例。为了证明这一点，可以添加一个setter观察器。在下面的代码中，虽然改变的是只是属性number的值，但是didSet依然调用了，这说明该实例被替换了：
-struct Digit {  var number: Int   init(_ n: Int) {  self.number = n  } }  var d: Digit = Digit(234) {  didSet {  debugPrint(&amp;#34;d was set&amp;#34;)  } }  d.number = 456 // &amp;#34;d was set&amp;#34; 下面的代码解释了，如果值类型的实例引用是用let声明的，那么就不能对该实例进行改变。下面的代码将会出现编译错误：
-let d = Digit(123) // Digit is a struct d.number = 42 // compile error 但类不是值类型，它们是引用类型。对一个类实例的引用不一定要用var来声明，即使是使用let声明的，也可以通过该引用设置var属性：
+Value Types and Reference Types 在Swift中，结构体和枚举类型都是值类型，类是引用类型。值类型不能就地可变，而类的实例能够就地可变。在下面的例子中，因为结构体是值类型，所以更改结构体实例的属性时，要将结构体实例用var声明，而不能用let声明：
+struct Digit {  var number: Int   init(_ n: Int) {  self.number = n  } }  var d = Digit(23) d.number = 45 实际上，当改变一个值类型的实例时，是在用一个不同的实例替换该实例。为了证明这一点，可以添加一个setter观察器。在下面的代码中，虽然改变的只是属性number的值，但是didSet依然调用了，这说明该实例被替换了：
+struct Digit {  var number: Int   init(_ n: Int) {  self.number = n  } }  var d: Digit = Digit(234) {  didSet {  debugPrint(&amp;#34;d was set&amp;#34;)  } }  d.number = 456 // &amp;#34;d was set&amp;#34; 下面代码会出现编译错误，能够解释如果值类型的实例引用是用let关键字声明的，那么就不能对该实例进行就地改变：
+let d = Digit(123) // Digit is a struct d.number = 42 // compile error 但类不是值类型，它们是引用类型。对一个类实例的引用不一定要用var来声明，即使是使用let声明的，也可以通过该引用更改其var属性的值：
 class Dog {  var name: String = &amp;#34;Fido&amp;#34; }  let rover = Dog() rover.name = &amp;#34;Rover&amp;#34; // fine 在上面代码的最后一行，rover所指向的类实例被就地改变了。没有涉及到对rover的隐式赋值，所以let声明无力阻止这种变化。当属性被设置时，Dog变量上的setter observer 没有被调用：
 class Dog {  var name: String = &amp;#34;Fido&amp;#34; }  var rover: Dog = Dog() { // Dog is a class  didSet {  debugPrint(&amp;#34;rover did set rover&amp;#34;)  } } rover.name = &amp;#34;Rover&amp;#34; // nothing in console 上面的didSet观察器的代码没有执行，说明没有生成新的实例。如果显式地重新设置rover，就会调用setter观察器，但是它不会仅仅因为我们改变了已经被rover指向的狗的实例的一个属性而被调用。
 值类型和引用类型之间的区别也可以在一个函数调用的参数中看到。当接收一个值类型的实例作为参数进入一个函数体时，如果试图赋值给它的实例属性，编译器将会报错：
