@@ -297,15 +297,14 @@ let dog1 = Dog() dog1.name = &amp;#34;Fido&amp;#34; var dog2 = Dog() dog2.name =
 也就是说一个实例既是代码又是数据。实例的代码指的是它的类型声明，与该类型的所有实例共享。但数据只属于实例，只要实例持续存在，数据就可以持续存在，实例在每个时刻都有一个状态，即实例属性值完整集合。
 一个类的声明实际上定义了一个命名空间。这个命名空间**要求其它对象使用额外的点标记来引用该空间内的内容**。命名空间本身并没有关闭任何可见性的大门，但访问权限private关键字可以。
 The Keyword self 一个实例是一个对象，而对象是消息的接收者。因此，一个实例需要一种向自己发送消息的方法，通过使用关键字self来实现，self关键字可以用在预期有适当类型实例的地方：
-class Dog {  var name = &amp;#34;name&amp;#34;  var whatADogSays = &amp;#34;woof&amp;#34;   func bark() {  debugPrint(self.whatADogSays)  }   func speak() {  self.bark()  } } 上面代码中self仅出现在实例方法中，当在一个实例代码中使用self时，它指的是当前这个实例。如果表达式self.name出现在Dog实例方法中，它意味着当前Dog实例的name，也就是此时代码正在运行的那个。
-在实例方法中使用self是可选的，即是可以省略的。如果省略了信息接收者，要发送的信息又可以发送给self，那么编译器默认会把self作为信息的接收者。
-作为一个编码风格问题，明确地使用self或许是一个好习惯，因为省略self的代码更难阅读和理解。而且在有些情况下，必须显式使用self。
+class Dog {  var name = &amp;#34;name&amp;#34;  var whatADogSays = &amp;#34;woof&amp;#34;   func bark() {  debugPrint(self.whatADogSays)  }   func speak() {  self.bark()  } } 上面代码中self仅出现在实例方法中，当在一个实例代码中使用self时，它指的是当前这个实例，也就是此时代码正在运行的那个。如果表达式self.name出现在Dog实例方法中，它意味着当前Dog实例的name属性。
+在实例方法中使用self关键字是可选的，即是可以省略的。如果省略了信息接收者，而要发送的信息又可以发送给self，那么编译器默认会把self作为信息的接收者。作为一个编码风格问题，明确地使用self或许是一个好习惯，因为省略self的代码更难阅读和理解。而且在有些情况下，必须显式使用self。
 Privacy 命名空间本身并未关闭任何可见性的大门，但这种可见性屏障有时是十分需要的。因为并非所有由实例存储的数据都是为了被另一个实例改变，甚至有时要求对其它实例是不可见的。
 也不是每个实例的方法都想要被其它实例调用。基于对象的编程语言通常都需要一种方法来赋予其对象成员以隐私——一种使其它对象更难看到这些属性和方法的方式。
 class Dog {  var name = &amp;#34;name&amp;#34;  var whatADogSays = &amp;#34;woof&amp;#34;   func bark() {  debugPrint(self.whatADogSays)  }   func speak() {  debugPrint(self.whatADogSays)  } } 在上面的声明中，其它对象都可以更改实例属性whatADogSays。并且bark和speak方法都使用该属性，一旦改变属性whatADogSays的值，则bark和speak使用的值也会跟着变化。为了避免whatADogSays被随意更改，可以将其用private限定只能方法能够修改，不能被实例直接修改。
 一个类声明定义了一个命名空间。这个命名空间要求其他对象使用额外的点符号来引用命名空间内的内容，命名空间本身并不会关闭任何可见性之门。private关键字可以关闭这些可见性大门。
 在上面的代码中，其它的实例也能够访问和修改属性whatADogSays。因为方法bark和speak都能修改属性whatADogSays的值。当使用一个Dog实例调用bark时，它却说meow，这似乎有点不可取：
-let fido = Dog() fido.whatADogSays = &amp;#34;meow&amp;#34; fido.bark() // meow 此时，我们可能想到把属性whatADogSays声明为常量，这样就没人可以修改它了。但这个带来了两个问题，假设想要Dog实例本身可以修改属性whatADogSays，此时需要将其声明为var，否则连实例本身也不能修改。
+let fido = Dog() fido.whatADogSays = &amp;#34;meow&amp;#34; fido.bark() // meow 此时，我们可能想到把属性whatADogSays声明为常量，这样就没人可以修改它了。但这个带来了两个问题。第一，假设想要Dog实例本身可以修改属性whatADogSays，此时需要将其声明为var，否则连实例本身也不能修改。
 另外，假设不希望任何其它对象知道这只Dog在说什么，除非通过调用bark和speak。即使使用let声明，其他对象仍然可以读取whatADogSays的值。为了解决这个问题，Swift提供了private关键字：
 class Dog {  var name = &amp;#34;&amp;#34;  private  var whatADogSays = &amp;#34;woof&amp;#34;   func bark() {  print(self.whatADogSays)  }   func speak() {  print(self.whatADogSays)  } } 现在whatADogSays是私有属性，它不能被其他类型的对象看到。Dog实例可以访问whatADogSays，但Cat实例中使用Dog实例时，不能访问属性whatADogSays：
 class Cat {  func tryToChangeWhatADogSays() {  let fido = Dog()  fido.whatADogSays = &amp;#34;meow&amp;#34; // compile error   } } Reserved Words 某些术语，如class和func和var和let和if以及private和import，在Swift中是保留的关键字。这意味着不能将它们用作标识符——例如作为类、函数或变量的名字。如果尝试这样做，将会出现编译错误。如果需要强制将保留字成作为标识符，需要反引号(`)将其括起来，下面这个代码看起来非常混乱，但是是合法的：
