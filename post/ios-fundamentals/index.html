@@ -241,7 +241,7 @@ code.has-jax {
     <i class="fa fa-file-word-o"></i>
 </span>
 <span class="post-meta-item-text">字数: </span>
-<span class="leancloud-visitors-count">58276</span>
+<span class="leancloud-visitors-count">58282</span>
 &nbsp; | &nbsp;
 <span class="post-meta-item-icon">
     <i class="fa fa-coffee"></i>
@@ -1279,9 +1279,9 @@ code.has-jax {
 </span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">let</span> p = UIBezierPath(roundedRect: CGRect(origin: CGPoint.zero, size: sz), cornerRadius: <span style="color:#ae81ff">8</span>)
 </span></span><span style="display:flex;"><span>    p.stroke()
 </span></span><span style="display:flex;"><span>}
-</span></span></code></pre></div><p>在上面的代码中，<code>sz</code>是在比匿名函数更高层次声明的，因此在匿名函数中能够看见和引用它。需要注意的是，匿名函数只是一个函数体，如果<code>imageOfSize</code>不调用，匿名函数就不会执行。</p>
-<p>然而，当函数体内部的表达式<code>CGRect(origin:CGPoint.zero, size:sz)</code>中引用<code>sz</code>时，我们现在捕获它的值（因为函数体是一个闭包）。当<code>imageOfSize</code>调用<code>whatToDraw</code>时，<code>whatToDraw</code>是一个函数体，它引用了一个变量<code>sz</code>，即使在<code>imageOfSize</code>附近没有<code>sz</code>也是没问题的。</p>
-<p>到目前为止，我们一直在硬编码所需圆角矩形的大小。不过，想象一下，创建各种大小的圆角矩形图像是我们经常做的事情。将这段代码打包成一个函数是有意义的，其中<code>sz</code>不是一个固定值，而是一个参数，然后该函数将返回图像：</p>
+</span></span></code></pre></div><p>在上面的代码中，常量<code>sz</code>是<font color=Blue>在比匿名函数更高层次声明的，因此在匿名函数中能够看见和引用它</font>。需要注意的是，匿名函数只是一个函数体，如果<code>imageOfSize</code>不调用，匿名函数就不会执行。</p>
+<p>当函数体内部的表达式<code>CGRect(origin:CGPoint.zero, size:sz)</code>中引用<code>sz</code>时，我们现在捕获了它的值，因为函数体是一个闭包。当函数<code>imageOfSize</code>调用<code>whatToDraw</code>时，<code>whatToDraw</code>是一个函数，它引用了一个变量<code>sz</code>，这就没有问题，即使在<code>imageOfSize</code>附近没有<code>sz</code>。</p>
+<p>到目前为止，我们一直在硬编码所需圆角矩形的大小。不过，想象一下，创建各种大小的圆角矩形图像是我们经常做的事情。将这段代码打包成一个函数是有意义的，其中<code>sz</code>不是一个固定值，而是一个入参，然后该函数将返回图像：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">makeRoundedRectangle</span>(<span style="color:#66d9ef">_</span> sz: CGSize) -&gt; UIImage {
 </span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">let</span> image = imageOfSize(sz) {
 </span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">let</span> p = UIBezierPath(roundedRect: CGRect(origin: CGPoint.zero, size: sz), cornerRadius: <span style="color:#ae81ff">8</span>)
@@ -1289,7 +1289,7 @@ code.has-jax {
 </span></span><span style="display:flex;"><span>    }
 </span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">return</span> image
 </span></span><span style="display:flex;"><span>}
-</span></span></code></pre></div><p>在上面的<code>makeRoundedRectangle</code>的函数中，参数<code>sz</code>不再是硬编码值，我们不知道它会是什么。当调用<code>makeRoundedRectangle</code>时，<code>sz</code>会有一个值，并且匿名函数会捕获<code>sz</code>，所以当<code>imageOfSize</code>调用匿名函数时，该函数内部的<code>sz</code>将具有传递给<code>makeRoundedRectangle</code>的<code>sz</code>值。</p>
+</span></span></code></pre></div><p>在上面的<code>makeRoundedRectangle</code>的函数中，参数<code>sz</code>不再是硬编码值，事先我们并不知道它会是什么。当调用<code>makeRoundedRectangle</code>时，<code>sz</code>会有一个值，并且匿名函数会捕获<code>sz</code>，所以当<code>imageOfSize</code>调用匿名函数时，该匿名函数内部的<code>sz</code>将具有传递给<code>makeRoundedRectangle</code>的<code>sz</code>值。</p>
 <h2 id="function-returning-function">Function Returning Function</h2>
 <p>但函数可以用作值，我们已经将一个函数作为函数调用中的参数传递给函数。函数可以返回函数，现在我们将从函数调用中接收一个函数作为其结果，也就是返回一个生成指定大小的圆角矩形的函数。</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">makeRoundedRectangleMaker</span>(<span style="color:#66d9ef">_</span> sz: CGSize) -&gt; () -&gt; UIImage { <span style="color:#960050;background-color:#1e0010">①</span>
