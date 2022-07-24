@@ -241,7 +241,7 @@ code.has-jax {
     <i class="fa fa-file-word-o"></i>
 </span>
 <span class="post-meta-item-text">字数: </span>
-<span class="leancloud-visitors-count">58265</span>
+<span class="leancloud-visitors-count">58276</span>
 &nbsp; | &nbsp;
 <span class="post-meta-item-icon">
     <i class="fa fa-coffee"></i>
@@ -1228,7 +1228,7 @@ code.has-jax {
 </span></span><span style="display:flex;"><span>        .paragraphStyle,
 </span></span><span style="display:flex;"><span>        value: para,
 </span></span><span style="display:flex;"><span>        range: NSRange(location: <span style="color:#ae81ff">0</span>, length: <span style="color:#ae81ff">1</span>))
-</span></span></code></pre></div><p>但是上面的代码看起来很丑。实际上<code>para</code>是在<code>addAttribute(_:value:range:)</code>调用中将它作为<code>value:</code>参数传递，因此在<font color=LightSeaGreen>调用时创建和配置会更好</font>。这听起来像是使用一个匿名函数的场景，除了<code>value:</code>参数不是一个函数，而是一个<code>NSMutableParagraphStyle</code>对象：</p>
+</span></span></code></pre></div><p>但是上面的代码看起来很丑。实际上<code>para</code>是在调用<code>addAttribute(_:value:range:)</code>时将它作为<code>value:</code>参数传递进去的，因此在<font color=LightSeaGreen>调用时创建和配置会更好</font>。这听起来像是使用一个匿名函数的场景，除了<code>value:</code>参数不是一个函数，而是一个<code>NSMutableParagraphStyle</code>对象：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span>content.addAttribute(
 </span></span><span style="display:flex;"><span>        .paragraphStyle, value: {
 </span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">let</span> para = NSMutableParagraphStyle()
@@ -1236,7 +1236,7 @@ code.has-jax {
 </span></span><span style="display:flex;"><span>    para.firstLineHeadIndent = <span style="color:#ae81ff">10</span> <span style="color:#75715e">// ... more configuration of para ... return para </span>
 </span></span><span style="display:flex;"><span>}(), range: NSRange(location: <span style="color:#ae81ff">0</span>, length: <span style="color:#ae81ff">1</span>))
 </span></span></code></pre></div><h2 id="closures">Closures</h2>
-<p><code>Swift</code>的**<font color=LightSeaGreen>函数都是闭包</font><strong>，这意味函数体内</strong><font color=red>可以捕获函数外的外部变量的引用</font>**。这是什么意思呢，在下面这段代码中，函数<code>bark</code>可以<font color=LightSeaGreen>「看到」在其函数体外声明的变量和函数</font>：</p>
+<p><code>Swift</code>的**<font color=LightSeaGreen>函数都是闭包</font><strong>，这意味函数体内</strong><font color=red>可以捕获函数外的外部变量的引用</font>**。这是什么意思呢，在下面这段代码中，函数<code>bark</code>可以<font color=LightSeaGreen>看到在其函数体外声明的变量和函数</font>：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span><span style="color:#66d9ef">class</span> <span style="color:#a6e22e">Dog</span> {
 </span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">var</span> whatThisDogSays = <span style="color:#e6db74">&#34;woof&#34;</span>
 </span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">func</span> <span style="color:#a6e22e">bark</span>() {
@@ -1256,8 +1256,9 @@ code.has-jax {
 </span></span><span style="display:flex;"><span>d.whatThisDogSays = <span style="color:#e6db74">&#34;arf&#34;</span>
 </span></span><span style="display:flex;"><span><span style="color:#66d9ef">let</span> barkFunction = d.bark
 </span></span><span style="display:flex;"><span>doThis(barkFunction) <span style="color:#75715e">// arf</span>
-</span></span></code></pre></div><p>上面的结果看起来是正常的，但是我们没有直接调用<code>d.dark</code>，而是创建了一个<code>Dog</code>的实例，并把它的<code>bark</code>函数作为值传给函数<code>doThis</code>函数。在那里，<code>bark</code>函数被调用。<code>whatThisDogSays</code>是<code>Dog</code>的实例属性，在函数<code>doThis</code>中并没有<code>whatThisDogSays</code>属性。事实上，在<code>doThis</code>函数中也没有<code>Dog</code>的实例。然而，调用<code>f()</code>仍然正常。<strong>函数<code>d.bark</code>，当它被传递的时候，显然是把变量<code>whatThisDogSays</code>一起传递的</strong>。</p>
-<p>当我们创建了<code>Dog</code>的实例<code>d</code>和<code>barkFunction</code>，更改<code>d</code>的属性会更改调用<code>barkFunction</code>的输出，怎么会这样？显然当<code>d.bark</code>赋值给<code>barkFunction</code>后，<font color=LightSeaGreen>实例<code>d</code>和<code>barkFunction</code>都持有对同一个<code>Dog</code>实例的引用</font>。这是因为我们赋值给<code>barkFunction</code>的<code>d.bark</code>引用了<code>self</code>，也就是<code>Dog</code>实例。当我们说函数是一个闭包并且它捕获在其主体中引用的外部变量时，这就是我们的意思。</p>
+</span></span></code></pre></div><p>上面的结果看起来是正常的，但是我们没有直接调用<code>d.dark</code>，而是创建了一个<code>Dog</code>的实例，并把它的<code>bark</code>函数作为值传给函数<code>doThis</code>函数。在函数<code>doThis</code>中，<code>bark</code>函数被调用。</p>
+<p><code>whatThisDogSays</code>是<code>Dog</code>的实例属性，在函数<code>doThis</code>中并没有<code>whatThisDogSays</code>属性。事实上，在<code>doThis</code>函数中也没有<code>Dog</code>的实例。然而，调用<code>f()</code>仍然能正常。<strong><font color=red>函数<code>d.bark</code>，当它被传递的时候，显然是把变量<code>whatThisDogSays</code>一起传递的</font></strong>。</p>
+<p>当我们创建了<code>Dog</code>的实例<code>d</code>和变量<code>barkFunction</code>，更改<code>d</code>的属性会改变<code>barkFunction</code>的输出，怎么会这样？显然当<code>d.bark</code>赋值给<code>barkFunction</code>后，<font color=LightSeaGreen>实例<code>d</code>和<code>barkFunction</code>都持有对同一个<code>Dog</code>实例的引用</font>。这是因为*<font color=red>我们赋值给<code>barkFunction</code>的<code>d.bark</code>引用了<code>self</code>，也就是<code>Dog</code>实例</font>*。当我们说函数是一个闭包并且它捕获在其主体中引用的外部变量时，这就是我们的意思。</p>
 <h2 id="how-closures-improve-code">How Closures Improve Code</h2>
 <p>可以<font color=red>使用函数是闭包这一事实来使你的代码更通用，从而更有用</font>。为了说明作用，使用之前的一个函数示例，它接受绘图指令并执行它们以生成图像：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">imageOfSize</span>(<span style="color:#66d9ef">_</span> size: CGSize, <span style="color:#66d9ef">_</span> whatToDraw: () -&gt; ()) -&gt; UIImage {
