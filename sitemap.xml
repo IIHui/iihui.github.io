@@ -436,8 +436,8 @@ Escaping Closures 如果作为值传递的函数将被保存下来供以后执�
 在某些场景下，函数的类型必须标记为escaping。编译器会检测到对这一规则的违反，所以如果你觉得这一规则令人困惑，不用担心，只要让编译器为你执行就可以了。
 下面这个函数是合法的，因为它接受一个函数作为参数，并且直接调用：
 func funcCaller(f: () -&amp;gt; ()) {  f() } 而下面这个函数也是合法的，即使它返回一个稍后执行的函数，因为它也是在内部创建了那个函数。它返回的函数是一个逃逸闭包，但函数返回值的类型不必标记为@escaping：
-func funcMaker() -&amp;gt; () -&amp;gt; () {  return {  print(&amp;#34;hello world&amp;#34;)  } } 但是，下面的函数是非法的。它接受了一个函数参数，并且随后返回了这个函数：
-func funcPasser(f: () -&amp;gt; ()) -&amp;gt; () -&amp;gt; () { // compile error  return f } 解决的方案是将函数参数标记为@escaping：
+func funcMaker() -&amp;gt; () -&amp;gt; () {  return {  print(&amp;#34;hello world&amp;#34;)  } } 但是，下面的函数是非法的。它接受了一个函数参数，并且随后返回了这个函数供后续执行：
+func funcPasser(f: () -&amp;gt; ()) -&amp;gt; () -&amp;gt; () { // compile error  return f } 解决的方案是将函数参数标记为@escaping，编译器也会提醒需要这样做：
 func funcPasser(f: @escaping () -&amp;gt; ()) -&amp;gt; () -&amp;gt; () {  return f } 逃逸闭包的第二个特点是当你在函数体内引用self的属性或方法时，编译器可能会坚持要明确地使用self。那是因为这样的引用捕获了self，编译器希望你通过说self来承认这个事实：
 let f1 = funcPasser {  print(view.bounds) // compile error, because self.view is implied } let f2 = funcPasser {  print(self.view.bounds) // ok } Capture Lists 有时，可能希望函数引用自身外部的变量，只是为了获取其值，但不捕获该变量。Swift提供了一种巧妙的语法来做到这一点——但仅限于函数是匿名函数时。在匿名函数体的开头，放置方括号，其中包含对周围环境中变量的引用的逗号分隔列表，这称为捕获列表。
 如果你有一个捕获列表，你必须在它后面加上关键字in。如果已经存在in表达式，则捕获列表位于任何参数名称之前。
