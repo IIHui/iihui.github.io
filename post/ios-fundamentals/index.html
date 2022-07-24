@@ -241,7 +241,7 @@ code.has-jax {
     <i class="fa fa-file-word-o"></i>
 </span>
 <span class="post-meta-item-text">字数: </span>
-<span class="leancloud-visitors-count">58750</span>
+<span class="leancloud-visitors-count">58753</span>
 &nbsp; | &nbsp;
 <span class="post-meta-item-icon">
     <i class="fa fa-coffee"></i>
@@ -1362,7 +1362,7 @@ code.has-jax {
 </span></span><span style="display:flex;"><span>print(x) <span style="color:#75715e">// 100</span>
 </span></span></code></pre></div><p>在上面的代码中，因为传入到<code>pass100</code>中的函数<code>setX</code>包含了引用<code>x</code>，不仅包含它，而且捕获它，并且修改了<code>x</code>的值。函数<code>pass100</code>函数能够像直接调用<code>setX</code>一样轻松地设置<code>x</code>。</p>
 <h2 id="closure-preserving-captured-environment">Closure Preserving Captured Environment</h2>
-<p>当一个闭包捕获它所在的环境，它会保留该环境，即使没有其他方法。这是一个让你大吃一惊的例子——一个修改函数的函数：</p>
+<p>当一个闭包捕获它所在的环境，它会保留该环境，即使没有其他方法。这是一个让你大吃一惊的例子——<font color=red>一个修改函数的函数</font>：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">countAdder</span>(<span style="color:#66d9ef">_</span> f: @escaping () -&gt; ()) -&gt; () -&gt; () {
 </span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">var</span> ct = <span style="color:#ae81ff">0</span>
 </span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">return</span> {
@@ -1389,10 +1389,11 @@ code.has-jax {
 </span></span><span style="display:flex;"><span>howdy
 </span></span><span style="display:flex;"><span>count <span style="color:#66d9ef">is</span> <span style="color:#ae81ff">3</span>
 </span></span><span style="display:flex;"><span>howdy
-</span></span></code></pre></div><p>显然，<code>countAdder</code>已经为传递给它的函数添加了报告调用次数的能力。维持这个计数的变量到底在哪里？在<code>countAdder</code>中，<code>ct</code>是一个局部变量，它并未声明在匿名函数中，这是故意的。如果它是在匿名函数中声明的，那么每次调用<code>countedGreet</code>时我们都会将<code>ct</code>设置为<code>0</code>——我们不会计数。相反，<code>ct</code>被初始化为<code>0</code>一次，然后被匿名函数捕获。</p>
-<p>这个变量作为<code>countedGreet</code>环境的一部分被保留下来&ndash;它在<code>countedGreet</code>之外的某个神秘的环境保护世界中，所以每次<code>countedGreet</code>被调用时它都能被递增。</p>
+</span></span></code></pre></div><p>显然，<code>countAdder</code>已经为传递给它的函数添加了报告调用次数的能力。维持这个计数的变量到底在哪里？在<code>countAdder</code>中，<code>ct</code>是一个局部变量，它并未声明在匿名函数中，这是故意的。如果它是在匿名函数中声明的，那么每次调用<code>countedGreet</code>时<code>ct</code>将设置为<code>0</code>。</p>
+<p>相反<code>ct</code>声明在匿名函数外，<code>ct</code>被初始化为<code>0</code>一次，然后被匿名函数捕获。这个变量作为<code>countedGreet</code>环境的一部分被保留下来&ndash;它在<code>countedGreet</code>之外的某个神秘的环境保护世界中，所以每次<code>countedGreet</code>被调用时它都能被递增。</p>
 <h2 id="escaping-closures">Escaping Closures</h2>
-<p>如果作为值传递的函数将被保留以供以后执行，而不是直接调用，它是一个随时间捕获并保留其环境的闭包。这被称为逃逸闭包(<code>escaping closure</code>)。在某些场景下，函数的类型必须标记为<code>escaping</code>。编译器会检测到对这一规则的违反，所以如果你觉得这一规则令人困惑，不用担心，只要让编译器为你执行就可以了。</p>
+<p>如果作为值传递的函数将被保存下来供以后执行，而不是直接调用，它是一个随着时间的推移捕获并保存其环境的闭包，这被称为逃逸闭包(<code>escaping closure</code>)。</p>
+<p>在某些场景下，函数的类型必须标记为<code>escaping</code>。编译器会检测到对这一规则的违反，所以如果你觉得这一规则令人困惑，不用担心，只要让编译器为你执行就可以了。</p>
 <p>下面这个函数是合法的，因为它接受一个函数作为参数，并且直接调用：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">funcCaller</span>(f: () -&gt; ()) {
 </span></span><span style="display:flex;"><span>    f()
