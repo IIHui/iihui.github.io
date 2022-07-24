@@ -241,7 +241,7 @@ code.has-jax {
     <i class="fa fa-file-word-o"></i>
 </span>
 <span class="post-meta-item-text">字数: </span>
-<span class="leancloud-visitors-count">58404</span>
+<span class="leancloud-visitors-count">58592</span>
 &nbsp; | &nbsp;
 <span class="post-meta-item-icon">
     <i class="fa fa-coffee"></i>
@@ -1315,12 +1315,15 @@ code.has-jax {
 <p>最后，返回内部函数<code>f</code>。也就是履行了之前的约定：将返回一个不带参数并返回一个<code>UIImage</code>的函数。</p>
 </li>
 </ol>
+<p>但也许你仍然张着嘴盯着<code>makeRoundedRectangleMaker</code>，想知道怎么使用它，如果你这样做会得到什么。让我们尝试一下：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span><span style="color:#66d9ef">let</span> maker = makeRoundedRectangleMaker(CGSize(width:<span style="color:#ae81ff">45</span>, height:<span style="color:#ae81ff">20</span>)) 
+</span></span></code></pre></div><p>该代码运行后的变量<code>maker</code>的是什么？它是一个函数——一个不带参数的函数，当被调用时，它会生成一个大小为<code>45,20</code>的圆角矩形的图像。可以通过调用<code>maker</code>来证实：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span><span style="color:#66d9ef">let</span> maker = makeRoundedRectangleMaker(CGSize(width:<span style="color:#ae81ff">45</span>, height:<span style="color:#ae81ff">20</span>)) 
 </span></span><span style="display:flex;"><span><span style="color:#66d9ef">self</span>.iv.image = maker()
-</span></span></code></pre></div><p>我们再次将注意力转向<code>makeRoundedRectangleMaker</code>函数的实现，编写<code>makeRoundedRectangleMaker</code>不是为了告诉你一个函数可以产生一个函数。编写它是为了说明闭包，让我们考虑一下上下文是如何被捕获的。</p>
-<p>函数<code>f</code>没有参数。然而，在<code>f</code>的函数体中两次引用了<code>sz</code>。函数<code>f</code>内部可以看到<code>sz</code>，即外部函数<code>makeRoundedRectangleMaker</code>的参数。函数<code>f</code>在<code>makeRoundedRectangleMaker</code>被调用时捕获了<code>sz</code>，并在<code>f</code>在函数中返回并赋值给<code>maker</code>时保留该引用：</p>
+</span></span></code></pre></div><p>我们再次将注意力转向<code>makeRoundedRectangleMaker</code>函数的实现，编写<code>makeRoundedRectangleMaker</code>不是为了告诉你一个函数可以产生一个函数。编写它是为了说明闭包，让我们思考一下<code>environment</code>是如何被捕获的。</p>
+<p>函数<code>f</code>没有参数。然而，在<code>f</code>的函数体中两次引用了<code>sz</code>。函数<code>f</code>内部可以看到<code>sz</code>，即外部函数<code>makeRoundedRectangleMaker</code>的参数。函数<code>f</code>在<code>makeRoundedRectangleMaker</code>被调用时捕获了<code>sz</code>，并在<code>f</code>返回并赋值给<code>maker</code>时保留该引用：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span><span style="color:#66d9ef">let</span> maker = makeRoundedRectangleMaker(CGSize(width:<span style="color:#ae81ff">45</span>, height:<span style="color:#ae81ff">20</span>)) 
-</span></span></code></pre></div><p>这就是为什么<code>maker</code>现在是一个函数，当它被调用时，创建和返回了特定大小的图片。另一方面，<code>makeRoundedRectangleMaker</code>是一个工厂，用于创建类似于<code>maker</code>的整个函数系列，每个函数都生成一个特定大小的图像。这是闭包力量的戏剧性例证。</p>
+</span></span></code></pre></div><p>这就是为什么<code>maker</code>现在是一个函数，当它被调用时，创建和返回了特定大小的图片，生成图像大小的知识已被纳入 <code>maker</code>引用的函数中。另一方面，<code>makeRoundedRectangleMaker</code>是一个工厂，用于创建类似于<code>maker</code>的整个函数系列，每个函数都生成一个特定大小的图像。这是一个戏剧性的例子，说明了关闭的力量。</p>
 <p>实际上，在<code>makeRoundedRectangleMaker</code>中，没有必要创建<code>im</code>变量，可以直接返回<code>imageOfSize</code>：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">makeRoundedRectangleMaker</span>(<span style="color:#66d9ef">_</span> sz: CGSize) -&gt; () -&gt; UIImage {
 </span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">func</span> <span style="color:#a6e22e">f</span>() -&gt; UIImage {

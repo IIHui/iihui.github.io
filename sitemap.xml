@@ -417,9 +417,11 @@ self.iv.image = makeRoundedRectangle(CGSize(width:45, height:20)) Function Retur
 func makeRoundedRectangleMaker(_ sz: CGSize) -&amp;gt; () -&amp;gt; UIImage { ①  func f() -&amp;gt; UIImage { ②  let im = imageOfSize(sz) {  let p = UIBezierPath(roundedRect: CGRect(origin: CGPoint.zero, size: sz), cornerRadius: 8)  p.stroke()  }  return im  }  return f ③ }   函数makeRoundedRectangleMaker的类型（签名）到底是什么？它是(CGSize) -&amp;gt; () -&amp;gt; UIImage。该表达式有两个箭头运算符，需要注意的是每个箭头运算符之后的所有内容都是返回值类型。因此上面的函数接受一个参数CGSize，并且返回一个签名为() -&amp;gt; UIImage的函数。
   在函数makeRoundedRectangleMaker体内第一步是定义一个内部函数，这个内部函数没有入参，返回一个UIImage，我们将这个函数命名为f。这个函数的工作方式既简单又熟悉：它调用imageOfSize，传递给它一个匿名函数，该函数生成一个圆角矩形(im)的图像——然后它返回该图像。
   最后，返回内部函数f。也就是履行了之前的约定：将返回一个不带参数并返回一个UIImage的函数。
-  let maker = makeRoundedRectangleMaker(CGSize(width:45, height:20)) self.iv.image = maker() 我们再次将注意力转向makeRoundedRectangleMaker函数的实现，编写makeRoundedRectangleMaker不是为了告诉你一个函数可以产生一个函数。编写它是为了说明闭包，让我们考虑一下上下文是如何被捕获的。
-函数f没有参数。然而，在f的函数体中两次引用了sz。函数f内部可以看到sz，即外部函数makeRoundedRectangleMaker的参数。函数f在makeRoundedRectangleMaker被调用时捕获了sz，并在f在函数中返回并赋值给maker时保留该引用：
-let maker = makeRoundedRectangleMaker(CGSize(width:45, height:20)) 这就是为什么maker现在是一个函数，当它被调用时，创建和返回了特定大小的图片。另一方面，makeRoundedRectangleMaker是一个工厂，用于创建类似于maker的整个函数系列，每个函数都生成一个特定大小的图像。这是闭包力量的戏剧性例证。
+  但也许你仍然张着嘴盯着makeRoundedRectangleMaker，想知道怎么使用它，如果你这样做会得到什么。让我们尝试一下：
+let maker = makeRoundedRectangleMaker(CGSize(width:45, height:20)) 该代码运行后的变量maker的是什么？它是一个函数——一个不带参数的函数，当被调用时，它会生成一个大小为45,20的圆角矩形的图像。可以通过调用maker来证实：
+let maker = makeRoundedRectangleMaker(CGSize(width:45, height:20)) self.iv.image = maker() 我们再次将注意力转向makeRoundedRectangleMaker函数的实现，编写makeRoundedRectangleMaker不是为了告诉你一个函数可以产生一个函数。编写它是为了说明闭包，让我们思考一下environment是如何被捕获的。
+函数f没有参数。然而，在f的函数体中两次引用了sz。函数f内部可以看到sz，即外部函数makeRoundedRectangleMaker的参数。函数f在makeRoundedRectangleMaker被调用时捕获了sz，并在f返回并赋值给maker时保留该引用：
+let maker = makeRoundedRectangleMaker(CGSize(width:45, height:20)) 这就是为什么maker现在是一个函数，当它被调用时，创建和返回了特定大小的图片，生成图像大小的知识已被纳入 maker引用的函数中。另一方面，makeRoundedRectangleMaker是一个工厂，用于创建类似于maker的整个函数系列，每个函数都生成一个特定大小的图像。这是一个戏剧性的例子，说明了关闭的力量。
 实际上，在makeRoundedRectangleMaker中，没有必要创建im变量，可以直接返回imageOfSize：
 func makeRoundedRectangleMaker(_ sz: CGSize) -&amp;gt; () -&amp;gt; UIImage {  func f() -&amp;gt; UIImage {  return imageOfSize(sz) {  let p = UIBezierPath(roundedRect: CGRect(origin: CGPoint.zero, size: sz), cornerRadius: 8)  p.stroke()   }  }  return f } 实际上也没有必要生成和返回f，可以直接返回匿名函数：
 func makeRoundedRectangleMaker(_ sz: CGSize) -&amp;gt; () -&amp;gt; UIImage {  return {  imageOfSize(sz) {  let p = UIBezierPath(roundedRect: CGRect(origin: CGPoint.zero, size: sz), cornerRadius: 8)  p.stroke()   }  } } Closure Setting a Captured Variable 闭包通过其捕捉环境的能力所获得的力量甚至比我到目前为止所展示的还要大。如果闭包能够捕获一个自身外部变量的引用，并且该变量是可设置的，则闭包可以设置该变量。
