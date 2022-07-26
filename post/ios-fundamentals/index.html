@@ -241,7 +241,7 @@ code.has-jax {
     <i class="fa fa-file-word-o"></i>
 </span>
 <span class="post-meta-item-text">字数: </span>
-<span class="leancloud-visitors-count">58766</span>
+<span class="leancloud-visitors-count">58774</span>
 &nbsp; | &nbsp;
 <span class="post-meta-item-icon">
     <i class="fa fa-coffee"></i>
@@ -1260,7 +1260,7 @@ code.has-jax {
 <p><code>whatThisDogSays</code>是<code>Dog</code>的实例属性，在函数<code>doThis</code>中并没有<code>whatThisDogSays</code>属性。事实上，在<code>doThis</code>函数中也没有<code>Dog</code>的实例。然而，调用<code>f()</code>仍然能正常。<strong><font color=red>函数<code>d.bark</code>，当它被传递的时候，显然是把变量<code>whatThisDogSays</code>一起传递的</font></strong>。</p>
 <p>当我们创建了<code>Dog</code>的实例<code>d</code>和变量<code>barkFunction</code>，更改<code>d</code>的属性会改变<code>barkFunction</code>的输出，怎么会这样？显然当<code>d.bark</code>赋值给<code>barkFunction</code>后，<font color=LightSeaGreen>实例<code>d</code>和<code>barkFunction</code>都持有对同一个<code>Dog</code>实例的引用</font>。这是因为*<font color=red>我们赋值给<code>barkFunction</code>的<code>d.bark</code>引用了<code>self</code>，也就是<code>Dog</code>实例</font>*。当我们说函数是一个闭包并且它捕获在其主体中引用的外部变量时，这就是我们的意思。</p>
 <h2 id="how-closures-improve-code">How Closures Improve Code</h2>
-<p>可以<font color=red>使用函数是闭包这一事实来使你的代码更通用，从而更有用</font>。为了说明作用，使用之前的一个函数示例，它接受绘图指令并执行它们以生成图像：</p>
+<p>可以<font color=red>使用函数是闭包这一事实来使你的代码更通用，从而更有用</font>。为了说明函数是闭包的作用，使用之前的一个函数示例，它接受绘图指令并执行它们以生成图像：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">imageOfSize</span>(<span style="color:#66d9ef">_</span> size: CGSize, <span style="color:#66d9ef">_</span> whatToDraw: () -&gt; ()) -&gt; UIImage {
 </span></span><span style="display:flex;"><span>    UIGraphicsBeginImageContextWithOptions(size, <span style="color:#66d9ef">false</span>, <span style="color:#ae81ff">0</span>)
 </span></span><span style="display:flex;"><span>    whatToDraw()
@@ -1289,8 +1289,8 @@ code.has-jax {
 </span></span><span style="display:flex;"><span>    }
 </span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">return</span> image
 </span></span><span style="display:flex;"><span>}
-</span></span></code></pre></div><p>在上面的<code>makeRoundedRectangle</code>的函数中，参数<code>sz</code>不再是硬编码值，事先我们并不知道它会是什么。当调用<code>makeRoundedRectangle</code>时，<code>sz</code>会有一个值，并且匿名函数会捕获<code>sz</code>，所以当<code>imageOfSize</code>调用匿名函数时，该匿名函数内部的<code>sz</code>将具有传递给<code>makeRoundedRectangle</code>的<code>sz</code>值。</p>
-<p>上面的代码变得非常紧凑。要调用<code>makeRoundedRectangle</code>，先提供<code>size</code>，返回图像。我可以一次完成调用、获取图像并显示该图像：</p>
+</span></span></code></pre></div><p>在上面的<code>makeRoundedRectangle</code>的函数中，参数<code>sz</code>不再是硬编码值，事先我们并不知道它将会是什么。当调用<code>makeRoundedRectangle</code>时，<code>sz</code>会有一个值，并且<font color=LightSeaGreen>匿名函数会捕获<code>sz</code>，所以当<code>imageOfSize</code>调用匿名函数时，该匿名函数内部的<code>sz</code>将具有传递给<code>makeRoundedRectangle</code>的<code>sz</code>值</font>。</p>
+<p>上面的代码变得非常紧凑。要调用<code>makeRoundedRectangle</code>，先提供<code>size</code>，返回图像。我们可以一次完成调用、获取图像并显示该图像：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span><span style="color:#66d9ef">self</span>.iv.image = makeRoundedRectangle(CGSize(width:<span style="color:#ae81ff">45</span>, height:<span style="color:#ae81ff">20</span>))
 </span></span></code></pre></div><h2 id="function-returning-function">Function Returning Function</h2>
 <p>实际上可以更进一步，相比于返回一个图像，我们的函数可以返回一个生成指定大小的圆角矩形图片的函数。函数可以用作值，我们已经将一个函数作为函数调用中的参数传递给函数。函数也可以返回函数，现在我们将从函数调用中接收一个函数作为其结果，也就是返回一个生成指定大小的圆角矩形图片的函数：</p>
