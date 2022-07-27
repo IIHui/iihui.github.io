@@ -439,7 +439,7 @@ func funcCaller(f: () -&amp;gt; ()) {  f() } 而下面这个函数也是合法�
 func funcMaker() -&amp;gt; () -&amp;gt; () {  return {  print(&amp;#34;hello world&amp;#34;)  } } 但是，下面的函数是非法的。它接受了一个函数参数，并且随后返回了这个函数供后续执行：
 func funcPasser(f: () -&amp;gt; ()) -&amp;gt; () -&amp;gt; () { // compile error  return f } 解决的方案是将函数参数标记为@escaping，编译器也会提醒需要这样做：
 func funcPasser(f: @escaping () -&amp;gt; ()) -&amp;gt; () -&amp;gt; () {  return f } 逃逸闭包的第二个特点是当在函数体内引用self的属性或方法时，编译器会坚持需要明确地使用self。那是因为这样的引用捕获了self，编译器希望通过使用self来承认这个事实：
-let f1 = funcPasser {  print(view.bounds) // compile error, because self.view is implied } let f2 = funcPasser {  print(self.view.bounds) // ok } Capture Lists 有时，可能希望函数引用自身外部的变量，只是为了获取其值，但不捕获该变量。Swift提供了一种巧妙的语法来做到这一点——但仅限于函数是匿名函数时。在匿名函数体的开头，放置方括号，其中包含对周围环境中变量的引用的逗号分隔列表，这称为捕获列表。
+let f1 = funcPasser {  print(view.bounds) // compile error, because self.view is implied } let f2 = funcPasser {  print(self.view.bounds) // ok } Capture Lists 有时，可能希望函数引用自身外部的变量，只是为了获取其值，但不捕获该变量。Swift提供了一种巧妙的语法来做到这一点，但这种方式仅限于函数是匿名函数时。在匿名函数体的开头，放置方括号，其中包含对周围环境中变量的引用的逗号分隔列表，这称为捕获列表。
 如果你有一个捕获列表，你必须在它后面加上关键字in。如果已经存在in表达式，则捕获列表位于任何参数名称之前。
 捕获列表的结果就好像该值已作为参数而不是通过闭包捕获传递给匿名函数，就像参数一样。它的行为就像是用let声明的一样：
 var x1 = 0 let f1: () -&amp;gt; () = {  print(x1) } f1() // 0  x1 = 1  f1() // 1 在上面的函数中，由于捕获到了变量的值，那么打印的值分别是0和1。而在下面的代码中，因为添加了捕获列表，下面的代码执行后两次打印的值均为0:
