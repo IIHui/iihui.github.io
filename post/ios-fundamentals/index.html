@@ -241,7 +241,7 @@ code.has-jax {
     <i class="fa fa-file-word-o"></i>
 </span>
 <span class="post-meta-item-text">字数: </span>
-<span class="leancloud-visitors-count">58918</span>
+<span class="leancloud-visitors-count">59039</span>
 &nbsp; | &nbsp;
 <span class="post-meta-item-icon">
     <i class="fa fa-coffee"></i>
@@ -1642,16 +1642,16 @@ code.has-jax {
 </span></span><span style="display:flex;"><span><span style="color:#66d9ef">class</span> <span style="color:#a6e22e">Dog</span> {
 </span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">func</span> <span style="color:#a6e22e">test</span>() {
 </span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">let</span> cat = Cat()
-</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">let</span> purrFunc = Cat.purr <span style="color:#66d9ef">as</span> (Cat) -&gt; () -&gt; Void <span style="color:#75715e">// 柯里版本</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">let</span> purrFunc = Cat.purr <span style="color:#66d9ef">as</span> (Cat) -&gt; () -&gt; Void <span style="color:#75715e">// 柯里版本，参数为类型，返回一个函数</span>
 </span></span><span style="display:flex;"><span>        debugPrint(purrFunc)
 </span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">let</span> tmpFunc = purrFunc(cat)
 </span></span><span style="display:flex;"><span>        tmpFunc() <span style="color:#75715e">// 调用purr方法</span>
 </span></span><span style="display:flex;"><span>    }
 </span></span><span style="display:flex;"><span>}
 </span></span></code></pre></div><h2 id="selectors">Selectors</h2>
-<p>在<code>Objective-C</code>中<code>selector</code>是一种方法引用。在<code>iOS</code>编程中，可能会调用一个<code>Cocoa</code>方法，这个方法需要一个<code>selector</code>作为它的某个参数。</p>
-<p>通常这样的<code>Cocoa</code>方法需要提供一个<code>target</code>（对象的引用）。运行时可以将<code>selector</code>变成一个消息，并将该消息发送给<code>target</code>以调用该方法。</p>
-<p>为了形成<code>selector</code>，需要构建一个代表方法的<code>Objective-C</code>字符串。这种方式是十分危险的，如果错误地构建了这个代表方法的字符串，那么向<code>target</code>发送消息时，<font color=Blue>因为<code>target</code>没有这样的方法，运行时将发现<code>target</code>不能处理这个消息</font>，此时应用程序会<code>crash</code>，并向控制台打印<code>未识别的选择器</code>。</p>
+<p>在<code>Objective-C</code>中<code>selector</code>是一种方法引用。在<code>iOS</code>编程中，可能会调用一个<code>Cocoa</code>方法，这个方法需要一个<code>selector</code>作为它的某个参数。通常，此参数将命名为<code>selector:</code>或<code>action:</code>。</p>
+<p>通常这样的<code>Cocoa</code>方法也需要提供一个<code>target</code>（一个对象的引用）。运行时可以将<code>selector</code>变成一个消息，并将该消息发送给这个<code>target</code>以调用该方法。</p>
+<p>为了形成<code>selector</code>，需要构建一个代表方法的<code>Objective-C</code>字符串。这种方式是十分危险的，如果错误地构建了这个代表方法的字符串，那么向<code>target</code>发送消息时，<font color=Blue>因为<code>target</code>没有这样的方法，运行时将发现<code>target</code>不能处理这个消息</font>，此时应用程序会<code>crash</code>，并向控制台打印<code>unrecognized selector</code>。</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span><span style="color:#66d9ef">class</span> <span style="color:#a6e22e">ViewController</span>: UIViewController {
 </span></span><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">@IBOutlet</span> <span style="color:#66d9ef">var</span> button: UIButton!
@@ -1669,9 +1669,9 @@ code.has-jax {
 </span></span><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span>}
 </span></span></code></pre></div><p>在上面的代码中<code>self.button</code>是界面上的一个按钮，通过调用<code>addTarget(action:for:)</code>来设置按钮的响应事件，使得当按钮点击时可以调用<code>buttonPressed</code>方法。</p>
-<p>但是，上面设置的方法字符串是错误的，因为<code>buttonPressed</code>不是<code>Objective-C</code>的方法字符串，正确的方法名称字符串应该是<code>buttonPressed:</code>。这样会导致按钮点击的时候发生崩溃。</p>
-<p>如果不知道形成<code>selector</code>字符串的规则，或者即使知道，但输入时不注意犯了一个小错误，都可能导致出现<code>未识别的选择器</code>崩溃。</p>
-<p><code>Swift</code>编译器在这方面并不容易出错，它提供了一种方法，即通过<code>#selector(...)</code>语法可以生成一个<code>Objective-C</code>的<code>selector</code>，括号里面的是函数引用：</p>
+<p>但是，上面的方法字符串是错误的，因为<code>buttonPressed</code>不是<code>Objective-C</code>的方法字符串，正确的方法名称字符串应该是<code>buttonPressed:</code>，这样会导致按钮点击的时候发生崩溃。</p>
+<p>如果不知道形成<code>selector</code>字符串的规则，或者即使知道，但输入时不注意犯了一个小错误，都可能导致出现<code>unrecognized selector</code>崩溃。人在输入时是很容易犯错，因此<code>unrecognized selector</code>崩溃历来在<code>iOS</code>程序员中极为常见。</p>
+<p><code>Swift</code>编译器在这方面并不容易出错，它提供了一种方法，即通过<code>#selector(...)</code>语法可以生成一个<code>Objective-C</code>的<code>selector</code>，<strong><font color=red>括号里面的是函数引用</font></strong>：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span><span style="color:#66d9ef">class</span> <span style="color:#a6e22e">ViewController</span>: UIViewController {
 </span></span><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">@IBOutlet</span> <span style="color:#66d9ef">var</span> button: UIButton!
