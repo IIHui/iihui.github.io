@@ -241,7 +241,7 @@ code.has-jax {
     <i class="fa fa-file-word-o"></i>
 </span>
 <span class="post-meta-item-text">字数: </span>
-<span class="leancloud-visitors-count">58895</span>
+<span class="leancloud-visitors-count">58905</span>
 &nbsp; | &nbsp;
 <span class="post-meta-item-icon">
     <i class="fa fa-coffee"></i>
@@ -1419,9 +1419,9 @@ code.has-jax {
 </span></span><span style="display:flex;"><span>    print(<span style="color:#66d9ef">self</span>.view.bounds) <span style="color:#75715e">// ok</span>
 </span></span><span style="display:flex;"><span>}
 </span></span></code></pre></div><h2 id="capture-lists">Capture Lists</h2>
-<p>有时，可能希望函数引用自身外部的变量，<font color=Blue>只是为了获取其值，但不捕获该变量</font>。<code>Swift</code>提供了一种巧妙的语法来做到这一点，但这种方式<font color=red>仅限于函数是匿名函数时</font>。在匿名函数体的开头，放置方括号，其中包含对周围环境中变量的引用的逗号分隔列表，这称为捕获列表。</p>
-<p>如果你有一个捕获列表，你必须在它后面加上关键字<code>in</code>。如果已经存在<code>in</code>表达式，则捕获列表位于任何参数名称之前。</p>
-<p>捕获列表的结果就好像<font color=red>该值已作为参数而不是通过闭包捕获传递给匿名函数，就像参数一样</font>。它的行为就像是用<code>let</code>声明的一样：</p>
+<p>有时，可能希望一个函数引用自身外部的变量，<font color=Blue>只是为了获取其值，但不捕获该变量</font>。<code>Swift</code>提供了一种巧妙的语法来做到这一点，但这种方式**<font color=red>仅限于函数是匿名函数时</font>**。在匿名函数体的开头，放置方括号，其中包含对外部环境中变量的引用的逗号分隔列表，这称为捕获列表。</p>
+<p>如果你有一个捕获列表，你<font color=LightSeaGreen>必须在它后面加上关键字<code>in</code>。</font>如果已经存在<code>in</code>表达式，则<font color=red>捕获列表位于任何参数名称之前</font>。</p>
+<p>捕获列表就好像<font color=red>这些值已作为参数而不是通过闭包捕获传递给匿名函数一样</font>。它的行为就像是用<code>let</code>声明的参数一样，如下所示：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span><span style="color:#66d9ef">var</span> x1 = <span style="color:#ae81ff">0</span>
 </span></span><span style="display:flex;"><span><span style="color:#66d9ef">let</span> f1: () -&gt; () = {
 </span></span><span style="display:flex;"><span>    print(x1)
@@ -1433,15 +1433,15 @@ code.has-jax {
 </span></span><span style="display:flex;"><span>f1() <span style="color:#75715e">// 1</span>
 </span></span></code></pre></div><p>在上面的函数中，由于捕获到了变量的值，那么打印的值分别是<code>0</code>和<code>1</code>。而在下面的代码中，因为<font color=red>添加了捕获列表</font>，下面的代码执行后两次打印的值均为<code>0</code>:</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span><span style="color:#66d9ef">var</span> x1 = <span style="color:#ae81ff">0</span>
-</span></span><span style="display:flex;"><span><span style="color:#66d9ef">let</span> f1: () -&gt; () = { [x1] <span style="color:#66d9ef">in</span>
-</span></span><span style="display:flex;"><span>    print(x1)
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">let</span> f1: () -&gt; () = { [x] <span style="color:#66d9ef">in</span>
+</span></span><span style="display:flex;"><span>    print(x)
 </span></span><span style="display:flex;"><span>}
 </span></span><span style="display:flex;"><span>f1() <span style="color:#75715e">// 0</span>
 </span></span><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span>x1 = <span style="color:#ae81ff">1</span>
 </span></span><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span>f1() <span style="color:#75715e">// 0</span>
-</span></span></code></pre></div><p>由于捕获列表，<code>f</code>在声明时已经将<code>x</code>的值捕获为<code>0</code>。实际上，<code>x</code>的行为类似于传递给<code>f</code>的普通参数，这是一个常数。另一种理解方式是，如果<code>f</code>尝试设置<code>x</code>的值，编译器会报错：“无法分配给值：<code>x</code>是不可变的捕获。”</p>
+</span></span></code></pre></div><p>由于捕获列表，<code>f</code>在声明时已经将变量<code>x</code>的值捕获为<code>0</code>。实际上，<code>x</code>的行为类似于传递给<code>f</code>的普通参数，它是一个常量。另一种理解方式是，如果<code>f</code>尝试设置<code>x</code>的值，编译器会报错：“无法设置<code>x</code>值，因为<code>x</code>是不可变的捕获。”</p>
 <p>将捕获列表表达式<font color=red>分配给另一个名称也是合法的</font>。例如，捕获列表可以使用<code>[y=x1]</code>，这种方式好像将<code>x1</code>作为参数传递给匿名函数，但现在该参数的名称为<code>y</code>。当原始名称有问题时，或者当要传入的值是需要在赋值时计算时，这很有用：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span><span style="color:#66d9ef">self</span>.undoer.registerUndo(withTarget: <span style="color:#66d9ef">self</span>) { [oldCenter = <span style="color:#66d9ef">self</span>.center] myself <span style="color:#66d9ef">in</span>
 </span></span><span style="display:flex;"><span>    myself.setCenterUndoably(oldCenter)
