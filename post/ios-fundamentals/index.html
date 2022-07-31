@@ -241,7 +241,7 @@ code.has-jax {
     <i class="fa fa-file-word-o"></i>
 </span>
 <span class="post-meta-item-text">字数: </span>
-<span class="leancloud-visitors-count">58887</span>
+<span class="leancloud-visitors-count">58895</span>
 &nbsp; | &nbsp;
 <span class="post-meta-item-icon">
     <i class="fa fa-coffee"></i>
@@ -1393,11 +1393,11 @@ code.has-jax {
 <h2 id="escaping-closures">Escaping Closures</h2>
 <p>如果作为值传递的函数将被保存供以后执行，而不是直接调用，那么它是一个随着时间推移捕获并保存其环境的闭包。这样的闭包被称为逃逸闭包(<code>escaping closure</code>)。</p>
 <p>在某些场景下，函数的类型必须标记为<code>escaping</code>。编译器会检测违反这个规则的情况，所以如果你觉得对于是否需要加<code>escaping</code>有所疑惑，不用担心，只要让编译器检查并添加就可以了。</p>
-<p>下面函数是合法的，因为它接受一个函数作为参数，并且在函数体内直接调用了这个函数：</p>
+<p>下面函数是合法的，因为**<font color=red>它接受一个函数作为参数，并且在函数体内直接调用了这个函数</font>**：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">funcCaller</span>(f: () -&gt; ()) {
 </span></span><span style="display:flex;"><span>    f()
 </span></span><span style="display:flex;"><span>}
-</span></span></code></pre></div><p>而下面这个函数也是合法的，即使它返回一个稍后执行的函数，因为它也是在内部创建了那个函数。它返回的函数是一个逃逸闭包，但函数返回值的类型不必标记为<code>@escaping</code>：</p>
+</span></span></code></pre></div><p>而下面这个函数也是合法的，即使它返回一个稍后执行的函数，因为**<font color=red>它也是在内部创建了那个函数</font>**。它返回的函数是一个逃逸闭包，但函数返回值的类型不必标记为<code>@escaping</code>：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">funcMaker</span>() -&gt; () -&gt; () {
 </span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">return</span> {
 </span></span><span style="display:flex;"><span>        print(<span style="color:#e6db74">&#34;hello world&#34;</span>)
@@ -1411,7 +1411,7 @@ code.has-jax {
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">funcPasser</span>(f: @escaping () -&gt; ()) -&gt; () -&gt; () { 
 </span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">return</span> f
 </span></span><span style="display:flex;"><span>}
-</span></span></code></pre></div><p>逃逸闭包的第二个特点是当在函数体内引用<code>self</code>的属性或方法时，编译器会坚持需要明确地使用<code>self</code>。那是因为这样的引用捕获了<code>self</code>，编译器希望通过使用<code>self</code>来承认这个事实：</p>
+</span></span></code></pre></div><p>逃逸闭包的第二个特点是当在函数体内引用<code>self</code>的属性或方法时，编译器会坚持需要明确地使用<code>self</code>。<strong><font color=red>那是因为这样的引用捕获了<code>self</code>，编译器希望通过使用<code>self</code>来承认这个事实</font></strong>：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span><span style="color:#66d9ef">let</span> f1 = funcPasser {
 </span></span><span style="display:flex;"><span>    print(view.bounds) <span style="color:#75715e">// compile error, because self.view is implied</span>
 </span></span><span style="display:flex;"><span>}

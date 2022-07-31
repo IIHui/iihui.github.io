@@ -435,8 +435,8 @@ count is 1 howdy count is 2 howdy count is 3 howdy 显然，countAdder已经为�
 相反ct声明在匿名函数外，ct被初始化为0一次，然后被匿名函数捕获。这个变量作为countedGreet环境的一部分被保存下来&amp;ndash;它在countedGreet之外的某个神秘的环境保护世界中，所以每次countedGreet被调用时它都能被递增。
 Escaping Closures 如果作为值传递的函数将被保存供以后执行，而不是直接调用，那么它是一个随着时间推移捕获并保存其环境的闭包。这样的闭包被称为逃逸闭包(escaping closure)。
 在某些场景下，函数的类型必须标记为escaping。编译器会检测违反这个规则的情况，所以如果你觉得对于是否需要加escaping有所疑惑，不用担心，只要让编译器检查并添加就可以了。
-下面函数是合法的，因为它接受一个函数作为参数，并且在函数体内直接调用了这个函数：
-func funcCaller(f: () -&amp;gt; ()) {  f() } 而下面这个函数也是合法的，即使它返回一个稍后执行的函数，因为它也是在内部创建了那个函数。它返回的函数是一个逃逸闭包，但函数返回值的类型不必标记为@escaping：
+下面函数是合法的，因为**它接受一个函数作为参数，并且在函数体内直接调用了这个函数**：
+func funcCaller(f: () -&amp;gt; ()) {  f() } 而下面这个函数也是合法的，即使它返回一个稍后执行的函数，因为**它也是在内部创建了那个函数**。它返回的函数是一个逃逸闭包，但函数返回值的类型不必标记为@escaping：
 func funcMaker() -&amp;gt; () -&amp;gt; () {  return {  print(&amp;#34;hello world&amp;#34;)  } } 但是，下面的函数是非法的。它接受了一个函数参数，并且随后返回了这个函数供后续执行：
 func funcPasser(f: () -&amp;gt; ()) -&amp;gt; () -&amp;gt; () { // compile error  return f } 解决的方案是将函数参数标记为@escaping，编译器也会提醒需要这样做：
 func funcPasser(f: @escaping () -&amp;gt; ()) -&amp;gt; () -&amp;gt; () {  return f } 逃逸闭包的第二个特点是当在函数体内引用self的属性或方法时，编译器会坚持需要明确地使用self。那是因为这样的引用捕获了self，编译器希望通过使用self来承认这个事实：
