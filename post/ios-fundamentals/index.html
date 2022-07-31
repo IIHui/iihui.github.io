@@ -241,7 +241,7 @@ code.has-jax {
     <i class="fa fa-file-word-o"></i>
 </span>
 <span class="post-meta-item-text">字数: </span>
-<span class="leancloud-visitors-count">58905</span>
+<span class="leancloud-visitors-count">58911</span>
 &nbsp; | &nbsp;
 <span class="post-meta-item-icon">
     <i class="fa fa-coffee"></i>
@@ -1442,16 +1442,16 @@ code.has-jax {
 </span></span><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span>f1() <span style="color:#75715e">// 0</span>
 </span></span></code></pre></div><p>由于捕获列表，<code>f</code>在声明时已经将变量<code>x</code>的值捕获为<code>0</code>。实际上，<code>x</code>的行为类似于传递给<code>f</code>的普通参数，它是一个常量。另一种理解方式是，如果<code>f</code>尝试设置<code>x</code>的值，编译器会报错：“无法设置<code>x</code>值，因为<code>x</code>是不可变的捕获。”</p>
-<p>将捕获列表表达式<font color=red>分配给另一个名称也是合法的</font>。例如，捕获列表可以使用<code>[y=x1]</code>，这种方式好像将<code>x1</code>作为参数传递给匿名函数，但现在该参数的名称为<code>y</code>。当原始名称有问题时，或者当要传入的值是需要在赋值时计算时，这很有用：</p>
+<p>对捕获列表中的值<font color=red>重命名也是合法的</font>。捕获列表可以使用<code>[y=x1]</code>来重命名，这种方式好像将<code>x1</code>作为参数传递给匿名函数，但现在该参数的名称为<code>y</code>。当原始名称有问题时，或者当要传入的值是需要在赋值的时候被计算时，这种方式很有用：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span><span style="color:#66d9ef">self</span>.undoer.registerUndo(withTarget: <span style="color:#66d9ef">self</span>) { [oldCenter = <span style="color:#66d9ef">self</span>.center] myself <span style="color:#66d9ef">in</span>
 </span></span><span style="display:flex;"><span>    myself.setCenterUndoably(oldCenter)
 </span></span><span style="display:flex;"><span>}
-</span></span></code></pre></div><p>作为参数传递给<code>registerUndo</code>的匿名函数是一个逃逸函数。捕获列表声明了一个常量<code>oldCenter</code>并将其值设置为 <code>self.center</code>。因此，<code>self.center</code>的值现在在调用<code>registerUndo</code>时进行求值，而不是稍后在调用匿名函数本身时进行评估（此时 <code>self.center</code>的值可能已更改）。</p>
+</span></span></code></pre></div><p>作为参数传递给<code>registerUndo</code>的匿名函数是一个逃逸函数。捕获列表声明了一个常量<code>oldCenter</code>并将其值设置为<code>self.center</code>。因此，<code>self.center</code>的值现在在调用<code>registerUndo</code>时进行求值，而不是稍后在调用匿名函数本身时进行求值（此时 <code>self.center</code>的值可能已更改）。</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span><span style="color:#66d9ef">let</span> f2 = funcPasser {
 </span></span><span style="display:flex;"><span>    print(<span style="color:#66d9ef">self</span>.view.bounds)
 </span></span><span style="display:flex;"><span>}
-</span></span></code></pre></div><p>捕获列表的另一个用途是解决在逃逸闭包中明确表示<code>self</code>的要求。下面的代码中，需要明确地使用<code>self</code>，因为这是一个逃逸闭包。但是很多人不喜欢明确地使用<code>self</code>，如果这个匿名函数多次隐含地使用<code>self</code>，则可能需要多次明确地使用<code>self</code>。</p>
-<p>从<code>Swift 5.3</code>开始，有一个风格上选择方案：如果你把<code>self</code>放在捕获列表中，这会满足编译器的要求，并且你不必将<code>self</code>写为函数体中的隐式目标：</p>
+</span></span></code></pre></div><p>捕获列表的另一个用途是解决在逃逸闭包中需要明确使用<code>self</code>关键字的要求。下面的代码中，需要明确地使用<code>self</code>，因为这是一个逃逸闭包。但是很多人不喜欢明确地使用<code>self</code>，如果这个匿名函数多次隐含地使用<code>self</code>，则可能需要多次明确地使用<code>self</code>。</p>
+<p>从<code>Swift 5.3</code>开始，有一个风格上选择方案：如果你把<code>self</code>放在捕获列表中，这会满足编译器的要求，并且不必将<code>self</code>写为函数体中的隐式目标：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span><span style="color:#66d9ef">let</span> f2 = funcPasser { [<span style="color:#66d9ef">self</span>] <span style="color:#66d9ef">in</span>
 </span></span><span style="display:flex;"><span>    print(view.bounds) <span style="color:#75715e">// ok </span>
 </span></span><span style="display:flex;"><span>}
@@ -1465,7 +1465,7 @@ code.has-jax {
 </span></span><span style="display:flex;"><span>        }
 </span></span><span style="display:flex;"><span>    }
 </span></span><span style="display:flex;"><span>}
-</span></span></code></pre></div><h2 id="函数引用">函数引用</h2>
+</span></span></code></pre></div><h2 id="function-references-and-selectors">Function References and Selectors</h2>
 <p>如果通过名字引用一个函数（或传递给另外一个函数作为参数），通常可以使用函数的<code>bare name</code>（裸名）。函数的<code>bare name</code>指的是函数的名字（只包括函数名字不包含其它）。下面代码中<code>whatToAnimate</code>和<code>whatToDoLater</code>都是函数的<code>bare name</code>：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">whatToAnimate</span>() { 
 </span></span><span style="display:flex;"><span>    debugPrint(<span style="color:#e6db74">&#34;animations&#34;</span>)
@@ -4196,7 +4196,7 @@ code.has-jax {
         <li><a href="#escaping-closures">Escaping Closures</a></li>
         <li><a href="#capture-lists">Capture Lists</a></li>
         <li><a href="#curried-function">curried function</a></li>
-        <li><a href="#函数引用">函数引用</a></li>
+        <li><a href="#function-references-and-selectors">Function References and Selectors</a></li>
         <li><a href="#函数引用的作用域">函数引用的作用域</a></li>
         <li><a href="#selectors">Selectors</a></li>
       </ul>
