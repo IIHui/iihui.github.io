@@ -473,12 +473,12 @@ class Cat {  func purr() {  debugPrint(&amp;#34;purr&amp;#34;)  }   func purr(_ 
 class ViewController: UIViewController {   @IBOutlet var button: UIButton!   func viewDidLoad() {   super.viewDidLoad()  // prepare to crash  self.button.addTarget(self, action: &amp;#34;buttonPressed&amp;#34;, for: .touchUpInside)  }   @objc func buttonPressed(_ sender: Any) {  debugPrint(&amp;#34;buttonPressed&amp;#34;)  }  } 在上面的代码中self.button是界面上的一个按钮，通过调用addTarget(action:for:)来设置按钮的响应事件，使得当按钮点击时可以调用buttonPressed方法。
 但是，上面的方法字符串是错误的，因为buttonPressed不是Objective-C的方法字符串，正确的方法名称字符串应该是buttonPressed:，这样会导致按钮点击的时候发生崩溃。
 如果不知道形成selector字符串的规则，或者即使知道，但输入时不注意犯了一个小错误，都可能导致出现unrecognized selector崩溃。人在输入时是很容易犯错，因此unrecognized selector崩溃历来在iOS程序员中极为常见。
-Swift编译器在这方面并不容易出错，它提供了一种方法，即通过#selector(...)语法可以生成一个Objective-C的selector，括号里面的是函数引用：
+Swift编译器在这方面并不容易出错，它提供了一种方法，即通过#selector(...)语法可以生成一个Objective-C的selector，括号里面的是函数的引用：
 class ViewController: UIViewController {   @IBOutlet var button: UIButton!   func viewDidLoad() {  super.viewDidLoad()  self.button.addTargett(self, action: #selector(buttonPressed), for: .touchUpInside)  }   @objc func buttonPressed(_ sender: Any) {  debugPrint(&amp;#34;buttonPressed&amp;#34;)  }  } 上面的代码中使用#selector(...)时，编译器会做两件事情：
-  编译器会检查函数引用是否合法，如果不合法则会出现编译错误。同时会检查这个函数是否暴露给Objective-C。为一个Objective-C看不到的方法形成一个选择器是没有意义的，因为如果Objective-C试图调用这样一个方法，应用程序会崩溃。在Swift为了确保对Objective-C是可见的，该方法需要标记为@objc。
-  如果使用#selector的代码能够编译，实际的selector将被传递到它的参数中，并保证它是正确的。手动写方法字符串可能会形成错误的选择器，但编译器不会，它所产生的selector不可能与方法不匹配，也不可能出现未识别的选择器崩溃。
-  在某些情况下，可能需要手动创建一个选择器。要做到这一点可以使用一个方法字符串，或者可以用字符串作为参数来实例化选择器：
-Selector(&amp;#34;woohoo:&amp;#34;) 使用#selector(...)语法，仍然可能通过向错误的target发送action信息而发送崩溃。在前面的例子中，如果把addTarget调用的第一个参数self改为self.button，将会在运行时以未识别的选择器崩溃。因为buttonPressed方法是在ViewController中声明的，而不是在UIButton中。
+  编译器会检查函数引用是否合法，如果不合法则会出现编译错误。同时会检查这个函数是否暴露给Objective-C。为一个Objective-C看不到的方法形成一个selector是没有意义的，因为如果Objective-C试图调用这样一个方法，应用程序会崩溃。在Swift为了确保对Objective-C是可见的，该方法需要标记为@objc。
+  如果使用#selector的代码能够编译，将保证将传递给此参数的实际选择器是正确的。手动写方法字符串可能会形成错误的选择器，但编译器不会，它所产生的selector不可能与方法不匹配，也不可能出现unrecognized selector崩溃。
+  尽管十分少见，但在某些情况下，可能需要手动创建一个选择器。要做到这一点可以使用一个方法字符串，或者可以用字符串作为参数来实例化Selector类型：
+Selector(&amp;#34;woohoo:&amp;#34;) 使用#selector(...)语法，仍然*可能通过向错误的target发送action信息而发送崩溃*。在前面的例子中，如果把addTarget调用的第一个参数self改为self.button，将会在运行时以unrecognized selector崩溃。因为buttonPressed方法是在ViewController中声明的，而不是在UIButton类型中声明的。
 变量和简单类型 变量的作用域和生命周期分为三个层次：全局变量，属性，局部变量。全局变量声明在Swift文件顶部，它的生命周期和所在的文件一样长。
 一个全局变量默认（默认是internal访问权限）在它声明所在module任何地方都是可见的，这就是全局的意思。它对同一文件中的所有代码都是可见的，因为它处于最高级别。
 此外，默认情况下全局变量对于同一模块中任何其他文件中的所有代码也都是可见的，因为同一模块中的Swift文件可以自动看到彼此，所以也可以看到彼此顶层声明的全局变量：
