@@ -512,11 +512,11 @@ let bti = UIApplication.shared.beginBackgroundTask {  UIApplication.shared.endBa
 var bti: UIBackgroundTaskIdentifier bti = UIApplication.shared.beginBackgroundTask {  UIApplication.shared.endBackgroundTask(bti) } // error: variable captured by a closure before being initialized 一种解决方案是提前声明变量，并且声明时给变量一个假的初始值作为占位符。如下所示，给了变量bti一个假的初始值.invalid用来占位：
 var bti: UIBackgroundTaskIdentifier = .invalid bti = UIApplication.shared.beginBackgroundTask {  UIApplication.shared.endBackgroundTask(bti) } 这里真正的问题是beginBackgroundTask相当陈旧了。更现代的方法可能会将返回值直接传递给函数参数。Cocoa的UIAction初始化程序init(title:handler:)就是一个很好的例子：
 let myAction = UIAction(title: &amp;#34;Hello&amp;#34;) { action in  print(action) } 在上面的代码中，action就是myAction，因此匿名函数体中可以直接引用action，而不使用myAction（使用myAction是非法的）。（这种方法还可以防止可能的循环引用）。
-计算初始化 有时需要先执行一些代码去才能获得变量的初始值，一个简洁的解决方案是定义和调用匿名函数来进行初始化，这种方式称为define-and-call initializer。下面代码中定义了一个匿名函数并立即执行来初始化常量timed：
+Computed Variable Initialization 有时需要先执行一些代码去才能获得变量的初始值，一个简洁的解决方案是定义和调用匿名函数来进行初始化，这种方式称为define-and-call initializer。下面代码中定义了一个匿名函数并立即执行来初始化常量timed：
 let val = 0 let timed: Bool = {  if val == 1 {  return true  } else {  return false  } }() 当一个实例属性也需要执行一些代码去获得初始值时，也可以使用define-and-call initializer方法进行初始化。下面的cellBackgroundImage属性需要用到多次，但初始化时需要执行一些其它代码，因此通过定义和调用一个匿名函数来初始化这个属性：
 class RootViewController: UITableViewController {  let cellBackgroundImage: UIImage = {  return imageOfSize(CGSize(width: 320, height: 44)) {  // ... drawing goes here ...  }  }() } 你可能会好奇，与其使用define-and-call initializer，为什么不直接定义一个实例方法来初始化实例属性。因为定义一个实例方法来初始化实例属性是非法的，会出现编译错误：
-class RootViewController: UITableViewController {  let cellBackgroundImage: UIImage = self.makeTheImage() // compile error    func makeTheImage() -&amp;gt; UIImage {  return imageOfSize(CGSize(width: 320, height: 44)) {  // ... drawing goes here ...  }  }  } 这是因为实例属性声明初始化时，实例尚未生成。因此，不能在属性声明的初始化器中引用自己。定义和调用匿名函数是合法的，但需要注意的是定义和调用匿名函数仍然不能在函数体中引用self，否则也会出现编译错误，如果需要在函数体中使用self，需要将属性声明为lazy。
-计算变量 除了正常的存储变量，Swift中的变量还可以是计算的。这意味着变量不是一个简单值，而是包含计算函数。计算变量中包括setter和getter函数，setter函数在变量被赋值自动调用，getter函数在变量被引用时被自动调用:
+class RootViewController: UITableViewController {  let cellBackgroundImage: UIImage = self.makeTheImage() // compile error    func makeTheImage() -&amp;gt; UIImage {  return imageOfSize(CGSize(width: 320, height: 44)) {  // ... drawing goes here ...  }  }  } 这是因为**实例属性声明初始化时，实例尚未生成**。因此，不能在属性声明的初始化器中引用自己。定义和调用匿名函数是合法的，但需要注意的是定义和调用匿名函数仍然不能在函数体中引用self，否则也会出现编译错误，如果需要在函数体中使用self，需要将属性声明为lazy。
+Computed Variables 除了正常的存储变量，Swift中的变量还可以是计算的。这意味着变量不是一个简单值，而是包含计算函数。计算变量中包括setter和getter函数，setter函数在变量被赋值自动调用，getter函数在变量被引用时被自动调用:
 var now: String { // ①  get { // ②   return Date().description // ③  }  set { // ④  debugPrint(newValue) // ⑤  } }   变量必须使用var声明，同时类型必须显式声明，类型后面紧跟花括号。
   getter函数被称为get。getter函数没有正式的函数声明，get这个词后面紧跟着函数体。
   getter函数必须返回一个与该变量类型相同的值。从Swift 5.1开始，当getter只有一个单一语句时，省略关键字return是合法的。
