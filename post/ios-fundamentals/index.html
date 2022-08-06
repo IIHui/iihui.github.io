@@ -241,7 +241,7 @@ code.has-jax {
     <i class="fa fa-file-word-o"></i>
 </span>
 <span class="post-meta-item-text">字数: </span>
-<span class="leancloud-visitors-count">59866</span>
+<span class="leancloud-visitors-count">60016</span>
 &nbsp; | &nbsp;
 <span class="post-meta-item-icon">
     <i class="fa fa-coffee"></i>
@@ -1782,9 +1782,9 @@ code.has-jax {
 </span></span><span style="display:flex;"><span><span style="color:#66d9ef">var</span> b: CGFloat = <span style="color:#ae81ff">0</span>
 </span></span><span style="display:flex;"><span><span style="color:#66d9ef">var</span> a: CGFloat = <span style="color:#ae81ff">0</span>
 </span></span><span style="display:flex;"><span>c.getRed(&amp;r, green: &amp;g, blue: &amp;b, alpha: &amp;a)
-</span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">oneParameter</span>(test: String) {
+</span></span></code></pre></div><p>在上面的代码中，<code>4</code>个<code>CGFloat</code>当传入到<code>getRed</code>中后，它们的值会被替换。而给定的初始值只是暂时的占位符，以满足编译器的需求。</p>
+<p>传入到函数的普通参数，也必须先初始化，否则编译器会报错：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">oneParameter</span>(test: String) {
 </span></span><span style="display:flex;"><span>    debugPrint(test)
 </span></span><span style="display:flex;"><span>}
 </span></span><span style="display:flex;"><span>
@@ -1792,16 +1792,25 @@ code.has-jax {
 </span></span><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span>oneParameter(test: tt1) <span style="color:#75715e">// Variable &#39;tt1&#39; used before being initialized</span>
 </span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">testMain</span>(test: <span style="color:#66d9ef">inout</span> String) {
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">var</span> tt2:String = <span style="color:#e6db74">&#34;name&#34;</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>oneParameter(test: tt2) 
+</span></span></code></pre></div><p>对于传入到函数中以<code>inout</code>修饰的形参对应的实参，必须使用<code>var</code>声明，并且必须初始化：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">testMain</span>(test: <span style="color:#66d9ef">inout</span> String) {
 </span></span><span style="display:flex;"><span>    test = <span style="color:#e6db74">&#34;name&#34;</span>
 </span></span><span style="display:flex;"><span>    debugPrint(test)
 </span></span><span style="display:flex;"><span>}
 </span></span><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span><span style="color:#66d9ef">var</span> newTest :String
 </span></span><span style="display:flex;"><span>testMain(test: &amp;newTest) <span style="color:#75715e">// Variable &#39;newTest&#39; passed by reference before being initialized</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">var</span> newTest1 :String = <span style="color:#e6db74">&#34;name&#34;</span>
+</span></span><span style="display:flex;"><span>testMain(test: &amp;newTest1)
 </span></span></code></pre></div><p>极少数情况下，会遇到这样一种情况：调用一个立即返回一个值的<code>Cocoa</code>方法，然后在传递给这个方法的函数参数中又要使用这个返回值。<code>Cocoa</code>有一个<code>UIApplication</code>实例方法是下面这样声明的：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">beginBackgroundTask</span>(expirationHandler handler: (() -&gt; Void)? = <span style="color:#66d9ef">nil</span>) -&gt; UIBackgroundTaskIdentifier
-</span></span></code></pre></div><p>上面的<code>beginBackgroundTask(expirationHandler:)</code>返回一个<code>UIBackgroundTaskIdentifier</code>对象，然后在<code>expirationHandler</code>函数中使用这个对象。<code>Swift</code>的安全规则<font color=Blue>不允许在一条语句中声明变量，同时又在声明语句中的匿名函数中使用它</font>：</p>
+</span></span></code></pre></div><p>上面的<code>beginBackgroundTask(expirationHandler:)</code>返回一个<code>UIBackgroundTaskIdentifier</code>对象，然后会在<code>expirationHandler</code>函数中使用这个对象。<code>Swift</code>的安全规则<font color=Blue>不允许在一条语句中声明变量，同时又在声明语句中的匿名函数中使用它</font>：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span><span style="color:#66d9ef">let</span> bti = UIApplication.shared.beginBackgroundTask {
 </span></span><span style="display:flex;"><span>    UIApplication.shared.endBackgroundTask(bti)
 </span></span><span style="display:flex;"><span>} <span style="color:#75715e">// error: variable used within its own initial value</span>
