@@ -241,13 +241,13 @@ code.has-jax {
     <i class="fa fa-file-word-o"></i>
 </span>
 <span class="post-meta-item-text">字数: </span>
-<span class="leancloud-visitors-count">60435</span>
+<span class="leancloud-visitors-count">60824</span>
 &nbsp; | &nbsp;
 <span class="post-meta-item-icon">
     <i class="fa fa-coffee"></i>
 </span>
 <span class="post-meta-item-text">阅读: </span>
-<span class="leancloud-visitors-count">121 分钟</span>
+<span class="leancloud-visitors-count">122 分钟</span>
 </span>
       </div>
     </header>
@@ -1927,6 +1927,24 @@ code.has-jax {
 </span></span><span style="display:flex;"><span>    }
 </span></span><span style="display:flex;"><span>}
 </span></span></code></pre></div><p>一个实例的<font color=LightSeaGreen>计算属性<code>getter</code>函数或<code>setter</code>函数可以引用其他实例成员</font>。这很重要，因为一般来说，存储属性的初始化器不能这样做。对于一个计算的属性来说，它是合法的，<em><font color=red>因为<code>getter</code>和<code>setter</code>函数是在实例实际存在之前不会被调用</font></em>。</p>
+<h2 id="property-wrappers">Property Wrappers</h2>
+<p>如果我们有几个存储立面的计算属性有效地做了同样的事情，那么我们最终会有大量的重复代码。想象一下，像上一节中那样，用一个钳制的<code>setter</code>实现多个<code>Int</code>属性。如果能把这些共同的功能移到一个地方就更好了。我们可以用一个属性包装器来实现。</p>
+<p>一个属性包装器被声明为一个标有<code>@propertyWrapper</code>属性的类型，并且必须有一个<code>wrappedValue</code>的计算属性。下面是一个实现&quot;钳制&quot;模式的属性包装器。</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span>@propertyWrapper <span style="color:#66d9ef">struct</span> <span style="color:#a6e22e">Clamped</span> {
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">private</span> <span style="color:#66d9ef">var</span> _i: Int = <span style="color:#ae81ff">0</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">var</span> wrappedValue: Int {
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">get</span> {
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">self</span>._i
+</span></span><span style="display:flex;"><span>        }
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">set</span> {
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">self</span>._i = Swift.max(Swift.min(newValue, <span style="color:#ae81ff">5</span>), <span style="color:#ae81ff">0</span>)
+</span></span><span style="display:flex;"><span>        }
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p>结果是我们可以声明一个用自定义属性标记的计算属性，该属性的名称与该结构 (<code>@Clamped</code>) 相同，没有<code>getter</code>或<code>setter</code>：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span>@Clamped <span style="color:#66d9ef">var</span> p
+</span></span></code></pre></div><p>上面的属性<code>p</code>不需要被初始化，因为它是一个计算属性，它也不需要<code>getter</code>或<code>setter</code>，实际上它都不需要类型声明，因为因为<code>Clamped</code>结构的<code>WrappedValue</code>计算属性提供了类型。</p>
 <h2 id="setter-observers">Setter Observers</h2>
 <p>计算变量并不经常需要作为一个存储变量的<code>立面</code>。这是因为<code>Swift</code>有另一个功能，可以让你在<font color=red>存储变量</font>的<code>setter</code>中注入<code>setter observers</code>功能。<code>setter observers</code>是<font color=Blue>在设置存储变量之前和之后调用的函数</font>，可以有一个<code>willSet</code>函数，或一个<code>didSet</code>函数，或两者均有：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span><span style="color:#66d9ef">var</span> s = <span style="color:#e6db74">&#34;whatever&#34;</span> { <span style="color:#75715e">// ①</span>
@@ -4240,6 +4258,7 @@ code.has-jax {
         <li><a href="#computed-variable-initialization">Computed Variable Initialization</a></li>
         <li><a href="#computed-variables">Computed Variables</a></li>
         <li><a href="#computed-properties">Computed Properties</a></li>
+        <li><a href="#property-wrappers">Property Wrappers</a></li>
         <li><a href="#setter-observers">Setter Observers</a></li>
         <li><a href="#懒初始化">懒初始化</a></li>
         <li><a href="#单例">单例</a></li>

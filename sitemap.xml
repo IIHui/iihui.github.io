@@ -525,6 +525,10 @@ var now: String {  Date().description } Computed Properties 在实际的编程�
 var mp: MPMusicPlayerController {  MPMusicPlayerController.systemMusicPlayer } var nowPlayingItem: MPMediaItem? {  self.mp.nowPlayingItem } 一个计算变量的getter函数可以封装多行代码，其实质是把一个方法变成了一个属性。下面的例子是从xml文件中提取作者信息，本可以将其声明为方法func authorOfItem() -&amp;gt; String?，但方法表达了一个过程，而计算属性则能更直观地描述：
 var authorOfItem: String? {  guard let authorNodes = self.extensionElements(withXMLNamespace: &amp;#34;http://www.tidbits.com/dummy&amp;#34;, elementName: &amp;#34;app_author_name&amp;#34;) else {  return nil  }  guard let authorNode = authorNodes.last as? FPExtensionNode else {  return nil  }  return authorNode.stringValue } 一个计算变量可以位于一个或多个存储变量的前面，充当这些存储变量的设置和获取时的守门员。通常，一个计算变量由一个私有的存储变量来支持：
 private var _pp: Int = 0 var pp: Int {  get {  self._pp  }  set {  self._pp = max(min(newValue, 5), 0)  } } 一个实例的计算属性getter函数或setter函数可以引用其他实例成员。这很重要，因为一般来说，存储属性的初始化器不能这样做。对于一个计算的属性来说，它是合法的，因为getter和setter函数是在实例实际存在之前不会被调用。
+Property Wrappers 如果我们有几个存储立面的计算属性有效地做了同样的事情，那么我们最终会有大量的重复代码。想象一下，像上一节中那样，用一个钳制的setter实现多个Int属性。如果能把这些共同的功能移到一个地方就更好了。我们可以用一个属性包装器来实现。
+一个属性包装器被声明为一个标有@propertyWrapper属性的类型，并且必须有一个wrappedValue的计算属性。下面是一个实现&amp;quot;钳制&amp;quot;模式的属性包装器。
+@propertyWrapper struct Clamped {  private var _i: Int = 0  var wrappedValue: Int {  get {  self._i  }  set {   self._i = Swift.max(Swift.min(newValue, 5), 0)  }  } } 结果是我们可以声明一个用自定义属性标记的计算属性，该属性的名称与该结构 (@Clamped) 相同，没有getter或setter：
+@Clamped var p 上面的属性p不需要被初始化，因为它是一个计算属性，它也不需要getter或setter，实际上它都不需要类型声明，因为因为Clamped结构的WrappedValue计算属性提供了类型。
 Setter Observers 计算变量并不经常需要作为一个存储变量的立面。这是因为Swift有另一个功能，可以让你在存储变量的setter中注入setter observers功能。setter observers是在设置存储变量之前和之后调用的函数，可以有一个willSet函数，或一个didSet函数，或两者均有：
 var s = &amp;#34;whatever&amp;#34; { // ①  willSet { // ②  debugPrint(newValue) // ③  }  didSet { // ④  debugPrint(oldValue) // ⑤  // self.s = &amp;#34;something else&amp;#34;  } }   变量必须使用var声明，不能使用let声明，并且它可以被赋予一个初始值。
   如果willSet函数存在的话，就是单词willSet后面紧跟着函数体。当其他代码设置该变量时，在该变量实际收到其新值之前willSet函数被调用。
