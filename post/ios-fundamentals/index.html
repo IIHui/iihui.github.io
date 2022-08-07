@@ -241,13 +241,13 @@ code.has-jax {
     <i class="fa fa-file-word-o"></i>
 </span>
 <span class="post-meta-item-text">字数: </span>
-<span class="leancloud-visitors-count">61477</span>
+<span class="leancloud-visitors-count">61832</span>
 &nbsp; | &nbsp;
 <span class="post-meta-item-icon">
     <i class="fa fa-coffee"></i>
 </span>
 <span class="post-meta-item-text">阅读: </span>
-<span class="leancloud-visitors-count">123 分钟</span>
+<span class="leancloud-visitors-count">124 分钟</span>
 </span>
       </div>
     </header>
@@ -2113,6 +2113,9 @@ code.has-jax {
 </span></span><span style="display:flex;"><span>    }()
 </span></span><span style="display:flex;"><span>}
 </span></span></code></pre></div><p>因为<font color=LightSeaGreen>不能将<code>lazy</code>加在<code>let</code>声明的属性上，所以不要让一个<code>lazy</code>的实例属性成为只读的。与自动<code>lazy</code>的全局变量和静态变量不同，标记为<code>lazy</code>的实例属性是线程不安全的</font>。<font color=Blue>当在多线程环境中使用时，<code>lazy</code>的实例属性可能会导致多次初始化，甚至闪退</font>。</p>
+<p>没有<code>lazy let</code>实例属性，因此不能轻易地将<code>lazy</code>实例属性设置为只读。这是不幸的，因为有一些常见的情况会从这样的功能中受益。</p>
+<p>假设我们想用一个<code>helper</code>属性来武装<code>self</code>，该属性持有一个<code>Helper</code>类的实例，需要一个对<code>self</code>的引用。我们还想让这个<code>Helper</code>实例在<code>self</code>的整个生命周期内持续存在。我们可以通过让<code>helper</code>成为一个<code>let</code>属性并在其声明中初始化它来执行这一规则。</p>
+<p>但是我们不能把<code>self</code>传递给<code>Helper</code>的初始化器，因为我们不能在属性声明中引用<code>self</code>。我们可以通过声明<code>helper</code>属性为<code>lazy</code>来解决这个问题。但问题是，我们必须使用<code>var</code>来声明<code>helper</code>，也就是说这个<code>helper</code>是可能被其他代码改变。当然，我们会尽量不让它发生，但问题是，<code>lazy var</code>这样的表达方式无法执行所需的策略。</p>
 <h2 id="built-in-simple-types">Built-In Simple Types</h2>
 <p>每一个变量和每一个字面量都必须有一个类型。<code>Swift</code>内置的简单类型有<code>Bool,Numbers，String，Character，Range，Tuple</code>等。</p>
 <p>与许多计算机语言不同，<code>Swift</code>中<font color=red>没有任何其它东西能被隐含地转换为<code>Bool</code></font>。例如，在<code>C</code>语言中，布尔值实际上是一个数字，<code>0</code>代表<code>false</code>，非<code>0</code>代表<code>true</code>。而在<code>Swift</code>中，只有<code>false</code>是<code>false</code>，<code>true</code>为<code>true</code>。</p>

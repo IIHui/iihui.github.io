@@ -555,6 +555,9 @@ class MyClass {  static let shared = MyClass()  private init() {  //  } } 在其
 最重要的是懒初始化可以访问实例本身，而正常的初始化器是不能这样做的，因为在正常初始化器需要运行的时候，实例尚未生成。在下面的代码中，如果arrow属性不声明为lazy，将会出现编译错误：
 class MyView: UIView {  lazy var arrow = self.arrowImage() // legal  func arrowImage() -&amp;gt; UIImage {  // ... big image-generating code goes here ...  } } 一个常见的场景是定义和调用匿名函数来初始化一个lazy的实例属性。一旦加上lazy，那么在这个匿名函数中是可以引用实例本身的：
 class MyView: UIView {  lazy var prog: UIProgressView = {  let p = UIProgressView(progressViewStyle: .default)  p.alpha = 0.7  p.trackTintColor = UIColor.clear  p.progressTintColor = UIColor.black  p.frame = CGRect(x: 0, y: 0, width: self.view.bounds.size.width, height: 20) // legal   p.progress = 1.0  return p  }() } 因为不能将lazy加在let声明的属性上，所以不要让一个lazy的实例属性成为只读的。与自动lazy的全局变量和静态变量不同，标记为lazy的实例属性是线程不安全的。当在多线程环境中使用时，lazy的实例属性可能会导致多次初始化，甚至闪退。
+没有lazy let实例属性，因此不能轻易地将lazy实例属性设置为只读。这是不幸的，因为有一些常见的情况会从这样的功能中受益。
+假设我们想用一个helper属性来武装self，该属性持有一个Helper类的实例，需要一个对self的引用。我们还想让这个Helper实例在self的整个生命周期内持续存在。我们可以通过让helper成为一个let属性并在其声明中初始化它来执行这一规则。
+但是我们不能把self传递给Helper的初始化器，因为我们不能在属性声明中引用self。我们可以通过声明helper属性为lazy来解决这个问题。但问题是，我们必须使用var来声明helper，也就是说这个helper是可能被其他代码改变。当然，我们会尽量不让它发生，但问题是，lazy var这样的表达方式无法执行所需的策略。
 Built-In Simple Types 每一个变量和每一个字面量都必须有一个类型。Swift内置的简单类型有Bool,Numbers，String，Character，Range，Tuple等。
 与许多计算机语言不同，Swift中没有任何其它东西能被隐含地转换为Bool。例如，在C语言中，布尔值实际上是一个数字，0代表false，非0代表true。而在Swift中，只有false是false，true为true。
 一个常见的情况：一个存储在某个var变量中的Bool，我们想反转它的值。即如果它是false的就变成true，如果它是true就变成false。
