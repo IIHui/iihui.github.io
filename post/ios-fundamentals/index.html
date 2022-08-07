@@ -241,7 +241,7 @@ code.has-jax {
     <i class="fa fa-file-word-o"></i>
 </span>
 <span class="post-meta-item-text">字数: </span>
-<span class="leancloud-visitors-count">61287</span>
+<span class="leancloud-visitors-count">61477</span>
 &nbsp; | &nbsp;
 <span class="post-meta-item-icon">
     <i class="fa fa-coffee"></i>
@@ -2046,7 +2046,7 @@ code.has-jax {
 </li>
 </ul>
 <p>如果您的代码从不引用延迟初始化的变量，则其初始化器永远不会运行；显然，如果初始值的生成成本可能很高，那么这很有用，因此你希望避免生成它，除非确实需要它。</p>
-<p>如果对一个懒惰初始化变量的第一个引用重新设置了该变量，怎么办？<font color=red>对于全局变量或静态属性，会被初始值并立即被新的值所取代。</font>。</p>
+<p>如果对一个懒惰初始化变量的第一个引用重新设置了该变量，怎么办？<font color=red>对于全局变量或静态属性，会被初始值并立即被新的值所取代。</font>下面的代码执行后，控制台打印了<code>firstStatic</code>和<code>secondStatic</code>：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span><span style="color:#66d9ef">struct</span> <span style="color:#a6e22e">Assist</span> {
 </span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">var</span> value: String
 </span></span><span style="display:flex;"><span>
@@ -2063,9 +2063,9 @@ code.has-jax {
 </span></span><span style="display:flex;"><span>    }
 </span></span><span style="display:flex;"><span>}
 </span></span><span style="display:flex;"><span>NewTest.staticTest = Assist(value: <span style="color:#e6db74">&#34;secondStatic&#34;</span>)
-</span></span><span style="display:flex;"><span><span style="color:#75715e">// &#34;firstStatic&#34;</span>
-</span></span><span style="display:flex;"><span><span style="color:#75715e">// &#34;secondStatic&#34;</span>
-</span></span></code></pre></div><p>但是对于懒加载的实例属性或局部变量的初始化器将永远不会赋初始值，如果该变量在被获取之前被重新设置：</p>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">// firstStatic</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">// secondStatic</span>
+</span></span></code></pre></div><p>但是对于懒加载的实例属性或局部变量的初始化器将永远不会赋初始值，如果该变量在被获取之前被重新设置。下面的代码执行后，控制台只打印了<code>secondTime</code>：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span><span style="color:#66d9ef">struct</span> <span style="color:#a6e22e">Assist</span> {
 </span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">var</span> value: String
 </span></span><span style="display:flex;"><span>
@@ -2091,8 +2091,9 @@ code.has-jax {
 </span></span><span style="display:flex;"><span>      <span style="color:#75715e">//</span>
 </span></span><span style="display:flex;"><span>    }
 </span></span><span style="display:flex;"><span>}
-</span></span></code></pre></div><p>通常，我们希望实例属性是<code>Lazy Initialization</code>的。因为实例属性初始值的生成所花费的代价可能是昂贵的，所以除非确实需要用到的时候，一般会避免提前生成。但还有另一个原因更重要，<font color=red>懒初始化可以做普通初始化器不能做的事情</font>。</p>
-<p>最重要的是<font color=Blue>懒初始化器可以访问实例本身</font>，而正常的初始化器是不能这样做的，因为在正常初始化器需要运行的时候，实例尚未生成。在下面的代码中，如果<code>arrow</code>属性不声明为<code>lazy</code>，将会出现编译错误：</p>
+</span></span></code></pre></div><p>在其它代码第一次使用<code>MyClass.shared</code>前，单例都不会被创建。随后，无论其他代码多少次使用<code>MyClass.shared</code>，返回的实例总是同一个实例(如果这是一个计算的只读属性，其<code>getter</code>调用<code>MyClass()</code>并返回该实例，则不会返回同一个实例)。</p>
+<p>通常，我们希望实例属性是<code>Lazy Initialization</code>的。因为实例属性初始值的生成所花费的代价可能是昂贵的，所以除非确实需要用到的时候，一般会避免提前生成。但还有另一个原因更重要，<font color=red>懒初始化可以做普通初始化器不能做的事情</font>。</p>
+<p>最重要的是<font color=Blue>懒初始化可以访问实例本身</font>，而正常的初始化器是不能这样做的，因为在正常初始化器需要运行的时候，实例尚未生成。在下面的代码中，如果<code>arrow</code>属性不声明为<code>lazy</code>，将会出现编译错误：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span><span style="color:#66d9ef">class</span> <span style="color:#a6e22e">MyView</span>: UIView {
 </span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">lazy</span> <span style="color:#66d9ef">var</span> arrow = <span style="color:#66d9ef">self</span>.arrowImage() <span style="color:#75715e">// legal</span>
 </span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">func</span> <span style="color:#a6e22e">arrowImage</span>() -&gt; UIImage {
@@ -2112,7 +2113,7 @@ code.has-jax {
 </span></span><span style="display:flex;"><span>    }()
 </span></span><span style="display:flex;"><span>}
 </span></span></code></pre></div><p>因为<font color=LightSeaGreen>不能将<code>lazy</code>加在<code>let</code>声明的属性上，所以不要让一个<code>lazy</code>的实例属性成为只读的。与自动<code>lazy</code>的全局变量和静态变量不同，标记为<code>lazy</code>的实例属性是线程不安全的</font>。<font color=Blue>当在多线程环境中使用时，<code>lazy</code>的实例属性可能会导致多次初始化，甚至闪退</font>。</p>
-<h2 id="内置简单类型">内置简单类型</h2>
+<h2 id="built-in-simple-types">Built-In Simple Types</h2>
 <p>每一个变量和每一个字面量都必须有一个类型。<code>Swift</code>内置的简单类型有<code>Bool,Numbers，String，Character，Range，Tuple</code>等。</p>
 <p>与许多计算机语言不同，<code>Swift</code>中<font color=red>没有任何其它东西能被隐含地转换为<code>Bool</code></font>。例如，在<code>C</code>语言中，布尔值实际上是一个数字，<code>0</code>代表<code>false</code>，非<code>0</code>代表<code>true</code>。而在<code>Swift</code>中，只有<code>false</code>是<code>false</code>，<code>true</code>为<code>true</code>。</p>
 <p>一个常见的情况：一个存储在某个<code>var</code>变量中的<code>Bool</code>，我们想反转它的值。即如果它是<code>false</code>的就变成<code>true</code>，如果它是<code>true</code>就变成<code>false</code>。</p>
@@ -4310,7 +4311,7 @@ code.has-jax {
         <li><a href="#setter-observers">Setter Observers</a></li>
         <li><a href="#lazy-initialization">Lazy Initialization</a></li>
         <li><a href="#singleton">Singleton</a></li>
-        <li><a href="#内置简单类型">内置简单类型</a></li>
+        <li><a href="#built-in-simple-types">Built-In Simple Types</a></li>
         <li><a href="#数值强制转换">数值强制转换</a></li>
         <li><a href="#string">String</a></li>
         <li><a href="#range">Range</a></li>
