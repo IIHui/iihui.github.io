@@ -517,12 +517,8 @@ let val = 0 let timed: Bool = {  if val == 1 {  return true  } else {  return fa
 class RootViewController: UITableViewController {  let cellBackgroundImage: UIImage = {  return imageOfSize(CGSize(width: 320, height: 44)) {  // ... drawing goes here ...  }  }() } 你可能会好奇，与其使用define-and-call initializer，为什么不直接定义一个实例方法来初始化实例属性。因为定义一个实例方法来初始化实例属性是非法的，会出现编译错误：
 class RootViewController: UITableViewController {  let cellBackgroundImage: UIImage = self.makeTheImage() // compile error    func makeTheImage() -&amp;gt; UIImage {  return imageOfSize(CGSize(width: 320, height: 44)) {  // ... drawing goes here ...  }  }  } 这是因为**实例属性声明初始化时，实例尚未生成**。因此，不能在属性声明的初始化器中引用自己。定义和调用匿名函数是合法的，但需要注意的是定义和调用匿名函数仍然不能在函数体中引用self，否则也会出现编译错误，如果需要在函数体中使用self，需要将属性声明为lazy。
 Computed Variables 除了正常的存储变量，Swift中的变量还可以是计算的。这意味着变量不是一个简单值，而是包含计算函数。计算变量中包括setter和getter函数，setter函数在变量被赋值自动调用，getter函数在变量被引用时被自动调用:
-var now: String { // ①  get { // ②   return Date().description // ③  }  set { // ④  debugPrint(newValue) // ⑤  } }   变量必须使用var声明，同时类型必须显式声明，类型后面紧跟花括号。
-  getter函数被称为get。getter函数没有正式的函数声明，get这个词后面紧跟着函数体。
-  getter函数必须返回一个与该变量类型相同的值。从Swift 5.1开始，当getter只有一个单一语句时，省略关键字return是合法的。
-  setter函数被称为set。setter函数也没有正式的函数声明，set这个词后面紧跟着函数体。
-  setter的行为就像接受一个参数的函数。默认情况下，该参数以newValue这个名字进入setter函数体。
-  对于set函数来说，默认的参数可以不是newValue。如果需要指定一个不同的名称，把新名字放在set后面的括号里就可以，下面就是用新名字val代替默认的newValue：
+var now: String { // ①  get { // ②   return Date().description // ③  }  set { // ④  debugPrint(newValue) // ⑤  } }  变量必须使用var声明（不能使用let），同时类型必须显式声明，类型后面紧跟花括号。 其中的getter函数被称为get。getter函数没有正式的函数声明，get这个词后面紧跟着函数体。 其中的getter函数必须返回一个与该变量类型相同的值。从Swift 5.1开始，当getter只有一个单一语句时，省略关键字return是合法的。 其中的setter函数被称为set。setter函数也没有正式的函数声明，set这个词后面紧跟着函数体。 其中setter函数的行为就像接受一个参数的函数。默认情况下，该参数以newValue这个名字进入setter函数体中。  这里有一些代码说明了计算变量的使用。对待它与任何其他变量没有任何不同！如果要赋值给变量，请赋值给它；如果要使用变量，请使用它。但是，在幕后都是调用了setter和getter函数。
+now = &amp;#34;Howdy&amp;#34; // Howdy print(now) // 2022-08-07 04:03:21 &#43;0000  上面代码中赋值给now时，set将被自动调用，参数就是将要赋值的值。在上面的代码就是Howdy，该值作为 newValue到达set函数。 获取now的值时，get将被自动调用。  对于set函数来说，默认的参数可以不是newValue。如果需要指定一个不同的名称，把新名字放在set后面的括号里就可以，下面就是用新名字val代替默认的newValue：
 var nowTest: String = &amp;#34;first&amp;#34; // 需要先初始化，否则报错 var now: String {  get {  &amp;#34;test&amp;#34;  }  set(val) {  nowTest = val  } } 如果setter函数省略，那么这个计算变量就成为了一个只读变量，等同于一个let常量，一旦试图去改变这个变量的值就会出现编译错误。即使只有一个get函数，计算变量声明的时候也必须使用var。
 计算变量必须有一个getter函数。如果计算变量中没有setter函数，get这个词和它后面的花括号可以省略。下面是一个合法的只读计算变量的声明：
 var now: String {  Date().description } 计算属性 在实际的编程中，对于计算变量的使用场景几乎都是实例属性。当一个值在每次需要的时候都可以很容易地计算时，将其表达为一个只读的计算变量往往更简单，实际上这是对一个较长表达式的速记法：
