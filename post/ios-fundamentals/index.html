@@ -241,7 +241,7 @@ code.has-jax {
     <i class="fa fa-file-word-o"></i>
 </span>
 <span class="post-meta-item-text">字数: </span>
-<span class="leancloud-visitors-count">60824</span>
+<span class="leancloud-visitors-count">60997</span>
 &nbsp; | &nbsp;
 <span class="post-meta-item-icon">
     <i class="fa fa-coffee"></i>
@@ -2021,7 +2021,14 @@ code.has-jax {
 </span></span></code></pre></div></li>
 </ol>
 <p>需要特别注意的是，当**<font color=red>存储变量初始化时或<code>didSet</code>函数中再次改变存储变量的值时，不会调用<code>setter observers</code>函数</font>**，否则会产生无限循环。</p>
-<p>计算变量或者属性不能有<code>setter observers</code>，因为它已经有了<code>setter</code>函数，任何在设置过程中需要发生的额外事情都可以直接写入<code>setter</code>函数中。但<font color=LightSeaGreen>一个被属性包装器包裹的计算变量可以有<code>setter observers</code></font>。</p>
+<p>在实际的<code>iOS</code>编程中，你可能想要可见的接口反应你的对象的状态。一个<code>setter</code>观察器是一种简单而强大的方式，可以使接口与一个属性同步。</p>
+<p>在下面这个例子中，我们有一个视图类的实例属性，决定了视图应该被旋转多少。每次这个属性发生变化时，我们都会改变界面来反映它，设置<code>self.transform</code>，使视图被旋转多少：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span><span style="color:#66d9ef">var</span> angle: CGFloat = <span style="color:#ae81ff">0</span> {
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">didSet</span> { <span style="color:#75715e">// modify interface to match </span>
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">self</span>.transform = CGAffineTransform(rotationAngle: <span style="color:#66d9ef">self</span>.angle)
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p>计算变量或者属性不能有<code>setter observers</code>，因为它已经有了<code>setter</code>函数，任何在设置过程中需要发生的额外事情都可以直接写入<code>setter</code>函数中。但<font color=LightSeaGreen>一个被属性包装器包裹的计算变量可以有<code>setter observers</code></font>。</p>
 <h2 id="lazy-initialization">Lazy Initialization</h2>
 <p>如果一个存储变量声明的时候分配了一个初始值，并且如果它使用了<code>Lazy Initialization</code>（懒初始化），那么在运行代码访问该变量的值之前，初始值实际上还不会有。在<code>Swift</code>中，有三种类型的变量可以被懒初始化<code>Lazy Initialization</code>。</p>
 <ul>

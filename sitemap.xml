@@ -538,7 +538,9 @@ var newStr: String = &amp;#34;new&amp;#34; {  willSet {  debugPrint(newValue)  n
   默认情况下，didSet函数接收旧的值，名字为oldValue，此时新值已经完成替换。可以通过在didSet后面的括号里写一个不同的名字来来自定义接受到的旧值名字。
 var now1: String = &amp;#34;now1&amp;#34; {  willSet(val) {  debugPrint(now1)  debugPrint(val)  }  didSet(val) {  debugPrint(val)  debugPrint(now1)  } }  debugPrint(now1 = &amp;#34;133&amp;#34;) //&amp;#34;now1&amp;#34; //&amp;#34;133&amp;#34; //&amp;#34;now1&amp;#34; //&amp;#34;133&amp;#34;   新的值已经在存储的变量中，didSet函数中可以访问新值。此外，在didSet函数中将存储变量设置为不同的值也是合法的。
 var newStr: String = &amp;#34;new&amp;#34; {  willSet {  debugPrint(newValue)  newStr = &amp;#34;test&amp;#34;  }  didSet {  newStr = &amp;#34;dddd&amp;#34;  } }  newStr = &amp;#34;name&amp;#34; debugPrint(newStr) // name // dddd   需要特别注意的是，当**存储变量初始化时或didSet函数中再次改变存储变量的值时，不会调用setter observers函数**，否则会产生无限循环。
-计算变量或者属性不能有setter observers，因为它已经有了setter函数，任何在设置过程中需要发生的额外事情都可以直接写入setter函数中。但一个被属性包装器包裹的计算变量可以有setter observers。
+在实际的iOS编程中，你可能想要可见的接口反应你的对象的状态。一个setter观察器是一种简单而强大的方式，可以使接口与一个属性同步。
+在下面这个例子中，我们有一个视图类的实例属性，决定了视图应该被旋转多少。每次这个属性发生变化时，我们都会改变界面来反映它，设置self.transform，使视图被旋转多少：
+var angle: CGFloat = 0 {  didSet { // modify interface to match   self.transform = CGAffineTransform(rotationAngle: self.angle)  } } 计算变量或者属性不能有setter observers，因为它已经有了setter函数，任何在设置过程中需要发生的额外事情都可以直接写入setter函数中。但一个被属性包装器包裹的计算变量可以有setter observers。
 Lazy Initialization 如果一个存储变量声明的时候分配了一个初始值，并且如果它使用了Lazy Initialization（懒初始化），那么在运行代码访问该变量的值之前，初始值实际上还不会有。在Swift中，有三种类型的变量可以被懒初始化Lazy Initialization。
   全局变量。全局变量是自动Lazy Initialization的，一个全局变量的初始化在其他代码首次引用该全局变量时才会发生，这种初始化只会执行一次，同时又是线程安全的。
   静态属性。静态属性也是自动的Lazy Initialization的，它的行为和全局变量完全一样，而且原因也基本相同。所以在Swift中类属性不能再加lazy关键字。
