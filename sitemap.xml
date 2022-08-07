@@ -545,9 +545,11 @@ Lazy Initialization 如果一个存储变量声明的时候分配了一个初始
   全局变量。全局变量是自动Lazy Initialization的，一个全局变量的初始化在其他代码首次引用该全局变量时才会发生，这种初始化只会执行一次，同时又是线程安全的。
   静态属性。静态属性也是自动的Lazy Initialization的，它的行为和全局变量完全一样，而且原因也基本相同。所以在Swift中类属性不能再加lazy关键字。
   实例属性默认不是lazy的，但可以在声明的时候显式加上关键字lazy。此时，这个属性必须使用var来声明而不能用let。如果没有任何代码获取属性的值，属性的初始化器可能永远不会执行。
+  从Swift 5.5开始，局部变量可以使用lazy var声明了。
   如果您的代码从不引用延迟初始化的变量，则其初始化器永远不会运行；显然，如果初始值的生成成本可能很高，那么这很有用，因此你希望避免生成它，除非确实需要它。
-如果对一个懒惰初始化变量的第一个引用设置了该变量，怎么办？对于全局变量或静态属性，初始化器会被求值并立即被新的值所取代。但是对于懒加载的实例属性或局部变量的初始化器将永远不会被求值，如果该变量在被获取之前被重新设置。
-Singleton Lazy Initialization常用于实现单例。单例是一种设计模式，所有的代码都能够访问某个类的单一共享实例。下面代码就是一个简单的单例实现：
+如果对一个懒惰初始化变量的第一个引用重新设置了该变量，怎么办？对于全局变量或静态属性，会被初始值并立即被新的值所取代。。
+struct Assist {  var value: String   init(value: String) {  self.value = value  debugPrint(self.value)  } }  class NewTest {  static var staticTest = Assist(value: &amp;#34;firstStatic&amp;#34;)  func changeTest() {  self.test = Assist(value: &amp;#34;secondTime&amp;#34;)  } } NewTest.staticTest = Assist(value: &amp;#34;secondStatic&amp;#34;) // &amp;#34;firstStatic&amp;#34; // &amp;#34;secondStatic&amp;#34; 但是对于懒加载的实例属性或局部变量的初始化器将永远不会赋初始值，如果该变量在被获取之前被重新设置：
+struct Assist {  var value: String   init(value: String) {  self.value = value  debugPrint(self.value)  } }  class NewTest {  lazy var test = Assist(value: &amp;#34;firstTime&amp;#34;)  func changeTest() {  self.test = Assist(value: &amp;#34;secondTime&amp;#34;)  } } NewTest().changeTest() // secondTime Singleton Lazy Initialization常用于实现单例。单例是一种设计模式，所有的代码都能够访问某个类的单一共享实例。下面代码就是一个简单的单例实现：
 class MyClass {  static let shared = MyClass()  private init() {  //  } } 通常，我们希望实例属性是Lazy Initialization的。因为实例属性初始值的生成所花费的代价可能是昂贵的，所以除非确实需要用到的时候，一般会避免提前生成。但还有另一个原因更重要，懒初始化可以做普通初始化器不能做的事情。
 最重要的是懒初始化器可以访问实例本身，而正常的初始化器是不能这样做的，因为在正常初始化器需要运行的时候，实例尚未生成。在下面的代码中，如果arrow属性不声明为lazy，将会出现编译错误：
 class MyView: UIView {  lazy var arrow = self.arrowImage() // legal  func arrowImage() -&amp;gt; UIImage {  // ... big image-generating code goes here ...  } } 一个常见的场景是定义和调用匿名函数来初始化一个lazy的实例属性。一旦加上lazy，那么在这个匿名函数中是可以引用实例本身的：

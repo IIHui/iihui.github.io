@@ -241,7 +241,7 @@ code.has-jax {
     <i class="fa fa-file-word-o"></i>
 </span>
 <span class="post-meta-item-text">字数: </span>
-<span class="leancloud-visitors-count">61178</span>
+<span class="leancloud-visitors-count">61287</span>
 &nbsp; | &nbsp;
 <span class="post-meta-item-icon">
     <i class="fa fa-coffee"></i>
@@ -2041,10 +2041,49 @@ code.has-jax {
 <li>
 <p>实例属性默认不是<code>lazy</code>的，但可以在声明的时候显式加上关键字<code>lazy</code>。此时，这个属性必须使用<code>var</code>来声明而不能用<code>let</code>。如果没有任何代码获取属性的值，属性的初始化器可能永远不会执行。</p>
 </li>
+<li>
+<p>从<code>Swift 5.5</code>开始，局部变量可以使用<code>lazy var</code>声明了。</p>
+</li>
 </ul>
 <p>如果您的代码从不引用延迟初始化的变量，则其初始化器永远不会运行；显然，如果初始值的生成成本可能很高，那么这很有用，因此你希望避免生成它，除非确实需要它。</p>
-<p>如果对一个懒惰初始化变量的第一个引用设置了该变量，怎么办？<font color=red>对于全局变量或静态属性，初始化器会被求值并立即被新的值所取代。但是对于懒加载的实例属性或局部变量的初始化器将永远不会被求值，如果该变量在被获取之前被重新设置</font>。</p>
-<h2 id="singleton">Singleton</h2>
+<p>如果对一个懒惰初始化变量的第一个引用重新设置了该变量，怎么办？<font color=red>对于全局变量或静态属性，会被初始值并立即被新的值所取代。</font>。</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span><span style="color:#66d9ef">struct</span> <span style="color:#a6e22e">Assist</span> {
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">var</span> value: String
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">init</span>(value: String) {
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">self</span>.value = value
+</span></span><span style="display:flex;"><span>        debugPrint(<span style="color:#66d9ef">self</span>.value)
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">class</span> <span style="color:#a6e22e">NewTest</span> {
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">static</span> <span style="color:#66d9ef">var</span> staticTest = Assist(value: <span style="color:#e6db74">&#34;firstStatic&#34;</span>)
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">func</span> <span style="color:#a6e22e">changeTest</span>() {
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">self</span>.test = Assist(value: <span style="color:#e6db74">&#34;secondTime&#34;</span>)
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>NewTest.staticTest = Assist(value: <span style="color:#e6db74">&#34;secondStatic&#34;</span>)
+</span></span><span style="display:flex;"><span><span style="color:#75715e">// &#34;firstStatic&#34;</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">// &#34;secondStatic&#34;</span>
+</span></span></code></pre></div><p>但是对于懒加载的实例属性或局部变量的初始化器将永远不会赋初始值，如果该变量在被获取之前被重新设置：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span><span style="color:#66d9ef">struct</span> <span style="color:#a6e22e">Assist</span> {
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">var</span> value: String
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">init</span>(value: String) {
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">self</span>.value = value
+</span></span><span style="display:flex;"><span>        debugPrint(<span style="color:#66d9ef">self</span>.value)
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">class</span> <span style="color:#a6e22e">NewTest</span> {
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">lazy</span> <span style="color:#66d9ef">var</span> test = Assist(value: <span style="color:#e6db74">&#34;firstTime&#34;</span>)
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">func</span> <span style="color:#a6e22e">changeTest</span>() {
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">self</span>.test = Assist(value: <span style="color:#e6db74">&#34;secondTime&#34;</span>)
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>NewTest().changeTest() 
+</span></span><span style="display:flex;"><span><span style="color:#75715e">// secondTime</span>
+</span></span></code></pre></div><h2 id="singleton">Singleton</h2>
 <p><code>Lazy Initialization</code>常用于实现单例。单例是一种设计模式，所有的代码都能够访问某个类的单一共享实例。下面代码就是一个简单的单例实现：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span><span style="color:#66d9ef">class</span> <span style="color:#a6e22e">MyClass</span> {
 </span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">static</span> <span style="color:#66d9ef">let</span> shared = MyClass()
