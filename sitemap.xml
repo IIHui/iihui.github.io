@@ -519,7 +519,7 @@ class RootViewController: UITableViewController {  let cellBackgroundImage: UIIm
 Computed Variables 除了正常的存储变量，Swift中的变量还可以是计算的。这意味着变量不是一个简单值，而是包含计算函数。计算变量中包括setter和getter函数，setter函数在变量被赋值自动调用，getter函数在变量被引用时被自动调用:
 var now: String { // ①  get { // ②   return Date().description // ③  }  set { // ④  debugPrint(newValue) // ⑤  } }  变量必须使用var声明（不能使用let），同时类型必须显式声明，类型后面紧跟花括号。 其中的getter函数被称为get。getter函数没有正式的函数声明，get这个词后面紧跟着函数体。 其中的getter函数必须返回一个与该变量类型相同的值。从Swift 5.1开始，当getter只有一个单一语句时，省略关键字return是合法的。 其中的setter函数被称为set。setter函数也没有正式的函数声明，set这个词后面紧跟着函数体。 其中setter函数的行为就像接受一个参数的函数。默认情况下，该参数以newValue这个名字进入setter函数体中。  这里有一些代码说明了计算变量的使用。对待它与任何其他变量没有任何不同！如果要赋值给变量，请赋值给它；如果要使用变量，请使用它。但是，在幕后都是调用了setter和getter函数。
 now = &amp;#34;Howdy&amp;#34; // Howdy print(now) // 2022-08-07 04:03:21 &#43;0000  上面代码中赋值给now时，set将被自动调用，参数就是将要赋值的值。在上面的代码就是Howdy，该值作为 newValue到达set函数。 获取now的值时，get将被自动调用。  对于set函数来说，默认的参数可以不是newValue。如果需要指定一个不同的名称，把新名字放在set后面的括号里就可以，下面就是用新名字val代替默认的newValue：
-var nowTest: String = &amp;#34;first&amp;#34; // 需要先初始化，否则报错 var now: String {  get {  &amp;#34;test&amp;#34;  }  set(val) {  nowTest = val  } } 如果setter函数省略，那么这个计算变量就成为了一个只读变量，等同于一个let常量，一旦试图去改变这个变量的值就会出现编译错误。即使只有一个get函数，计算变量声明的时候也必须使用`var。
+var nowTest: String = &amp;#34;first&amp;#34; // 需要先初始化，否则报错 var now: String {  get {  &amp;#34;test&amp;#34;  }  set(val) {  nowTest = val  } } 如果setter函数省略，那么这个计算变量就成为了一个只读变量，等同于一个let常量，一旦试图去改变这个变量的值就会出现编译错误。即使只有一个get函数，计算变量声明的时候也必须使用var。
 计算变量必须有一个getter函数。如果计算变量中没有setter函数，get这个词和它后面的花括号可以省略。下面是一个合法的只读计算变量的声明：
 var now: String {  Date().description } Computed Properties 在实际的编程中，对于计算变量的使用场景几乎都是实例属性。当一个值在每次需要的时候都可以很容易地计算时，将其表达为一个只读的计算变量往往更简单，实际上这是对一个较长表达式的速记法：
 var mp: MPMusicPlayerController {  MPMusicPlayerController.systemMusicPlayer } var nowPlayingItem: MPMediaItem? {  self.mp.nowPlayingItem } 一个计算变量的getter函数可以封装多行代码，其实质是把一个方法变成了一个属性。下面的例子是从xml文件中提取作者信息，本可以将其声明为方法func authorOfItem() -&amp;gt; String?，但方法表达了一个过程，而计算属性则能更直观地描述：
@@ -539,7 +539,7 @@ var newStr: String = &amp;#34;new&amp;#34; {  willSet {  debugPrint(newValue)  n
 var now1: String = &amp;#34;now1&amp;#34; {  willSet(val) {  debugPrint(now1)  debugPrint(val)  }  didSet(val) {  debugPrint(val)  debugPrint(now1)  } }  debugPrint(now1 = &amp;#34;133&amp;#34;) //&amp;#34;now1&amp;#34; //&amp;#34;133&amp;#34; //&amp;#34;now1&amp;#34; //&amp;#34;133&amp;#34;   新的值已经在存储的变量中，didSet函数中可以访问新值。此外，在didSet函数中将存储变量设置为不同的值也是合法的。
 var newStr: String = &amp;#34;new&amp;#34; {  willSet {  debugPrint(newValue)  newStr = &amp;#34;test&amp;#34;  }  didSet {  newStr = &amp;#34;dddd&amp;#34;  } }  newStr = &amp;#34;name&amp;#34; debugPrint(newStr) // name // dddd   需要特别注意的是，当**存储变量初始化时或didSet函数中再次改变存储变量的值时，不会调用setter observers函数**，否则会产生无限循环。
 在实际的iOS编程中，你可能想要可见的接口反应你的对象的状态。一个setter观察器是一种简单而强大的方式，可以使接口与一个属性同步。
-在下面这个例子中，我们有一个视图类的实例属性，决定了视图应该被旋转多少。每次这个属性发生变化时，我们都会改变界面来反映它，设置self.transform，使视图被旋转多少：
+在下面这个例子中，我们有一个视图类的实例属性，决定了视图应该被旋转多少。每次这个属性发生变化时，我们都会改变界面来反映它，即设置self.transform使视图被旋转相应的角度：
 var angle: CGFloat = 0 {  didSet { // modify interface to match   self.transform = CGAffineTransform(rotationAngle: self.angle)  } } 计算变量或者属性不能有setter observers，因为它已经有了setter函数，任何在设置过程中需要发生的额外事情都可以直接写入setter函数中。但一个被属性包装器包裹的计算变量可以有setter observers。
 Lazy Initialization 如果一个存储变量声明的时候分配了一个初始值，并且它使用了Lazy Initialization（懒初始化），那么在运行代码访问该变量的值之前，初始值实际上还不会有。在Swift中，有三种类型的变量可以被懒初始化Lazy Initialization。
   全局变量。全局变量是自动Lazy Initialization的，一个全局变量的初始化在其他代码首次引用该全局变量时才会发生，这种初始化只会执行一次，同时又是线程安全的。
