@@ -536,7 +536,7 @@ var s = &amp;#34;whatever&amp;#34; { // ①  willSet { // ②  debugPrint(newVal
   如果在willSet中将存储变量设置为不同的值时，不会生效：
 var newStr: String = &amp;#34;new&amp;#34; {  willSet {  debugPrint(newValue)  newStr = &amp;#34;test&amp;#34;  } }  newStr = &amp;#34;name&amp;#34; debugPrint(newStr) // name // name   如果didSet函数存在的话，就是didSet这个词后面紧跟着函数体。当其他代码设置该变量时，在该变量实际收到其新值之后被调用。
   默认情况下，didSet函数接收旧的值，名字为oldValue，此时新值已经完成替换。可以通过在didSet后面的括号里写一个不同的名字来来自定义接受到的旧值名字。
-var now1: String = &amp;#34;now1&amp;#34; {  willSet(val) {  debugPrint(now1)  debugPrint(val)  }  didSet(val) {  debugPrint(val)  debugPrint(now1)  } }  debugPrint(now1 = &amp;#34;133&amp;#34;) //&amp;#34;now1&amp;#34; //&amp;#34;133&amp;#34; //&amp;#34;now1&amp;#34; //&amp;#34;133&amp;#34;   新的值已经在存储的变量中，didSet函数中可以访问新值。此外，在didSet函数中将存储变量设置为不同的值也是合法的。
+var now1: String = &amp;#34;now1&amp;#34; {  willSet(val) {  debugPrint(now1)  debugPrint(val)  }  didSet(val) {  debugPrint(val)  debugPrint(now1)  } }  debugPrint(now1 = &amp;#34;133&amp;#34;) //&amp;#34;now1&amp;#34; //&amp;#34;133&amp;#34; //&amp;#34;now1&amp;#34; //&amp;#34;133&amp;#34;   新的值已经在存储的变量中，didSet函数中可以访问新值。此外，在didSet函数中将存储变量设置为不同的值也是合法的，但不会再调用Setter Observers。
 var newStr: String = &amp;#34;new&amp;#34; {  willSet {  debugPrint(newValue)  newStr = &amp;#34;test&amp;#34;  }  didSet {  newStr = &amp;#34;dddd&amp;#34;  } }  newStr = &amp;#34;name&amp;#34; debugPrint(newStr) // name // dddd   需要特别注意的是，当**存储变量初始化时或didSet函数中再次改变存储变量的值时，不会调用setter observers函数**，否则会产生无限循环。
 在实际的iOS编程中，你可能想要可见的接口反应你的对象的状态。一个setter观察器是一种简单而强大的方式，可以使接口与一个属性同步。
 在下面这个例子中，我们有一个视图类的实例属性，决定了视图应该被旋转多少。每次这个属性发生变化时，我们都会改变界面来反映它，即设置self.transform使视图被旋转相应的角度：
@@ -550,7 +550,7 @@ Lazy Initialization 如果一个存储变量声明的时候分配了一个初始
 如果对一个懒惰初始化变量的第一个引用重新设置了该变量，怎么办？对于全局变量或静态属性，会被初始值并立即被新的值所取代。下面的代码执行后，控制台打印了firstStatic和secondStatic：
 struct Assist {  var value: String   init(value: String) {  self.value = value  debugPrint(self.value)  } }  class NewTest {  static var staticTest = Assist(value: &amp;#34;firstStatic&amp;#34;)  func changeTest() {  self.test = Assist(value: &amp;#34;secondTime&amp;#34;)  } } NewTest.staticTest = Assist(value: &amp;#34;secondStatic&amp;#34;) // firstStatic // secondStatic 但是对于懒加载的实例属性或局部变量的初始化器将永远不会赋初始值，如果该变量在被获取之前被重新设置。下面的代码执行后，控制台只打印了secondTime：
 struct Assist {  var value: String   init(value: String) {  self.value = value  debugPrint(self.value)  } }  class NewTest {  lazy var test = Assist(value: &amp;#34;firstTime&amp;#34;)  func changeTest() {  self.test = Assist(value: &amp;#34;secondTime&amp;#34;)  } } NewTest().changeTest() // secondTime Singleton Lazy Initialization常用于实现单例。单例是一种设计模式，所有的代码都能够访问某个类的单一共享实例。下面代码就是一个简单的单例实现：
-class MyClass {  static let shared = MyClass()  private init() {  //  } } 在其它代码第一次使用MyClass.shared前，单例都不会被创建。随后，无论其他代码多少次使用MyClass.shared，返回的实例总是同一个实例(如果这是一个计算的只读属性，其getter调用MyClass()并返回该实例，则不会返回同一个实例)。
+class MyClass {  static let shared = MyClass()  private init() {  //  } } 在其它代码第一次使用MyClass.shared前，单例都不会被创建。只要单例创建成功后，无论其它代码多少次使用MyClass.shared，返回的实例总是同一个实例(如果这是一个计算的只读属性，其getter调用MyClass()并返回该实例，则不会返回同一个实例)。
 通常，我们希望实例属性是Lazy Initialization的。因为实例属性初始值的生成所花费的代价可能是昂贵的，所以除非确实需要用到的时候，一般会避免提前生成。但还有另一个原因更重要，懒初始化可以做普通初始化器不能做的事情。
 最重要的是懒初始化可以访问实例本身，而正常的初始化器是不能这样做的，因为在正常初始化器需要运行的时候，实例尚未生成。在下面的代码中，如果arrow属性不声明为lazy，将会出现编译错误：
 class MyView: UIView {  lazy var arrow = self.arrowImage() // legal  func arrowImage() -&amp;gt; UIImage {  // ... big image-generating code goes here ...  } } 一个常见的场景是定义和调用匿名函数来初始化一个lazy的实例属性。一旦加上lazy，那么在这个匿名函数中是可以引用实例本身的：
@@ -565,10 +565,10 @@ v.isUserInteractionEnabled = !v.isUserInteractionEnabled 上面的方式很麻�
 v.isUserInteractionEnabled.toggle() 主要的数字类型是Int和Double，我们一般会使用这些类型。其它数字类型的存在主要是为了与C和Objective-C API兼容。
 Int对象类型（一个结构体类型）表示Int.min和Int.max之间的一个整数。最小和最大限制的实际值取决于应用程序运行的平台和架构，它们并不是绝对的。
 表示一个Int值最简单的方法是作为一个数字字头。一个没有小数点的数字默认为Int。内部下划线也是合法的这对长数字的可读性很有用。前导零是合法的，这对于在代码中填充和对齐数值很有用。
-var x = 1000_000_000 var y = 00001 可以用二进制、八进制或十六进制的数字来写Int。要做到这一点，需要分别以0b、0o或0x开始。例如，0x10是十进制的16。
+var x = 1000_000_000 var y = 00001 可以用二进制、八进制或十六进制的数字来写Int。要做到这一点，需要分别以0b、0o或0x开始。例如，0x10是十六进制表示，代表十进制的16。
 在Swift中Double是一个结构体类型，表示一个精度约为15位小数的浮点数（使用64位存储）。含有小数点的数字默认为Double类型，并且Double类型的内部下划线和前导零是合法的。Double有静态属性Double.infinity和Double.pi，也有一个实例属性isZero。
 数值强制转换 强制转换是指从一种类型转换为另一种类型。Swift并没有显式的类型强制转换，但它使用实例化能够完成同样的效果。Swift的数字类型提供了初始化器，这些初始化器将另一个数字类型实例作为参数：
-let i = 10 //an Int let x = Double(i) debugPrint(x) // 10.0, a Double let y = 3.8 //a Double let j = Int(y) debugPrint(j) // 3, an Int 当数值被赋值给变量或作为参数传递给函数时，Swift只对字面数字量进行隐式强制转换。下面这段代码是合法的，虽然10默认是Int类型，但是因为它是字面数字量，因此能够隐式地转换为Double：
+let i = 10 //an Int let x = Double(i) debugPrint(x) // 10.0, a Double let y = 3.8 //a Double let j = Int(y) debugPrint(j) // 3, an Int 当数值被赋值给变量或作为参数传递给函数时，Swift只对字面数字量进行隐式强制转换。下面这段代码是合法的，虽然10默认是Int类型，但因为它是字面数字量，因此能够隐式地转换为Double类型：
 let d : Double = 10 但下面这段代码是不合法的，编译器会报错。因为所赋值的是一个不同类型的变量，而不是字面数字。问题的根源是i为Int实例，d是一个Double实例，二者不能自动进行隐式转换：
 let i = 10 let d : Double = i 当数字值被算术运算合并时，同样的规则也适用。Swift只对字面数字量进行隐式转换。例如，一个Int字面量与一个Double字面量运算时，Int字面量会隐式地转换为Double：
 let x = 10/3.0 debugPrint(x) // 3.33333333333333 String Swift中的字符串是完全现代的，它使用Unicode编码，可以在字符串字面量中直接包含任何字符（如表情符号）。如果知道一个字符的Unicode码点，并且不嫌麻烦，可以使用\u{...}，需要注意的是在花括号的内容至多为八位十六进制数字：

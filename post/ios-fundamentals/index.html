@@ -241,7 +241,7 @@ code.has-jax {
     <i class="fa fa-file-word-o"></i>
 </span>
 <span class="post-meta-item-text">字数: </span>
-<span class="leancloud-visitors-count">62141</span>
+<span class="leancloud-visitors-count">62180</span>
 &nbsp; | &nbsp;
 <span class="post-meta-item-icon">
     <i class="fa fa-coffee"></i>
@@ -2003,7 +2003,7 @@ code.has-jax {
 </span></span><span style="display:flex;"><span><span style="color:#75715e">//&#34;133&#34;</span>
 </span></span></code></pre></div></li>
 <li>
-<p>新的值已经在存储的变量中，<code>didSet</code>函数中可以访问新值。此外，在<code>didSet</code>函数中<font color=red>将存储变量设置为不同的值也是合法的</font>。</p>
+<p>新的值已经在存储的变量中，<code>didSet</code>函数中可以访问新值。此外，在<code>didSet</code>函数中<font color=red>将存储变量设置为不同的值也是合法的</font>，但不会再调用<code>Setter Observers</code>。</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span><span style="color:#66d9ef">var</span> newStr: String = <span style="color:#e6db74">&#34;new&#34;</span> {
 </span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">willSet</span> {
 </span></span><span style="display:flex;"><span>        debugPrint(newValue)
@@ -2091,8 +2091,8 @@ code.has-jax {
 </span></span><span style="display:flex;"><span>      <span style="color:#75715e">//</span>
 </span></span><span style="display:flex;"><span>    }
 </span></span><span style="display:flex;"><span>}
-</span></span></code></pre></div><p>在其它代码第一次使用<code>MyClass.shared</code>前，单例都不会被创建。随后，无论其他代码多少次使用<code>MyClass.shared</code>，返回的实例总是同一个实例(如果这是一个计算的只读属性，其<code>getter</code>调用<code>MyClass()</code>并返回该实例，则不会返回同一个实例)。</p>
-<p>通常，我们希望实例属性是<code>Lazy Initialization</code>的。因为实例属性初始值的生成所花费的代价可能是昂贵的，所以除非确实需要用到的时候，一般会避免提前生成。但还有另一个原因更重要，<font color=red>懒初始化可以做普通初始化器不能做的事情</font>。</p>
+</span></span></code></pre></div><p>在其它代码第一次使用<code>MyClass.shared</code>前，单例都不会被创建。只要单例创建成功后，无论其它代码多少次使用<code>MyClass.shared</code>，返回的实例总是同一个实例(如果这是一个计算的只读属性，其<code>getter</code>调用<code>MyClass()</code>并返回该实例，则不会返回同一个实例)。</p>
+<p>通常，我们希望实例属性是<code>Lazy Initialization</code>的。因为实例属性初始值的生成所花费的代价可能是昂贵的，所以除非确实需要用到的时候，<font color=LightSeaGreen>一般会避免提前生成</font>。但还有另一个原因更重要，<font color=red>懒初始化可以做普通初始化器不能做的事情</font>。</p>
 <p>最重要的是<font color=Blue>懒初始化可以访问实例本身</font>，而正常的初始化器是不能这样做的，因为在正常初始化器需要运行的时候，实例尚未生成。在下面的代码中，如果<code>arrow</code>属性不声明为<code>lazy</code>，将会出现编译错误：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span><span style="color:#66d9ef">class</span> <span style="color:#a6e22e">MyView</span>: UIView {
 </span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">lazy</span> <span style="color:#66d9ef">var</span> arrow = <span style="color:#66d9ef">self</span>.arrowImage() <span style="color:#75715e">// legal</span>
@@ -2128,7 +2128,7 @@ code.has-jax {
 <p>表示一个<code>Int</code>值最简单的方法是作为一个数字字头。一个没有小数点的数字默认为<code>Int</code>。内部下划线也是合法的这对长数字的可读性很有用。前导零是合法的，这对于在代码中填充和对齐数值很有用。</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span><span style="color:#66d9ef">var</span> x = <span style="color:#ae81ff">1000_000_000</span>
 </span></span><span style="display:flex;"><span><span style="color:#66d9ef">var</span> y = <span style="color:#ae81ff">00001</span>
-</span></span></code></pre></div><p>可以用二进制、八进制或十六进制的数字来写<code>Int</code>。要做到这一点，需要分别以<code>0b、0o</code>或<code>0x</code>开始。例如，<code>0x10</code>是十进制的<code>16</code>。</p>
+</span></span></code></pre></div><p>可以用二进制、八进制或十六进制的数字来写<code>Int</code>。要做到这一点，需要分别以<code>0b、0o</code>或<code>0x</code>开始。例如，<code>0x10</code>是十六进制表示，代表十进制的<code>16</code>。</p>
 <p>在<code>Swift</code>中<code>Double</code>是一个结构体类型，表示一个精度约为<code>15</code>位小数的浮点数（使用<code>64</code>位存储）。含有小数点的数字默认为<code>Double</code>类型，并且<code>Double</code>类型的<font color=red>内部下划线和前导零是合法的</font>。<code>Double</code>有静态属性<code>Double.infinity</code>和<code>Double.pi</code>，也有一个实例属性<code>isZero</code>。</p>
 <h2 id="数值强制转换">数值强制转换</h2>
 <p>强制转换是指从一种类型转换为另一种类型。<font color=LightSeaGreen><code>Swift</code>并没有显式的类型强制转换，但它使用实例化能够完成同样的效果</font>。<code>Swift</code>的数字类型提供了初始化器，这些初始化器将另一个数字类型实例作为参数：</p>
@@ -2138,7 +2138,7 @@ code.has-jax {
 </span></span><span style="display:flex;"><span><span style="color:#66d9ef">let</span> y = <span style="color:#ae81ff">3.8</span> <span style="color:#75715e">//a Double</span>
 </span></span><span style="display:flex;"><span><span style="color:#66d9ef">let</span> j = Int(y)
 </span></span><span style="display:flex;"><span>debugPrint(j) <span style="color:#75715e">// 3, an Int</span>
-</span></span></code></pre></div><p>当数值被赋值给变量或作为参数传递给函数时，<code>Swift</code><font color=red>只对字面数字量进行隐式强制转换</font>。下面这段代码是合法的，虽然<code>10</code>默认是<code>Int</code>类型，但是因为它是字面数字量，因此能够隐式地转换为<code>Double</code>：</p>
+</span></span></code></pre></div><p>当数值被赋值给变量或作为参数传递给函数时，<code>Swift</code><font color=red>只对字面数字量进行隐式强制转换</font>。下面这段代码是合法的，虽然<code>10</code>默认是<code>Int</code>类型，但因为它是字面数字量，因此能够隐式地转换为<code>Double</code>类型：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span><span style="color:#66d9ef">let</span> d : Double = <span style="color:#ae81ff">10</span>
 </span></span></code></pre></div><p>但下面这段代码是不合法的，编译器会报错。<font color=red>因为所赋值的是一个不同类型的变量，而不是字面数字</font>。问题的根源是<code>i</code>为<code>Int</code>实例，<code>d</code>是一个<code>Double</code>实例，二者不能自动进行隐式转换：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span><span style="color:#66d9ef">let</span> i = <span style="color:#ae81ff">10</span>
