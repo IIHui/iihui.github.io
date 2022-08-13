@@ -571,11 +571,14 @@ var x = 1000_000_000 var y = 00001 可以用二进制、八进制或十六进制
 Double字面量不能以小数点开头（与C和Objective-C不同）。如果要表示的值介于0和1之间，则以0开头。Double有静态属性Double.infinity和Double.pi，也有一个实例属性isZero。
 可以使用科学计数法写Double字面量，字母e之后的所有内容都是10的指数。如果小数位为零，则可以省略小数点。例如，3e2 是300。
 可以用十六进制数字写一个Double字面量。要这样做，以0x开头。也可以在使用指数法（同样，可以省略小数点，字母p后面的所有内容都是2的指数。 例如，0x10p2是十进制64。
-数值强制转换 强制转换是指从一种类型转换为另一种类型。Swift并没有显式的类型强制转换，但它使用实例化能够完成同样的效果。Swift的数字类型提供了初始化器，这些初始化器将另一个数字类型实例作为参数：
+Numeric coercion 强制转换是指从一种类型转换为另一种类型。Swift并没有显式的类型强制转换，但它使用实例化能够完成同样的效果。Swift的数字类型提供了初始化器，这些初始化器将另一个数字类型实例作为参数：
 let i = 10 //an Int let x = Double(i) debugPrint(x) // 10.0, a Double let y = 3.8 //a Double let j = Int(y) debugPrint(j) // 3, an Int 当数值被赋值给变量或作为参数传递给函数时，Swift只对字面数字量进行隐式强制转换。下面这段代码是合法的，虽然10默认是Int类型，但因为它是字面数字量，因此能够隐式地转换为Double类型：
 let d : Double = 10 但下面这段代码是不合法的，编译器会报错。因为所赋值的是一个不同类型的变量，而不是字面数字。问题的根源是i为Int实例，d是一个Double实例，二者不能自动进行隐式转换：
-let i = 10 let d : Double = i 当数字值被算术运算合并时，同样的规则也适用。Swift只对字面数字量进行隐式转换。例如，一个Int字面量与一个Double字面量运算时，Int字面量会隐式地转换为Double：
-let x = 10/3.0 debugPrint(x) // 3.33333333333333 String Swift中的字符串是完全现代的，它使用Unicode编码，可以在字符串字面量中直接包含任何字符（如表情符号）。如果知道一个字符的Unicode码点，并且不嫌麻烦，可以使用\u{...}，需要注意的是在花括号的内容至多为八位十六进制数字：
+let i = 10 let d : Double = i 解决方案是在赋值或传递变量时进行显式强制：
+let i = 10 let d : Double = Double(i) 当数字值被算术运算合并时，同样的规则也适用。Swift只对字面数字量进行隐式强制转换。例如，一个Int字面量与一个Double字面量运算时，Int字面量会隐式地转换为Double：
+let x = 10/3.0 debugPrint(x) // 3.33333333333333 但是，如果想在算术运算中组合它们，则必须显式强制转换不同数字类型的变量，以保证它们是相同的类型。如下所示，因为i和n是不同类型的变量，会出现编译错误：
+let i = 10 let n = 3.0 let x = i / n // compile error:Binary operator &amp;#39;/&amp;#39; cannot be applied to operands of type &amp;#39;Int&amp;#39; and &amp;#39;Double&amp;#39; 解决方案是将变量i的类型强制转换为Double：
+let i = 10 let n = 3.0 let x = Double(i) / nn String Swift中的字符串是完全现代的，它使用Unicode编码，可以在字符串字面量中直接包含任何字符（如表情符号）。如果知道一个字符的Unicode码点，并且不嫌麻烦，可以使用\u{...}，需要注意的是在花括号的内容至多为八位十六进制数字：
 let leftTripleArrow = &amp;#34;\u{21DA}&amp;#34; Range Range对象类型是一个结构体，代表一对端点。形成Range字面量的操作符有两个，提供一个开始值和一个结束值，在它们之间有一个Range操作符：
   ...闭range操作符：a...b意味着a到b的一切，包括b。
   ..&amp;lt;半开range操作符：a..&amp;lt;b意味着a到b的一切，但不包括b。

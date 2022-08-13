@@ -241,13 +241,13 @@ code.has-jax {
     <i class="fa fa-file-word-o"></i>
 </span>
 <span class="post-meta-item-text">字数: </span>
-<span class="leancloud-visitors-count">62500</span>
+<span class="leancloud-visitors-count">62671</span>
 &nbsp; | &nbsp;
 <span class="post-meta-item-icon">
     <i class="fa fa-coffee"></i>
 </span>
 <span class="post-meta-item-text">阅读: </span>
-<span class="leancloud-visitors-count">125 分钟</span>
+<span class="leancloud-visitors-count">126 分钟</span>
 </span>
       </div>
     </header>
@@ -2134,7 +2134,7 @@ code.has-jax {
 <p><code>Double</code>字面量<font color=Blue>不能以小数点开头</font>（与<code>C</code>和<code>Objective-C</code>不同）。如果要表示的值介于<code>0</code>和<code>1</code>之间，则以<code>0</code>开头。<code>Double</code>有静态属性<code>Double.infinity</code>和<code>Double.pi</code>，也有一个实例属性<code>isZero</code>。</p>
 <p>可以使用科学计数法写<code>Double</code>字面量，字母<code>e</code>之后的所有内容都是<code>10</code>的指数。如果小数位为零，则可以省略小数点。例如，<code>3e2</code> 是<code>300</code>。</p>
 <p>可以用十六进制数字写一个<code>Double</code>字面量。要这样做，以<code>0x</code>开头。也可以在使用指数法（同样，可以省略小数点，字母<code>p</code>后面的所有内容都是<code>2</code>的指数。 例如，<code>0x10p2</code>是十进制<code>64</code>。</p>
-<h2 id="数值强制转换">数值强制转换</h2>
+<h2 id="numeric-coercion">Numeric coercion</h2>
 <p>强制转换是指从一种类型转换为另一种类型。<font color=LightSeaGreen><code>Swift</code>并没有显式的类型强制转换，但它使用实例化能够完成同样的效果</font>。<code>Swift</code>的数字类型提供了初始化器，这些初始化器将另一个数字类型实例作为参数：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span><span style="color:#66d9ef">let</span> i = <span style="color:#ae81ff">10</span> <span style="color:#75715e">//an Int</span>
 </span></span><span style="display:flex;"><span><span style="color:#66d9ef">let</span> x = Double(i)
@@ -2147,9 +2147,20 @@ code.has-jax {
 </span></span></code></pre></div><p>但下面这段代码是不合法的，编译器会报错。<font color=red>因为所赋值的是一个不同类型的变量，而不是字面数字</font>。问题的根源是<code>i</code>为<code>Int</code>实例，<code>d</code>是一个<code>Double</code>实例，二者不能自动进行隐式转换：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span><span style="color:#66d9ef">let</span> i = <span style="color:#ae81ff">10</span>
 </span></span><span style="display:flex;"><span><span style="color:#66d9ef">let</span> d : Double = i
-</span></span></code></pre></div><p>当数字值被算术运算合并时，同样的规则也适用。<code>Swift</code><font color=red>只对字面数字量进行隐式转换</font>。例如，一个<code>Int</code>字面量与一个<code>Double</code>字面量运算时，<code>Int</code>字面量会隐式地转换为<code>Double</code>：</p>
+</span></span></code></pre></div><p>解决方案是在赋值或传递变量时进行显式强制：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span><span style="color:#66d9ef">let</span> i = <span style="color:#ae81ff">10</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">let</span> d : Double = Double(i)
+</span></span></code></pre></div><p>当数字值被算术运算合并时，同样的规则也适用。<code>Swift</code><font color=red>只对字面数字量进行隐式强制转换</font>。例如，一个<code>Int</code>字面量与一个<code>Double</code>字面量运算时，<code>Int</code>字面量会隐式地转换为<code>Double</code>：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span><span style="color:#66d9ef">let</span> x = <span style="color:#ae81ff">10</span><span style="color:#f92672">/</span><span style="color:#ae81ff">3.0</span>
 </span></span><span style="display:flex;"><span>debugPrint(x) <span style="color:#75715e">// 3.33333333333333</span>
+</span></span></code></pre></div><p>但是，如果想在算术运算中组合它们，则必须显式强制转换不同数字类型的变量，以保证它们是相同的类型。如下所示，因为<code>i</code>和<code>n</code>是不同类型的变量，会出现编译错误：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span><span style="color:#66d9ef">let</span> i = <span style="color:#ae81ff">10</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">let</span> n = <span style="color:#ae81ff">3.0</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">let</span> x = i <span style="color:#f92672">/</span> n <span style="color:#75715e">// compile error:Binary operator &#39;/&#39; cannot be applied to operands of type &#39;Int&#39; and &#39;Double&#39;</span>
+</span></span></code></pre></div><p>解决方案是将变量<code>i</code>的类型强制转换为<code>Double</code>：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span><span style="color:#66d9ef">let</span> i = <span style="color:#ae81ff">10</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">let</span> n = <span style="color:#ae81ff">3.0</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">let</span> x = Double(i) <span style="color:#f92672">/</span> nn
 </span></span></code></pre></div><h2 id="string">String</h2>
 <p><code>Swift</code>中的字符串是完全现代的，它使用<code>Unicode</code>编码，可以在字符串字面量中直接包含任何字符（如表情符号）。如果知道一个字符的<code>Unicode</code>码点，并且不嫌麻烦，可以使用<code>\u{...}</code>，需要注意的是在<font color=LightSeaGreen>花括号的内容至多为八位十六进制数字</font>：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span><span style="color:#66d9ef">let</span> leftTripleArrow = <span style="color:#e6db74">&#34;\u{21DA}&#34;</span>
@@ -4325,7 +4336,7 @@ code.has-jax {
         <li><a href="#lazy-initialization">Lazy Initialization</a></li>
         <li><a href="#singleton">Singleton</a></li>
         <li><a href="#built-in-simple-types">Built-In Simple Types</a></li>
-        <li><a href="#数值强制转换">数值强制转换</a></li>
+        <li><a href="#numeric-coercion">Numeric coercion</a></li>
         <li><a href="#string">String</a></li>
         <li><a href="#range">Range</a></li>
         <li><a href="#元组">元组</a></li>
