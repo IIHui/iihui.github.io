@@ -241,13 +241,13 @@ code.has-jax {
     <i class="fa fa-file-word-o"></i>
 </span>
 <span class="post-meta-item-text">字数: </span>
-<span class="leancloud-visitors-count">63317</span>
+<span class="leancloud-visitors-count">63870</span>
 &nbsp; | &nbsp;
 <span class="post-meta-item-icon">
     <i class="fa fa-coffee"></i>
 </span>
 <span class="post-meta-item-text">阅读: </span>
-<span class="leancloud-visitors-count">127 分钟</span>
+<span class="leancloud-visitors-count">128 分钟</span>
 </span>
       </div>
     </header>
@@ -2165,8 +2165,17 @@ code.has-jax {
 <p>到目前为止，所举的例子很容易解决，但如果算术表达式较长，事情就会变得更加复杂，而且这个问题会因为其它数字类型的存在而变得更加复杂，这些数字类型是与<code>Cocoa</code>兼容所需要的。</p>
 <p>如果只是在某个孤立的、抽象的世界中使用<code>Swift</code>，可能可以单独使用<code>Int</code>和<code>Double</code>完成所有必要的算术运算。但是，如果是在进行<code>iOS</code>编程，就会遇到<code>Cocoa</code>，它里面充满了其它的数字类型，而<code>Swift</code>有与每一种类型相匹配的类型。</p>
 <p>除了<code>Int</code>，还有各种大小的有符号整数类型——<code>Int8、Int16、Int32、Int64</code>。加上无符号整数类型<code>UInt</code>以及 <code>UInt8、UInt16、UInt32</code>和<code>UInt64</code>。除了<code>Double</code>，还有低精度<code>Float</code>（<code>32</code>位存储，大约<code>6</code>或<code>7</code>个小数位精度）、更低精度的<code>Float16</code>、扩展精度<code>Float80</code> 和来自<code>Core Graphics</code>框架<code>CGFloat</code>。</p>
-<p>在试图与<code>C</code>语言<code>API</code>对接时，也可能遇到<code>C</code>语言的数字类型。就<code>Swift</code>而言，这些类型只是类型别名，也就是说，它们是另一种类型的替代名称：<code>CDouble</code>（对应<code>C</code>语言的<code>double</code>）只是<code>Double</code>的另一个名字，<code>CLong</code>（<code>C</code>语言的<code>long</code>）是<code>Int</code>等等。在各种<code>Cocoa</code>框架中会出现许多其它的数字类型的别名，例如，<code>TimeInterval</code>（<code>Objective-C</code>的<code>NSTimeInterval</code>）只是<code>Double</code>的一个类型别名。</p>
-<h2 id="string">String</h2>
+<p>在试图与<code>C</code>语言<code>API</code>对接时，也可能遇到<code>C</code>语言的数字类型。就<code>Swift</code>而言，这些类型只是类型别名，也就是说，它们是另一种类型的替代名称：<code>CDouble</code>（对应<code>C</code>语言的<code>double</code>）只是<code>Double</code>的另一个名字，<code>CLong</code>（<code>C</code>语言的<code>long</code>）是<code>Int</code>等等。</p>
+<p>在各种<code>Cocoa</code>框架中会出现许多其它的数字类型的别名，例如，<code>TimeInterval</code>（<code>Objective-C</code>的<code>NSTimeInterval</code>）只是<code>Double</code>的一个类型别名。</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span><span style="color:#66d9ef">let</span> percentage = pt.x <span style="color:#f92672">/</span> s.bounds.size.width
+</span></span></code></pre></div><p>不能在变量赋值、传递或组合时使用不同数值类型的值，必须将这些值显式强制为正确的类型。但现在事实证明，有时被<code>Cocoa</code>淹没了许多类型的数值。<code>Cocoa</code>通常会给你一个既不是<code>Int</code>也不是<code>Double</code>的数值——你不一定会意识到这一点，直到编译器阻止你因为某种类型不匹配而终止编译。然后，必须弄清楚哪个类型错误了，并将所有内容强制为同一类型。</p>
+<p>这是一个应用程序中的一个典型示例。界面中的一个滑块是一个<code>UISlider</code>，它的<code>minimumValue</code>和<code>maximumValue</code>是<code>Floats</code>。在下面这段代码中s是<code>UISlider</code>，g是<code>UIGestureRecognizer</code>，我们尝试使用手势识别器将滑块的“拇指”移动到用户在滑块内点击的任何位置：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span><span style="color:#66d9ef">let</span> pt = g.location(<span style="color:#66d9ef">in</span>:s) 
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">let</span> percentage = pt.x <span style="color:#f92672">/</span> s.bounds.size.width 
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">let</span> delta = percentage <span style="color:#f92672">*</span> (s.maximumValue <span style="color:#f92672">-</span> s.minimumValue) <span style="color:#75715e">// compile error</span>
+</span></span></code></pre></div><p>上面代码发生编译错误，是因为pt.x的类型是CGFloat，s.bounds.size.width也是CGFloat，因此percentage的类型也是CGFloat，但是maximumValue和minimumValue是Float。所以percentage和(s.maximumValue - s.minimumValue)是不同类型。在Swift中Float和CGFloat是不同类型，必须显式强制转换：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span><span style="color:#66d9ef">let</span> delta = Float(percentage) <span style="color:#f92672">*</span> (s.maximumValue <span style="color:#f92672">-</span> s.minimumValue)
+</span></span></code></pre></div><h2 id="string">String</h2>
 <p><code>Swift</code>中的字符串是完全现代的，它使用<code>Unicode</code>编码，可以在字符串字面量中直接包含任何字符（如表情符号）。如果知道一个字符的<code>Unicode</code>码点，并且不嫌麻烦，可以使用<code>\u{...}</code>，需要注意的是在<font color=LightSeaGreen>花括号的内容至多为八位十六进制数字</font>：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span><span style="color:#66d9ef">let</span> leftTripleArrow = <span style="color:#e6db74">&#34;\u{21DA}&#34;</span>
 </span></span></code></pre></div><h2 id="range">Range</h2>

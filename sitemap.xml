@@ -582,8 +582,12 @@ let i = 10 let n = 3.0 let x = Double(i) / nn 这些规则是Swift强类型的�
 到目前为止，所举的例子很容易解决，但如果算术表达式较长，事情就会变得更加复杂，而且这个问题会因为其它数字类型的存在而变得更加复杂，这些数字类型是与Cocoa兼容所需要的。
 如果只是在某个孤立的、抽象的世界中使用Swift，可能可以单独使用Int和Double完成所有必要的算术运算。但是，如果是在进行iOS编程，就会遇到Cocoa，它里面充满了其它的数字类型，而Swift有与每一种类型相匹配的类型。
 除了Int，还有各种大小的有符号整数类型——Int8、Int16、Int32、Int64。加上无符号整数类型UInt以及 UInt8、UInt16、UInt32和UInt64。除了Double，还有低精度Float（32位存储，大约6或7个小数位精度）、更低精度的Float16、扩展精度Float80 和来自Core Graphics框架CGFloat。
-在试图与C语言API对接时，也可能遇到C语言的数字类型。就Swift而言，这些类型只是类型别名，也就是说，它们是另一种类型的替代名称：CDouble（对应C语言的double）只是Double的另一个名字，CLong（C语言的long）是Int等等。在各种Cocoa框架中会出现许多其它的数字类型的别名，例如，TimeInterval（Objective-C的NSTimeInterval）只是Double的一个类型别名。
-String Swift中的字符串是完全现代的，它使用Unicode编码，可以在字符串字面量中直接包含任何字符（如表情符号）。如果知道一个字符的Unicode码点，并且不嫌麻烦，可以使用\u{...}，需要注意的是在花括号的内容至多为八位十六进制数字：
+在试图与C语言API对接时，也可能遇到C语言的数字类型。就Swift而言，这些类型只是类型别名，也就是说，它们是另一种类型的替代名称：CDouble（对应C语言的double）只是Double的另一个名字，CLong（C语言的long）是Int等等。
+在各种Cocoa框架中会出现许多其它的数字类型的别名，例如，TimeInterval（Objective-C的NSTimeInterval）只是Double的一个类型别名。
+let percentage = pt.x / s.bounds.size.width 不能在变量赋值、传递或组合时使用不同数值类型的值，必须将这些值显式强制为正确的类型。但现在事实证明，有时被Cocoa淹没了许多类型的数值。Cocoa通常会给你一个既不是Int也不是Double的数值——你不一定会意识到这一点，直到编译器阻止你因为某种类型不匹配而终止编译。然后，必须弄清楚哪个类型错误了，并将所有内容强制为同一类型。
+这是一个应用程序中的一个典型示例。界面中的一个滑块是一个UISlider，它的minimumValue和maximumValue是Floats。在下面这段代码中s是UISlider，g是UIGestureRecognizer，我们尝试使用手势识别器将滑块的“拇指”移动到用户在滑块内点击的任何位置：
+let pt = g.location(in:s) let percentage = pt.x / s.bounds.size.width let delta = percentage * (s.maximumValue - s.minimumValue) // compile error 上面代码发生编译错误，是因为pt.x的类型是CGFloat，s.bounds.size.width也是CGFloat，因此percentage的类型也是CGFloat，但是maximumValue和minimumValue是Float。所以percentage和(s.maximumValue - s.minimumValue)是不同类型。在Swift中Float和CGFloat是不同类型，必须显式强制转换：
+let delta = Float(percentage) * (s.maximumValue - s.minimumValue) String Swift中的字符串是完全现代的，它使用Unicode编码，可以在字符串字面量中直接包含任何字符（如表情符号）。如果知道一个字符的Unicode码点，并且不嫌麻烦，可以使用\u{...}，需要注意的是在花括号的内容至多为八位十六进制数字：
 let leftTripleArrow = &amp;#34;\u{21DA}&amp;#34; Range Range对象类型是一个结构体，代表一对端点。形成Range字面量的操作符有两个，提供一个开始值和一个结束值，在它们之间有一个Range操作符：
   ...闭range操作符：a...b意味着a到b的一切，包括b。
   ..&amp;lt;半开range操作符：a..&amp;lt;b意味着a到b的一切，但不包括b。
