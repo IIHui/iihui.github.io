@@ -587,7 +587,9 @@ let i = 10 let n = 3.0 let x = Double(i) / nn 这些规则是Swift强类型的�
 let percentage = pt.x / s.bounds.size.width 不能在变量赋值、传递或组合时使用不同数值类型的值，必须将这些值显式强制为正确的类型。但现在事实证明，有时被Cocoa淹没了许多类型的数值。Cocoa通常会给你一个既不是Int也不是Double的数值——你不一定会意识到这一点，直到编译器阻止你因为某种类型不匹配而终止编译。然后，必须弄清楚哪个类型错误了，并将所有内容强制为同一类型。
 这是一个应用程序中的一个典型示例。界面中的一个滑块是一个UISlider，它的minimumValue和maximumValue是Floats。在下面这段代码中s是UISlider，g是UIGestureRecognizer，我们尝试使用手势识别器将滑块的“拇指”移动到用户在滑块内点击的任何位置：
 let pt = g.location(in:s) let percentage = pt.x / s.bounds.size.width let delta = percentage * (s.maximumValue - s.minimumValue) // compile error 上面代码发生编译错误，是因为pt.x的类型是CGFloat，s.bounds.size.width也是CGFloat，因此percentage的类型也是CGFloat，但是maximumValue和minimumValue是Float。所以percentage和(s.maximumValue - s.minimumValue)是不同类型。在Swift中Float和CGFloat是不同类型，必须显式强制转换：
-let delta = Float(percentage) * (s.maximumValue - s.minimumValue) String Swift中的字符串是完全现代的，它使用Unicode编码，可以在字符串字面量中直接包含任何字符（如表情符号）。如果知道一个字符的Unicode码点，并且不嫌麻烦，可以使用\u{...}，需要注意的是在花括号的内容至多为八位十六进制数字：
+let delta = Float(percentage) * (s.maximumValue - s.minimumValue) CGFloat是一个特殊的例子。它根据架构的位数（32位或64位）解析为Float或Double的大小。但这种区分已经不那么重要了，因为现在32位架构已经很少了，而且无论如何它都能有效地处理Doubles。
+从Swift 5.5开始，Double和CGFloat是可以互换的。你可以在他们被期望的地方互换，而不需要强制转换，这使iOS程序员减少了相当多的不便。
+var cfg : CGFloat = 1 var d1 : Double = 2 cfg = d1 // legal d1 = cfg &#43; d1 // legal let x2 = cfg &#43; d1 // x is inferred as Double String Swift中的字符串是完全现代的，它使用Unicode编码，可以在字符串字面量中直接包含任何字符（如表情符号）。如果知道一个字符的Unicode码点，并且不嫌麻烦，可以使用\u{...}，需要注意的是在花括号的内容至多为八位十六进制数字：
 let leftTripleArrow = &amp;#34;\u{21DA}&amp;#34; Range Range对象类型是一个结构体，代表一对端点。形成Range字面量的操作符有两个，提供一个开始值和一个结束值，在它们之间有一个Range操作符：
   ...闭range操作符：a...b意味着a到b的一切，包括b。
   ..&amp;lt;半开range操作符：a..&amp;lt;b意味着a到b的一切，但不包括b。

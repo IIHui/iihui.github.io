@@ -241,7 +241,7 @@ code.has-jax {
     <i class="fa fa-file-word-o"></i>
 </span>
 <span class="post-meta-item-text">字数: </span>
-<span class="leancloud-visitors-count">63870</span>
+<span class="leancloud-visitors-count">64084</span>
 &nbsp; | &nbsp;
 <span class="post-meta-item-icon">
     <i class="fa fa-coffee"></i>
@@ -2175,6 +2175,13 @@ code.has-jax {
 </span></span><span style="display:flex;"><span><span style="color:#66d9ef">let</span> delta = percentage <span style="color:#f92672">*</span> (s.maximumValue <span style="color:#f92672">-</span> s.minimumValue) <span style="color:#75715e">// compile error</span>
 </span></span></code></pre></div><p>上面代码发生编译错误，是因为<code>pt.x</code>的类型是<code>CGFloat，s.bounds.size.width</code>也是<code>CGFloat</code>，因此<code>percentage</code>的类型也是<code>CGFloat</code>，但是<code>maximumValue</code>和<code>minimumValue</code>是<code>Float</code>。所以<code>percentage</code>和<code>(s.maximumValue - s.minimumValue)</code>是不同类型。在<code>Swift</code>中<code>Float</code>和<code>CGFloat</code>是不同类型，必须显式强制转换：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span><span style="color:#66d9ef">let</span> delta = Float(percentage) <span style="color:#f92672">*</span> (s.maximumValue <span style="color:#f92672">-</span> s.minimumValue)
+</span></span></code></pre></div><p><code>CGFloat</code>是一个特殊的例子。它根据架构的位数（<code>32</code>位或<code>64</code>位）解析为<code>Float</code>或<code>Double</code>的大小。但这种区分已经不那么重要了，因为现在<code>32</code>位架构已经很少了，而且无论如何它都能有效地处理<code>Doubles</code>。</p>
+<p>从<code>Swift 5.5</code>开始，<code>Double</code>和<code>CGFloat</code>是可以互换的。你可以在他们被期望的地方互换，而不需要强制转换，这使<code>iOS</code>程序员减少了相当多的不便。</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span><span style="color:#66d9ef">var</span> cfg : CGFloat = <span style="color:#ae81ff">1</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">var</span> d1 : Double = <span style="color:#ae81ff">2</span>
+</span></span><span style="display:flex;"><span>cfg = d1 <span style="color:#75715e">// legal</span>
+</span></span><span style="display:flex;"><span>d1 = cfg <span style="color:#f92672">+</span> d1 <span style="color:#75715e">//  legal</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">let</span> x2 = cfg <span style="color:#f92672">+</span> d1 <span style="color:#75715e">// x is inferred as Double</span>
 </span></span></code></pre></div><h2 id="string">String</h2>
 <p><code>Swift</code>中的字符串是完全现代的，它使用<code>Unicode</code>编码，可以在字符串字面量中直接包含任何字符（如表情符号）。如果知道一个字符的<code>Unicode</code>码点，并且不嫌麻烦，可以使用<code>\u{...}</code>，需要注意的是在<font color=LightSeaGreen>花括号的内容至多为八位十六进制数字</font>：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span><span style="color:#66d9ef">let</span> leftTripleArrow = <span style="color:#e6db74">&#34;\u{21DA}&#34;</span>
