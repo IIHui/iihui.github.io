@@ -589,7 +589,12 @@ let percentage = pt.x / s.bounds.size.width 不能在变量赋值、传递或组
 let pt = g.location(in:s) let percentage = pt.x / s.bounds.size.width let delta = percentage * (s.maximumValue - s.minimumValue) // compile error 上面代码发生编译错误，是因为pt.x的类型是CGFloat，s.bounds.size.width也是CGFloat，因此percentage的类型也是CGFloat，但是maximumValue和minimumValue是Float。所以percentage和(s.maximumValue - s.minimumValue)是不同类型。在Swift中Float和CGFloat是不同类型，必须显式强制转换：
 let delta = Float(percentage) * (s.maximumValue - s.minimumValue) CGFloat是一个特殊的例子。它根据架构的位数（32位或64位）解析为Float或Double的大小。但这种区分已经不那么重要了，因为现在32位架构已经很少了，而且无论如何它都能有效地处理Doubles。
 从Swift 5.5开始，Double和CGFloat是可以互换的。你可以在他们被期望的地方互换，而不需要强制转换，这使iOS程序员减少了相当多的不便。
-var cfg : CGFloat = 1 var d1 : Double = 2 cfg = d1 // legal d1 = cfg &#43; d1 // legal let x2 = cfg &#43; d1 // x is inferred as Double String Swift中的字符串是完全现代的，它使用Unicode编码，可以在字符串字面量中直接包含任何字符（如表情符号）。如果知道一个字符的Unicode码点，并且不嫌麻烦，可以使用\u{...}，需要注意的是在花括号的内容至多为八位十六进制数字：
+var cfg : CGFloat = 1 var d1 : Double = 2 cfg = d1 // legal d1 = cfg &#43; d1 // legal let x2 = cfg &#43; d1 // x is inferred as Double 不是所有的数值型的能够强制转换为另一个类型。例如，Int8.max是127，如果尝试将&amp;gt;=128的字面量赋值给Int8是不合法的：
+let tx: Int8 = 128 // Integer literal &amp;#39;128&amp;#39; overflows when stored into &amp;#39;Int8&amp;#39; 上面的例子中因为128是一个字面量，所以编译器能够判断溢出了。但进行类型强制转换时，编译器无法事先判断出来，所以在运行时才会报错：
+let i : Int16 = 128 let i1 = Int8(i) // Swift/Integers.swift:3564: Fatal error: Not enough bits to represent the passed value 对于上面的情况，解决方案是调用一个可失败的初始化器。下面的代码虽然不会发生崩溃，但是需要测试转换是否成功：
+let i : Int16 = 128 let i1 = Int8(exactly: i)  if let i = i1 {  debugPrint(i1) } 另外一种解决方案是使用clamping初始化器，这个初始化器总是会成功的，因为超出范围的值被迫落入范围内：
+let i : Int16 = 128 let i1 = Int8(clamping: i)  debugPrint(i1) //127 当浮点类型（例如Double）被强制转换为整数类型时，小数点后的内容会先被丢弃，然后再尝试强制转换。Int8(127.9) 成功，因为127在界限内。
+String Swift中的字符串是完全现代的，它使用Unicode编码，可以在字符串字面量中直接包含任何字符（如表情符号）。如果知道一个字符的Unicode码点，并且不嫌麻烦，可以使用\u{...}，需要注意的是在花括号的内容至多为八位十六进制数字：
 let leftTripleArrow = &amp;#34;\u{21DA}&amp;#34; Range Range对象类型是一个结构体，代表一对端点。形成Range字面量的操作符有两个，提供一个开始值和一个结束值，在它们之间有一个Range操作符：
   ...闭range操作符：a...b意味着a到b的一切，包括b。
   ..&amp;lt;半开range操作符：a..&amp;lt;b意味着a到b的一切，但不包括b。
