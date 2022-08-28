@@ -208,17 +208,17 @@ print(&amp;#34;hello &amp;#34;) puts(&amp;#34;world&amp;#34;) puts(&amp;#34;test
 在Ruby中，方法的名称遵循与局部变量相同的规则和惯例（除了它们可以以?、!或=结尾，其意义你将在后面看到）。这是设计好的：方法并不像方法那样引起人们的注意，而是作为提供值的表达式融入到程序的结构中。在某些情况下，你无法通过观察一个表达式来判断你看到的是一个局部变量还是一个方法名&amp;ndash;这是故意的。
 说到方法，现在你已经有了一个Ruby标识符的路线图，让我们回到一些语言语义上，特别是对象及其方法的重要作用。
 Data, Expressions, and Flow Control 计算机程序几乎所有的时间都在操作数据或等待数据从其它地方送达。当输入文字、短语和数字，听音乐，看视频时计算机进行计算，作出决定，并向我们传递信息。要编写计算机程序，必须先了解数据及其操作的基本知识。
-Numbers and Expressions 编程时，表达式是数据（例如数字或字符串）、运算符（例如&#43;或-）和变量的组合。当计算机理解这些表达式时，这些变量会产生某种形式的结果。例如，下面这些都是表达式：
+Numbers and Expressions 编程时，表达式是数据（例如数字或字符串）、运算符（例如&#43;或-）和变量的组合。当计算机理解这些表达式时，会产生某种形式的结果。下面这些都是表达式：
 5 1 &#43; 2 &amp;#34;a&amp;#34; &#43; &amp;#34;b&amp;#34; &#43; &amp;#34;c&amp;#34; 100 - 5 * (2 - 1) x &#43; y 变量是占位符或对对象的引用，包括数字、文本或创建的任何类型的对象。可以随心所欲地命名变量，只是有一些限制。变量名称必须是一个单元（中间不能有空格）；必须以字母或下划线开头；必须只包含字母、数字或下划线；并且区分大小写。
    变量名 是否有效     x 是   Y2 是   _x 是   7x 否，字母开头   this_is_a_test 是   this is a test 否，包含空格   this&amp;rsquo;is@a&amp;rsquo;test! 否，包含特殊字符‘，@，！   this-is-a-test 否，包含特殊字符-    由于变量是值和数据的占位符，因此它们也可以用表达式的结果赋值（例如x = 2 - 1）并用于表达式本身（例如 x - y &#43; 2）。
 没有逻辑的程序仅仅是一个计算器。计算机不只是对数据进行单一操作，还使用逻辑来决定不同的行动方案。逻辑的一个基本形式是在表达式中使用比较运算符来做决定:
-age = 10 puts &amp;#34;You&amp;#39;re too young to use this system&amp;#34; if age &amp;lt; 18  age = 24 puts &amp;#34;You&amp;#39;re NOT a teenager&amp;#34; unless age &amp;gt; 12 &amp;amp;&amp;amp; age &amp;lt; 20 Ruby提供了另一个更方便的between?方法，如果对象介于或等于两个提供的值，则返回真或假。例如，至少在处理整数时，age.between?(13, 19)相当于age &amp;gt;= 13 &amp;amp;&amp;amp; age &amp;lt;= 19：
+age = 10 puts &amp;#34;You&amp;#39;re too young to use this system&amp;#34; if age &amp;lt; 18  age = 24 puts &amp;#34;You&amp;#39;re NOT a teenager&amp;#34; unless age &amp;gt; 12 &amp;amp;&amp;amp; age &amp;lt; 20 Ruby提供了另一个更方便的between?方法，如果对象介于或等于两个提供的值，则返回真或假。例如，在处理整数时，age.between?(13, 19)相当于age &amp;gt;= 13 &amp;amp;&amp;amp; age &amp;lt;= 19：
 age = 18 puts &amp;#34;You&amp;#39;re a teenager&amp;#34; if age.between?(12, 20) Looping Through Numbers with Blocks and Iterators 在下面的代码中，首先取了5，然后调用times方法（这个方法对于所有的数字类型都适用）。不是向这个方法传递数据，而是向它传递代码：do和end之间的代码。然后，times方法将会连续使用该代码五次，产生前面的五行输出：
 5.times do puts &amp;#34;Test&amp;#34; end 另一种写法是用花括号代替do和end。尽管鼓励do和end用于多行代码块，但花括号使代码在单行上更易于阅读。因此，下面的代码的执行后结果完全相同：
 5.times { puts &amp;#34;Test&amp;#34;} 也就说，对于单行代码建议使用花括号，但对较长的代码块将使用do和end。这是一个很好的习惯，几乎所有专业的Ruby开发者都遵循这种风格。
 在Ruby中，创建循环的一种机制称为迭代器。迭代器是逐个遍历项目列表的东西。还有其他迭代器可用于数字，例如：
 1.upto(5) { ...code to loop here... }  10.downto(5) { ...code to loop here... }  0.step(50, 5) { ...code to loop here... } 不明显的是如何知道每一步迭代中的数字，以便可以在循环的代码块中使用它。如果想打印出当前的迭代次数怎么办？如何使用这些迭代器开发计数程序？值得庆幸的是，刚刚解释的所有迭代器都会自动将迭代的状态作为参数传递给循环代码，然后可以将其检索到变量中并使用，如下所示：
-1.upto(5) do |number|  puts number end 需要注意的是，有些方法会执行代码块并传递数据，然后可以将其捕获到变量中。在上面的例子中，对整数可用的upto方法将每次迭代的值传递到代码块中，我们将其&amp;quot;captured&amp;quot;到变量数字中。
+1.upto(5) do |number|  puts number end 需要注意的是，有些方法会执行代码块并传递数据，然后可以将数据捕获到变量中。在上面的例子中，对整数可用的upto方法将每次迭代的值传递到代码块中，我们将其&amp;quot;captured&amp;quot;到变量number中。
 Floating Point Numbers 默认情况下，Ruby将任何没有为小数点的数字视为整数。当使用10 / 3 时，实际上是要求Ruby将两个整数相除，而Ruby会给出一个整数作为结果。因此，下面的代码运行后的结果为3，而不是3.333：
 puts 10 / 3 如果将代码做一些小小的改动：
 puts 10 / 3.0 puts 10.0 / 3 puts 10.0 / 3.0 则输出的结果将会是3.3333333333333335。上面的代码Ruby处理Float类型的数字对象，并返回一个Float，并提供期望的精度级别。
