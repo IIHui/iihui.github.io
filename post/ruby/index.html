@@ -241,13 +241,13 @@ code.has-jax {
     <i class="fa fa-file-word-o"></i>
 </span>
 <span class="post-meta-item-text">字数: </span>
-<span class="leancloud-visitors-count">9301</span>
+<span class="leancloud-visitors-count">9811</span>
 &nbsp; | &nbsp;
 <span class="post-meta-item-icon">
     <i class="fa fa-coffee"></i>
 </span>
 <span class="post-meta-item-text">阅读: </span>
-<span class="leancloud-visitors-count">19 分钟</span>
+<span class="leancloud-visitors-count">20 分钟</span>
 </span>
       </div>
     </header>
@@ -907,6 +907,61 @@ code.has-jax {
 </span></span><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span><span style="color:#66d9ef">Hello</span> from method1 <span style="color:#66d9ef">in</span> the parent <span style="color:#66d9ef">class</span>
 </span></span><span style="display:flex;"><span><span style="color:#a6e22e">Hello</span> from method2 <span style="color:#66d9ef">in</span> the child <span style="color:#66d9ef">class</span>
+</span></span></code></pre></div><p>下面的代码中，使用<code>super</code>时，它查找继承链并调用下一个最高类的同名方法。在这个例子中，只有两层，所以在 <code>Doctor</code>的<code>name</code>方法中使用<code>super</code>，然后在<code>Person</code>中使用<code>name</code>方法。</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ruby" data-lang="ruby"><span style="display:flex;"><span><span style="color:#66d9ef">class</span> <span style="color:#a6e22e">Person</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">def</span> <span style="color:#a6e22e">initialize</span>(name)
+</span></span><span style="display:flex;"><span>    @name <span style="color:#f92672">=</span> name
+</span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">end</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">def</span> <span style="color:#a6e22e">name</span>
+</span></span><span style="display:flex;"><span>    @name
+</span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">end</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">end</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">class</span> <span style="color:#a6e22e">Doctor</span> <span style="color:#f92672">&lt;</span> <span style="color:#66d9ef">Person</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">def</span> <span style="color:#a6e22e">name</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#e6db74">&#34;Dr. &#34;</span> <span style="color:#f92672">+</span> <span style="color:#66d9ef">super</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">end</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">end</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>puts <span style="color:#66d9ef">Doctor</span><span style="color:#f92672">.</span>new(<span style="color:#e6db74">&#34;Test&#34;</span>)<span style="color:#f92672">.</span>name
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">Dr</span><span style="color:#f92672">.</span> <span style="color:#66d9ef">Test</span>
+</span></span></code></pre></div><p>以这种方式使用继承的好处是，你可以在通用类中实现通用功能，然后只实现更具体的子类需要的具体功能。这可以节省大量的重复工作，并且意味着如果你对父类进行了修改，子类也会继承这些修改。</p>
+<h2 id="overriding-existing-methods">Overriding Existing Methods</h2>
+<p>因为<code>Ruby</code>是一种动态语言，因此可以覆盖现有的类和方法。一些<code>Ruby</code>的库和扩展（<code>add-ons</code>）覆盖了核心类提供的方法，以扩展<code>Ruby</code>的一般功能。</p>
+<p>下面这个<code>demo</code>说明了为什么总是需要谨慎行事，并注意你的应用程序中正在发生的事情。如果你依赖于能够测量字符串的长度，而长度方法被重写，你将会有一段艰难的时光：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ruby" data-lang="ruby"><span style="display:flex;"><span><span style="color:#66d9ef">class</span> <span style="color:#a6e22e">String</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">def</span> <span style="color:#a6e22e">length</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#ae81ff">20</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">end</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">end</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>puts <span style="color:#e6db74">&#34;test&#34;</span><span style="color:#f92672">.</span>length
+</span></span><span style="display:flex;"><span>puts <span style="color:#e6db74">&#34;N&#34;</span><span style="color:#f92672">.</span>length
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#ae81ff">20</span>
+</span></span><span style="display:flex;"><span><span style="color:#ae81ff">20</span>
+</span></span></code></pre></div><p>实际上，我们也可以覆盖自己的方法。在下面的代码中，首先定义了<code>Dog</code>类，然后定义了一个<code>talk</code>方法。然后又打开了<code>Dog</code>类，就地重定义了<code>talk</code>方法。这种<font color=red>重新打开类并添加和重新定义方法的能力在面向对象语言中是比较少见的</font>。</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ruby" data-lang="ruby"><span style="display:flex;"><span><span style="color:#66d9ef">class</span> <span style="color:#a6e22e">Dog</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">def</span> <span style="color:#a6e22e">talk</span>
+</span></span><span style="display:flex;"><span>    puts <span style="color:#e6db74">&#34;Woof!&#34;</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">end</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">end</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>my_dog <span style="color:#f92672">=</span> <span style="color:#66d9ef">Dog</span><span style="color:#f92672">.</span>new
+</span></span><span style="display:flex;"><span>my_dog<span style="color:#f92672">.</span>talk
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">class</span> <span style="color:#a6e22e">Dog</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">def</span> <span style="color:#a6e22e">talk</span>
+</span></span><span style="display:flex;"><span>    puts <span style="color:#e6db74">&#34;Howl!&#34;</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">end</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">end</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>my_dog<span style="color:#f92672">.</span>talk
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">Woof</span><span style="color:#f92672">!</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">Howl</span><span style="color:#f92672">!</span>
 </span></span></code></pre></div><div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">extension</span> <span style="color:#a6e22e">UIView</span> {
 </span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">func</span> <span style="color:#a6e22e">makeSecure</span>() {
 </span></span><span style="display:flex;"><span>        DispatchQueue.main.async {
@@ -1214,6 +1269,7 @@ code.has-jax {
         <li><a href="#class-variables">Class Variables</a></li>
         <li><a href="#class-methods-vs-instance-methods">Class Methods vs. Instance Methods</a></li>
         <li><a href="#inheritance">Inheritance</a></li>
+        <li><a href="#overriding-existing-methods">Overriding Existing Methods</a></li>
       </ul>
     </li>
   </ul>
