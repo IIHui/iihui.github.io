@@ -229,36 +229,35 @@ puts(5.7.to_i) puts(5.7.to_int) Constants 考虑一些永远不会改变的值�
 Pi = 3.141592 如果尝试改变Pi的值，虽然是可以的，但编译器会产生警告already initialized constant Pi。Ruby让我们可以完全控制常量的值（可以改变常量的值），但编译器会发出明确的警告信息。将来，Ruby可能会对常量实施更严格的控制，因此请尊重这种使用方式，并尽量不要在程序中给常量重新赋值。
 Text and Strings 字符串是任意长度的文本字符（包括数字、字母、空格和符号）的集合。 Ruby中的所有字符串都是String类型对象，可以通过调用字符串的类方法class并打印结果来查看：
 puts &amp;#34;Hello world&amp;#34;.class # String 如同数字类型，字符串也可以使用操作符：
-x = &amp;#34;Test&amp;#34; y = &amp;#34;String&amp;#34; puts &amp;#34;Success!&amp;#34; if x &#43; y == &amp;#34;TestString&amp;#34; 使用双引号仅适用单行字符串，但如果想跨越多行，请尝试以下操作：
-x = %q{This is a test of the multi line capabilities} puts x 在上面的例子中，字符串以%q{ }包裹。实际上花括号是非必须的，可以使用&amp;lt;和&amp;gt;，（和），或者简单地使用你选择的其它两个定界符，例如！和！。下面这段代码以完全相同的方式工作：
-x = %q!This is a test of the multi line capabilities! puts x 如果使用感叹号作为分隔符，那么引用的字符串中的任何感叹号都会导致字符串提前结束，Ruby会认为剩余的字符串文本是错误的，所以应该谨慎地选择分隔符：
-x = %q!This is a test of the multi line! capabilities! puts x // Uncaught exception: undefined method `capabilities!&amp;#39; for main:Object 构建长字符串字面量的另一种方法是使用here文档或heredoc，这是在许多其它编程语言中发现的概念。它的工作方式与前面的示例类似，不同之处在于分隔符可以是多个字符。下面是一个例子：
-x = &amp;lt;&amp;lt;END_MY_STRING_PLEASE This is the string And a second line END_MY_STRING_PLEASE puts x 在上面的例子中，&amp;lt;&amp;lt;标记字符串字面量的开头，然后使用END_MY_STRING_PLEASE作为字符串常量的分隔符。字符串真正的内容从下一个新行开始，分隔符在最后一行再次重复时表示结束。
-当字符串比较时，实际上比较的是字符串中字符对应的数字。如前所述，字符在计算机内存中存储为数字。每个字母和符号都有一个值，称为ASCII值：
-puts &amp;#34;Success!&amp;#34; if &amp;#34;Test&amp;#34; &#43; &amp;#34;String&amp;#34; == &amp;#34;TestString&amp;#34; puts &amp;#34;abc&amp;#34; * 5 puts &amp;#34;x&amp;#34; &amp;gt; &amp;#34;y&amp;#34; 可以通过字符的ord方法获取ASCII值，也可以通过chr函数，将ASCII值转换为字符：
+x = &amp;#34;Test&amp;#34; y = &amp;#34;String&amp;#34; puts &amp;#34;Success!&amp;#34; if x &#43; y == &amp;#34;TestString&amp;#34; 使用双引号仅适用单行字符串，但如果字符串文本想跨越多行，请尝试以下操作：
+x = %q{This is a test of the multi line capabilities} puts x 在上面的例子中，多行字符串以%q{ }包裹。实际上花括号是非必须的，可以使用&amp;lt;和&amp;gt;，（和），或者简单地使用你选择的其它两个定界符，例如！和！。下面这段代码将以完全相同的方式工作：
+x = %q!This is a test of the multi line capabilities! puts x 如果使用感叹号作为分隔符，那么字符串文本中的任何感叹号都会导致字符串提前结束，Ruby会认为剩余的字符串文本是错误的，所以应该谨慎地选择分隔符：
+x = %q!This is a test of the multi line! capabilities! puts x // Uncaught exception: undefined method `capabilities!&amp;#39; for main:Object 构建多行字符串字面量的另一种方法是使用here文档或heredoc，这是在许多其它编程语言中发现的概念。它的工作方式与前面的示例类似，不同之处在于分隔符可以是多个字符。下面是一个例子：
+x = &amp;lt;&amp;lt;END_MY_STRING_PLEASE This is the string And a second line END_MY_STRING_PLEASE puts x 在上面的例子中，&amp;lt;&amp;lt;标记字符串字面量的开头，然后使用END_MY_STRING_PLEASE作为字符串常量的分隔符。字符串真正的内容从下一个新行开始，分隔符在最后一行再次重复时表示字符串字面量结束。
+当比较字符串时，实际上比较的是字符串中字符对应的数字（ASCII码）。如前所述，字符在计算机内存中存储为数字，每个字母和符号都有一个值，称为ASCII值：
+puts &amp;#34;Success!&amp;#34; if &amp;#34;Test&amp;#34; &#43; &amp;#34;String&amp;#34; == &amp;#34;TestString&amp;#34; puts &amp;#34;abc&amp;#34; * 5 puts &amp;#34;x&amp;#34; &amp;gt; &amp;#34;y&amp;#34;  Success! abcabcabcabcabc false 可以通过字符的ord方法获取ASCII值。相应地，也可以通过chr函数将ASCII值转换为字符：
 puts &amp;#34;x&amp;#34;.ord #Integer puts 120.chr #String 插值是指将表达式的结果插入字符串常量的过程。在字符串中进行插值的方法是将表达式放在#{ }符号内。下面是一个简单的例子：
 x = 10 y = 20 puts &amp;#34;#{x}&#43; #{y}= #{x &#43; y}&amp;#34; # 10 &#43; 20 = 30 puts &amp;#34;100 * 5 = #{100 * 5}&amp;#34; # 100 * 5 = 500 x = &amp;#34;cat&amp;#34; puts &amp;#34;The #{x}in the hat&amp;#34; # The cat in the hat puts &amp;#34;It&amp;#39;s a #{&amp;#34;bad &amp;#34; * 5}world&amp;#34; # It&amp;#39;s a bad bad bad bad bad world Regular Expressions 正则表达式本质上是一个搜索查询，不要与表达式混淆。如果想要替换字符串的某些字符，可以使用sub方法，但是sub只替换第一次出现的字符。如果要做全局替换，则需要使用gsub方法：
 puts &amp;#34;foobar&amp;#34;.sub(&amp;#39;bar&amp;#39;, &amp;#39;foo&amp;#39;) # foofoo puts &amp;#34;this is a test&amp;#34;.gsub(&amp;#39;i&amp;#39;, &amp;#39;&amp;#39;) # ths s a test 如果先要替换开头的两个字符，可以使用如下方式：
-x = &amp;#34;This is a test&amp;#34; puts x.sub(/^../, &amp;#39;Hello&amp;#39;) 上面的代码中，sub方法的第一个参数不是字符串，而是一个正则表达式。在正则表达式中^是一个锚点，意味着正则表达式将从字符串中任何行的开头开始匹配。其中的.代表&amp;quot;任何字符&amp;quot;。总的来说，/^../意味着&amp;quot;紧随一行开始之后的任何两个字符&amp;quot;。因此，This is a test的Th被替换为Hello。
-相应地，下面的代码替换行字符串最后两个字符为Hello：
-x = &amp;#34;This is a test&amp;#34; puts x.sub(/..$/, &amp;#39;Hello&amp;#39;)  # This is a teHello  x = &amp;lt;&amp;lt;TEST this is a test dddd TEST puts x.sub(/..$/, &amp;#39;Hello&amp;#39;)  # this is a tesHello # dddd 如果想锚定一个字符串的绝对开始或结束，你可以分别使用\A和\Z（都是大写），而^和$则锚定一个字符串中的行的开始和结束:
-x = &amp;lt;&amp;lt;TEST This is a test dd TEST puts x.sub(/..\Z/, &amp;#39;Hello&amp;#39;)  #This is a test # Hello  x = &amp;lt;&amp;lt;TEST This is a test dd TEST puts x.sub(/\A../, &amp;#39;NA&amp;#39;)  # NAis is a test # dd 如果想遍历一个字符串，并能分别访问其中的每一部分，怎么办呢？scan就是你需要的迭代器方法。在下面的代码中，scan方法扫描字符串以查找与传递给它的正则表达式匹配的任何内容：
-&amp;#34;xyz&amp;#34;.scan(/./) { |letter| puts letter } 在上面的例子中，我们提供了一次查找单个字符的正则表达式。这就是在输出中分别得到x、y和z的原因。每个字母都被输入到块中，分配给letter，然后打印到屏幕上。
+x = &amp;#34;This is a test&amp;#34; puts x.sub(/^../, &amp;#39;Hello&amp;#39;) 上面的代码中，sub方法的第一个参数不是字符串，而是一个正则表达式。在正则表达式中^是一个锚点，意味着正则表达式将从字符串中任何行的开头开始匹配。其中的.代表任何字符。也就是说，/^../意味着「紧随一行开始之后的任何两个字符」。因此，This is a test的Th被替换为Hello。相应地，下面的代码替换行字符串最后两个字符为Hello：
+x = &amp;#34;This is a test&amp;#34; puts x.sub(/..$/, &amp;#39;Hello&amp;#39;)  # This is a teHello  x = &amp;lt;&amp;lt;TEST this is a test dddd TEST puts x.sub(/..$/, &amp;#39;Hello&amp;#39;)  # this is a tesHello # dddd 如果想锚定一个字符串的绝对开始或结束，你可以分别使用\A和\Z（都是大写），而^和$则只是锚定一个字符串中的行的开始和结束:
+x = &amp;lt;&amp;lt;TEST This is a test dd TEST puts x.sub(/..\Z/, &amp;#39;Hello&amp;#39;)  #This is a test # Hello  x = &amp;lt;&amp;lt;TEST This is a test dd TEST puts x.sub(/\A../, &amp;#39;NA&amp;#39;)  # NAis is a test # dd 如果想遍历一个字符串，并能访问其中的每一部分，怎么办呢？scan就是我们要找的迭代器方法。在下面的代码中，scan方法扫描字符串以查找与传递给它的正则表达式匹配的任何内容：
+&amp;#34;xyz&amp;#34;.scan(/./) { |letter| puts letter } 在上面的代码中，我们提供了一次查找单个字符的正则表达式。这就是在输出中分别得到x、y和z的原因。每个字母都被输入到块中，赋值给letter，然后打印到屏幕上。
 &amp;#34;This is a test&amp;#34;.scan(/../) { |x| puts x } 在上面的代码中，一次扫描两个字符，最后的打印结果如下所示：
 Th is  i s a te st 实际上，上面扫描的结果中是包含空格的，如果想要只包含数字和字母，可以使用如下方式：
 &amp;#34;This is a test&amp;#34;.scan(/\w\w/) { |x| puts x } 上面的\w表示任何数字和字母字符以及下划线。在正则表达式中，有一些用反斜杠表示的特殊字符，它们具有特殊的含义，如下表所示：
-从上表中，可以很轻松地从字符串中提取数字：
+参考上表，可以很轻松地从字符串中提取所有数字：
 &amp;#34;The car costs $1000 and the cat costs $10&amp;#34;.scan(/\d&#43;/) do |x|  puts x end # 1000 # 10 在上面\d后面跟着的&#43;被称为修饰器，它表示尽可能多地匹配，并且至少匹配一个。如果不添加&#43;，则只会匹配一个数字：
 &amp;#34;The car costs $1000 and the cat costs $10&amp;#34;.scan(/\d/) do |x|  puts x end  # 1 # 0 # 0 # 0 # 1 # 0 还有其它类型的修饰符：
-在正则表达式中，有一个重要的方面是字符类。这些允许匹配一组特定的字符。例如，可以扫描字符串中的所有元音字符：
+在正则表达式中，有一个重要的方面是字符类，它允许匹配一组特定的字符。例如，可以扫描字符串中的所有元音字符：
 &amp;#34;This is a test&amp;#34;.scan(/[aeiou]/) { |x| puts x } # i # i # a # e 也可以在方括号内指定字符范围：
 &amp;#34;This is a test&amp;#34;.scan(/[a-m]/) { |x| puts x } # h # i # i # a # e 进行替换并从字符串中提取某些文本很有用，但有时只想检查某个字符串是否与选择的模式匹配。如果字符串包含任何元音，你可能希望快速确定：
-puts &amp;#34;String has vowels&amp;#34; if &amp;#34;This is a test&amp;#34; =~ /[aeiou]/ 在上面的代码中=~是匹配运算符，如果字符串与运算符后面的正则表达式匹配，则表达式返回第一个匹配项的位置（在上面这种情况下返回的是2——逻辑上为非假，因此满足if条件）。当然，也可以做相反的事情：
-puts &amp;#34;String contains no digits&amp;#34; unless &amp;#34;This is a test&amp;#34; =~ /[0-9]/ 上面的代码的意思是除非0到9的数字范围与测试字符串匹配，否则告诉用户字符串中没有数字。也可以使用String类提供的称为match的方法。 =~根据正则表达式是否匹配字符串，返回第一个匹配项的位置或nil，而match提供了更多的功能。下面是一个基本示例：
+puts &amp;#34;String has vowels&amp;#34; if &amp;#34;This is a test&amp;#34; =~ /[aeiou]/ 在上面的代码中=~是匹配运算符，如果字符串与运算符后面的正则表达式匹配，则表达式会返回第一个匹配项的位置（在上面这种情况下返回的是2——逻辑上为true，因此满足if条件）。当然，也可以做相反的事情：
+puts &amp;#34;String contains no digits&amp;#34; unless &amp;#34;This is a test&amp;#34; =~ /[0-9]/ 上面的代码的意思是除非0到9的数字范围与测试字符串匹配，否则告诉用户字符串中没有数字。也可以使用String类提供的称为match的方法。=~根据正则表达式是否匹配字符串，返回第一个匹配项的位置或nil，而match提供了更多的功能。
 puts &amp;#34;String has vowels&amp;#34; if &amp;#34;This is a test&amp;#34;.match(/[aeiou]/) 在正则表达式中，如果用括号（）括住表达式的一部分，则与正则表达式的该部分匹配的数据将与其余部分分开使用。match允许访问此数据：
 x = &amp;#34;This is a test&amp;#34;.match(/(\w&#43;) (\w&#43;)/) puts x[0] puts x[1]  This is This is 字符串的match方法返回一个MatchData对象，它可以像数组一样被访问。第一个元素（x[0]）包含由整个正则表达式匹配的数据。然而，每个连续的元素都包含被正则表达式的每个匹配组所匹配的数据。在这个例子中，第一个（\w&#43;）匹配的是This，第二个（\w&#43;）匹配的是is。
-Arrays and Lists 在数组中，每个元素都用逗号与其相邻元素隔开，方括号用于表示数组字面量。每个元素都可以使用索引访问，索引从0开始，如果索引越界也不会发生闪退现象：
-x = [1, 2, 3, 4] puts x[2] # 3 puts x[4] #  数组不需要设置预定义条目或手动分配元素，可以像下面这样创建一个空数组。此时可以使用&amp;lt;&amp;lt;往数组最后添加新的元素，或者使用push方法
+Arrays and Lists 在数组中，每个元素都用逗号与其相邻元素隔开，方括号用于表示数组字面量。每个元素都可以使用索引访问，索引也是从0开始，如果索引越界不会发生闪退现象，而是取到空nil：
+x = [1, 2, 3, 4] puts x[2] # 3 puts x[4] # nil 数组不需要设置预定义条目或手动分配元素，可以像下面这样创建一个空数组。此时可以使用&amp;lt;&amp;lt;往数组最后添加新的元素，或者使用push方法：
 x = [] x &amp;lt;&amp;lt; &amp;#34;test&amp;#34; puts x x.push(&amp;#34;hello&amp;#34;) puts x  test test hello 也可以从数组中一个个移除元素。Ruby中的数组可以充当栈，遵循「后进先出」原则，其中的元素被推送到数组的末尾并从末尾弹出（弹出是从数组末尾检索和删除元素的过程）:
 x = [] x &amp;lt;&amp;lt; &amp;#34;Word&amp;#34; x &amp;lt;&amp;lt; &amp;#34;Play&amp;#34; x &amp;lt;&amp;lt; &amp;#34;Fun&amp;#34; puts x.pop # 影响原数组 puts x.pop puts x.length  Fun Play 1 如果数组中的元素都是字符串，可以使用join方法将所有元素连接起来：
 x = [&amp;#34;Word&amp;#34;, &amp;#34;Play&amp;#34;, &amp;#34;Fun&amp;#34;] puts x.join, x.join(&amp;#34;,&amp;#34;)  WordPlayFun Word,Play,Fun 也可以使用split方法将字符串分隔成数组：
