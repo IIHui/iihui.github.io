@@ -241,13 +241,13 @@ code.has-jax {
     <i class="fa fa-file-word-o"></i>
 </span>
 <span class="post-meta-item-text">字数: </span>
-<span class="leancloud-visitors-count">8370</span>
+<span class="leancloud-visitors-count">8646</span>
 &nbsp; | &nbsp;
 <span class="post-meta-item-icon">
     <i class="fa fa-coffee"></i>
 </span>
 <span class="post-meta-item-text">阅读: </span>
-<span class="leancloud-visitors-count">17 分钟</span>
+<span class="leancloud-visitors-count">18 分钟</span>
 </span>
       </div>
     </header>
@@ -785,8 +785,46 @@ code.has-jax {
 </span></span><span style="display:flex;"><span>puts <span style="color:#e6db74">&#34;PANIC!&#34;</span> <span style="color:#66d9ef">if</span> current_situation <span style="color:#f92672">==</span> <span style="color:#e6db74">&#34;bad&#34;</span>
 </span></span></code></pre></div><p>上面的两段代码会产生一样的结果，但不尽相同。第二段代码中，每次使用字符串<code>good</code>或<code>bad</code>时，都会独立创建一个存储在内存中的新对象。而<code>Symbols</code>只会初始化一次。</p>
 <h1 id="classes-objects-and-modules">Classes, Objects, and Modules</h1>
-<p>请记住，在<code>Ruby</code>中，没有必要使用<code>return</code>从方法中返回值。默认情况下，<font color=red>方法中的最后一个表达式用作返回值</font>。</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">extension</span> <span style="color:#a6e22e">UIView</span> {
+<p>请记住，在<code>Ruby</code>中，没有必要使用<code>return</code>从方法中返回值。默认情况下，<font color=red>方法中的最后一个表达式用作返回值</font>。下面定义了一个<code>Square</code>类，其中<code>initialize</code>是一个特殊的方法，在创建基于该类的新对象时调用：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ruby" data-lang="ruby"><span style="display:flex;"><span><span style="color:#66d9ef">class</span> <span style="color:#a6e22e">Square</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">def</span> <span style="color:#a6e22e">initialize</span>(side_length)
+</span></span><span style="display:flex;"><span>    @side_length <span style="color:#f92672">=</span> side_length
+</span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">end</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">def</span> <span style="color:#a6e22e">area</span>
+</span></span><span style="display:flex;"><span>    @side_length <span style="color:#f92672">*</span> @side_length
+</span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">end</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">end</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>a <span style="color:#f92672">=</span> <span style="color:#66d9ef">Square</span><span style="color:#f92672">.</span>new(<span style="color:#ae81ff">10</span>)
+</span></span><span style="display:flex;"><span>b <span style="color:#f92672">=</span> <span style="color:#66d9ef">Square</span><span style="color:#f92672">.</span>new(<span style="color:#ae81ff">5</span>)
+</span></span><span style="display:flex;"><span>puts a<span style="color:#f92672">.</span>area
+</span></span><span style="display:flex;"><span>puts b<span style="color:#f92672">.</span>area
+</span></span></code></pre></div><h2 id="local-variables">Local Variables</h2>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ruby" data-lang="ruby"><span style="display:flex;"><span>x <span style="color:#f92672">=</span> <span style="color:#ae81ff">10</span>
+</span></span><span style="display:flex;"><span>puts x
+</span></span></code></pre></div><p>像<code>x</code>这种基本变量称为局部变量，它只能在定义它的地方使用。如果在另外的方法或者对象方法中使用上面的<code>x</code>，则会出现编译错误：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ruby" data-lang="ruby"><span style="display:flex;"><span>x <span style="color:#f92672">=</span> <span style="color:#ae81ff">10</span>
+</span></span><span style="display:flex;"><span>puts x
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">def</span> <span style="color:#a6e22e">basic_method</span>
+</span></span><span style="display:flex;"><span>  puts x
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">end</span>
+</span></span><span style="display:flex;"><span>basic_method
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">Uncaught</span> <span style="color:#e6db74">exception</span>: undefined local variable <span style="color:#f92672">or</span> method <span style="color:#e6db74">`x&#39; for main:Object
+</span></span></span></code></pre></div><p>这是因为一旦进入到<code>basic_method</code>中，就不再与您创建的变量<code>x</code>在同一范围内。因为<code>x</code>是一个局部变量，它只存在它定义的地方。为了避免这个问题，重要的是要记住只在直接使用它们的地方使用局部变量。</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ruby" data-lang="ruby"><span style="display:flex;"><span>x <span style="color:#f92672">=</span> <span style="color:#ae81ff">10</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">def</span> <span style="color:#a6e22e">basic_method</span>
+</span></span><span style="display:flex;"><span>  x <span style="color:#f92672">=</span> <span style="color:#ae81ff">50</span>
+</span></span><span style="display:flex;"><span>  puts x
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">end</span>
+</span></span><span style="display:flex;"><span>basic_method
+</span></span><span style="display:flex;"><span>puts x
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#ae81ff">50</span>
+</span></span><span style="display:flex;"><span><span style="color:#ae81ff">10</span>
+</span></span></code></pre></div><div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">extension</span> <span style="color:#a6e22e">UIView</span> {
 </span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">func</span> <span style="color:#a6e22e">makeSecure</span>() {
 </span></span><span style="display:flex;"><span>        DispatchQueue.main.async {
 </span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">let</span> field = UITextField()
@@ -1085,7 +1123,11 @@ code.has-jax {
         <li><a href="#flow-control">Flow Control</a></li>
       </ul>
     </li>
-    <li><a href="#classes-objects-and-modules">Classes, Objects, and Modules</a></li>
+    <li><a href="#classes-objects-and-modules">Classes, Objects, and Modules</a>
+      <ul>
+        <li><a href="#local-variables">Local Variables</a></li>
+      </ul>
+    </li>
   </ul>
 </nav></div>
     </div>
