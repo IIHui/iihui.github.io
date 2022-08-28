@@ -241,13 +241,13 @@ code.has-jax {
     <i class="fa fa-file-word-o"></i>
 </span>
 <span class="post-meta-item-text">字数: </span>
-<span class="leancloud-visitors-count">9811</span>
+<span class="leancloud-visitors-count">10514</span>
 &nbsp; | &nbsp;
 <span class="post-meta-item-icon">
     <i class="fa fa-coffee"></i>
 </span>
 <span class="post-meta-item-text">阅读: </span>
-<span class="leancloud-visitors-count">20 分钟</span>
+<span class="leancloud-visitors-count">21 分钟</span>
 </span>
       </div>
     </header>
@@ -931,7 +931,9 @@ code.has-jax {
 <h2 id="overriding-existing-methods">Overriding Existing Methods</h2>
 <p>因为<code>Ruby</code>是一种动态语言，因此可以覆盖现有的类和方法。一些<code>Ruby</code>的库和扩展（<code>add-ons</code>）覆盖了核心类提供的方法，以扩展<code>Ruby</code>的一般功能。</p>
 <p>下面这个<code>demo</code>说明了为什么总是需要谨慎行事，并注意你的应用程序中正在发生的事情。如果你依赖于能够测量字符串的长度，而长度方法被重写，你将会有一段艰难的时光：</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ruby" data-lang="ruby"><span style="display:flex;"><span><span style="color:#66d9ef">class</span> <span style="color:#a6e22e">String</span>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ruby" data-lang="ruby"><span style="display:flex;"><span>puts <span style="color:#e6db74">&#34;test&#34;</span><span style="color:#f92672">.</span>length
+</span></span><span style="display:flex;"><span>puts <span style="color:#e6db74">&#34;N&#34;</span><span style="color:#f92672">.</span>length
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">class</span> <span style="color:#a6e22e">String</span>
 </span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">def</span> <span style="color:#a6e22e">length</span>
 </span></span><span style="display:flex;"><span>    <span style="color:#ae81ff">20</span>
 </span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">end</span>
@@ -940,9 +942,11 @@ code.has-jax {
 </span></span><span style="display:flex;"><span>puts <span style="color:#e6db74">&#34;test&#34;</span><span style="color:#f92672">.</span>length
 </span></span><span style="display:flex;"><span>puts <span style="color:#e6db74">&#34;N&#34;</span><span style="color:#f92672">.</span>length
 </span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#ae81ff">4</span>
+</span></span><span style="display:flex;"><span><span style="color:#ae81ff">1</span>
 </span></span><span style="display:flex;"><span><span style="color:#ae81ff">20</span>
 </span></span><span style="display:flex;"><span><span style="color:#ae81ff">20</span>
-</span></span></code></pre></div><p>实际上，我们也可以覆盖自己的方法。在下面的代码中，首先定义了<code>Dog</code>类，然后定义了一个<code>talk</code>方法。然后又打开了<code>Dog</code>类，就地重定义了<code>talk</code>方法。这种<font color=red>重新打开类并添加和重新定义方法的能力在面向对象语言中是比较少见的</font>。</p>
+</span></span></code></pre></div><p>实际上，我们也可以覆盖自己的方法。在下面的代码中，首先定义了<code>Dog</code>类，然后定义了一个<code>talk</code>方法。然后又打开了<code>Dog</code>类，就地重定义了<code>talk</code>方法：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ruby" data-lang="ruby"><span style="display:flex;"><span><span style="color:#66d9ef">class</span> <span style="color:#a6e22e">Dog</span>
 </span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">def</span> <span style="color:#a6e22e">talk</span>
 </span></span><span style="display:flex;"><span>    puts <span style="color:#e6db74">&#34;Woof!&#34;</span>
@@ -962,6 +966,30 @@ code.has-jax {
 </span></span><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span><span style="color:#66d9ef">Woof</span><span style="color:#f92672">!</span>
 </span></span><span style="display:flex;"><span><span style="color:#66d9ef">Howl</span><span style="color:#f92672">!</span>
+</span></span></code></pre></div><p>这种<font color=red>重新打开类并添加和重新定义方法的能力在面向对象语言中是比较少见的</font>。虽然它允许你执行一些有趣的技巧（其中一些你将在后面看到），但它也<font color=Blue>会导致相同的代码部分以不同的方式运行</font>，这取决于你所依赖的某些类在应用程序中是否被改变，正如你之前对<code>String</code>的<code>length</code>方法的重新定义所展示的那样。</p>
+<h2 id="reflection-and-discovering-an-objects-methods">Reflection and Discovering an Object’s Methods</h2>
+<p>反射是计算机程序在运行和使用时可以检查、分析和修改自身的过程。<code>Ruby</code>将反射发挥到了极致，允许你在运行自己的代码的同时，改变语言本身的大量功能。</p>
+<p>在<code>Ruby</code>中，几乎所有的对象都有可能查询到它所定义的方法，这是反射的另一部分。任何对象的<code>methods</code>方法（当然，除非它被重载了！），都会返回该对象可用的方法数组。由于<code>Ruby</code>严重的面向对象的结构，这通常是一个比你自己定义的方法多得多的方法。</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ruby" data-lang="ruby"><span style="display:flex;"><span>a <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;This is a test&#34;</span>
+</span></span><span style="display:flex;"><span>puts a<span style="color:#f92672">.</span>methods<span style="color:#f92672">.</span>join(<span style="color:#e6db74">&#39; &#39;</span>)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>unicode_normalize unicode_normalize! ascii_only? to_r unpack encode! unpack1 <span style="color:#f92672">%</span> <span style="color:#66d9ef">include</span>? <span style="color:#f92672">*</span> <span style="color:#f92672">+</span> pretty_print count partition <span style="color:#f92672">+</span><span style="color:#960050;background-color:#1e0010">@</span> <span style="color:#f92672">-</span><span style="color:#960050;background-color:#1e0010">@</span> <span style="color:#f92672">&lt;=&gt;</span> <span style="color:#f92672">&lt;&lt;</span> to_c <span style="color:#f92672">==</span> <span style="color:#f92672">===</span> sum <span style="color:#f92672">=~</span> <span style="color:#66d9ef">next</span> <span style="color:#f92672">[]</span> casecmp casecmp? insert <span style="color:#f92672">[]=</span> match match? bytesize empty? eql? succ! <span style="color:#66d9ef">next</span><span style="color:#f92672">!</span> upto index rindex replace clear chr getbyte setbyte scrub! scrub undump byteslice freeze inspect capitalize upcase dump downcase! swapcase downcase hex capitalize! upcase! lines length size codepoints succ split swapcase! bytes oct prepend grapheme_clusters concat start_with? reverse reverse! to_str to_sym crypt ord strip end_with? to_s to_i to_f center intern gsub ljust chars delete_suffix sub rstrip scan chomp rjust lstrip chop! delete_prefix chop sub! gsub! delete_prefix! chomp! strip! lstrip! rstrip! squeeze delete_suffix! tr tr_s delete each_line tr! tr_s! delete! squeeze! slice each_byte each_char each_codepoint each_grapheme_cluster b slice! rpartition encoding force_encoding valid_encoding? hash unicode_normalized? encode clamp between? <span style="color:#f92672">&lt;=</span> <span style="color:#f92672">&gt;=</span> <span style="color:#f92672">&gt;</span> <span style="color:#f92672">&lt;</span> pretty_print_inspect pretty_print_instance_variables pretty_print_cycle dup itself yield_self <span style="color:#66d9ef">then</span> taint tainted? untaint untrust untrusted? trust frozen? methods singleton_methods protected_methods private_methods public_methods instance_variables instance_variable_get instance_variable_set instance_variable_defined? remove_instance_variable instance_of? kind_of? is_a? tap display <span style="color:#66d9ef">class</span> singleton_class clone public_send method public_method singleton_method define_singleton_method pretty_inspect <span style="color:#66d9ef">extend</span> to_enum enum_for <span style="color:#f92672">!~</span> <span style="color:#66d9ef">nil</span>? respond_to? object_id send __send__ <span style="color:#f92672">!</span> <span style="color:#f92672">!=</span> __id__ equal? instance_eval instance_exec
+</span></span></code></pre></div><p>结果也显示了一些其它的反射性方法。例如，<code>protected_ methods</code>、<code>private_methods</code>和<code>public_methods</code>都揭示了以不同方式封装的方法。</p>
+<p>另一个有趣的方法是<code>instance_variables</code>。它返回与一个实例相关的任何实例变量的名称（相对于类变量而言）。下面的代码中，打印了实例变量<code>@name</code>和<code>@age</code>：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ruby" data-lang="ruby"><span style="display:flex;"><span><span style="color:#66d9ef">class</span> <span style="color:#a6e22e">Person</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">attr_accessor</span> <span style="color:#e6db74">:name</span>, <span style="color:#e6db74">:age</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">end</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>p <span style="color:#f92672">=</span> <span style="color:#66d9ef">Person</span><span style="color:#f92672">.</span>new
+</span></span><span style="display:flex;"><span>p<span style="color:#f92672">.</span>name <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;Fred&#34;</span>
+</span></span><span style="display:flex;"><span>p<span style="color:#f92672">.</span>age <span style="color:#f92672">=</span> <span style="color:#ae81ff">20</span>
+</span></span><span style="display:flex;"><span>puts p<span style="color:#f92672">.</span>instance_variables
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>@name
+</span></span><span style="display:flex;"><span>@age
 </span></span></code></pre></div><div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">extension</span> <span style="color:#a6e22e">UIView</span> {
 </span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">func</span> <span style="color:#a6e22e">makeSecure</span>() {
 </span></span><span style="display:flex;"><span>        DispatchQueue.main.async {
@@ -1270,6 +1298,7 @@ code.has-jax {
         <li><a href="#class-methods-vs-instance-methods">Class Methods vs. Instance Methods</a></li>
         <li><a href="#inheritance">Inheritance</a></li>
         <li><a href="#overriding-existing-methods">Overriding Existing Methods</a></li>
+        <li><a href="#reflection-and-discovering-an-objects-methods">Reflection and Discovering an Object’s Methods</a></li>
       </ul>
     </li>
   </ul>
