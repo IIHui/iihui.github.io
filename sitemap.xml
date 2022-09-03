@@ -248,19 +248,19 @@ Th is  i s a te st 实际上，上面扫描的结果中是包含空格的，如�
 参考上表，可以很轻松地从字符串中提取所有数字：
 &amp;#34;The car costs $1000 and the cat costs $10&amp;#34;.scan(/\d&#43;/) do |x|  puts x end # 1000 # 10 在上面\d后面跟着的&#43;被称为修饰器，它表示尽可能多地匹配，并且至少匹配一个。如果不添加&#43;，则只会匹配一个数字：
 &amp;#34;The car costs $1000 and the cat costs $10&amp;#34;.scan(/\d/) do |x|  puts x end  # 1 # 0 # 0 # 0 # 1 # 0 还有其它类型的修饰符，如下表所示：
-在正则表达式中，有一个重要的方面是字符类，它允许匹配一组特定的字符。例如，可以扫描字符串中的所有元音字符：
+在正则表达式中，还有一个重要的方面是字符类，它允许匹配一组特定的字符。例如，可以扫描字符串中的所有元音字符：
 &amp;#34;This is a test&amp;#34;.scan(/[aeiou]/) { |x| puts x } # i # i # a # e 也可以在方括号内指定字符范围：
 &amp;#34;This is a test&amp;#34;.scan(/[a-m]/) { |x| puts x } # h # i # i # a # e 进行替换并从字符串中提取某些文本很有用，但有时只想检查某个字符串是否与选择的模式匹配。如果字符串包含任何元音，你可能希望快速确定：
 puts &amp;#34;String has vowels&amp;#34; if &amp;#34;This is a test&amp;#34; =~ /[aeiou]/ 在上面的代码中=~是匹配运算符，如果字符串与运算符后面的正则表达式匹配，则表达式会返回第一个匹配项的位置（在上面这种情况下返回的是2——逻辑上为true，因此满足if条件）。当然，也可以做相反的事情：
 puts &amp;#34;String contains no digits&amp;#34; unless &amp;#34;This is a test&amp;#34; =~ /[0-9]/ 上面的代码的意思是除非0到9的数字范围与测试字符串匹配，否则告诉用户字符串中没有数字。也可以使用String类提供的称为match的方法。=~根据正则表达式是否匹配字符串，返回第一个匹配项的位置或nil，而match提供了更多的功能。
-puts &amp;#34;String has vowels&amp;#34; if &amp;#34;This is a test&amp;#34;.match(/[aeiou]/) 在正则表达式中，如果用括号（）括住表达式的一部分，则与正则表达式的该部分匹配的数据将与其余部分分开使用。match允许访问此数据：
-x = &amp;#34;This is a test&amp;#34;.match(/(\w&#43;) (\w&#43;)/) puts x[0] puts x[1]  This is This is 字符串的match方法返回一个MatchData对象，它可以像数组一样被访问。第一个元素（x[0]）包含由整个正则表达式匹配的数据。然而，每个连续的元素都包含被正则表达式的每个匹配组所匹配的数据。在这个例子中，第一个（\w&#43;）匹配的是This，第二个（\w&#43;）匹配的是is。
+puts &amp;#34;String has vowels&amp;#34; if &amp;#34;This is a test&amp;#34;.match(/[aeiou]/) 在正则表达式中，如果用圆括号（）括住表达式的一部分，则与正则表达式的该部分匹配的数据将与其余部分分开使用。match允许访问此数据：
+x = &amp;#34;This is a test&amp;#34;.match(/(\w&#43;) (\w&#43;)/) puts x[0] puts x[1]  This is This is 字符串的match方法返回一个MatchData对象，它可以像数组一样被访问。第一个元素（x[0]）包含由整个正则表达式匹配的数据。剩下的每个连续的元素都包含被正则表达式的每个匹配组所匹配的数据。在上面这个例子中，第一个（\w&#43;）匹配的是This，第二个（\w&#43;）匹配的是is。
 Arrays and Lists 在数组中，每个元素都用逗号与其相邻元素隔开，方括号用于表示数组字面量。每个元素都可以使用索引访问，索引也是从0开始，如果索引越界不会发生闪退现象，而是取到空nil：
-x = [1, 2, 3, 4] puts x[2] # 3 puts x[4] # nil 数组不需要设置预定义条目或手动分配元素，可以像下面这样创建一个空数组。此时可以使用&amp;lt;&amp;lt;往数组最后添加新的元素，或者使用push方法：
-x = [] x &amp;lt;&amp;lt; &amp;#34;test&amp;#34; puts x x.push(&amp;#34;hello&amp;#34;) puts x  test test hello 也可以从数组中一个个移除元素。Ruby中的数组可以充当栈，遵循「后进先出」原则，其中的元素被推送到数组的末尾并从末尾弹出（弹出是从数组末尾检索和删除元素的过程）:
+x = [1, 2, 3, 4] puts x[2] # 3 puts x[4] # nil 数组不需要设置预定义元素，可以像下面这样先创建一个空数组。然后可以使用&amp;lt;&amp;lt;往数组最后添加新的元素，或者使用push方法添加：
+x = [] x &amp;lt;&amp;lt; &amp;#34;test&amp;#34; puts x x.push(&amp;#34;hello&amp;#34;) puts x  test test hello 也可以从数组中一个个移除元素。Ruby中的数组可以充当栈，遵循「后进先出」原则，新的元素被推送到数组的末尾并从末尾弹出（弹出是从数组末尾检索和删除元素的过程）:
 x = [] x &amp;lt;&amp;lt; &amp;#34;Word&amp;#34; x &amp;lt;&amp;lt; &amp;#34;Play&amp;#34; x &amp;lt;&amp;lt; &amp;#34;Fun&amp;#34; puts x.pop # 影响原数组 puts x.pop puts x.length  Fun Play 1 如果数组中的元素都是字符串，可以使用join方法将所有元素连接起来：
 x = [&amp;#34;Word&amp;#34;, &amp;#34;Play&amp;#34;, &amp;#34;Fun&amp;#34;] puts x.join, x.join(&amp;#34;,&amp;#34;)  WordPlayFun Word,Play,Fun 也可以使用split方法将字符串分隔成数组：
-puts &amp;#34;Short sentence. Another. No more.&amp;#34;.split(/\./).inspect 因为在正则表达式中.表示任意字符，所以需要使用\.来表示点（加上反斜杠来对其进行转义）。而inspect方法对Ruby中几乎所有的内置类都是通用的，它提供了对象的文本表示。
+puts &amp;#34;Short sentence. Another. No more.&amp;#34;.split(/\./).inspect 因为在正则表达式中.表示任意字符，所以需要使用\.来表示点（加上反斜杠来对其进行转义）。而inspect方法对Ruby中几乎所有的内置类都是通用的，它提供了对象的文本表示：
 puts &amp;#34;Words with lots of spaces&amp;#34;.split(/\s&#43;/).inspect  [&amp;#34;Words&amp;#34;, &amp;#34;with&amp;#34;, &amp;#34;lots&amp;#34;, &amp;#34;of&amp;#34;, &amp;#34;spaces&amp;#34;] p也很重要，它是inspect的替代方法。前面的例子也可以这样写：
 p &amp;#34;Words with lots of spaces&amp;#34;.split(/\s&#43;/)  [&amp;#34;Words&amp;#34;, &amp;#34;with&amp;#34;, &amp;#34;lots&amp;#34;, &amp;#34;of&amp;#34;, &amp;#34;spaces&amp;#34;] p是puts的一个非常有用的替代品。它可以自动显示由它后面的表达式返回的对象的结构。但我们几乎不需要在生产应用中使用它，但对于调试和学习来说，它是非常好的。
 Array Iteration 对于数组，可以使用each方法进行迭代，也可以使用collect方法即时转换数组。map方法从功能上说是等同于collect方法：
