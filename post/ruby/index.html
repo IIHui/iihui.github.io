@@ -241,13 +241,13 @@ code.has-jax {
     <i class="fa fa-file-word-o"></i>
 </span>
 <span class="post-meta-item-text">字数: </span>
-<span class="leancloud-visitors-count">11374</span>
+<span class="leancloud-visitors-count">11825</span>
 &nbsp; | &nbsp;
 <span class="post-meta-item-icon">
     <i class="fa fa-coffee"></i>
 </span>
 <span class="post-meta-item-text">阅读: </span>
-<span class="leancloud-visitors-count">23 分钟</span>
+<span class="leancloud-visitors-count">24 分钟</span>
 </span>
       </div>
     </header>
@@ -1090,6 +1090,26 @@ code.has-jax {
 </span></span><span style="display:flex;"><span><span style="color:#ae81ff">10</span>
 </span></span><span style="display:flex;"><span><span style="color:#ae81ff">50</span>
 </span></span></code></pre></div><p>在上面的代码中有两个<code>bindling</code>在起作用：默认<code>bindling</code>和<code>remote_ binding</code>（来自<code>binding_elsewhere</code>方法）。第一个x的值是在默认<code>bindling</code>中设置，另一个是在<code>remote_ binding</code>中设置的。</p>
+<h2 id="other-forms-of-eval">Other Forms of eval</h2>
+<p>尽管<code>eval</code>在当前上下文（或绑<code>bindling</code>提供的上下文）中执行代码，但<code>class_eval、module_eval</code>和<code>instance_eval</code>可以分别在类、模块和对象实例的上下文中执行代码。<code>class_eval</code>非常适合动态向类添加方法:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ruby" data-lang="ruby"><span style="display:flex;"><span><span style="color:#66d9ef">class</span> <span style="color:#a6e22e">Person</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">end</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">def</span> <span style="color:#a6e22e">add_accessor_to_person</span>(accessor_name)
+</span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">Person</span><span style="color:#f92672">.</span>class_eval <span style="color:#e6db74">%{attr_accessor :</span><span style="color:#e6db74">#{</span>accessor_name<span style="color:#e6db74">}</span><span style="color:#e6db74">}</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">end</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>person <span style="color:#f92672">=</span> <span style="color:#66d9ef">Person</span><span style="color:#f92672">.</span>new
+</span></span><span style="display:flex;"><span>add_accessor_to_person <span style="color:#e6db74">:name</span>
+</span></span><span style="display:flex;"><span>add_accessor_to_person <span style="color:#e6db74">:gender</span>
+</span></span><span style="display:flex;"><span>person<span style="color:#f92672">.</span>name <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;Carleton DiLeo&#34;</span>
+</span></span><span style="display:flex;"><span>person<span style="color:#f92672">.</span>gender <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;male&#34;</span>
+</span></span><span style="display:flex;"><span>puts <span style="color:#e6db74">&#34;</span><span style="color:#e6db74">#{</span>person<span style="color:#f92672">.</span>name<span style="color:#e6db74">}</span><span style="color:#e6db74"> is </span><span style="color:#e6db74">#{</span>person<span style="color:#f92672">.</span>gender<span style="color:#e6db74">}</span><span style="color:#e6db74">&#34;</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">Carleton</span> <span style="color:#66d9ef">DiLeo</span> is male
+</span></span></code></pre></div><p>在上面的示例中，使用<code>add_accessor_to_person</code>方法将访问器动态添加到<code>Person</code>类。在使用 <code>add_accessor_to_person</code>方法之前，名称和性别访问器都不存在于<code>Person</code>中。请注意，代码的关键部分<code>class_eval</code>方法通过使用字符串插值来为<code>Person</code>创建所需的属性。</p>
+<p>字符串插值使<code>eval</code>方法成为动态生成不同特征的强大工具。这种能力是大多数编程语言中看不到的一种能力，并且在诸如<code>Ruby on Rails</code>之类的系统中发挥了巨大的作用。</p>
+<p>可以更进一步地使用前面的示例，并通过将的 class_eval 聪明放入一个新方法中，为每个类添加一个 add_accessor 方法，该方法定义在 Class 类中（所有其他类都来自该方法）：</p>
 <p>在<code>Gemfile</code>中添加如下内容</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ruby" data-lang="ruby"><span style="display:flex;"><span>  gem <span style="color:#e6db74">&#39;debase&#39;</span>
 </span></span><span style="display:flex;"><span>  gem <span style="color:#e6db74">&#39;ruby-debug-ide&#39;</span>
@@ -1426,6 +1446,7 @@ code.has-jax {
       <ul>
         <li><a href="#dynamic-code-execution">Dynamic Code Execution</a></li>
         <li><a href="#bindings">Bindings</a></li>
+        <li><a href="#other-forms-of-eval">Other Forms of eval</a></li>
       </ul>
     </li>
   </ul>
