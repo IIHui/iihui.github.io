@@ -241,7 +241,7 @@ code.has-jax {
     <i class="fa fa-file-word-o"></i>
 </span>
 <span class="post-meta-item-text">字数: </span>
-<span class="leancloud-visitors-count">11825</span>
+<span class="leancloud-visitors-count">11879</span>
 &nbsp; | &nbsp;
 <span class="post-meta-item-icon">
     <i class="fa fa-coffee"></i>
@@ -1109,8 +1109,23 @@ code.has-jax {
 </span></span><span style="display:flex;"><span><span style="color:#66d9ef">Carleton</span> <span style="color:#66d9ef">DiLeo</span> is male
 </span></span></code></pre></div><p>在上面的示例中，使用<code>add_accessor_to_person</code>方法将访问器动态添加到<code>Person</code>类。在使用 <code>add_accessor_to_person</code>方法之前，名称和性别访问器都不存在于<code>Person</code>中。请注意，代码的关键部分<code>class_eval</code>方法通过使用字符串插值来为<code>Person</code>创建所需的属性。</p>
 <p>字符串插值使<code>eval</code>方法成为动态生成不同特征的强大工具。这种能力是大多数编程语言中看不到的一种能力，并且在诸如<code>Ruby on Rails</code>之类的系统中发挥了巨大的作用。</p>
-<p>可以更进一步地使用前面的示例，并通过将的 class_eval 聪明放入一个新方法中，为每个类添加一个 add_accessor 方法，该方法定义在 Class 类中（所有其他类都来自该方法）：</p>
-<p>在<code>Gemfile</code>中添加如下内容</p>
+<p>可以在前面的例子中更进一步，通过把你的<code>class_eval</code>的聪明才智放在一个新的方法中，定义在<code>Class</code>类中（所有其他的类都来自于此），为每个类添加一个<code>add_accessor</code>方法。</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ruby" data-lang="ruby"><span style="display:flex;"><span><span style="color:#66d9ef">class</span> <span style="color:#a6e22e">Class</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">def</span> <span style="color:#a6e22e">add_accessor</span>(accessor_name)
+</span></span><span style="display:flex;"><span>    self<span style="color:#f92672">.</span>class_eval <span style="color:#e6db74">%{ attr_accessor :</span><span style="color:#e6db74">#{</span>accessor_name<span style="color:#e6db74">}</span><span style="color:#e6db74"> }</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">end</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">end</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">class</span> <span style="color:#a6e22e">Person</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">end</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>person <span style="color:#f92672">=</span> <span style="color:#66d9ef">Person</span><span style="color:#f92672">.</span>new
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">Person</span><span style="color:#f92672">.</span>add_accessor <span style="color:#e6db74">:name</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">Person</span><span style="color:#f92672">.</span>add_accessor <span style="color:#e6db74">:gender</span>
+</span></span><span style="display:flex;"><span>person<span style="color:#f92672">.</span>name <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;Carleton DiLeo&#34;</span>
+</span></span><span style="display:flex;"><span>person<span style="color:#f92672">.</span>gender <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;male&#34;</span>
+</span></span><span style="display:flex;"><span>puts <span style="color:#e6db74">&#34;</span><span style="color:#e6db74">#{</span>person<span style="color:#f92672">.</span>name<span style="color:#e6db74">}</span><span style="color:#e6db74"> is </span><span style="color:#e6db74">#{</span>person<span style="color:#f92672">.</span>gender<span style="color:#e6db74">}</span><span style="color:#e6db74">&#34;</span>
+</span></span></code></pre></div><p>在<code>Gemfile</code>中添加如下内容</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ruby" data-lang="ruby"><span style="display:flex;"><span>  gem <span style="color:#e6db74">&#39;debase&#39;</span>
 </span></span><span style="display:flex;"><span>  gem <span style="color:#e6db74">&#39;ruby-debug-ide&#39;</span>
 </span></span></code></pre></div><div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span><span style="color:#f92672">[</span>IPC<span style="color:#f92672">]</span> Connection::waitForSyncReply: Timed-out <span style="color:#66d9ef">while</span> waiting <span style="color:#66d9ef">for</span> reply <span style="color:#66d9ef">for</span> WebPage_TouchEventSync from process 584, id<span style="color:#f92672">=</span><span style="color:#ae81ff">20</span>
