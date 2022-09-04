@@ -241,13 +241,13 @@ code.has-jax {
     <i class="fa fa-file-word-o"></i>
 </span>
 <span class="post-meta-item-text">字数: </span>
-<span class="leancloud-visitors-count">11879</span>
+<span class="leancloud-visitors-count">12278</span>
 &nbsp; | &nbsp;
 <span class="post-meta-item-icon">
     <i class="fa fa-coffee"></i>
 </span>
 <span class="post-meta-item-text">阅读: </span>
-<span class="leancloud-visitors-count">24 分钟</span>
+<span class="leancloud-visitors-count">25 分钟</span>
 </span>
       </div>
     </header>
@@ -1109,7 +1109,7 @@ code.has-jax {
 </span></span><span style="display:flex;"><span><span style="color:#66d9ef">Carleton</span> <span style="color:#66d9ef">DiLeo</span> is male
 </span></span></code></pre></div><p>在上面的示例中，使用<code>add_accessor_to_person</code>方法将访问器动态添加到<code>Person</code>类。在使用 <code>add_accessor_to_person</code>方法之前，名称和性别访问器都不存在于<code>Person</code>中。请注意，代码的关键部分<code>class_eval</code>方法通过使用字符串插值来为<code>Person</code>创建所需的属性。</p>
 <p>字符串插值使<code>eval</code>方法成为动态生成不同特征的强大工具。这种能力是大多数编程语言中看不到的一种能力，并且在诸如<code>Ruby on Rails</code>之类的系统中发挥了巨大的作用。</p>
-<p>可以在前面的例子中更进一步，通过把你的<code>class_eval</code>的聪明才智放在一个新的方法中，定义在<code>Class</code>类中（所有其他的类都来自于此），为每个类添加一个<code>add_accessor</code>方法。</p>
+<p>可以在前面的例子中更进一步，通过<code>class_eval</code>强大功能放在一个新的方法中，定义在<code>Class</code>类中（<font color=red>所有其它的类都来自于此</font>），为每个类添加一个<code>add_accessor</code>方法：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ruby" data-lang="ruby"><span style="display:flex;"><span><span style="color:#66d9ef">class</span> <span style="color:#a6e22e">Class</span>
 </span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">def</span> <span style="color:#a6e22e">add_accessor</span>(accessor_name)
 </span></span><span style="display:flex;"><span>    self<span style="color:#f92672">.</span>class_eval <span style="color:#e6db74">%{ attr_accessor :</span><span style="color:#e6db74">#{</span>accessor_name<span style="color:#e6db74">}</span><span style="color:#e6db74"> }</span>
@@ -1125,6 +1125,47 @@ code.has-jax {
 </span></span><span style="display:flex;"><span>person<span style="color:#f92672">.</span>name <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;Carleton DiLeo&#34;</span>
 </span></span><span style="display:flex;"><span>person<span style="color:#f92672">.</span>gender <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;male&#34;</span>
 </span></span><span style="display:flex;"><span>puts <span style="color:#e6db74">&#34;</span><span style="color:#e6db74">#{</span>person<span style="color:#f92672">.</span>name<span style="color:#e6db74">}</span><span style="color:#e6db74"> is </span><span style="color:#e6db74">#{</span>person<span style="color:#f92672">.</span>gender<span style="color:#e6db74">}</span><span style="color:#e6db74">&#34;</span>
+</span></span></code></pre></div><p>因为<code>add_accessor</code>是在一个类中使用的，这个方法的调用将一直进行到<code>Class</code>类中定义的<code>add_accessor</code>方法。</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ruby" data-lang="ruby"><span style="display:flex;"><span><span style="color:#66d9ef">class</span> <span style="color:#a6e22e">SomethingElse</span>
+</span></span><span style="display:flex;"><span>  add_accessor <span style="color:#e6db74">:whatever</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">end</span>
+</span></span></code></pre></div><p>回到更简单的技术，使用<code>instance_eval</code>有点像使用常规<code>eval</code>，但作用在对象（而不是方法）的上下文中。在下面示例中，使用<code>instance_eval</code>在对象范围内执行代码：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ruby" data-lang="ruby"><span style="display:flex;"><span><span style="color:#66d9ef">class</span> <span style="color:#a6e22e">MyClass</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">def</span> <span style="color:#a6e22e">initialize</span>
+</span></span><span style="display:flex;"><span>    @my_variable <span style="color:#f92672">=</span> <span style="color:#e6db74">&#39;Hello, world!&#39;</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">end</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">end</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>obj <span style="color:#f92672">=</span> <span style="color:#66d9ef">MyClass</span><span style="color:#f92672">.</span>new
+</span></span><span style="display:flex;"><span>obj<span style="color:#f92672">.</span>instance_eval { puts @my_variable }
+</span></span></code></pre></div><h2 id="creating-your-own-version-of-attr_accessor">Creating Your Own Version of attr_accessor</h2>
+<p>到目前为止，已经在自定义的类中使用<code>attr_accessor</code>方法来快速生成实例变量的访问函数。例如，在可能手写下面这样的代码：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ruby" data-lang="ruby"><span style="display:flex;"><span><span style="color:#66d9ef">class</span> <span style="color:#a6e22e">Person</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">def</span> <span style="color:#a6e22e">name</span>
+</span></span><span style="display:flex;"><span>    @name
+</span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">end</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">def</span> <span style="color:#a6e22e">name</span><span style="color:#f92672">=</span>(name)
+</span></span><span style="display:flex;"><span>    @name <span style="color:#f92672">=</span> name
+</span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">end</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">end</span>
+</span></span></code></pre></div><p>上面的代码允许使用<code>puts person.name</code>和<code>person.name = 'Fred'</code>。可选的，也可以使用<code>attr_accessor</code>：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ruby" data-lang="ruby"><span style="display:flex;"><span><span style="color:#66d9ef">class</span> <span style="color:#a6e22e">Person</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">attr_accessor</span> <span style="color:#e6db74">:name</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">end</span>
+</span></span></code></pre></div><p>这个版本的类更加简洁，并且具有与普通版本完全相同的功能。现在是时候问这个问题了，<code>attr_accessor</code>是如何工作的？</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ruby" data-lang="ruby"><span style="display:flex;"><span><span style="color:#66d9ef">class</span> <span style="color:#a6e22e">Class</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">def</span> <span style="color:#a6e22e">add_accessor</span>(accessor_name)
+</span></span><span style="display:flex;"><span>    self<span style="color:#f92672">.</span>class_eval <span style="color:#e6db74">%{
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">      def </span><span style="color:#e6db74">#{</span>accessor_name<span style="color:#e6db74">}</span><span style="color:#e6db74">
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">        @</span><span style="color:#e6db74">#{</span>accessor_name<span style="color:#e6db74">}</span><span style="color:#e6db74">
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">      end
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">      def </span><span style="color:#e6db74">#{</span>accessor_name<span style="color:#e6db74">}</span><span style="color:#e6db74">=(value)
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">          @</span><span style="color:#e6db74">#{</span>accessor_name<span style="color:#e6db74">}</span><span style="color:#e6db74"> = value
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">      end
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    }</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">end</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">end</span>
 </span></span></code></pre></div><p>在<code>Gemfile</code>中添加如下内容</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ruby" data-lang="ruby"><span style="display:flex;"><span>  gem <span style="color:#e6db74">&#39;debase&#39;</span>
 </span></span><span style="display:flex;"><span>  gem <span style="color:#e6db74">&#39;ruby-debug-ide&#39;</span>
@@ -1462,6 +1503,7 @@ code.has-jax {
         <li><a href="#dynamic-code-execution">Dynamic Code Execution</a></li>
         <li><a href="#bindings">Bindings</a></li>
         <li><a href="#other-forms-of-eval">Other Forms of eval</a></li>
+        <li><a href="#creating-your-own-version-of-attr_accessor">Creating Your Own Version of attr_accessor</a></li>
       </ul>
     </li>
   </ul>
