@@ -240,11 +240,11 @@ x = 10 y = 20 puts &amp;#34;#{x}&#43; #{y}= #{x &#43; y}&amp;#34; # 10 &#43; 20 
 puts &amp;#34;foobar&amp;#34;.sub(&amp;#39;bar&amp;#39;, &amp;#39;foo&amp;#39;) # foofoo puts &amp;#34;this is a test&amp;#34;.gsub(&amp;#39;i&amp;#39;, &amp;#39;&amp;#39;) # ths s a test 如果先要替换开头的两个字符，可以使用如下方式：
 x = &amp;#34;This is a test&amp;#34; puts x.sub(/^../, &amp;#39;Hello&amp;#39;)  Hellois is a test 上面的代码中，sub方法的第一个参数不是字符串，而是一个正则表达式。在正则表达式中^是一个锚点，意味着正则表达式将从字符串中任何行的开头开始匹配。其中的.代表任何字符。也就是说，/^../意味着「紧随一行开始之后的任何两个字符」。因此，This is a test的Th被替换为Hello。相应地，下面的代码替换行字符串最后两个字符为Hello：
 x = &amp;#34;This is a test&amp;#34; puts x.sub(/..$/, &amp;#39;Hello&amp;#39;)  # This is a teHello  x = &amp;lt;&amp;lt;TEST this is a test dddd TEST puts x.sub(/..$/, &amp;#39;Hello&amp;#39;)  # this is a tesHello # dddd 如果想锚定一个字符串的绝对开始或结束，可以分别使用\A和\Z（都是大写），而^和$则只是锚定一个字符串中的行的开始和结束:
-x = &amp;lt;&amp;lt;TEST This is a test dd TEST puts x.sub(/..\Z/, &amp;#39;Hello&amp;#39;)  #This is a test # Hello  x = &amp;lt;&amp;lt;TEST This is a test dd TEST puts x.sub(/\A../, &amp;#39;NA&amp;#39;)  # NAis is a test # dd 如果想遍历一个字符串，并能访问其中的每个字符，怎么办呢？scan就是我们要找的迭代器方法。在下面的代码中，scan方法扫描字符串以查找与传递给它的正则表达式匹配的任何内容：
+x = &amp;lt;&amp;lt;TEST This is a test dd TEST puts x.sub(/..\Z/, &amp;#39;Hello&amp;#39;)  # This is a test # Hello  x = &amp;lt;&amp;lt;TEST This is a test dd TEST puts x.sub(/\A../, &amp;#39;NA&amp;#39;)  # NAis is a test # dd 如果想遍历一个字符串，并能访问其中的每个字符，怎么办呢？scan就是我们要找的迭代器方法。在下面的代码中，scan方法扫描字符串以查找与传递给它的正则表达式匹配的任何内容：
 &amp;#34;xyz&amp;#34;.scan(/./) { |letter| puts letter } 在上面的代码中，我们提供了一次查找单个字符的正则表达式。这就是在输出中分别得到x、y和z的原因。每个字母都被输入到块中，赋值给letter，然后打印到屏幕上。
 &amp;#34;This is a test&amp;#34;.scan(/../) { |x| puts x } 在上面的代码中，一次扫描两个字符，最后的打印结果如下所示：
 Th is  i s a te st 实际上，上面扫描的结果中是包含空格的，如果想要只包含数字和字母，可以使用如下方式：
-&amp;#34;This is a test&amp;#34;.scan(/\w\w/) { |x| puts x } 上面的\w表示任何数字和字母字符以及下划线。在正则表达式中，有一些用反斜杠表示的特殊字符，它们具有特殊的含义，如下表所示：
+&amp;#34;This is a test&amp;#34;.scan(/\w\w/) { |x| puts x }  Th is is te st 上面的\w表示任何数字和字母字符以及下划线。在正则表达式中，有一些用反斜杠表示的特殊字符，它们具有特殊的含义，如下表所示：
 参考上表，可以很轻松地从字符串中提取所有数字：
 &amp;#34;The car costs $1000 and the cat costs $10&amp;#34;.scan(/\d&#43;/) do |x|  puts x end # 1000 # 10 在上面\d后面跟着的&#43;被称为修饰器，它表示尽可能多地匹配，并且至少匹配一个。如果不添加&#43;，则只会匹配一个数字：
 &amp;#34;The car costs $1000 and the cat costs $10&amp;#34;.scan(/\d/) do |x|  puts x end  # 1 # 0 # 0 # 0 # 1 # 0 还有其它类型的修饰符，如下表所示：
@@ -256,11 +256,11 @@ puts &amp;#34;String contains no digits&amp;#34; unless &amp;#34;This is a test&
 puts &amp;#34;String has vowels&amp;#34; if &amp;#34;This is a test&amp;#34;.match(/[aeiou]/) 在正则表达式中，如果用圆括号（）括住表达式的一部分，则与正则表达式的该部分匹配的数据将与其余部分分开使用。match允许访问此数据：
 x = &amp;#34;This is a test&amp;#34;.match(/(\w&#43;) (\w&#43;)/) puts x[0] puts x[1]  This is This is 字符串的match方法返回一个MatchData对象，它可以像数组一样被访问。第一个元素（x[0]）包含由整个正则表达式匹配的数据。剩下的每个连续的元素都包含被正则表达式的每个匹配组所匹配的数据。在上面这个例子中，第一个（\w&#43;）匹配的是This，第二个（\w&#43;）匹配的是is。
 Arrays and Lists 在数组中，每个元素都用逗号与其相邻元素隔开，方括号用于表示数组字面量。每个元素都可以使用索引访问，索引也是从0开始，如果索引越界不会发生闪退现象，而是取到空nil：
-x = [1, 2, 3, 4] puts x[2] # 3 puts x[4] # nil 数组不需要设置预定义元素，可以像下面这样先创建一个空数组。然后可以使用&amp;lt;&amp;lt;往数组最后添加新的元素，或者使用push方法添加：
+x = [1, 2, 3, 4] puts x[2] # 3 puts x[4] # nil 数组不需要设置预定义元素，可以像下面这样先创建一个空数组。然后可以使用&amp;lt;&amp;lt;往数组最后添加新的元素，或者使用push方法添加新元素：
 x = [] x &amp;lt;&amp;lt; &amp;#34;test&amp;#34; puts x x.push(&amp;#34;hello&amp;#34;) puts x  test test hello 也可以从数组中一个个移除元素。Ruby中的数组可以充当栈，遵循「后进先出」原则，新的元素被推送到数组的末尾并从末尾弹出（弹出是从数组末尾检索和删除元素的过程）:
 x = [] x &amp;lt;&amp;lt; &amp;#34;Word&amp;#34; x &amp;lt;&amp;lt; &amp;#34;Play&amp;#34; x &amp;lt;&amp;lt; &amp;#34;Fun&amp;#34; puts x.pop # 影响原数组 puts x.pop puts x.length  Fun Play 1 如果数组中的元素都是字符串，可以使用join方法将所有元素连接起来：
 x = [&amp;#34;Word&amp;#34;, &amp;#34;Play&amp;#34;, &amp;#34;Fun&amp;#34;] puts x.join, x.join(&amp;#34;,&amp;#34;)  WordPlayFun Word,Play,Fun 也可以使用split方法将字符串分隔成数组：
-puts &amp;#34;Short sentence. Another. No more.&amp;#34;.split(/\./).inspect 因为在正则表达式中.表示任意字符，所以需要使用\.来表示点（加上反斜杠来对其进行转义）。而inspect方法对Ruby中几乎所有的内置类都是通用的，它提供了对象的文本表示：
+puts &amp;#34;Short sentence. Another. No more.&amp;#34;.split(/\./).inspect  [&amp;#34;Short sentence&amp;#34;, &amp;#34; Another&amp;#34;, &amp;#34; No more&amp;#34;] 因为在正则表达式中.表示任意字符，所以需要使用\.来表示真正的点符号（加上反斜杠来对其进行转义）。而inspect方法对Ruby中几乎所有的内置类都是通用的，它提供了对象的文本表示：
 puts &amp;#34;Words with lots of spaces&amp;#34;.split(/\s&#43;/).inspect  [&amp;#34;Words&amp;#34;, &amp;#34;with&amp;#34;, &amp;#34;lots&amp;#34;, &amp;#34;of&amp;#34;, &amp;#34;spaces&amp;#34;] p也很重要，它是inspect的替代方法，前面的例子也可以这样写：
 p &amp;#34;Words with lots of spaces&amp;#34;.split(/\s&#43;/)  [&amp;#34;Words&amp;#34;, &amp;#34;with&amp;#34;, &amp;#34;lots&amp;#34;, &amp;#34;of&amp;#34;, &amp;#34;spaces&amp;#34;] p是puts的一个非常有用的替代品，它可以自动显示后面的表达式返回对象的结构。但这个方法几乎不需要在生产应用中使用它，但对于调试和学习来说是非常好的。
 Array Iteration 对于数组，可以使用each方法进行迭代，也可以使用collect方法即时转换数组。map方法从功能上说是等同于collect方法：
