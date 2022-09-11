@@ -315,8 +315,11 @@ class Person  def initialize(name)  set_name(name)  end   def name  @first_name 
 p = Person.new(&amp;#34;Fred Bloggs&amp;#34;) puts p.name  Fred Bloggs 但是，你仍然可以发现一些问题：
 p = Person.new(&amp;#34;Fred Bloggs&amp;#34;) p.set_last_name(&amp;#34;Smith&amp;#34;) puts p.name  Fred Smith 实际上我们只想通过设置name来修改first_name和last_name，然而set_first_name和set_last_name方法依然是公开的，可以通过Person类的实例直接调用。幸运的是可以使用封装来解决这个问题：
 class Person  def initialize(name)  set_name(name)  end   def name  @first_name &#43; &amp;#39; &amp;#39; &#43; @last_name  end   private  def set_name(name)  first_name, last_name = name.split(/\s&#43;/)  set_first_name(first_name)  set_last_name(last_name)  end   def set_first_name(name)  @first_name = name  end   def set_last_name(name)  @last_name = name  end end  p = Person.new(&amp;#34;Fred Bloggs&amp;#34;) p.set_last_name(&amp;#34;Smith&amp;#34;) puts p.name 上面添加了private关键字，它告诉Ruby从它出现的地方开始在这个类中声明的任何方法都应该保持私有。上面的代码会出现编译错误：Uncaught exception: private method set_last_name called for Person:0x00007fa79e101a60。
-而private关键字的反面是public，可以在一个方法之前放上private，但之后再使用public关键字恢复到public方法，就像下面这样：
-class Person   def anyone_can_access_this  ...  end   private def this_is_private  ...  end   public def another_public_method  ...  end end Advanced Ruby Features Dynamic Code Execution 作为一种动态的解释型语言，Ruby能够执行动态创建的代码。这样做的方法是使用eval方法，例如下面的代码执行后打印结果为4。
+而private关键字的反面是public，可以在一个方法之前放上private，那么其后的都是私有方法。之后再使用public关键字其后的都是公开的方法，就像下面这样：
+class Person   def anyone_can_access_this  ...  end   private def this_is_private  ...  end   public def another_public_method  ...  end end 也可以使用private作为一个命令，通过传入代表你想保持私有方法的符号。下面的示例代码的意思是告诉Ruby，方法this_is_private和another_public_method都是私有的：
+class Person  def anyone_can_access_this; ...; end  def this_is_private; ...; end  def this_is_also_private; ...; end  def another_public_method; ...; end private :this_is_private, :this_is_also_private end 不管选择将private作为方法前的指令，还是直接放在方法名前，都是可以的。但需要注意的是private命令声明必须在方法被定义之后进行。Ruby支持使用分号来分隔多行语句。
+Ruby支持第三种形式的封装（除了public和private），叫做protected，它使一个方法成为私有的，但是在一个类的范围内，而不是在一个单独的对象内。例如，你无法在该对象及其方法的范围之外直接调用一个私有方法。然而，你可以从任何对象的方法的范围内调用一个受保护的方法，该对象是同一个类的成员：
+Advanced Ruby Features Dynamic Code Execution 作为一种动态的解释型语言，Ruby能够执行动态创建的代码。这样做的方法是使用eval方法，例如下面的代码执行后打印结果为4。
 eval &amp;#34;puts 2 &#43; 2&amp;#34; 上面eval表达式的返回值并非4，而是nil，因为puts作为表达式的放回值为nil。如果要返回4，必须像下面这样写：
 puts eval(&amp;#34;2 &#43; 2&amp;#34;) 下面是一个复杂的使用字符串和插值的更复杂的示例：
 my_number = 15 my_code = %{#{my_number}* 2} puts my_code puts eval(my_code)  15 * 2 30 实际上eval方法只是执行（或求值）传递给它的代码并返回结果。最上面的例子是让eval执行puts 2 &#43; 2，上面的例子是执行15 * 2。
