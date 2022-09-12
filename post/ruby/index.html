@@ -241,13 +241,13 @@ code.has-jax {
     <i class="fa fa-file-word-o"></i>
 </span>
 <span class="post-meta-item-text">字数: </span>
-<span class="leancloud-visitors-count">15437</span>
+<span class="leancloud-visitors-count">16053</span>
 &nbsp; | &nbsp;
 <span class="post-meta-item-icon">
     <i class="fa fa-coffee"></i>
 </span>
 <span class="post-meta-item-text">阅读: </span>
-<span class="leancloud-visitors-count">31 分钟</span>
+<span class="leancloud-visitors-count">33 分钟</span>
 </span>
       </div>
     </header>
@@ -1386,7 +1386,39 @@ code.has-jax {
 </span></span><span style="display:flex;"><span>a<span style="color:#f92672">.</span>length <span style="color:#f92672">=</span> <span style="color:#ae81ff">50</span>
 </span></span><span style="display:flex;"><span>b <span style="color:#f92672">=</span> <span style="color:#66d9ef">Country</span><span style="color:#f92672">::</span><span style="color:#66d9ef">Ruler</span><span style="color:#f92672">.</span>new
 </span></span><span style="display:flex;"><span>b<span style="color:#f92672">.</span>name <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;Genghis Khan from Moskau&#34;</span>
-</span></span></code></pre></div><h1 id="advanced-ruby-features">Advanced Ruby Features</h1>
+</span></span></code></pre></div><p>因为<code>Ruby</code>不支持多重继承，所以不具备同时从多个类中继承的能力。<code>Ruby</code>的继承功能只允许创建简单的类树，避免了多重继承系统所带来的混乱。</p>
+<p>但是，在某些情况下，在不同类之间共享功能是很有用的。在这个意义上，模块就像一种方法、类和常量的捆绑，可以被包含在其它类中。例如，用模块提供的方法来扩展该类:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ruby" data-lang="ruby"><span style="display:flex;"><span><span style="color:#66d9ef">module</span> UsefulFeatures
+</span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">def</span> <span style="color:#a6e22e">class_name</span>
+</span></span><span style="display:flex;"><span>    self<span style="color:#f92672">.</span>class<span style="color:#f92672">.</span>to_s
+</span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">end</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">end</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">class</span> <span style="color:#a6e22e">Person</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">include</span> <span style="color:#66d9ef">UsefulFeatures</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">end</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>x <span style="color:#f92672">=</span> <span style="color:#66d9ef">Person</span><span style="color:#f92672">.</span>new
+</span></span><span style="display:flex;"><span>puts x<span style="color:#f92672">.</span>class_name
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">Person</span>
+</span></span></code></pre></div><p>在上面的代码中，<code>UsefulFeatures</code>看起来像是一个类。但是，模块是组织工具，而不是类本身。<code>class_ name</code>方法存在于模块中，然后被包含在<code>Person</code>类中，下面是另一个例子：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ruby" data-lang="ruby"><span style="display:flex;"><span><span style="color:#66d9ef">module</span> AnotherModule
+</span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">def</span> <span style="color:#a6e22e">do_stuff</span>
+</span></span><span style="display:flex;"><span>    puts <span style="color:#e6db74">&#34;This is a test&#34;</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">end</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">end</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">include</span> <span style="color:#66d9ef">AnotherModule</span>
+</span></span><span style="display:flex;"><span>do_stuff
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">This</span> is a test
+</span></span></code></pre></div><p>从上面的代码中可以看出，即使没有直接在一个类中，也可以在当前作用域里<code>include</code>一个模块。但也可以直接使用模块中的方法：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ruby" data-lang="ruby"><span style="display:flex;"><span><span style="color:#66d9ef">AnotherModule</span><span style="color:#f92672">.</span>do_stuff
+</span></span></code></pre></div><p>也就是说，<code>include</code>接收一个模块并将其内容包含在当前范围内。<code>Ruby</code>按标准配备了几个模块。例如，<code>Kernel</code>模块包含了你在<code>Ruby</code>中使用的所有&quot;标准 &ldquo;命令（如<code>load、require、exit、puts</code>和<code>eval</code>），而没有涉及到对象或类。这些方法都不是直接在对象的范围内进行的（就像你自己程序中的方法一样），而是通过<code>Kernel</code>模块默认包含在所有类（包括主范围）中的特殊方法。</p>
+<p>然而，我们更感兴趣的是<code>Ruby</code>提供的模块，你可以在你自己的类中包含这些模块来立即获得更多的功能。两个这样的模块是<code>Enumerable</code>和<code>Comparable</code>。</p>
+<h2 id="enumerable">Enumerable</h2>
+<h1 id="advanced-ruby-features">Advanced Ruby Features</h1>
 <h2 id="dynamic-code-execution">Dynamic Code Execution</h2>
 <p>作为一种动态的解释型语言，<code>Ruby</code>能够执行动态创建的代码。这样做的方法是使用<code>eval</code>方法，例如下面的代码执行后打印结果为<code>4</code>。</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ruby" data-lang="ruby"><span style="display:flex;"><span>eval <span style="color:#e6db74">&#34;puts 2 + 2&#34;</span>
@@ -1844,6 +1876,7 @@ code.has-jax {
         <li><a href="#nested-classes">Nested Classes</a></li>
         <li><a href="#the-scope-of-constants">The Scope of Constants</a></li>
         <li><a href="#modules-namespaces-and-mix-ins">Modules, Namespaces, and Mix-Ins</a></li>
+        <li><a href="#enumerable">Enumerable</a></li>
       </ul>
     </li>
     <li><a href="#advanced-ruby-features">Advanced Ruby Features</a>
