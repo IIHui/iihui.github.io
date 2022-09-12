@@ -241,13 +241,13 @@ code.has-jax {
     <i class="fa fa-file-word-o"></i>
 </span>
 <span class="post-meta-item-text">字数: </span>
-<span class="leancloud-visitors-count">16856</span>
+<span class="leancloud-visitors-count">18815</span>
 &nbsp; | &nbsp;
 <span class="post-meta-item-icon">
     <i class="fa fa-coffee"></i>
 </span>
 <span class="post-meta-item-text">阅读: </span>
-<span class="leancloud-visitors-count">34 分钟</span>
+<span class="leancloud-visitors-count">38 分钟</span>
 </span>
       </div>
     </header>
@@ -1668,7 +1668,98 @@ code.has-jax {
 <p>有时，最好是立即跳到另一个程序，并停止当前程序的执行。如果你有一个多步骤的程序，并为每个程序编写了一个应用程序，这就很有用。要结束当前程序并调用另一个程序，只需使用<code>exec</code>方法来代替<code>system</code>:</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ruby" data-lang="ruby"><span style="display:flex;"><span>exec <span style="color:#e6db74">&#34;ruby letter_stuff.rb&#34;</span>
 </span></span><span style="display:flex;"><span>puts <span style="color:#e6db74">&#34;This will never be displayed&#34;</span>
-</span></span></code></pre></div><p>在<code>Gemfile</code>中添加如下内容</p>
+</span></span></code></pre></div><h2 id="running-two-programs-at-the-same-time">Running Two Programs at the Same Time</h2>
+<p><code>Forking</code>是指一个程序的实例（一个进程）复制自己，导致该程序的两个进程同时运行。可以通过使用<code>exec</code>从这第二个进程中运行其他程序，而第一个（父）进程将继续运行原始程序。</p>
+<p><code>fork</code>是<code>Kernel</code>模块提供的方法，用于创建当前进程的分叉。它在父进程中返回子进程的<code>ID</code>，但在子进程中返回<code>nil</code>&ndash;可以用它来确定一个脚本在哪个进程中。下面的例子将当前进程分叉为两个进程，并且只在子进程（由分叉产生的进程）中执行<code>exec</code>命令：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ruby" data-lang="ruby"><span style="display:flex;"><span><span style="color:#66d9ef">if</span> fork<span style="color:#f92672">.</span>nil?
+</span></span><span style="display:flex;"><span>  exec <span style="color:#e6db74">&#34;ruby letter_stuff.rb&#34;</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">end</span>
+</span></span><span style="display:flex;"><span>puts <span style="color:#e6db74">&#34;This Ruby script now runs alongside letter_stuff.rb&#34;</span>
+</span></span></code></pre></div><p>如果另一个程序（被<code>exec</code>运行）预计在某个时间点完成，想在父程序中做某些事情之前等待它完成执行，可以使用<code>Process.wait</code>来等待所有子进程完成后再继续：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ruby" data-lang="ruby"><span style="display:flex;"><span>child <span style="color:#f92672">=</span> fork <span style="color:#66d9ef">do</span>
+</span></span><span style="display:flex;"><span>  sleep <span style="color:#ae81ff">3</span>
+</span></span><span style="display:flex;"><span>  puts <span style="color:#e6db74">&#34;Child says &#39;hi&#39;!&#34;</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">end</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>puts <span style="color:#e6db74">&#34;Waiting for the child process...&#34;</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">Process</span><span style="color:#f92672">.</span>wait child
+</span></span><span style="display:flex;"><span>puts <span style="color:#e6db74">&#34;All done!&#34;</span>
+</span></span></code></pre></div><p>在<code>Windows</code>版本的<code>Ruby</code>中，分叉是不可能的，因为该平台上不支持<code>POSIX-style</code>分叉，应当使用对应的<code>spawn()</code>方法。</p>
+<h2 id="threads">Threads</h2>
+<p>线程是执行线程的简称。你用线程把一个程序的执行分成多个部分，可以同时运行。例如，一个被设计为同时给数千人发送电子邮件的程序可能会将任务分成<code>20</code>个不同的线程，这些线程都会同时发送电子邮件。</p>
+<p>这种并行性比一个接一个地处理要快，特别是在有多个<code>CPU</code>的系统上，因为不同的执行线程可以在不同的处理器上运行。它也可以更快，因为与其浪费时间等待远程机器的响应，不如继续进行其他操作。</p>
+<p><code>Ruby 1.8</code>并不支持传统意义上的线程。通常，线程能力是由操作系统提供的，并且在不同的系统中有所不同。然而，<code>Ruby 1.8</code>直接提供了<code>Ruby</code>的线程能力，这意味着它们缺乏传统系统级线程的一些能力。在<code>Ruby 1.9</code>中，<code>Ruby</code>开始使用基于系统的线程，现在这已经是<code>Rubyists</code>中默认的期望。</p>
+<p>虽然<code>Ruby 1.9</code>和<code>2.x</code>的线程是系统（原生）线程，但为了与<code>1.8</code>代码保持兼容，全局解释器锁（<code>GIL</code>）被保留下来，所以线程不会真正同时运行。这意味着本节所涉及的所有内容都与<code>1.8、1.9、2.0</code>及以后的所有版本有关。本章的下一个主要部分将介绍<code>Ruby 1.9</code>及更高版本的替代品&ndash;<code>fibers</code>，它现在支持非阻塞并发。</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ruby" data-lang="ruby"><span style="display:flex;"><span>threads <span style="color:#f92672">=</span> <span style="color:#f92672">[]</span>
+</span></span><span style="display:flex;"><span><span style="color:#ae81ff">10</span><span style="color:#f92672">.</span>times <span style="color:#66d9ef">do</span>
+</span></span><span style="display:flex;"><span>  thread <span style="color:#f92672">=</span> <span style="color:#66d9ef">Thread</span><span style="color:#f92672">.</span>new <span style="color:#66d9ef">do</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#ae81ff">10</span><span style="color:#f92672">.</span>times { <span style="color:#f92672">|</span>i<span style="color:#f92672">|</span> print i; $stdout<span style="color:#f92672">.</span>flush; sleep rand(<span style="color:#ae81ff">2</span>) }
+</span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">end</span>
+</span></span><span style="display:flex;"><span>  threads <span style="color:#f92672">&lt;&lt;</span> thread
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">end</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>threads<span style="color:#f92672">.</span>each { <span style="color:#f92672">|</span>thread<span style="color:#f92672">|</span> thread<span style="color:#f92672">.</span>join }
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#ae81ff">000000012301200114561111231234567</span><span style="color:#ae81ff">8234512323454279234233346648445756757567958586867689967987878989999</span>
+</span></span></code></pre></div><p>一旦创建了线程，就要等待所有的线程在程序结束前完成。可以通过循环浏览线程中的所有线程对象并调用每个线程的<code>join</code>方法来等待。<code>join</code>方法使主程序等待，直到一个线程的执行完成后再继续。通过这种方式，可以确保在退出之前所有的线程都完成了。</p>
+<h2 id="fibers">Fibers</h2>
+<p>在<code>Ruby 1.9</code>及以后的版本中，<code>Fibers</code>提供了线程的替代品。在<code>Ruby 3</code>中，<code>Fiber</code>被重写了，所以它不再对IO操作进行阻塞，并支持非阻塞的<code>fibers</code>。</p>
+<p><code>fibers</code>是轻量级的执行单元，可以控制自己的调度（通常被称为合作调度）。线程通常会持续运行，而<code>fibers</code>一旦执行完某些任务就会移交控制权。然而，与常规方法不同的是，一旦<code>fibers</code>交出控制权，它就会继续存在，并可以随意恢复。简而言之，<code>fibers</code>在实用上类似于线程，但<code>fibers</code>并不被安排在一起运行，必须手动控制调度。</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ruby" data-lang="ruby"><span style="display:flex;"><span>sg <span style="color:#f92672">=</span> <span style="color:#66d9ef">Fiber</span><span style="color:#f92672">.</span>new <span style="color:#66d9ef">do</span>
+</span></span><span style="display:flex;"><span>  s <span style="color:#f92672">=</span> <span style="color:#ae81ff">0</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">loop</span> <span style="color:#66d9ef">do</span>
+</span></span><span style="display:flex;"><span>    square <span style="color:#f92672">=</span> s <span style="color:#f92672">*</span> s
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">Fiber</span><span style="color:#f92672">.</span>yield square
+</span></span><span style="display:flex;"><span>    s <span style="color:#f92672">+=</span> <span style="color:#ae81ff">1</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">end</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">end</span>
+</span></span><span style="display:flex;"><span><span style="color:#ae81ff">10</span><span style="color:#f92672">.</span>times { puts sg<span style="color:#f92672">.</span>resume }
+</span></span></code></pre></div><p>在上面的代码中，我们使用<code>block</code>创建了一个<code>fiber</code>。创建的<code>fiber</code>将会完全独立运行，直到<code>Fiber.yield</code>方法被用来将控制权交还给最后告诉<code>fiber</code>运行的东西（在上面这个例子中，是<code>sg.resume</code>方法的调用）。另外，如果<code>fiber</code>&ldquo;结束&rdquo;，最后执行的表达式的值将被返回。</p>
+<p>当你恢复<code>fiber</code>的执行时，可以将数据传回<code>fiber</code>，也可以从<code>fiber</code>中接收数据。例如，让我们调整一下平方数发生器的<code>fiber</code>，以支持接收一个可选的新基数来提供平方数。</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ruby" data-lang="ruby"><span style="display:flex;"><span>sg <span style="color:#f92672">=</span> <span style="color:#66d9ef">Fiber</span><span style="color:#f92672">.</span>new <span style="color:#66d9ef">do</span>
+</span></span><span style="display:flex;"><span>  s <span style="color:#f92672">=</span> <span style="color:#ae81ff">0</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">loop</span> <span style="color:#66d9ef">do</span>
+</span></span><span style="display:flex;"><span>    square <span style="color:#f92672">=</span> s <span style="color:#f92672">*</span> s
+</span></span><span style="display:flex;"><span>    s <span style="color:#f92672">+=</span> <span style="color:#ae81ff">1</span>
+</span></span><span style="display:flex;"><span>    s <span style="color:#f92672">=</span> <span style="color:#66d9ef">Fiber</span><span style="color:#f92672">.</span>yield(square) <span style="color:#f92672">||</span> s
+</span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">end</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">end</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 10.times { puts sg.resume }</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>puts sg<span style="color:#f92672">.</span>resume
+</span></span><span style="display:flex;"><span>puts sg<span style="color:#f92672">.</span>resume
+</span></span><span style="display:flex;"><span>puts sg<span style="color:#f92672">.</span>resume
+</span></span><span style="display:flex;"><span>puts sg<span style="color:#f92672">.</span>resume
+</span></span><span style="display:flex;"><span>puts sg<span style="color:#f92672">.</span>resume <span style="color:#ae81ff">40</span>
+</span></span><span style="display:flex;"><span>puts sg<span style="color:#f92672">.</span>resume
+</span></span><span style="display:flex;"><span>puts sg<span style="color:#f92672">.</span>resume
+</span></span><span style="display:flex;"><span>puts sg<span style="color:#f92672">.</span>resume <span style="color:#ae81ff">0</span>
+</span></span><span style="display:flex;"><span>puts sg<span style="color:#f92672">.</span>resume
+</span></span><span style="display:flex;"><span>puts sg<span style="color:#f92672">.</span>resume
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#ae81ff">0</span>
+</span></span><span style="display:flex;"><span><span style="color:#ae81ff">1</span>
+</span></span><span style="display:flex;"><span><span style="color:#ae81ff">4</span>
+</span></span><span style="display:flex;"><span><span style="color:#ae81ff">9</span>
+</span></span><span style="display:flex;"><span><span style="color:#ae81ff">1600</span>
+</span></span><span style="display:flex;"><span><span style="color:#ae81ff">1681</span>
+</span></span><span style="display:flex;"><span><span style="color:#ae81ff">1764</span>
+</span></span><span style="display:flex;"><span><span style="color:#ae81ff">0</span>
+</span></span><span style="display:flex;"><span><span style="color:#ae81ff">1</span>
+</span></span><span style="display:flex;"><span><span style="color:#ae81ff">4</span>
+</span></span></code></pre></div><p><code>Ruby 3</code>引入了创建非阻塞<code>fiber</code>的能力。创建一个非阻塞<code>fiber</code>很简单：在构造函数中指定参数<code>blocking: false</code>。这个选项可以防止阻塞操作，如<code>I/O、sleep</code>等的阻塞。</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ruby" data-lang="ruby"><span style="display:flex;"><span>non_blocking <span style="color:#f92672">=</span> <span style="color:#66d9ef">Fiber</span><span style="color:#f92672">.</span>new(<span style="color:#e6db74">blocking</span>: <span style="color:#66d9ef">false</span>) <span style="color:#66d9ef">do</span>
+</span></span><span style="display:flex;"><span>  puts <span style="color:#e6db74">&#34;Blocking Fiber? </span><span style="color:#e6db74">#{</span><span style="color:#66d9ef">Fiber</span><span style="color:#f92672">.</span>current<span style="color:#f92672">.</span>blocking?<span style="color:#e6db74">}</span><span style="color:#e6db74">&#34;</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#75715e"># Will not block</span>
+</span></span><span style="display:flex;"><span>  sleep <span style="color:#ae81ff">2</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">end</span>
+</span></span><span style="display:flex;"><span><span style="color:#ae81ff">3</span><span style="color:#f92672">.</span>times { puts non_blocking<span style="color:#f92672">.</span>resume }
+</span></span></code></pre></div><p>当正确使用时，非阻塞<code>fiber</code>将提高性能，因为多个操作是一次性执行的。由于非阻塞<code>fiber</code>是选择加入的，<code>Ruby 3</code>不会破坏现有的代码。默认情况下，在<code>Ruby 3</code>中，<code>fiber</code>中的所有I/O操作都是无阻塞的。</p>
+<p>在某些情况下，使用<code>fiber</code>而不是线程的动机是效率。创建数百个<code>fiber</code>比创建同等的线程要快得多，因为线程是在操作系统层面创建的。此外，还有显著的内存效率优势。</p>
+<p><code>Fiber</code>最大的好处之一是在其他库中实现轻量级的<code>I/O</code>管理例程，所以即使你不直接使用<code>fiber</code>，你最终也可能从其他地方的使用中获益。</p>
+<h1 id="debug">debug</h1>
+<p>在<code>Gemfile</code>中添加如下内容</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ruby" data-lang="ruby"><span style="display:flex;"><span>  gem <span style="color:#e6db74">&#39;debase&#39;</span>
 </span></span><span style="display:flex;"><span>  gem <span style="color:#e6db74">&#39;ruby-debug-ide&#39;</span>
 </span></span></code></pre></div><div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span><span style="color:#f92672">[</span>IPC<span style="color:#f92672">]</span> Connection::waitForSyncReply: Timed-out <span style="color:#66d9ef">while</span> waiting <span style="color:#66d9ef">for</span> reply <span style="color:#66d9ef">for</span> WebPage_TouchEventSync from process 584, id<span style="color:#f92672">=</span><span style="color:#ae81ff">20</span>
@@ -2015,8 +2106,12 @@ code.has-jax {
         <li><a href="#creating-your-own-version-of-attr_accessor">Creating Your Own Version of attr_accessor</a></li>
         <li><a href="#running-other-programs-from-ruby">Running Other Programs from Ruby</a></li>
         <li><a href="#transferring-execution-to-another-program">Transferring Execution to Another Program</a></li>
+        <li><a href="#running-two-programs-at-the-same-time">Running Two Programs at the Same Time</a></li>
+        <li><a href="#threads">Threads</a></li>
+        <li><a href="#fibers">Fibers</a></li>
       </ul>
     </li>
+    <li><a href="#debug">debug</a></li>
   </ul>
 </nav></div>
     </div>
