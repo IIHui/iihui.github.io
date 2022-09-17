@@ -227,7 +227,13 @@ if obj.respond_to?(&amp;#34;talk&amp;#34;)  obj.talk else  puts &amp;#34;Sorry, 
 if ticket.respond_to?(request)  puts ticket.send(request) else  puts &amp;#34;No such information available&amp;#34; end send是一个广泛的概念：电子邮件被发送，数据被发送到I/O套接字等等。对于程序来说，定义一个叫做send的方法，与Ruby内置的send方法相冲突是很常见的事情。
 因此，Ruby给了一个send的替代方法__send__。根据惯例，从来没有人用这个名字写过一个方法，所以内置的Ruby版本总是可用的，并且永远不会与新写的方法发生冲突。它看起来很奇怪，但从方法名称冲突的角度来看，它比普通的send版本更安全。
 此外，还有一个安全的，但方式不同的send (或 __send__) 版本，叫做public_send。普通send和public_send的区别在于send可以调用对象的私有方法，而public_send不能。
-Data, Expressions, and Flow Control 计算机程序几乎所有的时间都在操作数据或等待数据从其它地方送达。当输入文字、短语和数字，听音乐，看视频时计算机进行计算，作出决定，并向我们传递信息。要编写计算机程序，必须先了解数据及其操作的基本知识。
+很多情况下是使用点操作符来发送消息。但是，替代方法send可能是有用和强大的，也足够容易出错，以至于几乎总是先调用response_to?。在某些情况下，response_to?甚至可能过于宽泛而不安全，可能只向一个对象发送一个消息，如果该消息包含在一个预先确定的消息&amp;quot;允许列表&amp;quot;中。
+这在处理用户输入时尤其重要。从用户那里获取输入信息，并使用它来调用方法，这可能会出现意想不到的行为，甚至是恶意的攻击。指导原则是要小心向对象发送任意的消息，特别是当这些消息是基于用户的选择或输入时。
+当调用方法时，必须提供正确数目的实参，如果提供错误的参数，则会出现编译错误：
+obj = Object.new def obj.one_arg(x)  puts &amp;#34;I require one and only one argument!&amp;#34; end obj.one_arg(1, 2, 3)  Uncaught exception: wrong number of arguments 如果要写一个方法接受多个参数，可以在参数前面加*：
+obj = Object.new  def obj.multi_args(*x)  puts &amp;#34;I can take zero or more arguments!&amp;#34; end  obj.multi_args(1, 2, 3)  def two_or_more(a, b, *c)  puts &amp;#34;I require two or more arguments!&amp;#34;  puts &amp;#34;And sure enough, I got: &amp;#34;  p a, b, c end  two_or_more(1,2,3,4,5) 参数也可以添加默认值：
+def default_args(a, b, c = 1)  puts &amp;#34;Values of variables: &amp;#34;, a, b, c end default_args(3,2)  3 2 1 参数顺序：
+def mixed_args(a, b, *c, d)  puts &amp;#34;Arguments:&amp;#34;  p a, b, c, d end  mixed_args(1, 2, 3, 4, 5)  1 2 [3, 4] 5 Data, Expressions, and Flow Control 计算机程序几乎所有的时间都在操作数据或等待数据从其它地方送达。当输入文字、短语和数字，听音乐，看视频时计算机进行计算，作出决定，并向我们传递信息。要编写计算机程序，必须先了解数据及其操作的基本知识。
 Numbers and Expressions 编程时，表达式是数据（例如数字或字符串）、运算符（例如&#43;或-）和变量的组合。当计算机理解这些表达式时，会产生某种形式的结果。Ruby代码是由表达式组成的，每个表达式都会被评估为一个特定的值。下面这些都是表达式：
 5 1 &#43; 2 &amp;#34;a&amp;#34; &#43; &amp;#34;b&amp;#34; &#43; &amp;#34;c&amp;#34; 100 - 5 * (2 - 1) x &#43; y 变量是占位符或对象的引用，包括数字、文本或创建的任何类型的对象。可以随心所欲地命名变量，只是有一些限制，必须满足下面3个条件：
  变量名称必须是一个单元（中间不能有空格）。 必须以字母或下划线开头，不能以数字开头。 必须只包含字母、数字或下划线，并且区分大小写。     变量名 是否有效     x 是   Y2 是   _x 是   7x 否，字母开头   this_is_a_test 是   this is a test 否，包含空格   this&amp;rsquo;is@a&amp;rsquo;test! 否，包含特殊字符‘，@，！   this-is-a-test 否，包含特殊字符-    由于变量是值和数据的占位符，因此它们也可以用某个表达式的结果进行赋值（例如x = 2 - 1）并将其用于表达式本身（例如x - y &#43; 2）。

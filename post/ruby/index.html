@@ -241,13 +241,13 @@ code.has-jax {
     <i class="fa fa-file-word-o"></i>
 </span>
 <span class="post-meta-item-text">字数: </span>
-<span class="leancloud-visitors-count">21002</span>
+<span class="leancloud-visitors-count">21438</span>
 &nbsp; | &nbsp;
 <span class="post-meta-item-icon">
     <i class="fa fa-coffee"></i>
 </span>
 <span class="post-meta-item-text">阅读: </span>
-<span class="leancloud-visitors-count">42 分钟</span>
+<span class="leancloud-visitors-count">43 分钟</span>
 </span>
       </div>
     </header>
@@ -366,7 +366,54 @@ code.has-jax {
 </span></span></code></pre></div><p><code>send</code>是一个广泛的概念：电子邮件被发送，数据被发送到<code>I/O</code>套接字等等。对于程序来说，定义一个叫做<code>send</code>的方法，与<code>Ruby</code>内置的<code>send</code>方法相冲突是很常见的事情。</p>
 <p>因此，<code>Ruby</code>给了一个<code>send</code>的替代方法<code>__send__</code>。根据惯例，从来没有人用这个名字写过一个方法，所以内置的<code>Ruby</code>版本总是可用的，并且永远不会与新写的方法发生冲突。它看起来很奇怪，但从方法名称冲突的角度来看，它比普通的<code>send</code>版本更安全。</p>
 <p>此外，还有一个安全的，但方式不同的<code>send</code> (或 <code>__send__</code>) 版本，叫做<code>public_send</code>。普通<code>send</code>和<code>public_send</code>的区别在于<code>send</code>可以调用对象的私有方法，而<code>public_send</code>不能。</p>
-<h1 id="data-expressions-and-flow-control">Data, Expressions, and Flow Control</h1>
+<p>很多情况下是使用点操作符来发送消息。但是，替代方法<code>send</code>可能是有用和强大的，也足够容易出错，以至于几乎总是先调用<code>response_to?</code>。在某些情况下，<code>response_to?</code>甚至可能过于宽泛而不安全，可能只向一个对象发送一个消息，如果该消息包含在一个预先确定的消息&quot;允许列表&quot;中。</p>
+<p>这在处理用户输入时尤其重要。从用户那里获取输入信息，并使用它来调用方法，这可能会出现意想不到的行为，甚至是恶意的攻击。指导原则是要小心向对象发送任意的消息，特别是当这些消息是基于用户的选择或输入时。</p>
+<p>当调用方法时，必须提供正确数目的实参，如果提供错误的参数，则会出现编译错误：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ruby" data-lang="ruby"><span style="display:flex;"><span>obj <span style="color:#f92672">=</span> <span style="color:#66d9ef">Object</span><span style="color:#f92672">.</span>new
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">def</span> <span style="color:#a6e22e">obj</span><span style="color:#f92672">.</span><span style="color:#a6e22e">one_arg</span>(x)
+</span></span><span style="display:flex;"><span>  puts <span style="color:#e6db74">&#34;I require one and only one argument!&#34;</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">end</span>
+</span></span><span style="display:flex;"><span>obj<span style="color:#f92672">.</span>one_arg(<span style="color:#ae81ff">1</span>, <span style="color:#ae81ff">2</span>, <span style="color:#ae81ff">3</span>)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">Uncaught</span> <span style="color:#e6db74">exception</span>: wrong number of arguments
+</span></span></code></pre></div><p>如果要写一个方法接受多个参数，可以在参数前面加<code>*</code>：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ruby" data-lang="ruby"><span style="display:flex;"><span>obj <span style="color:#f92672">=</span> <span style="color:#66d9ef">Object</span><span style="color:#f92672">.</span>new
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">def</span> <span style="color:#a6e22e">obj</span><span style="color:#f92672">.</span><span style="color:#a6e22e">multi_args</span>(<span style="color:#f92672">*</span>x)
+</span></span><span style="display:flex;"><span>  puts <span style="color:#e6db74">&#34;I can take zero or more arguments!&#34;</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">end</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>obj<span style="color:#f92672">.</span>multi_args(<span style="color:#ae81ff">1</span>, <span style="color:#ae81ff">2</span>, <span style="color:#ae81ff">3</span>)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">def</span> <span style="color:#a6e22e">two_or_more</span>(a, b, <span style="color:#f92672">*</span>c)
+</span></span><span style="display:flex;"><span>  puts <span style="color:#e6db74">&#34;I require two or more arguments!&#34;</span>
+</span></span><span style="display:flex;"><span>  puts <span style="color:#e6db74">&#34;And sure enough, I got: &#34;</span>
+</span></span><span style="display:flex;"><span>  p a, b, c
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">end</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>two_or_more(<span style="color:#ae81ff">1</span>,<span style="color:#ae81ff">2</span>,<span style="color:#ae81ff">3</span>,<span style="color:#ae81ff">4</span>,<span style="color:#ae81ff">5</span>)
+</span></span></code></pre></div><p>参数也可以添加默认值：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ruby" data-lang="ruby"><span style="display:flex;"><span><span style="color:#66d9ef">def</span> <span style="color:#a6e22e">default_args</span>(a, b, c <span style="color:#f92672">=</span> <span style="color:#ae81ff">1</span>)
+</span></span><span style="display:flex;"><span>  puts <span style="color:#e6db74">&#34;Values of variables: &#34;</span>, a, b, c
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">end</span>
+</span></span><span style="display:flex;"><span>default_args(<span style="color:#ae81ff">3</span>,<span style="color:#ae81ff">2</span>)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#ae81ff">3</span>
+</span></span><span style="display:flex;"><span><span style="color:#ae81ff">2</span>
+</span></span><span style="display:flex;"><span><span style="color:#ae81ff">1</span>
+</span></span></code></pre></div><p>参数顺序：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ruby" data-lang="ruby"><span style="display:flex;"><span><span style="color:#66d9ef">def</span> <span style="color:#a6e22e">mixed_args</span>(a, b, <span style="color:#f92672">*</span>c, d)
+</span></span><span style="display:flex;"><span>  puts <span style="color:#e6db74">&#34;Arguments:&#34;</span>
+</span></span><span style="display:flex;"><span>  p a, b, c, d
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">end</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>mixed_args(<span style="color:#ae81ff">1</span>, <span style="color:#ae81ff">2</span>, <span style="color:#ae81ff">3</span>, <span style="color:#ae81ff">4</span>, <span style="color:#ae81ff">5</span>)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#ae81ff">1</span>
+</span></span><span style="display:flex;"><span><span style="color:#ae81ff">2</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">[</span><span style="color:#ae81ff">3</span>, <span style="color:#ae81ff">4</span><span style="color:#f92672">]</span>
+</span></span><span style="display:flex;"><span><span style="color:#ae81ff">5</span>
+</span></span></code></pre></div><h1 id="data-expressions-and-flow-control">Data, Expressions, and Flow Control</h1>
 <p>计算机程序几乎所有的时间都在操作数据或等待数据从其它地方送达。当输入文字、短语和数字，听音乐，看视频时计算机进行计算，作出决定，并向我们传递信息。要编写计算机程序，必须先了解数据及其操作的基本知识。</p>
 <h2 id="numbers-and-expressions">Numbers and Expressions</h2>
 <p>编程时，表达式是数据（例如数字或字符串）、运算符（例如<code>+</code>或<code>-</code>）和变量的组合。当计算机理解这些表达式时，会产生某种形式的结果。<code>Ruby</code>代码是由表达式组成的，每个表达式都会被评估为一个特定的值。下面这些都是表达式：</p>
