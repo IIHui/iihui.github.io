@@ -241,7 +241,7 @@ code.has-jax {
     <i class="fa fa-file-word-o"></i>
 </span>
 <span class="post-meta-item-text">字数: </span>
-<span class="leancloud-visitors-count">22701</span>
+<span class="leancloud-visitors-count">22916</span>
 &nbsp; | &nbsp;
 <span class="post-meta-item-icon">
     <i class="fa fa-coffee"></i>
@@ -481,7 +481,40 @@ code.has-jax {
 <p>这些例子使用局部变量来演示当你赋值给一个已经被赋值的变量时，会发生什么和不会发生什么。但是在这里看到的规则和行为<font color=LightSeaGreen>并不只是针对局部变量，类、全局和实例变量都遵循同样的规则</font>。</p>
 <p>与某些语言不同，<code>Ruby</code>没有类型化的变量，任何变量都可以在任何时候被绑定到任何类的任何对象上。因此，引用和（再）赋值的语义对调用一个带参数方法时有重要影响。该方法会收到什么？该方法能用它做什么？</p>
 <h2 id="references-and-method-arguments">References and method arguments</h2>
-<h1 id="data-expressions-and-flow-control">Data, Expressions, and Flow Control</h1>
+<p>下面的代码表明在<code>change_string</code>方法中，变量<code>str</code>被分配了一个指向字符串的引用。一旦方法持有了一个引用，它通过该引用对该对象所做的任何改变都是对其他引用都是可见的：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ruby" data-lang="ruby"><span style="display:flex;"><span><span style="color:#66d9ef">def</span> <span style="color:#a6e22e">change_string</span>(str)
+</span></span><span style="display:flex;"><span>  str<span style="color:#f92672">.</span>replace(<span style="color:#e6db74">&#34;New string content!&#34;</span>)
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">end</span>
+</span></span><span style="display:flex;"><span>s <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;Original string content!&#34;</span>
+</span></span><span style="display:flex;"><span>puts s
+</span></span><span style="display:flex;"><span>change_string(s)
+</span></span><span style="display:flex;"><span>puts s
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">Original</span> string content!
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">New</span> string content!
+</span></span></code></pre></div><p>如果想保护对象不在方法中被改变，可以使用<code>dup</code>方法，它可以复制一个对象：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ruby" data-lang="ruby"><span style="display:flex;"><span><span style="color:#66d9ef">def</span> <span style="color:#a6e22e">change_string</span>(str)
+</span></span><span style="display:flex;"><span>  str<span style="color:#f92672">.</span>replace(<span style="color:#e6db74">&#34;New string content!&#34;</span>)
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">end</span>
+</span></span><span style="display:flex;"><span>s <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;Original string content!&#34;</span>
+</span></span><span style="display:flex;"><span>puts s
+</span></span><span style="display:flex;"><span>change_string(s<span style="color:#f92672">.</span>dump)
+</span></span><span style="display:flex;"><span>puts s
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">Original</span> string content!
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">Original</span> string content!
+</span></span></code></pre></div><p>也可以冻结一个对象，这可以防止它发生进一步的变化:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ruby" data-lang="ruby"><span style="display:flex;"><span><span style="color:#66d9ef">def</span> <span style="color:#a6e22e">change_string</span>(str)
+</span></span><span style="display:flex;"><span>  str<span style="color:#f92672">.</span>replace(<span style="color:#e6db74">&#34;New string content!&#34;</span>)
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">end</span>
+</span></span><span style="display:flex;"><span>s <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;Original string content!&#34;</span>
+</span></span><span style="display:flex;"><span>puts s
+</span></span><span style="display:flex;"><span>s<span style="color:#f92672">.</span>freeze
+</span></span><span style="display:flex;"><span>change_string(s)
+</span></span><span style="display:flex;"><span>puts s
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">Uncaught</span> <span style="color:#e6db74">exception</span>: can<span style="color:#960050;background-color:#1e0010">&#39;</span>t modify frozen String
+</span></span></code></pre></div><h1 id="data-expressions-and-flow-control">Data, Expressions, and Flow Control</h1>
 <p>计算机程序几乎所有的时间都在操作数据或等待数据从其它地方送达。当输入文字、短语和数字，听音乐，看视频时计算机进行计算，作出决定，并向我们传递信息。要编写计算机程序，必须先了解数据及其操作的基本知识。</p>
 <h2 id="numbers-and-expressions">Numbers and Expressions</h2>
 <p>编程时，表达式是数据（例如数字或字符串）、运算符（例如<code>+</code>或<code>-</code>）和变量的组合。当计算机理解这些表达式时，会产生某种形式的结果。<code>Ruby</code>代码是由表达式组成的，每个表达式都会被评估为一个特定的值。下面这些都是表达式：</p>
