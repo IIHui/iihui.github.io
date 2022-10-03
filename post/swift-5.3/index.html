@@ -18,8 +18,8 @@
     <link href="https://iihui.github.io/js/vendor/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
     <link href="https://iihui.github.io/js/vendor/fancybox/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
     <link href="https://iihui.github.io/css/main.css" rel="stylesheet" type="text/css" />
+    <link href="https://iihui.github.io/css/custom.css" rel="stylesheet" type="text/css" />
     <link href="https://iihui.github.io/css/syntax.css" rel="stylesheet" type="text/css" />
-
     <script type="text/javascript" id="hexo.configuration">
   var NexT = window.NexT || {};
   var CONFIG = {
@@ -38,9 +38,9 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.1/languages/objectivec.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.1/languages/clojure.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.1/languages/cpp.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.1/languages/kotlin.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.1/languages/yaml.min.js"></script>
     <script>hljs.initHighlightingOnLoad();</script>
+
+
 </head>
 <body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
 <div class="container one-collumn sidebar-position-left page-home  ">
@@ -241,7 +241,7 @@ code.has-jax {
     <i class="fa fa-file-word-o"></i>
 </span>
 <span class="post-meta-item-text">字数: </span>
-<span class="leancloud-visitors-count">2174</span>
+<span class="leancloud-visitors-count">2165</span>
 &nbsp; | &nbsp;
 <span class="post-meta-item-icon">
     <i class="fa fa-coffee"></i>
@@ -257,222 +257,225 @@ code.has-jax {
 </blockquote>
 <h1 id="多尾闭包">多尾闭包</h1>
 <h2 id="以前">以前</h2>
-<p>在<code>Swift 5.3</code>前尾闭包提供了精简写法，但<font color=red>仅限于函数最后一个参数为函数闭包</font>。而当函数有多个函数闭包参数时，如果该函数类型参数<font color=Blue>不为最后一个参数时，不能使用精简写法</font>。如下所示，既有在圆括号内的闭包，又有在圆括号外的闭包：</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span><span style="color:#75715e">// 写法 1（传统写法）</span>
-</span></span><span style="display:flex;"><span>UIView.animate(withDuration: <span style="color:#ae81ff">0.25</span>, animations: {
-</span></span><span style="display:flex;"><span>  <span style="color:#75715e">// animation code</span>
-</span></span><span style="display:flex;"><span>}, completion: { completed <span style="color:#66d9ef">in</span>
-</span></span><span style="display:flex;"><span>  <span style="color:#75715e">// completion code</span>
-</span></span><span style="display:flex;"><span>})
-</span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span><span style="color:#75715e">// 写法 2（单尾闭包精简写法）</span>
-</span></span><span style="display:flex;"><span>UIView.animate(withDuration: <span style="color:#ae81ff">0.25</span>, animations: {
-</span></span><span style="display:flex;"><span>  <span style="color:#75715e">// animation code</span>
-</span></span><span style="display:flex;"><span>}) { completed <span style="color:#66d9ef">in</span>
-</span></span><span style="display:flex;"><span>  <span style="color:#75715e">// completion code</span>
-</span></span><span style="display:flex;"><span>}
-</span></span></code></pre></div><h2 id="现在">现在</h2>
-<p>而在<code>Swift 5.3</code>中，同一个函数的多尾闭包有了新的精简模式。在第一闭包之后可以使用标签的方式来使用尾闭包。这种新的写法把<font color=red>最后的连续几个闭包参数都算作是尾闭包</font>，这些闭包都可以放在圆括号外面。</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span>UIView.animate(withDuration: <span style="color:#ae81ff">0.3</span>) {
-</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">self</span>.view.alpha = <span style="color:#ae81ff">0</span>
-</span></span><span style="display:flex;"><span>} completion: { <span style="color:#66d9ef">_</span> <span style="color:#66d9ef">in</span>
-</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">self</span>.view.removeFromSuperview()
-</span></span><span style="display:flex;"><span>}
-</span></span></code></pre></div><p>但是，这些尾闭包中<font color=red>第一个闭包被强制省略标签</font>。苹果的解释是：<font color=Blue>如果允许第一个尾闭包加上标签，那么开发者需要考虑是加好还是不加好</font>，这会导致代码风格不一致，那么干脆禁了吧。也就是除了第一个尾闭包需要省略标签之外，<font color=red>其余的尾闭包都需有标签</font>。</p>
+<p>在<code>Swift 5.3</code>前尾闭包提供了精简写法，但<!-- raw HTML omitted -->仅限于函数最后一个参数为函数闭包<!-- raw HTML omitted -->。而当函数有多个函数闭包参数时，如果该函数类型参数<!-- raw HTML omitted -->不为最后一个参数时，不能使用精简写法<!-- raw HTML omitted -->。如下所示，既有在圆括号内的闭包，又有在圆括号外的闭包：</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift"><span style="color:#75715e">//</span><span style="color:#75715e"> </span><span style="color:#75715e">写</span><span style="color:#75715e">法</span><span style="color:#75715e"> </span><span style="color:#75715e">1</span><span style="color:#75715e">（</span><span style="color:#75715e">传</span><span style="color:#75715e">统</span><span style="color:#75715e">写</span><span style="color:#75715e">法</span><span style="color:#75715e">）</span>
+UIView.animate(withDuration: <span style="color:#ae81ff">0.25</span>, animations: {
+  <span style="color:#75715e">//</span><span style="color:#75715e"> </span><span style="color:#75715e">a</span><span style="color:#75715e">n</span><span style="color:#75715e">i</span><span style="color:#75715e">m</span><span style="color:#75715e">a</span><span style="color:#75715e">t</span><span style="color:#75715e">i</span><span style="color:#75715e">o</span><span style="color:#75715e">n</span><span style="color:#75715e"> </span><span style="color:#75715e">c</span><span style="color:#75715e">o</span><span style="color:#75715e">d</span><span style="color:#75715e">e</span>
+}, completion: { completed <span style="color:#66d9ef">in</span>
+  <span style="color:#75715e">//</span><span style="color:#75715e"> </span><span style="color:#75715e">c</span><span style="color:#75715e">o</span><span style="color:#75715e">m</span><span style="color:#75715e">p</span><span style="color:#75715e">l</span><span style="color:#75715e">e</span><span style="color:#75715e">t</span><span style="color:#75715e">i</span><span style="color:#75715e">o</span><span style="color:#75715e">n</span><span style="color:#75715e"> </span><span style="color:#75715e">c</span><span style="color:#75715e">o</span><span style="color:#75715e">d</span><span style="color:#75715e">e</span>
+})
+
+<span style="color:#75715e">//</span><span style="color:#75715e"> </span><span style="color:#75715e">写</span><span style="color:#75715e">法</span><span style="color:#75715e"> </span><span style="color:#75715e">2</span><span style="color:#75715e">（</span><span style="color:#75715e">单</span><span style="color:#75715e">尾</span><span style="color:#75715e">闭</span><span style="color:#75715e">包</span><span style="color:#75715e">精</span><span style="color:#75715e">简</span><span style="color:#75715e">写</span><span style="color:#75715e">法</span><span style="color:#75715e">）</span>
+UIView.animate(withDuration: <span style="color:#ae81ff">0.25</span>, animations: {
+  <span style="color:#75715e">//</span><span style="color:#75715e"> </span><span style="color:#75715e">a</span><span style="color:#75715e">n</span><span style="color:#75715e">i</span><span style="color:#75715e">m</span><span style="color:#75715e">a</span><span style="color:#75715e">t</span><span style="color:#75715e">i</span><span style="color:#75715e">o</span><span style="color:#75715e">n</span><span style="color:#75715e"> </span><span style="color:#75715e">c</span><span style="color:#75715e">o</span><span style="color:#75715e">d</span><span style="color:#75715e">e</span>
+}) { completed <span style="color:#66d9ef">in</span>
+  <span style="color:#75715e">//</span><span style="color:#75715e"> </span><span style="color:#75715e">c</span><span style="color:#75715e">o</span><span style="color:#75715e">m</span><span style="color:#75715e">p</span><span style="color:#75715e">l</span><span style="color:#75715e">e</span><span style="color:#75715e">t</span><span style="color:#75715e">i</span><span style="color:#75715e">o</span><span style="color:#75715e">n</span><span style="color:#75715e"> </span><span style="color:#75715e">c</span><span style="color:#75715e">o</span><span style="color:#75715e">d</span><span style="color:#75715e">e</span>
+}
+</code></pre></div><h2 id="现在">现在</h2>
+<p>而在<code>Swift 5.3</code>中，同一个函数的多尾闭包有了新的精简模式。在第一闭包之后可以使用标签的方式来使用尾闭包。这种新的写法把<!-- raw HTML omitted -->最后的连续几个闭包参数都算作是尾闭包<!-- raw HTML omitted -->，这些闭包都可以放在圆括号外面。</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift">UIView.animate(withDuration: <span style="color:#ae81ff">0.3</span>) {
+    <span style="color:#66d9ef">self</span>.view.alpha = <span style="color:#ae81ff">0</span>
+} completion: { <span style="color:#66d9ef">_</span> <span style="color:#66d9ef">in</span>
+    <span style="color:#66d9ef">self</span>.view.removeFromSuperview()
+}
+</code></pre></div><p>但是，这些尾闭包中<!-- raw HTML omitted -->第一个闭包被强制省略标签<!-- raw HTML omitted -->。苹果的解释是：<!-- raw HTML omitted -->如果允许第一个尾闭包加上标签，那么开发者需要考虑是加好还是不加好<!-- raw HTML omitted -->，这会导致代码风格不一致，那么干脆禁了吧。也就是除了第一个尾闭包需要省略标签之外，<!-- raw HTML omitted -->其余的尾闭包都需有标签<!-- raw HTML omitted -->。</p>
 <p><a href="https://juejin.im/post/5ef57124e51d45347748f539">参考资料</a></p>
 <h1 id="多模式catch语句">多模式catch语句</h1>
 <h2 id="以前-1">以前</h2>
-<p>在<code>Swift 5.3</code>之前，捕获<font color=red>同一类型</font><code>Error</code>只能有一个<code>catch</code>，然后再使用<code>switch</code>语句区分同一类型<code>Error</code>中具体的哪种错误，如下所示：</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span><span style="color:#66d9ef">enum</span> <span style="color:#a6e22e">TaskError</span>: Error {
-</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">case</span> someRecoverableError
-</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">case</span> someFailure(msg: String)
-</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">case</span> anotherFailure(msg: String)
-</span></span><span style="display:flex;"><span>}
-</span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">performTask</span>() <span style="color:#66d9ef">throws</span> -&gt; String {
-</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">throw</span> TaskError.someFailure(msg: <span style="color:#e6db74">&#34;some Failure&#34;</span>)
-</span></span><span style="display:flex;"><span>}
-</span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">recover</span>() {
-</span></span><span style="display:flex;"><span>    <span style="color:#75715e">//</span>
-</span></span><span style="display:flex;"><span>}
-</span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span><span style="color:#66d9ef">do</span> {
-</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">try</span> performTask()
-</span></span><span style="display:flex;"><span>} <span style="color:#66d9ef">catch</span> <span style="color:#66d9ef">let</span> error <span style="color:#66d9ef">as</span> TaskError {
-</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">switch</span> error {
-</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">case</span> .someFailure(<span style="color:#66d9ef">let</span> msg), .anotherFailure(<span style="color:#66d9ef">let</span> msg):
-</span></span><span style="display:flex;"><span>        debugPrint(msg)
-</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">case</span> .someRecoverableError:
-</span></span><span style="display:flex;"><span>        recover()
-</span></span><span style="display:flex;"><span>    }
-</span></span><span style="display:flex;"><span>}
-</span></span></code></pre></div><h2 id="现在-1">现在</h2>
-<p><code>Swift 5.3</code>可以使用多个<code>catch</code>块捕获<font color=red>同一类型不同类错误</font>，这个特性使得代码具有<font color=Blue>更好的可读性，并且能够有效减少代码行数</font>：</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span><span style="color:#66d9ef">do</span> {
-</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">try</span> performTask()
-</span></span><span style="display:flex;"><span>} <span style="color:#66d9ef">catch</span> TaskError.someRecoverableError {
-</span></span><span style="display:flex;"><span>    recover()
-</span></span><span style="display:flex;"><span>} <span style="color:#66d9ef">catch</span> TaskError.someFailure(<span style="color:#66d9ef">let</span> msg), TaskError.anotherFailure(<span style="color:#66d9ef">let</span> msg) {
-</span></span><span style="display:flex;"><span>    debugPrint(msg)
-</span></span><span style="display:flex;"><span>}
-</span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span><span style="color:#66d9ef">enum</span> <span style="color:#a6e22e">TemperatureError</span>: Error {
-</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">case</span> tooCold, tooHot
-</span></span><span style="display:flex;"><span>}
-</span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">getReactorTemperature</span>() -&gt; Int {
-</span></span><span style="display:flex;"><span>    <span style="color:#ae81ff">90</span>
-</span></span><span style="display:flex;"><span>}
-</span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">checkReactorOperational</span>() <span style="color:#66d9ef">throws</span> -&gt; String {
-</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">let</span> temp = getReactorTemperature()
-</span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">if</span> temp <span style="color:#f92672">&lt;</span> <span style="color:#ae81ff">10</span> {
-</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">throw</span> TemperatureError.tooCold
-</span></span><span style="display:flex;"><span>    } <span style="color:#66d9ef">else</span> <span style="color:#66d9ef">if</span> temp <span style="color:#f92672">&gt;</span> <span style="color:#ae81ff">90</span> {
-</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">throw</span> TemperatureError.tooHot
-</span></span><span style="display:flex;"><span>    } <span style="color:#66d9ef">else</span> {
-</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">return</span> <span style="color:#e6db74">&#34;OK&#34;</span>
-</span></span><span style="display:flex;"><span>    }
-</span></span><span style="display:flex;"><span>}
-</span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span><span style="color:#66d9ef">do</span> {
-</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">let</span> result = <span style="color:#66d9ef">try</span> checkReactorOperational()
-</span></span><span style="display:flex;"><span>    print(<span style="color:#e6db74">&#34;结果: </span><span style="color:#e6db74">\(</span>result<span style="color:#e6db74">)</span><span style="color:#e6db74">&#34;</span>)
-</span></span><span style="display:flex;"><span>} <span style="color:#66d9ef">catch</span> TemperatureError.tooHot, TemperatureError.tooCold {
-</span></span><span style="display:flex;"><span>   <span style="color:#75715e">// 捕获多个异常</span>
-</span></span><span style="display:flex;"><span>    debugPrint(<span style="color:#e6db74">&#34;关闭反应堆&#34;</span>)
-</span></span><span style="display:flex;"><span>} <span style="color:#66d9ef">catch</span> {
-</span></span><span style="display:flex;"><span>    debugPrint(<span style="color:#e6db74">&#34;未知错误&#34;</span>)
-</span></span><span style="display:flex;"><span>}
-</span></span></code></pre></div><h1 id="枚举comparable">枚举Comparable</h1>
+<p>在<code>Swift 5.3</code>之前，捕获<!-- raw HTML omitted -->同一类型<!-- raw HTML omitted --><code>Error</code>只能有一个<code>catch</code>，然后再使用<code>switch</code>语句区分同一类型<code>Error</code>中具体的哪种错误，如下所示：</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift"><span style="color:#66d9ef">enum</span> <span style="color:#a6e22e">TaskError</span>: Error {
+    <span style="color:#66d9ef">case</span> someRecoverableError
+    <span style="color:#66d9ef">case</span> someFailure(msg: String)
+    <span style="color:#66d9ef">case</span> anotherFailure(msg: String)
+}
+
+<span style="color:#66d9ef">func</span> <span style="color:#a6e22e">performTask</span>() <span style="color:#66d9ef">throws</span> -&gt; String {
+    <span style="color:#66d9ef">throw</span> TaskError.someFailure(msg: <span style="color:#e6db74">&#34;</span><span style="color:#e6db74">some Failure</span><span style="color:#e6db74">&#34;</span>)
+}
+
+<span style="color:#66d9ef">func</span> <span style="color:#a6e22e">recover</span>() {
+    <span style="color:#75715e">//</span>
+}
+
+<span style="color:#66d9ef">do</span> {
+    <span style="color:#66d9ef">try</span> performTask()
+} <span style="color:#66d9ef">catch</span> <span style="color:#66d9ef">let</span> error <span style="color:#66d9ef">as</span> TaskError {
+    <span style="color:#66d9ef">switch</span> error {
+    <span style="color:#66d9ef">case</span> .someFailure(<span style="color:#66d9ef">let</span> msg), .anotherFailure(<span style="color:#66d9ef">let</span> msg):
+        debugPrint(msg)
+    <span style="color:#66d9ef">case</span> .someRecoverableError:
+        recover()
+    }
+}
+
+</code></pre></div><h2 id="现在-1">现在</h2>
+<p><code>Swift 5.3</code>可以使用多个<code>catch</code>块捕获<!-- raw HTML omitted -->同一类型不同类错误<!-- raw HTML omitted -->，这个特性使得代码具有<!-- raw HTML omitted -->更好的可读性，并且能够有效减少代码行数<!-- raw HTML omitted -->：</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift"><span style="color:#66d9ef">do</span> {
+    <span style="color:#66d9ef">try</span> performTask()
+} <span style="color:#66d9ef">catch</span> TaskError.someRecoverableError {
+    recover()
+} <span style="color:#66d9ef">catch</span> TaskError.someFailure(<span style="color:#66d9ef">let</span> msg), TaskError.anotherFailure(<span style="color:#66d9ef">let</span> msg) {
+    debugPrint(msg)
+}
+
+<span style="color:#66d9ef">enum</span> <span style="color:#a6e22e">TemperatureError</span>: Error {
+    <span style="color:#66d9ef">case</span> tooCold, tooHot
+}
+
+<span style="color:#66d9ef">func</span> <span style="color:#a6e22e">getReactorTemperature</span>() -&gt; Int {
+    <span style="color:#ae81ff">90</span>
+}
+
+<span style="color:#66d9ef">func</span> <span style="color:#a6e22e">checkReactorOperational</span>() <span style="color:#66d9ef">throws</span> -&gt; String {
+    <span style="color:#66d9ef">let</span> temp = getReactorTemperature()
+
+    <span style="color:#66d9ef">if</span> temp <span style="color:#f92672">&lt;</span> <span style="color:#ae81ff">10</span> {
+        <span style="color:#66d9ef">throw</span> TemperatureError.tooCold
+    } <span style="color:#66d9ef">else</span> <span style="color:#66d9ef">if</span> temp <span style="color:#f92672">&gt;</span> <span style="color:#ae81ff">90</span> {
+        <span style="color:#66d9ef">throw</span> TemperatureError.tooHot
+    } <span style="color:#66d9ef">else</span> {
+        <span style="color:#66d9ef">return</span> <span style="color:#e6db74">&#34;</span><span style="color:#e6db74">OK</span><span style="color:#e6db74">&#34;</span>
+    }
+}
+
+<span style="color:#66d9ef">do</span> {
+    <span style="color:#66d9ef">let</span> result = <span style="color:#66d9ef">try</span> checkReactorOperational()
+    print(<span style="color:#e6db74">&#34;</span><span style="color:#e6db74">结果: </span><span style="color:#e6db74">\(</span>result<span style="color:#e6db74">)</span><span style="color:#e6db74">&#34;</span>)
+} <span style="color:#66d9ef">catch</span> TemperatureError.tooHot, TemperatureError.tooCold {
+   <span style="color:#75715e">//</span><span style="color:#75715e"> </span><span style="color:#75715e">捕</span><span style="color:#75715e">获</span><span style="color:#75715e">多</span><span style="color:#75715e">个</span><span style="color:#75715e">异</span><span style="color:#75715e">常</span>
+    debugPrint(<span style="color:#e6db74">&#34;</span><span style="color:#e6db74">关闭反应堆</span><span style="color:#e6db74">&#34;</span>)
+} <span style="color:#66d9ef">catch</span> {
+    debugPrint(<span style="color:#e6db74">&#34;</span><span style="color:#e6db74">未知错误</span><span style="color:#e6db74">&#34;</span>)
+}
+
+</code></pre></div><h1 id="枚举comparable">枚举Comparable</h1>
 <h2 id="之前">之前</h2>
 <p>在<code>Swift 5.3</code>之前，如果需要比较<code>enum</code>，则需要<code>enum</code>遵循<code>Comparable</code>协议，并且需要实现<code>&lt;</code>和<code>minimum</code>方法，但是这种代码极难维护，因为如果添加一个枚举值，则需要更新<code>&lt;</code>和<code>minimum</code>方法，才能比较<code>enum</code>，否则会报错：</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span><span style="color:#66d9ef">enum</span> <span style="color:#a6e22e">Volume</span>: Comparable {
-</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">case</span> low
-</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">case</span> medium
-</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">case</span> high
-</span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">private</span> <span style="color:#66d9ef">static</span> <span style="color:#66d9ef">func</span> <span style="color:#a6e22e">minium</span>(<span style="color:#66d9ef">_</span> lhs: <span style="color:#66d9ef">Self</span>, <span style="color:#66d9ef">_</span> rhs: <span style="color:#66d9ef">Self</span>) -&gt; <span style="color:#66d9ef">Self</span> {
-</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">switch</span> (lhs, rhs) {
-</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">case</span> (.low, <span style="color:#66d9ef">_</span>), (<span style="color:#66d9ef">_</span>, .low):
-</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">return</span> .low
-</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">case</span> (.medium, <span style="color:#66d9ef">_</span>), (<span style="color:#66d9ef">_</span>, .medium):
-</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">return</span> .medium
-</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">case</span> (.high, <span style="color:#66d9ef">_</span>), (<span style="color:#66d9ef">_</span>, .high):
-</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">return</span> .high
-</span></span><span style="display:flex;"><span>        }
-</span></span><span style="display:flex;"><span>    }
-</span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">private</span> <span style="color:#66d9ef">static</span> <span style="color:#66d9ef">func</span> <span style="color:#f92672">&lt;</span> (<span style="color:#66d9ef">_</span> lhs: <span style="color:#66d9ef">Self</span>, <span style="color:#66d9ef">_</span> rhs: <span style="color:#66d9ef">Self</span>) -&gt; Bool {
-</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">return</span> (lhs <span style="color:#f92672">!=</span> rhs) <span style="color:#f92672">&amp;&amp;</span> (lhs == <span style="color:#66d9ef">self</span>.minium(lhs, rhs))
-</span></span><span style="display:flex;"><span>    }
-</span></span><span style="display:flex;"><span>}
-</span></span></code></pre></div><p>可以使用扩展的方式解决上面的比较问题，即在扩展中添加一个容易比较的计算属性值，在实现静态方法<code>&lt;</code>时，使用自定义的<code>comparableValue</code>即可：</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span><span style="color:#66d9ef">private</span> <span style="color:#66d9ef">var</span> comparableValue: Int {
-</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">switch</span> <span style="color:#66d9ef">self</span> {
-</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">case</span> .low:
-</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">return</span> <span style="color:#ae81ff">0</span>
-</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">case</span> .medium:
-</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">return</span> <span style="color:#ae81ff">1</span>
-</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">case</span> .high:
-</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">return</span> <span style="color:#ae81ff">2</span>
-</span></span><span style="display:flex;"><span>    }
-</span></span><span style="display:flex;"><span>}
-</span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span><span style="color:#66d9ef">private</span> <span style="color:#66d9ef">static</span> <span style="color:#66d9ef">func</span> <span style="color:#f92672">&lt;</span> (<span style="color:#66d9ef">_</span> lhs: <span style="color:#66d9ef">Self</span>, <span style="color:#66d9ef">_</span> rhs: <span style="color:#66d9ef">Self</span>) -&gt; Bool {
-</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">return</span> lhs.comparableValue <span style="color:#f92672">&lt;</span> rhs.comparableValue
-</span></span><span style="display:flex;"><span>}
-</span></span></code></pre></div><h2 id="现在-2">现在</h2>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift"><span style="color:#66d9ef">enum</span> <span style="color:#a6e22e">Volume</span>: Comparable {
+    <span style="color:#66d9ef">case</span> low
+    <span style="color:#66d9ef">case</span> medium
+    <span style="color:#66d9ef">case</span> high
+
+    <span style="color:#66d9ef">private</span> <span style="color:#66d9ef">static</span> <span style="color:#66d9ef">func</span> <span style="color:#a6e22e">minium</span>(<span style="color:#66d9ef">_</span> lhs: <span style="color:#66d9ef">Self</span>, <span style="color:#66d9ef">_</span> rhs: <span style="color:#66d9ef">Self</span>) -&gt; <span style="color:#66d9ef">Self</span> {
+        <span style="color:#66d9ef">switch</span> (lhs, rhs) {
+        <span style="color:#66d9ef">case</span> (.low, <span style="color:#66d9ef">_</span>), (<span style="color:#66d9ef">_</span>, .low):
+            <span style="color:#66d9ef">return</span> .low
+        <span style="color:#66d9ef">case</span> (.medium, <span style="color:#66d9ef">_</span>), (<span style="color:#66d9ef">_</span>, .medium):
+            <span style="color:#66d9ef">return</span> .medium
+        <span style="color:#66d9ef">case</span> (.high, <span style="color:#66d9ef">_</span>), (<span style="color:#66d9ef">_</span>, .high):
+            <span style="color:#66d9ef">return</span> .high
+        }
+    }
+
+    <span style="color:#66d9ef">private</span> <span style="color:#66d9ef">static</span> <span style="color:#66d9ef">func</span> <span style="color:#f92672">&lt;</span> (<span style="color:#66d9ef">_</span> lhs: <span style="color:#66d9ef">Self</span>, <span style="color:#66d9ef">_</span> rhs: <span style="color:#66d9ef">Self</span>) -&gt; Bool {
+        <span style="color:#66d9ef">return</span> (lhs <span style="color:#f92672">!=</span> rhs) <span style="color:#f92672">&amp;&amp;</span> (lhs == <span style="color:#66d9ef">self</span>.minium(lhs, rhs))
+    }
+}
+</code></pre></div><p>可以使用扩展的方式解决上面的比较问题，即在扩展中添加一个容易比较的计算属性值，在实现静态方法<code>&lt;</code>时，使用自定义的<code>comparableValue</code>即可：</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift"><span style="color:#66d9ef">private</span> <span style="color:#66d9ef">var</span> comparableValue: Int {
+    <span style="color:#66d9ef">switch</span> <span style="color:#66d9ef">self</span> {
+    <span style="color:#66d9ef">case</span> .low:
+        <span style="color:#66d9ef">return</span> <span style="color:#ae81ff">0</span>
+    <span style="color:#66d9ef">case</span> .medium:
+        <span style="color:#66d9ef">return</span> <span style="color:#ae81ff">1</span>
+    <span style="color:#66d9ef">case</span> .high:
+        <span style="color:#66d9ef">return</span> <span style="color:#ae81ff">2</span>
+    }
+}
+
+<span style="color:#66d9ef">private</span> <span style="color:#66d9ef">static</span> <span style="color:#66d9ef">func</span> <span style="color:#f92672">&lt;</span> (<span style="color:#66d9ef">_</span> lhs: <span style="color:#66d9ef">Self</span>, <span style="color:#66d9ef">_</span> rhs: <span style="color:#66d9ef">Self</span>) -&gt; Bool {
+    <span style="color:#66d9ef">return</span> lhs.comparableValue <span style="color:#f92672">&lt;</span> rhs.comparableValue
+}
+</code></pre></div><h2 id="现在-2">现在</h2>
 <p>在<code>Swift 5.3</code>中，只要<code>enum</code>没有关联值或者只有一个<code>Comparable</code>的关联值，则会自动实现实现<code>&lt;</code>和<code>minimum</code>方法，定义的<code>enum</code>直接可以进行比较：</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span><span style="color:#66d9ef">enum</span> <span style="color:#a6e22e">Size</span>: Comparable {
-</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">case</span> small(Int)
-</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">case</span> medium
-</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">case</span> large(Int)
-</span></span><span style="display:flex;"><span>}
-</span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span><span style="color:#66d9ef">let</span> sizes: [Size] = [.medium, .small(<span style="color:#ae81ff">4</span>), .large(<span style="color:#ae81ff">5</span>), .large(<span style="color:#ae81ff">1</span>), .small(<span style="color:#ae81ff">1</span>)]
-</span></span><span style="display:flex;"><span>debugPrint(sizes.sorted())
-</span></span><span style="display:flex;"><span><span style="color:#75715e">//[__lldb_expr_13.Size.small(1), __lldb_expr_13.Size.small(4), __lldb_expr_13.Size.medium, __lldb_expr_13.Size.large(1), __lldb_expr_13.Size.large(5)]</span>
-</span></span></code></pre></div><h1 id="self的省略">self的省略</h1>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift"><span style="color:#66d9ef">enum</span> <span style="color:#a6e22e">Size</span>: Comparable {
+    <span style="color:#66d9ef">case</span> small(Int)
+    <span style="color:#66d9ef">case</span> medium
+    <span style="color:#66d9ef">case</span> large(Int)
+}
+
+<span style="color:#66d9ef">let</span> sizes: [Size] = [.medium, .small(<span style="color:#ae81ff">4</span>), .large(<span style="color:#ae81ff">5</span>), .large(<span style="color:#ae81ff">1</span>), .small(<span style="color:#ae81ff">1</span>)]
+debugPrint(sizes.sorted())
+<span style="color:#75715e">//</span><span style="color:#75715e">[</span><span style="color:#75715e">_</span><span style="color:#75715e">_</span><span style="color:#75715e">l</span><span style="color:#75715e">l</span><span style="color:#75715e">d</span><span style="color:#75715e">b</span><span style="color:#75715e">_</span><span style="color:#75715e">e</span><span style="color:#75715e">x</span><span style="color:#75715e">p</span><span style="color:#75715e">r</span><span style="color:#75715e">_</span><span style="color:#75715e">1</span><span style="color:#75715e">3</span><span style="color:#75715e">.</span><span style="color:#75715e">S</span><span style="color:#75715e">i</span><span style="color:#75715e">z</span><span style="color:#75715e">e</span><span style="color:#75715e">.</span><span style="color:#75715e">s</span><span style="color:#75715e">m</span><span style="color:#75715e">a</span><span style="color:#75715e">l</span><span style="color:#75715e">l</span><span style="color:#75715e">(</span><span style="color:#75715e">1</span><span style="color:#75715e">)</span><span style="color:#75715e">,</span><span style="color:#75715e"> </span><span style="color:#75715e">_</span><span style="color:#75715e">_</span><span style="color:#75715e">l</span><span style="color:#75715e">l</span><span style="color:#75715e">d</span><span style="color:#75715e">b</span><span style="color:#75715e">_</span><span style="color:#75715e">e</span><span style="color:#75715e">x</span><span style="color:#75715e">p</span><span style="color:#75715e">r</span><span style="color:#75715e">_</span><span style="color:#75715e">1</span><span style="color:#75715e">3</span><span style="color:#75715e">.</span><span style="color:#75715e">S</span><span style="color:#75715e">i</span><span style="color:#75715e">z</span><span style="color:#75715e">e</span><span style="color:#75715e">.</span><span style="color:#75715e">s</span><span style="color:#75715e">m</span><span style="color:#75715e">a</span><span style="color:#75715e">l</span><span style="color:#75715e">l</span><span style="color:#75715e">(</span><span style="color:#75715e">4</span><span style="color:#75715e">)</span><span style="color:#75715e">,</span><span style="color:#75715e"> </span><span style="color:#75715e">_</span><span style="color:#75715e">_</span><span style="color:#75715e">l</span><span style="color:#75715e">l</span><span style="color:#75715e">d</span><span style="color:#75715e">b</span><span style="color:#75715e">_</span><span style="color:#75715e">e</span><span style="color:#75715e">x</span><span style="color:#75715e">p</span><span style="color:#75715e">r</span><span style="color:#75715e">_</span><span style="color:#75715e">1</span><span style="color:#75715e">3</span><span style="color:#75715e">.</span><span style="color:#75715e">S</span><span style="color:#75715e">i</span><span style="color:#75715e">z</span><span style="color:#75715e">e</span><span style="color:#75715e">.</span><span style="color:#75715e">m</span><span style="color:#75715e">e</span><span style="color:#75715e">d</span><span style="color:#75715e">i</span><span style="color:#75715e">u</span><span style="color:#75715e">m</span><span style="color:#75715e">,</span><span style="color:#75715e"> </span><span style="color:#75715e">_</span><span style="color:#75715e">_</span><span style="color:#75715e">l</span><span style="color:#75715e">l</span><span style="color:#75715e">d</span><span style="color:#75715e">b</span><span style="color:#75715e">_</span><span style="color:#75715e">e</span><span style="color:#75715e">x</span><span style="color:#75715e">p</span><span style="color:#75715e">r</span><span style="color:#75715e">_</span><span style="color:#75715e">1</span><span style="color:#75715e">3</span><span style="color:#75715e">.</span><span style="color:#75715e">S</span><span style="color:#75715e">i</span><span style="color:#75715e">z</span><span style="color:#75715e">e</span><span style="color:#75715e">.</span><span style="color:#75715e">l</span><span style="color:#75715e">a</span><span style="color:#75715e">r</span><span style="color:#75715e">g</span><span style="color:#75715e">e</span><span style="color:#75715e">(</span><span style="color:#75715e">1</span><span style="color:#75715e">)</span><span style="color:#75715e">,</span><span style="color:#75715e"> </span><span style="color:#75715e">_</span><span style="color:#75715e">_</span><span style="color:#75715e">l</span><span style="color:#75715e">l</span><span style="color:#75715e">d</span><span style="color:#75715e">b</span><span style="color:#75715e">_</span><span style="color:#75715e">e</span><span style="color:#75715e">x</span><span style="color:#75715e">p</span><span style="color:#75715e">r</span><span style="color:#75715e">_</span><span style="color:#75715e">1</span><span style="color:#75715e">3</span><span style="color:#75715e">.</span><span style="color:#75715e">S</span><span style="color:#75715e">i</span><span style="color:#75715e">z</span><span style="color:#75715e">e</span><span style="color:#75715e">.</span><span style="color:#75715e">l</span><span style="color:#75715e">a</span><span style="color:#75715e">r</span><span style="color:#75715e">g</span><span style="color:#75715e">e</span><span style="color:#75715e">(</span><span style="color:#75715e">5</span><span style="color:#75715e">)</span><span style="color:#75715e">]</span>
+
+</code></pre></div><h1 id="self的省略">self的省略</h1>
 <h2 id="之前-1">之前</h2>
-<p>在<code>Swift 5.3</code>之前，在闭包中对当前对象的属性或方法的引用，都要明确添加<code>self</code>，<font color=LightSeaGreen>即便闭包不会产生循环引用时，也必须要添加</font>：</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span><span style="color:#66d9ef">struct</span> <span style="color:#a6e22e">SomeStruct</span> {
-</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">var</span> x = <span style="color:#ae81ff">0</span>
-</span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">func</span> <span style="color:#a6e22e">doSomething</span>(task: @escaping () -&gt; Void) {
-</span></span><span style="display:flex;"><span>        task()
-</span></span><span style="display:flex;"><span>    }
-</span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">func</span> <span style="color:#a6e22e">test</span>() {
-</span></span><span style="display:flex;"><span>        doSomething {
-</span></span><span style="display:flex;"><span>            <span style="color:#75715e">// 闭包中使用属性，需要显式添加self</span>
-</span></span><span style="display:flex;"><span>            debugPrint(<span style="color:#66d9ef">self</span>.x)
-</span></span><span style="display:flex;"><span>        }
-</span></span><span style="display:flex;"><span>    }
-</span></span><span style="display:flex;"><span>}
-</span></span></code></pre></div><h2 id="现在-3">现在</h2>
+<p>在<code>Swift 5.3</code>之前，在闭包中对当前对象的属性或方法的引用，都要明确添加<code>self</code>，<!-- raw HTML omitted -->即便闭包不会产生循环引用时，也必须要添加<!-- raw HTML omitted -->：</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift"><span style="color:#66d9ef">struct</span> <span style="color:#a6e22e">SomeStruct</span> {
+    <span style="color:#66d9ef">var</span> x = <span style="color:#ae81ff">0</span>
+
+    <span style="color:#66d9ef">func</span> <span style="color:#a6e22e">doSomething</span>(task: @escaping () -&gt; Void) {
+        task()
+    }
+
+    <span style="color:#66d9ef">func</span> <span style="color:#a6e22e">test</span>() {
+        doSomething {
+            <span style="color:#75715e">//</span><span style="color:#75715e"> </span><span style="color:#75715e">闭</span><span style="color:#75715e">包</span><span style="color:#75715e">中</span><span style="color:#75715e">使</span><span style="color:#75715e">用</span><span style="color:#75715e">属</span><span style="color:#75715e">性</span><span style="color:#75715e">，</span><span style="color:#75715e">需</span><span style="color:#75715e">要</span><span style="color:#75715e">显</span><span style="color:#75715e">式</span><span style="color:#75715e">添</span><span style="color:#75715e">加</span><span style="color:#75715e">s</span><span style="color:#75715e">e</span><span style="color:#75715e">l</span><span style="color:#75715e">f</span>
+            debugPrint(<span style="color:#66d9ef">self</span>.x)
+        }
+    }
+}
+</code></pre></div><h2 id="现在-3">现在</h2>
 <p>而在<code>Swift 5.3</code>中，在闭包中对当前对象的属性或方法的引用没有这样的限制，可以去除<code>self</code>，直接使用属性和方法，如下所示：</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span><span style="color:#66d9ef">struct</span> <span style="color:#a6e22e">SomeStruct</span> {
-</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">var</span> x = <span style="color:#ae81ff">0</span>
-</span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">func</span> <span style="color:#a6e22e">doSomething</span>(task: @escaping () -&gt; Void) {
-</span></span><span style="display:flex;"><span>        task()
-</span></span><span style="display:flex;"><span>    }
-</span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">func</span> <span style="color:#a6e22e">test</span>() {
-</span></span><span style="display:flex;"><span>        doSomething {
-</span></span><span style="display:flex;"><span>            debugPrint(x)
-</span></span><span style="display:flex;"><span>        }
-</span></span><span style="display:flex;"><span>    }
-</span></span><span style="display:flex;"><span>}
-</span></span></code></pre></div><p>还有一种新的方法在捕获列表中使用<code>self</code>，只需在捕获列表中加入<code>[self]</code>。这样就可以<font color=red>避免在闭包中反复使用<code>self</code></font>，如下所示：</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span><span style="color:#66d9ef">class</span> <span style="color:#a6e22e">SomeClass</span> {
-</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">var</span> x = <span style="color:#ae81ff">0</span>
-</span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">func</span> <span style="color:#a6e22e">doSomething</span>(task: @escaping () -&gt; Void) {
-</span></span><span style="display:flex;"><span>        task()
-</span></span><span style="display:flex;"><span>    }
-</span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">func</span> <span style="color:#a6e22e">newTest</span>() {
-</span></span><span style="display:flex;"><span>        doSomething { [<span style="color:#66d9ef">self</span>] <span style="color:#66d9ef">in</span>
-</span></span><span style="display:flex;"><span>            x <span style="color:#f92672">+=</span> <span style="color:#ae81ff">1</span>
-</span></span><span style="display:flex;"><span>            x = x <span style="color:#f92672">*</span> <span style="color:#ae81ff">5</span>
-</span></span><span style="display:flex;"><span>        }
-</span></span><span style="display:flex;"><span>    }
-</span></span><span style="display:flex;"><span>}
-</span></span></code></pre></div><p>但是对于在逃逸闭包中，为了防止循环引用时添加的<code>[weak self]</code>，在<code>Swift 5.3</code>中仍然不能省略，依旧需要添加<code>[weak self]</code>。</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift"><span style="color:#66d9ef">struct</span> <span style="color:#a6e22e">SomeStruct</span> {
+    <span style="color:#66d9ef">var</span> x = <span style="color:#ae81ff">0</span>
+
+    <span style="color:#66d9ef">func</span> <span style="color:#a6e22e">doSomething</span>(task: @escaping () -&gt; Void) {
+        task()
+    }
+
+    <span style="color:#66d9ef">func</span> <span style="color:#a6e22e">test</span>() {
+        doSomething {
+            debugPrint(x)
+        }
+    }
+}
+</code></pre></div><p>还有一种新的方法在捕获列表中使用<code>self</code>，只需在捕获列表中加入<code>[self]</code>。这样就可以<!-- raw HTML omitted -->避免在闭包中反复使用<code>self</code><!-- raw HTML omitted -->，如下所示：</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift"><span style="color:#66d9ef">class</span> <span style="color:#a6e22e">SomeClass</span> {
+    <span style="color:#66d9ef">var</span> x = <span style="color:#ae81ff">0</span>
+
+    <span style="color:#66d9ef">func</span> <span style="color:#a6e22e">doSomething</span>(task: @escaping () -&gt; Void) {
+        task()
+    }
+
+    <span style="color:#66d9ef">func</span> <span style="color:#a6e22e">newTest</span>() {
+        doSomething { [<span style="color:#66d9ef">self</span>] <span style="color:#66d9ef">in</span>
+            x <span style="color:#f92672">+=</span> <span style="color:#ae81ff">1</span>
+            x = x <span style="color:#f92672">*</span> <span style="color:#ae81ff">5</span>
+        }
+    }
+}
+</code></pre></div><p>但是对于在逃逸闭包中，为了防止循环引用时添加的<code>[weak self]</code>，在<code>Swift 5.3</code>中仍然不能省略，依旧需要添加<code>[weak self]</code>。</p>
 <p><a href="https://juejin.im/post/5ef5571ff265da22c8569c13">参考资料</a></p>
 <h1 id="main">main</h1>
 <p>直到<code>Swift 5.3</code>之前，开发一个<code>Swift</code>程序需要在<code>main.swft</code>文件中定义程序启动点。现在，能够用<code>@main</code>和静态<code>func main()</code>方法来标记一个结构或基类（在任何文件中），当程序启动时，它将被自动被调用：</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span>@main
-</span></span><span style="display:flex;"><span><span style="color:#66d9ef">struct</span> <span style="color:#a6e22e">TerminalApp</span> {
-</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">static</span> <span style="color:#66d9ef">func</span> <span style="color:#a6e22e">main</span>() {
-</span></span><span style="display:flex;"><span>        debugPrint(<span style="color:#e6db74">&#34;Hello Swift 5.3&#34;</span>)
-</span></span><span style="display:flex;"><span>    }
-</span></span><span style="display:flex;"><span>}
-</span></span></code></pre></div><p>但使用<code>@main</code>时，如果<code>main.swift</code>文件已经存在，就不应该使用它。因为<code>@main</code>应该在基类或结构体中使用，而且<font color=red>只应该定义一次</font>。</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift">@main
+<span style="color:#66d9ef">struct</span> <span style="color:#a6e22e">TerminalApp</span> {
+    <span style="color:#66d9ef">static</span> <span style="color:#66d9ef">func</span> <span style="color:#a6e22e">main</span>() {
+        debugPrint(<span style="color:#e6db74">&#34;</span><span style="color:#e6db74">Hello Swift 5.3</span><span style="color:#e6db74">&#34;</span>)
+    }
+}
+</code></pre></div><p>但使用<code>@main</code>时，如果<code>main.swift</code>文件已经存在，就不应该使用它。因为<code>@main</code>应该在基类或结构体中使用，而且<!-- raw HTML omitted -->只应该定义一次<!-- raw HTML omitted -->。</p>
 <h2 id="where">where</h2>
 <p>在<code>Swift 5.3</code>中可以在具有泛型和扩展的函数中使用<code>where</code>子句。如下所示<code>sorted</code>方法中要求<code>Element</code>遵循<code>Comparable</code>协议：</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span><span style="color:#66d9ef">struct</span> <span style="color:#a6e22e">Stack</span>&lt;Element&gt; {
-</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">private</span> <span style="color:#66d9ef">var</span> array = [Element]()
-</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">mutating</span> <span style="color:#66d9ef">func</span> <span style="color:#a6e22e">push</span>(<span style="color:#66d9ef">_</span> item: Element) {
-</span></span><span style="display:flex;"><span>        array.append(item)
-</span></span><span style="display:flex;"><span>    }
-</span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">mutating</span> <span style="color:#66d9ef">func</span> <span style="color:#a6e22e">pop</span>() -&gt; Element? {
-</span></span><span style="display:flex;"><span>        array.popLast()
-</span></span><span style="display:flex;"><span>    }
-</span></span><span style="display:flex;"><span>}
-</span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span><span style="color:#66d9ef">extension</span> <span style="color:#a6e22e">Stack</span> {
-</span></span><span style="display:flex;"><span>    <span style="color:#75715e">// where </span>
-</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">func</span> <span style="color:#a6e22e">sorted</span>() -&gt; [Element] <span style="color:#66d9ef">where</span> Element: Comparable {
-</span></span><span style="display:flex;"><span>        array.sorted()
-</span></span><span style="display:flex;"><span>    }
-</span></span><span style="display:flex;"><span>}
-</span></span></code></pre></div><h1 id="didset">didSet</h1>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift"><span style="color:#66d9ef">struct</span> <span style="color:#a6e22e">Stack</span>&lt;Element&gt; {
+    <span style="color:#66d9ef">private</span> <span style="color:#66d9ef">var</span> array = [Element]()
+    <span style="color:#66d9ef">mutating</span> <span style="color:#66d9ef">func</span> <span style="color:#a6e22e">push</span>(<span style="color:#66d9ef">_</span> item: Element) {
+        array.append(item)
+    }
+
+    <span style="color:#66d9ef">mutating</span> <span style="color:#66d9ef">func</span> <span style="color:#a6e22e">pop</span>() -&gt; Element? {
+        array.popLast()
+    }
+}
+
+<span style="color:#66d9ef">extension</span> <span style="color:#a6e22e">Stack</span> {
+    <span style="color:#75715e">//</span><span style="color:#75715e"> </span><span style="color:#75715e">w</span><span style="color:#75715e">h</span><span style="color:#75715e">e</span><span style="color:#75715e">r</span><span style="color:#75715e">e</span><span style="color:#75715e"> </span>
+    <span style="color:#66d9ef">func</span> <span style="color:#a6e22e">sorted</span>() -&gt; [Element] <span style="color:#66d9ef">where</span> Element: Comparable {
+        array.sorted()
+    }
+}
+</code></pre></div><h1 id="didset">didSet</h1>
 <p>在<code>Swift 5.3</code>中，<code>didSet</code>发生了一些变化：</p>
 <ul>
 <li>
@@ -485,9 +488,9 @@ code.has-jax {
 <p><a href="https://juejin.cn/post/6854573210839547912">参考资料</a></p>
 <h1 id="float16">Float16</h1>
 <p>因为在图像处理和机器学习领域，经常会使用<code>Float16</code>。所以<code>Swift 5.3</code>中标准库添加了<code>Float16</code>类型，<code>Float16</code>是一个半精度，即<code>16</code>位的浮点值类型。</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span>debugPrint(Float16.pi) <span style="color:#75715e">//3.14</span>
-</span></span><span style="display:flex;"><span>debugPrint(Float32.pi) <span style="color:#75715e">//3.1415925</span>
-</span></span></code></pre></div>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift">debugPrint(Float16.pi) <span style="color:#75715e">//</span><span style="color:#75715e">3</span><span style="color:#75715e">.</span><span style="color:#75715e">1</span><span style="color:#75715e">4</span>
+debugPrint(Float32.pi) <span style="color:#75715e">//</span><span style="color:#75715e">3</span><span style="color:#75715e">.</span><span style="color:#75715e">1</span><span style="color:#75715e">4</span><span style="color:#75715e">1</span><span style="color:#75715e">5</span><span style="color:#75715e">9</span><span style="color:#75715e">2</span><span style="color:#75715e">5</span>
+</code></pre></div>
     </div>
     <footer class="post-footer">
         
@@ -597,7 +600,7 @@ code.has-jax {
     <div class="site-state-item site-state-tags">
         <a href="https://iihui.github.io/tags/">
          
-        <span class="site-state-item-count">29</span>
+        <span class="site-state-item-count">28</span>
         
         <span class="site-state-item-name">标签</span>
         </a>
@@ -700,7 +703,6 @@ code.has-jax {
   <span class="with-love"><i class="fa fa-heart"></i></span>
   <span class="author" itemprop="copyrightHolder">Keep It Simple</span>
 </div>
-
 
 
 

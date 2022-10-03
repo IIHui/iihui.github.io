@@ -18,8 +18,8 @@
     <link href="https://iihui.github.io/js/vendor/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
     <link href="https://iihui.github.io/js/vendor/fancybox/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
     <link href="https://iihui.github.io/css/main.css" rel="stylesheet" type="text/css" />
+    <link href="https://iihui.github.io/css/custom.css" rel="stylesheet" type="text/css" />
     <link href="https://iihui.github.io/css/syntax.css" rel="stylesheet" type="text/css" />
-
     <script type="text/javascript" id="hexo.configuration">
   var NexT = window.NexT || {};
   var CONFIG = {
@@ -38,9 +38,9 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.1/languages/objectivec.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.1/languages/clojure.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.1/languages/cpp.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.1/languages/kotlin.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.1/languages/yaml.min.js"></script>
     <script>hljs.initHighlightingOnLoad();</script>
+
+
 </head>
 <body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
 <div class="container one-collumn sidebar-position-left page-home  ">
@@ -253,114 +253,115 @@ code.has-jax {
     </header>
     <div class="post-body" itemprop="articleBody">
     <h2 id="方法">方法</h2>
-<p>在Go中结构体就像是类的一种简化形式，方法就像类中的方法。<font color=red>方法是与对象实例绑定的特殊函数</font>，方法和函数定义语法区别在于:<font color=Blue>方法有前置实例接收参数<code>receiver</code>，编译器以此确定方法所属类型</font>。</p>
-<p>接收者类型<font color=Blue>几乎可以是任何类型</font>，不仅仅是结构体类型，甚至可以是函数类型。但是，有两种类型不可以有方法：</p>
+<p>在Go中结构体就像是类的一种简化形式，方法就像类中的方法。<!-- raw HTML omitted -->方法是与对象实例绑定的特殊函数<!-- raw HTML omitted -->，方法和函数定义语法区别在于:<!-- raw HTML omitted -->方法有前置实例接收参数<code>receiver</code>，编译器以此确定方法所属类型<!-- raw HTML omitted -->。</p>
+<p>接收者类型<!-- raw HTML omitted -->几乎可以是任何类型<!-- raw HTML omitted -->，不仅仅是结构体类型，甚至可以是函数类型。但是，有两种类型不可以有方法：</p>
 <ul>
 <li>
-<p>接收者<font color=red>不能是一个接口类型</font>， 因为接口是一个抽象定义，但是方法需要具体实现。</p>
+<p>接收者<!-- raw HTML omitted -->不能是一个接口类型<!-- raw HTML omitted -->， 因为接口是一个抽象定义，但是方法需要具体实现。</p>
 </li>
 <li>
-<p>接收者的类型<font color=Blue>不能是本身类型是指针的类型</font>，例如<code>type TP *int</code>,那么<code>TP</code>就不可以定义方法。</p>
+<p>接收者的类型<!-- raw HTML omitted -->不能是本身类型是指针的类型<!-- raw HTML omitted -->，例如<code>type TP *int</code>,那么<code>TP</code>就不可以定义方法。</p>
 </li>
 </ul>
-<p>一个<font color=Blue>类型加上它的方法等价于面向对象中的一个类</font>。在Go中，<font color=LightSeaGreen>类型的代码和绑定在它上面的方法的代码可以不放置在一起</font>，它们<font color=red>可以存在于不同的源文件，唯一的要求——它们必须在同一个包中</font>。</p>
+<p>一个<!-- raw HTML omitted -->类型加上它的方法等价于面向对象中的一个类<!-- raw HTML omitted -->。在Go中，<!-- raw HTML omitted -->类型的代码和绑定在它上面的方法的代码可以不放置在一起<!-- raw HTML omitted -->，它们<!-- raw HTML omitted -->可以存在于不同的源文件，唯一的要求——它们必须在同一个包中<!-- raw HTML omitted -->。</p>
 <hr>
 <h2 id="使用">使用</h2>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-go" data-lang="go"><span style="display:flex;"><span><span style="color:#f92672">package</span> <span style="color:#a6e22e">main</span>
-</span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span><span style="color:#f92672">import</span> (
-</span></span><span style="display:flex;"><span>	<span style="color:#e6db74">&#34;fmt&#34;</span>
-</span></span><span style="display:flex;"><span>)
-</span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span><span style="color:#66d9ef">type</span> <span style="color:#a6e22e">user</span> <span style="color:#66d9ef">struct</span> {
-</span></span><span style="display:flex;"><span>	<span style="color:#a6e22e">name</span>  <span style="color:#66d9ef">string</span>
-</span></span><span style="display:flex;"><span>	<span style="color:#a6e22e">email</span> <span style="color:#66d9ef">string</span>
-</span></span><span style="display:flex;"><span>}
-</span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span><span style="color:#75715e">// 使用user值类型作为接收者
-</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">func</span> (<span style="color:#a6e22e">u</span> <span style="color:#a6e22e">user</span>) <span style="color:#a6e22e">notify</span>() {
-</span></span><span style="display:flex;"><span>	<span style="color:#a6e22e">fmt</span>.<span style="color:#a6e22e">Printf</span>(<span style="color:#e6db74">&#34;Sending User Email To %s&lt;%s&gt;\n&#34;</span>, <span style="color:#a6e22e">u</span>.<span style="color:#a6e22e">name</span>, <span style="color:#a6e22e">u</span>.<span style="color:#a6e22e">email</span>)
-</span></span><span style="display:flex;"><span>}
-</span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span><span style="color:#75715e">// 使用指针类型作为接收者
-</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">func</span> (<span style="color:#a6e22e">u</span> <span style="color:#f92672">*</span><span style="color:#a6e22e">user</span>) <span style="color:#a6e22e">changeEmail</span>(<span style="color:#a6e22e">email</span> <span style="color:#66d9ef">string</span>) {
-</span></span><span style="display:flex;"><span>	<span style="color:#a6e22e">u</span>.<span style="color:#a6e22e">email</span> = <span style="color:#a6e22e">email</span>
-</span></span><span style="display:flex;"><span>}
-</span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span><span style="color:#75715e">//
-</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">main</span>() {
-</span></span><span style="display:flex;"><span>	<span style="color:#a6e22e">bill</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">user</span>{<span style="color:#e6db74">&#34;Bill&#34;</span>, <span style="color:#e6db74">&#34;bill@email.com&#34;</span>}
-</span></span><span style="display:flex;"><span>	<span style="color:#a6e22e">bill</span>.<span style="color:#a6e22e">notify</span>() <span style="color:#75715e">//值类型来调用方法
-</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>
-</span></span><span style="display:flex;"><span>	<span style="color:#a6e22e">lisa</span> <span style="color:#f92672">:=</span> <span style="color:#f92672">&amp;</span><span style="color:#a6e22e">user</span>{<span style="color:#e6db74">&#34;Lisa&#34;</span>, <span style="color:#e6db74">&#34;lisa@email.com&#34;</span>}
-</span></span><span style="display:flex;"><span>	<span style="color:#a6e22e">lisa</span>.<span style="color:#a6e22e">notify</span>() <span style="color:#75715e">//指向user类型值的指针也可以调用使用值类型作为接收者的方法
-</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>
-</span></span><span style="display:flex;"><span>	<span style="color:#a6e22e">bill</span>.<span style="color:#a6e22e">changeEmail</span>(<span style="color:#e6db74">&#34;bill@newdomain.com&#34;</span>)
-</span></span><span style="display:flex;"><span>	<span style="color:#a6e22e">bill</span>.<span style="color:#a6e22e">notify</span>() <span style="color:#75715e">//使用值来调用以指针作为接收者的类型
-</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>
-</span></span><span style="display:flex;"><span>	<span style="color:#a6e22e">lisa</span>.<span style="color:#a6e22e">changeEmail</span>(<span style="color:#e6db74">&#34;Lisa@newdomain.com&#34;</span>)
-</span></span><span style="display:flex;"><span>	<span style="color:#a6e22e">lisa</span>.<span style="color:#a6e22e">notify</span>()  <span style="color:#75715e">//指针类调用以指针类型作为接收者的类型
-</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>}
-</span></span></code></pre></div><hr>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#f92672">package</span> <span style="color:#a6e22e">main</span>
+
+<span style="color:#f92672">import</span> (
+	<span style="color:#e6db74">&#34;fmt&#34;</span>
+)
+
+<span style="color:#66d9ef">type</span> <span style="color:#a6e22e">user</span> <span style="color:#66d9ef">struct</span> {
+	<span style="color:#a6e22e">name</span>  <span style="color:#66d9ef">string</span>
+	<span style="color:#a6e22e">email</span> <span style="color:#66d9ef">string</span>
+}
+
+<span style="color:#75715e">// 使用user值类型作为接收者
+</span><span style="color:#75715e"></span><span style="color:#66d9ef">func</span> (<span style="color:#a6e22e">u</span> <span style="color:#a6e22e">user</span>) <span style="color:#a6e22e">notify</span>() {
+	<span style="color:#a6e22e">fmt</span>.<span style="color:#a6e22e">Printf</span>(<span style="color:#e6db74">&#34;Sending User Email To %s&lt;%s&gt;\n&#34;</span>, <span style="color:#a6e22e">u</span>.<span style="color:#a6e22e">name</span>, <span style="color:#a6e22e">u</span>.<span style="color:#a6e22e">email</span>)
+}
+
+<span style="color:#75715e">// 使用指针类型作为接收者
+</span><span style="color:#75715e"></span><span style="color:#66d9ef">func</span> (<span style="color:#a6e22e">u</span> <span style="color:#f92672">*</span><span style="color:#a6e22e">user</span>) <span style="color:#a6e22e">changeEmail</span>(<span style="color:#a6e22e">email</span> <span style="color:#66d9ef">string</span>) {
+	<span style="color:#a6e22e">u</span>.<span style="color:#a6e22e">email</span> = <span style="color:#a6e22e">email</span>
+}
+
+<span style="color:#75715e">//
+</span><span style="color:#75715e"></span><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">main</span>() {
+	<span style="color:#a6e22e">bill</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">user</span>{<span style="color:#e6db74">&#34;Bill&#34;</span>, <span style="color:#e6db74">&#34;bill@email.com&#34;</span>}
+	<span style="color:#a6e22e">bill</span>.<span style="color:#a6e22e">notify</span>() <span style="color:#75715e">//值类型来调用方法
+</span><span style="color:#75715e"></span>
+	<span style="color:#a6e22e">lisa</span> <span style="color:#f92672">:=</span> <span style="color:#f92672">&amp;</span><span style="color:#a6e22e">user</span>{<span style="color:#e6db74">&#34;Lisa&#34;</span>, <span style="color:#e6db74">&#34;lisa@email.com&#34;</span>}
+	<span style="color:#a6e22e">lisa</span>.<span style="color:#a6e22e">notify</span>() <span style="color:#75715e">//指向user类型值的指针也可以调用使用值类型作为接收者的方法
+</span><span style="color:#75715e"></span>
+	<span style="color:#a6e22e">bill</span>.<span style="color:#a6e22e">changeEmail</span>(<span style="color:#e6db74">&#34;bill@newdomain.com&#34;</span>)
+	<span style="color:#a6e22e">bill</span>.<span style="color:#a6e22e">notify</span>() <span style="color:#75715e">//使用值来调用以指针作为接收者的类型
+</span><span style="color:#75715e"></span>
+	<span style="color:#a6e22e">lisa</span>.<span style="color:#a6e22e">changeEmail</span>(<span style="color:#e6db74">&#34;Lisa@newdomain.com&#34;</span>)
+	<span style="color:#a6e22e">lisa</span>.<span style="color:#a6e22e">notify</span>()  <span style="color:#75715e">//指针类调用以指针类型作为接收者的类型
+</span><span style="color:#75715e"></span>}
+
+</code></pre></div><hr>
 <h2 id="注意事项">注意事项</h2>
 <ul>
 <li>
-<p>方法是一种特殊的函数，因此方法是<font color=Blue>不支持重载</font>的，即一个类型的方法集中的所有方法是不能够有同名的方法。</p>
+<p>方法是一种特殊的函数，因此方法是<!-- raw HTML omitted -->不支持重载<!-- raw HTML omitted -->的，即一个类型的方法集中的所有方法是不能够有同名的方法。</p>
 </li>
 <li>
-<p>如果<font color=LightSeaGreen>方法内部不引用实例，可省略参数名，仅保留类型</font>。</p>
+<p>如果<!-- raw HTML omitted -->方法内部不引用实例，可省略参数名，仅保留类型<!-- raw HTML omitted -->。</p>
 </li>
 <li>
-<p>接收者<code>receiver</code>类型可以是基础类型或指针类型，区别在于调用时对象实例是否被复制。<font color=red>值接收者使用值的副本来调用方法，而指针接受者使用实际值来调用方法</font>。</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-go" data-lang="go"><span style="display:flex;"><span><span style="color:#66d9ef">type</span> <span style="color:#a6e22e">N</span> <span style="color:#66d9ef">int</span>
-</span></span><span style="display:flex;"><span><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">TestMethod</span>() {
-</span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">var</span> <span style="color:#a6e22e">a</span> <span style="color:#a6e22e">N</span> = <span style="color:#ae81ff">25</span>
-</span></span><span style="display:flex;"><span>  <span style="color:#75715e">//println(a.toString())
-</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>  <span style="color:#a6e22e">a</span>.<span style="color:#a6e22e">value</span>()
-</span></span><span style="display:flex;"><span>  <span style="color:#a6e22e">fmt</span>.<span style="color:#a6e22e">Printf</span>(<span style="color:#e6db74">&#34;a: %p,%v\n&#34;</span>, <span style="color:#f92672">&amp;</span><span style="color:#a6e22e">a</span>, <span style="color:#a6e22e">a</span>)
-</span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span>  <span style="color:#a6e22e">a</span>.<span style="color:#a6e22e">pointer</span>()
-</span></span><span style="display:flex;"><span>  <span style="color:#a6e22e">fmt</span>.<span style="color:#a6e22e">Printf</span>(<span style="color:#e6db74">&#34;a: %p,%v\n&#34;</span>, <span style="color:#f92672">&amp;</span><span style="color:#a6e22e">a</span>, <span style="color:#a6e22e">a</span>)
-</span></span><span style="display:flex;"><span>}
-</span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span><span style="color:#66d9ef">func</span> (<span style="color:#a6e22e">n</span> <span style="color:#a6e22e">N</span>) <span style="color:#a6e22e">value</span>() { <span style="color:#75715e">//值类型的接受者，调用的时候会复制，所以n的值的更改不会体现到接收者的类型上来
-</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>  <span style="color:#a6e22e">n</span><span style="color:#f92672">++</span>
-</span></span><span style="display:flex;"><span>  <span style="color:#a6e22e">fmt</span>.<span style="color:#a6e22e">Printf</span>(<span style="color:#e6db74">&#34;v: %p,%v\n&#34;</span>, <span style="color:#f92672">&amp;</span><span style="color:#a6e22e">n</span>, <span style="color:#a6e22e">n</span>)
-</span></span><span style="display:flex;"><span>}
-</span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span><span style="color:#66d9ef">func</span> (<span style="color:#a6e22e">n</span> <span style="color:#f92672">*</span><span style="color:#a6e22e">N</span>) <span style="color:#a6e22e">pointer</span>() {
-</span></span><span style="display:flex;"><span>  (<span style="color:#f92672">*</span><span style="color:#a6e22e">n</span>)<span style="color:#f92672">++</span>
-</span></span><span style="display:flex;"><span>  <span style="color:#a6e22e">fmt</span>.<span style="color:#a6e22e">Printf</span>(<span style="color:#e6db74">&#34;p: %p, %v\n&#34;</span>, <span style="color:#a6e22e">n</span>, <span style="color:#f92672">*</span><span style="color:#a6e22e">n</span>)
-</span></span><span style="display:flex;"><span>}
-</span></span></code></pre></div></li>
+<p>接收者<code>receiver</code>类型可以是基础类型或指针类型，区别在于调用时对象实例是否被复制。<!-- raw HTML omitted -->值接收者使用值的副本来调用方法，而指针接受者使用实际值来调用方法<!-- raw HTML omitted -->。</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#66d9ef">type</span> <span style="color:#a6e22e">N</span> <span style="color:#66d9ef">int</span>
+<span style="color:#66d9ef">func</span> <span style="color:#a6e22e">TestMethod</span>() {
+  <span style="color:#66d9ef">var</span> <span style="color:#a6e22e">a</span> <span style="color:#a6e22e">N</span> = <span style="color:#ae81ff">25</span>
+  <span style="color:#75715e">//println(a.toString())
+</span><span style="color:#75715e"></span>  <span style="color:#a6e22e">a</span>.<span style="color:#a6e22e">value</span>()
+  <span style="color:#a6e22e">fmt</span>.<span style="color:#a6e22e">Printf</span>(<span style="color:#e6db74">&#34;a: %p,%v\n&#34;</span>, <span style="color:#f92672">&amp;</span><span style="color:#a6e22e">a</span>, <span style="color:#a6e22e">a</span>)
+
+  <span style="color:#a6e22e">a</span>.<span style="color:#a6e22e">pointer</span>()
+  <span style="color:#a6e22e">fmt</span>.<span style="color:#a6e22e">Printf</span>(<span style="color:#e6db74">&#34;a: %p,%v\n&#34;</span>, <span style="color:#f92672">&amp;</span><span style="color:#a6e22e">a</span>, <span style="color:#a6e22e">a</span>)
+}
+
+<span style="color:#66d9ef">func</span> (<span style="color:#a6e22e">n</span> <span style="color:#a6e22e">N</span>) <span style="color:#a6e22e">value</span>() { <span style="color:#75715e">//值类型的接受者，调用的时候会复制，所以n的值的更改不会体现到接收者的类型上来
+</span><span style="color:#75715e"></span>  <span style="color:#a6e22e">n</span><span style="color:#f92672">++</span>
+  <span style="color:#a6e22e">fmt</span>.<span style="color:#a6e22e">Printf</span>(<span style="color:#e6db74">&#34;v: %p,%v\n&#34;</span>, <span style="color:#f92672">&amp;</span><span style="color:#a6e22e">n</span>, <span style="color:#a6e22e">n</span>)
+}
+
+<span style="color:#66d9ef">func</span> (<span style="color:#a6e22e">n</span> <span style="color:#f92672">*</span><span style="color:#a6e22e">N</span>) <span style="color:#a6e22e">pointer</span>() {
+  (<span style="color:#f92672">*</span><span style="color:#a6e22e">n</span>)<span style="color:#f92672">++</span>
+  <span style="color:#a6e22e">fmt</span>.<span style="color:#a6e22e">Printf</span>(<span style="color:#e6db74">&#34;p: %p, %v\n&#34;</span>, <span style="color:#a6e22e">n</span>, <span style="color:#f92672">*</span><span style="color:#a6e22e">n</span>)
+}
+</code></pre></div></li>
 <li>
-<p>可使用实例值或者指针调用方法，<font color=red>编译器会根据方法<code>receiver</code>类型自动在基础类型和指针类型间转换</font>。</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-go" data-lang="go"><span style="display:flex;"><span><span style="color:#66d9ef">var</span> <span style="color:#a6e22e">a</span> <span style="color:#a6e22e">N</span> = <span style="color:#ae81ff">25</span>
-</span></span><span style="display:flex;"><span><span style="color:#a6e22e">p</span> <span style="color:#f92672">:=</span> <span style="color:#f92672">&amp;</span><span style="color:#a6e22e">a</span>
-</span></span><span style="display:flex;"><span><span style="color:#a6e22e">a</span>.<span style="color:#a6e22e">value</span>()
-</span></span><span style="display:flex;"><span><span style="color:#a6e22e">a</span>.<span style="color:#a6e22e">pointer</span>()
-</span></span><span style="display:flex;"><span><span style="color:#a6e22e">p</span>.<span style="color:#a6e22e">value</span>()
-</span></span><span style="display:flex;"><span><span style="color:#a6e22e">p</span>.<span style="color:#a6e22e">pointer</span>()
-</span></span></code></pre></div></li>
+<p>可使用实例值或者指针调用方法，<!-- raw HTML omitted -->编译器会根据方法<code>receiver</code>类型自动在基础类型和指针类型间转换<!-- raw HTML omitted -->。</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#66d9ef">var</span> <span style="color:#a6e22e">a</span> <span style="color:#a6e22e">N</span> = <span style="color:#ae81ff">25</span>
+<span style="color:#a6e22e">p</span> <span style="color:#f92672">:=</span> <span style="color:#f92672">&amp;</span><span style="color:#a6e22e">a</span>
+<span style="color:#a6e22e">a</span>.<span style="color:#a6e22e">value</span>()
+<span style="color:#a6e22e">a</span>.<span style="color:#a6e22e">pointer</span>()
+<span style="color:#a6e22e">p</span>.<span style="color:#a6e22e">value</span>()
+<span style="color:#a6e22e">p</span>.<span style="color:#a6e22e">pointer</span>()
+</code></pre></div></li>
 <li>
-<p>只能使用一级指针调用方法，<font color=red>不能使用多级指针调用方法</font>。</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-go" data-lang="go"><span style="display:flex;"><span><span style="color:#66d9ef">var</span> <span style="color:#a6e22e">a</span> <span style="color:#a6e22e">N</span> = <span style="color:#ae81ff">25</span>
-</span></span><span style="display:flex;"><span><span style="color:#a6e22e">p</span> <span style="color:#f92672">:=</span> <span style="color:#f92672">&amp;</span><span style="color:#a6e22e">a</span>
-</span></span><span style="display:flex;"><span><span style="color:#a6e22e">p2</span> <span style="color:#f92672">:=</span> <span style="color:#f92672">&amp;</span><span style="color:#a6e22e">p</span>
-</span></span><span style="display:flex;"><span><span style="color:#a6e22e">p2</span>.<span style="color:#a6e22e">value</span>() <span style="color:#75715e">//错误，使用多级指针
-</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#a6e22e">p2</span>.<span style="color:#a6e22e">pointer</span>() <span style="color:#75715e">//错误，使用多级指针调用
-</span></span></span></code></pre></div></li>
+<p>只能使用一级指针调用方法，<!-- raw HTML omitted -->不能使用多级指针调用方法<!-- raw HTML omitted -->。</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#66d9ef">var</span> <span style="color:#a6e22e">a</span> <span style="color:#a6e22e">N</span> = <span style="color:#ae81ff">25</span>
+<span style="color:#a6e22e">p</span> <span style="color:#f92672">:=</span> <span style="color:#f92672">&amp;</span><span style="color:#a6e22e">a</span>
+<span style="color:#a6e22e">p2</span> <span style="color:#f92672">:=</span> <span style="color:#f92672">&amp;</span><span style="color:#a6e22e">p</span>
+<span style="color:#a6e22e">p2</span>.<span style="color:#a6e22e">value</span>() <span style="color:#75715e">//错误，使用多级指针
+</span><span style="color:#75715e"></span><span style="color:#a6e22e">p2</span>.<span style="color:#a6e22e">pointer</span>() <span style="color:#75715e">//错误，使用多级指针调用
+</span></code></pre></div></li>
 <li>
-<p>指针类型的<code>receiver</code><font color=red>必须是合法地址（包括<code>nil</code>），或能获取实例的地址，</font>否则会出现运行时错误。</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-go" data-lang="go"><span style="display:flex;"><span><span style="color:#66d9ef">var</span> <span style="color:#a6e22e">b</span> <span style="color:#f92672">*</span> <span style="color:#a6e22e">N</span>
-</span></span><span style="display:flex;"><span><span style="color:#a6e22e">b</span>.<span style="color:#a6e22e">value</span>() <span style="color:#75715e">//b 相当于nil,可以调用，但是会出现运行时错误，因为没有指向具体实例，所以在传参数时出现错误
-</span></span></span><span style="display:flex;"><span><span style="color:#75715e">//N{}.pointer()
-</span></span></span></code></pre></div></li>
+<p>指针类型的<code>receiver</code><!-- raw HTML omitted -->必须是合法地址（包括<code>nil</code>），或能获取实例的地址，<!-- raw HTML omitted -->否则会出现运行时错误。</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#66d9ef">var</span> <span style="color:#a6e22e">b</span> <span style="color:#f92672">*</span> <span style="color:#a6e22e">N</span>
+<span style="color:#a6e22e">b</span>.<span style="color:#a6e22e">value</span>() <span style="color:#75715e">//b 相当于nil,可以调用，但是会出现运行时错误，因为没有指向具体实例，所以在传参数时出现错误
+</span><span style="color:#75715e"></span><span style="color:#75715e">//N{}.pointer()
+</span></code></pre></div></li>
 <li>
 <p>别名类型能定义方法的前提是其原始类型没有定义过该方法。</p>
 </li>
 <li>
-<p>在Go中<font color=red>类型和作用在它上面的方法必须在同一个包里定义，</font>这就是为什么不能在<code>int、float</code>或类似这样的标准类型上定义方法。有一个比较曲折的绕过这种规定的方式：可以<font color=Blue>先定义该类型（比如<code>int</code>或<code>float</code>）的别名类型，然后再为别名类型定义方法</font>。</p>
+<p>在Go中<!-- raw HTML omitted -->类型和作用在它上面的方法必须在同一个包里定义，<!-- raw HTML omitted -->这就是为什么不能在<code>int、float</code>或类似这样的标准类型上定义方法。有一个比较曲折的绕过这种规定的方式：可以<!-- raw HTML omitted -->先定义该类型（比如<code>int</code>或<code>float</code>）的别名类型，然后再为别名类型定义方法<!-- raw HTML omitted -->。</p>
 </li>
 </ul>
 <hr>
@@ -387,15 +388,15 @@ code.has-jax {
 </li>
 </ul>
 <p>可以像访问匿名字段那样调用其方法，由编译器负责查找，尽管可以直接访问匿名字段的成员和方法，但它们仍不属于继承关系</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-go" data-lang="go"><span style="display:flex;"><span><span style="color:#66d9ef">type</span> <span style="color:#a6e22e">data</span> <span style="color:#66d9ef">struct</span> {
-</span></span><span style="display:flex;"><span>	<span style="color:#a6e22e">sync</span>.<span style="color:#a6e22e">Mutex</span>
-</span></span><span style="display:flex;"><span>}
-</span></span><span style="display:flex;"><span><span style="color:#a6e22e">d</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">data</span>{}
-</span></span><span style="display:flex;"><span><span style="color:#a6e22e">d</span>.<span style="color:#a6e22e">Lock</span>()
-</span></span><span style="display:flex;"><span><span style="color:#66d9ef">defer</span> <span style="color:#a6e22e">d</span>.<span style="color:#a6e22e">Unlock</span>()
-</span></span></code></pre></div><hr>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#66d9ef">type</span> <span style="color:#a6e22e">data</span> <span style="color:#66d9ef">struct</span> {
+	<span style="color:#a6e22e">sync</span>.<span style="color:#a6e22e">Mutex</span>
+}
+<span style="color:#a6e22e">d</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">data</span>{}
+<span style="color:#a6e22e">d</span>.<span style="color:#a6e22e">Lock</span>()
+<span style="color:#66d9ef">defer</span> <span style="color:#a6e22e">d</span>.<span style="color:#a6e22e">Unlock</span>()
+</code></pre></div><hr>
 <h2 id="方法集">方法集</h2>
-<p>类型有一个与之对应的方法集，这决定了它是否实现某个接口。<font color=Blue>当一个匿名类型被内嵌在结构体中时，匿名类型的可见方法也同样被内嵌</font>。这在效果上等同于外层类型继承了这些方法。这个机制提供了一种简单的方式来<font color=red>模拟经典面向对象语言中的子类和继承相关的效果</font>。</p>
+<p>类型有一个与之对应的方法集，这决定了它是否实现某个接口。<!-- raw HTML omitted -->当一个匿名类型被内嵌在结构体中时，匿名类型的可见方法也同样被内嵌<!-- raw HTML omitted -->。这在效果上等同于外层类型继承了这些方法。这个机制提供了一种简单的方式来<!-- raw HTML omitted -->模拟经典面向对象语言中的子类和继承相关的效果<!-- raw HTML omitted -->。</p>
 <ol>
 <li>
 <p>类型<code>T</code>的方法集包含了所有的<code>receiver T</code>方法</p>
@@ -413,96 +414,96 @@ code.has-jax {
 <p>匿名嵌入<code>S</code>或<code>*S</code>，<code>*T</code>的方法集中包含所有<code>receiver S + *S</code>方法</p>
 </li>
 </ol>
-<p>和<font color=Blue>内嵌类型方法具有同样名字的外层类型的方法会覆写内嵌类型对应的方法</font>。</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-go" data-lang="go"><span style="display:flex;"><span><span style="color:#66d9ef">func</span> (<span style="color:#a6e22e">S</span>) <span style="color:#a6e22e">sVal</span>()  {}
-</span></span><span style="display:flex;"><span><span style="color:#66d9ef">func</span> (<span style="color:#f92672">*</span><span style="color:#a6e22e">S</span>) <span style="color:#a6e22e">sPtr</span>() {}
-</span></span><span style="display:flex;"><span><span style="color:#66d9ef">func</span> (<span style="color:#a6e22e">T</span>) <span style="color:#a6e22e">tVale</span>() {}
-</span></span><span style="display:flex;"><span><span style="color:#66d9ef">func</span> (<span style="color:#f92672">*</span><span style="color:#a6e22e">T</span>) <span style="color:#a6e22e">tPtr</span>() {}
-</span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">MethodSet</span>(<span style="color:#a6e22e">a</span> <span style="color:#66d9ef">interface</span>{}) {
-</span></span><span style="display:flex;"><span>	<span style="color:#a6e22e">t</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">reflect</span>.<span style="color:#a6e22e">TypeOf</span>(<span style="color:#a6e22e">a</span>)
-</span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span>	<span style="color:#66d9ef">for</span> <span style="color:#a6e22e">i</span>, <span style="color:#a6e22e">n</span> <span style="color:#f92672">:=</span> <span style="color:#ae81ff">0</span>, <span style="color:#a6e22e">t</span>.<span style="color:#a6e22e">NumMethod</span>(); <span style="color:#a6e22e">i</span> &lt; <span style="color:#a6e22e">n</span>; <span style="color:#a6e22e">i</span><span style="color:#f92672">++</span> {
-</span></span><span style="display:flex;"><span>		<span style="color:#a6e22e">m</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">t</span>.<span style="color:#a6e22e">Method</span>(<span style="color:#a6e22e">i</span>)
-</span></span><span style="display:flex;"><span>		<span style="color:#a6e22e">fmt</span>.<span style="color:#a6e22e">Println</span>(<span style="color:#a6e22e">m</span>.<span style="color:#a6e22e">Name</span>, <span style="color:#a6e22e">m</span>.<span style="color:#a6e22e">Type</span>)
-</span></span><span style="display:flex;"><span>	}
-</span></span><span style="display:flex;"><span>}
-</span></span></code></pre></div><hr>
+<p>和<!-- raw HTML omitted -->内嵌类型方法具有同样名字的外层类型的方法会覆写内嵌类型对应的方法<!-- raw HTML omitted -->。</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#66d9ef">func</span> (<span style="color:#a6e22e">S</span>) <span style="color:#a6e22e">sVal</span>()  {}
+<span style="color:#66d9ef">func</span> (<span style="color:#f92672">*</span><span style="color:#a6e22e">S</span>) <span style="color:#a6e22e">sPtr</span>() {}
+<span style="color:#66d9ef">func</span> (<span style="color:#a6e22e">T</span>) <span style="color:#a6e22e">tVale</span>() {}
+<span style="color:#66d9ef">func</span> (<span style="color:#f92672">*</span><span style="color:#a6e22e">T</span>) <span style="color:#a6e22e">tPtr</span>() {}
+
+<span style="color:#66d9ef">func</span> <span style="color:#a6e22e">MethodSet</span>(<span style="color:#a6e22e">a</span> <span style="color:#66d9ef">interface</span>{}) {
+	<span style="color:#a6e22e">t</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">reflect</span>.<span style="color:#a6e22e">TypeOf</span>(<span style="color:#a6e22e">a</span>)
+
+	<span style="color:#66d9ef">for</span> <span style="color:#a6e22e">i</span>, <span style="color:#a6e22e">n</span> <span style="color:#f92672">:=</span> <span style="color:#ae81ff">0</span>, <span style="color:#a6e22e">t</span>.<span style="color:#a6e22e">NumMethod</span>(); <span style="color:#a6e22e">i</span> &lt; <span style="color:#a6e22e">n</span>; <span style="color:#a6e22e">i</span><span style="color:#f92672">++</span> {
+		<span style="color:#a6e22e">m</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">t</span>.<span style="color:#a6e22e">Method</span>(<span style="color:#a6e22e">i</span>)
+		<span style="color:#a6e22e">fmt</span>.<span style="color:#a6e22e">Println</span>(<span style="color:#a6e22e">m</span>.<span style="color:#a6e22e">Name</span>, <span style="color:#a6e22e">m</span>.<span style="color:#a6e22e">Type</span>)
+	}
+}
+</code></pre></div><hr>
 <h2 id="方法表达式">方法表达式</h2>
 <p>方法和函数一样，除直接调用外，还可赋值变量，作为参数传递，依照具体的引用方法不同，分为 <code>expression</code> 和 <code>value</code> 两种。</p>
 <h3 id="method-expression">Method Expression</h3>
-<p>通过类型引用的<code>Method Expression</code><font color=red>会被还原成普通函数样式</font>,<code>receiver</code>是第一参数，调用时须显式传参，可以是<code>T</code>或<code>*T</code>，只要该方法存在于该类型方法集中即可。</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-go" data-lang="go"><span style="display:flex;"><span><span style="color:#66d9ef">type</span> <span style="color:#a6e22e">N</span> <span style="color:#66d9ef">int</span>
-</span></span><span style="display:flex;"><span><span style="color:#66d9ef">func</span> (<span style="color:#a6e22e">n</span> <span style="color:#a6e22e">N</span>) <span style="color:#a6e22e">test</span>() {
-</span></span><span style="display:flex;"><span>	<span style="color:#a6e22e">fmt</span>.<span style="color:#a6e22e">Printf</span>(<span style="color:#e6db74">&#34;test.n:,%p,%d\n&#34;</span>, <span style="color:#f92672">&amp;</span><span style="color:#a6e22e">n</span>, <span style="color:#a6e22e">n</span>)
-</span></span><span style="display:flex;"><span>}
-</span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span><span style="color:#66d9ef">var</span> <span style="color:#a6e22e">n</span> <span style="color:#a6e22e">N</span> = <span style="color:#ae81ff">25</span>
-</span></span><span style="display:flex;"><span><span style="color:#a6e22e">fmt</span>.<span style="color:#a6e22e">Printf</span>(<span style="color:#e6db74">&#34;main.n:,%p,%d\n&#34;</span>, <span style="color:#f92672">&amp;</span><span style="color:#a6e22e">n</span>, <span style="color:#a6e22e">n</span>)
-</span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span><span style="color:#a6e22e">f1</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">N</span>.<span style="color:#a6e22e">test</span>
-</span></span><span style="display:flex;"><span><span style="color:#a6e22e">f1</span>(<span style="color:#a6e22e">n</span>)
-</span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span><span style="color:#a6e22e">f2</span> <span style="color:#f92672">:=</span> (<span style="color:#f92672">*</span><span style="color:#a6e22e">N</span>).<span style="color:#a6e22e">test</span> <span style="color:#75715e">//尽管*N方法集包装test方法receiver类型不同，但编译器会保证按原定义类型拷贝传值
-</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#a6e22e">f2</span>(<span style="color:#f92672">&amp;</span><span style="color:#a6e22e">n</span>)
-</span></span><span style="display:flex;"><span><span style="color:#75715e">//main.n:,0xc42006e1a8,25
-</span></span></span><span style="display:flex;"><span><span style="color:#75715e">//test.n:,0xc42006e1c8,25
-</span></span></span><span style="display:flex;"><span><span style="color:#75715e">//test.n:,0xc42006e1d8,25
-</span></span></span></code></pre></div><p>还可以直接以表达式的方式调用</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-go" data-lang="go"><span style="display:flex;"><span><span style="color:#a6e22e">N</span>.<span style="color:#a6e22e">test</span>(<span style="color:#a6e22e">n</span>)
-</span></span><span style="display:flex;"><span>(<span style="color:#f92672">*</span><span style="color:#a6e22e">N</span>).<span style="color:#a6e22e">test</span>(<span style="color:#f92672">&amp;</span><span style="color:#a6e22e">n</span>)
-</span></span><span style="display:flex;"><span><span style="color:#75715e">//test.n:,0xc42006e1c8,25
-</span></span></span><span style="display:flex;"><span><span style="color:#75715e">//test.n:,0xc42006e1d8,25
-</span></span></span></code></pre></div><hr>
+<p>通过类型引用的<code>Method Expression</code><!-- raw HTML omitted -->会被还原成普通函数样式<!-- raw HTML omitted -->,<code>receiver</code>是第一参数，调用时须显式传参，可以是<code>T</code>或<code>*T</code>，只要该方法存在于该类型方法集中即可。</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#66d9ef">type</span> <span style="color:#a6e22e">N</span> <span style="color:#66d9ef">int</span>
+<span style="color:#66d9ef">func</span> (<span style="color:#a6e22e">n</span> <span style="color:#a6e22e">N</span>) <span style="color:#a6e22e">test</span>() {
+	<span style="color:#a6e22e">fmt</span>.<span style="color:#a6e22e">Printf</span>(<span style="color:#e6db74">&#34;test.n:,%p,%d\n&#34;</span>, <span style="color:#f92672">&amp;</span><span style="color:#a6e22e">n</span>, <span style="color:#a6e22e">n</span>)
+}
+
+<span style="color:#66d9ef">var</span> <span style="color:#a6e22e">n</span> <span style="color:#a6e22e">N</span> = <span style="color:#ae81ff">25</span>
+<span style="color:#a6e22e">fmt</span>.<span style="color:#a6e22e">Printf</span>(<span style="color:#e6db74">&#34;main.n:,%p,%d\n&#34;</span>, <span style="color:#f92672">&amp;</span><span style="color:#a6e22e">n</span>, <span style="color:#a6e22e">n</span>)
+
+<span style="color:#a6e22e">f1</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">N</span>.<span style="color:#a6e22e">test</span>
+<span style="color:#a6e22e">f1</span>(<span style="color:#a6e22e">n</span>)
+
+<span style="color:#a6e22e">f2</span> <span style="color:#f92672">:=</span> (<span style="color:#f92672">*</span><span style="color:#a6e22e">N</span>).<span style="color:#a6e22e">test</span> <span style="color:#75715e">//尽管*N方法集包装test方法receiver类型不同，但编译器会保证按原定义类型拷贝传值
+</span><span style="color:#75715e"></span><span style="color:#a6e22e">f2</span>(<span style="color:#f92672">&amp;</span><span style="color:#a6e22e">n</span>)
+<span style="color:#75715e">//main.n:,0xc42006e1a8,25
+</span><span style="color:#75715e"></span><span style="color:#75715e">//test.n:,0xc42006e1c8,25
+</span><span style="color:#75715e"></span><span style="color:#75715e">//test.n:,0xc42006e1d8,25
+</span></code></pre></div><p>还可以直接以表达式的方式调用</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#a6e22e">N</span>.<span style="color:#a6e22e">test</span>(<span style="color:#a6e22e">n</span>)
+(<span style="color:#f92672">*</span><span style="color:#a6e22e">N</span>).<span style="color:#a6e22e">test</span>(<span style="color:#f92672">&amp;</span><span style="color:#a6e22e">n</span>)
+<span style="color:#75715e">//test.n:,0xc42006e1c8,25
+</span><span style="color:#75715e"></span><span style="color:#75715e">//test.n:,0xc42006e1d8,25
+</span></code></pre></div><hr>
 <h3 id="method-value">Method Value</h3>
 <p>基于实例或指针引用的<code>method value</code>，参数签名不会改变，依旧按正常方式调用，但当<code>method value</code>被赋值给变量或作为参数传递时，会立即计算并复制该方法执行所需的<code>receiver</code>对象与其绑定，以便在稍后的执行时，能隐式传入<code>receiver</code>参数。</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-go" data-lang="go"><span style="display:flex;"><span><span style="color:#66d9ef">var</span> <span style="color:#a6e22e">n</span> <span style="color:#a6e22e">N</span> = <span style="color:#ae81ff">25</span>
-</span></span><span style="display:flex;"><span><span style="color:#a6e22e">p</span> <span style="color:#f92672">:=</span> <span style="color:#f92672">&amp;</span><span style="color:#a6e22e">n</span>
-</span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span><span style="color:#a6e22e">n</span><span style="color:#f92672">++</span>
-</span></span><span style="display:flex;"><span><span style="color:#a6e22e">t1</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">n</span>.<span style="color:#a6e22e">test</span>
-</span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span><span style="color:#a6e22e">n</span><span style="color:#f92672">++</span>
-</span></span><span style="display:flex;"><span><span style="color:#a6e22e">t2</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">p</span>.<span style="color:#a6e22e">test</span>
-</span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span><span style="color:#a6e22e">n</span><span style="color:#f92672">++</span>
-</span></span><span style="display:flex;"><span><span style="color:#a6e22e">fmt</span>.<span style="color:#a6e22e">Printf</span>(<span style="color:#e6db74">&#34;main.n:,%p,%d\n&#34;</span>, <span style="color:#f92672">&amp;</span><span style="color:#a6e22e">n</span>, <span style="color:#a6e22e">n</span>)
-</span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span><span style="color:#a6e22e">t1</span>()
-</span></span><span style="display:flex;"><span><span style="color:#a6e22e">t2</span>()
-</span></span><span style="display:flex;"><span><span style="color:#75715e">//main.n:,0xc42000e258,28
-</span></span></span><span style="display:flex;"><span><span style="color:#75715e">//test.n:,0xc42000e278,26
-</span></span></span><span style="display:flex;"><span><span style="color:#75715e">//test.n:,0xc42000e288,27
-</span></span></span></code></pre></div><p>当<code>method value</code>作为参数时，会复制含<code>receiver</code>在内的整个<code>method value</code></p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-go" data-lang="go"><span style="display:flex;"><span><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">call</span>(<span style="color:#a6e22e">m</span> <span style="color:#66d9ef">func</span>()){
-</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">m</span>()
-</span></span><span style="display:flex;"><span>}
-</span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span><span style="color:#66d9ef">var</span> <span style="color:#a6e22e">n</span> <span style="color:#a6e22e">N</span> = <span style="color:#ae81ff">25</span>
-</span></span><span style="display:flex;"><span><span style="color:#a6e22e">p</span> <span style="color:#f92672">:=</span> <span style="color:#f92672">&amp;</span><span style="color:#a6e22e">n</span>
-</span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span><span style="color:#a6e22e">fmt</span>.<span style="color:#a6e22e">Printf</span>(<span style="color:#e6db74">&#34;main.n:,%p,%d\n&#34;</span>, <span style="color:#f92672">&amp;</span><span style="color:#a6e22e">n</span>, <span style="color:#a6e22e">n</span>)
-</span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span><span style="color:#a6e22e">n</span><span style="color:#f92672">++</span>
-</span></span><span style="display:flex;"><span><span style="color:#a6e22e">call</span>(<span style="color:#a6e22e">n</span>.<span style="color:#a6e22e">test</span>)
-</span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span><span style="color:#a6e22e">n</span><span style="color:#f92672">++</span>
-</span></span><span style="display:flex;"><span><span style="color:#a6e22e">call</span>(<span style="color:#a6e22e">p</span>.<span style="color:#a6e22e">test</span>)
-</span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span><span style="color:#75715e">//main.n:,0xc42006e1a8,25
-</span></span></span><span style="display:flex;"><span><span style="color:#75715e">//test.n:,0xc42006e1c8,26
-</span></span></span><span style="display:flex;"><span><span style="color:#75715e">//test.n:,0xc42006e1d8,27
-</span></span></span></code></pre></div><p>如果目标方法的<code>receiver</code>是指针类型，那么被复制的仅是指针</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#66d9ef">var</span> <span style="color:#a6e22e">n</span> <span style="color:#a6e22e">N</span> = <span style="color:#ae81ff">25</span>
+<span style="color:#a6e22e">p</span> <span style="color:#f92672">:=</span> <span style="color:#f92672">&amp;</span><span style="color:#a6e22e">n</span>
+
+<span style="color:#a6e22e">n</span><span style="color:#f92672">++</span>
+<span style="color:#a6e22e">t1</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">n</span>.<span style="color:#a6e22e">test</span>
+
+<span style="color:#a6e22e">n</span><span style="color:#f92672">++</span>
+<span style="color:#a6e22e">t2</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">p</span>.<span style="color:#a6e22e">test</span>
+
+<span style="color:#a6e22e">n</span><span style="color:#f92672">++</span>
+<span style="color:#a6e22e">fmt</span>.<span style="color:#a6e22e">Printf</span>(<span style="color:#e6db74">&#34;main.n:,%p,%d\n&#34;</span>, <span style="color:#f92672">&amp;</span><span style="color:#a6e22e">n</span>, <span style="color:#a6e22e">n</span>)
+
+<span style="color:#a6e22e">t1</span>()
+<span style="color:#a6e22e">t2</span>()
+<span style="color:#75715e">//main.n:,0xc42000e258,28
+</span><span style="color:#75715e"></span><span style="color:#75715e">//test.n:,0xc42000e278,26
+</span><span style="color:#75715e"></span><span style="color:#75715e">//test.n:,0xc42000e288,27
+</span></code></pre></div><p>当<code>method value</code>作为参数时，会复制含<code>receiver</code>在内的整个<code>method value</code></p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">call</span>(<span style="color:#a6e22e">m</span> <span style="color:#66d9ef">func</span>()){
+    <span style="color:#a6e22e">m</span>()
+}
+
+<span style="color:#66d9ef">var</span> <span style="color:#a6e22e">n</span> <span style="color:#a6e22e">N</span> = <span style="color:#ae81ff">25</span>
+<span style="color:#a6e22e">p</span> <span style="color:#f92672">:=</span> <span style="color:#f92672">&amp;</span><span style="color:#a6e22e">n</span>
+
+<span style="color:#a6e22e">fmt</span>.<span style="color:#a6e22e">Printf</span>(<span style="color:#e6db74">&#34;main.n:,%p,%d\n&#34;</span>, <span style="color:#f92672">&amp;</span><span style="color:#a6e22e">n</span>, <span style="color:#a6e22e">n</span>)
+
+<span style="color:#a6e22e">n</span><span style="color:#f92672">++</span>
+<span style="color:#a6e22e">call</span>(<span style="color:#a6e22e">n</span>.<span style="color:#a6e22e">test</span>)
+
+<span style="color:#a6e22e">n</span><span style="color:#f92672">++</span>
+<span style="color:#a6e22e">call</span>(<span style="color:#a6e22e">p</span>.<span style="color:#a6e22e">test</span>)
+
+<span style="color:#75715e">//main.n:,0xc42006e1a8,25
+</span><span style="color:#75715e"></span><span style="color:#75715e">//test.n:,0xc42006e1c8,26
+</span><span style="color:#75715e"></span><span style="color:#75715e">//test.n:,0xc42006e1d8,27
+</span></code></pre></div><p>如果目标方法的<code>receiver</code>是指针类型，那么被复制的仅是指针</p>
 <p>只要<code>receiver</code>参数类型正确，使用<code>nil</code>同样可以执行</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-go" data-lang="go"><span style="display:flex;"><span><span style="color:#66d9ef">type</span> <span style="color:#a6e22e">N</span> <span style="color:#66d9ef">int</span>
-</span></span><span style="display:flex;"><span><span style="color:#66d9ef">func</span> (<span style="color:#a6e22e">n</span> <span style="color:#a6e22e">N</span>) <span style="color:#a6e22e">value</span>(){}
-</span></span><span style="display:flex;"><span><span style="color:#66d9ef">func</span> (<span style="color:#a6e22e">n</span> <span style="color:#f92672">*</span><span style="color:#a6e22e">N</span>) <span style="color:#a6e22e">pointer</span>(){}
-</span></span><span style="display:flex;"><span><span style="color:#66d9ef">var</span> <span style="color:#a6e22e">ptr</span> <span style="color:#f92672">*</span><span style="color:#a6e22e">N</span>
-</span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span><span style="color:#a6e22e">ptr</span>.<span style="color:#a6e22e">pointer</span>()
-</span></span><span style="display:flex;"><span>(<span style="color:#f92672">*</span><span style="color:#a6e22e">N</span>)(<span style="color:#66d9ef">nil</span>).<span style="color:#a6e22e">pointer</span>()
-</span></span><span style="display:flex;"><span>(<span style="color:#f92672">*</span><span style="color:#a6e22e">N</span>).<span style="color:#a6e22e">pointer</span>(<span style="color:#66d9ef">nil</span>)
-</span></span></code></pre></div><hr>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#66d9ef">type</span> <span style="color:#a6e22e">N</span> <span style="color:#66d9ef">int</span>
+<span style="color:#66d9ef">func</span> (<span style="color:#a6e22e">n</span> <span style="color:#a6e22e">N</span>) <span style="color:#a6e22e">value</span>(){}
+<span style="color:#66d9ef">func</span> (<span style="color:#a6e22e">n</span> <span style="color:#f92672">*</span><span style="color:#a6e22e">N</span>) <span style="color:#a6e22e">pointer</span>(){}
+<span style="color:#66d9ef">var</span> <span style="color:#a6e22e">ptr</span> <span style="color:#f92672">*</span><span style="color:#a6e22e">N</span>
+
+<span style="color:#a6e22e">ptr</span>.<span style="color:#a6e22e">pointer</span>()
+(<span style="color:#f92672">*</span><span style="color:#a6e22e">N</span>)(<span style="color:#66d9ef">nil</span>).<span style="color:#a6e22e">pointer</span>()
+(<span style="color:#f92672">*</span><span style="color:#a6e22e">N</span>).<span style="color:#a6e22e">pointer</span>(<span style="color:#66d9ef">nil</span>)
+</code></pre></div><hr>
 
     </div>
     <footer class="post-footer">
@@ -613,7 +614,7 @@ code.has-jax {
     <div class="site-state-item site-state-tags">
         <a href="https://iihui.github.io/tags/">
          
-        <span class="site-state-item-count">29</span>
+        <span class="site-state-item-count">28</span>
         
         <span class="site-state-item-name">标签</span>
         </a>
@@ -700,7 +701,6 @@ code.has-jax {
   <span class="with-love"><i class="fa fa-heart"></i></span>
   <span class="author" itemprop="copyrightHolder">Keep It Simple</span>
 </div>
-
 
 
 

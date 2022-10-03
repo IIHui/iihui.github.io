@@ -18,8 +18,8 @@
     <link href="https://iihui.github.io/js/vendor/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
     <link href="https://iihui.github.io/js/vendor/fancybox/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
     <link href="https://iihui.github.io/css/main.css" rel="stylesheet" type="text/css" />
+    <link href="https://iihui.github.io/css/custom.css" rel="stylesheet" type="text/css" />
     <link href="https://iihui.github.io/css/syntax.css" rel="stylesheet" type="text/css" />
-
     <script type="text/javascript" id="hexo.configuration">
   var NexT = window.NexT || {};
   var CONFIG = {
@@ -38,9 +38,9 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.1/languages/objectivec.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.1/languages/clojure.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.1/languages/cpp.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.1/languages/kotlin.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.1/languages/yaml.min.js"></script>
     <script>hljs.initHighlightingOnLoad();</script>
+
+
 </head>
 <body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
 <div class="container one-collumn sidebar-position-left page-home  ">
@@ -239,33 +239,33 @@ code.has-jax {
     </header>
     <div class="post-body" itemprop="articleBody">
     <blockquote>
-<p>使用<code>Swift</code>写代码时，经常会遇到一些<font color=red>不常见的关键词或者常用关键词的特殊使用场景</font>，因为比较少使用，通常这些不常见的关键词或者特殊场景很容易忘记。</p>
+<p>使用<code>Swift</code>写代码时，经常会遇到一些<!-- raw HTML omitted -->不常见的关键词或者常用关键词的特殊使用场景<!-- raw HTML omitted -->，因为比较少使用，通常这些不常见的关键词或者特殊场景很容易忘记。</p>
 </blockquote>
 <h1 id="便利构造函数">便利构造函数</h1>
 <p>关键字<code>convenience</code>用于初始化器（构造函数）中，称之为便利初始化器（构造函数）。通常是在对一些系统类进行扩展时使用，下面是对<code>UIColor</code>进行扩展：</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span><span style="color:#66d9ef">extension</span> <span style="color:#a6e22e">UIColor</span> {
-</span></span><span style="display:flex;"><span>    
-</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">convenience</span> <span style="color:#66d9ef">init</span>(hex: String) {
-</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">var</span> cString: String = hex.trimmingCharacters(<span style="color:#66d9ef">in</span>: .whitespacesAndNewlines).uppercased()
-</span></span><span style="display:flex;"><span>        
-</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">if</span> (cString.hasPrefix(<span style="color:#e6db74">&#34;#&#34;</span>)) {
-</span></span><span style="display:flex;"><span>            cString.remove(at: cString.startIndex)
-</span></span><span style="display:flex;"><span>        }
-</span></span><span style="display:flex;"><span>        
-</span></span><span style="display:flex;"><span>        assert(cString.count == <span style="color:#ae81ff">6</span>, <span style="color:#e6db74">&#34;无效的hex值&#34;</span>)
-</span></span><span style="display:flex;"><span>        
-</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">var</span> rgbValue: UInt64 = <span style="color:#ae81ff">0</span>
-</span></span><span style="display:flex;"><span>        Scanner(string: cString).scanHexInt64(&amp;rgbValue)
-</span></span><span style="display:flex;"><span>        
-</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">self</span>.<span style="color:#66d9ef">init</span>(
-</span></span><span style="display:flex;"><span>            red: CGFloat((rgbValue <span style="color:#f92672">&amp;</span> <span style="color:#ae81ff">0xFF0000</span>) <span style="color:#f92672">&gt;&gt;</span> <span style="color:#ae81ff">16</span>) <span style="color:#f92672">/</span> <span style="color:#ae81ff">255.0</span>,
-</span></span><span style="display:flex;"><span>            green: CGFloat((rgbValue <span style="color:#f92672">&amp;</span> <span style="color:#ae81ff">0x00FF00</span>) <span style="color:#f92672">&gt;&gt;</span> <span style="color:#ae81ff">8</span>) <span style="color:#f92672">/</span> <span style="color:#ae81ff">255.0</span>,
-</span></span><span style="display:flex;"><span>            blue: CGFloat(rgbValue <span style="color:#f92672">&amp;</span> <span style="color:#ae81ff">0x0000FF</span>) <span style="color:#f92672">/</span> <span style="color:#ae81ff">255.0</span>,
-</span></span><span style="display:flex;"><span>            alpha: CGFloat(<span style="color:#ae81ff">1.0</span>)
-</span></span><span style="display:flex;"><span>        )
-</span></span><span style="display:flex;"><span>    }
-</span></span><span style="display:flex;"><span>}
-</span></span></code></pre></div><p><code>Swift</code>为了保证安全，不加修饰的<code>init</code>方法需要保证所有的<code>非Optional</code>的实例属性都被初始化。此时，如果想写一个自定义构造函数，就一定要把类型中所有的<code>非Optional</code>的实例属性初始化，如果类型中很多实例属性将会变得很麻烦。此时便利初始化器就发挥作用了，它通常在对系统类进行<font color=LightSeaGreen>初始化器扩展时使用</font>。</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift"><span style="color:#66d9ef">extension</span> <span style="color:#a6e22e">UIColor</span> {
+    
+    <span style="color:#66d9ef">convenience</span> <span style="color:#66d9ef">init</span>(hex: String) {
+        <span style="color:#66d9ef">var</span> cString: String = hex.trimmingCharacters(<span style="color:#66d9ef">in</span>: .whitespacesAndNewlines).uppercased()
+        
+        <span style="color:#66d9ef">if</span> (cString.hasPrefix(<span style="color:#e6db74">&#34;</span><span style="color:#e6db74">#</span><span style="color:#e6db74">&#34;</span>)) {
+            cString.remove(at: cString.startIndex)
+        }
+        
+        assert(cString.count == <span style="color:#ae81ff">6</span>, <span style="color:#e6db74">&#34;</span><span style="color:#e6db74">无效的hex值</span><span style="color:#e6db74">&#34;</span>)
+        
+        <span style="color:#66d9ef">var</span> rgbValue: UInt64 = <span style="color:#ae81ff">0</span>
+        Scanner(string: cString).scanHexInt64(&amp;rgbValue)
+        
+        <span style="color:#66d9ef">self</span>.<span style="color:#66d9ef">init</span>(
+            red: CGFloat((rgbValue <span style="color:#f92672">&amp;</span> <span style="color:#ae81ff">0xFF0000</span>) <span style="color:#f92672">&gt;&gt;</span> <span style="color:#ae81ff">16</span>) <span style="color:#f92672">/</span> <span style="color:#ae81ff">255.0</span>,
+            green: CGFloat((rgbValue <span style="color:#f92672">&amp;</span> <span style="color:#ae81ff">0x00FF00</span>) <span style="color:#f92672">&gt;&gt;</span> <span style="color:#ae81ff">8</span>) <span style="color:#f92672">/</span> <span style="color:#ae81ff">255.0</span>,
+            blue: CGFloat(rgbValue <span style="color:#f92672">&amp;</span> <span style="color:#ae81ff">0x0000FF</span>) <span style="color:#f92672">/</span> <span style="color:#ae81ff">255.0</span>,
+            alpha: CGFloat(<span style="color:#ae81ff">1.0</span>)
+        )
+    }
+}
+</code></pre></div><p><code>Swift</code>为了保证安全，不加修饰的<code>init</code>方法需要保证所有的<code>非Optional</code>的实例属性都被初始化。此时，如果想写一个自定义构造函数，就一定要把类型中所有的<code>非Optional</code>的实例属性初始化，如果类型中很多实例属性将会变得很麻烦。此时便利初始化器就发挥作用了，它通常在对系统类进行<!-- raw HTML omitted -->初始化器扩展时使用<!-- raw HTML omitted -->。</p>
 <ul>
 <li>
 <p>必须在构造函数中，而且必须调用本类的初始化器，不能调用父类的初始化器。</p>
@@ -387,7 +387,7 @@ code.has-jax {
     <div class="site-state-item site-state-tags">
         <a href="https://iihui.github.io/tags/">
          
-        <span class="site-state-item-count">29</span>
+        <span class="site-state-item-count">28</span>
         
         <span class="site-state-item-name">标签</span>
         </a>
@@ -460,7 +460,6 @@ code.has-jax {
   <span class="with-love"><i class="fa fa-heart"></i></span>
   <span class="author" itemprop="copyrightHolder">Keep It Simple</span>
 </div>
-
 
 
 

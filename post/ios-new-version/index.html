@@ -18,8 +18,8 @@
     <link href="https://iihui.github.io/js/vendor/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
     <link href="https://iihui.github.io/js/vendor/fancybox/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
     <link href="https://iihui.github.io/css/main.css" rel="stylesheet" type="text/css" />
+    <link href="https://iihui.github.io/css/custom.css" rel="stylesheet" type="text/css" />
     <link href="https://iihui.github.io/css/syntax.css" rel="stylesheet" type="text/css" />
-
     <script type="text/javascript" id="hexo.configuration">
   var NexT = window.NexT || {};
   var CONFIG = {
@@ -38,9 +38,9 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.1/languages/objectivec.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.1/languages/clojure.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.1/languages/cpp.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.1/languages/kotlin.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.1/languages/yaml.min.js"></script>
     <script>hljs.initHighlightingOnLoad();</script>
+
+
 </head>
 <body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
 <div class="container one-collumn sidebar-position-left page-home  ">
@@ -253,138 +253,138 @@ code.has-jax {
     </header>
     <div class="post-body" itemprop="articleBody">
     <p>首先由<code>AboutViewController</code>中的<code>presenter</code>调用其<code>requestLastestVersion</code>方法，而<code>presenter</code>是<code> AboutPresenter</code>类的实例：</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span><span style="color:#66d9ef">lazy</span> <span style="color:#66d9ef">var</span> presenter:AboutPresenter = AboutPresenter(delegate:<span style="color:#66d9ef">self</span>)
-</span></span><span style="display:flex;"><span> presenter.requestLatestVersion()
-</span></span></code></pre></div><h1 id="aboutpresenter类">AboutPresenter类</h1>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift"><span style="color:#66d9ef">lazy</span> <span style="color:#66d9ef">var</span> presenter:AboutPresenter = AboutPresenter(delegate:<span style="color:#66d9ef">self</span>)
+ presenter.requestLatestVersion()
+</code></pre></div><h1 id="aboutpresenter类">AboutPresenter类</h1>
 <p>而<code>AboutPresenter</code>类的实现如下所示:</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span><span style="color:#66d9ef">import</span> <span style="color:#a6e22e">Foundation</span>
-</span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span><span style="color:#66d9ef">protocol</span> <span style="color:#a6e22e">AboutPresenterDelegate</span>:<span style="color:#66d9ef">class</span> {
-</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">func</span> <span style="color:#a6e22e">updateUIForLatestVersion</span>(shouldUpdate:Bool,updateMessage:String,updateUrl:String,minOSVersion: String?)
-</span></span><span style="display:flex;"><span>}
-</span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span><span style="color:#66d9ef">class</span> <span style="color:#a6e22e">AboutPresenter</span>:NSObject,WelcomeHttpProtocol {
-</span></span><span style="display:flex;"><span>    
-</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">lazy</span> <span style="color:#66d9ef">var</span> webConfigs:[WebConfig?] = [<span style="color:#66d9ef">self</span>.webConfigService.versionDescriptionWebConfig,<span style="color:#66d9ef">self</span>.webConfigService.teamWebConfig,<span style="color:#66d9ef">self</span>.webConfigService.statisticWebConfig]
-</span></span><span style="display:flex;"><span>    
-</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">let</span> publishVersion:String = UpdateService().publishVersion
-</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">let</span> appDelegate = UIApplication.shared.delegate <span style="color:#66d9ef">as</span>! AppDelegate
-</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">let</span> deviceID:String = EnvironmentService.shared.deviceID
-</span></span><span style="display:flex;"><span>    
-</span></span><span style="display:flex;"><span>    fileprivate <span style="color:#66d9ef">lazy</span> <span style="color:#66d9ef">var</span> welcomHttpController: WelcomeHttpController = WelcomeHttpController(delegate: <span style="color:#66d9ef">self</span>)
-</span></span><span style="display:flex;"><span>    fileprivate <span style="color:#66d9ef">lazy</span> <span style="color:#66d9ef">var</span> webConfigService = WebConfigService()
-</span></span><span style="display:flex;"><span>    fileprivate <span style="color:#66d9ef">weak</span> <span style="color:#66d9ef">var</span> delegate:AboutPresenterDelegate?
-</span></span><span style="display:flex;"><span>    
-</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">init</span>(delegate:AboutPresenterDelegate?) {
-</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">self</span>.delegate = delegate
-</span></span><span style="display:flex;"><span>    }
-</span></span><span style="display:flex;"><span>    
-</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">func</span> <span style="color:#a6e22e">requestLatestVersion</span>() {
-</span></span><span style="display:flex;"><span>        welcomHttpController.requestLatestVersion(<span style="color:#66d9ef">false</span>)
-</span></span><span style="display:flex;"><span>    }
-</span></span><span style="display:flex;"><span>    
-</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">func</span> <span style="color:#a6e22e">didReceiveLatestVersion</span>(<span style="color:#66d9ef">_</span> jsonData: JSON) {
-</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">let</span> retCode = jsonData[<span style="color:#e6db74">&#34;data&#34;</span>][<span style="color:#e6db74">&#34;retCode&#34;</span>].stringValue
-</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">let</span> message = jsonData[<span style="color:#e6db74">&#34;data&#34;</span>][<span style="color:#e6db74">&#34;changeLog&#34;</span>].stringValue
-</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">let</span> updateUrl = jsonData[<span style="color:#e6db74">&#34;data&#34;</span>][<span style="color:#e6db74">&#34;appUrl&#34;</span>].stringValue
-</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">let</span> isLatest = (retCode == <span style="color:#e6db74">&#34;0&#34;</span> <span style="color:#f92672">||</span> retCode == <span style="color:#e6db74">&#34;&#34;</span>)
-</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">let</span> minOSVersion = jsonData[<span style="color:#e6db74">&#34;data&#34;</span>][<span style="color:#e6db74">&#34;minOSVersion&#34;</span>].string
-</span></span><span style="display:flex;"><span>        
-</span></span><span style="display:flex;"><span>        appDelegate.isLatest = isLatest
-</span></span><span style="display:flex;"><span>        delegate?.updateUIForLatestVersion(shouldUpdate: <span style="color:#f92672">!</span>isLatest, updateMessage: message, updateUrl: updateUrl, minOSVersion: minOSVersion)
-</span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span>    }
-</span></span><span style="display:flex;"><span>    
-</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">func</span> <span style="color:#a6e22e">didError</span>() {
-</span></span><span style="display:flex;"><span>        BaseHttpController.commonNetworkError()
-</span></span><span style="display:flex;"><span>    }
-</span></span><span style="display:flex;"><span>    
-</span></span><span style="display:flex;"><span>}
-</span></span></code></pre></div><hr>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift"><span style="color:#66d9ef">import</span> <span style="color:#a6e22e">Foundation</span>
+
+<span style="color:#66d9ef">protocol</span> <span style="color:#a6e22e">AboutPresenterDelegate</span>:<span style="color:#66d9ef">class</span> {
+    <span style="color:#66d9ef">func</span> <span style="color:#a6e22e">updateUIForLatestVersion</span>(shouldUpdate:Bool,updateMessage:String,updateUrl:String,minOSVersion: String?)
+}
+
+<span style="color:#66d9ef">class</span> <span style="color:#a6e22e">AboutPresenter</span>:NSObject,WelcomeHttpProtocol {
+    
+    <span style="color:#66d9ef">lazy</span> <span style="color:#66d9ef">var</span> webConfigs:[WebConfig?] = [<span style="color:#66d9ef">self</span>.webConfigService.versionDescriptionWebConfig,<span style="color:#66d9ef">self</span>.webConfigService.teamWebConfig,<span style="color:#66d9ef">self</span>.webConfigService.statisticWebConfig]
+    
+    <span style="color:#66d9ef">let</span> publishVersion:String = UpdateService().publishVersion
+    <span style="color:#66d9ef">let</span> appDelegate = UIApplication.shared.delegate <span style="color:#66d9ef">as</span>! AppDelegate
+    <span style="color:#66d9ef">let</span> deviceID:String = EnvironmentService.shared.deviceID
+    
+    fileprivate <span style="color:#66d9ef">lazy</span> <span style="color:#66d9ef">var</span> welcomHttpController: WelcomeHttpController = WelcomeHttpController(delegate: <span style="color:#66d9ef">self</span>)
+    fileprivate <span style="color:#66d9ef">lazy</span> <span style="color:#66d9ef">var</span> webConfigService = WebConfigService()
+    fileprivate <span style="color:#66d9ef">weak</span> <span style="color:#66d9ef">var</span> delegate:AboutPresenterDelegate?
+    
+    <span style="color:#66d9ef">init</span>(delegate:AboutPresenterDelegate?) {
+        <span style="color:#66d9ef">self</span>.delegate = delegate
+    }
+    
+    <span style="color:#66d9ef">func</span> <span style="color:#a6e22e">requestLatestVersion</span>() {
+        welcomHttpController.requestLatestVersion(<span style="color:#66d9ef">false</span>)
+    }
+    
+    <span style="color:#66d9ef">func</span> <span style="color:#a6e22e">didReceiveLatestVersion</span>(<span style="color:#66d9ef">_</span> jsonData: JSON) {
+        <span style="color:#66d9ef">let</span> retCode = jsonData[<span style="color:#e6db74">&#34;</span><span style="color:#e6db74">data</span><span style="color:#e6db74">&#34;</span>][<span style="color:#e6db74">&#34;</span><span style="color:#e6db74">retCode</span><span style="color:#e6db74">&#34;</span>].stringValue
+        <span style="color:#66d9ef">let</span> message = jsonData[<span style="color:#e6db74">&#34;</span><span style="color:#e6db74">data</span><span style="color:#e6db74">&#34;</span>][<span style="color:#e6db74">&#34;</span><span style="color:#e6db74">changeLog</span><span style="color:#e6db74">&#34;</span>].stringValue
+        <span style="color:#66d9ef">let</span> updateUrl = jsonData[<span style="color:#e6db74">&#34;</span><span style="color:#e6db74">data</span><span style="color:#e6db74">&#34;</span>][<span style="color:#e6db74">&#34;</span><span style="color:#e6db74">appUrl</span><span style="color:#e6db74">&#34;</span>].stringValue
+        <span style="color:#66d9ef">let</span> isLatest = (retCode == <span style="color:#e6db74">&#34;</span><span style="color:#e6db74">0</span><span style="color:#e6db74">&#34;</span> <span style="color:#f92672">||</span> retCode == <span style="color:#e6db74">&#34;</span><span style="color:#e6db74">&#34;</span>)
+        <span style="color:#66d9ef">let</span> minOSVersion = jsonData[<span style="color:#e6db74">&#34;</span><span style="color:#e6db74">data</span><span style="color:#e6db74">&#34;</span>][<span style="color:#e6db74">&#34;</span><span style="color:#e6db74">minOSVersion</span><span style="color:#e6db74">&#34;</span>].string
+        
+        appDelegate.isLatest = isLatest
+        delegate?.updateUIForLatestVersion(shouldUpdate: <span style="color:#f92672">!</span>isLatest, updateMessage: message, updateUrl: updateUrl, minOSVersion: minOSVersion)
+
+    }
+    
+    <span style="color:#66d9ef">func</span> <span style="color:#a6e22e">didError</span>() {
+        BaseHttpController.commonNetworkError()
+    }
+    
+}
+</code></pre></div><hr>
 <h1 id="welcmehttpcontroller类">WelcmeHttpController类</h1>
 <p>在<code>presenter</code>中的<code>requestLastestVersion</code>方法中调用了<code>welcomHttpController.requestLatestVersion(false)</code>，而<code>WelcmeHttpController</code>的实现为：</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span><span style="color:#66d9ef">import</span> <span style="color:#a6e22e">UIKit</span>
-</span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span><span style="color:#66d9ef">protocol</span> <span style="color:#a6e22e">WelcomeHttpProtocol</span>: BaseHttpProtocol {
-</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">func</span> <span style="color:#a6e22e">didReceiveLatestVersion</span>(<span style="color:#66d9ef">_</span> jsonData: JSON)
-</span></span><span style="display:flex;"><span>}
-</span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span><span style="color:#66d9ef">class</span> <span style="color:#a6e22e">WelcomeHttpController</span>: BaseHttpController {
-</span></span><span style="display:flex;"><span>    
-</span></span><span style="display:flex;"><span>    fileprivate <span style="color:#66d9ef">weak</span> <span style="color:#66d9ef">var</span> delegate: WelcomeHttpProtocol?
-</span></span><span style="display:flex;"><span>    fileprivate <span style="color:#66d9ef">lazy</span> <span style="color:#66d9ef">var</span> environmentService = EnvironmentService.shared
-</span></span><span style="display:flex;"><span>    fileprivate <span style="color:#66d9ef">lazy</span> <span style="color:#66d9ef">var</span> updateService = UpdateService()
-</span></span><span style="display:flex;"><span>    fileprivate <span style="color:#66d9ef">lazy</span> <span style="color:#66d9ef">var</span> userInfoService = UserInfoService()
-</span></span><span style="display:flex;"><span>    
-</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">init</span>(delegate: WelcomeHttpProtocol) {
-</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">super</span>.<span style="color:#66d9ef">init</span>()
-</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">self</span>.delegate = delegate
-</span></span><span style="display:flex;"><span>    }
-</span></span><span style="display:flex;"><span>    
-</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">func</span> <span style="color:#a6e22e">requestLatestVersion</span>(<span style="color:#66d9ef">_</span> async: Bool) {
-</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">let</span> dataDic = NSMutableDictionary()
-</span></span><span style="display:flex;"><span>        dataDic[<span style="color:#e6db74">&#34;rand&#34;</span>] = UUID().uuidString
-</span></span><span style="display:flex;"><span>        dataDic[<span style="color:#e6db74">&#34;buildVersion&#34;</span>] = updateService.buildVersion
-</span></span><span style="display:flex;"><span>        dataDic[<span style="color:#e6db74">&#34;pubVersion&#34;</span>] = updateService.publishVersion
-</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">if</span> <span style="color:#66d9ef">let</span> activeUser = userInfoService.activeUserEntity {
-</span></span><span style="display:flex;"><span>            dataDic[<span style="color:#e6db74">&#34;pathID&#34;</span>] = activeUser.pathID
-</span></span><span style="display:flex;"><span>        }
-</span></span><span style="display:flex;"><span>        
-</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">let</span> metaDic = getDefaultMetaData(ConfigRequestAction.getLatestVersion)
-</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">if</span> async {
-</span></span><span style="display:flex;"><span>            startAsynchronousRequest(metaDic: metaDic, dataDic: dataDic, handler: {(response, data, error) -&gt; Void <span style="color:#66d9ef">in</span>
-</span></span><span style="display:flex;"><span>                <span style="color:#66d9ef">if</span> error == <span style="color:#66d9ef">nil</span> {
-</span></span><span style="display:flex;"><span>                    <span style="color:#66d9ef">let</span> jsonData = JSON(data: data!)
-</span></span><span style="display:flex;"><span>                    <span style="color:#66d9ef">self</span>.delegate?.didReceiveLatestVersion(jsonData)
-</span></span><span style="display:flex;"><span>                } <span style="color:#66d9ef">else</span> {
-</span></span><span style="display:flex;"><span>                    <span style="color:#66d9ef">self</span>.didError()
-</span></span><span style="display:flex;"><span>                }
-</span></span><span style="display:flex;"><span>            })
-</span></span><span style="display:flex;"><span>        } <span style="color:#66d9ef">else</span> {
-</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">if</span> <span style="color:#66d9ef">let</span> result = startSynchronousRequest(metaDic: metaDic, dataDic: dataDic, timeoutInterval: <span style="color:#ae81ff">3</span>) {
-</span></span><span style="display:flex;"><span>                <span style="color:#66d9ef">if</span> result.error == <span style="color:#66d9ef">nil</span> {
-</span></span><span style="display:flex;"><span>                    <span style="color:#66d9ef">let</span> jsonData = JSON(data: result.data!)
-</span></span><span style="display:flex;"><span>                    <span style="color:#66d9ef">self</span>.delegate?.didReceiveLatestVersion(jsonData)
-</span></span><span style="display:flex;"><span>                } <span style="color:#66d9ef">else</span> {
-</span></span><span style="display:flex;"><span>                    <span style="color:#66d9ef">self</span>.didError()
-</span></span><span style="display:flex;"><span>                }
-</span></span><span style="display:flex;"><span>            } <span style="color:#66d9ef">else</span> {
-</span></span><span style="display:flex;"><span>                <span style="color:#66d9ef">self</span>.didError()
-</span></span><span style="display:flex;"><span>            }
-</span></span><span style="display:flex;"><span>        }
-</span></span><span style="display:flex;"><span>    }
-</span></span><span style="display:flex;"><span>    
-</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">override</span> <span style="color:#66d9ef">func</span> <span style="color:#a6e22e">didError</span>() {
-</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">self</span>.delegate?.didError()
-</span></span><span style="display:flex;"><span>    }
-</span></span><span style="display:flex;"><span>}
-</span></span></code></pre></div><h1 id="updateuiforlatestversion">updateUIForLatestVersion</h1>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift"><span style="color:#66d9ef">import</span> <span style="color:#a6e22e">UIKit</span>
+
+<span style="color:#66d9ef">protocol</span> <span style="color:#a6e22e">WelcomeHttpProtocol</span>: BaseHttpProtocol {
+    <span style="color:#66d9ef">func</span> <span style="color:#a6e22e">didReceiveLatestVersion</span>(<span style="color:#66d9ef">_</span> jsonData: JSON)
+}
+
+<span style="color:#66d9ef">class</span> <span style="color:#a6e22e">WelcomeHttpController</span>: BaseHttpController {
+    
+    fileprivate <span style="color:#66d9ef">weak</span> <span style="color:#66d9ef">var</span> delegate: WelcomeHttpProtocol?
+    fileprivate <span style="color:#66d9ef">lazy</span> <span style="color:#66d9ef">var</span> environmentService = EnvironmentService.shared
+    fileprivate <span style="color:#66d9ef">lazy</span> <span style="color:#66d9ef">var</span> updateService = UpdateService()
+    fileprivate <span style="color:#66d9ef">lazy</span> <span style="color:#66d9ef">var</span> userInfoService = UserInfoService()
+    
+    <span style="color:#66d9ef">init</span>(delegate: WelcomeHttpProtocol) {
+        <span style="color:#66d9ef">super</span>.<span style="color:#66d9ef">init</span>()
+        <span style="color:#66d9ef">self</span>.delegate = delegate
+    }
+    
+    <span style="color:#66d9ef">func</span> <span style="color:#a6e22e">requestLatestVersion</span>(<span style="color:#66d9ef">_</span> async: Bool) {
+        <span style="color:#66d9ef">let</span> dataDic = NSMutableDictionary()
+        dataDic[<span style="color:#e6db74">&#34;</span><span style="color:#e6db74">rand</span><span style="color:#e6db74">&#34;</span>] = UUID().uuidString
+        dataDic[<span style="color:#e6db74">&#34;</span><span style="color:#e6db74">buildVersion</span><span style="color:#e6db74">&#34;</span>] = updateService.buildVersion
+        dataDic[<span style="color:#e6db74">&#34;</span><span style="color:#e6db74">pubVersion</span><span style="color:#e6db74">&#34;</span>] = updateService.publishVersion
+        <span style="color:#66d9ef">if</span> <span style="color:#66d9ef">let</span> activeUser = userInfoService.activeUserEntity {
+            dataDic[<span style="color:#e6db74">&#34;</span><span style="color:#e6db74">pathID</span><span style="color:#e6db74">&#34;</span>] = activeUser.pathID
+        }
+        
+        <span style="color:#66d9ef">let</span> metaDic = getDefaultMetaData(ConfigRequestAction.getLatestVersion)
+        <span style="color:#66d9ef">if</span> async {
+            startAsynchronousRequest(metaDic: metaDic, dataDic: dataDic, handler: {(response, data, error) -&gt; Void <span style="color:#66d9ef">in</span>
+                <span style="color:#66d9ef">if</span> error == <span style="color:#66d9ef">nil</span> {
+                    <span style="color:#66d9ef">let</span> jsonData = JSON(data: data!)
+                    <span style="color:#66d9ef">self</span>.delegate?.didReceiveLatestVersion(jsonData)
+                } <span style="color:#66d9ef">else</span> {
+                    <span style="color:#66d9ef">self</span>.didError()
+                }
+            })
+        } <span style="color:#66d9ef">else</span> {
+            <span style="color:#66d9ef">if</span> <span style="color:#66d9ef">let</span> result = startSynchronousRequest(metaDic: metaDic, dataDic: dataDic, timeoutInterval: <span style="color:#ae81ff">3</span>) {
+                <span style="color:#66d9ef">if</span> result.error == <span style="color:#66d9ef">nil</span> {
+                    <span style="color:#66d9ef">let</span> jsonData = JSON(data: result.data!)
+                    <span style="color:#66d9ef">self</span>.delegate?.didReceiveLatestVersion(jsonData)
+                } <span style="color:#66d9ef">else</span> {
+                    <span style="color:#66d9ef">self</span>.didError()
+                }
+            } <span style="color:#66d9ef">else</span> {
+                <span style="color:#66d9ef">self</span>.didError()
+            }
+        }
+    }
+    
+    <span style="color:#66d9ef">override</span> <span style="color:#66d9ef">func</span> <span style="color:#a6e22e">didError</span>() {
+        <span style="color:#66d9ef">self</span>.delegate?.didError()
+    }
+}
+</code></pre></div><h1 id="updateuiforlatestversion">updateUIForLatestVersion</h1>
 <p>最后由<code>AboutViewController</code>作为代理实现<code>updateUIForLatestVersion</code>方法，用于更新该版本的提示</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">updateUIForLatestVersion</span>(shouldUpdate:Bool,updateMessage:String,updateUrl:String,minOSVersion: String?) {
-</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">if</span> shouldUpdate {
-</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">if</span> <span style="color:#66d9ef">let</span> minOS = minOSVersion {
-</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">let</span> minF = (minOS <span style="color:#66d9ef">as</span> NSString).floatValue
-</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">let</span> sysF = (UIDevice.current.systemVersion <span style="color:#66d9ef">as</span> NSString).floatValue
-</span></span><span style="display:flex;"><span>            
-</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">if</span> minF <span style="color:#f92672">&gt;</span> sysF {
-</span></span><span style="display:flex;"><span>                <span style="color:#66d9ef">let</span> alertView = UIAlertView(title: <span style="color:#e6db74">&#34;发现更新&#34;</span>, message: <span style="color:#e6db74">&#34;最新版移事通已不再支持您的手机系统版本，请升级手机系统到</span><span style="color:#e6db74">\(</span>minOS<span style="color:#e6db74">)</span><span style="color:#e6db74">或以上后再检查更新&#34;</span>, delegate: <span style="color:#66d9ef">self</span>, cancelButtonTitle: <span style="color:#66d9ef">nil</span>
-</span></span><span style="display:flex;"><span>otherButtonTitles: <span style="color:#e6db74">&#34;确定&#34;</span>.localized)
-</span></span><span style="display:flex;"><span>                alertView.tag = <span style="color:#ae81ff">102</span>
-</span></span><span style="display:flex;"><span>                alertView.show()
-</span></span><span style="display:flex;"><span>                <span style="color:#66d9ef">return</span>
-</span></span><span style="display:flex;"><span>            }
-</span></span><span style="display:flex;"><span>        }
-</span></span><span style="display:flex;"><span>        
-</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">self</span>.newAppUrl = updateUrl
-</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">let</span> alertVC = UIAlertView(title: <span style="color:#e6db74">&#34;发现更新&#34;</span>.localized, message: <span style="color:#e6db74">&#34;&#34;</span>, delegate: <span style="color:#66d9ef">self</span>, cancelButtonTitle: <span style="color:#e6db74">&#34;取消&#34;</span>.localized, otherButtonTitles: <span style="color:#e6db74">&#34;更新&#34;</span>.localized)
-</span></span><span style="display:flex;"><span>        alertVC.tag = <span style="color:#ae81ff">100</span>
-</span></span><span style="display:flex;"><span>        alertVC.extShow(.<span style="color:#66d9ef">left</span>, messageStr: updateMessage)
-</span></span><span style="display:flex;"><span>    } <span style="color:#66d9ef">else</span> {
-</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">let</span> alertView = FlashAlertView(message: <span style="color:#e6db74">&#34;已经是最新版本&#34;</span>.localized, delegate: <span style="color:#66d9ef">nil</span>)
-</span></span><span style="display:flex;"><span>        alertView.show()
-</span></span><span style="display:flex;"><span>    }
-</span></span><span style="display:flex;"><span>}
-</span></span></code></pre></div><hr>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift"><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">updateUIForLatestVersion</span>(shouldUpdate:Bool,updateMessage:String,updateUrl:String,minOSVersion: String?) {
+    <span style="color:#66d9ef">if</span> shouldUpdate {
+        <span style="color:#66d9ef">if</span> <span style="color:#66d9ef">let</span> minOS = minOSVersion {
+            <span style="color:#66d9ef">let</span> minF = (minOS <span style="color:#66d9ef">as</span> NSString).floatValue
+            <span style="color:#66d9ef">let</span> sysF = (UIDevice.current.systemVersion <span style="color:#66d9ef">as</span> NSString).floatValue
+            
+            <span style="color:#66d9ef">if</span> minF <span style="color:#f92672">&gt;</span> sysF {
+                <span style="color:#66d9ef">let</span> alertView = UIAlertView(title: <span style="color:#e6db74">&#34;</span><span style="color:#e6db74">发现更新</span><span style="color:#e6db74">&#34;</span>, message: <span style="color:#e6db74">&#34;</span><span style="color:#e6db74">最新版移事通已不再支持您的手机系统版本，请升级手机系统到</span><span style="color:#e6db74">\(</span>minOS<span style="color:#e6db74">)</span><span style="color:#e6db74">或以上后再检查更新</span><span style="color:#e6db74">&#34;</span>, delegate: <span style="color:#66d9ef">self</span>, cancelButtonTitle: <span style="color:#66d9ef">nil</span>
+otherButtonTitles: <span style="color:#e6db74">&#34;</span><span style="color:#e6db74">确定</span><span style="color:#e6db74">&#34;</span>.localized)
+                alertView.tag = <span style="color:#ae81ff">102</span>
+                alertView.show()
+                <span style="color:#66d9ef">return</span>
+            }
+        }
+        
+        <span style="color:#66d9ef">self</span>.newAppUrl = updateUrl
+        <span style="color:#66d9ef">let</span> alertVC = UIAlertView(title: <span style="color:#e6db74">&#34;</span><span style="color:#e6db74">发现更新</span><span style="color:#e6db74">&#34;</span>.localized, message: <span style="color:#e6db74">&#34;</span><span style="color:#e6db74">&#34;</span>, delegate: <span style="color:#66d9ef">self</span>, cancelButtonTitle: <span style="color:#e6db74">&#34;</span><span style="color:#e6db74">取消</span><span style="color:#e6db74">&#34;</span>.localized, otherButtonTitles: <span style="color:#e6db74">&#34;</span><span style="color:#e6db74">更新</span><span style="color:#e6db74">&#34;</span>.localized)
+        alertVC.tag = <span style="color:#ae81ff">100</span>
+        alertVC.extShow(.<span style="color:#66d9ef">left</span>, messageStr: updateMessage)
+    } <span style="color:#66d9ef">else</span> {
+        <span style="color:#66d9ef">let</span> alertView = FlashAlertView(message: <span style="color:#e6db74">&#34;</span><span style="color:#e6db74">已经是最新版本</span><span style="color:#e6db74">&#34;</span>.localized, delegate: <span style="color:#66d9ef">nil</span>)
+        alertView.show()
+    }
+}
+</code></pre></div><hr>
 
     </div>
     <footer class="post-footer">
@@ -495,7 +495,7 @@ code.has-jax {
     <div class="site-state-item site-state-tags">
         <a href="https://iihui.github.io/tags/">
          
-        <span class="site-state-item-count">29</span>
+        <span class="site-state-item-count">28</span>
         
         <span class="site-state-item-name">标签</span>
         </a>
@@ -570,7 +570,6 @@ code.has-jax {
   <span class="with-love"><i class="fa fa-heart"></i></span>
   <span class="author" itemprop="copyrightHolder">Keep It Simple</span>
 </div>
-
 
 
 

@@ -18,8 +18,8 @@
     <link href="https://iihui.github.io/js/vendor/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
     <link href="https://iihui.github.io/js/vendor/fancybox/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
     <link href="https://iihui.github.io/css/main.css" rel="stylesheet" type="text/css" />
+    <link href="https://iihui.github.io/css/custom.css" rel="stylesheet" type="text/css" />
     <link href="https://iihui.github.io/css/syntax.css" rel="stylesheet" type="text/css" />
-
     <script type="text/javascript" id="hexo.configuration">
   var NexT = window.NexT || {};
   var CONFIG = {
@@ -38,9 +38,9 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.1/languages/objectivec.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.1/languages/clojure.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.1/languages/cpp.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.1/languages/kotlin.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.1/languages/yaml.min.js"></script>
     <script>hljs.initHighlightingOnLoad();</script>
+
+
 </head>
 <body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
 <div class="container one-collumn sidebar-position-left page-home  ">
@@ -241,7 +241,7 @@ code.has-jax {
     <i class="fa fa-file-word-o"></i>
 </span>
 <span class="post-meta-item-text">字数: </span>
-<span class="leancloud-visitors-count">499</span>
+<span class="leancloud-visitors-count">452</span>
 &nbsp; | &nbsp;
 <span class="post-meta-item-icon">
     <i class="fa fa-coffee"></i>
@@ -256,123 +256,124 @@ code.has-jax {
 <p>最近使用<code>UIAlertViewController</code>时，需要定制其背景颜色，在网上找到一个解决方案，基本思路是为<code>UIAlertViewController</code>设置一个计算属性，这个属性改变时即将<code>UIAlertViewController</code>的背景色修改。</p>
 </blockquote>
 <h2 id="添加计算属性">添加计算属性</h2>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span><span style="color:#66d9ef">class</span> <span style="color:#a6e22e">AlertController</span>: UIAlertController {
-</span></span><span style="display:flex;"><span>    <span style="color:#75715e">/// Buttons background color.</span>
-</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">var</span> buttonBackgroundColor: UIColor = .darkGray {
-</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">didSet</span> {
-</span></span><span style="display:flex;"><span>            <span style="color:#75715e">// Invalidate current colors on change.</span>
-</span></span><span style="display:flex;"><span>            view.setNeedsLayout()
-</span></span><span style="display:flex;"><span>        }
-</span></span><span style="display:flex;"><span>    }
-</span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">override</span> <span style="color:#66d9ef">func</span> <span style="color:#a6e22e">viewDidLayoutSubviews</span>() {
-</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">super</span>.viewDidLayoutSubviews()
-</span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span>        <span style="color:#75715e">// Traverse view hierarchy.</span>
-</span></span><span style="display:flex;"><span>        view.allViews.forEach {
-</span></span><span style="display:flex;"><span>            <span style="color:#75715e">// If there was any non-clear background color, update to custom background.</span>
-</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">if</span> <span style="color:#66d9ef">let</span> color = $0.backgroundColor, color <span style="color:#f92672">!=</span> .clear {
-</span></span><span style="display:flex;"><span>                $0.backgroundColor = buttonBackgroundColor
-</span></span><span style="display:flex;"><span>            }
-</span></span><span style="display:flex;"><span>            <span style="color:#75715e">// If view is UIVisualEffectView, remove it&#39;s effect and customise color.</span>
-</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">if</span> <span style="color:#66d9ef">let</span> visualEffectView = $0 <span style="color:#66d9ef">as</span>? UIVisualEffectView {
-</span></span><span style="display:flex;"><span>                visualEffectView.effect = <span style="color:#66d9ef">nil</span>
-</span></span><span style="display:flex;"><span>                visualEffectView.backgroundColor = buttonBackgroundColor
-</span></span><span style="display:flex;"><span>            }
-</span></span><span style="display:flex;"><span>        }
-</span></span><span style="display:flex;"><span>        <span style="color:#75715e">// Update background color of popoverPresentationController (for iPads).</span>
-</span></span><span style="display:flex;"><span>        popoverPresentationController?.backgroundColor = buttonBackgroundColor
-</span></span><span style="display:flex;"><span>    }
-</span></span><span style="display:flex;"><span>}
-</span></span></code></pre></div><h2 id="获取views">获取views</h2>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span><span style="color:#66d9ef">extension</span> <span style="color:#a6e22e">UIView</span> {
-</span></span><span style="display:flex;"><span>    <span style="color:#75715e">/// All child subviews in view hierarchy plus self.</span>
-</span></span><span style="display:flex;"><span>    fileprivate <span style="color:#66d9ef">var</span> allViews: [UIView] {
-</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">var</span> views = [<span style="color:#66d9ef">self</span>]
-</span></span><span style="display:flex;"><span>        subviews.forEach {
-</span></span><span style="display:flex;"><span>            views.append(contentsOf: $0.allViews)
-</span></span><span style="display:flex;"><span>        }
-</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">return</span> views
-</span></span><span style="display:flex;"><span>    }
-</span></span><span style="display:flex;"><span>}
-</span></span></code></pre></div><h2 id="扩展vc">扩展VC</h2>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span><span style="color:#66d9ef">extension</span> <span style="color:#a6e22e">UIViewController</span> {
-</span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">func</span> <span style="color:#a6e22e">notify</span>(msg: String) -&gt; Void {
-</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">let</span> alert = UIAlertController(title: <span style="color:#e6db74">&#34;&#34;</span>, message: msg, preferredStyle: .alert)
-</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">if</span> <span style="color:#66d9ef">let</span> visualEffectView = alert.view.searchVisualEffectsSubview() {
-</span></span><span style="display:flex;"><span>            visualEffectView.effect = UIBlurEffect(style: .light)
-</span></span><span style="display:flex;"><span>        }
-</span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span>        alert.setMessage(font: UIFont.systemFont(ofSize: <span style="color:#ae81ff">17</span>))
-</span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span>        present(alert, animated: <span style="color:#66d9ef">true</span>, completion: <span style="color:#66d9ef">nil</span>)
-</span></span><span style="display:flex;"><span>        DispatchQueue.main.asyncAfter(deadline: .now() <span style="color:#f92672">+</span> <span style="color:#ae81ff">1.5</span>) { [<span style="color:#66d9ef">weak</span> <span style="color:#66d9ef">self</span>] <span style="color:#66d9ef">in</span>
-</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">self</span>?.dismiss(animated: <span style="color:#66d9ef">true</span>)
-</span></span><span style="display:flex;"><span>        }
-</span></span><span style="display:flex;"><span>    }
-</span></span><span style="display:flex;"><span>}
-</span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">func</span> <span style="color:#a6e22e">searchVisualEffectsSubview</span>() -&gt; UIVisualEffectView? {
-</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">if</span> <span style="color:#66d9ef">let</span> visualEffectView = <span style="color:#66d9ef">self</span> <span style="color:#66d9ef">as</span>? UIVisualEffectView {
-</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">return</span> visualEffectView
-</span></span><span style="display:flex;"><span>        } <span style="color:#66d9ef">else</span> {
-</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">for</span> subview <span style="color:#66d9ef">in</span> subviews {
-</span></span><span style="display:flex;"><span>                <span style="color:#66d9ef">if</span> <span style="color:#66d9ef">let</span> found = subview.searchVisualEffectsSubview() {
-</span></span><span style="display:flex;"><span>                    <span style="color:#66d9ef">return</span> found
-</span></span><span style="display:flex;"><span>                }
-</span></span><span style="display:flex;"><span>            }
-</span></span><span style="display:flex;"><span>        }
-</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">return</span> <span style="color:#66d9ef">nil</span>
-</span></span><span style="display:flex;"><span>    }
-</span></span></code></pre></div><h2 id="定制字体和颜色">定制字体和颜色</h2>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span><span style="color:#66d9ef">extension</span> <span style="color:#a6e22e">UIAlertController</span> {
-</span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">func</span> <span style="color:#a6e22e">setBackgroundColor</span>(color: UIColor) {
-</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">if</span> <span style="color:#66d9ef">let</span> bgView = <span style="color:#66d9ef">self</span>.view.subviews.first, <span style="color:#66d9ef">let</span> groupView = bgView.subviews.first, <span style="color:#66d9ef">let</span> contentView = groupView.subviews.first {
-</span></span><span style="display:flex;"><span>            contentView.backgroundColor = color
-</span></span><span style="display:flex;"><span>        }
-</span></span><span style="display:flex;"><span>    }
-</span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">func</span> <span style="color:#a6e22e">setTitle</span>(font: UIFont?, color: UIColor? = <span style="color:#66d9ef">nil</span>) {
-</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">guard</span> <span style="color:#66d9ef">let</span> title = <span style="color:#66d9ef">self</span>.title <span style="color:#66d9ef">else</span> {
-</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">return</span>
-</span></span><span style="display:flex;"><span>        }
-</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">let</span> attributeString = NSMutableAttributedString(string: title)
-</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">if</span> <span style="color:#66d9ef">let</span> titleFont = font {
-</span></span><span style="display:flex;"><span>            attributeString.addAttributes([NSAttributedString.Key.font: titleFont],
-</span></span><span style="display:flex;"><span>                    range: NSMakeRange(<span style="color:#ae81ff">0</span>, title.count))
-</span></span><span style="display:flex;"><span>        }
-</span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">if</span> <span style="color:#66d9ef">let</span> titleColor = color {
-</span></span><span style="display:flex;"><span>            attributeString.addAttributes([NSAttributedString.Key.foregroundColor: titleColor],
-</span></span><span style="display:flex;"><span>                    range: NSMakeRange(<span style="color:#ae81ff">0</span>, title.count))
-</span></span><span style="display:flex;"><span>        }
-</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">self</span>.setValue(attributeString, forKey: <span style="color:#e6db74">&#34;attributedTitle&#34;</span>)
-</span></span><span style="display:flex;"><span>    }
-</span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">func</span> <span style="color:#a6e22e">setMessage</span>(font: UIFont?, color: UIColor? = <span style="color:#66d9ef">nil</span>) {
-</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">guard</span> <span style="color:#66d9ef">let</span> message = <span style="color:#66d9ef">self</span>.message <span style="color:#66d9ef">else</span> {
-</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">return</span>
-</span></span><span style="display:flex;"><span>        }
-</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">let</span> attributeString = NSMutableAttributedString(string: message)
-</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">if</span> <span style="color:#66d9ef">let</span> messageFont = font {
-</span></span><span style="display:flex;"><span>            attributeString.addAttributes([NSAttributedString.Key.font: messageFont],
-</span></span><span style="display:flex;"><span>                    range: NSMakeRange(<span style="color:#ae81ff">0</span>, message.count))
-</span></span><span style="display:flex;"><span>        }
-</span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">if</span> <span style="color:#66d9ef">let</span> messageColor = color {
-</span></span><span style="display:flex;"><span>            attributeString.addAttributes([NSAttributedString.Key.foregroundColor: messageColor],
-</span></span><span style="display:flex;"><span>                    range: NSMakeRange(<span style="color:#ae81ff">0</span>, message.count))
-</span></span><span style="display:flex;"><span>        }
-</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">self</span>.setValue(attributeString, forKey: <span style="color:#e6db74">&#34;attributedMessage&#34;</span>)
-</span></span><span style="display:flex;"><span>    }
-</span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">func</span> <span style="color:#a6e22e">setTint</span>(color: UIColor) {
-</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">self</span>.view.tintColor = color
-</span></span><span style="display:flex;"><span>    }
-</span></span><span style="display:flex;"><span>}
-</span></span></code></pre></div><hr>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift"><span style="color:#66d9ef">class</span> <span style="color:#a6e22e">AlertController</span>: UIAlertController {
+    <span style="color:#75715e">//</span><span style="color:#75715e">/</span><span style="color:#75715e"> </span><span style="color:#75715e">B</span><span style="color:#75715e">u</span><span style="color:#75715e">t</span><span style="color:#75715e">t</span><span style="color:#75715e">o</span><span style="color:#75715e">n</span><span style="color:#75715e">s</span><span style="color:#75715e"> </span><span style="color:#75715e">b</span><span style="color:#75715e">a</span><span style="color:#75715e">c</span><span style="color:#75715e">k</span><span style="color:#75715e">g</span><span style="color:#75715e">r</span><span style="color:#75715e">o</span><span style="color:#75715e">u</span><span style="color:#75715e">n</span><span style="color:#75715e">d</span><span style="color:#75715e"> </span><span style="color:#75715e">c</span><span style="color:#75715e">o</span><span style="color:#75715e">l</span><span style="color:#75715e">o</span><span style="color:#75715e">r</span><span style="color:#75715e">.</span>
+    <span style="color:#66d9ef">var</span> buttonBackgroundColor: UIColor = .darkGray {
+        <span style="color:#66d9ef">didSet</span> {
+            <span style="color:#75715e">//</span><span style="color:#75715e"> </span><span style="color:#75715e">I</span><span style="color:#75715e">n</span><span style="color:#75715e">v</span><span style="color:#75715e">a</span><span style="color:#75715e">l</span><span style="color:#75715e">i</span><span style="color:#75715e">d</span><span style="color:#75715e">a</span><span style="color:#75715e">t</span><span style="color:#75715e">e</span><span style="color:#75715e"> </span><span style="color:#75715e">c</span><span style="color:#75715e">u</span><span style="color:#75715e">r</span><span style="color:#75715e">r</span><span style="color:#75715e">e</span><span style="color:#75715e">n</span><span style="color:#75715e">t</span><span style="color:#75715e"> </span><span style="color:#75715e">c</span><span style="color:#75715e">o</span><span style="color:#75715e">l</span><span style="color:#75715e">o</span><span style="color:#75715e">r</span><span style="color:#75715e">s</span><span style="color:#75715e"> </span><span style="color:#75715e">o</span><span style="color:#75715e">n</span><span style="color:#75715e"> </span><span style="color:#75715e">c</span><span style="color:#75715e">h</span><span style="color:#75715e">a</span><span style="color:#75715e">n</span><span style="color:#75715e">g</span><span style="color:#75715e">e</span><span style="color:#75715e">.</span>
+            view.setNeedsLayout()
+        }
+    }
+
+    <span style="color:#66d9ef">override</span> <span style="color:#66d9ef">func</span> <span style="color:#a6e22e">viewDidLayoutSubviews</span>() {
+        <span style="color:#66d9ef">super</span>.viewDidLayoutSubviews()
+
+        <span style="color:#75715e">//</span><span style="color:#75715e"> </span><span style="color:#75715e">T</span><span style="color:#75715e">r</span><span style="color:#75715e">a</span><span style="color:#75715e">v</span><span style="color:#75715e">e</span><span style="color:#75715e">r</span><span style="color:#75715e">s</span><span style="color:#75715e">e</span><span style="color:#75715e"> </span><span style="color:#75715e">v</span><span style="color:#75715e">i</span><span style="color:#75715e">e</span><span style="color:#75715e">w</span><span style="color:#75715e"> </span><span style="color:#75715e">h</span><span style="color:#75715e">i</span><span style="color:#75715e">e</span><span style="color:#75715e">r</span><span style="color:#75715e">a</span><span style="color:#75715e">r</span><span style="color:#75715e">c</span><span style="color:#75715e">h</span><span style="color:#75715e">y</span><span style="color:#75715e">.</span>
+        view.allViews.forEach {
+            <span style="color:#75715e">//</span><span style="color:#75715e"> </span><span style="color:#75715e">I</span><span style="color:#75715e">f</span><span style="color:#75715e"> </span><span style="color:#75715e">t</span><span style="color:#75715e">h</span><span style="color:#75715e">e</span><span style="color:#75715e">r</span><span style="color:#75715e">e</span><span style="color:#75715e"> </span><span style="color:#75715e">w</span><span style="color:#75715e">a</span><span style="color:#75715e">s</span><span style="color:#75715e"> </span><span style="color:#75715e">a</span><span style="color:#75715e">n</span><span style="color:#75715e">y</span><span style="color:#75715e"> </span><span style="color:#75715e">n</span><span style="color:#75715e">o</span><span style="color:#75715e">n</span><span style="color:#75715e">-</span><span style="color:#75715e">c</span><span style="color:#75715e">l</span><span style="color:#75715e">e</span><span style="color:#75715e">a</span><span style="color:#75715e">r</span><span style="color:#75715e"> </span><span style="color:#75715e">b</span><span style="color:#75715e">a</span><span style="color:#75715e">c</span><span style="color:#75715e">k</span><span style="color:#75715e">g</span><span style="color:#75715e">r</span><span style="color:#75715e">o</span><span style="color:#75715e">u</span><span style="color:#75715e">n</span><span style="color:#75715e">d</span><span style="color:#75715e"> </span><span style="color:#75715e">c</span><span style="color:#75715e">o</span><span style="color:#75715e">l</span><span style="color:#75715e">o</span><span style="color:#75715e">r</span><span style="color:#75715e">,</span><span style="color:#75715e"> </span><span style="color:#75715e">u</span><span style="color:#75715e">p</span><span style="color:#75715e">d</span><span style="color:#75715e">a</span><span style="color:#75715e">t</span><span style="color:#75715e">e</span><span style="color:#75715e"> </span><span style="color:#75715e">t</span><span style="color:#75715e">o</span><span style="color:#75715e"> </span><span style="color:#75715e">c</span><span style="color:#75715e">u</span><span style="color:#75715e">s</span><span style="color:#75715e">t</span><span style="color:#75715e">o</span><span style="color:#75715e">m</span><span style="color:#75715e"> </span><span style="color:#75715e">b</span><span style="color:#75715e">a</span><span style="color:#75715e">c</span><span style="color:#75715e">k</span><span style="color:#75715e">g</span><span style="color:#75715e">r</span><span style="color:#75715e">o</span><span style="color:#75715e">u</span><span style="color:#75715e">n</span><span style="color:#75715e">d</span><span style="color:#75715e">.</span>
+            <span style="color:#66d9ef">if</span> <span style="color:#66d9ef">let</span> color = $0.backgroundColor, color <span style="color:#f92672">!=</span> .clear {
+                $0.backgroundColor = buttonBackgroundColor
+            }
+            <span style="color:#75715e">//</span><span style="color:#75715e"> </span><span style="color:#75715e">I</span><span style="color:#75715e">f</span><span style="color:#75715e"> </span><span style="color:#75715e">v</span><span style="color:#75715e">i</span><span style="color:#75715e">e</span><span style="color:#75715e">w</span><span style="color:#75715e"> </span><span style="color:#75715e">i</span><span style="color:#75715e">s</span><span style="color:#75715e"> </span><span style="color:#75715e">U</span><span style="color:#75715e">I</span><span style="color:#75715e">V</span><span style="color:#75715e">i</span><span style="color:#75715e">s</span><span style="color:#75715e">u</span><span style="color:#75715e">a</span><span style="color:#75715e">l</span><span style="color:#75715e">E</span><span style="color:#75715e">f</span><span style="color:#75715e">f</span><span style="color:#75715e">e</span><span style="color:#75715e">c</span><span style="color:#75715e">t</span><span style="color:#75715e">V</span><span style="color:#75715e">i</span><span style="color:#75715e">e</span><span style="color:#75715e">w</span><span style="color:#75715e">,</span><span style="color:#75715e"> </span><span style="color:#75715e">r</span><span style="color:#75715e">e</span><span style="color:#75715e">m</span><span style="color:#75715e">o</span><span style="color:#75715e">v</span><span style="color:#75715e">e</span><span style="color:#75715e"> </span><span style="color:#75715e">i</span><span style="color:#75715e">t</span><span style="color:#75715e">&#39;</span><span style="color:#75715e">s</span><span style="color:#75715e"> </span><span style="color:#75715e">e</span><span style="color:#75715e">f</span><span style="color:#75715e">f</span><span style="color:#75715e">e</span><span style="color:#75715e">c</span><span style="color:#75715e">t</span><span style="color:#75715e"> </span><span style="color:#75715e">a</span><span style="color:#75715e">n</span><span style="color:#75715e">d</span><span style="color:#75715e"> </span><span style="color:#75715e">c</span><span style="color:#75715e">u</span><span style="color:#75715e">s</span><span style="color:#75715e">t</span><span style="color:#75715e">o</span><span style="color:#75715e">m</span><span style="color:#75715e">i</span><span style="color:#75715e">s</span><span style="color:#75715e">e</span><span style="color:#75715e"> </span><span style="color:#75715e">c</span><span style="color:#75715e">o</span><span style="color:#75715e">l</span><span style="color:#75715e">o</span><span style="color:#75715e">r</span><span style="color:#75715e">.</span>
+            <span style="color:#66d9ef">if</span> <span style="color:#66d9ef">let</span> visualEffectView = $0 <span style="color:#66d9ef">as</span>? UIVisualEffectView {
+                visualEffectView.effect = <span style="color:#66d9ef">nil</span>
+                visualEffectView.backgroundColor = buttonBackgroundColor
+            }
+        }
+        <span style="color:#75715e">//</span><span style="color:#75715e"> </span><span style="color:#75715e">U</span><span style="color:#75715e">p</span><span style="color:#75715e">d</span><span style="color:#75715e">a</span><span style="color:#75715e">t</span><span style="color:#75715e">e</span><span style="color:#75715e"> </span><span style="color:#75715e">b</span><span style="color:#75715e">a</span><span style="color:#75715e">c</span><span style="color:#75715e">k</span><span style="color:#75715e">g</span><span style="color:#75715e">r</span><span style="color:#75715e">o</span><span style="color:#75715e">u</span><span style="color:#75715e">n</span><span style="color:#75715e">d</span><span style="color:#75715e"> </span><span style="color:#75715e">c</span><span style="color:#75715e">o</span><span style="color:#75715e">l</span><span style="color:#75715e">o</span><span style="color:#75715e">r</span><span style="color:#75715e"> </span><span style="color:#75715e">o</span><span style="color:#75715e">f</span><span style="color:#75715e"> </span><span style="color:#75715e">p</span><span style="color:#75715e">o</span><span style="color:#75715e">p</span><span style="color:#75715e">o</span><span style="color:#75715e">v</span><span style="color:#75715e">e</span><span style="color:#75715e">r</span><span style="color:#75715e">P</span><span style="color:#75715e">r</span><span style="color:#75715e">e</span><span style="color:#75715e">s</span><span style="color:#75715e">e</span><span style="color:#75715e">n</span><span style="color:#75715e">t</span><span style="color:#75715e">a</span><span style="color:#75715e">t</span><span style="color:#75715e">i</span><span style="color:#75715e">o</span><span style="color:#75715e">n</span><span style="color:#75715e">C</span><span style="color:#75715e">o</span><span style="color:#75715e">n</span><span style="color:#75715e">t</span><span style="color:#75715e">r</span><span style="color:#75715e">o</span><span style="color:#75715e">l</span><span style="color:#75715e">l</span><span style="color:#75715e">e</span><span style="color:#75715e">r</span><span style="color:#75715e"> </span><span style="color:#75715e">(</span><span style="color:#75715e">f</span><span style="color:#75715e">o</span><span style="color:#75715e">r</span><span style="color:#75715e"> </span><span style="color:#75715e">i</span><span style="color:#75715e">P</span><span style="color:#75715e">a</span><span style="color:#75715e">d</span><span style="color:#75715e">s</span><span style="color:#75715e">)</span><span style="color:#75715e">.</span>
+        popoverPresentationController?.backgroundColor = buttonBackgroundColor
+    }
+}
+</code></pre></div><h2 id="获取views">获取views</h2>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift"><span style="color:#66d9ef">extension</span> <span style="color:#a6e22e">UIView</span> {
+    <span style="color:#75715e">//</span><span style="color:#75715e">/</span><span style="color:#75715e"> </span><span style="color:#75715e">A</span><span style="color:#75715e">l</span><span style="color:#75715e">l</span><span style="color:#75715e"> </span><span style="color:#75715e">c</span><span style="color:#75715e">h</span><span style="color:#75715e">i</span><span style="color:#75715e">l</span><span style="color:#75715e">d</span><span style="color:#75715e"> </span><span style="color:#75715e">s</span><span style="color:#75715e">u</span><span style="color:#75715e">b</span><span style="color:#75715e">v</span><span style="color:#75715e">i</span><span style="color:#75715e">e</span><span style="color:#75715e">w</span><span style="color:#75715e">s</span><span style="color:#75715e"> </span><span style="color:#75715e">i</span><span style="color:#75715e">n</span><span style="color:#75715e"> </span><span style="color:#75715e">v</span><span style="color:#75715e">i</span><span style="color:#75715e">e</span><span style="color:#75715e">w</span><span style="color:#75715e"> </span><span style="color:#75715e">h</span><span style="color:#75715e">i</span><span style="color:#75715e">e</span><span style="color:#75715e">r</span><span style="color:#75715e">a</span><span style="color:#75715e">r</span><span style="color:#75715e">c</span><span style="color:#75715e">h</span><span style="color:#75715e">y</span><span style="color:#75715e"> </span><span style="color:#75715e">p</span><span style="color:#75715e">l</span><span style="color:#75715e">u</span><span style="color:#75715e">s</span><span style="color:#75715e"> </span><span style="color:#75715e">s</span><span style="color:#75715e">e</span><span style="color:#75715e">l</span><span style="color:#75715e">f</span><span style="color:#75715e">.</span>
+    fileprivate <span style="color:#66d9ef">var</span> allViews: [UIView] {
+        <span style="color:#66d9ef">var</span> views = [<span style="color:#66d9ef">self</span>]
+        subviews.forEach {
+            views.append(contentsOf: $0.allViews)
+        }
+        <span style="color:#66d9ef">return</span> views
+    }
+}
+</code></pre></div><h2 id="扩展vc">扩展VC</h2>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift"><span style="color:#66d9ef">extension</span> <span style="color:#a6e22e">UIViewController</span> {
+
+    <span style="color:#66d9ef">func</span> <span style="color:#a6e22e">notify</span>(msg: String) -&gt; Void {
+        <span style="color:#66d9ef">let</span> alert = UIAlertController(title: <span style="color:#e6db74">&#34;</span><span style="color:#e6db74">&#34;</span>, message: msg, preferredStyle: .alert)
+        <span style="color:#66d9ef">if</span> <span style="color:#66d9ef">let</span> visualEffectView = alert.view.searchVisualEffectsSubview() {
+            visualEffectView.effect = UIBlurEffect(style: .light)
+        }
+
+        alert.setMessage(font: UIFont.systemFont(ofSize: <span style="color:#ae81ff">17</span>))
+
+        present(alert, animated: <span style="color:#66d9ef">true</span>, completion: <span style="color:#66d9ef">nil</span>)
+        DispatchQueue.main.asyncAfter(deadline: .now() <span style="color:#f92672">+</span> <span style="color:#ae81ff">1.5</span>) { [<span style="color:#66d9ef">weak</span> <span style="color:#66d9ef">self</span>] <span style="color:#66d9ef">in</span>
+            <span style="color:#66d9ef">self</span>?.dismiss(animated: <span style="color:#66d9ef">true</span>)
+        }
+    }
+}
+
+    <span style="color:#66d9ef">func</span> <span style="color:#a6e22e">searchVisualEffectsSubview</span>() -&gt; UIVisualEffectView? {
+        <span style="color:#66d9ef">if</span> <span style="color:#66d9ef">let</span> visualEffectView = <span style="color:#66d9ef">self</span> <span style="color:#66d9ef">as</span>? UIVisualEffectView {
+            <span style="color:#66d9ef">return</span> visualEffectView
+        } <span style="color:#66d9ef">else</span> {
+            <span style="color:#66d9ef">for</span> subview <span style="color:#66d9ef">in</span> subviews {
+                <span style="color:#66d9ef">if</span> <span style="color:#66d9ef">let</span> found = subview.searchVisualEffectsSubview() {
+                    <span style="color:#66d9ef">return</span> found
+                }
+            }
+        }
+        <span style="color:#66d9ef">return</span> <span style="color:#66d9ef">nil</span>
+    }
+</code></pre></div><h2 id="定制字体和颜色">定制字体和颜色</h2>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift"><span style="color:#66d9ef">extension</span> <span style="color:#a6e22e">UIAlertController</span> {
+
+    <span style="color:#66d9ef">func</span> <span style="color:#a6e22e">setBackgroundColor</span>(color: UIColor) {
+        <span style="color:#66d9ef">if</span> <span style="color:#66d9ef">let</span> bgView = <span style="color:#66d9ef">self</span>.view.subviews.first, <span style="color:#66d9ef">let</span> groupView = bgView.subviews.first, <span style="color:#66d9ef">let</span> contentView = groupView.subviews.first {
+            contentView.backgroundColor = color
+        }
+    }
+
+    <span style="color:#66d9ef">func</span> <span style="color:#a6e22e">setTitle</span>(font: UIFont?, color: UIColor? = <span style="color:#66d9ef">nil</span>) {
+        <span style="color:#66d9ef">guard</span> <span style="color:#66d9ef">let</span> title = <span style="color:#66d9ef">self</span>.title <span style="color:#66d9ef">else</span> {
+            <span style="color:#66d9ef">return</span>
+        }
+        <span style="color:#66d9ef">let</span> attributeString = NSMutableAttributedString(string: title)
+        <span style="color:#66d9ef">if</span> <span style="color:#66d9ef">let</span> titleFont = font {
+            attributeString.addAttributes([NSAttributedString.Key.font: titleFont],
+                    range: NSMakeRange(<span style="color:#ae81ff">0</span>, title.count))
+        }
+
+        <span style="color:#66d9ef">if</span> <span style="color:#66d9ef">let</span> titleColor = color {
+            attributeString.addAttributes([NSAttributedString.Key.foregroundColor: titleColor],
+                    range: NSMakeRange(<span style="color:#ae81ff">0</span>, title.count))
+        }
+        <span style="color:#66d9ef">self</span>.setValue(attributeString, forKey: <span style="color:#e6db74">&#34;</span><span style="color:#e6db74">attributedTitle</span><span style="color:#e6db74">&#34;</span>)
+    }
+
+    <span style="color:#66d9ef">func</span> <span style="color:#a6e22e">setMessage</span>(font: UIFont?, color: UIColor? = <span style="color:#66d9ef">nil</span>) {
+        <span style="color:#66d9ef">guard</span> <span style="color:#66d9ef">let</span> message = <span style="color:#66d9ef">self</span>.message <span style="color:#66d9ef">else</span> {
+            <span style="color:#66d9ef">return</span>
+        }
+        <span style="color:#66d9ef">let</span> attributeString = NSMutableAttributedString(string: message)
+        <span style="color:#66d9ef">if</span> <span style="color:#66d9ef">let</span> messageFont = font {
+            attributeString.addAttributes([NSAttributedString.Key.font: messageFont],
+                    range: NSMakeRange(<span style="color:#ae81ff">0</span>, message.count))
+        }
+
+        <span style="color:#66d9ef">if</span> <span style="color:#66d9ef">let</span> messageColor = color {
+            attributeString.addAttributes([NSAttributedString.Key.foregroundColor: messageColor],
+                    range: NSMakeRange(<span style="color:#ae81ff">0</span>, message.count))
+        }
+        <span style="color:#66d9ef">self</span>.setValue(attributeString, forKey: <span style="color:#e6db74">&#34;</span><span style="color:#e6db74">attributedMessage</span><span style="color:#e6db74">&#34;</span>)
+    }
+
+    <span style="color:#66d9ef">func</span> <span style="color:#a6e22e">setTint</span>(color: UIColor) {
+        <span style="color:#66d9ef">self</span>.view.tintColor = color
+    }
+}
+
+</code></pre></div><hr>
 
     </div>
     <footer class="post-footer">
@@ -483,7 +484,7 @@ code.has-jax {
     <div class="site-state-item site-state-tags">
         <a href="https://iihui.github.io/tags/">
          
-        <span class="site-state-item-count">29</span>
+        <span class="site-state-item-count">28</span>
         
         <span class="site-state-item-name">标签</span>
         </a>
@@ -563,7 +564,6 @@ code.has-jax {
   <span class="with-love"><i class="fa fa-heart"></i></span>
   <span class="author" itemprop="copyrightHolder">Keep It Simple</span>
 </div>
-
 
 
 
