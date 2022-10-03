@@ -222,8 +222,8 @@ a = Object.new b = a puts &amp;#34;a&amp;#39;s id is #{a.object_id}and b&amp;#39
 如果有两个字符串，可以测试它们是否包含相同的字符，也可以测试它们是否是同一个对象。正如上面的示例代码，即使它们包含相同的字符，也不一定是同一个对象。
 Ruby提供了多种方法来比较不同对象的相等性。比较ID编号是否相等只是衡量对象相等性的一种方法。现在，我们将转向先天方法列表中的下一个方法：respond_to?。在下面的代码中在发送talk消息时，可以先检查对象是否对talk响应：
 if obj.respond_to?(&amp;#34;talk&amp;#34;) obj.talk else puts &amp;#34;Sorry, the object doesn&amp;#39;t understand the &amp;#39;talk&amp;#39; message.&amp;#34; end 实际上respond_to?方法是introspection（反射）或reflection，这两个术语指的是在程序运行时检查程序的状态。 Ruby提供了许多用于introspection的工具。使用方法检查某个方法是否为对象的方法是一种introspection或reflection技术。
-if ticket.respond_to?(request) puts ticket.send(request) else puts &amp;#34;No such information available&amp;#34; end send是一个广泛的概念：电子邮件被发送，数据被发送到I/O套接字等等。对于程序来说，定义一个叫做send的方法，与Ruby内置的send方法相冲突是很常见的事情。
-因此，Ruby给了一个send的替代方法__send__。一般来说，不会有人用这个名字定义一个方法，所以内置的Ruby版本总是可用的，并且永远不会与新写的方法发生冲突。它看起来很奇怪，但从方法名称冲突的角度来看，它比普通的send版本更安全。
+if ticket.respond_to?(request) puts ticket.send(request) else puts &amp;#34;No such information available&amp;#34; end send是一个很常见的概念，例如电子邮件被发送，数据被发送到I/O套接字等等。对于某个程序来说，很可能会在其中定义一个名为send方法，那么就会Ruby内置的send方法冲突。
+因此，Ruby内置了一个send的替代方法__send__。一般来说，不会有人用这个名字定义一个方法，所以内置的Ruby版本总是可用的，并且永远不会与新写的方法发生冲突。它看起来很奇怪，但从方法名称冲突的角度来看，它比普通的send版本更安全。
 此外，还有一个安全的，但方式不同的send (或__send__) 版本，叫做public_send。普通send和public_send的区别在于send可以调用对象的私有方法，而public_send不能。
 很多情况下是使用点操作符来发送消息。但是，替代方法send可能是有用和强大的，也足够容易出错，以至于几乎总是先调用response_to?。在某些情况下，response_to?甚至可能过于宽泛而不安全，可能只向一个对象发送一个消息，如果该消息包含在一个预先确定的消息&amp;quot;允许列表&amp;quot;中。
 这在处理用户输入时尤其重要。从用户那里获取输入信息，并使用它来调用方法，这可能会出现意想不到的行为，甚至是恶意的攻击。指导原则是要小心向对象发送任意的消息，特别是当这些消息是基于用户的选择或输入时。
