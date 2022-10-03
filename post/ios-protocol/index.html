@@ -1,0 +1,1492 @@
+<!DOCTYPE HTML>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" /> 
+    <title>Swift协议 - Keep It Simple</title>
+    <meta name="keywords" content="博客,思考,读书,笔记,技术,分享">
+    
+    <meta property="og:title" content="Swift协议">
+    <meta property="og:site_name" content="Keep It Simple">
+    <meta property="og:image" content="/img/author.jpg"> 
+    <meta name="title" content="Swift协议 - Keep It Simple" />
+    <meta name="description" content="Swift | Go | C&#43;&#43; "> 
+    <link rel="shortcut icon" href="https://iihui.github.io/img/favicon.ico" />
+    <link rel="apple-touch-icon" href="https://iihui.github.io/img/apple-touch-icon.png" />
+    <link rel="apple-touch-icon-precomposed" href="https://iihui.github.io/img/apple-touch-icon.png" />
+    <link href="https://iihui.github.io/js/vendor/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+    <link href="https://iihui.github.io/js/vendor/fancybox/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+    <link href="https://iihui.github.io/css/main.css" rel="stylesheet" type="text/css" />
+    <link href="https://iihui.github.io/css/custom.css" rel="stylesheet" type="text/css" />
+    <link href="https://iihui.github.io/css/syntax.css" rel="stylesheet" type="text/css" />
+    <script type="text/javascript" id="hexo.configuration">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    scheme: 'Pisces',
+    sidebar: {"position":"left","display":"post"},
+     fancybox: true, 
+    motion: true
+  };
+</script>
+
+    <link href="https://cdn.bootcss.com/highlight.js/9.12.0/styles/monokai-sublime.min.css" rel="stylesheet">
+    <script src="https://cdn.bootcss.com/highlight.js/9.12.0/highlight.min.js"></script>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/languages/go.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/languages/swift.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.1/languages/objectivec.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.1/languages/clojure.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.1/languages/cpp.min.js"></script>
+    <script>hljs.initHighlightingOnLoad();</script>
+
+
+</head>
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+<div class="container one-collumn sidebar-position-left page-home  ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"> <div class="site-meta  custom-logo ">
+
+  <div class="custom-logo-site-title">
+    <a href="https://iihui.github.io/"  class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <span class="site-title">Keep It Simple</span>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+  <p class="site-subtitle">靡不有初，鲜克有终</p>
+</div>
+
+<div class="site-nav-toggle">
+  <button>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+  </button>
+</div>
+
+<nav class="site-nav">
+    <ul id="menu" class="menu">
+      
+      
+        <li class="menu-item ">
+          <a href="https://iihui.github.io/" rel="section">
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />首页
+          </a>
+        </li>
+      
+        <li class="menu-item ">
+          <a href="https://iihui.github.io/tags/" rel="section">
+              <i class="menu-item-icon fa fa-fw fa-tag"></i> <br />标签
+          </a>
+        </li>
+      
+        <li class="menu-item ">
+          <a href="https://iihui.github.io/post/" rel="section">
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />归档
+          </a>
+        </li>
+      
+        <li class="menu-item ">
+          <a href="https://iihui.github.io/categories/%E7%BE%8E%E9%A3%9F/" rel="section">
+              <i class="menu-item-icon fa fa-fw fa-fire"></i> <br />美食
+          </a>
+        </li>
+      
+        <li class="menu-item ">
+          <a href="https://iihui.github.io/categories/%E5%90%8E%E6%9C%9F/" rel="section">
+              <i class="menu-item-icon fa fa-fw fa-edit"></i> <br />后期
+          </a>
+        </li>
+      
+        <li class="menu-item ">
+          <a href="https://iihui.github.io/categories/%E6%97%85%E8%A1%8C/" rel="section">
+              <i class="menu-item-icon fa fa-fw fa-leaf"></i> <br />旅行
+          </a>
+        </li>
+      
+        <li class="menu-item ">
+          <a href="https://iihui.github.io/about/" rel="section">
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />关于
+          </a>
+        </li>
+      
+      <li class="menu-item menu-item-search">
+        <a href="javascript:;" class="popup-trigger"> <i class="menu-item-icon fa fa-search fa-fw"></i> <br /> 搜索</a>
+      </li>
+    </ul>
+    <div class="site-search">
+      <div class="popup">
+ <span class="search-icon fa fa-search"></span>
+ <input type="text" id="local-search-input">
+ <div id="local-search-result"></div>
+ <span class="popup-btn-close">close</span>
+</div>
+
+    </div>
+</nav>
+<script type="text/javascript"
+        async
+        src="https://cdn.bootcss.com/mathjax/2.7.3/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+		<!-- src = "http://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"> <\!--  -\-> -->
+MathJax.Hub.Config({
+  tex2jax: {
+    inlineMath: [['$','$'], ['\\(','\\)']],
+    displayMath: [['$$','$$'], ['\[\[','\]\]']],
+    processEscapes: true,
+    processEnvironments: true,
+    skipTags: ['script', 'noscript', 'style', 'textarea', 'pre'],
+    TeX: { equationNumbers: { autoNumber: "AMS" },
+         extensions: ["AMSmath.js", "AMSsymbols.js"] }
+  }
+});
+
+MathJax.Hub.Queue(function() {
+    
+    
+    
+    var all = MathJax.Hub.getAllJax(), i;
+    for(i = 0; i < all.length; i += 1) {
+        all[i].SourceElement().parentNode.className += ' has-jax';
+    }
+});
+</script>
+
+<style>
+code.has-jax {
+    font: inherit;
+    font-size: 100%;
+    background: inherit;
+    border: inherit;
+    color: #515151;
+}
+</style>
+
+<!DOCTYPE html>
+<html lang="en">
+
+
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.10.0-rc.1/dist/katex.min.css" integrity="sha384-D+9gmBxUQogRLqvARvNLmA9hS2x//eK1FhVb9PiU86gmcrBrJAQT8okdJ4LMp2uv" crossorigin="anonymous">
+
+    
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.10.0-rc.1/dist/katex.min.js" integrity="sha384-483A6DwYfKeDa0Q52fJmxFXkcPCFfnXMoXblOkJ4JcA8zATN6Tm78UNL72AKk+0O" crossorigin="anonymous"></script>
+</head>
+<body>
+
+</body>
+</html>
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+<section id="posts" class="posts-expand">
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <header class="post-header">
+      <h1 class="post-title" itemprop="name headline">
+        <a class="post-title-link" href="https://iihui.github.io/post/ios-protocol/" itemprop="url">
+        Swift协议
+        </a>
+      </h1>
+      <div class="post-meta">
+      <span class="post-time">
+<span class="post-meta-item-icon">
+    <i class="fa fa-calendar-o"></i>
+</span>
+<span class="post-meta-item-text">创建: </span>
+<time itemprop="dateCreated" datetime="2016-03-22T13:04:35+08:00" content="2021-08-07">
+    2021-08-07
+</time>
+</span>
+&nbsp; | &nbsp;
+<span class="post-updated-time">
+<span class="post-meta-item-icon">
+    <i class="fa fa-calendar-check-o"></i>
+</span>
+<span class="post-meta-item-text">更新: </span>
+<time itemprop="dateUpdated" content="2021-08-07">
+    2021-08-07
+</time>
+</span> 
+      
+
+  <span class="post-category" >
+  &nbsp; | &nbsp;
+  <span class="post-meta-item-icon">
+    <i class="fa fa-folder-o"></i>
+  </span>
+  <span class="post-meta-item-text">分类: </span>
+  
+    <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
+      <a href="https://iihui.github.io/categories/ios" itemprop="url" rel="index">
+        <span itemprop="name">iOS</span>
+      </a>
+      &nbsp; 
+    </span>
+  
+</span>
+
+
+      <span>
+&nbsp; | &nbsp;
+<span class="post-meta-item-icon">
+    <i class="fa fa-file-word-o"></i>
+</span>
+<span class="post-meta-item-text">字数: </span>
+<span class="leancloud-visitors-count">12814</span>
+&nbsp; | &nbsp;
+<span class="post-meta-item-icon">
+    <i class="fa fa-coffee"></i>
+</span>
+<span class="post-meta-item-text">阅读: </span>
+<span class="leancloud-visitors-count">26 分钟</span>
+</span>
+      </div>
+    </header>
+    <div class="post-body" itemprop="articleBody">
+    <blockquote>
+<p><code>2015</code>年苹果声称<code>Swift</code>是第一个面向协议的编程语言。从它的名字来看，<!-- raw HTML omitted -->很可能会认为面向协议编程都是关于协议的，但这是不正确的<!-- raw HTML omitted -->。面向协议的编程所涉及的不仅仅是协议，它实际上是一种新的方式，不仅是编写应用程序，而且是我们如何思考应用程序的设计。</p>
+</blockquote>
+<p>协议使用<code>protocol</code>关键字来定义，其定义语法类似于<code>class,struct,enum</code>等类型。下面代码定义了<code>BaseProtocol</code>协议，它只包含一个<code>baseFunc</code>方法：</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift"><span style="color:#66d9ef">protocol</span> <span style="color:#a6e22e">BaseProtocol</span> {
+    <span style="color:#66d9ef">func</span> <span style="color:#a6e22e">baseFunc</span>()
+}
+</code></pre></div><h1 id="协议中的属性">协议中的属性</h1>
+<p>定义协议时可以要求<code>adopting</code>协议的类型提供<!-- raw HTML omitted -->特定名字和特定类型<!-- raw HTML omitted -->的属性，但<!-- raw HTML omitted -->对于<code>adopting</code>协议的类型定义的是计算属性还是存储属性并没有要求<!-- raw HTML omitted -->。下面定义的<code>FullNameProtocol</code>协议包含了两个属性：</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift"><span style="color:#66d9ef">protocol</span> <span style="color:#a6e22e">FullNameProtocol</span> {
+    <span style="color:#66d9ef">var</span> firstName: String { <span style="color:#66d9ef">get</span> <span style="color:#66d9ef">set</span> }
+    <span style="color:#66d9ef">var</span> lastName: String { <span style="color:#66d9ef">get</span> <span style="color:#66d9ef">set</span> }
+}
+</code></pre></div><p>上面定义的两个属性<code>firstName</code>和<code>lastName</code>，都是<!-- raw HTML omitted -->读写属性<!-- raw HTML omitted -->。如果想要定义只读属性，则只需声明<code>get</code>，去掉<code>set</code>关键字即可：</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift"><span style="color:#66d9ef">protocol</span> <span style="color:#a6e22e">ReadOnlyProtocol</span> {
+    <span style="color:#66d9ef">var</span> readOnly: String { <span style="color:#66d9ef">get</span> }
+}
+</code></pre></div><p>协议中也<!-- raw HTML omitted -->可以定义静态属性<!-- raw HTML omitted -->，只需要在属性名的<!-- raw HTML omitted -->最前面<!-- raw HTML omitted -->添加<code>static</code>关键字。下面定义的<code>StaticProtocol</code>协议中添加了一个静态只读属性<code>staticProperty</code>:</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift"><span style="color:#66d9ef">protocol</span> <span style="color:#a6e22e">StaticProtocol</span> {
+    <span style="color:#66d9ef">static</span> <span style="color:#66d9ef">var</span> staticProperty: String { <span style="color:#66d9ef">get</span> }
+}
+</code></pre></div><h1 id="协议中的方法">协议中的方法</h1>
+<p>在协议定义时可以要求<code>adopting</code>协议的类型提供特定的方法。在协议中定义方法和在<code>class,struct</code>中声明方法有点相似，但不需要花括号和函数体：</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift"><span style="color:#66d9ef">protocol</span> <span style="color:#a6e22e">FullNameProtocol</span> {
+    <span style="color:#66d9ef">func</span> <span style="color:#a6e22e">getFullName</span>() -&gt; String
+}
+</code></pre></div><h1 id="可选属性或方法">可选属性或方法</h1>
+<p>如果要定义一个属性或者方法是可选实现的，<!-- raw HTML omitted -->首先需要在协议定义前添加<code>@objc</code>关键字，并且在可选的属性或方法前添加<code>@objc optional</code><!-- raw HTML omitted -->:</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift"><span style="color:#66d9ef">@objc</span> <span style="color:#66d9ef">protocol</span> <span style="color:#a6e22e">Phone</span> {
+    <span style="color:#66d9ef">var</span> phoneNumber: String { <span style="color:#66d9ef">get</span> <span style="color:#66d9ef">set</span> }
+    <span style="color:#66d9ef">@objc</span> <span style="color:#66d9ef">optional</span> <span style="color:#66d9ef">var</span> emailAdress: String { <span style="color:#66d9ef">get</span> <span style="color:#66d9ef">set</span> }
+    <span style="color:#66d9ef">func</span> <span style="color:#a6e22e">dialNumber</span>()
+    <span style="color:#66d9ef">@objc</span> <span style="color:#66d9ef">optional</span> <span style="color:#66d9ef">func</span> <span style="color:#a6e22e">getEmail</span>() -&gt; String
+}
+</code></pre></div><h1 id="协议继承">协议继承</h1>
+<p>定义协议时可以从<!-- raw HTML omitted -->一个或多个协议中继承定义的属性和方法<!-- raw HTML omitted -->，即<!-- raw HTML omitted -->协议支持多继承<!-- raw HTML omitted -->，在继承的同时也可以添加自定义的属性和方法。下面代码是协议继承的一个简单例子：</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift"><span style="color:#66d9ef">protocol</span> <span style="color:#a6e22e">FullName</span> {
+    <span style="color:#66d9ef">var</span> firstName: String { <span style="color:#66d9ef">get</span> <span style="color:#66d9ef">set</span> }
+    <span style="color:#66d9ef">var</span> lastName: String { <span style="color:#66d9ef">get</span> <span style="color:#66d9ef">set</span> }
+
+    <span style="color:#66d9ef">func</span> <span style="color:#a6e22e">getFullName</span>() -&gt; String
+}
+
+<span style="color:#66d9ef">protocol</span> <span style="color:#a6e22e">Person</span>: FullName {
+    <span style="color:#66d9ef">var</span> age: Int { <span style="color:#66d9ef">set</span> <span style="color:#66d9ef">get</span> }
+}
+
+<span style="color:#66d9ef">struct</span> <span style="color:#a6e22e">student</span>: Person {
+    <span style="color:#66d9ef">var</span> firstName = <span style="color:#e6db74">&#34;</span><span style="color:#e6db74">firstName</span><span style="color:#e6db74">&#34;</span>
+
+    <span style="color:#66d9ef">var</span> lastName = <span style="color:#e6db74">&#34;</span><span style="color:#e6db74">lastName</span><span style="color:#e6db74">&#34;</span>
+
+    <span style="color:#66d9ef">var</span> age = <span style="color:#ae81ff">0</span>
+    <span style="color:#66d9ef">func</span> <span style="color:#a6e22e">getFullName</span>() -&gt; String {
+        <span style="color:#66d9ef">return</span> <span style="color:#e6db74">&#34;</span><span style="color:#e6db74">\(</span>firstName<span style="color:#e6db74">)</span><span style="color:#e6db74"> </span><span style="color:#e6db74">\(</span>lastName<span style="color:#e6db74">)</span><span style="color:#e6db74">&#34;</span>
+    }
+}
+
+<span style="color:#66d9ef">protocol</span> <span style="color:#a6e22e">A</span> {
+    <span style="color:#66d9ef">var</span> name: String { <span style="color:#66d9ef">get</span> }
+}
+<span style="color:#66d9ef">protocol</span> <span style="color:#a6e22e">B</span> {
+    <span style="color:#66d9ef">var</span> age: Int { <span style="color:#66d9ef">get</span> }
+}
+
+<span style="color:#66d9ef">protocol</span> <span style="color:#a6e22e">C</span>: A, B {
+    <span style="color:#66d9ef">var</span> hook: String { <span style="color:#66d9ef">get</span> }
+}
+</code></pre></div><h1 id="协议组合">协议组合</h1>
+<p>面向协议编程中有个重要的概念<code>protocol composition</code>（协议组合）。协议组合允许一个类型<code>adopting</code>多个协议，这是相对于类继承的最大优势，因为<code>Swift</code>中的<!-- raw HTML omitted -->类类型只允许单继承<!-- raw HTML omitted -->。</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift"><span style="color:#66d9ef">struct</span> <span style="color:#a6e22e">MyStruct</span>: ProtocolOne, ProtocolTwo, ProtocolThree { 
+    <span style="color:#75715e">//</span><span style="color:#75715e"> </span><span style="color:#75715e">实</span><span style="color:#75715e">现</span><span style="color:#75715e">结</span><span style="color:#75715e">构</span><span style="color:#75715e">体</span><span style="color:#75715e">的</span><span style="color:#75715e">定</span><span style="color:#75715e">义</span>
+}
+</code></pre></div><p>协议组合允许我们将需求<!-- raw HTML omitted -->分解成许多较小的组件<!-- raw HTML omitted -->，而不是从一个协议或单一的父类中继承所有的属性或方法。<!-- raw HTML omitted -->这使得类型族在宽度上而不是在高度上增长<!-- raw HTML omitted -->，意味着可以避免创建臃肿的类型（这些类型可能包含一些不需要的属性和方法）。</p>
+<h1 id="像类型一样使用协议">像类型一样使用协议</h1>
+<p>尽管协议中没有任何具体实现，但在<code>Swift</code>中，协议仍然<!-- raw HTML omitted -->被认为是一种成熟的类型<!-- raw HTML omitted -->，并且大多可以像其他类型一样使用。这意味着，<!-- raw HTML omitted -->可以将协议作为函数的参数或返回类型，还可以把它们作为变量、常量和集合的类型<!-- raw HTML omitted -->。</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift"><span style="color:#66d9ef">protocol</span> <span style="color:#a6e22e">FullName</span> {
+    <span style="color:#66d9ef">var</span> firstName: String { <span style="color:#66d9ef">get</span> <span style="color:#66d9ef">set</span> }
+    <span style="color:#66d9ef">var</span> lastName: String { <span style="color:#66d9ef">get</span> <span style="color:#66d9ef">set</span> }
+
+    <span style="color:#66d9ef">func</span> <span style="color:#a6e22e">getFullName</span>() -&gt; String
+}
+
+<span style="color:#66d9ef">protocol</span> <span style="color:#a6e22e">Person</span>: FullName {
+    <span style="color:#66d9ef">var</span> age: Int { <span style="color:#66d9ef">set</span> <span style="color:#66d9ef">get</span> }
+    <span style="color:#66d9ef">var</span> birthDate: Date { <span style="color:#66d9ef">get</span> <span style="color:#66d9ef">set</span> }
+    <span style="color:#66d9ef">var</span> profession: String { <span style="color:#66d9ef">get</span> }
+    <span style="color:#66d9ef">init</span>(firstName: String, lastName: String, birthDate: Date)
+}
+
+<span style="color:#66d9ef">func</span> <span style="color:#a6e22e">updatePerson</span>(person: Person) -&gt; Person {
+    <span style="color:#66d9ef">var</span> newPerson: Person
+    <span style="color:#75715e">//</span><span style="color:#75715e"> </span><span style="color:#75715e">在</span><span style="color:#75715e">这</span><span style="color:#75715e">里</span><span style="color:#75715e">更</span><span style="color:#75715e">新</span><span style="color:#75715e">n</span><span style="color:#75715e">e</span><span style="color:#75715e">w</span><span style="color:#75715e">P</span><span style="color:#75715e">e</span><span style="color:#75715e">r</span><span style="color:#75715e">s</span><span style="color:#75715e">o</span><span style="color:#75715e">n</span>
+    <span style="color:#66d9ef">return</span> newPerson
+}
+<span style="color:#66d9ef">var</span> personArray = [Person]()
+<span style="color:#66d9ef">var</span> personDict = [String: Person]()
+</code></pre></div><h1 id="协议的多态性">协议的多态性</h1>
+<p>多态这个词来自希腊语的词根<code>poly</code>（意为许多）和<code>morphe</code>（意为形式）。在编程语言中，<!-- raw HTML omitted -->多态性是指多种类型的单一接口<!-- raw HTML omitted -->。多态性让我们<!-- raw HTML omitted -->通过单一的统一接口与多种类型进行交互<!-- raw HTML omitted -->。在面向对象的编程世界中，单一的统一接口通常来自父类，而在面向协议的编程世界中，这个单一的接口的通常跟协议相关。</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift"><span style="color:#66d9ef">struct</span> <span style="color:#a6e22e">Student</span>: Person {
+    <span style="color:#66d9ef">var</span> firstName = <span style="color:#e6db74">&#34;</span><span style="color:#e6db74">&#34;</span>
+    <span style="color:#66d9ef">var</span> lastName = <span style="color:#e6db74">&#34;</span><span style="color:#e6db74">&#34;</span>
+    <span style="color:#66d9ef">var</span> age = <span style="color:#ae81ff">0</span>
+    <span style="color:#66d9ef">var</span> birthDate: Date
+    <span style="color:#66d9ef">var</span> profession: String = <span style="color:#e6db74">&#34;</span><span style="color:#e6db74">&#34;</span>
+
+    <span style="color:#66d9ef">init</span>(firstName: String, lastName: String, birthDate: Date) {
+        <span style="color:#66d9ef">self</span>.firstName = firstName
+        <span style="color:#66d9ef">self</span>.lastName = lastName
+        <span style="color:#66d9ef">self</span>.birthDate = birthDate
+    }
+   
+    <span style="color:#66d9ef">func</span> <span style="color:#a6e22e">getFullName</span>() -&gt; String {
+        <span style="color:#66d9ef">return</span> <span style="color:#e6db74">&#34;</span><span style="color:#e6db74">\(</span>firstName<span style="color:#e6db74">)</span><span style="color:#e6db74"> </span><span style="color:#e6db74">\(</span>lastName<span style="color:#e6db74">)</span><span style="color:#e6db74">&#34;</span>
+    }
+}
+
+<span style="color:#66d9ef">struct</span> <span style="color:#a6e22e">FootballPlayer</span>: Person {
+    <span style="color:#66d9ef">var</span> firstName: String
+    <span style="color:#66d9ef">var</span> lastName: String
+    <span style="color:#66d9ef">var</span> age: Int = <span style="color:#ae81ff">0</span>
+    <span style="color:#66d9ef">var</span> birthDate: Date
+    <span style="color:#66d9ef">var</span> profession: String = <span style="color:#e6db74">&#34;</span><span style="color:#e6db74">&#34;</span>
+
+    <span style="color:#66d9ef">init</span>(firstName: String, lastName: String, birthDate: Date) {
+        <span style="color:#66d9ef">self</span>.firstName = firstName
+        <span style="color:#66d9ef">self</span>.lastName = lastName
+        <span style="color:#66d9ef">self</span>.birthDate = birthDate
+    }
+
+    <span style="color:#66d9ef">func</span> <span style="color:#a6e22e">getFullName</span>() -&gt; String {
+        <span style="color:#66d9ef">return</span> <span style="color:#e6db74">&#34;</span><span style="color:#e6db74">\(</span>firstName<span style="color:#e6db74">)</span><span style="color:#e6db74"> </span><span style="color:#e6db74">\(</span>lastName<span style="color:#e6db74">)</span><span style="color:#e6db74">&#34;</span>
+    }
+}
+
+<span style="color:#66d9ef">func</span> <span style="color:#a6e22e">test</span>() {
+    <span style="color:#66d9ef">var</span> myPerson: Person
+    myPerson = Student(firstName: <span style="color:#e6db74">&#34;</span><span style="color:#e6db74">Jon</span><span style="color:#e6db74">&#34;</span>, lastName: <span style="color:#e6db74">&#34;</span><span style="color:#e6db74">Hoffman</span><span style="color:#e6db74">&#34;</span>, birthDate: Date())
+    myPerson = FootballPlayer(firstName: <span style="color:#e6db74">&#34;</span><span style="color:#e6db74">Dan</span><span style="color:#e6db74">&#34;</span>, lastName: <span style="color:#e6db74">&#34;</span><span style="color:#e6db74">Marino</span><span style="color:#e6db74">&#34;</span>, birthDate: Date())
+}
+</code></pre></div><h1 id="协议中的关联类型">协议中的关联类型</h1>
+<p>当定义一个协议时，有时定义一个或多个关联类型是很有用的。<!-- raw HTML omitted -->关联类型是一个类型占位符<!-- raw HTML omitted -->，可以在协议中使用它来代替一个类型。实际用于关联类型的类型在协议被实现之前是不被定义的。</p>
+<p>关联类型的意思是说：暂时<!-- raw HTML omitted -->不知道要使用的确切类型<!-- raw HTML omitted -->。当一个类型采用这个协议时，它才定义实际的类型。关联类型的定义需要使用<code>associatedtype</code>关键字。</p>
+<p>假设要为一个队列定义一个协议，我们希望实现该协议的类型能够定义队列包含的实例类型。下面定义的<code>Queue</code>协议有一个关联类型<code>QueueType</code>，在协议中的两个方法都使用了这个关联类型：</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift"><span style="color:#66d9ef">protocol</span> <span style="color:#a6e22e">Queue</span> {
+    associatedtype QueueType
+    <span style="color:#66d9ef">mutating</span> <span style="color:#66d9ef">func</span> <span style="color:#a6e22e">addItem</span>(item: QueueType)
+    <span style="color:#66d9ef">mutating</span> <span style="color:#66d9ef">func</span> <span style="color:#a6e22e">getItem</span>() -&gt; QueueType?
+    <span style="color:#66d9ef">func</span> <span style="color:#a6e22e">count</span>() -&gt; Int
+}
+</code></pre></div><p>任何实现<code>Queue</code>协议的类型必须为<code>QueueType</code>占位符指定一个实际的类型，并且必须确保在协议中使用<code>QueueType</code>占位符的地方<!-- raw HTML omitted -->只使用这个实际的类型<!-- raw HTML omitted -->：</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift"><span style="color:#66d9ef">struct</span> <span style="color:#a6e22e">IntQueue</span>: Queue {
+    <span style="color:#66d9ef">var</span> items = [Int]()
+
+    <span style="color:#66d9ef">mutating</span> <span style="color:#66d9ef">func</span> <span style="color:#a6e22e">addItem</span>(item: Int) {
+        items.append(item)
+    }
+
+    <span style="color:#66d9ef">mutating</span> <span style="color:#66d9ef">func</span> <span style="color:#a6e22e">getItem</span>() -&gt; Int? {
+        <span style="color:#66d9ef">if</span> <span style="color:#f92672">!</span>items.isEmpty() {
+            <span style="color:#66d9ef">return</span> items.remove(at: <span style="color:#ae81ff">0</span>)
+        } <span style="color:#66d9ef">else</span> {
+            <span style="color:#66d9ef">return</span> <span style="color:#66d9ef">nil</span>
+        }
+    }
+
+    <span style="color:#66d9ef">func</span> <span style="color:#a6e22e">count</span>() -&gt; Int {
+        <span style="color:#66d9ef">return</span> items.count
+    }
+}
+</code></pre></div><h1 id="协议设计">协议设计</h1>
+<p>下面定义的<code>RobotMovment</code>协议中有<code>5</code>个方法，每个采用<code>RobotMovment</code>协议的类型都必须全部实现这<code>5</code>个的方法：</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift"><span style="color:#66d9ef">protocol</span> <span style="color:#a6e22e">RobotMovement</span> {
+    <span style="color:#66d9ef">func</span> <span style="color:#a6e22e">forward</span>(speedPercent: Double)
+    <span style="color:#66d9ef">func</span> <span style="color:#a6e22e">reverse</span>(speedPercent: Double)
+    <span style="color:#66d9ef">func</span> <span style="color:#a6e22e">left</span>(speedPercent: Double)
+    <span style="color:#66d9ef">func</span> <span style="color:#a6e22e">right</span>(speedPercent: Double)
+    <span style="color:#66d9ef">func</span> <span style="color:#a6e22e">stop</span>()
+}
+</code></pre></div><p>如果机器人在二维空间行走，则上面的<code>5</code>个方法已经足够使用。但如果机器人要到三维空间飞行，则需要定义向上和向下的方法：</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift"><span style="color:#66d9ef">protocol</span> <span style="color:#a6e22e">RobotMovementThreeDimensions</span>: RobotMovement {
+    <span style="color:#66d9ef">func</span> <span style="color:#a6e22e">up</span>(speedPercent: Double)
+    <span style="color:#66d9ef">func</span> <span style="color:#a6e22e">down</span>(speedPercent: Double)
+}
+</code></pre></div><h1 id="protocols">Protocols</h1>
+<p>协议是一种<!-- raw HTML omitted -->表达与其它不相关类型之间共性的方式<!-- raw HTML omitted -->。例如，由于<code>Bee</code>和<code>Bird</code>都可以飞行，因此<code>Bee</code>对象和<code>Bird</code>对象可能具有共同的特征。因此，定义飞行者<code>Flier</code>类型可能是有用的。问题是在什么意义上，<code>Bee</code>和<code>Bird</code>都可以是飞行者？</p>
+<p>一种可能的实现方式是使用类继承。如果<code>Bee</code>和<code>Bird</code>都是类，<code>Flier</code>可能是<code>Bee</code>和<code>Bird</code>的父类。然而，<code>Flier</code>不能成为<code>Bee</code>和<code>Bird</code>的父类可能有其它原因。例如，<code>Bee</code>是一种昆虫，而<code>Bird</code>则不是，但是它们都有飞行的能力。我们需要一个以某种方式跨越类的层次结构，将两个关系较远的类联系在一起。</p>
+<p>此外，如果<code>Bee</code>和<code>Bird</code>不是两个类怎么办？在<code>Swift</code>中，这是可能的，因为重要且强大的对象可以是结构而不是类。因为结构体不能继承，所以<!-- raw HTML omitted -->没有父结构体和子结构体<!-- raw HTML omitted -->。<code>Bee</code>结构体和<code>Bird</code>结构体如何都是<code>Fliers</code>？</p>
+<p><code>Swift</code>通过使用协议解决了这个问题。协议在<code>Swift</code>中是非常重要，<code>Swift</code>头文件中定义了<code>60</code>多个协议。此外，<code>Objective-C</code>也有协议，<code>Cocoa</code>也大量使用协议。<code>Swift</code>的协议与<code>Objective-C</code>的协议大致对应，并且可以互换。</p>
+<p>协议<!-- raw HTML omitted -->也是对象类型，但是不能实例化一个协议类型<!-- raw HTML omitted -->。协议声明只是一个轻量级的属性和方法列表，<!-- raw HTML omitted -->其中的属性没有值，方法没有代码<!-- raw HTML omitted -->。一个&quot;真正的&quot;对象类型可以正式声明它属于一个协议类型，这被称为<code>adopting</code>协议。一个<code>adopting</code>协议的对象类型<!-- raw HTML omitted -->承诺要实现协议中列出的属性和方法<!-- raw HTML omitted -->。</p>
+<p>假设成为一名飞行者仅包括实现飞行方法。那么一个<code>Flier</code>协议可以指定必须有一个<code>fly</code>方法。因此，它列出了没有函数体的<code>fly</code>方法，如下所示:</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift"><span style="color:#66d9ef">protocol</span> <span style="color:#a6e22e">Flier</span> {
+    <span style="color:#66d9ef">func</span> <span style="color:#a6e22e">fly</span>()
+}
+</code></pre></div><p><code>enum,struct,class</code>甚至另外一个协议都可以<code>adopting</code>当前协议。只需在声明中的名称后的冒号后列出协议即可，<!-- raw HTML omitted -->如果采用者是具有父类的类，则协议位于父类规范后的逗号之后<!-- raw HTML omitted -->。</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift"><span style="color:#66d9ef">protocol</span> <span style="color:#a6e22e">Flier</span> {
+    <span style="color:#66d9ef">func</span> <span style="color:#a6e22e">fly</span>()
+}
+
+<span style="color:#66d9ef">struct</span> <span style="color:#a6e22e">Bird</span>: Flier {
+    <span style="color:#66d9ef">func</span> <span style="color:#a6e22e">fly</span>() {
+        debugPrint(<span style="color:#e6db74">&#34;</span><span style="color:#e6db74">fly</span><span style="color:#e6db74">&#34;</span>)
+    }
+}
+</code></pre></div><p>也许你此时想知道：那又怎样？如果想让一只鸟知道如何飞行，为什么不直接给鸟一种飞行方法而不采用任何协议呢？协议有什么区别？答案与<!-- raw HTML omitted -->类型有关<!-- raw HTML omitted -->，协议是一种类型。因此，在声明变量或函数参数的类型时，可以使用<code>Flier</code>作为类型：</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift"><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">tellToFly</span>(<span style="color:#66d9ef">_</span> f: Flier) {
+    f.fly()
+}
+</code></pre></div><p>因此，协议给了<!-- raw HTML omitted -->另一种表达类型和子类型概念的方式，多态性也适用<!-- raw HTML omitted -->。根据替换原则，这里的<code>Flier</code>可以是任何对象类型的实例，只要它<code>adopting</code>了<code>flier</code>协议。它可能是一只鸟，也可能是其它任何东西。如果类型采用了<code>Flier</code>协议，它就可以被传递到期望有<code>Flier</code>的地方。</p>
+<p>此外，<code>Flier</code>必须有一个<code>fly</code>方法，这是<code>adopting Flier</code>协议意义所在。一个有<code>fly</code>方法的对象并不能自动成为<code>Flier</code>。仅仅实现协议中的方法的要求还不够，对象类型必须正式采用该协议，这段代码是不会被编译的:</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift"><span style="color:#66d9ef">struct</span> <span style="color:#a6e22e">Bee</span> {
+    <span style="color:#66d9ef">func</span> <span style="color:#a6e22e">fly</span>() {
+        <span style="color:#75715e">//</span>
+    }
+}
+
+<span style="color:#66d9ef">let</span> b = Bee()
+tellToFly(b) <span style="color:#75715e">//</span><span style="color:#75715e"> </span><span style="color:#75715e">c</span><span style="color:#75715e">o</span><span style="color:#75715e">m</span><span style="color:#75715e">p</span><span style="color:#75715e">i</span><span style="color:#75715e">l</span><span style="color:#75715e">e</span><span style="color:#75715e"> </span><span style="color:#75715e">e</span><span style="color:#75715e">r</span><span style="color:#75715e">r</span><span style="color:#75715e">o</span><span style="color:#75715e">r</span>
+</code></pre></div><p>虽然<code>Bee</code>能够发送<code>fly</code>消息。但是<code>tellToFly</code>不接受<code>Bee</code>参数，因为它需要一个<code>Flier</code>参数。从形式来讲，<code>Bee</code>不是<code>Flier</code>。要使<code>Bee</code>成为<code>Flier</code>，需要正式声明<code>Bee</code>采用<code>Flier</code>了协议。下面这段代码是可以通过编译的：</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift"><span style="color:#66d9ef">struct</span> <span style="color:#a6e22e">Bee</span>: Flier {
+    <span style="color:#66d9ef">func</span> <span style="color:#a6e22e">fly</span>() {
+        debugPrint(<span style="color:#e6db74">&#34;</span><span style="color:#e6db74">Bee fly</span><span style="color:#e6db74">&#34;</span>)
+    }
+}
+
+<span style="color:#66d9ef">let</span> b = Bee()
+tellToFly(b)
+</code></pre></div><h2 id="adopting-a-library-protocol">Adopting a Library Protocol</h2>
+<p>在<code>Swift</code>标准库中有各种协议，其中<code>CustomStringConvertible</code>协议要求实现一个<code>description</code>字符串属性。如果遵循<code>CustomStringConvertible</code>协议，当这种类型的实例被用于字符串插值或打印（在控制台中使用<code>po</code>命令，或在字符串初始化器<code>init(descripbing:)</code>）时，它的<code>description</code>属性值会被自动用来表示它。</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift"><span style="color:#66d9ef">enum</span> <span style="color:#a6e22e">Filter</span>: String, CustomStringConvertible {
+
+    <span style="color:#66d9ef">case</span> albums = <span style="color:#e6db74">&#34;</span><span style="color:#e6db74">Albums</span><span style="color:#e6db74">&#34;</span>
+
+    <span style="color:#66d9ef">case</span> playlists = <span style="color:#e6db74">&#34;</span><span style="color:#e6db74">Playlists</span><span style="color:#e6db74">&#34;</span>
+
+    <span style="color:#66d9ef">case</span> podcasts = <span style="color:#e6db74">&#34;</span><span style="color:#e6db74">Podcasts</span><span style="color:#e6db74">&#34;</span>
+
+    <span style="color:#66d9ef">case</span> books = <span style="color:#e6db74">&#34;</span><span style="color:#e6db74">Audiobooks</span><span style="color:#e6db74">&#34;</span>
+
+    <span style="color:#66d9ef">var</span> description: String {
+        <span style="color:#66d9ef">return</span> <span style="color:#66d9ef">self</span>.rawValue
+    }
+
+}
+
+<span style="color:#66d9ef">let</span> filterType = Filter.albums
+debugPrint(<span style="color:#e6db74">&#34;</span><span style="color:#e6db74">It is </span><span style="color:#e6db74">\(</span>filterType<span style="color:#e6db74">)</span><span style="color:#e6db74">&#34;</span>) <span style="color:#75715e">//</span><span style="color:#75715e"> </span><span style="color:#75715e">I</span><span style="color:#75715e">t</span><span style="color:#75715e"> </span><span style="color:#75715e">i</span><span style="color:#75715e">s</span><span style="color:#75715e"> </span><span style="color:#75715e">A</span><span style="color:#75715e">l</span><span style="color:#75715e">b</span><span style="color:#75715e">u</span><span style="color:#75715e">m</span><span style="color:#75715e">s</span>
+debugPrint(filterType) <span style="color:#75715e">//</span><span style="color:#75715e"> </span><span style="color:#75715e">A</span><span style="color:#75715e">l</span><span style="color:#75715e">b</span><span style="color:#75715e">u</span><span style="color:#75715e">m</span><span style="color:#75715e">s</span>
+debugPrint(Filter.albums)
+debugPrint(String(describing: Filter.books))
+</code></pre></div><p>请注意，一个类型可以采用多个协议（协议组合）。例如，内置的<code>Double</code>类型采用了<code>CustomStringConvertible、Hashable、Strideable</code>等几个内置协议。声明采用多个协议的格式如下：</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift"><span style="color:#66d9ef">struct</span> <span style="color:#a6e22e">MyType</span>: CustomStringConvertible, TextOutputStreamable, Strideable {
+    <span style="color:#75715e">//</span><span style="color:#75715e"> </span><span style="color:#75715e">.</span><span style="color:#75715e">.</span><span style="color:#75715e">.</span>
+}
+</code></pre></div><p>当声明的类型是一个协议类型时，在采用的协议类型和它的真实类型之间进行转换。给定一个同时被<code>Bird</code>和<code>Bee</code>采用的协议<code>Flier</code>，可以使用<code>is</code>操作符来测试一个特定的<code>Flier</code>是否为<code>Bird</code>类型：</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift"><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">isBird</span>(<span style="color:#66d9ef">_</span> f: Flier) -&gt; Bool {
+    <span style="color:#66d9ef">return</span> f <span style="color:#66d9ef">is</span> Bird
+}
+</code></pre></div><p>同样地，<code>as</code>和<code>as?</code>可以用来将一个被声明为协议类型的对象转换到它的实际类型。能够这样做很重要，因为采用协议的实际对象通常能够接收协议不能接收的消息。例如，一个<code>Bird</code>作为<code>Filier</code>时可以调用<code>fly</code>，但只能作为<code>Bird</code>时才能调用<code>getWorm</code>方法：</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift"><span style="color:#66d9ef">struct</span> <span style="color:#a6e22e">Bird</span>: Flier {
+    <span style="color:#66d9ef">func</span> <span style="color:#a6e22e">fly</span>() {
+        debugPrint(<span style="color:#e6db74">&#34;</span><span style="color:#e6db74">fly</span><span style="color:#e6db74">&#34;</span>)
+    }
+
+    <span style="color:#66d9ef">func</span> <span style="color:#a6e22e">getWorm</span>() {
+     		<span style="color:#75715e">//</span>
+    }
+}
+
+<span style="color:#66d9ef">func</span> <span style="color:#a6e22e">tellGetWorm</span>(f: Flier) {
+    (f <span style="color:#66d9ef">as</span>? Bird)?.getWorm()
+}
+</code></pre></div><h2 id="declaring-a-protocol">Declaring a Protocol</h2>
+<p>协议声明<!-- raw HTML omitted -->只能在文件的顶层进行<!-- raw HTML omitted -->。要声明协议，需要使用关键字<code>protocol</code>，后跟协议名称（应该以大写字母开头，因为这是一种类型），然后是花括号，它可能包含以下任何一项的声明：</p>
+<ul>
+<li>
+<p>属性：协议中的属性声明由<code>var</code>（不能使用<code>let</code>）、属性名称、冒号、类型名称和包含<code>get</code>或<code>get set</code>花括号组成。其中<code>get</code>或<code>get set</code>不能被省略。</p>
+<ul>
+<li>
+<p>在只有<code>get</code>的情况下，采用者对该属性的实现可以是只读或者可写的。而在有<code>get set</code>情况下，它必须是可写的，采用者不得将<code>get set</code>属性实现为只读的计算属性或常量（<code>let</code>）存储属性。</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift"><span style="color:#66d9ef">protocol</span> <span style="color:#a6e22e">A</span> {
+    <span style="color:#66d9ef">let</span> str: String <span style="color:#75715e">//</span><span style="color:#75715e">P</span><span style="color:#75715e">r</span><span style="color:#75715e">o</span><span style="color:#75715e">t</span><span style="color:#75715e">o</span><span style="color:#75715e">c</span><span style="color:#75715e">o</span><span style="color:#75715e">l</span><span style="color:#75715e">s</span><span style="color:#75715e"> </span><span style="color:#75715e">c</span><span style="color:#75715e">a</span><span style="color:#75715e">n</span><span style="color:#75715e">n</span><span style="color:#75715e">o</span><span style="color:#75715e">t</span><span style="color:#75715e"> </span><span style="color:#75715e">r</span><span style="color:#75715e">e</span><span style="color:#75715e">q</span><span style="color:#75715e">u</span><span style="color:#75715e">i</span><span style="color:#75715e">r</span><span style="color:#75715e">e</span><span style="color:#75715e"> </span><span style="color:#75715e">p</span><span style="color:#75715e">r</span><span style="color:#75715e">o</span><span style="color:#75715e">p</span><span style="color:#75715e">e</span><span style="color:#75715e">r</span><span style="color:#75715e">t</span><span style="color:#75715e">i</span><span style="color:#75715e">e</span><span style="color:#75715e">s</span><span style="color:#75715e"> </span><span style="color:#75715e">t</span><span style="color:#75715e">o</span><span style="color:#75715e"> </span><span style="color:#75715e">b</span><span style="color:#75715e">e</span><span style="color:#75715e"> </span><span style="color:#75715e">i</span><span style="color:#75715e">m</span><span style="color:#75715e">m</span><span style="color:#75715e">u</span><span style="color:#75715e">t</span><span style="color:#75715e">a</span><span style="color:#75715e">b</span><span style="color:#75715e">l</span><span style="color:#75715e">e</span><span style="color:#75715e">;</span><span style="color:#75715e"> </span><span style="color:#75715e">d</span><span style="color:#75715e">e</span><span style="color:#75715e">c</span><span style="color:#75715e">l</span><span style="color:#75715e">a</span><span style="color:#75715e">r</span><span style="color:#75715e">e</span><span style="color:#75715e"> </span><span style="color:#75715e">r</span><span style="color:#75715e">e</span><span style="color:#75715e">a</span><span style="color:#75715e">d</span><span style="color:#75715e">-</span><span style="color:#75715e">o</span><span style="color:#75715e">n</span><span style="color:#75715e">l</span><span style="color:#75715e">y</span><span style="color:#75715e"> </span><span style="color:#75715e">p</span><span style="color:#75715e">r</span><span style="color:#75715e">o</span><span style="color:#75715e">p</span><span style="color:#75715e">e</span><span style="color:#75715e">r</span><span style="color:#75715e">t</span><span style="color:#75715e">i</span><span style="color:#75715e">e</span><span style="color:#75715e">s</span><span style="color:#75715e"> </span><span style="color:#75715e">b</span><span style="color:#75715e">y</span><span style="color:#75715e"> </span><span style="color:#75715e">u</span><span style="color:#75715e">s</span><span style="color:#75715e">i</span><span style="color:#75715e">n</span><span style="color:#75715e">g</span><span style="color:#75715e"> </span><span style="color:#75715e">&#39;</span><span style="color:#75715e">v</span><span style="color:#75715e">a</span><span style="color:#75715e">r</span><span style="color:#75715e">&#39;</span><span style="color:#75715e"> </span><span style="color:#75715e">w</span><span style="color:#75715e">i</span><span style="color:#75715e">t</span><span style="color:#75715e">h</span><span style="color:#75715e"> </span><span style="color:#75715e">a</span><span style="color:#75715e"> </span><span style="color:#75715e">&#39;</span><span style="color:#75715e">{</span><span style="color:#75715e"> </span><span style="color:#75715e">g</span><span style="color:#75715e">e</span><span style="color:#75715e">t</span><span style="color:#75715e"> </span><span style="color:#75715e">}</span><span style="color:#75715e">&#39;</span><span style="color:#75715e"> </span><span style="color:#75715e">s</span><span style="color:#75715e">p</span><span style="color:#75715e">e</span><span style="color:#75715e">c</span><span style="color:#75715e">i</span><span style="color:#75715e">f</span><span style="color:#75715e">i</span><span style="color:#75715e">e</span><span style="color:#75715e">r</span>
+}
+    
+<span style="color:#66d9ef">protocol</span> <span style="color:#a6e22e">B</span> {
+    <span style="color:#66d9ef">let</span> str: String { <span style="color:#66d9ef">get</span> } <span style="color:#75715e">//</span><span style="color:#75715e">&#39;</span><span style="color:#75715e">l</span><span style="color:#75715e">e</span><span style="color:#75715e">t</span><span style="color:#75715e">&#39;</span><span style="color:#75715e"> </span><span style="color:#75715e">d</span><span style="color:#75715e">e</span><span style="color:#75715e">c</span><span style="color:#75715e">l</span><span style="color:#75715e">a</span><span style="color:#75715e">r</span><span style="color:#75715e">a</span><span style="color:#75715e">t</span><span style="color:#75715e">i</span><span style="color:#75715e">o</span><span style="color:#75715e">n</span><span style="color:#75715e">s</span><span style="color:#75715e"> </span><span style="color:#75715e">c</span><span style="color:#75715e">a</span><span style="color:#75715e">n</span><span style="color:#75715e">n</span><span style="color:#75715e">o</span><span style="color:#75715e">t</span><span style="color:#75715e"> </span><span style="color:#75715e">b</span><span style="color:#75715e">e</span><span style="color:#75715e"> </span><span style="color:#75715e">c</span><span style="color:#75715e">o</span><span style="color:#75715e">m</span><span style="color:#75715e">p</span><span style="color:#75715e">u</span><span style="color:#75715e">t</span><span style="color:#75715e">e</span><span style="color:#75715e">d</span><span style="color:#75715e"> </span><span style="color:#75715e">p</span><span style="color:#75715e">r</span><span style="color:#75715e">o</span><span style="color:#75715e">p</span><span style="color:#75715e">e</span><span style="color:#75715e">r</span><span style="color:#75715e">t</span><span style="color:#75715e">i</span><span style="color:#75715e">e</span><span style="color:#75715e">s</span><span style="color:#75715e">.</span><span style="color:#75715e"> </span><span style="color:#75715e">R</span><span style="color:#75715e">e</span><span style="color:#75715e">p</span><span style="color:#75715e">l</span><span style="color:#75715e">a</span><span style="color:#75715e">c</span><span style="color:#75715e">e</span><span style="color:#75715e"> </span><span style="color:#75715e">&#39;</span><span style="color:#75715e">l</span><span style="color:#75715e">e</span><span style="color:#75715e">t</span><span style="color:#75715e">&#39;</span><span style="color:#75715e"> </span><span style="color:#75715e">w</span><span style="color:#75715e">i</span><span style="color:#75715e">t</span><span style="color:#75715e">h</span><span style="color:#75715e"> </span><span style="color:#75715e">&#39;</span><span style="color:#75715e">v</span><span style="color:#75715e">a</span><span style="color:#75715e">r</span><span style="color:#75715e">&#39;</span>
+}
+</code></pre></div></li>
+<li>
+<p>要声明一个静态/类属性，在它前面加上关键字<code>static</code>。如果采用者是类类型可以自由地将其作为一个<code>class</code>的计算属性来实现。如果采用者是结构体，只能使用<code>static</code>关键字：</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift"><span style="color:#66d9ef">struct</span> <span style="color:#a6e22e">B</span>: A {
+    <span style="color:#66d9ef">static</span> <span style="color:#66d9ef">var</span> name: String = <span style="color:#e6db74">&#34;</span><span style="color:#e6db74">&#34;</span>
+}
+    
+<span style="color:#66d9ef">struct</span> <span style="color:#a6e22e">C</span>: A {
+    <span style="color:#66d9ef">static</span> <span style="color:#66d9ef">var</span> name: String = <span style="color:#e6db74">&#34;</span><span style="color:#e6db74">&#34;</span>
+}
+    
+<span style="color:#66d9ef">class</span> <span style="color:#a6e22e">D</span>: A {
+    <span style="color:#75715e">//</span><span style="color:#75715e"> </span><span style="color:#75715e">c</span><span style="color:#75715e">l</span><span style="color:#75715e">a</span><span style="color:#75715e">s</span><span style="color:#75715e">s</span><span style="color:#75715e"> </span><span style="color:#75715e">v</span><span style="color:#75715e">a</span><span style="color:#75715e">r</span><span style="color:#75715e"> </span><span style="color:#75715e">n</span><span style="color:#75715e">a</span><span style="color:#75715e">m</span><span style="color:#75715e">e</span><span style="color:#75715e">:</span><span style="color:#75715e"> </span><span style="color:#75715e">S</span><span style="color:#75715e">t</span><span style="color:#75715e">r</span><span style="color:#75715e">i</span><span style="color:#75715e">n</span><span style="color:#75715e">g</span><span style="color:#75715e"> </span><span style="color:#75715e">=</span><span style="color:#75715e"> </span><span style="color:#75715e">&#34;</span><span style="color:#75715e">&#34;</span><span style="color:#75715e"> </span><span style="color:#75715e">/</span><span style="color:#75715e">/</span><span style="color:#75715e">C</span><span style="color:#75715e">l</span><span style="color:#75715e">a</span><span style="color:#75715e">s</span><span style="color:#75715e">s</span><span style="color:#75715e"> </span><span style="color:#75715e">s</span><span style="color:#75715e">t</span><span style="color:#75715e">o</span><span style="color:#75715e">r</span><span style="color:#75715e">e</span><span style="color:#75715e">d</span><span style="color:#75715e"> </span><span style="color:#75715e">p</span><span style="color:#75715e">r</span><span style="color:#75715e">o</span><span style="color:#75715e">p</span><span style="color:#75715e">e</span><span style="color:#75715e">r</span><span style="color:#75715e">t</span><span style="color:#75715e">i</span><span style="color:#75715e">e</span><span style="color:#75715e">s</span><span style="color:#75715e"> </span><span style="color:#75715e">n</span><span style="color:#75715e">o</span><span style="color:#75715e">t</span><span style="color:#75715e"> </span><span style="color:#75715e">s</span><span style="color:#75715e">u</span><span style="color:#75715e">p</span><span style="color:#75715e">p</span><span style="color:#75715e">o</span><span style="color:#75715e">r</span><span style="color:#75715e">t</span><span style="color:#75715e">e</span><span style="color:#75715e">d</span><span style="color:#75715e"> </span><span style="color:#75715e">i</span><span style="color:#75715e">n</span><span style="color:#75715e"> </span><span style="color:#75715e">c</span><span style="color:#75715e">l</span><span style="color:#75715e">a</span><span style="color:#75715e">s</span><span style="color:#75715e">s</span><span style="color:#75715e">e</span><span style="color:#75715e">s</span><span style="color:#75715e">;</span><span style="color:#75715e"> </span><span style="color:#75715e">d</span><span style="color:#75715e">i</span><span style="color:#75715e">d</span><span style="color:#75715e"> </span><span style="color:#75715e">y</span><span style="color:#75715e">o</span><span style="color:#75715e">u</span><span style="color:#75715e"> </span><span style="color:#75715e">m</span><span style="color:#75715e">e</span><span style="color:#75715e">a</span><span style="color:#75715e">n</span><span style="color:#75715e"> </span><span style="color:#75715e">&#39;</span><span style="color:#75715e">s</span><span style="color:#75715e">t</span><span style="color:#75715e">a</span><span style="color:#75715e">t</span><span style="color:#75715e">i</span><span style="color:#75715e">c</span><span style="color:#75715e">&#39;</span><span style="color:#75715e">?</span>
+    <span style="color:#66d9ef">private</span> <span style="color:#66d9ef">static</span> <span style="color:#66d9ef">var</span> _name = <span style="color:#e6db74">&#34;</span><span style="color:#e6db74">&#34;</span>
+    <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">var</span> name: String {
+        <span style="color:#66d9ef">get</span> {
+            <span style="color:#66d9ef">return</span> _name
+        }
+        <span style="color:#66d9ef">set</span> {
+            <span style="color:#66d9ef">self</span>._name = newValue
+        }
+    }
+}
+    
+D.name = <span style="color:#e6db74">&#34;</span><span style="color:#e6db74">test</span><span style="color:#e6db74">&#34;</span>
+debugPrint(D.name)
+</code></pre></div></li>
+</ul>
+</li>
+<li>
+<p>方法：协议中的方法声明是没有函数体的函数声明，既没有花括号，也没有代码。任何函数类型都是合法的，包括 <code>init</code>和<code>subscript</code>方法。</p>
+<ul>
+<li>
+<p>在协议中声明下标的语法与在对象类型中声明下标的语法相同，只是花括号中包含<code>get</code>或<code>get set</code>。</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift"><span style="color:#66d9ef">protocol</span> <span style="color:#a6e22e">A</span> {
+    <span style="color:#66d9ef">subscript</span>(ix: Int) -&gt; String { <span style="color:#66d9ef">get</span> }
+}
+    
+<span style="color:#66d9ef">struct</span> <span style="color:#a6e22e">B</span>: A {
+    <span style="color:#66d9ef">subscript</span>(ix: Int) -&gt; String {
+        <span style="color:#66d9ef">return</span> <span style="color:#e6db74">&#34;</span><span style="color:#e6db74">&#34;</span>
+    }
+}
+</code></pre></div></li>
+<li>
+<p>要声明静态/类方法，请在其前面加上关键字<code>static</code>。如果采用者为类类型，那么可以自由地将其实现为<code>class</code>方法。</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift"><span style="color:#66d9ef">protocol</span> <span style="color:#a6e22e">A</span> {
+    <span style="color:#66d9ef">static</span> <span style="color:#66d9ef">subscript</span>(ix: Int) -&gt; String { <span style="color:#66d9ef">get</span> }
+}
+    
+<span style="color:#66d9ef">struct</span> <span style="color:#a6e22e">B</span>: A {
+    <span style="color:#66d9ef">static</span> <span style="color:#66d9ef">subscript</span>(ix: Int) -&gt; String {
+        <span style="color:#66d9ef">return</span> <span style="color:#e6db74">&#34;</span><span style="color:#e6db74">B</span><span style="color:#e6db74">&#34;</span>
+    }
+}
+    
+<span style="color:#66d9ef">class</span> <span style="color:#a6e22e">C</span>: A {
+    <span style="color:#75715e">//</span><span style="color:#75715e"> </span><span style="color:#75715e">实</span><span style="color:#75715e">现</span><span style="color:#75715e">为</span><span style="color:#75715e">c</span><span style="color:#75715e">l</span><span style="color:#75715e">a</span><span style="color:#75715e">s</span><span style="color:#75715e">s</span><span style="color:#75715e">方</span><span style="color:#75715e">法</span>
+    <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">subscript</span>(ix: Int) -&gt; String {
+        <span style="color:#66d9ef">return</span> <span style="color:#e6db74">&#34;</span><span style="color:#e6db74">C</span><span style="color:#e6db74">&#34;</span>
+    }
+}
+    
+</code></pre></div><div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift"><span style="color:#66d9ef">protocol</span> <span style="color:#a6e22e">A</span> {
+    <span style="color:#66d9ef">static</span> <span style="color:#66d9ef">subscript</span>(ix: Int) -&gt; String { <span style="color:#66d9ef">get</span> <span style="color:#66d9ef">set</span> }
+}
+    
+<span style="color:#66d9ef">struct</span> <span style="color:#a6e22e">B</span>: A {
+    <span style="color:#66d9ef">static</span> <span style="color:#66d9ef">subscript</span>(ix: Int) -&gt; String {
+        <span style="color:#66d9ef">get</span> {
+            <span style="color:#66d9ef">return</span> <span style="color:#e6db74">&#34;</span><span style="color:#e6db74">B</span><span style="color:#e6db74">&#34;</span>
+        }
+        <span style="color:#66d9ef">set</span> {
+            <span style="color:#75715e">//</span>
+        }
+    }
+}
+    
+<span style="color:#66d9ef">class</span> <span style="color:#a6e22e">C</span>: A {
+    <span style="color:#75715e">//</span><span style="color:#75715e"> </span><span style="color:#75715e">实</span><span style="color:#75715e">现</span><span style="color:#75715e">为</span><span style="color:#75715e">c</span><span style="color:#75715e">l</span><span style="color:#75715e">a</span><span style="color:#75715e">s</span><span style="color:#75715e">s</span><span style="color:#75715e">方</span><span style="color:#75715e">法</span>
+    <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">subscript</span>(ix: Int) -&gt; String {
+        <span style="color:#66d9ef">get</span> {
+            <span style="color:#66d9ef">return</span> <span style="color:#e6db74">&#34;</span><span style="color:#e6db74">B</span><span style="color:#e6db74">&#34;</span>
+        }
+        <span style="color:#66d9ef">set</span> {
+            <span style="color:#75715e">//</span>
+        }
+    }
+}
+</code></pre></div></li>
+<li>
+<p>如果要允许枚举或结构体采用者声明方法<code>mutating</code>，必须在协议中声明它是<code>mutating</code>的。如果协议缺少<code>mutating</code>，采用者不能添加<code>mutating</code>，但如果协议具有<code>mutating</code>，采用者可以省略<code>mutating</code>。</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift"><span style="color:#66d9ef">protocol</span> <span style="color:#a6e22e">A</span> {
+    <span style="color:#66d9ef">func</span> <span style="color:#a6e22e">change</span>(name: String) -&gt; Void
+}
+    
+<span style="color:#66d9ef">struct</span> <span style="color:#a6e22e">B</span>: A {
+    <span style="color:#66d9ef">var</span> name: String
+    <span style="color:#75715e">//</span><span style="color:#75715e"> </span><span style="color:#75715e">T</span><span style="color:#75715e">y</span><span style="color:#75715e">p</span><span style="color:#75715e">e</span><span style="color:#75715e"> </span><span style="color:#75715e">&#39;</span><span style="color:#75715e">B</span><span style="color:#75715e">&#39;</span><span style="color:#75715e"> </span><span style="color:#75715e">d</span><span style="color:#75715e">o</span><span style="color:#75715e">e</span><span style="color:#75715e">s</span><span style="color:#75715e"> </span><span style="color:#75715e">n</span><span style="color:#75715e">o</span><span style="color:#75715e">t</span><span style="color:#75715e"> </span><span style="color:#75715e">c</span><span style="color:#75715e">o</span><span style="color:#75715e">n</span><span style="color:#75715e">f</span><span style="color:#75715e">o</span><span style="color:#75715e">r</span><span style="color:#75715e">m</span><span style="color:#75715e"> </span><span style="color:#75715e">t</span><span style="color:#75715e">o</span><span style="color:#75715e"> </span><span style="color:#75715e">p</span><span style="color:#75715e">r</span><span style="color:#75715e">o</span><span style="color:#75715e">t</span><span style="color:#75715e">o</span><span style="color:#75715e">c</span><span style="color:#75715e">o</span><span style="color:#75715e">l</span><span style="color:#75715e"> </span><span style="color:#75715e">&#39;</span><span style="color:#75715e">A</span><span style="color:#75715e">&#39;</span>
+    <span style="color:#66d9ef">mutating</span> <span style="color:#66d9ef">func</span> <span style="color:#a6e22e">change</span>(name: String) {
+        <span style="color:#66d9ef">self</span>.name = name
+    }
+}
+    
+</code></pre></div><div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift"><span style="color:#66d9ef">protocol</span> <span style="color:#a6e22e">A</span> {
+    <span style="color:#66d9ef">mutating</span> <span style="color:#66d9ef">func</span> <span style="color:#a6e22e">change</span>(name: String) -&gt; Void
+}
+    
+<span style="color:#66d9ef">struct</span> <span style="color:#a6e22e">B</span>: A {
+    <span style="color:#66d9ef">var</span> name: String
+        
+    <span style="color:#66d9ef">mutating</span> <span style="color:#66d9ef">func</span> <span style="color:#a6e22e">change</span>(name: String) {
+        <span style="color:#66d9ef">self</span>.name = name
+    }
+}
+</code></pre></div><div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift"><span style="color:#66d9ef">protocol</span> <span style="color:#a6e22e">A</span> {
+    <span style="color:#66d9ef">mutating</span> <span style="color:#66d9ef">func</span> <span style="color:#a6e22e">change</span>(name: String) -&gt; Void
+}
+    
+<span style="color:#66d9ef">struct</span> <span style="color:#a6e22e">B</span>: A {
+    <span style="color:#66d9ef">var</span> name: String
+    
+    <span style="color:#66d9ef">func</span> <span style="color:#a6e22e">change</span>(name: String) {
+        <span style="color:#75715e">//</span><span style="color:#75715e">s</span><span style="color:#75715e">e</span><span style="color:#75715e">l</span><span style="color:#75715e">f</span><span style="color:#75715e">.</span><span style="color:#75715e">n</span><span style="color:#75715e">a</span><span style="color:#75715e">m</span><span style="color:#75715e">e</span><span style="color:#75715e"> </span><span style="color:#75715e">=</span><span style="color:#75715e"> </span><span style="color:#75715e">n</span><span style="color:#75715e">a</span><span style="color:#75715e">m</span><span style="color:#75715e">e</span>
+    }
+}
+</code></pre></div></li>
+</ul>
+</li>
+</ul>
+<p>一个协议本身可以继承多个协议，声明协议时在名称后面加一个冒号，然后用逗号分隔它所采用的协议列表。实际上，这提供了一种方法来创建整个类型的二级层次结构，<code>Swift</code>的头文件就大量使用了这一点。</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift"><span style="color:#66d9ef">protocol</span> <span style="color:#a6e22e">A</span> {
+    <span style="color:#66d9ef">func</span> <span style="color:#a6e22e">test1</span>() -&gt; Void
+}
+
+<span style="color:#66d9ef">protocol</span> <span style="color:#a6e22e">B</span> {
+    <span style="color:#66d9ef">func</span> <span style="color:#a6e22e">test2</span>() -&gt; Void
+}
+
+<span style="color:#66d9ef">protocol</span> <span style="color:#a6e22e">C</span>: A, B {
+    <span style="color:#66d9ef">func</span> <span style="color:#a6e22e">test3</span>() -&gt; Void
+}
+</code></pre></div><h2 id="protocol-composition">Protocol Composition</h2>
+<p>如果协议的唯一目的是通过采用所有其它协议，而不添加任何新要求，则可以通过<!-- raw HTML omitted -->即时指定协议组合来避免正式声明协议<!-- raw HTML omitted -->。为此，请使用<code>&amp;</code>连接协议名称，这称为协议组合：</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift"><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">f</span>(<span style="color:#66d9ef">_</span> x: CustomStringConvertible <span style="color:#f92672">&amp;</span> CustomDebugStringConvertible) {
+   <span style="color:#75715e">//</span>
+}
+</code></pre></div><p>一个类型也可以被指定为一个类类型和一个或多个协议的组合。下面的代码中<code>ViewController</code>中声明的变量<code>v</code>的类型就是类<code>UIView</code>和协议<code>MyViewProtocol</code>的组合:</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift"><span style="color:#66d9ef">protocol</span> <span style="color:#a6e22e">MyViewProtocol</span> {
+    <span style="color:#66d9ef">func</span> <span style="color:#a6e22e">doSomethingReallyCool</span>()
+}
+
+<span style="color:#66d9ef">class</span> <span style="color:#a6e22e">ViewController</span>: UIViewController {
+    <span style="color:#66d9ef">var</span> v: (UIView <span style="color:#f92672">&amp;</span> MyViewProtocol)?
+
+    <span style="color:#66d9ef">func</span> <span style="color:#a6e22e">test</span>() {
+        <span style="color:#66d9ef">self</span>.v?.doSomethingReallyCool() <span style="color:#75715e">//</span><span style="color:#75715e"> </span><span style="color:#75715e">a</span><span style="color:#75715e"> </span><span style="color:#75715e">M</span><span style="color:#75715e">y</span><span style="color:#75715e">V</span><span style="color:#75715e">i</span><span style="color:#75715e">e</span><span style="color:#75715e">w</span><span style="color:#75715e">P</span><span style="color:#75715e">r</span><span style="color:#75715e">o</span><span style="color:#75715e">t</span><span style="color:#75715e">o</span><span style="color:#75715e">c</span><span style="color:#75715e">o</span><span style="color:#75715e">l</span><span style="color:#75715e"> </span><span style="color:#75715e">r</span><span style="color:#75715e">e</span><span style="color:#75715e">q</span><span style="color:#75715e">u</span><span style="color:#75715e">i</span><span style="color:#75715e">r</span><span style="color:#75715e">e</span><span style="color:#75715e">m</span><span style="color:#75715e">e</span><span style="color:#75715e">n</span><span style="color:#75715e">t</span><span style="color:#75715e"> </span>
+        <span style="color:#66d9ef">self</span>.v?.backgroundColor = .red <span style="color:#75715e">//</span><span style="color:#75715e"> </span><span style="color:#75715e">a</span><span style="color:#75715e"> </span><span style="color:#75715e">U</span><span style="color:#75715e">I</span><span style="color:#75715e">V</span><span style="color:#75715e">i</span><span style="color:#75715e">e</span><span style="color:#75715e">w</span><span style="color:#75715e"> </span><span style="color:#75715e">p</span><span style="color:#75715e">r</span><span style="color:#75715e">o</span><span style="color:#75715e">p</span><span style="color:#75715e">e</span><span style="color:#75715e">r</span><span style="color:#75715e">t</span><span style="color:#75715e">y</span><span style="color:#75715e"> </span>
+    }
+}
+</code></pre></div><p>如果要赋值变量给<code>ViewController</code>的属性<code>v</code>，这个实例必须是<code>UIView</code>类型（或者它的子类型）并且<code>adopting</code>协议<code>MyViewProtocol</code>。</p>
+<h2 id="class-protocols">Class Protocols</h2>
+<p>协议声明可以在冒号后包含类名，这将能够采用此协议的类型限制为该类或其子类。所以还有一种更简单的方式实现上面的效果，就是在<code>MyViewProtocol</code>声明的时候，限定<code>adopting</code>协议的具体类型。如下所示只要在<code>MyViewProtocol</code>声明的时候加上冒号和类型：</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift"><span style="color:#66d9ef">protocol</span> <span style="color:#a6e22e">MyViewProtocol</span>: UIView {
+    <span style="color:#66d9ef">func</span> <span style="color:#a6e22e">doSomethingReallyCool</span>()
+}
+</code></pre></div><p>上面的代码的意思是<code>MyViewProtocol</code>协议只能被<code>UIView</code>或它的子类所采用。如果要限定一个协议只能被类类型所采用，可以将其限定类型设置为<code>AnyObject</code>：</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift"><span style="color:#66d9ef">protocol</span> <span style="color:#a6e22e">MyClassProtocol</span> : AnyObject { 
+    <span style="color:#75715e">//</span><span style="color:#75715e"> </span><span style="color:#75715e">.</span><span style="color:#75715e">.</span><span style="color:#75715e">.</span>
+}
+</code></pre></div><p>在限定类型时一种可选的方式是在协议定义的花括号前使用<code>where</code>关键字：</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift"><span style="color:#66d9ef">protocol</span> <span style="color:#a6e22e">MyClassProtocol</span> <span style="color:#66d9ef">where</span> <span style="color:#66d9ef">Self</span>: AnyObject {
+    <span style="color:#75715e">//</span><span style="color:#75715e"> </span><span style="color:#75715e">.</span><span style="color:#75715e">.</span><span style="color:#75715e">.</span>
+}
+</code></pre></div><h2 id="optional-protocol-members">Optional Protocol Members</h2>
+<p>在<code>Objective-C</code>中协议的成员可以声明为可选的，这意味着该成员不是必须要实现的。<code>Swift</code>中也可以声明可选的协议类型，但该特性是为了兼容<code>Objective-C</code>，实际上是由<code>Objective-C</code>实现的，它根本就不是 <code>Swift</code> 的特性。</p>
+<p>因此，关于可选协议成员的一切都必须显式地暴露给<code>Objective-C</code>。协议声明必须用<code>@objc</code>属性标记，可选成员的声明必须用关键字<code>@objc optional</code>标记：</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift"><span style="color:#66d9ef">@objc</span> <span style="color:#66d9ef">protocol</span> <span style="color:#a6e22e">Flier</span> {
+    <span style="color:#66d9ef">@objc</span> <span style="color:#66d9ef">optional</span> <span style="color:#66d9ef">var</span> song: String { <span style="color:#66d9ef">get</span> }
+    <span style="color:#66d9ef">@objc</span> <span style="color:#66d9ef">optional</span> <span style="color:#66d9ef">func</span> <span style="color:#a6e22e">sing</span>()
+}
+</code></pre></div><p>在上面的代码中，在<code>Flier</code>协议中声明了可选的属性<code>song</code>，<code>Swift</code>通过将其获取的值包装在一个<code>Optional</code>中来解决这个问题。如果<code>Flier</code>采用者不实现该属性，则结果为<code>nil</code>：</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift"><span style="color:#66d9ef">class</span> <span style="color:#a6e22e">Bird</span>: Flier {
+    <span style="color:#66d9ef">func</span> <span style="color:#a6e22e">sing</span>() {
+        <span style="color:#75715e">//</span>
+    }
+}
+
+<span style="color:#66d9ef">let</span> flier: Flier = Bird()
+<span style="color:#66d9ef">let</span> song = flier.song <span style="color:#75715e">//</span><span style="color:#75715e"> </span><span style="color:#75715e">s</span><span style="color:#75715e">o</span><span style="color:#75715e">n</span><span style="color:#75715e">g</span><span style="color:#75715e"> </span><span style="color:#75715e">i</span><span style="color:#75715e">s</span><span style="color:#75715e"> </span><span style="color:#75715e">a</span><span style="color:#75715e">n</span><span style="color:#75715e"> </span><span style="color:#75715e">O</span><span style="color:#75715e">p</span><span style="color:#75715e">t</span><span style="color:#75715e">i</span><span style="color:#75715e">o</span><span style="color:#75715e">n</span><span style="color:#75715e">a</span><span style="color:#75715e">l</span><span style="color:#75715e"> </span><span style="color:#75715e">w</span><span style="color:#75715e">r</span><span style="color:#75715e">a</span><span style="color:#75715e">p</span><span style="color:#75715e">p</span><span style="color:#75715e">i</span><span style="color:#75715e">n</span><span style="color:#75715e">g</span><span style="color:#75715e"> </span><span style="color:#75715e">a</span><span style="color:#75715e"> </span><span style="color:#75715e">S</span><span style="color:#75715e">t</span><span style="color:#75715e">r</span><span style="color:#75715e">i</span><span style="color:#75715e">n</span><span style="color:#75715e">g</span>
+</code></pre></div><p>这是一种罕见的情况，在这种情况下，可以得到一个双重包装的可选属性。如果可选属性 <code>song</code> 的值本身就是一个 <code>String?</code>，那么从 <code>Flier</code> 中获取它的值将产生一个 <code>String??</code>。</p>
+<p>对于在协议中声明的读写可选属性，有一个奇怪的限制，就是不能去重新设置它的值。如下所示，重新设置<code>flier</code>的<code>song</code>属性时会报错：</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift"><span style="color:#66d9ef">@objc</span> <span style="color:#66d9ef">protocol</span> <span style="color:#a6e22e">Flier</span> {
+    <span style="color:#66d9ef">@objc</span> <span style="color:#66d9ef">optional</span> <span style="color:#66d9ef">var</span> song: String { <span style="color:#66d9ef">get</span> <span style="color:#66d9ef">set</span> }
+    <span style="color:#66d9ef">@objc</span> <span style="color:#66d9ef">optional</span> <span style="color:#66d9ef">func</span> <span style="color:#a6e22e">sing</span>()
+}
+
+<span style="color:#66d9ef">class</span> <span style="color:#a6e22e">Bird</span>: Flier {
+    <span style="color:#66d9ef">var</span> song: String = <span style="color:#e6db74">&#34;</span><span style="color:#e6db74">bird name</span><span style="color:#e6db74">&#34;</span>
+
+    <span style="color:#66d9ef">func</span> <span style="color:#a6e22e">sing</span>() {
+        <span style="color:#75715e">//</span>
+    }
+}
+
+<span style="color:#66d9ef">let</span> flier: Flier = Bird()
+<span style="color:#66d9ef">let</span> song = flier.song <span style="color:#75715e">//</span><span style="color:#75715e"> </span><span style="color:#75715e">s</span><span style="color:#75715e">o</span><span style="color:#75715e">n</span><span style="color:#75715e">g</span><span style="color:#75715e"> </span><span style="color:#75715e">i</span><span style="color:#75715e">s</span><span style="color:#75715e"> </span><span style="color:#75715e">a</span><span style="color:#75715e">n</span><span style="color:#75715e"> </span><span style="color:#75715e">O</span><span style="color:#75715e">p</span><span style="color:#75715e">t</span><span style="color:#75715e">i</span><span style="color:#75715e">o</span><span style="color:#75715e">n</span><span style="color:#75715e">a</span><span style="color:#75715e">l</span><span style="color:#75715e"> </span><span style="color:#75715e">w</span><span style="color:#75715e">r</span><span style="color:#75715e">a</span><span style="color:#75715e">p</span><span style="color:#75715e">p</span><span style="color:#75715e">i</span><span style="color:#75715e">n</span><span style="color:#75715e">g</span><span style="color:#75715e"> </span><span style="color:#75715e">a</span><span style="color:#75715e"> </span><span style="color:#75715e">S</span><span style="color:#75715e">t</span><span style="color:#75715e">r</span><span style="color:#75715e">i</span><span style="color:#75715e">n</span><span style="color:#75715e">g</span>
+flier.song = <span style="color:#e6db74">&#34;</span><span style="color:#e6db74">test</span><span style="color:#e6db74">&#34;</span> <span style="color:#75715e">//</span><span style="color:#75715e"> </span><span style="color:#75715e">C</span><span style="color:#75715e">a</span><span style="color:#75715e">n</span><span style="color:#75715e">n</span><span style="color:#75715e">o</span><span style="color:#75715e">t</span><span style="color:#75715e"> </span><span style="color:#75715e">a</span><span style="color:#75715e">s</span><span style="color:#75715e">s</span><span style="color:#75715e">i</span><span style="color:#75715e">g</span><span style="color:#75715e">n</span><span style="color:#75715e"> </span><span style="color:#75715e">t</span><span style="color:#75715e">o</span><span style="color:#75715e"> </span><span style="color:#75715e">p</span><span style="color:#75715e">r</span><span style="color:#75715e">o</span><span style="color:#75715e">p</span><span style="color:#75715e">e</span><span style="color:#75715e">r</span><span style="color:#75715e">t</span><span style="color:#75715e">y</span><span style="color:#75715e">:</span><span style="color:#75715e"> </span><span style="color:#75715e">&#39;</span><span style="color:#75715e">f</span><span style="color:#75715e">l</span><span style="color:#75715e">i</span><span style="color:#75715e">e</span><span style="color:#75715e">r</span><span style="color:#75715e">&#39;</span><span style="color:#75715e"> </span><span style="color:#75715e">i</span><span style="color:#75715e">s</span><span style="color:#75715e"> </span><span style="color:#75715e">i</span><span style="color:#75715e">m</span><span style="color:#75715e">m</span><span style="color:#75715e">u</span><span style="color:#75715e">t</span><span style="color:#75715e">a</span><span style="color:#75715e">b</span><span style="color:#75715e">l</span><span style="color:#75715e">e</span>
+</code></pre></div><p>报错的信息是<code>Cannot assign to property: 'flier' is immutable</code>，而这完全不合逻辑，因为<code>flier</code>指向的是一个类实例，这显然是语言中的一个错误，一种解决方法是使用关键路径：</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift"><span style="color:#66d9ef">@objc</span> <span style="color:#66d9ef">protocol</span> <span style="color:#a6e22e">Flier</span> {
+    <span style="color:#66d9ef">@objc</span> <span style="color:#66d9ef">optional</span> <span style="color:#66d9ef">var</span> song: String { <span style="color:#66d9ef">get</span> <span style="color:#66d9ef">set</span> }
+    <span style="color:#66d9ef">@objc</span> <span style="color:#66d9ef">optional</span> <span style="color:#66d9ef">func</span> <span style="color:#a6e22e">sing</span>()
+}
+
+<span style="color:#66d9ef">class</span> <span style="color:#a6e22e">Bird</span>: Flier {
+    <span style="color:#66d9ef">var</span> song: String = <span style="color:#e6db74">&#34;</span><span style="color:#e6db74">bird name</span><span style="color:#e6db74">&#34;</span>
+
+    <span style="color:#66d9ef">func</span> <span style="color:#a6e22e">sing</span>() {
+        <span style="color:#75715e">//</span>
+    }
+}
+
+<span style="color:#66d9ef">var</span> flier: Flier = Bird()
+<span style="color:#66d9ef">let</span> song = flier.song <span style="color:#75715e">//</span><span style="color:#75715e"> </span><span style="color:#75715e">s</span><span style="color:#75715e">o</span><span style="color:#75715e">n</span><span style="color:#75715e">g</span><span style="color:#75715e"> </span><span style="color:#75715e">i</span><span style="color:#75715e">s</span><span style="color:#75715e"> </span><span style="color:#75715e">a</span><span style="color:#75715e">n</span><span style="color:#75715e"> </span><span style="color:#75715e">O</span><span style="color:#75715e">p</span><span style="color:#75715e">t</span><span style="color:#75715e">i</span><span style="color:#75715e">o</span><span style="color:#75715e">n</span><span style="color:#75715e">a</span><span style="color:#75715e">l</span><span style="color:#75715e"> </span><span style="color:#75715e">w</span><span style="color:#75715e">r</span><span style="color:#75715e">a</span><span style="color:#75715e">p</span><span style="color:#75715e">p</span><span style="color:#75715e">i</span><span style="color:#75715e">n</span><span style="color:#75715e">g</span><span style="color:#75715e"> </span><span style="color:#75715e">a</span><span style="color:#75715e"> </span><span style="color:#75715e">S</span><span style="color:#75715e">t</span><span style="color:#75715e">r</span><span style="color:#75715e">i</span><span style="color:#75715e">n</span><span style="color:#75715e">g</span>
+<span style="color:#75715e">//</span><span style="color:#75715e">f</span><span style="color:#75715e">l</span><span style="color:#75715e">i</span><span style="color:#75715e">e</span><span style="color:#75715e">r</span><span style="color:#75715e">.</span><span style="color:#75715e">s</span><span style="color:#75715e">o</span><span style="color:#75715e">n</span><span style="color:#75715e">g</span><span style="color:#75715e"> </span><span style="color:#75715e">=</span><span style="color:#75715e"> </span><span style="color:#75715e">&#34;</span><span style="color:#75715e">t</span><span style="color:#75715e">e</span><span style="color:#75715e">s</span><span style="color:#75715e">t</span><span style="color:#75715e">&#34;</span><span style="color:#75715e"> </span><span style="color:#75715e">/</span><span style="color:#75715e">/</span><span style="color:#75715e"> </span><span style="color:#75715e">C</span><span style="color:#75715e">a</span><span style="color:#75715e">n</span><span style="color:#75715e">n</span><span style="color:#75715e">o</span><span style="color:#75715e">t</span><span style="color:#75715e"> </span><span style="color:#75715e">a</span><span style="color:#75715e">s</span><span style="color:#75715e">s</span><span style="color:#75715e">i</span><span style="color:#75715e">g</span><span style="color:#75715e">n</span><span style="color:#75715e"> </span><span style="color:#75715e">t</span><span style="color:#75715e">o</span><span style="color:#75715e"> </span><span style="color:#75715e">p</span><span style="color:#75715e">r</span><span style="color:#75715e">o</span><span style="color:#75715e">p</span><span style="color:#75715e">e</span><span style="color:#75715e">r</span><span style="color:#75715e">t</span><span style="color:#75715e">y</span><span style="color:#75715e">:</span><span style="color:#75715e"> </span><span style="color:#75715e">&#39;</span><span style="color:#75715e">f</span><span style="color:#75715e">l</span><span style="color:#75715e">i</span><span style="color:#75715e">e</span><span style="color:#75715e">r</span><span style="color:#75715e">&#39;</span><span style="color:#75715e"> </span><span style="color:#75715e">i</span><span style="color:#75715e">s</span><span style="color:#75715e"> </span><span style="color:#75715e">i</span><span style="color:#75715e">m</span><span style="color:#75715e">m</span><span style="color:#75715e">u</span><span style="color:#75715e">t</span><span style="color:#75715e">a</span><span style="color:#75715e">b</span><span style="color:#75715e">l</span><span style="color:#75715e">e</span>
+flier[keyPath: <span style="color:#960050;background-color:#1e0010">\</span>.song] = <span style="color:#e6db74">&#34;</span><span style="color:#e6db74">test</span><span style="color:#e6db74">&#34;</span>
+</code></pre></div><p>在上面的代码中<code>Flier</code>协议中也定义了一个可选<code>sing</code>方法，所以调用它之前需要使用<code>？</code>。如果采用<code>Flier</code>协议的类型没有实现<code>sing</code>方法，那么下面的调用不会发生任何事情：</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift">flier.sing?()
+</code></pre></div><p>如果可选协议中的可选方法有返回值，那么调用时得到的值也是可选的：</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift"><span style="color:#66d9ef">@objc</span> <span style="color:#66d9ef">protocol</span> <span style="color:#a6e22e">Flier</span> {
+    <span style="color:#66d9ef">@objc</span> <span style="color:#66d9ef">optional</span> <span style="color:#66d9ef">var</span> song: String { <span style="color:#66d9ef">get</span> <span style="color:#66d9ef">set</span> }
+    <span style="color:#66d9ef">@objc</span> <span style="color:#66d9ef">optional</span> <span style="color:#66d9ef">func</span> <span style="color:#a6e22e">sing</span>() -&gt; String
+}
+
+<span style="color:#66d9ef">class</span> <span style="color:#a6e22e">Bird</span>: Flier {
+    <span style="color:#66d9ef">var</span> song: String = <span style="color:#e6db74">&#34;</span><span style="color:#e6db74">bird name</span><span style="color:#e6db74">&#34;</span>
+
+    <span style="color:#66d9ef">func</span> <span style="color:#a6e22e">sing</span>() -&gt; String {
+        <span style="color:#66d9ef">return</span> <span style="color:#e6db74">&#34;</span><span style="color:#e6db74">sing</span><span style="color:#e6db74">&#34;</span>
+    }
+}
+
+<span style="color:#66d9ef">let</span> singe = flier.sing?() <span style="color:#75715e">//</span><span style="color:#75715e">O</span><span style="color:#75715e">p</span><span style="color:#75715e">t</span><span style="color:#75715e">i</span><span style="color:#75715e">o</span><span style="color:#75715e">n</span><span style="color:#75715e">a</span><span style="color:#75715e">l</span><span style="color:#75715e">(</span><span style="color:#75715e">&#34;</span><span style="color:#75715e">s</span><span style="color:#75715e">i</span><span style="color:#75715e">n</span><span style="color:#75715e">g</span><span style="color:#75715e">&#34;</span><span style="color:#75715e">)</span>
+</code></pre></div><p>如果在协议中声明<code>init</code>方法，如果<!-- raw HTML omitted -->采用协议的是类类型，那么该类和它的子类必须实现该初始化器，并且必须标记为<code>required</code><!-- raw HTML omitted -->，否则会出现编译错误<code>nitializer requirement 'init()' can only be satisfied by a 'required' initializer in non-final class 'Bird'</code>：</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift"><span style="color:#66d9ef">protocol</span> <span style="color:#a6e22e">Flier</span> {
+    <span style="color:#66d9ef">init</span>()
+}
+
+<span style="color:#66d9ef">class</span> <span style="color:#a6e22e">Bird</span>: Flier {
+    <span style="color:#66d9ef">required</span> <span style="color:#66d9ef">init</span>() {
+        debugPrint(<span style="color:#e6db74">&#34;</span><span style="color:#e6db74">required init</span><span style="color:#e6db74">&#34;</span>)
+    }
+}
+
+</code></pre></div><p>上面代码中<code>Bird</code>没有被标记为<code>final</code>，它的<code>init</code>必须标记为<code>required</code>。这意味着实现任何指定初始化器的任何 <code>Bird</code> 子类（因此失去初始化器继承）必须实现<code>required</code>初始化器并将其标记为<code>required</code>的。如果类<code>Bird</code>标记为<code>final</code>时，实现<code>Flier</code>协议中的<code>init</code>方法则不再需要关键字<code>required</code>：</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift"><span style="color:#66d9ef">protocol</span> <span style="color:#a6e22e">Flier</span> {
+    <span style="color:#66d9ef">init</span>()
+}
+
+<span style="color:#66d9ef">final</span> <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">Bird</span>: Flier {
+    <span style="color:#66d9ef">init</span>() {
+        debugPrint(<span style="color:#e6db74">&#34;</span><span style="color:#e6db74">required init</span><span style="color:#e6db74">&#34;</span>)
+    }
+}
+</code></pre></div><p>这个事实会产生一个奇怪而烦人的特性。假设将内置的<code>Cocoa</code>类<code>UIViewController</code>子类化，下面代码是你极有可能做的事情：</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift"><span style="color:#66d9ef">class</span> <span style="color:#a6e22e">ViewController</span>: UIViewController {
+    <span style="color:#66d9ef">init</span>() {
+        <span style="color:#66d9ef">super</span>.<span style="color:#66d9ef">init</span>(nibName: <span style="color:#e6db74">&#34;</span><span style="color:#e6db74">ViewController</span><span style="color:#e6db74">&#34;</span>, bundle: <span style="color:#66d9ef">nil</span>) <span style="color:#75715e">//</span><span style="color:#75715e"> </span><span style="color:#75715e">c</span><span style="color:#75715e">o</span><span style="color:#75715e">m</span><span style="color:#75715e">p</span><span style="color:#75715e">i</span><span style="color:#75715e">l</span><span style="color:#75715e">e</span><span style="color:#75715e"> </span><span style="color:#75715e">e</span><span style="color:#75715e">r</span><span style="color:#75715e">r</span><span style="color:#75715e">o</span><span style="color:#75715e">r</span><span style="color:#75715e"> </span>
+    }
+}
+</code></pre></div><p>上面的代码会出现编译错误<code>required initializer init(coder:)</code>。这是因为<code>UIViewController</code>采用了<code>NSCoding</code>协议，这个协议中有一个<code>required</code>的<code>init(coder:)</code>。<code>UIViewController</code>子类必须继承 <code>init(coder:)</code>或必须显式实现它并将其标记为<code>required</code>。</p>
+<p>上面的代码中已经实现了自己的指定初始化程序——因此切断了初始化程序继承。因此它必须实现 <code>init(coder:)</code>并将其标记为<code>required</code>。</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift"><span style="color:#66d9ef">class</span> <span style="color:#a6e22e">ViewController</span>: UIViewController {
+    <span style="color:#66d9ef">init</span>() {
+        <span style="color:#66d9ef">super</span>.<span style="color:#66d9ef">init</span>(nibName: <span style="color:#e6db74">&#34;</span><span style="color:#e6db74">ViewController</span><span style="color:#e6db74">&#34;</span>, bundle: <span style="color:#66d9ef">nil</span>) <span style="color:#75715e">//</span><span style="color:#75715e"> </span><span style="color:#75715e">c</span><span style="color:#75715e">o</span><span style="color:#75715e">m</span><span style="color:#75715e">p</span><span style="color:#75715e">i</span><span style="color:#75715e">l</span><span style="color:#75715e">e</span><span style="color:#75715e"> </span><span style="color:#75715e">e</span><span style="color:#75715e">r</span><span style="color:#75715e">r</span><span style="color:#75715e">o</span><span style="color:#75715e">r</span>
+    }
+
+    <span style="color:#66d9ef">required</span> <span style="color:#66d9ef">init</span>?(coder: NSCoder) {
+        fatalError(<span style="color:#e6db74">&#34;</span><span style="color:#e6db74">init(coder:) has not been implemented</span><span style="color:#e6db74">&#34;</span>)
+    }
+}
+</code></pre></div><p>上面的代码可以通过编译，但如果真的被调用了，就会发生崩溃。不仅是<code>UIViewController</code>，其它的很多内置的<code>Cocoa</code> 类都采用<code>NSCoding</code>协议。<!-- raw HTML omitted -->如果将这些类中的任何一个进行子类化并实现自定义的初始化程序，都将遇到此问题<!-- raw HTML omitted -->。</p>
+<h2 id="expressible-by-literal">Expressible by Literal</h2>
+<p><code>Swift</code>的美妙之处是它的许多功能都在<code>Swift</code>头文件中公开，字面量就是一个很好的例子。可以用<code>5</code>来表示一个值为<code>5</code>的<code>Int</code>，而不是通过<code>Int(5)</code>来正式初始化<code>Int</code>，这不是因为魔法。</p>
+<p>这是因为<code>Int</code>采用了<code>ExpressibleByIntegerLiteral</code>协议。不仅是<code>Int</code>字面量，所有的字面量都是这样工作的。以下协议在<code>Swift</code>头文件中声明：</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift">ExpressibleByNilLiteral
+
+ExpressibleByBooleanLiteral
+
+ExpressibleByIntegerLiteral
+
+ExpressibleByFloatLiteral
+
+ExpressibleByStringLiteral
+
+ExpressibleByExtendedGraphemeClusterLiteral
+
+ExpressibleByUnicodeScalarLiteral
+
+ExpressibleByArrayLiteral
+
+ExpressibleByDictionaryLiteral
+</code></pre></div><p>可以在自定义的类型中采用字面量协议，这意味了字面量可以出现在需要对象类型实例的地方。下面的代码中声明了一个<code>Nest</code>结构体，它采用了<code>ExpressibleByIntegerLiteral</code>协议，因此在需要使用<code>Nest</code>实例的地方可以使用字面量：</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift"><span style="color:#66d9ef">struct</span> <span style="color:#a6e22e">Nest</span>: ExpressibleByIntegerLiteral {
+    <span style="color:#66d9ef">var</span> eggCount: Int = <span style="color:#ae81ff">0</span>
+
+    <span style="color:#66d9ef">init</span>() {
+     	<span style="color:#75715e">//</span>
+    }
+
+    <span style="color:#66d9ef">init</span>(integerLiteral val: Int) {
+        <span style="color:#66d9ef">self</span>.eggCount = val
+    }
+}
+
+<span style="color:#66d9ef">func</span> <span style="color:#a6e22e">reportEggs</span>(<span style="color:#66d9ef">_</span> nest: Nest) {
+    print(<span style="color:#e6db74">&#34;</span><span style="color:#e6db74">this nest contains </span><span style="color:#e6db74">\(</span>nest.eggCount<span style="color:#e6db74">)</span><span style="color:#e6db74"> eggs</span><span style="color:#e6db74">&#34;</span>)
+}
+
+reportEggs(<span style="color:#ae81ff">4</span>) <span style="color:#75715e">//</span><span style="color:#75715e"> </span><span style="color:#75715e">t</span><span style="color:#75715e">h</span><span style="color:#75715e">i</span><span style="color:#75715e">s</span><span style="color:#75715e"> </span><span style="color:#75715e">n</span><span style="color:#75715e">e</span><span style="color:#75715e">s</span><span style="color:#75715e">t</span><span style="color:#75715e"> </span><span style="color:#75715e">c</span><span style="color:#75715e">o</span><span style="color:#75715e">n</span><span style="color:#75715e">t</span><span style="color:#75715e">a</span><span style="color:#75715e">i</span><span style="color:#75715e">n</span><span style="color:#75715e">s</span><span style="color:#75715e"> </span><span style="color:#75715e">4</span><span style="color:#75715e"> </span><span style="color:#75715e">e</span><span style="color:#75715e">g</span><span style="color:#75715e">g</span><span style="color:#75715e">s</span>
+
+</code></pre></div><h2 id="generics">Generics</h2>
+<p>泛型是一种类型占位符，以后将会把实际的类型放入其中。特别是，在有些情况下，某个相同的类型将在多个地方使用，而不需要精确指定是什么类型。</p>
+<p>之前我们定义了如下的全局函数，该函数声明的返回的类型是<code>Dog</code>，如果在调用的时候传入了<code>Dog</code>的子类，那么返回的依然是父类<code>Dog</code>实例：</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift"><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">dogMakerAndNamer</span>(<span style="color:#66d9ef">_</span> whatType: Dog.<span style="color:#66d9ef">Type</span>) -&gt; Dog {
+    <span style="color:#66d9ef">let</span> d = WhatType.<span style="color:#66d9ef">init</span>(name: <span style="color:#e6db74">&#34;</span><span style="color:#e6db74">Fido</span><span style="color:#e6db74">&#34;</span>)
+    <span style="color:#66d9ef">return</span> d
+}
+</code></pre></div><p>实际上我们希望在箭头运算符后的返回类型与参数类型相同，泛型可以达到这个目的。在下面的代码中，泛型函数指定<code>WhatType</code>始终是相同的类型（要求是<code>Dog</code>或<code>Dog</code>子类），而不必确切指定它是什么类型：</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift"><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">dogMakerAndNamer</span>&lt;WhatType: Dog&gt;(<span style="color:#66d9ef">_</span>: WhatType.<span style="color:#66d9ef">Type</span>) -&gt; WhatType {
+    <span style="color:#66d9ef">let</span> d = WhatType.<span style="color:#66d9ef">init</span>(name: <span style="color:#e6db74">&#34;</span><span style="color:#e6db74">Fido</span><span style="color:#e6db74">&#34;</span>)
+    <span style="color:#66d9ef">return</span> d
+}		
+</code></pre></div><p>因为<code>Swift</code>是一种强类型语言，为了调用函数<code>dogMakerAndNamer</code>，编译器需要知道<code>WhatType</code>的真实类型。但事实上，它是通过调用时传入的类型才知道真实的类型：</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift"><span style="color:#66d9ef">class</span> <span style="color:#a6e22e">Dog</span> {
+    <span style="color:#66d9ef">required</span> <span style="color:#66d9ef">init</span>(name: String) {
+        <span style="color:#75715e">//</span>
+    }
+}
+
+<span style="color:#66d9ef">class</span> <span style="color:#a6e22e">NoisyDog</span>: Dog {
+    <span style="color:#66d9ef">required</span> <span style="color:#66d9ef">init</span>(name: String) {
+        <span style="color:#66d9ef">super</span>.<span style="color:#66d9ef">init</span>(name: name)
+    }
+}
+
+<span style="color:#66d9ef">let</span> dog = dogMakerAndNamer(NoisyDog.<span style="color:#66d9ef">self</span>)
+</code></pre></div><p>在上面方法调用中，传递了<code>NoisyDog.self</code>作为参数，这就是告诉编译器<code>WhatType</code>的实际类型，实际上编译器现相当于在整个泛型中将<code>NoisyDog</code>替换为<code>WhatType</code>，该替换过程称为解析（或专门化）泛型。：</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift"><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">dogMakerAndNamer</span>(<span style="color:#66d9ef">_</span>: NoisyDog.<span style="color:#66d9ef">Type</span>) -&gt; NoisyDog {
+    <span style="color:#66d9ef">let</span> d = NoisyDog.<span style="color:#66d9ef">init</span>(name: <span style="color:#e6db74">&#34;</span><span style="color:#e6db74">Fido</span><span style="color:#e6db74">&#34;</span>)
+    <span style="color:#66d9ef">return</span> d
+}
+</code></pre></div><h3 id="optional">Optional</h3>
+<p>任何类型的值都可以被包裹在一个<code>Optional</code>中，这是因为<code>Optional</code>是一个泛型。下面是一个<code>Optional</code>的工作原理：</p>
+<p><code>Optional</code>是一种枚举类型，它有两个值<code>.none</code>和<code>.some</code>。如果一个<code>Optional</code>是<code>.some</code>，它就有一个关联值——被这个<code>Optional</code>包裹的值。但是这个关联值的类型是什么呢？</p>
+<p>一方面，我们可以认为是任何类型，毕竟，这就是为什么任何东西都可以被<code>Optional</code>包裹起来。另一方面，任何特定的<code>Optional</code>都只能包装一个特定的已知类型的值，这听起来就像一个泛型。<code>Swift</code>头中的<code>Optional</code>枚举的声明如下所示：</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift">@frozen <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">enum</span> <span style="color:#a6e22e">Optional</span>&lt;Wrapped&gt; : ExpressibleByNilLiteral {
+
+    <span style="color:#66d9ef">case</span> <span style="color:#66d9ef">none</span>
+
+    <span style="color:#66d9ef">case</span> some(Wrapped)
+
+    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">init</span>(<span style="color:#66d9ef">_</span> some: Wrapped)
+
+    @inlinable <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">func</span> <span style="color:#a6e22e">map</span>&lt;U&gt;(<span style="color:#66d9ef">_</span> transform: (Wrapped) <span style="color:#66d9ef">throws</span> -&gt; U) <span style="color:#66d9ef">rethrows</span> -&gt; U?
+
+    @inlinable <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">func</span> <span style="color:#a6e22e">flatMap</span>&lt;U&gt;(<span style="color:#66d9ef">_</span> transform: (Wrapped) <span style="color:#66d9ef">throws</span> -&gt; U?) <span style="color:#66d9ef">rethrows</span> -&gt; U?
+
+    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">init</span>(nilLiteral: ())
+
+    @inlinable <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">var</span> unsafelyUnwrapped: Wrapped { <span style="color:#66d9ef">get</span> }
+}
+</code></pre></div><p>上面声明中尖括号里的<code>Wrapped</code>是一个占位符，枚举声明的其余部分将继续使用这个占位符。除了<code>.none</code>这种情况，还有一种情况<code>.some</code>，它有一个相关的值&ndash;<code>Wrapped</code>类型。</p>
+<p>还有一个初始化器，它需要一个参数&ndash;<code>Wrapped</code>类型的。因此，我们被初始化的类型(不管是什么类型)都是<code>Wrapped</code>类型，因此是与<code>.some</code>情况相关的类型。</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift"><span style="color:#66d9ef">let</span> s = Optional(<span style="color:#e6db74">&#34;</span><span style="color:#e6db74">howdy</span><span style="color:#e6db74">&#34;</span>)
+</code></pre></div><p>对于上面的代码首先调用初始化器<code>init(_ some: Wrapped)</code>，所以<code>&quot;howdy&quot;</code>在这里作为一个<code>Wrapped</code>实例被提供的，并将这个泛型解析为<code>String</code>。编译器现在知道，在这个特定的<code>Optional&lt;Wrapped&gt;</code>中，<code>Wrapped</code>是<code>String</code>，这个特定的<code>Optional</code>的声明在编译器看起来如下所示：</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift"><span style="color:#66d9ef">enum</span> <span style="color:#a6e22e">Optional</span>&lt;String&gt; {
+    <span style="color:#66d9ef">case</span> <span style="color:#66d9ef">none</span>
+    <span style="color:#66d9ef">case</span> some(String)
+    <span style="color:#66d9ef">init</span>(<span style="color:#66d9ef">_</span> some: String) <span style="color:#75715e">//</span><span style="color:#75715e"> </span><span style="color:#75715e">.</span><span style="color:#75715e">.</span><span style="color:#75715e">.</span>
+}
+</code></pre></div><p>上面代码中，实际上<code>s</code>的类型为<code>Optional&lt;String&gt;</code>，可以使用<code>let s: Optional&lt;String&gt; = &quot;howdy&quot;</code>来达到同样的效果。</p>
+<h2 id="generic-declarations">Generic Declarations</h2>
+<p>下面列出了可以在<code>Swift</code>中以某种形式声明泛型的地方：</p>
+<ul>
+<li>
+<p>泛型协议使用<code>Self</code>。在协议声明时，使用关键词<code>Self</code>可以将协议变成一个泛型协议。<code>Self</code>在这里<!-- raw HTML omitted -->是一个占位符，意味着采用者的类型<!-- raw HTML omitted -->。下面是一个<code>Flier</code>协议，它声明了一个接受<code>Self</code>参数的方法：</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift"><span style="color:#66d9ef">protocol</span> <span style="color:#a6e22e">Flier</span> {
+    <span style="color:#66d9ef">func</span> <span style="color:#a6e22e">flockTogetherWith</span>(<span style="color:#66d9ef">_</span> f: <span style="color:#66d9ef">Self</span>)
+}
+</code></pre></div><p>这意味着，如果<code>Bird</code>对象类型采用<code>Flier</code>协议，那么实现<code>flockTogetherWith</code>时需要将其参数声明为<code>Bird</code>。</p>
+</li>
+<li>
+<p>泛型协议使用关联类型。协议定义时可以使用<code>associatedtype</code>关键字来声明关联类型，这可以将协议转换为泛型协议，<!-- raw HTML omitted -->关联类型名此时也是一个占位符<!-- raw HTML omitted -->：</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift"><span style="color:#66d9ef">protocol</span> <span style="color:#a6e22e">Flier</span> {
+    associatedtype Other
+    <span style="color:#66d9ef">func</span> <span style="color:#a6e22e">flockTogetherWith</span>(<span style="color:#66d9ef">_</span> f: Other)
+    <span style="color:#66d9ef">func</span> <span style="color:#a6e22e">mateWith</span>(<span style="color:#66d9ef">_</span> f: Other)
+}
+</code></pre></div><p>采用该协议的类型将指定占位符所代表的真正类型：</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift"><span style="color:#66d9ef">struct</span> <span style="color:#a6e22e">Bird</span>: Flier {
+    <span style="color:#66d9ef">func</span> <span style="color:#a6e22e">flockTogetherWith</span>(<span style="color:#66d9ef">_</span> f: Bird) {
+      <span style="color:#75715e">//</span>
+    }
+  
+    <span style="color:#66d9ef">func</span> <span style="color:#a6e22e">mateWith</span>(<span style="color:#66d9ef">_</span> f: Bird) {
+      <span style="color:#75715e">//</span>
+    }
+}
+</code></pre></div><p>上面<code>Bird</code>结构体采用了<code>Flier</code>协议并将<code>flockTogetherWith</code>的参数声明为<code>Bird</code>类型。对于这个特定的采用者来说，因为<code>Flier</code>协议中定义的所有方法的参数类型都使用占位类型<code>Other</code>，因此<code>Bird</code>必须将<code>mateWith</code>方法的参数也声明为<code>Bird</code>类型。</p>
+</li>
+<li>
+<p>泛型函数。一个函数声明可以为它的任何参数、返回类型使用通用占位符类型。占位符名称在函数名称后面的尖括号中声明：</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift"><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">takeAndReturnSameThing</span>&lt;T&gt;(<span style="color:#66d9ef">_</span> t: T) -&gt; T {
+    debugPrint(T.<span style="color:#66d9ef">self</span>)
+    <span style="color:#66d9ef">return</span> t
+}
+</code></pre></div><p>调用者可以在函数声明中出现占位符的某个地方使用一个特定的类型，以解析占位符的具体类型：<code>let t = takeAndReturnSameThing(&quot;howdy&quot;)</code>。在这里，调用中使用的参数<code>&quot;howdy&quot;</code>的类型将<code>T</code>解析为<code>String</code>。因此<code>takeAndReturnSameThing</code>的调用后也将返回一个<code>String</code>类型。</p>
+</li>
+<li>
+<p>泛型对象类型。一个对象类型声明可以在其花括号内的任何地方使用一个通用占位符类型。占位符名称在对象类型名称后面的尖括号中声明。</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift"><span style="color:#66d9ef">struct</span> <span style="color:#a6e22e">HolderOfTwoSameThings</span>&lt;T&gt; {
+    <span style="color:#66d9ef">var</span> firstThing: T
+    <span style="color:#66d9ef">var</span> secondThing: T
+  
+    <span style="color:#66d9ef">init</span>(thingOne: T, thingTwo: T) {
+        <span style="color:#66d9ef">self</span>.firstThing = thingOne
+        <span style="color:#66d9ef">self</span>.secondThing = thingTwo
+    }
+}
+</code></pre></div><p>使用这个对象类型的用户将在对象类型声明中出现占位符的某个地方使用一个特定的类型，以解决占位符的问题。<code>let holder = HolderOfTwoSameThings(thingOne:&quot;howdy&quot;, thingTwo:&quot;getLost&quot;)</code>。在初始化器调用中使用的<code>thingOne</code>的参数<code>&quot;howdy&quot;</code>的类型将<code>T</code>解析为<code>String</code>。因此<code>thingTwo</code>也必须是一个<code>String</code>，并且属性<code>firstThing</code>和<code>secondThing</code>也是<code>Strings</code>。</p>
+</li>
+</ul>
+<p>在泛型声明时尖括号内可以声明多个占位符以代表不同的类型，使用逗号分隔。下面定义的<code>flockTwoTogether</code>方法有两个占位符类型：</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift"><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">flockTwoTogether</span>&lt;T, U&gt;(<span style="color:#66d9ef">_</span> f1: T, <span style="color:#66d9ef">_</span> f2: U) {
+    <span style="color:#75715e">//</span>
+}
+</code></pre></div><p>在泛型代码中，泛型占位符代表解析类型的类型引用，可以使用类型引用比较：</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift"><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">takeAndReturnSameThing</span>&lt;T&gt;(<span style="color:#66d9ef">_</span> t: T) -&gt; T {
+    <span style="color:#75715e">//</span><span style="color:#75715e"> </span><span style="color:#75715e">S</span><span style="color:#75715e">t</span><span style="color:#75715e">r</span><span style="color:#75715e">i</span><span style="color:#75715e">n</span><span style="color:#75715e">g</span><span style="color:#75715e">.</span><span style="color:#75715e">T</span><span style="color:#75715e">y</span><span style="color:#75715e">p</span><span style="color:#75715e">e</span><span style="color:#75715e"> </span><span style="color:#75715e">是</span><span style="color:#75715e">元</span><span style="color:#75715e">类</span><span style="color:#75715e">型</span><span style="color:#75715e">，</span><span style="color:#75715e">而</span><span style="color:#75715e">T</span><span style="color:#75715e">.</span><span style="color:#75715e">s</span><span style="color:#75715e">e</span><span style="color:#75715e">l</span><span style="color:#75715e">f</span><span style="color:#75715e">是</span><span style="color:#75715e">元</span><span style="color:#75715e">类</span><span style="color:#75715e">型</span><span style="color:#75715e">的</span><span style="color:#75715e">值</span><span style="color:#75715e">，</span><span style="color:#75715e">参</span><span style="color:#75715e">考</span><span style="color:#75715e">自</span><span style="color:#75715e">h</span><span style="color:#75715e">t</span><span style="color:#75715e">t</span><span style="color:#75715e">p</span><span style="color:#75715e">s</span><span style="color:#75715e">:</span><span style="color:#75715e">/</span><span style="color:#75715e">/</span><span style="color:#75715e">j</span><span style="color:#75715e">u</span><span style="color:#75715e">e</span><span style="color:#75715e">j</span><span style="color:#75715e">i</span><span style="color:#75715e">n</span><span style="color:#75715e">.</span><span style="color:#75715e">c</span><span style="color:#75715e">n</span><span style="color:#75715e">/</span><span style="color:#75715e">p</span><span style="color:#75715e">o</span><span style="color:#75715e">s</span><span style="color:#75715e">t</span><span style="color:#75715e">/</span><span style="color:#75715e">6</span><span style="color:#75715e">8</span><span style="color:#75715e">4</span><span style="color:#75715e">4</span><span style="color:#75715e">9</span><span style="color:#75715e">0</span><span style="color:#75715e">3</span><span style="color:#75715e">7</span><span style="color:#75715e">2</span><span style="color:#75715e">5</span><span style="color:#75715e">1</span><span style="color:#75715e">9</span><span style="color:#75715e">9</span><span style="color:#75715e">2</span><span style="color:#75715e">6</span><span style="color:#75715e">1</span><span style="color:#75715e">7</span><span style="color:#75715e">1</span><span style="color:#75715e">0</span>
+    <span style="color:#66d9ef">if</span> T.<span style="color:#66d9ef">self</span> <span style="color:#66d9ef">is</span> String.<span style="color:#66d9ef">Type</span> {
+        debugPrint(<span style="color:#e6db74">&#34;</span><span style="color:#e6db74">T is String</span><span style="color:#e6db74">&#34;</span>)
+    }
+    <span style="color:#66d9ef">return</span> t
+}
+</code></pre></div><h2 id="contradictory-resolution-is-impossible">Contradictory Resolution Is Impossible</h2>
+<p>泛型在<!-- raw HTML omitted -->编译时就能排除与自身相矛盾的解析，这是泛型最重要的特性之一<!-- raw HTML omitted -->。由于<code>Swift</code>是强类型的，矛盾的解析是不可能的。泛型占位符必须在整个泛型中得到一致的解析，否则会编译报错。</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift"><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">dogMakerAndNamer</span>&lt;WhatType: Dog&gt;(<span style="color:#66d9ef">_</span>: WhatType.<span style="color:#66d9ef">Type</span>) -&gt; WhatType {
+    <span style="color:#66d9ef">let</span> d = WhatType.<span style="color:#66d9ef">init</span>(name: <span style="color:#e6db74">&#34;</span><span style="color:#e6db74">Fido</span><span style="color:#e6db74">&#34;</span>)
+    <span style="color:#66d9ef">return</span> d
+}
+
+<span style="color:#66d9ef">let</span> d : NoisyDog = dogMakerAndNamer(Dog.<span style="color:#66d9ef">self</span>) <span style="color:#75715e">//</span><span style="color:#75715e"> </span><span style="color:#75715e">c</span><span style="color:#75715e">o</span><span style="color:#75715e">m</span><span style="color:#75715e">p</span><span style="color:#75715e">i</span><span style="color:#75715e">l</span><span style="color:#75715e">e</span><span style="color:#75715e"> </span><span style="color:#75715e">e</span><span style="color:#75715e">r</span><span style="color:#75715e">r</span><span style="color:#75715e">o</span><span style="color:#75715e">r</span>
+</code></pre></div><p>对于上面的代码<code>let d : NoisyDog = dogMakerAndNamer(Dog.self)</code>传入了参数<code>Dog.self</code>时<code>WhatType</code>会解析成类型<code>Dog</code>，但<code>d</code>声明为<code>NoisyDog</code>类型，会导致类型不一致，出现编译错误。</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift"><span style="color:#66d9ef">protocol</span> <span style="color:#a6e22e">Flier</span> {
+    associatedtype Other
+    <span style="color:#66d9ef">func</span> <span style="color:#a6e22e">flockTogetherWith</span>(<span style="color:#66d9ef">_</span> f: Other)
+    <span style="color:#66d9ef">func</span> <span style="color:#a6e22e">mateWith</span>(<span style="color:#66d9ef">_</span> f: Other)
+}
+</code></pre></div><p>相似的，如果采用上面<code>Flier</code>协议的类型在实现<code>flockTogetherWith</code>和<code>mateWith</code>方法中，使用不一致的类型时会出现编译错误<code>Type 'Bird' does not conform to protocol 'Flier'</code>：</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift"><span style="color:#66d9ef">struct</span> <span style="color:#a6e22e">Bird</span>: Flier {
+    <span style="color:#66d9ef">func</span> <span style="color:#a6e22e">flockTogetherWith</span>(<span style="color:#66d9ef">_</span> f: String) {
+        <span style="color:#75715e">//</span>
+    }
+
+    <span style="color:#66d9ef">func</span> <span style="color:#a6e22e">mateWith</span>(<span style="color:#66d9ef">_</span> f: Int) {
+        <span style="color:#75715e">//</span>
+    }
+}
+</code></pre></div><h2 id="type-constraints">Type Constraints</h2>
+<p>泛型声明<!-- raw HTML omitted -->可以限制可用于解析占位符的类型，这称为类型约束<!-- raw HTML omitted -->。最简单的类型约束形式是在占位符第一次出现时在它的名称后面放一个冒号和一个类型名称，<!-- raw HTML omitted -->冒号后的类型名可以是类名或协议名<!-- raw HTML omitted -->：</p>
+<ul>
+<li>如果是类名，则将泛型的具体类型限定为这个类或子类的名称。</li>
+<li>如果是协议名，则协议名称表示该类型必须是该协议的采用者。</li>
+</ul>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift"><span style="color:#66d9ef">protocol</span> <span style="color:#a6e22e">Flier</span> {
+    <span style="color:#66d9ef">func</span> <span style="color:#a6e22e">fly</span>()
+}
+
+<span style="color:#66d9ef">protocol</span> <span style="color:#a6e22e">Flocker</span> {
+
+    associatedtype Other: Flier 
+
+    <span style="color:#66d9ef">func</span> <span style="color:#a6e22e">flockTogetherWith</span>(f: Other)
+}
+
+<span style="color:#66d9ef">struct</span> <span style="color:#a6e22e">Bird</span>: Flocker, Flier {
+
+    <span style="color:#66d9ef">func</span> <span style="color:#a6e22e">fly</span>() {
+        <span style="color:#75715e">//</span>
+    }
+
+    <span style="color:#66d9ef">func</span> <span style="color:#a6e22e">flockTogetherWith</span>(f: Bird) {
+        <span style="color:#75715e">//</span>
+    }
+}
+</code></pre></div><p>上面定义的<code>Flocker</code>协议中的关联类型<code>Other</code>必须采用<code>Flier</code>协议。<code>Bird</code>是<code>Flier</code>的采用者，因此它也可以采用<code>Flocker</code>，同时指定其<code>flockTogetherWith</code>实现中的参数类型为<code>Bird</code>。</p>
+<p>对于上面的代码，不使用关联类型，还有一种方法可以实现同样的效果。但是，还是有区别的，因为此时要求<code>Flocker</code>的采用者将<code>flockTogetherWith</code>的参数指定为<code>Flier</code>。然后在实现<code>Flocker</code>时就不得不将<code>flockTogetherWith</code>的类型声明为<code>Flier</code>：</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift"><span style="color:#66d9ef">protocol</span> <span style="color:#a6e22e">Flier</span> {
+    <span style="color:#66d9ef">func</span> <span style="color:#a6e22e">fly</span>()
+}
+
+<span style="color:#66d9ef">protocol</span> <span style="color:#a6e22e">Flocker</span> {
+    <span style="color:#66d9ef">func</span> <span style="color:#a6e22e">flockTogetherWith</span>(f: Flier)
+}
+
+<span style="color:#66d9ef">struct</span> <span style="color:#a6e22e">Bird</span>: Flocker, Flier {
+    <span style="color:#66d9ef">func</span> <span style="color:#a6e22e">fly</span>() {
+      <span style="color:#75715e">//</span>
+    }
+
+    <span style="color:#66d9ef">func</span> <span style="color:#a6e22e">flockTogetherWith</span>(f: Flier) {
+      <span style="color:#75715e">//</span>
+    }
+}
+</code></pre></div><p>而最上面定义的关联类型要求采用<code>Flocker</code>的类型在实现<code>flockTogetherWith</code>时参数<code>f</code>的类型也应该是采用<code>Flocker</code>协议的类型。</p>
+<p>对于泛型函数或泛型对象，类型约束出现在尖括号中。前面声明的全局函数<code>func dogMakerAndNamer</code>就是一个例子。因为<code>Dog</code>是一个类，因此约束说明<code>WhatType</code>必须是<code>Dog</code>或<code>Dog</code>子类。下面是另一个例子，使用协议作为约束：</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift"><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">flockTwoTogether</span>&lt;T: Flier&gt;(<span style="color:#66d9ef">_</span> f1: T, <span style="color:#66d9ef">_</span> f2: T) {
+    <span style="color:#75715e">//</span>
+}
+</code></pre></div><p>在这个例子中，<code>Flier</code>是一个协议，所以约束条件表明<code>T</code>必须是一个<code>Flier</code>的采用者。假如<code>Bird</code>和<code>Insect</code>都采用<code>Flier</code>，那么<code>flockTwoTogether</code>函数可以用两个<code>Bird</code>参数或两个<code>Insect</code>参数来调用，但不能一个是<code>Bird</code>另一个是<code>Insect</code>，因为<code>T</code>只是一个占位符(不是两个)，表示一个<code>Flier</code>采用者类型。但也不能用两个字符串参数调用<code>flockTwoTogether</code>，因为字符串不是<code>Flier</code>。</p>
+<p>占位符上的类型约束经常被用来向编译器保证一些消息可以被发送到占位符类型的实例上。比方说，想实现一个函数<code>myMin</code>，从同一类型的列表中返回最小值:</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift"><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">myMin</span>&lt;T:Comparable&gt;(<span style="color:#66d9ef">_</span> things: T...) -&gt; T {
+    <span style="color:#66d9ef">var</span> minimum = things.first!
+
+    <span style="color:#66d9ef">for</span> item <span style="color:#66d9ef">in</span> things.dropFirst() {
+        <span style="color:#66d9ef">if</span> item <span style="color:#f92672">&lt;</span> minimum { 
+            minimum = item
+        }
+    }
+    <span style="color:#66d9ef">return</span> minimum
+}
+</code></pre></div><h2 id="explicit-specialization">Explicit Specialization</h2>
+<p>到目前为止，在泛型示例中，占位符的类型主要是通过类型推断来解析的（隐式解析）。但还有另一种解析的方法：可以手动解析类型，这称为显式解析。在某些情况下，显式解析是强制性的，即若无法通过推理解析占位符类型。显示解析有两种形式：</p>
+<ul>
+<li>
+<p>以占位符声明的泛型协议。协议的采用者可以通过将关联类型<!-- raw HTML omitted -->定义为某种类型的别名手动解析关联类型<!-- raw HTML omitted -->：</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift"><span style="color:#66d9ef">protocol</span> <span style="color:#a6e22e">Flier</span> {
+    associatedtype Other
+}
+  
+<span style="color:#66d9ef">struct</span> <span style="color:#a6e22e">Bird</span>: Flier {
+    <span style="color:#66d9ef">typealias</span> Other = String
+}
+</code></pre></div></li>
+<li>
+<p>泛型对象类型。使用泛型对象类型的用户可以使用与声明泛型时相同的尖括号语法手动解析占位符类型，类型名称在尖括号中：</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift"><span style="color:#66d9ef">class</span> <span style="color:#a6e22e">Dog</span>&lt;T&gt; {
+    <span style="color:#66d9ef">var</span> name: T?
+}
+<span style="color:#66d9ef">let</span> d = Dog&lt;String&gt;()
+</code></pre></div></li>
+</ul>
+<p>不能手动显式解析泛型函数。一种解决方案是让泛型函数采用解析泛型的类型参数。这就是之前的<code>dogMakerAndNamer</code>示例中所做的:</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift"><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">dogMakerAndNamer</span>&lt;WhatType: Dog&gt;(<span style="color:#66d9ef">_</span>: WhatType.<span style="color:#66d9ef">Type</span>) -&gt; WhatType {
+    <span style="color:#66d9ef">let</span> d = WhatType.<span style="color:#66d9ef">init</span>(name: <span style="color:#e6db74">&#34;</span><span style="color:#e6db74">Fido</span><span style="color:#e6db74">&#34;</span>)
+    <span style="color:#66d9ef">return</span> d
+}
+</code></pre></div><p><code>dogMakerAndNamer</code>的参数从未在函数体内使用，这就是它没有名称（只有下划线）的原因。但是，它确实用于解析泛型。</p>
+<p>另一种方法是首先不使用泛型函数。相反，先声明一个泛型对象类型，包装一个使用泛型类型占位符的非泛型函数。泛型类型可以显式特化，解析函数中的占位符：</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift"><span style="color:#66d9ef">protocol</span> <span style="color:#a6e22e">Flier</span> {
+    <span style="color:#66d9ef">init</span>()
+}
+
+<span style="color:#66d9ef">struct</span> <span style="color:#a6e22e">Bird</span>: Flier {
+    <span style="color:#66d9ef">init</span>() {
+        <span style="color:#75715e">//</span>
+    }
+}
+
+<span style="color:#66d9ef">struct</span> <span style="color:#a6e22e">FlierMaker</span>&lt;T: Flier&gt; {
+    <span style="color:#66d9ef">static</span> <span style="color:#66d9ef">func</span> <span style="color:#a6e22e">makeFlier</span>() -&gt; T {
+        <span style="color:#66d9ef">return</span> T()
+    }
+}
+<span style="color:#66d9ef">let</span> f = FlierMaker&lt;Bird&gt;.makeFlier() <span style="color:#75715e">//</span><span style="color:#75715e"> </span><span style="color:#75715e">r</span><span style="color:#75715e">e</span><span style="color:#75715e">t</span><span style="color:#75715e">u</span><span style="color:#75715e">r</span><span style="color:#75715e">n</span><span style="color:#75715e">s</span><span style="color:#75715e"> </span><span style="color:#75715e">a</span><span style="color:#75715e"> </span><span style="color:#75715e">B</span><span style="color:#75715e">i</span><span style="color:#75715e">r</span><span style="color:#75715e">d</span>
+</code></pre></div><p>当一个类是泛型时，<!-- raw HTML omitted -->可以对它进行子类化，前提是解析了泛型<!-- raw HTML omitted -->。可以通过匹配的泛型子类或显式解析父类泛型来执行此操作。下面是一个泛型的<code>Dog</code>：</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift"><span style="color:#66d9ef">class</span> <span style="color:#a6e22e">Dog</span>&lt;T&gt; {
+    <span style="color:#66d9ef">func</span> <span style="color:#a6e22e">speak</span>(<span style="color:#66d9ef">_</span> what: T) {
+      <span style="color:#75715e">//</span>
+    }
+}
+</code></pre></div><p>可以将其子类化为泛型，其占位符与父类的占位符匹配：</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift"><span style="color:#66d9ef">class</span> <span style="color:#a6e22e">Dog</span>&lt;T&gt; {
+    <span style="color:#66d9ef">func</span> <span style="color:#a6e22e">speak</span>(<span style="color:#66d9ef">_</span> what: T) {
+        <span style="color:#75715e">//</span>
+    }
+}
+
+<span style="color:#66d9ef">class</span> <span style="color:#a6e22e">NoisyDog</span>&lt;T&gt;: Dog&lt;T&gt; {
+    <span style="color:#75715e">//</span>
+}
+</code></pre></div><p>这是合法的，因为<code>NoisyDog</code>占位符<code>T</code>的解析的同时将解析<code>Dog</code>占位符<code>T</code>。替代方法是子类化一个显式解析的<code>Dog</code>:</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift"><span style="color:#66d9ef">class</span> <span style="color:#a6e22e">NoisyDog</span>: Dog&lt;String&gt; {
+    <span style="color:#75715e">//</span>
+}
+</code></pre></div><p>在这种情况下，子类中的方法覆盖可以使用特化类型，而父类使用泛型：</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift"><span style="color:#66d9ef">class</span> <span style="color:#a6e22e">NoisyDog</span>: Dog&lt;String&gt; {
+    <span style="color:#66d9ef">override</span> <span style="color:#66d9ef">func</span> <span style="color:#a6e22e">speak</span>(<span style="color:#66d9ef">_</span> what: String) {
+        <span style="color:#75715e">//</span>
+    }
+}
+</code></pre></div><h2 id="generic-invariance">Generic Invariance</h2>
+<p>通常，专用于子类型的泛型类型相对于专用于父类型的相同泛型类型而言不是多态的。假设我们有一个简单的通用<code>Wrapper</code>结构以及一个<code>Cat</code>类及其<code>CalicoCat</code>子类：</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift"><span style="color:#66d9ef">class</span> <span style="color:#a6e22e">Cat</span> {
+    <span style="color:#75715e">//</span>
+}
+
+<span style="color:#66d9ef">class</span> <span style="color:#a6e22e">CalicoCat</span>: Cat {
+    <span style="color:#75715e">//</span>
+}
+</code></pre></div><p>那么你不能赋值一个专门用于<code>CalicoCat</code>的<code>Wrapper</code>给一个专门用于<code>Cat</code>的<code>Wrapper</code>，下面将会出现编译错误：</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift"><span style="color:#66d9ef">let</span> w : Wrapper&lt;Cat&gt; = Wrapper&lt;CalicoCat&gt;() <span style="color:#75715e">//</span><span style="color:#75715e"> </span><span style="color:#75715e">c</span><span style="color:#75715e">o</span><span style="color:#75715e">m</span><span style="color:#75715e">p</span><span style="color:#75715e">i</span><span style="color:#75715e">l</span><span style="color:#75715e">e</span><span style="color:#75715e"> </span><span style="color:#75715e">e</span><span style="color:#75715e">r</span><span style="color:#75715e">r</span><span style="color:#75715e">o</span><span style="color:#75715e">r</span>
+</code></pre></div><p>上面的代码看起来多态已经失效，但实际上不是这样的。因为<code>Wrapper&lt;Cat&gt;</code>和<code>Wrapper&lt;CalicoCat&gt;</code>两种类型不是父类和子类的关系。</p>
+<p>相反，如果这种赋值是可行的话，我们会说这些类型是共变的，这意味着<!-- raw HTML omitted -->占位符的特殊化之间的多态关系被应用于泛型类型本身<!-- raw HTML omitted -->。某些<code>Swift</code>内置的泛型类型是共变的，<code>Optional</code>就是一个明显的例子。但是，令人沮丧的是，<!-- raw HTML omitted -->共变性并不是一个通用的语言特性<!-- raw HTML omitted -->，没有办法指定你的泛型类型应该是共变性的。</p>
+<p>一个变通方法是将泛型占位符限制在一个协议上，并让你的类型采用该协议：</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift"><span style="color:#66d9ef">protocol</span> <span style="color:#a6e22e">Meower</span> {
+    <span style="color:#66d9ef">func</span> <span style="color:#a6e22e">meow</span>()
+}
+
+<span style="color:#66d9ef">struct</span> <span style="color:#a6e22e">Wrapper</span>&lt;T: Meower&gt; {
+    <span style="color:#66d9ef">let</span> meower: T
+}
+
+<span style="color:#66d9ef">class</span> <span style="color:#a6e22e">Cat</span>: Meower {
+    <span style="color:#66d9ef">func</span> <span style="color:#a6e22e">meow</span>() {
+        debugPrint(<span style="color:#e6db74">&#34;</span><span style="color:#e6db74">meow</span><span style="color:#e6db74">&#34;</span>)
+    }
+}
+
+<span style="color:#66d9ef">class</span> <span style="color:#a6e22e">CalicoCat</span>: Cat {
+    <span style="color:#75715e">//</span>
+}
+</code></pre></div><p>现在可以使用合法地使用<code>let w : Wrapper&lt;Cat&gt; = Wrapper(meower:CalicoCat())</code>这样的表达式，而不会出现编译错误。</p>
+<h2 id="associated-type-chains">Associated Type Chains</h2>
+<p>当一个泛型占位符限制为一个带有关联类型的泛型协议时，可以使用点符号来推断相关的类型：占位符的名称，一个点，和关联类型的名称。</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift"><span style="color:#66d9ef">protocol</span> <span style="color:#a6e22e">Fighter</span> {
+    associatedtype Enemy: Fighter
+}
+
+<span style="color:#66d9ef">struct</span> <span style="color:#a6e22e">Soldier</span>: Fighter {
+    <span style="color:#66d9ef">typealias</span> Enemy = Archer
+}
+
+<span style="color:#66d9ef">struct</span> <span style="color:#a6e22e">Archer</span>: Fighter {
+    <span style="color:#66d9ef">typealias</span> Enemy = Soldier
+}
+</code></pre></div><p>现在可以使用点操作符推断相关类型：</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift"><span style="color:#66d9ef">struct</span> <span style="color:#a6e22e">Camp</span>&lt;T: Fighter&gt; {
+    <span style="color:#66d9ef">var</span> spy: T.Enemy?
+}
+</code></pre></div><p>这就意味着，对于某个特定的<code>Camp</code>，如果T被解析为<code>Soldier</code>，那么<code>T.Enemy</code>就是<code>Archer</code>；如果T被解析为<code>Archer</code>，那么<code>T.Enemy</code>就是<code>Soldier</code>。</p>
+<p>如果此时尝试赋值给spy给一个错误的类型，那么就会出现编译错误：<code>Cannot assign value of type 'Soldier' to type 'Soldier.Enemy?' (aka 'Optional&lt;Archer&gt;')</code>：</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift"><span style="color:#66d9ef">var</span> c = Camp&lt;Soldier&gt;()
+
+c.spy = Soldier() <span style="color:#75715e">//</span><span style="color:#75715e"> </span><span style="color:#75715e">c</span><span style="color:#75715e">o</span><span style="color:#75715e">m</span><span style="color:#75715e">p</span><span style="color:#75715e">i</span><span style="color:#75715e">l</span><span style="color:#75715e">e</span><span style="color:#75715e"> </span><span style="color:#75715e">e</span><span style="color:#75715e">r</span><span style="color:#75715e">r</span><span style="color:#75715e">o</span><span style="color:#75715e">r</span>
+</code></pre></div><p>一个泛型协议可能有个关联类型限制为一个有关联类型的协议。因此，可能出现长的关联类型链：</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift"><span style="color:#66d9ef">protocol</span> <span style="color:#a6e22e">Wieldable</span> {
+}
+
+<span style="color:#66d9ef">struct</span> <span style="color:#a6e22e">Sword</span>: Wieldable {
+}
+
+<span style="color:#66d9ef">struct</span> <span style="color:#a6e22e">Bow</span>: Wieldable {
+}
+
+<span style="color:#66d9ef">protocol</span> <span style="color:#a6e22e">Fighter</span> {
+    associatedtype Enemy: Fighter
+    associatedtype Weapon: Wieldable
+}
+
+<span style="color:#66d9ef">struct</span> <span style="color:#a6e22e">Soldier</span>: Fighter {
+
+    <span style="color:#66d9ef">typealias</span> Weapon = Sword
+
+    <span style="color:#66d9ef">typealias</span> Enemy = Archer
+}
+
+<span style="color:#66d9ef">struct</span> <span style="color:#a6e22e">Archer</span>: Fighter {
+
+    <span style="color:#66d9ef">typealias</span> Weapon = Bow
+
+    <span style="color:#66d9ef">typealias</span> Enemy = Soldier
+}
+</code></pre></div>
+    </div>
+    <footer class="post-footer">
+        
+ 
+<div class="post-tags">     
+     
+    <a href="https://iihui.github.io/tags/ios" rel="tag" title="iOS">#iOS#</a>
+    
+</div>
+
+
+
+        <div class="post-nav">
+    <div class="post-nav-next post-nav-item">
+    
+        <a href="https://iihui.github.io/post/ios-fundamentals/" rel="next" title="iOS 14 编程基础">
+        <i class="fa fa-chevron-left"></i> iOS 14 编程基础
+        </a>
+    
+    </div>
+
+    <div class="post-nav-prev post-nav-item">
+    
+        <a href="https://iihui.github.io/post/ios-kingfisher/" rel="prev" title="KingFisher 使用">
+        KingFisher 使用 <i class="fa fa-chevron-right"></i>
+        </a>
+    
+    </div>
+</div>
+      
+        <div class="post-nav">
+    <div style="border: 1px dashed #e0e0e0; padding: 10px 10px 10px 10px; background-color: #fffeee; background-repeat: no-repeat; background-attachment: scroll; background-position: 1% 50%; -moz-background-size: auto auto; -moz-background-clip: -moz-initial; -moz-background-origin: -moz-initial; -moz-background-inline-policy: -moz-initial;">
+        <div style="float:left;margin-top:0px;">
+            <img src="https://i.loli.net/2020/02/09/SvhUdz4XJsOr9Vk.jpg" width="128px" height="128px"/>
+            <div style="text-align:center;">谢谢支持!</div>
+        </div>
+        <div>
+            <p style="margin-top:10px;">
+                标题：Swift协议
+                <br />作者：阿呆<a target="_blank" href="https://iihui.github.io/"></a>
+                
+                <br />地址：https://iihui.github.io/post/ios-protocol/
+                <br />声明：自由转载-非商用-保持署名（创作共享4.0许可证）
+            </p>
+        </div>
+    </div>
+    <div class="clear"></div>
+</div>
+        
+        
+        
+
+
+
+
+    </footer>
+  </article>
+</section>
+
+          </div>
+        </div>
+        <div class="sidebar-toggle">
+  <div class="sidebar-toggle-line-wrap">
+    <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+    <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+    <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+  </div>
+</div>
+<aside id="sidebar" class="sidebar">
+  <div class="sidebar-inner">
+
+  <ul class="sidebar-nav motion-element">
+    <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+      文章目录
+    </li>
+    <li class="sidebar-nav-overview" data-target="site-overview">
+      站点概览
+    </li>
+  </ul>
+
+    <section class="site-overview sidebar-panel ">
+      <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image"
+        src="https://i.loli.net/2020/02/07/dVFzrvZkHRNq2lL.jpg"
+        alt="" />
+    <p class="site-author-name" itemprop="name"></p>
+    <p class="site-description motion-element" itemprop="description"> 
+        coder &amp; cook</p>
+</div>
+      <nav class="site-state motion-element">
+    <div class="site-state-item site-state-posts">
+      <a href="https://iihui.github.io/post/">
+        <span class="site-state-item-count">141</span>
+        <span class="site-state-item-name">日志</span>
+      </a>
+    </div>
+    <div class="site-state-item site-state-categories">    
+        <a href="https://iihui.github.io/categories/">      
+         
+        <span class="site-state-item-count">17</span>
+        
+        <span class="site-state-item-name">分类</span>
+        
+        </a>
+    </div>
+
+    <div class="site-state-item site-state-tags">
+        <a href="https://iihui.github.io/tags/">
+         
+        <span class="site-state-item-count">29</span>
+        
+        <span class="site-state-item-name">标签</span>
+        </a>
+    </div>
+</nav>
+      
+      
+<div class="links-of-author motion-element">
+    
+        <span class="links-of-author-item">
+        <a href="https://coolshell.cn" target="_blank" title="皓 大">
+            <i class="fa fa-fw fa-globe"></i>
+            皓 大
+        </a>
+        </span>
+    
+        <span class="links-of-author-item">
+        <a href="http://www.ruanyifeng.com" target="_blank" title="阮 大">
+            <i class="fa fa-fw fa-globe"></i>
+            阮 大
+        </a>
+        </span>
+    
+        <span class="links-of-author-item">
+        <a href="https://juejin.im/" target="_blank" title="掘 金">
+            <i class="fa fa-fw fa-globe"></i>
+            掘 金
+        </a>
+        </span>
+    
+        <span class="links-of-author-item">
+        <a href="http://www.ideamsg.com" target="_blank" title="灵 感">
+            <i class="fa fa-fw fa-globe"></i>
+            灵 感
+        </a>
+        </span>
+    
+</div>
+
+
+      
+
+      <div class="links-of-blogroll motion-element inline">
+<script type="text/javascript" src="//rf.revolvermaps.com/0/0/8.js?i=&amp;m=0&amp;s=220&amp;c=ff0000&amp;cr1=ffffff&amp;f=arial&amp;l=33&amp;bv=35" async="async"></script>
+</div>
+
+    </section>
+    
+<section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+    <div class="post-toc">
+        <div class="post-toc-content"><nav id="TableOfContents">
+  <ul>
+    <li><a href="#协议中的属性">协议中的属性</a></li>
+    <li><a href="#协议中的方法">协议中的方法</a></li>
+    <li><a href="#可选属性或方法">可选属性或方法</a></li>
+    <li><a href="#协议继承">协议继承</a></li>
+    <li><a href="#协议组合">协议组合</a></li>
+    <li><a href="#像类型一样使用协议">像类型一样使用协议</a></li>
+    <li><a href="#协议的多态性">协议的多态性</a></li>
+    <li><a href="#协议中的关联类型">协议中的关联类型</a></li>
+    <li><a href="#协议设计">协议设计</a></li>
+    <li><a href="#protocols">Protocols</a>
+      <ul>
+        <li><a href="#adopting-a-library-protocol">Adopting a Library Protocol</a></li>
+        <li><a href="#declaring-a-protocol">Declaring a Protocol</a></li>
+        <li><a href="#protocol-composition">Protocol Composition</a></li>
+        <li><a href="#class-protocols">Class Protocols</a></li>
+        <li><a href="#optional-protocol-members">Optional Protocol Members</a></li>
+        <li><a href="#expressible-by-literal">Expressible by Literal</a></li>
+        <li><a href="#generics">Generics</a>
+          <ul>
+            <li><a href="#optional">Optional</a></li>
+          </ul>
+        </li>
+        <li><a href="#generic-declarations">Generic Declarations</a></li>
+        <li><a href="#contradictory-resolution-is-impossible">Contradictory Resolution Is Impossible</a></li>
+        <li><a href="#type-constraints">Type Constraints</a></li>
+        <li><a href="#explicit-specialization">Explicit Specialization</a></li>
+        <li><a href="#generic-invariance">Generic Invariance</a></li>
+        <li><a href="#associated-type-chains">Associated Type Chains</a></li>
+      </ul>
+    </li>
+  </ul>
+</nav></div>
+    </div>
+</section>
+
+  </div>
+</aside>
+
+      </div>
+    </main>
+   
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  <span itemprop="copyrightYear">  &copy; 
+  2017 - 2022</span>
+  <span class="with-love"><i class="fa fa-heart"></i></span>
+  <span class="author" itemprop="copyrightHolder">Keep It Simple</span>
+</div>
+
+
+
+      </div>
+    </footer>
+
+    <div class="back-to-top">
+      <i class="fa fa-arrow-up"></i>
+      <span id="scrollpercent"><span>0</span>%</span>
+    </div>
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+<script type="text/javascript" src="https://iihui.github.io/js/vendor/jquery/index.js?v=2.1.3"></script>
+<script type="text/javascript" src="https://iihui.github.io/js/vendor/fastclick/lib/fastclick.min.js?v=1.0.6"></script> 
+<script type="text/javascript" src="https://iihui.github.io/js/vendor/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+<script type="text/javascript" src="https://iihui.github.io/js/vendor/velocity/velocity.min.js?v=1.2.1"></script>
+<script type="text/javascript" src="https://iihui.github.io/js/vendor/velocity/velocity.ui.min.js?v=1.2.1"></script>
+<script src="https://iihui.github.io/js/vendor/ua-parser-js/dist/ua-parser.min.js?v=0.7.9"></script>
+
+<script src="https://iihui.github.io/js/vendor/fancybox/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+<script type="text/javascript" src="https://iihui.github.io/js/utils.js"></script>
+<script type="text/javascript" src="https://iihui.github.io/js/motion.js"></script>
+<script type="text/javascript" src="https://iihui.github.io/js/affix.js"></script>
+<script type="text/javascript" src="https://iihui.github.io/js/schemes/pisces.js"></script>
+
+<script type="text/javascript" src="https://iihui.github.io/js/scrollspy.js"></script>
+<script type="text/javascript" src="https://iihui.github.io/js/post-details.js"></script>
+<script type="text/javascript" src="https://iihui.github.io/js/toc.js"></script>
+
+<script type="text/javascript" src="https://iihui.github.io/js/bootstrap.js"></script>
+
+<script type="text/javascript" src="https://iihui.github.io/js/search.js"></script>
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+    extensions: ["tex2jax.js"],
+    jax: ["input/TeX", "output/HTML-CSS"],
+    tex2jax: {
+      inlineMath: [ ['$','$'] ],
+      displayMath: [ ['$$','$$'] ],
+      processEscapes: true
+    },
+    "HTML-CSS": { fonts: ["TeX"] }
+  });
+</script>
+<script src='https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-AMS-MML_HTMLorMML' async></script>
+</body>
+</html>

@@ -4,13 +4,13 @@
     <meta charset="UTF-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" /> 
-    <title>Swift中for-in的各种姿势 - Keep It Simple</title>
+    <title>Swift中for循环 - Keep It Simple</title>
     <meta name="keywords" content="博客,思考,读书,笔记,技术,分享">
     
-    <meta property="og:title" content="Swift中for-in的各种姿势">
+    <meta property="og:title" content="Swift中for循环">
     <meta property="og:site_name" content="Keep It Simple">
     <meta property="og:image" content="/img/author.jpg"> 
-    <meta name="title" content="Swift中for-in的各种姿势 - Keep It Simple" />
+    <meta name="title" content="Swift中for循环 - Keep It Simple" />
     <meta name="description" content="Swift | Go | C&#43;&#43; "> 
     <link rel="shortcut icon" href="https://iihui.github.io/img/favicon.ico" />
     <link rel="apple-touch-icon" href="https://iihui.github.io/img/apple-touch-icon.png" />
@@ -193,7 +193,7 @@ code.has-jax {
     <header class="post-header">
       <h1 class="post-title" itemprop="name headline">
         <a class="post-title-link" href="https://iihui.github.io/post/swift-for-in/" itemprop="url">
-        Swift中for-in的各种姿势
+        Swift中for循环
         </a>
       </h1>
       <div class="post-meta">
@@ -241,7 +241,7 @@ code.has-jax {
     <i class="fa fa-file-word-o"></i>
 </span>
 <span class="post-meta-item-text">字数: </span>
-<span class="leancloud-visitors-count">577</span>
+<span class="leancloud-visitors-count">626</span>
 &nbsp; | &nbsp;
 <span class="post-meta-item-icon">
     <i class="fa fa-coffee"></i>
@@ -253,16 +253,16 @@ code.has-jax {
     </header>
     <div class="post-body" itemprop="articleBody">
     <blockquote>
-<p><code>Swift</code>中只有一种形式的<code>for</code>循环，即<code>for-in</code>。但是<code>for-in</code>有多种形式，包括常规用法和区间循环。</p>
+<p><code>Swift</code>中只有一种形式<code>for</code>循环，即<code>for in</code>。但是<code>for-in</code>有多种形式，既包括常规用法又包括区间循环。</p>
 </blockquote>
 <!-- raw HTML omitted -->
-<h1 id="常规用法">常规用法</h1>
-<p>常规用法一般用于直接访问数组中的元素，分为直接访问和按索引访问：</p>
+<h2 id="常规用法">常规用法</h2>
+<p>常规用法一般用于直接访问数组中的元素，可以分为直接访问和按索引访问：</p>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift"><span style="color:#66d9ef">let</span> arr = [<span style="color:#ae81ff">34</span>,<span style="color:#ae81ff">78</span>,<span style="color:#ae81ff">789</span>,<span style="color:#f92672">-</span><span style="color:#ae81ff">12</span>]
 <span style="color:#66d9ef">for</span> item <span style="color:#66d9ef">in</span> arr{
     print(item)
 }
-</code></pre></div><p>在<code>OC</code>中是通过索引<code>i</code>来访问数组中的元素，在<code>Swift</code>中需要借助枚举<code>enumerate</code>来实现</p>
+</code></pre></div><p>在<code>OC</code>中是通过索引<code>i</code>来访问数组中的元素，在<code>Swift</code>中需要借助枚举<code>enumerated()</code>来实现，如下所示：</p>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift"><span style="color:#66d9ef">for</span> item <span style="color:#66d9ef">in</span> arr.enumerated(){
     print(item.offset,item.element)
 }
@@ -270,7 +270,7 @@ code.has-jax {
     print(i,num)
 }
 </code></pre></div><hr>
-<h1 id="区间循环">区间循环</h1>
+<h2 id="区间循环">区间循环</h2>
 <p>在<code>Swift</code>中<code>...</code>表示闭区间，例如<code>0...10</code>表示<code>0，1，2，...，10</code>；而<code>..&lt;</code>表示前闭后开区间，例如<code>0..&lt;10</code>表示<code>0，1，2，...，9</code>。</p>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift"><span style="color:#66d9ef">for</span> i  <span style="color:#66d9ef">in</span> <span style="color:#ae81ff">0.</span>..<span style="color:#ae81ff">10</span>{
     print(i)
@@ -279,7 +279,11 @@ code.has-jax {
 <span style="color:#66d9ef">for</span> i <span style="color:#66d9ef">in</span> <span style="color:#ae81ff">0.</span>.&lt;<span style="color:#ae81ff">10</span>{
     print(i)
 }
-</code></pre></div><p>在<code>...</code>和<code>..&lt;</code>这两种表示中<!-- raw HTML omitted -->要求左边界小于等于右边界<!-- raw HTML omitted -->，灵活性较弱。因此，<code>Swift</code>提供了一种更灵活的<code>stride</code>，以满足<!-- raw HTML omitted -->不同的递增条件以和开闭区间的结合<!-- raw HTML omitted -->。</p>
+</code></pre></div><p>如果要使用倒序，则需要将顺序区间进行<code>reversed()</code>，在<code>...</code>和<code>..&lt;</code>这两种表示中<!-- raw HTML omitted -->要求左边界小于等于右边界<!-- raw HTML omitted -->。</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift"><span style="color:#66d9ef">for</span> i <span style="color:#66d9ef">in</span> (<span style="color:#ae81ff">0</span> ... <span style="color:#ae81ff">10</span>).reversed() {
+    print(i)
+}
+</code></pre></div><p>此外，<code>Swift</code>还提供了一种更灵活的<code>stride</code>，以满足<!-- raw HTML omitted -->不同的递增条件以和开闭区间的结合<!-- raw HTML omitted -->：</p>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift"><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">stride</span>&lt;T&gt;(from start: T, to end: T, by stride: T.Stride)
 <span style="color:#66d9ef">func</span> <span style="color:#a6e22e">stride</span>&lt;T&gt;(from start: T, through end: T, by stride: T.Stride)
 <span style="color:#75715e">//</span><span style="color:#75715e">f</span><span style="color:#75715e">r</span><span style="color:#75715e">o</span><span style="color:#75715e">m</span><span style="color:#75715e">:</span><span style="color:#75715e">开</span><span style="color:#75715e">始</span><span style="color:#75715e">位</span><span style="color:#75715e">置</span><span style="color:#75715e">包</span><span style="color:#75715e">括</span><span style="color:#75715e">上</span><span style="color:#75715e">边</span><span style="color:#75715e">界</span><span style="color:#75715e"> </span><span style="color:#75715e">b</span><span style="color:#75715e">y</span><span style="color:#75715e">：</span><span style="color:#75715e">递</span><span style="color:#75715e">增</span><span style="color:#75715e">步</span><span style="color:#75715e">长</span>
@@ -295,14 +299,14 @@ code.has-jax {
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift"><span style="color:#66d9ef">for</span> i <span style="color:#66d9ef">in</span> stride(from: <span style="color:#ae81ff">10</span>, through: <span style="color:#ae81ff">0</span>, by: <span style="color:#f92672">-</span><span style="color:#ae81ff">2</span>){
     print(i, terminator: <span style="color:#e6db74">&#34;</span><span style="color:#ae81ff">\t</span><span style="color:#e6db74">&#34;</span>)  <span style="color:#75715e">//</span><span style="color:#75715e">1</span><span style="color:#75715e">0</span><span style="color:#75715e"> </span><span style="color:#75715e"> </span><span style="color:#75715e"> </span><span style="color:#75715e"> </span><span style="color:#75715e">8</span><span style="color:#75715e"> </span><span style="color:#75715e"> </span><span style="color:#75715e"> </span><span style="color:#75715e"> </span><span style="color:#75715e">6</span><span style="color:#75715e"> </span><span style="color:#75715e"> </span><span style="color:#75715e"> </span><span style="color:#75715e"> </span><span style="color:#75715e">4</span><span style="color:#75715e"> </span><span style="color:#75715e"> </span><span style="color:#75715e"> </span><span style="color:#75715e"> </span><span style="color:#75715e">2</span><span style="color:#75715e"> </span><span style="color:#75715e"> </span><span style="color:#75715e"> </span><span style="color:#75715e"> </span><span style="color:#75715e">0</span>
 }
-</code></pre></div><p>中途改变<code>by</code>的值没有作用，查看源码发现<code>by</code>是以传值的方式传递到<code>stride</code>函数中的：</p>
+</code></pre></div><p>如果中途改变<code>by</code>的值，不会起作用，查看源码发现<code>by</code>是以传值的方式传递到<code>stride</code>函数中的：</p>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift"><span style="color:#66d9ef">var</span> step = <span style="color:#f92672">-</span><span style="color:#ae81ff">3</span>
 <span style="color:#66d9ef">for</span> i <span style="color:#66d9ef">in</span> stride(from: <span style="color:#ae81ff">10</span>, through: <span style="color:#ae81ff">0</span>, by: step){
     print(i, terminator: <span style="color:#e6db74">&#34;</span><span style="color:#ae81ff">\t</span><span style="color:#e6db74">&#34;</span>)  <span style="color:#75715e">//</span><span style="color:#75715e">1</span><span style="color:#75715e">0</span><span style="color:#75715e"> </span><span style="color:#75715e"> </span><span style="color:#75715e"> </span><span style="color:#75715e"> </span><span style="color:#75715e">7</span><span style="color:#75715e"> </span><span style="color:#75715e"> </span><span style="color:#75715e"> </span><span style="color:#75715e"> </span><span style="color:#75715e">4</span><span style="color:#75715e"> </span><span style="color:#75715e"> </span><span style="color:#75715e"> </span><span style="color:#75715e"> </span><span style="color:#75715e">1</span>
     step <span style="color:#f92672">-=</span> <span style="color:#ae81ff">2</span>    <span style="color:#75715e">//</span><span style="color:#75715e">虽</span><span style="color:#75715e">然</span><span style="color:#75715e">改</span><span style="color:#75715e">变</span><span style="color:#75715e">了</span><span style="color:#75715e">s</span><span style="color:#75715e">t</span><span style="color:#75715e">e</span><span style="color:#75715e">p</span><span style="color:#75715e">但</span><span style="color:#75715e">结</span><span style="color:#75715e">果</span><span style="color:#75715e">依</span><span style="color:#75715e">然</span><span style="color:#75715e">是</span><span style="color:#75715e">1</span><span style="color:#75715e">0</span><span style="color:#75715e"> </span><span style="color:#75715e"> </span><span style="color:#75715e"> </span><span style="color:#75715e"> </span><span style="color:#75715e">7</span><span style="color:#75715e"> </span><span style="color:#75715e"> </span><span style="color:#75715e"> </span><span style="color:#75715e"> </span><span style="color:#75715e">4</span><span style="color:#75715e"> </span><span style="color:#75715e"> </span><span style="color:#75715e"> </span><span style="color:#75715e"> </span><span style="color:#75715e">1</span>
 }
 </code></pre></div><hr>
-<h1 id="参考资料">参考资料</h1>
+<h2 id="参考资料">参考资料</h2>
 <p><a href="https://www.jianshu.com/p/35e08768d356">参考资料</a></p>
 <hr>
 
@@ -321,15 +325,15 @@ code.has-jax {
         <div class="post-nav">
     <div class="post-nav-next post-nav-item">
     
-        <a href="https://iihui.github.io/post/ios-image-selector/" rel="next" title="多图片选择">
-        <i class="fa fa-chevron-left"></i> 多图片选择
+        <a href="https://iihui.github.io/post/tool-papers/" rel="next" title="Papers教程">
+        <i class="fa fa-chevron-left"></i> Papers教程
         </a>
     
     </div>
 
     <div class="post-nav-prev post-nav-item">
     
-        <a href="https://iihui.github.io/post/ios-sort/" rel="prev" title="基本内排序算法Swift实现">
+        <a href="https://iihui.github.io/post/swift-sort/" rel="prev" title="基本内排序算法Swift实现">
         基本内排序算法Swift实现 <i class="fa fa-chevron-right"></i>
         </a>
     
@@ -344,7 +348,7 @@ code.has-jax {
         </div>
         <div>
             <p style="margin-top:10px;">
-                标题：Swift中for-in的各种姿势
+                标题：Swift中for循环
                 <br />作者：阿呆<a target="_blank" href="https://iihui.github.io/"></a>
                 
                 <br />地址：https://iihui.github.io/post/swift-for-in/
@@ -398,14 +402,14 @@ code.has-jax {
       <nav class="site-state motion-element">
     <div class="site-state-item site-state-posts">
       <a href="https://iihui.github.io/post/">
-        <span class="site-state-item-count">134</span>
+        <span class="site-state-item-count">141</span>
         <span class="site-state-item-name">日志</span>
       </a>
     </div>
     <div class="site-state-item site-state-categories">    
         <a href="https://iihui.github.io/categories/">      
          
-        <span class="site-state-item-count">15</span>
+        <span class="site-state-item-count">17</span>
         
         <span class="site-state-item-name">分类</span>
         
@@ -468,9 +472,13 @@ code.has-jax {
     <div class="post-toc">
         <div class="post-toc-content"><nav id="TableOfContents">
   <ul>
-    <li><a href="#常规用法">常规用法</a></li>
-    <li><a href="#区间循环">区间循环</a></li>
-    <li><a href="#参考资料">参考资料</a></li>
+    <li>
+      <ul>
+        <li><a href="#常规用法">常规用法</a></li>
+        <li><a href="#区间循环">区间循环</a></li>
+        <li><a href="#参考资料">参考资料</a></li>
+      </ul>
+    </li>
   </ul>
 </nav></div>
     </div>
@@ -486,7 +494,7 @@ code.has-jax {
       <div class="footer-inner">
         <div class="copyright" >
   <span itemprop="copyrightYear">  &copy; 
-  2017 - 2021</span>
+  2017 - 2022</span>
   <span class="with-love"><i class="fa fa-heart"></i></span>
   <span class="author" itemprop="copyrightHolder">Keep It Simple</span>
 </div>
