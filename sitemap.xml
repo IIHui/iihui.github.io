@@ -230,17 +230,16 @@ if ticket.respond_to?(request) puts ticket.send(request) else puts &amp;#34;No s
 当调用方法时，必须提供正确数目的实参，如果提供错误的参数，则会出现编译错误。下面示例代码中的one_arg方法只需要一个入参，但在调用时却给了3个参数，因此会出现编译错误：
 obj = Object.new def obj.one_arg(x) puts &amp;#34;I require one and only one argument!&amp;#34; end obj.one_arg(1, 2, 3) Uncaught exception: wrong number of arguments 如果想要一个方法接受多个参数，可以在参数前面添加*。此时，该参数将以列表的形式接受参数：
 obj = Object.new def obj.multi_args(*x) puts &amp;#34;I can take zero or more arguments!&amp;#34; end obj.multi_args(1, 2, 3) def two_or_more(a, b, *c) puts &amp;#34;I require two or more arguments!&amp;#34; puts &amp;#34;And sure enough, I got: &amp;#34; p a, b, c end two_or_more(1,2,3,4,5) 参数也可以添加默认值：
-def default_args(a, b, c = 1) puts &amp;#34;Values of variables: &amp;#34;, a, b, c end default_args(3,2) 3 2 1 参数顺序：
+def default_args(a, b, c = 1) puts &amp;#34;Values of variables: &amp;#34;, a, b, c end default_args(3,2) 3 2 1 在一个方法中，参数的解析也是有顺序的，首先解析的是必须参数，其次是带默认值的参数，最后是可变参数：
 def mixed_args(a, b, *c, d) puts &amp;#34;Arguments:&amp;#34; p a, b, c, d end mixed_args(1, 2, 3, 4, 5) 1 2 [3, 4] 5 mixed_args(1,2,3) 1 2 [] 3 下图提供了一个参数分配逻辑的图形表示。下面框中列出的赋值显示了优先级的顺序：首先处理必需的参数，然后是默认值的可选参数，最后是可变参数：
-在Ruby中，所有参数都是有顺序的。必需的参数具有优先权，无论它们出现在列表的左边还是右边，所有可选参数必须出现在中间，但必须参数可以放在两边：
+在Ruby中所有参数都是有顺序的。必需的参数具有优先权，无论它们出现在列表的左边还是右边，所有可选参数必须出现在中间，但必须参数可以放在两边：
 def all_optional(*args) def broken_args(x, *y, z = 1) end syntax error, unexpected &amp;#39;=&amp;#39;, expecting &amp;#39;)&amp;#39; d
 Local variables and variable assignment 局部变量以小写字母或下划线开始，并且以字母、数字和下划线开始。下面都是合法的局部变量名：x,_x,name,firs_name,plan9,user_ID,_。局部的意思是仅在程序的有限部分可见，例如方法定义。局部变量可以在多个地方重复使用。
 def say_goodbye x = &amp;#34;Goodbye&amp;#34; puts x end def start_here x = &amp;#34;Hello&amp;#34; puts x say_goodbye puts &amp;#34;Let&amp;#39;s check whether x remained the same:&amp;#34; puts x end start_here Hello Goodbye Let&amp;#39;s check whether x remained the same: Hello 变量赋值给人的感觉是使左边的变量被设置为右边的对象:
 str = &amp;#34;Hello&amp;#34; 在下面的代码中，虽然只替换了str，但是abc的值也被替换了。这是因为变量不持有对象的值，只是对象的引用，因此str只是string对象的引用。
 在一次赋值中，如果左边是一个变量名，右边是一个对象，那么该变量收到对该对象的一个引用。在从一个变量到另一个变量的赋值中（abc = str），左边的变量收到了储存在右边变量中的引用的副本，结果是两个变量现在都包含对同一个对象的引用。
-def say_goodbye str = &amp;#34;Hello&amp;#34; abc = str str.replace(&amp;#34;Goodbye&amp;#34;) puts str puts abc end say_goodbye 在Ruby中有些对象是作为即时值存储在变量中的。这些对象包括整数、符号（看起来像:this），以及特殊对象true、false和nil。当把这些值赋给给一个变量时（例如x = 1），那么该变量持有该值本身，而不是对它的引用。
-但是即时值表示规则有几个有趣的变化，特别是当它涉及到整数时。首先，任何被表示为即时值的对象都是完全相同的对象，无论它被赋值到多少个变量。例如，只有一个对象100，只有一个对象false，以此类推。
-整数绑定变量后导致的的直接结果是Ruby缺乏前置和后置递增运算符，也就是说，不能在Ruby中这样做：
+def say_goodbye str = &amp;#34;Hello&amp;#34; abc = str str.replace(&amp;#34;Goodbye&amp;#34;) puts str puts abc end say_goodbye 在Ruby中有些对象是作为即时值存储在变量中的。这些对象包括整数、符号（例如:this），以及特殊对象true、false和nil。当把这些值赋给给一个变量时（例如x = 1），那么该变量持有该值本身，而不是对它的引用。
+但是即时值表示规则有几个有趣的变化，特别是当它涉及到整数时。首先，任何被表示为即时值的对象都是完全相同的对象，无论它被赋值到多少个变量。例如，只有一个对象100，只有一个对象false，以此类推。整数绑定变量的直接结果是Ruby缺乏前置和后置递增运算符，也就是说，不能在Ruby中这样做：
 x = 1 x&#43;&#43; 对于Ruby中的每个对象，可以而且必须有一个或多个对该对象的引用。如果没有引用，该对象被认为是失效的，其内存空间被释放并重新使用。
 如果有两个或更多的变量包含对一个对象的引用，可以在平等的基础上使用其中的任何一个变量来向该对象发送消息。引用与它们的对象有多对一的关系。但是如果你把一个全新的对象分配给一个已经引用了一个对象的变量，事情就会发生变化：
 str = &amp;#34;Hello&amp;#34; abc = str str = &amp;#34;Goodbye&amp;#34; puts str puts abc Goodbye Hello 在上面的代码中，给str第二次赋值时引用了一个完全不同的对象。此时，abc和str指向发生了变化，abc依然指向旧的对象，而str指向了新的对象。
