@@ -18,8 +18,8 @@
     <link href="https://iihui.github.io/js/vendor/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
     <link href="https://iihui.github.io/js/vendor/fancybox/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
     <link href="https://iihui.github.io/css/main.css" rel="stylesheet" type="text/css" />
-    <link href="https://iihui.github.io/css/custom.css" rel="stylesheet" type="text/css" />
     <link href="https://iihui.github.io/css/syntax.css" rel="stylesheet" type="text/css" />
+
     <script type="text/javascript" id="hexo.configuration">
   var NexT = window.NexT || {};
   var CONFIG = {
@@ -38,9 +38,9 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.1/languages/objectivec.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.1/languages/clojure.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.1/languages/cpp.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.1/languages/kotlin.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.1/languages/yaml.min.js"></script>
     <script>hljs.initHighlightingOnLoad();</script>
-
-
 </head>
 <body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
 <div class="container one-collumn sidebar-position-left page-home  ">
@@ -253,58 +253,58 @@ code.has-jax {
     </header>
     <div class="post-body" itemprop="articleBody">
     <blockquote>
-<p>一篇图文笔记<!-- raw HTML omitted -->可能有多张图片<!-- raw HTML omitted -->，目前的需求为单击图片后开始预览图片。想到的解决思路有两种，第一种是为每张图片添加点击事件的监听，这种方式的麻烦在于要监听是否有新图片插入，一旦有新图片插入时则要对其加入点击事件的监听；第二种则是全局监听点击事件，用户一旦点击，则判断该点击事件是否在<code>img</code>标签上，如果是则进入图片预览，否则什么也不做。</p>
+<p>一篇图文笔记<font color=LightSeaGreen>可能有多张图片</font>，目前的需求为单击图片后开始预览图片。想到的解决思路有两种，第一种是为每张图片添加点击事件的监听，这种方式的麻烦在于要监听是否有新图片插入，一旦有新图片插入时则要对其加入点击事件的监听；第二种则是全局监听点击事件，用户一旦点击，则判断该点击事件是否在<code>img</code>标签上，如果是则进入图片预览，否则什么也不做。</p>
 </blockquote>
-<!-- raw HTML omitted -->
+<!-- more -->
 <h1 id="第一种方式">第一种方式</h1>
-<p>每次进入图文笔记的浏览模式时为所有<code>img</code>添加点击事件的监听。因此，需要监听是否有新图片插入，一旦有新图片插入时需要将原来所有图片的点击事件的监听删除，<!-- raw HTML omitted -->再重新<!-- raw HTML omitted -->为所有图片添加新的点击监听。</p>
+<p>每次进入图文笔记的浏览模式时为所有<code>img</code>添加点击事件的监听。因此，需要监听是否有新图片插入，一旦有新图片插入时需要将原来所有图片的点击事件的监听删除，<font color=red>再重新</font>为所有图片添加新的点击监听。</p>
 <h2 id="添加监听">添加监听</h2>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-js" data-lang="js"><span style="color:#66d9ef">function</span> <span style="color:#a6e22e">addImagesClickListener</span>(){
-    <span style="color:#a6e22e">$</span>(<span style="color:#e6db74">&#39;body&#39;</span>).<span style="color:#a6e22e">on</span>(<span style="color:#e6db74">&#39;click&#39;</span>, <span style="color:#e6db74">&#39;img&#39;</span>, <span style="color:#66d9ef">function</span> () {
-        <span style="color:#66d9ef">let</span> <span style="color:#a6e22e">position</span> <span style="color:#f92672">=</span> <span style="color:#66d9ef">this</span>.<span style="color:#a6e22e">offsetTop</span>;
-        <span style="color:#66d9ef">this</span>.<span style="color:#a6e22e">focus</span>();
-        <span style="color:#66d9ef">let</span> <span style="color:#a6e22e">result</span> <span style="color:#f92672">=</span> {};
-        <span style="color:#a6e22e">result</span>.<span style="color:#a6e22e">position</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">position</span>.<span style="color:#a6e22e">toString</span>();  <span style="color:#75715e">//顺便将图片所在纵位置返回
-</span><span style="color:#75715e"></span>        <span style="color:#a6e22e">result</span>.<span style="color:#a6e22e">src</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">$</span>(<span style="color:#66d9ef">this</span>).<span style="color:#a6e22e">attr</span>(<span style="color:#e6db74">&#34;src&#34;</span>);
-        <span style="color:#66d9ef">let</span> <span style="color:#a6e22e">jsonString</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">JSON</span>.<span style="color:#a6e22e">stringify</span>(<span style="color:#a6e22e">result</span>);
-        <span style="color:#66d9ef">let</span> <span style="color:#a6e22e">escapedJsonString</span> <span style="color:#f92672">=</span> encodeURI(<span style="color:#a6e22e">jsonString</span>);  <span style="color:#75715e">//重新编码
-</span><span style="color:#75715e"></span>        <span style="color:#66d9ef">let</span> <span style="color:#a6e22e">scheme</span> <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;position://&#34;</span>;
-        document.<span style="color:#a6e22e">location</span>.<span style="color:#a6e22e">href</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">scheme</span> <span style="color:#f92672">+</span> <span style="color:#e6db74">&#34;#&#34;</span> <span style="color:#f92672">+</span> <span style="color:#a6e22e">escapedJsonString</span>; <span style="color:#75715e">//向ios发送
-</span><span style="color:#75715e"></span>    });
-}
-</code></pre></div><hr>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-js" data-lang="js"><span style="display:flex;"><span><span style="color:#66d9ef">function</span> <span style="color:#a6e22e">addImagesClickListener</span>(){
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">$</span>(<span style="color:#e6db74">&#39;body&#39;</span>).<span style="color:#a6e22e">on</span>(<span style="color:#e6db74">&#39;click&#39;</span>, <span style="color:#e6db74">&#39;img&#39;</span>, <span style="color:#66d9ef">function</span> () {
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">let</span> <span style="color:#a6e22e">position</span> <span style="color:#f92672">=</span> <span style="color:#66d9ef">this</span>.<span style="color:#a6e22e">offsetTop</span>;
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">this</span>.<span style="color:#a6e22e">focus</span>();
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">let</span> <span style="color:#a6e22e">result</span> <span style="color:#f92672">=</span> {};
+</span></span><span style="display:flex;"><span>        <span style="color:#a6e22e">result</span>.<span style="color:#a6e22e">position</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">position</span>.<span style="color:#a6e22e">toString</span>();  <span style="color:#75715e">//顺便将图片所在纵位置返回
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>        <span style="color:#a6e22e">result</span>.<span style="color:#a6e22e">src</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">$</span>(<span style="color:#66d9ef">this</span>).<span style="color:#a6e22e">attr</span>(<span style="color:#e6db74">&#34;src&#34;</span>);
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">let</span> <span style="color:#a6e22e">jsonString</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">JSON</span>.<span style="color:#a6e22e">stringify</span>(<span style="color:#a6e22e">result</span>);
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">let</span> <span style="color:#a6e22e">escapedJsonString</span> <span style="color:#f92672">=</span> encodeURI(<span style="color:#a6e22e">jsonString</span>);  <span style="color:#75715e">//重新编码
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>        <span style="color:#66d9ef">let</span> <span style="color:#a6e22e">scheme</span> <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;position://&#34;</span>;
+</span></span><span style="display:flex;"><span>        document.<span style="color:#a6e22e">location</span>.<span style="color:#a6e22e">href</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">scheme</span> <span style="color:#f92672">+</span> <span style="color:#e6db74">&#34;#&#34;</span> <span style="color:#f92672">+</span> <span style="color:#a6e22e">escapedJsonString</span>; <span style="color:#75715e">//向ios发送
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    });
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><hr>
 <h2 id="取消监听">取消监听</h2>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-js" data-lang="js"> <span style="color:#66d9ef">function</span> <span style="color:#a6e22e">removeImagesClickListener</span>() {
-        <span style="color:#75715e">// let pic = document.getElementsByTagName(&#39;img&#39;);
-</span><span style="color:#75715e"></span>        <span style="color:#75715e">// for (i = 0; i &lt; pic.length; i++) {
-</span><span style="color:#75715e"></span>        <span style="color:#75715e">//     pic[i].off(&#39;click&#39;);
-</span><span style="color:#75715e"></span>        <span style="color:#75715e">// }
-</span><span style="color:#75715e"></span>        <span style="color:#a6e22e">$</span>(<span style="color:#e6db74">&#39;img&#39;</span>).<span style="color:#a6e22e">each</span>(<span style="color:#66d9ef">function</span> () {
-            <span style="color:#a6e22e">$</span>(<span style="color:#66d9ef">this</span>).<span style="color:#a6e22e">off</span>(<span style="color:#e6db74">&#39;click&#39;</span>); <span style="color:#75715e">//移除所有图片的点击监听
-</span><span style="color:#75715e"></span>        })
-    }
-</code></pre></div><hr>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-js" data-lang="js"><span style="display:flex;"><span> <span style="color:#66d9ef">function</span> <span style="color:#a6e22e">removeImagesClickListener</span>() {
+</span></span><span style="display:flex;"><span>        <span style="color:#75715e">// let pic = document.getElementsByTagName(&#39;img&#39;);
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>        <span style="color:#75715e">// for (i = 0; i &lt; pic.length; i++) {
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>        <span style="color:#75715e">//     pic[i].off(&#39;click&#39;);
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>        <span style="color:#75715e">// }
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>        <span style="color:#a6e22e">$</span>(<span style="color:#e6db74">&#39;img&#39;</span>).<span style="color:#a6e22e">each</span>(<span style="color:#66d9ef">function</span> () {
+</span></span><span style="display:flex;"><span>            <span style="color:#a6e22e">$</span>(<span style="color:#66d9ef">this</span>).<span style="color:#a6e22e">off</span>(<span style="color:#e6db74">&#39;click&#39;</span>); <span style="color:#75715e">//移除所有图片的点击监听
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>        })
+</span></span><span style="display:flex;"><span>    }
+</span></span></code></pre></div><hr>
 <h1 id="第二种方式">第二种方式</h1>
-<p>利用全局监听点击事件，检查该点击事件的元素是否在<code>img</code>上，如果是则进入图片预览模式，但是这种方式会与<code>UIWebview</code><!-- raw HTML omitted -->键盘弹出有冲突<!-- raw HTML omitted -->，因此进入图片浏览时需要先关掉键盘：</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-js" data-lang="js"><span style="color:#75715e">//与软键盘弹出有冲突，应该先关闭键盘
-</span><span style="color:#75715e"></span><span style="color:#66d9ef">function</span> <span style="color:#a6e22e">clickHandler</span>(<span style="color:#a6e22e">event</span>) {
-    <span style="color:#66d9ef">if</span> (<span style="color:#a6e22e">event</span>.<span style="color:#a6e22e">target</span> <span style="color:#66d9ef">instanceof</span> <span style="color:#a6e22e">HTMLImageElement</span>) {
-        <span style="color:#75715e">//点击的是图片标签,则获取点击图片的src
-</span><span style="color:#75715e"></span>        <span style="color:#a6e22e">$</span>(<span style="color:#e6db74">&#39;img&#39;</span>).<span style="color:#a6e22e">each</span>(<span style="color:#66d9ef">function</span> () {
-            <span style="color:#66d9ef">if</span> (<span style="color:#66d9ef">this</span>.<span style="color:#a6e22e">isSameNode</span>(<span style="color:#a6e22e">event</span>.<span style="color:#a6e22e">target</span>)) {
-                <span style="color:#75715e">//https://segmentfault.com/q/1010000000156830/a-1020000000156902
-</span><span style="color:#75715e"></span>                document.<span style="color:#a6e22e">activeElement</span>.<span style="color:#a6e22e">blur</span>(); <span style="color:#75715e">//首先关闭键盘以免冲突
-</span><span style="color:#75715e"></span>                <span style="color:#66d9ef">let</span> <span style="color:#a6e22e">result</span> <span style="color:#f92672">=</span> {};
-                <span style="color:#a6e22e">result</span>.<span style="color:#a6e22e">src</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">$</span>(<span style="color:#66d9ef">this</span>).<span style="color:#a6e22e">attr</span>(<span style="color:#e6db74">&#34;src&#34;</span>);
-                <span style="color:#66d9ef">let</span> <span style="color:#a6e22e">jsonString</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">JSON</span>.<span style="color:#a6e22e">stringify</span>(<span style="color:#a6e22e">result</span>);
-                <span style="color:#66d9ef">let</span> <span style="color:#a6e22e">escapedJsonString</span> <span style="color:#f92672">=</span> encodeURI(<span style="color:#a6e22e">jsonString</span>);  <span style="color:#75715e">//重新编码
-</span><span style="color:#75715e"></span>                <span style="color:#66d9ef">let</span> <span style="color:#a6e22e">scheme</span> <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;position://&#34;</span>;
-                document.<span style="color:#a6e22e">location</span>.<span style="color:#a6e22e">href</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">scheme</span> <span style="color:#f92672">+</span> <span style="color:#e6db74">&#34;#&#34;</span> <span style="color:#f92672">+</span> <span style="color:#a6e22e">escapedJsonString</span>; <span style="color:#75715e">//向ios发送
-</span><span style="color:#75715e"></span>            }
-        });
-    }
-}
-</code></pre></div><hr>
+<p>利用全局监听点击事件，检查该点击事件的元素是否在<code>img</code>上，如果是则进入图片预览模式，但是这种方式会与<code>UIWebview</code><font color=red>键盘弹出有冲突</font>，因此进入图片浏览时需要先关掉键盘：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-js" data-lang="js"><span style="display:flex;"><span><span style="color:#75715e">//与软键盘弹出有冲突，应该先关闭键盘
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">function</span> <span style="color:#a6e22e">clickHandler</span>(<span style="color:#a6e22e">event</span>) {
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">if</span> (<span style="color:#a6e22e">event</span>.<span style="color:#a6e22e">target</span> <span style="color:#66d9ef">instanceof</span> <span style="color:#a6e22e">HTMLImageElement</span>) {
+</span></span><span style="display:flex;"><span>        <span style="color:#75715e">//点击的是图片标签,则获取点击图片的src
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>        <span style="color:#a6e22e">$</span>(<span style="color:#e6db74">&#39;img&#39;</span>).<span style="color:#a6e22e">each</span>(<span style="color:#66d9ef">function</span> () {
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">if</span> (<span style="color:#66d9ef">this</span>.<span style="color:#a6e22e">isSameNode</span>(<span style="color:#a6e22e">event</span>.<span style="color:#a6e22e">target</span>)) {
+</span></span><span style="display:flex;"><span>                <span style="color:#75715e">//https://segmentfault.com/q/1010000000156830/a-1020000000156902
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>                document.<span style="color:#a6e22e">activeElement</span>.<span style="color:#a6e22e">blur</span>(); <span style="color:#75715e">//首先关闭键盘以免冲突
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>                <span style="color:#66d9ef">let</span> <span style="color:#a6e22e">result</span> <span style="color:#f92672">=</span> {};
+</span></span><span style="display:flex;"><span>                <span style="color:#a6e22e">result</span>.<span style="color:#a6e22e">src</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">$</span>(<span style="color:#66d9ef">this</span>).<span style="color:#a6e22e">attr</span>(<span style="color:#e6db74">&#34;src&#34;</span>);
+</span></span><span style="display:flex;"><span>                <span style="color:#66d9ef">let</span> <span style="color:#a6e22e">jsonString</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">JSON</span>.<span style="color:#a6e22e">stringify</span>(<span style="color:#a6e22e">result</span>);
+</span></span><span style="display:flex;"><span>                <span style="color:#66d9ef">let</span> <span style="color:#a6e22e">escapedJsonString</span> <span style="color:#f92672">=</span> encodeURI(<span style="color:#a6e22e">jsonString</span>);  <span style="color:#75715e">//重新编码
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>                <span style="color:#66d9ef">let</span> <span style="color:#a6e22e">scheme</span> <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;position://&#34;</span>;
+</span></span><span style="display:flex;"><span>                document.<span style="color:#a6e22e">location</span>.<span style="color:#a6e22e">href</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">scheme</span> <span style="color:#f92672">+</span> <span style="color:#e6db74">&#34;#&#34;</span> <span style="color:#f92672">+</span> <span style="color:#a6e22e">escapedJsonString</span>; <span style="color:#75715e">//向ios发送
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>            }
+</span></span><span style="display:flex;"><span>        });
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><hr>
 
     </div>
     <footer class="post-footer">
@@ -494,6 +494,7 @@ code.has-jax {
   <span class="with-love"><i class="fa fa-heart"></i></span>
   <span class="author" itemprop="copyrightHolder">Keep It Simple</span>
 </div>
+
 
 
 

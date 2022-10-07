@@ -18,8 +18,8 @@
     <link href="https://iihui.github.io/js/vendor/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
     <link href="https://iihui.github.io/js/vendor/fancybox/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
     <link href="https://iihui.github.io/css/main.css" rel="stylesheet" type="text/css" />
-    <link href="https://iihui.github.io/css/custom.css" rel="stylesheet" type="text/css" />
     <link href="https://iihui.github.io/css/syntax.css" rel="stylesheet" type="text/css" />
+
     <script type="text/javascript" id="hexo.configuration">
   var NexT = window.NexT || {};
   var CONFIG = {
@@ -38,9 +38,9 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.1/languages/objectivec.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.1/languages/clojure.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.1/languages/cpp.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.1/languages/kotlin.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.1/languages/yaml.min.js"></script>
     <script>hljs.initHighlightingOnLoad();</script>
-
-
 </head>
 <body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
 <div class="container one-collumn sidebar-position-left page-home  ">
@@ -241,7 +241,7 @@ code.has-jax {
     <i class="fa fa-file-word-o"></i>
 </span>
 <span class="post-meta-item-text">字数: </span>
-<span class="leancloud-visitors-count">2323</span>
+<span class="leancloud-visitors-count">2268</span>
 &nbsp; | &nbsp;
 <span class="post-meta-item-icon">
     <i class="fa fa-coffee"></i>
@@ -253,406 +253,406 @@ code.has-jax {
     </header>
     <div class="post-body" itemprop="articleBody">
     <blockquote>
-<p>属性包装器<code>propertyWrapper</code>的作用对象是属性，它的思想是<!-- raw HTML omitted -->只可以通过<!-- raw HTML omitted --><code>wrappedValue</code>的<code>get</code>和<code>set</code>方法来访问属性，这样就可以通过<code>get</code>和<code>set</code>方法来对属性进行包装，提供特定功能的属性。属性包装器是一种通用结构，它封装了<code>wrappedValue</code>属性的读写访问，并可以为其<!-- raw HTML omitted -->添加其他行为<!-- raw HTML omitted -->，也就是如果需要限制属性值，向<code>get</code>和<code>set</code>方法添加限制逻辑即可。</p>
+<p>属性包装器<code>propertyWrapper</code>的作用对象是属性，它的思想是<font color=red>只可以通过</font><code>wrappedValue</code>的<code>get</code>和<code>set</code>方法来访问属性，这样就可以通过<code>get</code>和<code>set</code>方法来对属性进行包装，提供特定功能的属性。属性包装器是一种通用结构，它封装了<code>wrappedValue</code>属性的读写访问，并可以为其<font color=Blue>添加其他行为</font>，也就是如果需要限制属性值，向<code>get</code>和<code>set</code>方法添加限制逻辑即可。</p>
 </blockquote>
 <h1 id="基本使用">基本使用</h1>
-<p>属性包装器<code>propertyWrapper</code>是<code>Swift 5.1</code>引入，使用时必须满足两个条件。首先必须使用<code>@propertyWrapper</code>声明。其次，必须具有<!-- raw HTML omitted -->非静态的<!-- raw HTML omitted --><code>wrapppedValue</code>属性。</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift">@propertyWrapper
-<span style="color:#66d9ef">struct</span> <span style="color:#a6e22e">SomeWrapper</span> {
-    <span style="color:#66d9ef">var</span> wrappedValue: Int
-    <span style="color:#66d9ef">var</span> someValue: Double
-    <span style="color:#66d9ef">init</span>() {
-        <span style="color:#66d9ef">self</span>.wrappedValue = <span style="color:#ae81ff">100</span>
-        <span style="color:#66d9ef">self</span>.someValue = <span style="color:#ae81ff">12.3</span>
-    }
-    <span style="color:#66d9ef">init</span>(wrappedValue: Int) {
-        <span style="color:#66d9ef">self</span>.wrappedValue = wrappedValue
-        <span style="color:#66d9ef">self</span>.someValue = <span style="color:#ae81ff">45.6</span>
-    }
-    <span style="color:#66d9ef">init</span>(wrappedValue value: Int, custom: Double) {
-        <span style="color:#66d9ef">self</span>.wrappedValue = value
-        <span style="color:#66d9ef">self</span>.someValue = custom
-    }
-}
-
-<span style="color:#66d9ef">struct</span> <span style="color:#a6e22e">SomeStruct</span> {
-    <span style="color:#75715e">//</span><span style="color:#75715e"> </span><span style="color:#75715e">使</span><span style="color:#75715e">用</span><span style="color:#75715e"> </span><span style="color:#75715e">i</span><span style="color:#75715e">n</span><span style="color:#75715e">i</span><span style="color:#75715e">t</span><span style="color:#75715e">(</span><span style="color:#75715e">)</span><span style="color:#75715e"> </span><span style="color:#75715e">进</span><span style="color:#75715e">行</span><span style="color:#75715e">初</span><span style="color:#75715e">始</span><span style="color:#75715e">化</span>
-    @SomeWrapper <span style="color:#66d9ef">var</span> a: Int
-
-    <span style="color:#75715e">//</span><span style="color:#75715e"> </span><span style="color:#75715e">使</span><span style="color:#75715e">用</span><span style="color:#75715e"> </span><span style="color:#75715e">i</span><span style="color:#75715e">n</span><span style="color:#75715e">i</span><span style="color:#75715e">t</span><span style="color:#75715e">(</span><span style="color:#75715e">w</span><span style="color:#75715e">r</span><span style="color:#75715e">a</span><span style="color:#75715e">p</span><span style="color:#75715e">p</span><span style="color:#75715e">e</span><span style="color:#75715e">d</span><span style="color:#75715e">V</span><span style="color:#75715e">a</span><span style="color:#75715e">l</span><span style="color:#75715e">u</span><span style="color:#75715e">e</span><span style="color:#75715e">:</span><span style="color:#75715e">)</span><span style="color:#75715e"> </span><span style="color:#75715e">进</span><span style="color:#75715e">行</span><span style="color:#75715e">初</span><span style="color:#75715e">始</span><span style="color:#75715e">化</span>
-    @SomeWrapper <span style="color:#66d9ef">var</span> b = <span style="color:#ae81ff">10</span>
-
-    <span style="color:#75715e">//</span><span style="color:#75715e"> </span><span style="color:#75715e">两</span><span style="color:#75715e">个</span><span style="color:#75715e">都</span><span style="color:#75715e">是</span><span style="color:#75715e">使</span><span style="color:#75715e">用</span><span style="color:#75715e"> </span><span style="color:#75715e">i</span><span style="color:#75715e">n</span><span style="color:#75715e">i</span><span style="color:#75715e">t</span><span style="color:#75715e">(</span><span style="color:#75715e">w</span><span style="color:#75715e">r</span><span style="color:#75715e">a</span><span style="color:#75715e">p</span><span style="color:#75715e">p</span><span style="color:#75715e">e</span><span style="color:#75715e">d</span><span style="color:#75715e">V</span><span style="color:#75715e">a</span><span style="color:#75715e">l</span><span style="color:#75715e">u</span><span style="color:#75715e">e</span><span style="color:#75715e">:</span><span style="color:#75715e">c</span><span style="color:#75715e">u</span><span style="color:#75715e">s</span><span style="color:#75715e">t</span><span style="color:#75715e">o</span><span style="color:#75715e">m</span><span style="color:#75715e">:</span><span style="color:#75715e">)</span><span style="color:#75715e"> </span><span style="color:#75715e">进</span><span style="color:#75715e">行</span><span style="color:#75715e">初</span><span style="color:#75715e">始</span><span style="color:#75715e">化</span>
-    @SomeWrapper(custom: <span style="color:#ae81ff">98.7</span>) <span style="color:#66d9ef">var</span> c = <span style="color:#ae81ff">30</span>
-    @SomeWrapper(wrappedValue: <span style="color:#ae81ff">30</span>, custom: <span style="color:#ae81ff">98.7</span>) <span style="color:#66d9ef">var</span> d
-}
-
-@propertyWrapper
-<span style="color:#66d9ef">struct</span> <span style="color:#a6e22e">Wrapper</span>&lt;T&gt; {
-    <span style="color:#66d9ef">var</span> wrappedValue: T
-}
-
-<span style="color:#66d9ef">struct</span> <span style="color:#a6e22e">TestWrapper</span> {
-    @Wrapper <span style="color:#66d9ef">var</span> x: Int
-    @Wrapper <span style="color:#66d9ef">var</span> y = <span style="color:#ae81ff">12</span>
-    @Wrapper(wrappedValue: <span style="color:#ae81ff">34</span>) <span style="color:#66d9ef">var</span> z
-}
-
-<span style="color:#66d9ef">func</span> <span style="color:#a6e22e">test</span>() {
-    <span style="color:#66d9ef">let</span> test1 = TestWrapper(x: <span style="color:#ae81ff">100</span>)
-    print(test1.x, test1.y, test1.z)
-    
-    <span style="color:#66d9ef">let</span> test2 = TestWrapper(x: <span style="color:#ae81ff">34</span>, y: <span style="color:#ae81ff">45</span>, z: Wrapper(wrappedValue: <span style="color:#ae81ff">89</span>))
-    print(test2.x,test2.y,test2.z)
-}
-</code></pre></div><p>在属性包装器中，也可以提供额外的功能，但如果要使用这些额外的功能，则<!-- raw HTML omitted -->需要访问包装器本身<!-- raw HTML omitted -->，而不是其封装的属性值<code>wrappedValue</code>。如果想要访问包装器本身，而不是包装的属性值，则需要在<!-- raw HTML omitted -->属性名称之前添加下划线<!-- raw HTML omitted -->。下面代码中属性包装器<code>Wrapper</code>提供了的函数<code>foo</code>不能直接访问，需要利用包装器本身来访问，即在包装属性前加下划线：</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift">@propertyWrapper
-<span style="color:#66d9ef">struct</span> <span style="color:#a6e22e">Wrapper</span>&lt;T&gt; {
-    <span style="color:#66d9ef">var</span> wrappedValue: T
-    
-    <span style="color:#66d9ef">func</span> <span style="color:#a6e22e">foo</span>(){
-        print(<span style="color:#e6db74">&#34;</span><span style="color:#e6db74">foo</span><span style="color:#e6db74">&#34;</span>)
-    }
-}
-
-<span style="color:#66d9ef">struct</span> <span style="color:#a6e22e">TestWrapper</span> {
-    @Wrapper <span style="color:#66d9ef">var</span> x: Int
-    @Wrapper <span style="color:#66d9ef">var</span> y = <span style="color:#ae81ff">12</span>
-    @Wrapper(wrappedValue: <span style="color:#ae81ff">34</span>) <span style="color:#66d9ef">var</span> z
-    
-    <span style="color:#66d9ef">func</span> <span style="color:#a6e22e">foo</span>(){
-        _x.foo() <span style="color:#75715e">//</span><span style="color:#75715e">_</span><span style="color:#75715e">x</span><span style="color:#75715e">是</span><span style="color:#75715e">属</span><span style="color:#75715e">性</span><span style="color:#75715e">包</span><span style="color:#75715e">装</span><span style="color:#75715e">器</span><span style="color:#75715e">本</span><span style="color:#75715e">身</span><span style="color:#75715e">，</span><span style="color:#75715e">不</span><span style="color:#75715e">能</span><span style="color:#75715e">通</span><span style="color:#75715e">过</span><span style="color:#75715e">x</span><span style="color:#75715e">.</span><span style="color:#75715e">f</span><span style="color:#75715e">o</span><span style="color:#75715e">o</span><span style="color:#75715e">(</span><span style="color:#75715e">)</span><span style="color:#75715e">来</span><span style="color:#75715e">访</span><span style="color:#75715e">问</span><span style="color:#75715e">f</span><span style="color:#75715e">o</span><span style="color:#75715e">o</span>
-    }
-}
-
-<span style="color:#66d9ef">func</span> <span style="color:#a6e22e">test</span>() {
-    <span style="color:#66d9ef">let</span> test1 = TestWrapper(x: <span style="color:#ae81ff">100</span>)
-    print(test1.x, test1.y, test1.z)
-    
-    <span style="color:#66d9ef">let</span> test2 = TestWrapper(x: <span style="color:#ae81ff">34</span>, y: <span style="color:#ae81ff">45</span>, z: Wrapper(wrappedValue: <span style="color:#ae81ff">89</span>))
-    print(test2.x,test2.y,test2.z)
-    
-    test1.foo()
-    test2.foo()
-}
-</code></pre></div><p>上面的<code>_x</code>是属性包装器本身，它是<code>private</code>级别的。因此，从外部使用它会产生编译错误。属性包装器还可以通过定义投影值来暴露其他功能。投影值的名称与包装值相同，只是它以<code>$</code>开头。投影值使用<code>projectedValue</code>定义，可以<!-- raw HTML omitted -->返回任何类型的值作为投影值<!-- raw HTML omitted -->：</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift">@propertyWrapper
-<span style="color:#66d9ef">struct</span> <span style="color:#a6e22e">Wrapper</span>&lt;T&gt; {
-    <span style="color:#66d9ef">var</span> wrappedValue: T
-    <span style="color:#66d9ef">var</span> projectedValue: Wrapper&lt;T&gt; { <span style="color:#66d9ef">return</span> <span style="color:#66d9ef">self</span> }
-    
-    <span style="color:#66d9ef">func</span> <span style="color:#a6e22e">foo</span>(){
-        print(<span style="color:#e6db74">&#34;</span><span style="color:#e6db74">foo</span><span style="color:#e6db74">&#34;</span>)
-    }
-}
-
-<span style="color:#66d9ef">struct</span> <span style="color:#a6e22e">TestWrapper</span> {
-    @Wrapper <span style="color:#66d9ef">var</span> x: Int
-    @Wrapper <span style="color:#66d9ef">var</span> y = <span style="color:#ae81ff">12</span>
-    @Wrapper(wrappedValue: <span style="color:#ae81ff">34</span>) <span style="color:#66d9ef">var</span> z
-    
-    <span style="color:#66d9ef">func</span> <span style="color:#a6e22e">foo</span>(){
-        _x.foo()
-        <span style="color:#960050;background-color:#1e0010">$</span>x.foo()
-        <span style="color:#75715e">//</span><span style="color:#75715e">不</span><span style="color:#75715e">能</span><span style="color:#75715e">使</span><span style="color:#75715e">用</span><span style="color:#75715e">x</span><span style="color:#75715e">.</span><span style="color:#75715e">f</span><span style="color:#75715e">o</span><span style="color:#75715e">o</span><span style="color:#75715e">(</span><span style="color:#75715e">)</span><span style="color:#75715e">，</span><span style="color:#75715e">因</span><span style="color:#75715e">为</span><span style="color:#75715e">x</span><span style="color:#75715e">代</span><span style="color:#75715e">表</span><span style="color:#75715e">w</span><span style="color:#75715e">r</span><span style="color:#75715e">a</span><span style="color:#75715e">p</span><span style="color:#75715e">p</span><span style="color:#75715e">e</span><span style="color:#75715e">d</span><span style="color:#75715e">V</span><span style="color:#75715e">a</span><span style="color:#75715e">l</span><span style="color:#75715e">u</span><span style="color:#75715e">e</span>
-        print(x,_x,<span style="color:#960050;background-color:#1e0010">$</span>x) <span style="color:#75715e">//</span><span style="color:#75715e">1</span><span style="color:#75715e">2</span><span style="color:#75715e"> </span><span style="color:#75715e">W</span><span style="color:#75715e">r</span><span style="color:#75715e">a</span><span style="color:#75715e">p</span><span style="color:#75715e">p</span><span style="color:#75715e">e</span><span style="color:#75715e">r</span><span style="color:#75715e">&lt;</span><span style="color:#75715e">I</span><span style="color:#75715e">n</span><span style="color:#75715e">t</span><span style="color:#75715e">&gt;</span><span style="color:#75715e">(</span><span style="color:#75715e">w</span><span style="color:#75715e">r</span><span style="color:#75715e">a</span><span style="color:#75715e">p</span><span style="color:#75715e">p</span><span style="color:#75715e">e</span><span style="color:#75715e">d</span><span style="color:#75715e">V</span><span style="color:#75715e">a</span><span style="color:#75715e">l</span><span style="color:#75715e">u</span><span style="color:#75715e">e</span><span style="color:#75715e">:</span><span style="color:#75715e"> </span><span style="color:#75715e">1</span><span style="color:#75715e">2</span><span style="color:#75715e">)</span><span style="color:#75715e"> </span><span style="color:#75715e">W</span><span style="color:#75715e">r</span><span style="color:#75715e">a</span><span style="color:#75715e">p</span><span style="color:#75715e">p</span><span style="color:#75715e">e</span><span style="color:#75715e">r</span><span style="color:#75715e">&lt;</span><span style="color:#75715e">I</span><span style="color:#75715e">n</span><span style="color:#75715e">t</span><span style="color:#75715e">&gt;</span><span style="color:#75715e">(</span><span style="color:#75715e">w</span><span style="color:#75715e">r</span><span style="color:#75715e">a</span><span style="color:#75715e">p</span><span style="color:#75715e">p</span><span style="color:#75715e">e</span><span style="color:#75715e">d</span><span style="color:#75715e">V</span><span style="color:#75715e">a</span><span style="color:#75715e">l</span><span style="color:#75715e">u</span><span style="color:#75715e">e</span><span style="color:#75715e">:</span><span style="color:#75715e"> </span><span style="color:#75715e">1</span><span style="color:#75715e">2</span><span style="color:#75715e">)</span>
-    }
-}
-
-<span style="color:#66d9ef">func</span> <span style="color:#a6e22e">test</span>() {
-    <span style="color:#66d9ef">let</span> test1 = TestWrapper(x: <span style="color:#ae81ff">100</span>)
-    print(test1.x, test1.y, test1.z)
-    
-    <span style="color:#66d9ef">let</span> test2 = TestWrapper(x: <span style="color:#ae81ff">34</span>, y: <span style="color:#ae81ff">45</span>, z: Wrapper(wrappedValue: <span style="color:#ae81ff">89</span>))
-    print(test2.x,test2.y,test2.z)
-    
-    test1.foo()
-    test2.foo()
-    
-    test1.<span style="color:#960050;background-color:#1e0010">$</span>x.foo()
-    test2.<span style="color:#960050;background-color:#1e0010">$</span>x.foo()
-}
-</code></pre></div><p>在上面的例子中投影值<!-- raw HTML omitted -->返回的是包装器本身<!-- raw HTML omitted -->，也就是投影成自己。投影值可以返回任何类型的值，在下面的例子中，投影值是布尔类型：</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift">@propertyWrapper
-<span style="color:#66d9ef">struct</span> <span style="color:#a6e22e">SmallNumber</span> {
-    <span style="color:#66d9ef">private</span> <span style="color:#66d9ef">var</span> number: Int
-    <span style="color:#66d9ef">var</span> projectedValue: Bool
-
-    <span style="color:#66d9ef">init</span>() {
-        <span style="color:#66d9ef">self</span>.number = <span style="color:#ae81ff">0</span>
-        <span style="color:#66d9ef">self</span>.projectedValue = <span style="color:#66d9ef">false</span>
-    }
-
-    <span style="color:#66d9ef">var</span> wrappedValue: Int {
-        <span style="color:#66d9ef">get</span> {
-            <span style="color:#66d9ef">return</span> number
-        }
-        <span style="color:#66d9ef">set</span> {
-            <span style="color:#66d9ef">if</span> newValue <span style="color:#f92672">&gt;</span> <span style="color:#ae81ff">12</span> {
-                number = <span style="color:#ae81ff">12</span>
-                projectedValue = <span style="color:#66d9ef">true</span>
-            } <span style="color:#66d9ef">else</span> {
-                number = newValue
-                projectedValue = <span style="color:#66d9ef">false</span>
-            }
-        }
-    }
-}
-
-<span style="color:#66d9ef">struct</span> <span style="color:#a6e22e">SomeStruct</span> {
-    @SmallNumber <span style="color:#66d9ef">var</span> someNum: Int
-}
-
-<span style="color:#66d9ef">func</span> <span style="color:#a6e22e">testSmall</span>() {
-    <span style="color:#66d9ef">var</span> small = SomeStruct()
-    small.someNum = <span style="color:#ae81ff">3</span>
-    print(small.<span style="color:#960050;background-color:#1e0010">$</span>someNum) <span style="color:#75715e">//</span><span style="color:#75715e"> </span><span style="color:#75715e">f</span><span style="color:#75715e">a</span><span style="color:#75715e">l</span><span style="color:#75715e">s</span><span style="color:#75715e">e</span>
-    small.someNum = <span style="color:#ae81ff">70</span>
-    print(small.<span style="color:#960050;background-color:#1e0010">$</span>someNum) <span style="color:#75715e">//</span><span style="color:#75715e"> </span><span style="color:#75715e">t</span><span style="color:#75715e">r</span><span style="color:#75715e">u</span><span style="color:#75715e">e</span>
-}
-</code></pre></div><p><a href="http://www.srcmini.com/23534.html">参考资料</a> <a href="https://docs.swift.org/swift-book/LanguageGuide/Properties.html">参考资料</a></p>
+<p>属性包装器<code>propertyWrapper</code>是<code>Swift 5.1</code>引入，使用时必须满足两个条件。首先必须使用<code>@propertyWrapper</code>声明。其次，必须具有<font color=red>非静态的</font><code>wrapppedValue</code>属性。</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span>@propertyWrapper
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">struct</span> <span style="color:#a6e22e">SomeWrapper</span> {
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">var</span> wrappedValue: Int
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">var</span> someValue: Double
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">init</span>() {
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">self</span>.wrappedValue = <span style="color:#ae81ff">100</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">self</span>.someValue = <span style="color:#ae81ff">12.3</span>
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">init</span>(wrappedValue: Int) {
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">self</span>.wrappedValue = wrappedValue
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">self</span>.someValue = <span style="color:#ae81ff">45.6</span>
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">init</span>(wrappedValue value: Int, custom: Double) {
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">self</span>.wrappedValue = value
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">self</span>.someValue = custom
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">struct</span> <span style="color:#a6e22e">SomeStruct</span> {
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">// 使用 init() 进行初始化</span>
+</span></span><span style="display:flex;"><span>    @SomeWrapper <span style="color:#66d9ef">var</span> a: Int
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">// 使用 init(wrappedValue:) 进行初始化</span>
+</span></span><span style="display:flex;"><span>    @SomeWrapper <span style="color:#66d9ef">var</span> b = <span style="color:#ae81ff">10</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">// 两个都是使用 init(wrappedValue:custom:) 进行初始化</span>
+</span></span><span style="display:flex;"><span>    @SomeWrapper(custom: <span style="color:#ae81ff">98.7</span>) <span style="color:#66d9ef">var</span> c = <span style="color:#ae81ff">30</span>
+</span></span><span style="display:flex;"><span>    @SomeWrapper(wrappedValue: <span style="color:#ae81ff">30</span>, custom: <span style="color:#ae81ff">98.7</span>) <span style="color:#66d9ef">var</span> d
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>@propertyWrapper
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">struct</span> <span style="color:#a6e22e">Wrapper</span>&lt;T&gt; {
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">var</span> wrappedValue: T
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">struct</span> <span style="color:#a6e22e">TestWrapper</span> {
+</span></span><span style="display:flex;"><span>    @Wrapper <span style="color:#66d9ef">var</span> x: Int
+</span></span><span style="display:flex;"><span>    @Wrapper <span style="color:#66d9ef">var</span> y = <span style="color:#ae81ff">12</span>
+</span></span><span style="display:flex;"><span>    @Wrapper(wrappedValue: <span style="color:#ae81ff">34</span>) <span style="color:#66d9ef">var</span> z
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">test</span>() {
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">let</span> test1 = TestWrapper(x: <span style="color:#ae81ff">100</span>)
+</span></span><span style="display:flex;"><span>    print(test1.x, test1.y, test1.z)
+</span></span><span style="display:flex;"><span>    
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">let</span> test2 = TestWrapper(x: <span style="color:#ae81ff">34</span>, y: <span style="color:#ae81ff">45</span>, z: Wrapper(wrappedValue: <span style="color:#ae81ff">89</span>))
+</span></span><span style="display:flex;"><span>    print(test2.x,test2.y,test2.z)
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p>在属性包装器中，也可以提供额外的功能，但如果要使用这些额外的功能，则<font color=red>需要访问包装器本身</font>，而不是其封装的属性值<code>wrappedValue</code>。如果想要访问包装器本身，而不是包装的属性值，则需要在<font color=red>属性名称之前添加下划线</font>。下面代码中属性包装器<code>Wrapper</code>提供了的函数<code>foo</code>不能直接访问，需要利用包装器本身来访问，即在包装属性前加下划线：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span>@propertyWrapper
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">struct</span> <span style="color:#a6e22e">Wrapper</span>&lt;T&gt; {
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">var</span> wrappedValue: T
+</span></span><span style="display:flex;"><span>    
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">func</span> <span style="color:#a6e22e">foo</span>(){
+</span></span><span style="display:flex;"><span>        print(<span style="color:#e6db74">&#34;foo&#34;</span>)
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">struct</span> <span style="color:#a6e22e">TestWrapper</span> {
+</span></span><span style="display:flex;"><span>    @Wrapper <span style="color:#66d9ef">var</span> x: Int
+</span></span><span style="display:flex;"><span>    @Wrapper <span style="color:#66d9ef">var</span> y = <span style="color:#ae81ff">12</span>
+</span></span><span style="display:flex;"><span>    @Wrapper(wrappedValue: <span style="color:#ae81ff">34</span>) <span style="color:#66d9ef">var</span> z
+</span></span><span style="display:flex;"><span>    
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">func</span> <span style="color:#a6e22e">foo</span>(){
+</span></span><span style="display:flex;"><span>        _x.foo() <span style="color:#75715e">//_x是属性包装器本身，不能通过x.foo()来访问foo</span>
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">test</span>() {
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">let</span> test1 = TestWrapper(x: <span style="color:#ae81ff">100</span>)
+</span></span><span style="display:flex;"><span>    print(test1.x, test1.y, test1.z)
+</span></span><span style="display:flex;"><span>    
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">let</span> test2 = TestWrapper(x: <span style="color:#ae81ff">34</span>, y: <span style="color:#ae81ff">45</span>, z: Wrapper(wrappedValue: <span style="color:#ae81ff">89</span>))
+</span></span><span style="display:flex;"><span>    print(test2.x,test2.y,test2.z)
+</span></span><span style="display:flex;"><span>    
+</span></span><span style="display:flex;"><span>    test1.foo()
+</span></span><span style="display:flex;"><span>    test2.foo()
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p>上面的<code>_x</code>是属性包装器本身，它是<code>private</code>级别的。因此，从外部使用它会产生编译错误。属性包装器还可以通过定义投影值来暴露其他功能。投影值的名称与包装值相同，只是它以<code>$</code>开头。投影值使用<code>projectedValue</code>定义，可以<font color=red>返回任何类型的值作为投影值</font>：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span>@propertyWrapper
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">struct</span> <span style="color:#a6e22e">Wrapper</span>&lt;T&gt; {
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">var</span> wrappedValue: T
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">var</span> projectedValue: Wrapper&lt;T&gt; { <span style="color:#66d9ef">return</span> <span style="color:#66d9ef">self</span> }
+</span></span><span style="display:flex;"><span>    
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">func</span> <span style="color:#a6e22e">foo</span>(){
+</span></span><span style="display:flex;"><span>        print(<span style="color:#e6db74">&#34;foo&#34;</span>)
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">struct</span> <span style="color:#a6e22e">TestWrapper</span> {
+</span></span><span style="display:flex;"><span>    @Wrapper <span style="color:#66d9ef">var</span> x: Int
+</span></span><span style="display:flex;"><span>    @Wrapper <span style="color:#66d9ef">var</span> y = <span style="color:#ae81ff">12</span>
+</span></span><span style="display:flex;"><span>    @Wrapper(wrappedValue: <span style="color:#ae81ff">34</span>) <span style="color:#66d9ef">var</span> z
+</span></span><span style="display:flex;"><span>    
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">func</span> <span style="color:#a6e22e">foo</span>(){
+</span></span><span style="display:flex;"><span>        _x.foo()
+</span></span><span style="display:flex;"><span>        <span style="color:#960050;background-color:#1e0010">$</span>x.foo()
+</span></span><span style="display:flex;"><span>        <span style="color:#75715e">//不能使用x.foo()，因为x代表wrappedValue</span>
+</span></span><span style="display:flex;"><span>        print(x,_x,<span style="color:#960050;background-color:#1e0010">$</span>x) <span style="color:#75715e">//12 Wrapper&lt;Int&gt;(wrappedValue: 12) Wrapper&lt;Int&gt;(wrappedValue: 12)</span>
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">test</span>() {
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">let</span> test1 = TestWrapper(x: <span style="color:#ae81ff">100</span>)
+</span></span><span style="display:flex;"><span>    print(test1.x, test1.y, test1.z)
+</span></span><span style="display:flex;"><span>    
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">let</span> test2 = TestWrapper(x: <span style="color:#ae81ff">34</span>, y: <span style="color:#ae81ff">45</span>, z: Wrapper(wrappedValue: <span style="color:#ae81ff">89</span>))
+</span></span><span style="display:flex;"><span>    print(test2.x,test2.y,test2.z)
+</span></span><span style="display:flex;"><span>    
+</span></span><span style="display:flex;"><span>    test1.foo()
+</span></span><span style="display:flex;"><span>    test2.foo()
+</span></span><span style="display:flex;"><span>    
+</span></span><span style="display:flex;"><span>    test1.<span style="color:#960050;background-color:#1e0010">$</span>x.foo()
+</span></span><span style="display:flex;"><span>    test2.<span style="color:#960050;background-color:#1e0010">$</span>x.foo()
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p>在上面的例子中投影值<font color=red>返回的是包装器本身</font>，也就是投影成自己。投影值可以返回任何类型的值，在下面的例子中，投影值是布尔类型：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span>@propertyWrapper
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">struct</span> <span style="color:#a6e22e">SmallNumber</span> {
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">private</span> <span style="color:#66d9ef">var</span> number: Int
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">var</span> projectedValue: Bool
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">init</span>() {
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">self</span>.number = <span style="color:#ae81ff">0</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">self</span>.projectedValue = <span style="color:#66d9ef">false</span>
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">var</span> wrappedValue: Int {
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">get</span> {
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">return</span> number
+</span></span><span style="display:flex;"><span>        }
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">set</span> {
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">if</span> newValue <span style="color:#f92672">&gt;</span> <span style="color:#ae81ff">12</span> {
+</span></span><span style="display:flex;"><span>                number = <span style="color:#ae81ff">12</span>
+</span></span><span style="display:flex;"><span>                projectedValue = <span style="color:#66d9ef">true</span>
+</span></span><span style="display:flex;"><span>            } <span style="color:#66d9ef">else</span> {
+</span></span><span style="display:flex;"><span>                number = newValue
+</span></span><span style="display:flex;"><span>                projectedValue = <span style="color:#66d9ef">false</span>
+</span></span><span style="display:flex;"><span>            }
+</span></span><span style="display:flex;"><span>        }
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">struct</span> <span style="color:#a6e22e">SomeStruct</span> {
+</span></span><span style="display:flex;"><span>    @SmallNumber <span style="color:#66d9ef">var</span> someNum: Int
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">testSmall</span>() {
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">var</span> small = SomeStruct()
+</span></span><span style="display:flex;"><span>    small.someNum = <span style="color:#ae81ff">3</span>
+</span></span><span style="display:flex;"><span>    print(small.<span style="color:#960050;background-color:#1e0010">$</span>someNum) <span style="color:#75715e">// false</span>
+</span></span><span style="display:flex;"><span>    small.someNum = <span style="color:#ae81ff">70</span>
+</span></span><span style="display:flex;"><span>    print(small.<span style="color:#960050;background-color:#1e0010">$</span>someNum) <span style="color:#75715e">// true</span>
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p><a href="http://www.srcmini.com/23534.html">参考资料</a> <a href="https://docs.swift.org/swift-book/LanguageGuide/Properties.html">参考资料</a></p>
 <h1 id="减少重复代码">减少重复代码</h1>
 <p>使用属性包装器可以减少重复代码。我们通常使用<code>UserDefaults</code>来保存引导页是否已经展示过，如果没有<code>@propertyWrapper</code>时，可能会使用如下代码实现：</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift"><span style="color:#66d9ef">extension</span> <span style="color:#a6e22e">UserDefaults</span> {
-    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">enum</span> <span style="color:#a6e22e">Keys</span> {
-        <span style="color:#66d9ef">static</span> <span style="color:#66d9ef">let</span> hasDisplayedGuideView = <span style="color:#e6db74">&#34;</span><span style="color:#e6db74">has_Displayed_guide_view</span><span style="color:#e6db74">&#34;</span>
-    }
-
-    <span style="color:#66d9ef">var</span> hasDisplayedGuideView: Bool {
-        <span style="color:#66d9ef">get</span> {
-            <span style="color:#66d9ef">return</span> bool(forKey: Keys.hasDisplayedGuideView)
-        }
-        <span style="color:#66d9ef">set</span> {
-            <span style="color:#66d9ef">set</span>(newValue, forKey: Keys.hasDisplayedGuideView)
-        }
-    }
-}
-
-<span style="color:#66d9ef">func</span> <span style="color:#a6e22e">showGuide</span>() {
-    <span style="color:#66d9ef">let</span> hasDisplayed = UserDefaults.standard.hasDisplayedGuideView
-
-    <span style="color:#66d9ef">if</span> hasDisplayed {
-        <span style="color:#75715e">//</span><span style="color:#75715e"> </span><span style="color:#75715e">显</span><span style="color:#75715e">示</span><span style="color:#75715e">引</span><span style="color:#75715e">导</span><span style="color:#75715e">页</span>
-        UserDefaults.standard.hasDisplayedGuideView = <span style="color:#66d9ef">false</span>
-    }
-}
-</code></pre></div><p>如果后续需要再添加另一个引导项，则需要重复上面的代码。如果使用<code>@propertyWrapper</code>，可以减少上面的重复代码，如下所示：</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift">@propertyWrapper
-<span style="color:#66d9ef">struct</span> <span style="color:#a6e22e">UserDefault</span>&lt;T&gt; {
-    <span style="color:#66d9ef">let</span> key: String
-    <span style="color:#66d9ef">let</span> defaultValue: T
-
-    <span style="color:#66d9ef">init</span>(key: String, defaultValue: T) {
-        <span style="color:#66d9ef">self</span>.key = key
-        <span style="color:#66d9ef">self</span>.defaultValue = defaultValue
-    }
-
-    <span style="color:#66d9ef">var</span> wrappedValue: T {
-        <span style="color:#66d9ef">get</span> {
-            <span style="color:#66d9ef">return</span> UserDefaults.standard.object(forKey: key) <span style="color:#66d9ef">as</span>? T ?? defaultValue
-        }
-        <span style="color:#66d9ef">set</span> {
-            UserDefaults.standard.<span style="color:#66d9ef">set</span>(newValue, forKey: key)
-        }
-    }
-}
-
-<span style="color:#66d9ef">enum</span> <span style="color:#a6e22e">UserDefaultConfig</span> {
-    @UserDefault(key: <span style="color:#e6db74">&#34;</span><span style="color:#e6db74">speech_guide</span><span style="color:#e6db74">&#34;</span>, defaultValue: <span style="color:#66d9ef">false</span>) <span style="color:#66d9ef">static</span> <span style="color:#66d9ef">var</span> speechGuide: Bool
-    @UserDefault(key: <span style="color:#e6db74">&#34;</span><span style="color:#e6db74">note_guide</span><span style="color:#e6db74">&#34;</span>, defaultValue: <span style="color:#66d9ef">false</span>) <span style="color:#66d9ef">static</span> <span style="color:#66d9ef">var</span> noteGuide: Bool
-}
-
-<span style="color:#66d9ef">func</span> <span style="color:#a6e22e">testGuide</span>() {
-    UserDefaultConfig.speechGuide = <span style="color:#66d9ef">false</span>
-    UserDefaultConfig.noteGuide = <span style="color:#66d9ef">true</span>
-}
-</code></pre></div><p>因为<code>UserDefaults</code>本身只能存储基本类型，所以上面的包装的属性<code>UserDefault</code>，也只适用于基本类型都。对于非基本类型，就要借助于<code>Codable</code>才能保存：</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift"><span style="color:#75715e">//</span><span style="color:#75715e">/</span><span style="color:#75715e"> </span><span style="color:#75715e">f</span><span style="color:#75715e">o</span><span style="color:#75715e">r</span><span style="color:#75715e"> </span><span style="color:#75715e">c</span><span style="color:#75715e">o</span><span style="color:#75715e">d</span><span style="color:#75715e">a</span><span style="color:#75715e">b</span><span style="color:#75715e">l</span><span style="color:#75715e">e</span>
-@available(swift <span style="color:#ae81ff">5.1</span>)
-@propertyWrapper
-<span style="color:#66d9ef">struct</span> <span style="color:#a6e22e">UserDefaultJsonWrapper</span>&lt;T: Codable&gt; {
-    <span style="color:#66d9ef">var</span> key: String
-    <span style="color:#66d9ef">var</span> defaultValue: T
-    <span style="color:#66d9ef">var</span> wrappedValue: T {
-        <span style="color:#66d9ef">get</span> {
-            <span style="color:#66d9ef">guard</span> <span style="color:#66d9ef">let</span> jsonString = UserDefaults.standard.string(forKey: key) <span style="color:#66d9ef">else</span> {
-                <span style="color:#66d9ef">return</span> defaultValue
-            }
-            <span style="color:#66d9ef">guard</span> <span style="color:#66d9ef">let</span> jsonData = jsonString.data(using: .utf8) <span style="color:#66d9ef">else</span> {
-                <span style="color:#66d9ef">return</span> defaultValue
-            }
-            <span style="color:#66d9ef">guard</span> <span style="color:#66d9ef">let</span> value = <span style="color:#66d9ef">try</span>? JSONDecoder().decode(T.<span style="color:#66d9ef">self</span>, from: jsonData) <span style="color:#66d9ef">else</span> {
-                <span style="color:#66d9ef">return</span> defaultValue
-            }
-            <span style="color:#66d9ef">return</span> value
-        }
-        <span style="color:#66d9ef">set</span> {
-            <span style="color:#66d9ef">let</span> encoder = JSONEncoder()
-            <span style="color:#66d9ef">guard</span> <span style="color:#66d9ef">let</span> jsonData = <span style="color:#66d9ef">try</span>? encoder.encode(newValue) <span style="color:#66d9ef">else</span> {
-                <span style="color:#66d9ef">return</span>
-            }
-            <span style="color:#66d9ef">let</span> jsonString = String(bytes: jsonData, encoding: .utf8)
-            UserDefaults.standard.<span style="color:#66d9ef">set</span>(jsonString, forKey: key)
-        }
-    }
-
-    <span style="color:#66d9ef">init</span>(key: String, defaultValue: T) {
-        <span style="color:#66d9ef">self</span>.key = key
-        <span style="color:#66d9ef">self</span>.defaultValue = defaultValue
-    }
-}
-</code></pre></div><div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift"><span style="color:#75715e">//</span><span style="color:#75715e">/</span><span style="color:#75715e"> </span><span style="color:#75715e">全</span><span style="color:#75715e">局</span><span style="color:#75715e">配</span><span style="color:#75715e">置</span><span style="color:#75715e">的</span><span style="color:#75715e">属</span><span style="color:#75715e">性</span><span style="color:#75715e">包</span><span style="color:#75715e">装</span><span style="color:#75715e">，</span><span style="color:#75715e">w</span><span style="color:#75715e">r</span><span style="color:#75715e">a</span><span style="color:#75715e">p</span><span style="color:#75715e">p</span><span style="color:#75715e">e</span><span style="color:#75715e">d</span><span style="color:#75715e">V</span><span style="color:#75715e">a</span><span style="color:#75715e">l</span><span style="color:#75715e">u</span><span style="color:#75715e">e</span><span style="color:#75715e">为</span><span style="color:#75715e">可</span><span style="color:#75715e">选</span><span style="color:#75715e">值</span>
-@propertyWrapper
-<span style="color:#66d9ef">public</span> <span style="color:#66d9ef">struct</span> <span style="color:#a6e22e">CodableGlobalConfigProperty</span>&lt;T: Codable&gt; {
-
-    <span style="color:#66d9ef">private</span> <span style="color:#66d9ef">var</span> key: UserDefaultsKey
-
-    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">init</span>(key: UserDefaultsKey) {
-        <span style="color:#66d9ef">self</span>.key = key
-    }
-
-    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">var</span> wrappedValue: T? {
-        <span style="color:#66d9ef">get</span> {
-            <span style="color:#66d9ef">if</span> <span style="color:#66d9ef">let</span> data = UserDefaultsManager.standard.value(forKey: key) <span style="color:#66d9ef">as</span>? Data, <span style="color:#66d9ef">let</span> model = <span style="color:#66d9ef">try</span>? JSONDecoder().decode(T.<span style="color:#66d9ef">self</span>, from: data) {
-                <span style="color:#66d9ef">return</span> model
-            } <span style="color:#66d9ef">else</span> {
-                <span style="color:#66d9ef">return</span> <span style="color:#66d9ef">nil</span>
-            }
-        }
-        <span style="color:#66d9ef">set</span> {
-            <span style="color:#66d9ef">if</span> <span style="color:#66d9ef">let</span> value = newValue {
-                <span style="color:#75715e">//</span><span style="color:#75715e"> </span><span style="color:#75715e">此</span><span style="color:#75715e">处</span><span style="color:#75715e">不</span><span style="color:#75715e">可</span><span style="color:#75715e">与</span><span style="color:#75715e">上</span><span style="color:#75715e">面</span><span style="color:#75715e">合</span><span style="color:#75715e">并</span><span style="color:#75715e">,</span><span style="color:#75715e">因</span><span style="color:#75715e">为</span><span style="color:#75715e">要</span><span style="color:#75715e">确</span><span style="color:#75715e">保</span><span style="color:#75715e">n</span><span style="color:#75715e">e</span><span style="color:#75715e">w</span><span style="color:#75715e">V</span><span style="color:#75715e">a</span><span style="color:#75715e">l</span><span style="color:#75715e">u</span><span style="color:#75715e">e</span><span style="color:#75715e">为</span><span style="color:#75715e">n</span><span style="color:#75715e">i</span><span style="color:#75715e">l</span><span style="color:#75715e">时</span><span style="color:#75715e">删</span><span style="color:#75715e">除</span><span style="color:#75715e">k</span><span style="color:#75715e">e</span><span style="color:#75715e">y</span><span style="color:#75715e">对</span><span style="color:#75715e">应</span><span style="color:#75715e">的</span><span style="color:#75715e">值</span>
-                <span style="color:#66d9ef">if</span> <span style="color:#66d9ef">let</span> jsonData = <span style="color:#66d9ef">try</span>? JSONEncoder().encode(value) {
-                    UserDefaultsManager.standard.<span style="color:#66d9ef">set</span>(value: jsonData, forKey: key)
-                }
-            } <span style="color:#66d9ef">else</span> {
-                UserDefaultsManager.standard.remove(forKey: key)
-            }
-        }
-    }
-}
-</code></pre></div><p><a href="https://onevcat.com/2020/11/codable-default/">参考资料</a></p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span><span style="color:#66d9ef">extension</span> <span style="color:#a6e22e">UserDefaults</span> {
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">enum</span> <span style="color:#a6e22e">Keys</span> {
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">static</span> <span style="color:#66d9ef">let</span> hasDisplayedGuideView = <span style="color:#e6db74">&#34;has_Displayed_guide_view&#34;</span>
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">var</span> hasDisplayedGuideView: Bool {
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">get</span> {
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">return</span> bool(forKey: Keys.hasDisplayedGuideView)
+</span></span><span style="display:flex;"><span>        }
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">set</span> {
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">set</span>(newValue, forKey: Keys.hasDisplayedGuideView)
+</span></span><span style="display:flex;"><span>        }
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">showGuide</span>() {
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">let</span> hasDisplayed = UserDefaults.standard.hasDisplayedGuideView
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">if</span> hasDisplayed {
+</span></span><span style="display:flex;"><span>        <span style="color:#75715e">// 显示引导页</span>
+</span></span><span style="display:flex;"><span>        UserDefaults.standard.hasDisplayedGuideView = <span style="color:#66d9ef">false</span>
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p>如果后续需要再添加另一个引导项，则需要重复上面的代码。如果使用<code>@propertyWrapper</code>，可以减少上面的重复代码，如下所示：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span>@propertyWrapper
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">struct</span> <span style="color:#a6e22e">UserDefault</span>&lt;T&gt; {
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">let</span> key: String
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">let</span> defaultValue: T
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">init</span>(key: String, defaultValue: T) {
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">self</span>.key = key
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">self</span>.defaultValue = defaultValue
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">var</span> wrappedValue: T {
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">get</span> {
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">return</span> UserDefaults.standard.object(forKey: key) <span style="color:#66d9ef">as</span>? T ?? defaultValue
+</span></span><span style="display:flex;"><span>        }
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">set</span> {
+</span></span><span style="display:flex;"><span>            UserDefaults.standard.<span style="color:#66d9ef">set</span>(newValue, forKey: key)
+</span></span><span style="display:flex;"><span>        }
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">enum</span> <span style="color:#a6e22e">UserDefaultConfig</span> {
+</span></span><span style="display:flex;"><span>    @UserDefault(key: <span style="color:#e6db74">&#34;speech_guide&#34;</span>, defaultValue: <span style="color:#66d9ef">false</span>) <span style="color:#66d9ef">static</span> <span style="color:#66d9ef">var</span> speechGuide: Bool
+</span></span><span style="display:flex;"><span>    @UserDefault(key: <span style="color:#e6db74">&#34;note_guide&#34;</span>, defaultValue: <span style="color:#66d9ef">false</span>) <span style="color:#66d9ef">static</span> <span style="color:#66d9ef">var</span> noteGuide: Bool
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">testGuide</span>() {
+</span></span><span style="display:flex;"><span>    UserDefaultConfig.speechGuide = <span style="color:#66d9ef">false</span>
+</span></span><span style="display:flex;"><span>    UserDefaultConfig.noteGuide = <span style="color:#66d9ef">true</span>
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p>因为<code>UserDefaults</code>本身只能存储基本类型，所以上面的包装的属性<code>UserDefault</code>，也只适用于基本类型都。对于非基本类型，就要借助于<code>Codable</code>才能保存：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span><span style="color:#75715e">/// for codable</span>
+</span></span><span style="display:flex;"><span>@available(swift <span style="color:#ae81ff">5.1</span>)
+</span></span><span style="display:flex;"><span>@propertyWrapper
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">struct</span> <span style="color:#a6e22e">UserDefaultJsonWrapper</span>&lt;T: Codable&gt; {
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">var</span> key: String
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">var</span> defaultValue: T
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">var</span> wrappedValue: T {
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">get</span> {
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">guard</span> <span style="color:#66d9ef">let</span> jsonString = UserDefaults.standard.string(forKey: key) <span style="color:#66d9ef">else</span> {
+</span></span><span style="display:flex;"><span>                <span style="color:#66d9ef">return</span> defaultValue
+</span></span><span style="display:flex;"><span>            }
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">guard</span> <span style="color:#66d9ef">let</span> jsonData = jsonString.data(using: .utf8) <span style="color:#66d9ef">else</span> {
+</span></span><span style="display:flex;"><span>                <span style="color:#66d9ef">return</span> defaultValue
+</span></span><span style="display:flex;"><span>            }
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">guard</span> <span style="color:#66d9ef">let</span> value = <span style="color:#66d9ef">try</span>? JSONDecoder().decode(T.<span style="color:#66d9ef">self</span>, from: jsonData) <span style="color:#66d9ef">else</span> {
+</span></span><span style="display:flex;"><span>                <span style="color:#66d9ef">return</span> defaultValue
+</span></span><span style="display:flex;"><span>            }
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">return</span> value
+</span></span><span style="display:flex;"><span>        }
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">set</span> {
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">let</span> encoder = JSONEncoder()
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">guard</span> <span style="color:#66d9ef">let</span> jsonData = <span style="color:#66d9ef">try</span>? encoder.encode(newValue) <span style="color:#66d9ef">else</span> {
+</span></span><span style="display:flex;"><span>                <span style="color:#66d9ef">return</span>
+</span></span><span style="display:flex;"><span>            }
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">let</span> jsonString = String(bytes: jsonData, encoding: .utf8)
+</span></span><span style="display:flex;"><span>            UserDefaults.standard.<span style="color:#66d9ef">set</span>(jsonString, forKey: key)
+</span></span><span style="display:flex;"><span>        }
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">init</span>(key: String, defaultValue: T) {
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">self</span>.key = key
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">self</span>.defaultValue = defaultValue
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span><span style="color:#75715e">/// 全局配置的属性包装，wrappedValue为可选值</span>
+</span></span><span style="display:flex;"><span>@propertyWrapper
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">struct</span> <span style="color:#a6e22e">CodableGlobalConfigProperty</span>&lt;T: Codable&gt; {
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">private</span> <span style="color:#66d9ef">var</span> key: UserDefaultsKey
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">init</span>(key: UserDefaultsKey) {
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">self</span>.key = key
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">var</span> wrappedValue: T? {
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">get</span> {
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">if</span> <span style="color:#66d9ef">let</span> data = UserDefaultsManager.standard.value(forKey: key) <span style="color:#66d9ef">as</span>? Data, <span style="color:#66d9ef">let</span> model = <span style="color:#66d9ef">try</span>? JSONDecoder().decode(T.<span style="color:#66d9ef">self</span>, from: data) {
+</span></span><span style="display:flex;"><span>                <span style="color:#66d9ef">return</span> model
+</span></span><span style="display:flex;"><span>            } <span style="color:#66d9ef">else</span> {
+</span></span><span style="display:flex;"><span>                <span style="color:#66d9ef">return</span> <span style="color:#66d9ef">nil</span>
+</span></span><span style="display:flex;"><span>            }
+</span></span><span style="display:flex;"><span>        }
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">set</span> {
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">if</span> <span style="color:#66d9ef">let</span> value = newValue {
+</span></span><span style="display:flex;"><span>                <span style="color:#75715e">// 此处不可与上面合并,因为要确保newValue为nil时删除key对应的值</span>
+</span></span><span style="display:flex;"><span>                <span style="color:#66d9ef">if</span> <span style="color:#66d9ef">let</span> jsonData = <span style="color:#66d9ef">try</span>? JSONEncoder().encode(value) {
+</span></span><span style="display:flex;"><span>                    UserDefaultsManager.standard.<span style="color:#66d9ef">set</span>(value: jsonData, forKey: key)
+</span></span><span style="display:flex;"><span>                }
+</span></span><span style="display:flex;"><span>            } <span style="color:#66d9ef">else</span> {
+</span></span><span style="display:flex;"><span>                UserDefaultsManager.standard.remove(forKey: key)
+</span></span><span style="display:flex;"><span>            }
+</span></span><span style="display:flex;"><span>        }
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p><a href="https://onevcat.com/2020/11/codable-default/">参考资料</a></p>
 <h1 id="原子属性包装器">原子属性包装器</h1>
-<p>静态缓存类相关变量（类变量或者结构体中含有类变量），数组，字典均是<!-- raw HTML omitted -->多线程不安全<!-- raw HTML omitted -->的，为了解决线程安全问题，可以使用属性包装器定义原子属性：</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift">@propertyWrapper
-<span style="color:#66d9ef">public</span> <span style="color:#66d9ef">struct</span> <span style="color:#a6e22e">Atomic</span>&lt;Value&gt; {
-
-    <span style="color:#66d9ef">private</span> <span style="color:#66d9ef">var</span> value: Value
-    <span style="color:#66d9ef">private</span> <span style="color:#66d9ef">var</span> lock: os_unfair_lock <span style="color:#75715e">//</span><span style="color:#75715e">自</span><span style="color:#75715e">旋</span><span style="color:#75715e">锁</span>
-
-    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">init</span>(wrappedValue value: Value) {
-        <span style="color:#66d9ef">self</span>.value = value
-        lock = os_unfair_lock.<span style="color:#66d9ef">init</span>()
-    }
-
-    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">var</span> wrappedValue: Value {
-        <span style="color:#66d9ef">mutating</span> <span style="color:#66d9ef">get</span> {
-            <span style="color:#66d9ef">return</span> read()
-        }
-        <span style="color:#66d9ef">set</span> {
-            write(newValue: newValue)
-        }
-    }
-
-    <span style="color:#66d9ef">mutating</span> <span style="color:#66d9ef">func</span> <span style="color:#a6e22e">read</span>() -&gt; Value {
-        os_unfair_lock_lock(&amp;<span style="color:#66d9ef">self</span>.lock)
-        <span style="color:#66d9ef">defer</span> {
-            os_unfair_lock_unlock(&amp;<span style="color:#66d9ef">self</span>.lock)
-        }
-        <span style="color:#66d9ef">return</span> value
-    }
-
-    <span style="color:#66d9ef">mutating</span> <span style="color:#66d9ef">func</span> <span style="color:#a6e22e">write</span>(newValue: Value) {
-        os_unfair_lock_lock(&amp;<span style="color:#66d9ef">self</span>.lock)
-        <span style="color:#66d9ef">defer</span> {
-            os_unfair_lock_unlock(&amp;<span style="color:#66d9ef">self</span>.lock)
-        }
-        value = newValue
-    }
-}
-</code></pre></div><p><a href="https://davidlinnn.medium.com/thread-safety-in-ios-ca24049b2724">参考资料</a></p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift"><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">UserConfigService</span> {
-    <span style="color:#66d9ef">private</span> <span style="color:#66d9ef">var</span> pid: String
-    <span style="color:#66d9ef">private</span> <span style="color:#66d9ef">let</span> split: String = <span style="color:#e6db74">&#34;</span><span style="color:#e6db74">...</span><span style="color:#e6db74">&#34;</span>
-
-    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">init</span>(pid: String) {
-        <span style="color:#66d9ef">self</span>.pid = pid
-        <span style="color:#75715e">//</span><span style="color:#75715e"> </span><span style="color:#75715e">取</span><span style="color:#75715e">巧</span><span style="color:#75715e">的</span><span style="color:#75715e">方</span><span style="color:#75715e">式</span><span style="color:#75715e">将</span><span style="color:#75715e">i</span><span style="color:#75715e">d</span><span style="color:#75715e">传</span><span style="color:#75715e">递</span><span style="color:#75715e">给</span><span style="color:#75715e">属</span><span style="color:#75715e">性</span><span style="color:#75715e">包</span><span style="color:#75715e">装</span><span style="color:#75715e">器</span>
-        _loginRestriction.setId(id: <span style="color:#66d9ef">self</span>.pid)
-    }
-}
-<span style="color:#75715e">//</span><span style="color:#75715e">/</span><span style="color:#75715e"> </span><span style="color:#75715e">用</span><span style="color:#75715e">户</span><span style="color:#75715e">个</span><span style="color:#75715e">性</span><span style="color:#75715e">化</span><span style="color:#75715e">配</span><span style="color:#75715e">置</span><span style="color:#75715e">的</span><span style="color:#75715e">属</span><span style="color:#75715e">性</span><span style="color:#75715e">包</span><span style="color:#75715e">装</span><span style="color:#75715e">，</span><span style="color:#75715e">需</span><span style="color:#75715e">带</span><span style="color:#75715e">默</span><span style="color:#75715e">认</span><span style="color:#75715e">值</span>
-@propertyWrapper
-<span style="color:#66d9ef">public</span> <span style="color:#66d9ef">struct</span> <span style="color:#a6e22e">UserConfigProperty</span>&lt;Value&gt; {
-    <span style="color:#75715e">//</span><span style="color:#75715e">/</span><span style="color:#75715e"> </span><span style="color:#75715e">自</span><span style="color:#75715e">定</span><span style="color:#75715e">U</span><span style="color:#75715e">s</span><span style="color:#75715e">e</span><span style="color:#75715e">r</span><span style="color:#75715e">D</span><span style="color:#75715e">e</span><span style="color:#75715e">f</span><span style="color:#75715e">a</span><span style="color:#75715e">u</span><span style="color:#75715e">l</span><span style="color:#75715e">t</span><span style="color:#75715e">s</span><span style="color:#75715e">K</span><span style="color:#75715e">e</span><span style="color:#75715e">y</span><span style="color:#75715e">，</span><span style="color:#75715e">详</span><span style="color:#75715e">见</span><span style="color:#75715e">其</span><span style="color:#75715e">定</span><span style="color:#75715e">义</span>
-    <span style="color:#66d9ef">private</span> <span style="color:#66d9ef">var</span> key: UserDefaultsKey
-    <span style="color:#75715e">//</span><span style="color:#75715e">/</span><span style="color:#75715e"> </span><span style="color:#75715e">默</span><span style="color:#75715e">认</span><span style="color:#75715e">值</span>
-    <span style="color:#66d9ef">private</span> <span style="color:#66d9ef">var</span> defaultValue: Value
-    <span style="color:#75715e">//</span><span style="color:#75715e">/</span><span style="color:#75715e"> </span><span style="color:#75715e">用</span><span style="color:#75715e">户</span><span style="color:#75715e">主</span><span style="color:#75715e">键</span>
-    <span style="color:#66d9ef">private</span> <span style="color:#66d9ef">var</span> id: String
-
-    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">init</span>(key: UserDefaultsKey, id: String, defaultValue: Value) {
-        <span style="color:#66d9ef">self</span>.key = key
-        <span style="color:#66d9ef">self</span>.defaultValue = defaultValue
-        <span style="color:#66d9ef">self</span>.id = id
-    }
-    
-    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">init</span>(key: UserDefaultsKey, defaultValue: Value) {
-        <span style="color:#66d9ef">self</span>.key = key
-        <span style="color:#66d9ef">self</span>.defaultValue = defaultValue
-        <span style="color:#75715e">//</span><span style="color:#75715e"> </span><span style="color:#75715e">因</span><span style="color:#75715e">为</span><span style="color:#75715e">属</span><span style="color:#75715e">性</span><span style="color:#75715e">包</span><span style="color:#75715e">装</span><span style="color:#75715e">器</span><span style="color:#75715e">会</span><span style="color:#75715e">在</span><span style="color:#75715e">i</span><span style="color:#75715e">n</span><span style="color:#75715e">i</span><span style="color:#75715e">t</span><span style="color:#75715e">方</span><span style="color:#75715e">法</span><span style="color:#75715e">之</span><span style="color:#75715e">前</span><span style="color:#75715e">执</span><span style="color:#75715e">行</span><span style="color:#75715e">，</span><span style="color:#75715e">导</span><span style="color:#75715e">致</span><span style="color:#75715e">i</span><span style="color:#75715e">d</span><span style="color:#75715e">无</span><span style="color:#75715e">法</span><span style="color:#75715e">初</span><span style="color:#75715e">始</span><span style="color:#75715e">化</span><span style="color:#75715e">，</span><span style="color:#75715e">因</span><span style="color:#75715e">此</span><span style="color:#75715e">先</span><span style="color:#75715e">给</span><span style="color:#75715e">i</span><span style="color:#75715e">d</span><span style="color:#75715e">一</span><span style="color:#75715e">个</span><span style="color:#75715e">初</span><span style="color:#75715e">始</span><span style="color:#75715e">空</span><span style="color:#75715e">值</span>
-        <span style="color:#66d9ef">self</span>.id = <span style="color:#e6db74">&#34;</span><span style="color:#e6db74">&#34;</span>
-    }
-    
-    <span style="color:#75715e">//</span><span style="color:#75715e">/</span><span style="color:#75715e"> </span><span style="color:#75715e">因</span><span style="color:#75715e">为</span><span style="color:#75715e">属</span><span style="color:#75715e">性</span><span style="color:#75715e">包</span><span style="color:#75715e">装</span><span style="color:#75715e">器</span><span style="color:#75715e">会</span><span style="color:#75715e">在</span><span style="color:#75715e">i</span><span style="color:#75715e">n</span><span style="color:#75715e">i</span><span style="color:#75715e">t</span><span style="color:#75715e">方</span><span style="color:#75715e">法</span><span style="color:#75715e">之</span><span style="color:#75715e">前</span><span style="color:#75715e">执</span><span style="color:#75715e">行</span><span style="color:#75715e">，</span><span style="color:#75715e">所</span><span style="color:#75715e">以</span><span style="color:#75715e">初</span><span style="color:#75715e">始</span><span style="color:#75715e">给</span><span style="color:#75715e">了</span><span style="color:#75715e">一</span><span style="color:#75715e">个</span><span style="color:#75715e">空</span><span style="color:#75715e">值</span><span style="color:#75715e">，</span><span style="color:#75715e">此</span><span style="color:#75715e">函</span><span style="color:#75715e">数</span><span style="color:#75715e">是</span><span style="color:#75715e">为</span><span style="color:#75715e">了</span><span style="color:#75715e">修</span><span style="color:#75715e">改</span><span style="color:#75715e">真</span><span style="color:#75715e">正</span><span style="color:#75715e">的</span><span style="color:#75715e">i</span><span style="color:#75715e">d</span>
-    <span style="color:#75715e">//</span><span style="color:#75715e">/</span><span style="color:#75715e"> </span><span style="color:#75715e">-</span><span style="color:#75715e"> </span><span style="color:#75715e">P</span><span style="color:#75715e">a</span><span style="color:#75715e">r</span><span style="color:#75715e">a</span><span style="color:#75715e">m</span><span style="color:#75715e">e</span><span style="color:#75715e">t</span><span style="color:#75715e">e</span><span style="color:#75715e">r</span><span style="color:#75715e"> </span><span style="color:#75715e">i</span><span style="color:#75715e">d</span><span style="color:#75715e">:</span><span style="color:#75715e"> </span><span style="color:#75715e">i</span><span style="color:#75715e">d</span>
-    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">mutating</span> <span style="color:#66d9ef">func</span> <span style="color:#a6e22e">setId</span>(id:String) {
-        <span style="color:#66d9ef">self</span>.id = id
-    }
-
-    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">var</span> wrappedValue: Value {
-        <span style="color:#66d9ef">get</span> {
-            <span style="color:#66d9ef">return</span> (UserDefaultsManager.standard.value(forKey: key, forId: id) <span style="color:#66d9ef">as</span>? Value) ?? defaultValue
-        }
-        <span style="color:#66d9ef">set</span> {
-            UserDefaultsManager.standard.<span style="color:#66d9ef">set</span>(value: newValue, forKey: key, forId: <span style="color:#66d9ef">self</span>.id)
-        }
-    }
-}
-</code></pre></div><h2 id="测试代码">测试代码</h2>
+<p>静态缓存类相关变量（类变量或者结构体中含有类变量），数组，字典均是<font color=red>多线程不安全</font>的，为了解决线程安全问题，可以使用属性包装器定义原子属性：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span>@propertyWrapper
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">struct</span> <span style="color:#a6e22e">Atomic</span>&lt;Value&gt; {
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">private</span> <span style="color:#66d9ef">var</span> value: Value
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">private</span> <span style="color:#66d9ef">var</span> lock: os_unfair_lock <span style="color:#75715e">//自旋锁</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">init</span>(wrappedValue value: Value) {
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">self</span>.value = value
+</span></span><span style="display:flex;"><span>        lock = os_unfair_lock.<span style="color:#66d9ef">init</span>()
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">var</span> wrappedValue: Value {
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">mutating</span> <span style="color:#66d9ef">get</span> {
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">return</span> read()
+</span></span><span style="display:flex;"><span>        }
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">set</span> {
+</span></span><span style="display:flex;"><span>            write(newValue: newValue)
+</span></span><span style="display:flex;"><span>        }
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">mutating</span> <span style="color:#66d9ef">func</span> <span style="color:#a6e22e">read</span>() -&gt; Value {
+</span></span><span style="display:flex;"><span>        os_unfair_lock_lock(&amp;<span style="color:#66d9ef">self</span>.lock)
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">defer</span> {
+</span></span><span style="display:flex;"><span>            os_unfair_lock_unlock(&amp;<span style="color:#66d9ef">self</span>.lock)
+</span></span><span style="display:flex;"><span>        }
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">return</span> value
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">mutating</span> <span style="color:#66d9ef">func</span> <span style="color:#a6e22e">write</span>(newValue: Value) {
+</span></span><span style="display:flex;"><span>        os_unfair_lock_lock(&amp;<span style="color:#66d9ef">self</span>.lock)
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">defer</span> {
+</span></span><span style="display:flex;"><span>            os_unfair_lock_unlock(&amp;<span style="color:#66d9ef">self</span>.lock)
+</span></span><span style="display:flex;"><span>        }
+</span></span><span style="display:flex;"><span>        value = newValue
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p><a href="https://davidlinnn.medium.com/thread-safety-in-ios-ca24049b2724">参考资料</a></p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">UserConfigService</span> {
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">private</span> <span style="color:#66d9ef">var</span> pid: String
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">private</span> <span style="color:#66d9ef">let</span> split: String = <span style="color:#e6db74">&#34;...&#34;</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">init</span>(pid: String) {
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">self</span>.pid = pid
+</span></span><span style="display:flex;"><span>        <span style="color:#75715e">// 取巧的方式将id传递给属性包装器</span>
+</span></span><span style="display:flex;"><span>        _loginRestriction.setId(id: <span style="color:#66d9ef">self</span>.pid)
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span><span style="color:#75715e">/// 用户个性化配置的属性包装，需带默认值</span>
+</span></span><span style="display:flex;"><span>@propertyWrapper
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">struct</span> <span style="color:#a6e22e">UserConfigProperty</span>&lt;Value&gt; {
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">/// 自定UserDefaultsKey，详见其定义</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">private</span> <span style="color:#66d9ef">var</span> key: UserDefaultsKey
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">/// 默认值</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">private</span> <span style="color:#66d9ef">var</span> defaultValue: Value
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">/// 用户主键</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">private</span> <span style="color:#66d9ef">var</span> id: String
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">init</span>(key: UserDefaultsKey, id: String, defaultValue: Value) {
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">self</span>.key = key
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">self</span>.defaultValue = defaultValue
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">self</span>.id = id
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>    
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">init</span>(key: UserDefaultsKey, defaultValue: Value) {
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">self</span>.key = key
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">self</span>.defaultValue = defaultValue
+</span></span><span style="display:flex;"><span>        <span style="color:#75715e">// 因为属性包装器会在init方法之前执行，导致id无法初始化，因此先给id一个初始空值</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">self</span>.id = <span style="color:#e6db74">&#34;&#34;</span>
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>    
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">/// 因为属性包装器会在init方法之前执行，所以初始给了一个空值，此函数是为了修改真正的id</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">/// - Parameter id: id</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">mutating</span> <span style="color:#66d9ef">func</span> <span style="color:#a6e22e">setId</span>(id:String) {
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">self</span>.id = id
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">var</span> wrappedValue: Value {
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">get</span> {
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">return</span> (UserDefaultsManager.standard.value(forKey: key, forId: id) <span style="color:#66d9ef">as</span>? Value) ?? defaultValue
+</span></span><span style="display:flex;"><span>        }
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">set</span> {
+</span></span><span style="display:flex;"><span>            UserDefaultsManager.standard.<span style="color:#66d9ef">set</span>(value: newValue, forKey: key, forId: <span style="color:#66d9ef">self</span>.id)
+</span></span><span style="display:flex;"><span>        }
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><h2 id="测试代码">测试代码</h2>
 <p>在工程中<code>ConfigDataService</code>文件中相关的缓存变量都是数组，例如<code>static var desktopConfigItems: [MoConfigItemModel] = []</code>是线程不安全的，不使用原子属性包装器下面测试代码会闪退：</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift"><span style="color:#66d9ef">static</span> <span style="color:#66d9ef">func</span> <span style="color:#a6e22e">testDemo</span>(){
-        <span style="color:#66d9ef">let</span> group = DispatchGroup()
-        <span style="color:#66d9ef">let</span> models:[MoConfigItemModel] = [MoConfigItemModel(),MoConfigItemModel()]
-        <span style="color:#66d9ef">for</span> <span style="color:#66d9ef">_</span> <span style="color:#66d9ef">in</span> <span style="color:#ae81ff">0.</span>.&lt;<span style="color:#ae81ff">2000</span> {
-            <span style="color:#66d9ef">let</span> delaySet = TimeInterval(arc4random() <span style="color:#f92672">%</span> <span style="color:#ae81ff">10</span>);
-            group.enter()
-            DispatchQueue.global().asyncAfter(deadline: .now() <span style="color:#f92672">+</span> delaySet) {
-                <span style="color:#66d9ef">self</span>.desktopConfigItems = models
-                group.leave()
-            }
-
-            <span style="color:#66d9ef">let</span> delaySetNil = TimeInterval(arc4random() <span style="color:#f92672">%</span> <span style="color:#ae81ff">10</span>);
-            group.enter()
-            DispatchQueue.global().asyncAfter(deadline: .now() <span style="color:#f92672">+</span> delaySetNil) {
-                <span style="color:#66d9ef">self</span>.desktopConfigItems.append(MoConfigItemModel())
-                group.leave()
-            }
-
-            <span style="color:#66d9ef">let</span> delayGet = TimeInterval(arc4random() <span style="color:#f92672">%</span> <span style="color:#ae81ff">10</span>)
-            group.enter()
-            DispatchQueue.global().asyncAfter(deadline: .now() <span style="color:#f92672">+</span> delayGet) {
-                <span style="color:#66d9ef">let</span> _ = <span style="color:#66d9ef">self</span>.allConfigItems
-                group.leave()
-            }
-        }
-
-        <span style="color:#66d9ef">let</span> success = group.wait(timeout: .now() <span style="color:#f92672">+</span> <span style="color:#ae81ff">12</span>)
-        <span style="color:#66d9ef">if</span> success == .success {
-            print(<span style="color:#e6db74">&#34;</span><span style="color:#e6db74">test</span><span style="color:#e6db74">&#34;</span>)
-        }
-    }
-</code></pre></div>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span><span style="color:#66d9ef">static</span> <span style="color:#66d9ef">func</span> <span style="color:#a6e22e">testDemo</span>(){
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">let</span> group = DispatchGroup()
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">let</span> models:[MoConfigItemModel] = [MoConfigItemModel(),MoConfigItemModel()]
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">for</span> <span style="color:#66d9ef">_</span> <span style="color:#66d9ef">in</span> <span style="color:#ae81ff">0.</span>.&lt;<span style="color:#ae81ff">2000</span> {
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">let</span> delaySet = TimeInterval(arc4random() <span style="color:#f92672">%</span> <span style="color:#ae81ff">10</span>);
+</span></span><span style="display:flex;"><span>            group.enter()
+</span></span><span style="display:flex;"><span>            DispatchQueue.global().asyncAfter(deadline: .now() <span style="color:#f92672">+</span> delaySet) {
+</span></span><span style="display:flex;"><span>                <span style="color:#66d9ef">self</span>.desktopConfigItems = models
+</span></span><span style="display:flex;"><span>                group.leave()
+</span></span><span style="display:flex;"><span>            }
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">let</span> delaySetNil = TimeInterval(arc4random() <span style="color:#f92672">%</span> <span style="color:#ae81ff">10</span>);
+</span></span><span style="display:flex;"><span>            group.enter()
+</span></span><span style="display:flex;"><span>            DispatchQueue.global().asyncAfter(deadline: .now() <span style="color:#f92672">+</span> delaySetNil) {
+</span></span><span style="display:flex;"><span>                <span style="color:#66d9ef">self</span>.desktopConfigItems.append(MoConfigItemModel())
+</span></span><span style="display:flex;"><span>                group.leave()
+</span></span><span style="display:flex;"><span>            }
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">let</span> delayGet = TimeInterval(arc4random() <span style="color:#f92672">%</span> <span style="color:#ae81ff">10</span>)
+</span></span><span style="display:flex;"><span>            group.enter()
+</span></span><span style="display:flex;"><span>            DispatchQueue.global().asyncAfter(deadline: .now() <span style="color:#f92672">+</span> delayGet) {
+</span></span><span style="display:flex;"><span>                <span style="color:#66d9ef">let</span> _ = <span style="color:#66d9ef">self</span>.allConfigItems
+</span></span><span style="display:flex;"><span>                group.leave()
+</span></span><span style="display:flex;"><span>            }
+</span></span><span style="display:flex;"><span>        }
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">let</span> success = group.wait(timeout: .now() <span style="color:#f92672">+</span> <span style="color:#ae81ff">12</span>)
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">if</span> success == .success {
+</span></span><span style="display:flex;"><span>            print(<span style="color:#e6db74">&#34;test&#34;</span>)
+</span></span><span style="display:flex;"><span>        }
+</span></span><span style="display:flex;"><span>    }
+</span></span></code></pre></div>
     </div>
     <footer class="post-footer">
         
@@ -841,6 +841,7 @@ code.has-jax {
   <span class="with-love"><i class="fa fa-heart"></i></span>
   <span class="author" itemprop="copyrightHolder">Keep It Simple</span>
 </div>
+
 
 
 

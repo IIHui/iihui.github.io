@@ -18,8 +18,8 @@
     <link href="https://iihui.github.io/js/vendor/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
     <link href="https://iihui.github.io/js/vendor/fancybox/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
     <link href="https://iihui.github.io/css/main.css" rel="stylesheet" type="text/css" />
-    <link href="https://iihui.github.io/css/custom.css" rel="stylesheet" type="text/css" />
     <link href="https://iihui.github.io/css/syntax.css" rel="stylesheet" type="text/css" />
+
     <script type="text/javascript" id="hexo.configuration">
   var NexT = window.NexT || {};
   var CONFIG = {
@@ -38,9 +38,9 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.1/languages/objectivec.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.1/languages/clojure.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.1/languages/cpp.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.1/languages/kotlin.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.1/languages/yaml.min.js"></script>
     <script>hljs.initHighlightingOnLoad();</script>
-
-
 </head>
 <body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
 <div class="container one-collumn sidebar-position-left page-home  ">
@@ -241,7 +241,7 @@ code.has-jax {
     <i class="fa fa-file-word-o"></i>
 </span>
 <span class="post-meta-item-text">字数: </span>
-<span class="leancloud-visitors-count">881</span>
+<span class="leancloud-visitors-count">877</span>
 &nbsp; | &nbsp;
 <span class="post-meta-item-icon">
     <i class="fa fa-coffee"></i>
@@ -256,95 +256,95 @@ code.has-jax {
 <p>在<code>iOS</code>开发中，<code>UITableView</code>的使用频率较高，这篇文章主要用于记录一些常用的使用方法和问题解决方案。</p>
 </blockquote>
 <h1 id="点击cell不变色">点击cell不变色</h1>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift"><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">tableView</span>(<span style="color:#66d9ef">_</span> tableView: UITableView, cellForRowAt indexPath: IndexPath) -&gt; UITableViewCell {
-    <span style="color:#66d9ef">let</span> cell = tableView.dequeueReusableCell(withIdentifier: cellId, <span style="color:#66d9ef">for</span>: indexPath) <span style="color:#66d9ef">as</span>! NoteDetailInfoCell
-    cell.selectionStyle = .<span style="color:#66d9ef">none</span>  <span style="color:#75715e">//</span><span style="color:#75715e">点</span><span style="color:#75715e">击</span><span style="color:#75715e">该</span><span style="color:#75715e">c</span><span style="color:#75715e">e</span><span style="color:#75715e">l</span><span style="color:#75715e">l</span><span style="color:#75715e">不</span><span style="color:#75715e">变</span><span style="color:#75715e">色</span>
-    <span style="color:#66d9ef">return</span> cell
-}
-</code></pre></div><hr>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">tableView</span>(<span style="color:#66d9ef">_</span> tableView: UITableView, cellForRowAt indexPath: IndexPath) -&gt; UITableViewCell {
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">let</span> cell = tableView.dequeueReusableCell(withIdentifier: cellId, <span style="color:#66d9ef">for</span>: indexPath) <span style="color:#66d9ef">as</span>! NoteDetailInfoCell
+</span></span><span style="display:flex;"><span>    cell.selectionStyle = .<span style="color:#66d9ef">none</span>  <span style="color:#75715e">//点击该cell不变色</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">return</span> cell
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><hr>
 <h1 id="cell异步更新">Cell异步更新</h1>
 <p>在<code>UITableView</code>中经常要使用到异步请求，请求回来之后要更新相应<code>cell</code>的外观，由于<code>UITableView</code>中的<code>cell</code>存在复用问题，因此异步请求返回之后要特别小心处理。目前个人总结可以有三种方式。</p>
 <h2 id="使用内存缓存">使用内存缓存</h2>
-<p>在<code>presenter</code>中增加缓存，一般使用<code>map</code>来实现，然后一般以<code>indexPath</code>作为<code>key</code>（也可以其他具有唯一性的<code>id</code>作为<code>key</code>），以异步请求之后返回的某项数据作为<code>value</code>。异步返回之后，更新缓存，然后再在<!-- raw HTML omitted -->主线程中<!-- raw HTML omitted -->调用<code>reload</code>方法。</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift"><span style="color:#66d9ef">override</span> <span style="color:#66d9ef">func</span> <span style="color:#a6e22e">tableView</span>(<span style="color:#66d9ef">_</span> tableView: UITableView, cellForRowAt indexPath: IndexPath) -&gt; UITableViewCell {
-    <span style="color:#66d9ef">let</span> cell = tableView.dequeueReusableCell(withIdentifier: <span style="color:#66d9ef">self</span>.zhGroupCellIdentifier, <span style="color:#66d9ef">for</span>: indexPath)
-    <span style="color:#66d9ef">let</span> model = <span style="color:#66d9ef">self</span>.presenter.dataSource[indexPath.row]
-    <span style="color:#66d9ef">if</span> <span style="color:#66d9ef">let</span> groupCell: ZHGroupCell = cell <span style="color:#66d9ef">as</span>? ZHGroupCell {
-        groupCell.nameLbl.text = model.sessionName
-        <span style="color:#66d9ef">if</span> <span style="color:#66d9ef">let</span> image = <span style="color:#66d9ef">self</span>.presenter.headCache[model.sessionID] {
-            groupCell.imgView.image = image
-        } <span style="color:#66d9ef">else</span> {
-            <span style="color:#66d9ef">self</span>.presenter.requestImage(id: model.sessionID,indexPath: indexPath) { [<span style="color:#66d9ef">weak</span> <span style="color:#66d9ef">self</span>] index <span style="color:#66d9ef">in</span>
-                DispatchQueue.main.async { [<span style="color:#66d9ef">weak</span> <span style="color:#66d9ef">self</span>] <span style="color:#66d9ef">in</span>
-                     tableView.reloadRows(at: [index], with: .<span style="color:#66d9ef">none</span>)
-                    }
-                }
-            }
-        }
-    }
-    <span style="color:#66d9ef">return</span> cell
-}
-</code></pre></div><div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift"><span style="color:#75715e">//</span><span style="color:#75715e">/</span><span style="color:#75715e"> </span><span style="color:#75715e">从</span><span style="color:#75715e">服</span><span style="color:#75715e">务</span><span style="color:#75715e">端</span><span style="color:#75715e">获</span><span style="color:#75715e">取</span><span style="color:#75715e">用</span><span style="color:#75715e">户</span><span style="color:#75715e">头</span><span style="color:#75715e">像</span>
-<span style="color:#66d9ef">private</span> <span style="color:#66d9ef">func</span> <span style="color:#a6e22e">getHeaderImageFromRemote</span>(user: ContactsUser, indexPath: IndexPath) {
-    <span style="color:#66d9ef">self</span>.contactsHeadPhotoService.getServerImage(user: user) { [<span style="color:#66d9ef">weak</span> <span style="color:#66d9ef">self</span>] <span style="color:#66d9ef">_</span> <span style="color:#66d9ef">in</span>
-        DispatchQueue.main.async { [<span style="color:#66d9ef">weak</span> <span style="color:#66d9ef">self</span>] <span style="color:#66d9ef">in</span>
-            <span style="color:#66d9ef">if</span> <span style="color:#66d9ef">self</span>?.tableView.cellForRow(at: indexPath) <span style="color:#f92672">!=</span> <span style="color:#66d9ef">nil</span> {
-                <span style="color:#66d9ef">if</span> <span style="color:#66d9ef">self</span>?.isSearching == <span style="color:#66d9ef">true</span> {
-                    <span style="color:#66d9ef">self</span>?.tableView.reloadRows(at: [indexPath], with: .<span style="color:#66d9ef">none</span>)
-                } <span style="color:#66d9ef">else</span> {
-                    <span style="color:#75715e">//</span><span style="color:#75715e">非</span><span style="color:#75715e">搜</span><span style="color:#75715e">索</span><span style="color:#75715e">状</span><span style="color:#75715e">态</span><span style="color:#75715e">时</span><span style="color:#75715e">有</span><span style="color:#75715e">可</span><span style="color:#75715e">能</span><span style="color:#75715e">有</span><span style="color:#75715e">相</span><span style="color:#75715e">同</span><span style="color:#75715e">的</span><span style="color:#75715e">联</span><span style="color:#75715e">系</span><span style="color:#75715e">人</span><span style="color:#75715e">在</span><span style="color:#75715e">不</span><span style="color:#75715e">同</span><span style="color:#75715e">的</span><span style="color:#75715e">分</span><span style="color:#75715e">组</span><span style="color:#75715e">，</span><span style="color:#75715e">所</span><span style="color:#75715e">以</span><span style="color:#75715e">选</span><span style="color:#75715e">择</span><span style="color:#75715e">全</span><span style="color:#75715e">部</span><span style="color:#75715e">r</span><span style="color:#75715e">e</span><span style="color:#75715e">l</span><span style="color:#75715e">o</span><span style="color:#75715e">a</span><span style="color:#75715e">d</span>
-                    <span style="color:#66d9ef">self</span>?.tableView.reloadData()
-                }
-            }
-        }
-    }
-}
-</code></pre></div><h2 id="使用prepareforreuse">使用prepareForReuse()</h2>
+<p>在<code>presenter</code>中增加缓存，一般使用<code>map</code>来实现，然后一般以<code>indexPath</code>作为<code>key</code>（也可以其他具有唯一性的<code>id</code>作为<code>key</code>），以异步请求之后返回的某项数据作为<code>value</code>。异步返回之后，更新缓存，然后再在<font color=red>主线程中</font>调用<code>reload</code>方法。</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span><span style="color:#66d9ef">override</span> <span style="color:#66d9ef">func</span> <span style="color:#a6e22e">tableView</span>(<span style="color:#66d9ef">_</span> tableView: UITableView, cellForRowAt indexPath: IndexPath) -&gt; UITableViewCell {
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">let</span> cell = tableView.dequeueReusableCell(withIdentifier: <span style="color:#66d9ef">self</span>.zhGroupCellIdentifier, <span style="color:#66d9ef">for</span>: indexPath)
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">let</span> model = <span style="color:#66d9ef">self</span>.presenter.dataSource[indexPath.row]
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">if</span> <span style="color:#66d9ef">let</span> groupCell: ZHGroupCell = cell <span style="color:#66d9ef">as</span>? ZHGroupCell {
+</span></span><span style="display:flex;"><span>        groupCell.nameLbl.text = model.sessionName
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">if</span> <span style="color:#66d9ef">let</span> image = <span style="color:#66d9ef">self</span>.presenter.headCache[model.sessionID] {
+</span></span><span style="display:flex;"><span>            groupCell.imgView.image = image
+</span></span><span style="display:flex;"><span>        } <span style="color:#66d9ef">else</span> {
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">self</span>.presenter.requestImage(id: model.sessionID,indexPath: indexPath) { [<span style="color:#66d9ef">weak</span> <span style="color:#66d9ef">self</span>] index <span style="color:#66d9ef">in</span>
+</span></span><span style="display:flex;"><span>                DispatchQueue.main.async { [<span style="color:#66d9ef">weak</span> <span style="color:#66d9ef">self</span>] <span style="color:#66d9ef">in</span>
+</span></span><span style="display:flex;"><span>                     tableView.reloadRows(at: [index], with: .<span style="color:#66d9ef">none</span>)
+</span></span><span style="display:flex;"><span>                    }
+</span></span><span style="display:flex;"><span>                }
+</span></span><span style="display:flex;"><span>            }
+</span></span><span style="display:flex;"><span>        }
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">return</span> cell
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span><span style="color:#75715e">/// 从服务端获取用户头像</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">private</span> <span style="color:#66d9ef">func</span> <span style="color:#a6e22e">getHeaderImageFromRemote</span>(user: ContactsUser, indexPath: IndexPath) {
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">self</span>.contactsHeadPhotoService.getServerImage(user: user) { [<span style="color:#66d9ef">weak</span> <span style="color:#66d9ef">self</span>] <span style="color:#66d9ef">_</span> <span style="color:#66d9ef">in</span>
+</span></span><span style="display:flex;"><span>        DispatchQueue.main.async { [<span style="color:#66d9ef">weak</span> <span style="color:#66d9ef">self</span>] <span style="color:#66d9ef">in</span>
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">if</span> <span style="color:#66d9ef">self</span>?.tableView.cellForRow(at: indexPath) <span style="color:#f92672">!=</span> <span style="color:#66d9ef">nil</span> {
+</span></span><span style="display:flex;"><span>                <span style="color:#66d9ef">if</span> <span style="color:#66d9ef">self</span>?.isSearching == <span style="color:#66d9ef">true</span> {
+</span></span><span style="display:flex;"><span>                    <span style="color:#66d9ef">self</span>?.tableView.reloadRows(at: [indexPath], with: .<span style="color:#66d9ef">none</span>)
+</span></span><span style="display:flex;"><span>                } <span style="color:#66d9ef">else</span> {
+</span></span><span style="display:flex;"><span>                    <span style="color:#75715e">//非搜索状态时有可能有相同的联系人在不同的分组，所以选择全部reload</span>
+</span></span><span style="display:flex;"><span>                    <span style="color:#66d9ef">self</span>?.tableView.reloadData()
+</span></span><span style="display:flex;"><span>                }
+</span></span><span style="display:flex;"><span>            }
+</span></span><span style="display:flex;"><span>        }
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><h2 id="使用prepareforreuse">使用prepareForReuse()</h2>
 <p>使用<code>KingFisher</code>请求图片资源时，由于有些图片返回较慢，因为<code>cell</code>复用，可能会导致图片出现错乱，此时可以在<code>prepareForReuse</code>先取消相应的网络请求。</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift"><span style="color:#75715e">//</span><span style="color:#75715e">/</span><span style="color:#75715e"> </span><span style="color:#75715e">因</span><span style="color:#75715e">为</span><span style="color:#75715e">使</span><span style="color:#75715e">用</span><span style="color:#75715e">k</span><span style="color:#75715e">i</span><span style="color:#75715e">n</span><span style="color:#75715e">g</span><span style="color:#75715e">f</span><span style="color:#75715e">i</span><span style="color:#75715e">s</span><span style="color:#75715e">h</span><span style="color:#75715e">e</span><span style="color:#75715e">r</span><span style="color:#75715e">进</span><span style="color:#75715e">行</span><span style="color:#75715e">图</span><span style="color:#75715e">片</span><span style="color:#75715e">下</span><span style="color:#75715e">载</span><span style="color:#75715e">为</span><span style="color:#75715e">异</span><span style="color:#75715e">步</span><span style="color:#75715e">的</span><span style="color:#75715e">，</span><span style="color:#75715e">所</span><span style="color:#75715e">以</span><span style="color:#75715e">要</span><span style="color:#75715e">解</span><span style="color:#75715e">决</span><span style="color:#75715e">复</span><span style="color:#75715e">用</span><span style="color:#75715e">问</span><span style="color:#75715e">题</span>
-<span style="color:#66d9ef">override</span> <span style="color:#66d9ef">func</span> <span style="color:#a6e22e">prepareForReuse</span>() {
-    <span style="color:#66d9ef">super</span>.prepareForReuse()
-    <span style="color:#66d9ef">self</span>.headerImageView.kf.cancelDownloadTask()
-    <span style="color:#66d9ef">self</span>.dkImageView.kf.cancelDownloadTask()
-}
-</code></pre></div><h2 id="设置对应cell">设置对应cell</h2>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span><span style="color:#75715e">/// 因为使用kingfisher进行图片下载为异步的，所以要解决复用问题</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">override</span> <span style="color:#66d9ef">func</span> <span style="color:#a6e22e">prepareForReuse</span>() {
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">super</span>.prepareForReuse()
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">self</span>.headerImageView.kf.cancelDownloadTask()
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">self</span>.dkImageView.kf.cancelDownloadTask()
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><h2 id="设置对应cell">设置对应cell</h2>
 <p>首先异步请求时多加一个<code>indexPath</code>参数，异步返回时把返回的数据和<code>indexPath</code>作为回调参数，然后根据<code>indexPath</code>找到对应的<code>cell</code>，最后更新<code>cell</code>的外观。</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift"><span style="color:#66d9ef">override</span> <span style="color:#66d9ef">func</span> <span style="color:#a6e22e">tableView</span>(<span style="color:#66d9ef">_</span> tableView: UITableView, cellForRowAt indexPath: IndexPath) -&gt; UITableViewCell {
-    <span style="color:#66d9ef">let</span> cell = tableView.dequeueReusableCell(withIdentifier: <span style="color:#66d9ef">self</span>.zhGroupCellIdentifier, <span style="color:#66d9ef">for</span>: indexPath)
-    <span style="color:#66d9ef">let</span> model = <span style="color:#66d9ef">self</span>.presenter.dataSource[indexPath.row]
-    <span style="color:#66d9ef">if</span> <span style="color:#66d9ef">let</span> groupCell: ZHGroupCell = cell <span style="color:#66d9ef">as</span>? ZHGroupCell {
-        groupCell.nameLbl.text = model.sessionName
-        <span style="color:#66d9ef">if</span> <span style="color:#66d9ef">let</span> image = <span style="color:#66d9ef">self</span>.presenter.headCache[model.sessionID] {
-            groupCell.imgView.image = image
-        } <span style="color:#66d9ef">else</span> {
-            <span style="color:#66d9ef">self</span>.presenter.requestImage(id: model.sessionID,indexPath: indexPath) { [<span style="color:#66d9ef">weak</span> <span style="color:#66d9ef">self</span>] index <span style="color:#66d9ef">in</span>
-                DispatchQueue.main.async { [<span style="color:#66d9ef">weak</span> <span style="color:#66d9ef">self</span>] <span style="color:#66d9ef">in</span>
-                    <span style="color:#66d9ef">if</span> <span style="color:#66d9ef">let</span> cell = tableView.cellForRow(at: index) <span style="color:#66d9ef">as</span>? ZHGroupCell,<span style="color:#66d9ef">let</span> model = <span style="color:#66d9ef">self</span>?.presenter.dataSource[index.row] {
-                        cell.imgView?.image = <span style="color:#66d9ef">self</span>?.presenter.headCache[model.sessionID]
-                    }
-                }
-            }
-        }
-    }
-    <span style="color:#66d9ef">return</span> cell
-}
-</code></pre></div><h1 id="分组显示">分组显示</h1>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span><span style="color:#66d9ef">override</span> <span style="color:#66d9ef">func</span> <span style="color:#a6e22e">tableView</span>(<span style="color:#66d9ef">_</span> tableView: UITableView, cellForRowAt indexPath: IndexPath) -&gt; UITableViewCell {
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">let</span> cell = tableView.dequeueReusableCell(withIdentifier: <span style="color:#66d9ef">self</span>.zhGroupCellIdentifier, <span style="color:#66d9ef">for</span>: indexPath)
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">let</span> model = <span style="color:#66d9ef">self</span>.presenter.dataSource[indexPath.row]
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">if</span> <span style="color:#66d9ef">let</span> groupCell: ZHGroupCell = cell <span style="color:#66d9ef">as</span>? ZHGroupCell {
+</span></span><span style="display:flex;"><span>        groupCell.nameLbl.text = model.sessionName
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">if</span> <span style="color:#66d9ef">let</span> image = <span style="color:#66d9ef">self</span>.presenter.headCache[model.sessionID] {
+</span></span><span style="display:flex;"><span>            groupCell.imgView.image = image
+</span></span><span style="display:flex;"><span>        } <span style="color:#66d9ef">else</span> {
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">self</span>.presenter.requestImage(id: model.sessionID,indexPath: indexPath) { [<span style="color:#66d9ef">weak</span> <span style="color:#66d9ef">self</span>] index <span style="color:#66d9ef">in</span>
+</span></span><span style="display:flex;"><span>                DispatchQueue.main.async { [<span style="color:#66d9ef">weak</span> <span style="color:#66d9ef">self</span>] <span style="color:#66d9ef">in</span>
+</span></span><span style="display:flex;"><span>                    <span style="color:#66d9ef">if</span> <span style="color:#66d9ef">let</span> cell = tableView.cellForRow(at: index) <span style="color:#66d9ef">as</span>? ZHGroupCell,<span style="color:#66d9ef">let</span> model = <span style="color:#66d9ef">self</span>?.presenter.dataSource[index.row] {
+</span></span><span style="display:flex;"><span>                        cell.imgView?.image = <span style="color:#66d9ef">self</span>?.presenter.headCache[model.sessionID]
+</span></span><span style="display:flex;"><span>                    }
+</span></span><span style="display:flex;"><span>                }
+</span></span><span style="display:flex;"><span>            }
+</span></span><span style="display:flex;"><span>        }
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">return</span> cell
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><h1 id="分组显示">分组显示</h1>
 <p><a href="http://www.hackmz.com">链接</a></p>
 <p><a href="https://juejin.im/entry/582a73880ce463006cd1f5b9">range</a></p>
 <h1 id="动态调整footer高度">动态调整footer高度</h1>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift"><span style="color:#66d9ef">override</span> <span style="color:#66d9ef">func</span> <span style="color:#a6e22e">viewDidLayoutSubviews</span>() {
-  <span style="color:#66d9ef">super</span>.viewDidLayoutSubviews()
-  <span style="color:#66d9ef">guard</span> <span style="color:#66d9ef">let</span> footerView = <span style="color:#66d9ef">self</span>.tableView.tableFooterView <span style="color:#66d9ef">else</span> {
-    <span style="color:#66d9ef">return</span>
-  }
-  <span style="color:#66d9ef">let</span> width = <span style="color:#66d9ef">self</span>.tableView.bounds.size.width
-  <span style="color:#66d9ef">let</span> size = footerView.systemLayoutSizeFitting(CGSize(width: width, height: UIView.layoutFittingCompressedSize.height))
-  <span style="color:#66d9ef">if</span> footerView.frame.size.height <span style="color:#f92672">!=</span> size.height {
-    footerView.frame.size.height = size.height
-    <span style="color:#66d9ef">self</span>.tableView.tableFooterView = footerView
-  }
-}
-</code></pre></div><p><a href="https://medium.com/better-programming/dynamic-height-uitableview-footer-e99e8c04484a">参考</a></p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span><span style="color:#66d9ef">override</span> <span style="color:#66d9ef">func</span> <span style="color:#a6e22e">viewDidLayoutSubviews</span>() {
+</span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">super</span>.viewDidLayoutSubviews()
+</span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">guard</span> <span style="color:#66d9ef">let</span> footerView = <span style="color:#66d9ef">self</span>.tableView.tableFooterView <span style="color:#66d9ef">else</span> {
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">return</span>
+</span></span><span style="display:flex;"><span>  }
+</span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">let</span> width = <span style="color:#66d9ef">self</span>.tableView.bounds.size.width
+</span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">let</span> size = footerView.systemLayoutSizeFitting(CGSize(width: width, height: UIView.layoutFittingCompressedSize.height))
+</span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">if</span> footerView.frame.size.height <span style="color:#f92672">!=</span> size.height {
+</span></span><span style="display:flex;"><span>    footerView.frame.size.height = size.height
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">self</span>.tableView.tableFooterView = footerView
+</span></span><span style="display:flex;"><span>  }
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p><a href="https://medium.com/better-programming/dynamic-height-uitableview-footer-e99e8c04484a">参考</a></p>
 <hr>
 
     </div>
@@ -538,6 +538,7 @@ code.has-jax {
   <span class="with-love"><i class="fa fa-heart"></i></span>
   <span class="author" itemprop="copyrightHolder">Keep It Simple</span>
 </div>
+
 
 
 

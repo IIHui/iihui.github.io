@@ -18,8 +18,8 @@
     <link href="https://iihui.github.io/js/vendor/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
     <link href="https://iihui.github.io/js/vendor/fancybox/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
     <link href="https://iihui.github.io/css/main.css" rel="stylesheet" type="text/css" />
-    <link href="https://iihui.github.io/css/custom.css" rel="stylesheet" type="text/css" />
     <link href="https://iihui.github.io/css/syntax.css" rel="stylesheet" type="text/css" />
+
     <script type="text/javascript" id="hexo.configuration">
   var NexT = window.NexT || {};
   var CONFIG = {
@@ -38,9 +38,9 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.1/languages/objectivec.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.1/languages/clojure.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.1/languages/cpp.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.1/languages/kotlin.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.1/languages/yaml.min.js"></script>
     <script>hljs.initHighlightingOnLoad();</script>
-
-
 </head>
 <body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
 <div class="container one-collumn sidebar-position-left page-home  ">
@@ -259,29 +259,29 @@ code.has-jax {
 <p>第一种方式，是在<code>Target</code>中的<code>General</code>下<code>Device Orientation</code>中设置，但是这种方式设置的允许横竖屏会被<code>AppDelegate.swift</code>中对应的代码覆盖，所以一般不在这里设置。设置方式如下图所示：</p>
 <p><img src="https://i.loli.net/2020/06/09/GUvoVtrzQgsfPx2.jpg" alt=""></p>
 <p>另一种方法是在<code>AppDelegate.swift</code>中设置允许横竖屏，如下代码所示：</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift"><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">application</span>(<span style="color:#66d9ef">_</span> application: UIApplication, supportedInterfaceOrientationsFor window: UIWindow?) -&gt; UIInterfaceOrientationMask {
-    <span style="color:#66d9ef">return</span> .all
-}
-</code></pre></div><h2 id="界面强制竖屏">界面强制竖屏</h2>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">application</span>(<span style="color:#66d9ef">_</span> application: UIApplication, supportedInterfaceOrientationsFor window: UIWindow?) -&gt; UIInterfaceOrientationMask {
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">return</span> .all
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><h2 id="界面强制竖屏">界面强制竖屏</h2>
 <p>对于以<code>present</code>方式呈现的界面，需要在当前界面所属的<code>UIViewController</code>中重写以下两个属性：</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift"><span style="color:#66d9ef">override</span> <span style="color:#66d9ef">var</span> supportedInterfaceOrientations: UIInterfaceOrientationMask {
-    <span style="color:#66d9ef">return</span> .portrait
-}
-<span style="color:#66d9ef">override</span> <span style="color:#66d9ef">var</span> shouldAutorotate: Bool {
-    <span style="color:#66d9ef">return</span> <span style="color:#66d9ef">false</span>
-}
-</code></pre></div><p>而对于以<code>push</code>方式呈现的界面，需要重写对应的<code>UINavigationController</code>中重写上面的两个属性。为了方便可以写一个继承自<code>UINavigationController</code>，然后将强制横竖屏的代码交给要<code>push</code>的界面，如下所示：</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift"><span style="color:#66d9ef">class</span> <span style="color:#a6e22e">RotatableNavigationController</span>: UINavigationController {
-    
-    <span style="color:#66d9ef">override</span> <span style="color:#66d9ef">var</span> shouldAutorotate : Bool {
-        <span style="color:#66d9ef">return</span> <span style="color:#66d9ef">self</span>.topViewController?.shouldAutorotate ?? <span style="color:#66d9ef">super</span>.shouldAutorotate
-    }
-    
-    <span style="color:#66d9ef">override</span> <span style="color:#66d9ef">var</span> supportedInterfaceOrientations : UIInterfaceOrientationMask {
-        <span style="color:#66d9ef">return</span> <span style="color:#66d9ef">self</span>.topViewController?.supportedInterfaceOrientations ?? <span style="color:#66d9ef">super</span>.supportedInterfaceOrientations
-    }
-}
-</code></pre></div><hr>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span><span style="color:#66d9ef">override</span> <span style="color:#66d9ef">var</span> supportedInterfaceOrientations: UIInterfaceOrientationMask {
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">return</span> .portrait
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">override</span> <span style="color:#66d9ef">var</span> shouldAutorotate: Bool {
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">return</span> <span style="color:#66d9ef">false</span>
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p>而对于以<code>push</code>方式呈现的界面，需要重写对应的<code>UINavigationController</code>中重写上面的两个属性。为了方便可以写一个继承自<code>UINavigationController</code>，然后将强制横竖屏的代码交给要<code>push</code>的界面，如下所示：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span><span style="color:#66d9ef">class</span> <span style="color:#a6e22e">RotatableNavigationController</span>: UINavigationController {
+</span></span><span style="display:flex;"><span>    
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">override</span> <span style="color:#66d9ef">var</span> shouldAutorotate : Bool {
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">return</span> <span style="color:#66d9ef">self</span>.topViewController?.shouldAutorotate ?? <span style="color:#66d9ef">super</span>.shouldAutorotate
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>    
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">override</span> <span style="color:#66d9ef">var</span> supportedInterfaceOrientations : UIInterfaceOrientationMask {
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">return</span> <span style="color:#66d9ef">self</span>.topViewController?.supportedInterfaceOrientations ?? <span style="color:#66d9ef">super</span>.supportedInterfaceOrientations
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><hr>
 
     </div>
     <footer class="post-footer">
@@ -470,6 +470,7 @@ code.has-jax {
   <span class="with-love"><i class="fa fa-heart"></i></span>
   <span class="author" itemprop="copyrightHolder">Keep It Simple</span>
 </div>
+
 
 
 

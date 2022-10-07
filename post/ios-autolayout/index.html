@@ -18,8 +18,8 @@
     <link href="https://iihui.github.io/js/vendor/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
     <link href="https://iihui.github.io/js/vendor/fancybox/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
     <link href="https://iihui.github.io/css/main.css" rel="stylesheet" type="text/css" />
-    <link href="https://iihui.github.io/css/custom.css" rel="stylesheet" type="text/css" />
     <link href="https://iihui.github.io/css/syntax.css" rel="stylesheet" type="text/css" />
+
     <script type="text/javascript" id="hexo.configuration">
   var NexT = window.NexT || {};
   var CONFIG = {
@@ -38,9 +38,9 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.1/languages/objectivec.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.1/languages/clojure.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.1/languages/cpp.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.1/languages/kotlin.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.1/languages/yaml.min.js"></script>
     <script>hljs.initHighlightingOnLoad();</script>
-
-
 </head>
 <body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
 <div class="container one-collumn sidebar-position-left page-home  ">
@@ -249,10 +249,10 @@ code.has-jax {
 <p><code>setNeedsLayout</code> 告知页面需要更新，但是不会立刻开始更新，也就是先做一个标记。</p>
 </li>
 <li>
-<p><code>layoutIfNeeded</code> 如果<!-- raw HTML omitted -->有需要刷新的标记<!-- raw HTML omitted -->，立即调用<code>layoutSubViews</code>进行布局；如果没有标记，不会调用<code>layoutSubbViews</code>。如果希望立即刷新<code>frame</code>，要先调用<code>setNeedsLayout</code>，把标记为需要布局，然后马上调用<code>layoutIfNeeded</code>实现布局。</p>
+<p><code>layoutIfNeeded</code> 如果<font color=red>有需要刷新的标记</font>，立即调用<code>layoutSubViews</code>进行布局；如果没有标记，不会调用<code>layoutSubbViews</code>。如果希望立即刷新<code>frame</code>，要先调用<code>setNeedsLayout</code>，把标记为需要布局，然后马上调用<code>layoutIfNeeded</code>实现布局。</p>
 </li>
 <li>
-<p><code>layoutSubviews</code> 对<code>subviews</code>进行布局，<!-- raw HTML omitted -->不能主动调用<!-- raw HTML omitted -->，需要的时候在子类中重写，系统会在合适的时候调用。</p>
+<p><code>layoutSubviews</code> 对<code>subviews</code>进行布局，<font color=red>不能主动调用</font>，需要的时候在子类中重写，系统会在合适的时候调用。</p>
 </li>
 <li>
 <p><code>setNeedsUpdateConstraints</code> 告知需要更新约束，但是不会立刻开始，也就是先做一个标记，调用<code>updateConstraintsIfNeeded</code>会查看该标记。</p>
@@ -287,22 +287,22 @@ code.has-jax {
 </ul>
 <h1 id="固有内容大小">固有内容大小</h1>
 <p><code>Intrinsic content size</code> 就是固有内容大小，对应的是<code>intrinsicContentSize</code>计算属性。实际上，可以通过继承可以重写<code>UIView</code>的固有内容大小，达到定制的目的：</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift"><span style="color:#66d9ef">class</span> <span style="color:#a6e22e">TestView</span>: UIView {
-    <span style="color:#66d9ef">override</span> <span style="color:#66d9ef">var</span> intrinsicContentSize: CGSize {
-        <span style="color:#66d9ef">return</span> CGSize(width: <span style="color:#ae81ff">300</span>, height: <span style="color:#ae81ff">800</span>)
-    }
-}
-</code></pre></div><h1 id="uitableview高度计算">UITableView高度计算</h1>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span><span style="color:#66d9ef">class</span> <span style="color:#a6e22e">TestView</span>: UIView {
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">override</span> <span style="color:#66d9ef">var</span> intrinsicContentSize: CGSize {
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">return</span> CGSize(width: <span style="color:#ae81ff">300</span>, height: <span style="color:#ae81ff">800</span>)
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><h1 id="uitableview高度计算">UITableView高度计算</h1>
 <h2 id="自动计算">自动计算</h2>
 <p>当布局满足<code>self-satisfied</code>（设置约束时，只有一个不确定时，例如高度）时，系统会自动计算高度，缺点时慢，因为没有缓存高度，每次都要计算一次。</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift"><span style="color:#75715e">//</span><span style="color:#75715e">首</span><span style="color:#75715e">先</span><span style="color:#75715e">在</span><span style="color:#75715e">v</span><span style="color:#75715e">i</span><span style="color:#75715e">e</span><span style="color:#75715e">w</span><span style="color:#75715e">D</span><span style="color:#75715e">i</span><span style="color:#75715e">d</span><span style="color:#75715e">L</span><span style="color:#75715e">o</span><span style="color:#75715e">a</span><span style="color:#75715e">d</span><span style="color:#75715e">中</span><span style="color:#75715e">c</span><span style="color:#75715e">e</span><span style="color:#75715e">l</span><span style="color:#75715e">l</span><span style="color:#75715e">预</span><span style="color:#75715e">估</span><span style="color:#75715e">高</span><span style="color:#75715e">度</span><span style="color:#75715e">,</span><span style="color:#75715e">设</span><span style="color:#75715e">一</span><span style="color:#75715e">个</span><span style="color:#75715e">接</span><span style="color:#75715e">近</span><span style="color:#75715e">c</span><span style="color:#75715e">e</span><span style="color:#75715e">l</span><span style="color:#75715e">l</span><span style="color:#75715e">高</span><span style="color:#75715e">度</span><span style="color:#75715e">的</span><span style="color:#75715e">值</span>
-<span style="color:#66d9ef">self</span>.tableView.estimatedRowHeight = <span style="color:#ae81ff">100</span>;
-
-<span style="color:#75715e">//</span><span style="color:#75715e">然</span><span style="color:#75715e">后</span><span style="color:#75715e">在</span><span style="color:#75715e">设</span><span style="color:#75715e">置</span><span style="color:#75715e">返</span><span style="color:#75715e">回</span><span style="color:#75715e">a</span><span style="color:#75715e">u</span><span style="color:#75715e">t</span><span style="color:#75715e">o</span><span style="color:#75715e">m</span><span style="color:#75715e">a</span><span style="color:#75715e">t</span><span style="color:#75715e">i</span><span style="color:#75715e">c</span><span style="color:#75715e">D</span><span style="color:#75715e">i</span><span style="color:#75715e">m</span><span style="color:#75715e">e</span><span style="color:#75715e">n</span><span style="color:#75715e">s</span><span style="color:#75715e">i</span><span style="color:#75715e">o</span><span style="color:#75715e">n</span>
-<span style="color:#66d9ef">override</span> <span style="color:#66d9ef">func</span> <span style="color:#a6e22e">tableView</span>(<span style="color:#66d9ef">_</span> tableView:UITableView, heightForRawAt: indexPath IndexPath) -&gt; CGFloat {
-  <span style="color:#66d9ef">return</span> UITableView.automaticDimension
-}
-</code></pre></div><hr>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span><span style="color:#75715e">//首先在viewDidLoad中cell预估高度,设一个接近cell高度的值</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">self</span>.tableView.estimatedRowHeight = <span style="color:#ae81ff">100</span>;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">//然后在设置返回automaticDimension</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">override</span> <span style="color:#66d9ef">func</span> <span style="color:#a6e22e">tableView</span>(<span style="color:#66d9ef">_</span> tableView:UITableView, heightForRawAt: indexPath IndexPath) -&gt; CGFloat {
+</span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">return</span> UITableView.automaticDimension
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><hr>
 <p><a href="https://www.jianshu.com/p/c8efc7014800">摘抄自这里</a></p>
 
     </div>
@@ -494,6 +494,7 @@ code.has-jax {
   <span class="with-love"><i class="fa fa-heart"></i></span>
   <span class="author" itemprop="copyrightHolder">Keep It Simple</span>
 </div>
+
 
 
 

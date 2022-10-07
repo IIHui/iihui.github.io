@@ -18,8 +18,8 @@
     <link href="https://iihui.github.io/js/vendor/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
     <link href="https://iihui.github.io/js/vendor/fancybox/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
     <link href="https://iihui.github.io/css/main.css" rel="stylesheet" type="text/css" />
-    <link href="https://iihui.github.io/css/custom.css" rel="stylesheet" type="text/css" />
     <link href="https://iihui.github.io/css/syntax.css" rel="stylesheet" type="text/css" />
+
     <script type="text/javascript" id="hexo.configuration">
   var NexT = window.NexT || {};
   var CONFIG = {
@@ -38,9 +38,9 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.1/languages/objectivec.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.1/languages/clojure.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.1/languages/cpp.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.1/languages/kotlin.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.1/languages/yaml.min.js"></script>
     <script>hljs.initHighlightingOnLoad();</script>
-
-
 </head>
 <body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
 <div class="container one-collumn sidebar-position-left page-home  ">
@@ -241,7 +241,7 @@ code.has-jax {
     <i class="fa fa-file-word-o"></i>
 </span>
 <span class="post-meta-item-text">字数: </span>
-<span class="leancloud-visitors-count">649</span>
+<span class="leancloud-visitors-count">652</span>
 &nbsp; | &nbsp;
 <span class="post-meta-item-icon">
     <i class="fa fa-coffee"></i>
@@ -256,69 +256,69 @@ code.has-jax {
 <p>从语言设计上来说，<code>defer</code>是为了进行资源清理和返回前避免重复执行相关的代码，而不是用来取巧的实现某些功能，这样做只会让代码的可读性降低。</p>
 </blockquote>
 <h1 id="典型用法">典型用法</h1>
-<p><code>Swift</code>中<code>defer</code>声明的<code>block</code>会在<!-- raw HTML omitted -->当前代码执行退出后<!-- raw HTML omitted -->调用，这种延迟调用特性，一般用来进行资源释放或者销毁。</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift"><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">operateOnFile</span>(descriptor: Int32) {
-    <span style="color:#66d9ef">let</span> fileHandle = FileHandle(fileDescriptor: descriptor)
-    
-    <span style="color:#66d9ef">let</span> data = fileHandle.readDataToEndOfFile()
-
-    <span style="color:#66d9ef">if</span> <span style="color:#75715e">/*</span><span style="color:#75715e"> </span><span style="color:#75715e">o</span><span style="color:#75715e">n</span><span style="color:#75715e">l</span><span style="color:#75715e">y</span><span style="color:#75715e">R</span><span style="color:#75715e">e</span><span style="color:#75715e">a</span><span style="color:#75715e">d</span><span style="color:#75715e"> </span><span style="color:#75715e">*/</span> {
-        fileHandle.closeFile()
-        <span style="color:#66d9ef">return</span>
-    }
-    
-    <span style="color:#66d9ef">let</span> shouldWrite = <span style="color:#75715e">/*</span><span style="color:#75715e"> </span><span style="color:#75715e">是</span><span style="color:#75715e">否</span><span style="color:#75715e">需</span><span style="color:#75715e">要</span><span style="color:#75715e">写</span><span style="color:#75715e">文</span><span style="color:#75715e">件</span><span style="color:#75715e"> </span><span style="color:#75715e">*/</span>
-    <span style="color:#66d9ef">guard</span> shouldWrite <span style="color:#66d9ef">else</span> {
-        fileHandle.closeFile()
-        <span style="color:#66d9ef">return</span>
-    }
-    
-    fileHandle.seekToEndOfFile()
-    fileHandle.write(someData)
-    fileHandle.closeFile()
-}
-</code></pre></div><p>上面代码在不同的地方调用<code>fileHandle.closeFile()</code>来关闭文件，更好的方法是使用<code>defer</code>来统一处理。这不仅可以<!-- raw HTML omitted -->就近在资源申请的地方就声明释放<!-- raw HTML omitted -->，也减少了未来添加代码时忘记释放资源的可能性，如下所示：</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift"><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">operateOnFile</span>(descriptor: Int32) {
-    <span style="color:#66d9ef">let</span> fileHandle = FileHandle(fileDescriptor: descriptor)
-    <span style="color:#66d9ef">defer</span> { fileHandle.closeFile() }
-    <span style="color:#66d9ef">let</span> data = fileHandle.readDataToEndOfFile()
-
-    <span style="color:#66d9ef">if</span> <span style="color:#75715e">/*</span><span style="color:#75715e"> </span><span style="color:#75715e">o</span><span style="color:#75715e">n</span><span style="color:#75715e">l</span><span style="color:#75715e">y</span><span style="color:#75715e">R</span><span style="color:#75715e">e</span><span style="color:#75715e">a</span><span style="color:#75715e">d</span><span style="color:#75715e"> </span><span style="color:#75715e">*/</span> { <span style="color:#66d9ef">return</span> }
-    
-    <span style="color:#66d9ef">let</span> shouldWrite = <span style="color:#75715e">/*</span><span style="color:#75715e"> </span><span style="color:#75715e">是</span><span style="color:#75715e">否</span><span style="color:#75715e">需</span><span style="color:#75715e">要</span><span style="color:#75715e">写</span><span style="color:#75715e">文</span><span style="color:#75715e">件</span><span style="color:#75715e"> </span><span style="color:#75715e">*/</span>
-    <span style="color:#66d9ef">guard</span> shouldWrite <span style="color:#66d9ef">else</span> { <span style="color:#66d9ef">return</span> }
-    
-    fileHandle.seekToEndOfFile()
-    fileHandle.write(someData)
-}
-</code></pre></div><h1 id="作用域">作用域</h1>
-<p>一般都人<code>defer</code>是在函数退出的时候调用，其实它是在<!-- raw HTML omitted -->是当前<code>scope</code>退出的时候调用<!-- raw HTML omitted -->。在 <code>if，guard，for，try</code>这些语句中使用<code>defer</code>时，应该要特别注意。</p>
+<p><code>Swift</code>中<code>defer</code>声明的<code>block</code>会在<font color=red>当前代码执行退出后</font>调用，这种延迟调用特性，一般用来进行资源释放或者销毁。</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">operateOnFile</span>(descriptor: Int32) {
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">let</span> fileHandle = FileHandle(fileDescriptor: descriptor)
+</span></span><span style="display:flex;"><span>    
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">let</span> data = fileHandle.readDataToEndOfFile()
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">if</span> <span style="color:#75715e">/* onlyRead */</span> {
+</span></span><span style="display:flex;"><span>        fileHandle.closeFile()
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">return</span>
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>    
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">let</span> shouldWrite = <span style="color:#75715e">/* 是否需要写文件 */</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">guard</span> shouldWrite <span style="color:#66d9ef">else</span> {
+</span></span><span style="display:flex;"><span>        fileHandle.closeFile()
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">return</span>
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>    
+</span></span><span style="display:flex;"><span>    fileHandle.seekToEndOfFile()
+</span></span><span style="display:flex;"><span>    fileHandle.write(someData)
+</span></span><span style="display:flex;"><span>    fileHandle.closeFile()
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p>上面代码在不同的地方调用<code>fileHandle.closeFile()</code>来关闭文件，更好的方法是使用<code>defer</code>来统一处理。这不仅可以<font color=red>就近在资源申请的地方就声明释放</font>，也减少了未来添加代码时忘记释放资源的可能性，如下所示：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">operateOnFile</span>(descriptor: Int32) {
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">let</span> fileHandle = FileHandle(fileDescriptor: descriptor)
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">defer</span> { fileHandle.closeFile() }
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">let</span> data = fileHandle.readDataToEndOfFile()
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">if</span> <span style="color:#75715e">/* onlyRead */</span> { <span style="color:#66d9ef">return</span> }
+</span></span><span style="display:flex;"><span>    
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">let</span> shouldWrite = <span style="color:#75715e">/* 是否需要写文件 */</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">guard</span> shouldWrite <span style="color:#66d9ef">else</span> { <span style="color:#66d9ef">return</span> }
+</span></span><span style="display:flex;"><span>    
+</span></span><span style="display:flex;"><span>    fileHandle.seekToEndOfFile()
+</span></span><span style="display:flex;"><span>    fileHandle.write(someData)
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><h1 id="作用域">作用域</h1>
+<p>一般都人<code>defer</code>是在函数退出的时候调用，其实它是在<font color=red>是当前<code>scope</code>退出的时候调用</font>。在 <code>if，guard，for，try</code>这些语句中使用<code>defer</code>时，应该要特别注意。</p>
 <h1 id="defer闭包不持有值">defer闭包不持有值</h1>
-<p>虽然<code>defer</code>后面跟了一个闭包，但是它更多地像是一个语法糖，和我们所熟知的闭包特性不一样，<!-- raw HTML omitted -->并不会持有里面的值<!-- raw HTML omitted -->：</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift"><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">foo</span>() {
-    <span style="color:#66d9ef">var</span> number = <span style="color:#ae81ff">1</span>
-    <span style="color:#66d9ef">defer</span> { print(<span style="color:#e6db74">&#34;</span><span style="color:#e6db74">Statement 2: </span><span style="color:#e6db74">\(</span>number<span style="color:#e6db74">)</span><span style="color:#e6db74">&#34;</span>) }
-    number = <span style="color:#ae81ff">100</span>
-    print(<span style="color:#e6db74">&#34;</span><span style="color:#e6db74">Statement 1: </span><span style="color:#e6db74">\(</span>number<span style="color:#e6db74">)</span><span style="color:#e6db74">&#34;</span>)
-}
-</code></pre></div><p>上面代码将会输出：</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift">Statement <span style="color:#ae81ff">1</span>: <span style="color:#ae81ff">100</span>
-Statement <span style="color:#ae81ff">2</span>: <span style="color:#ae81ff">100</span>
-</code></pre></div><h1 id="执行时机">执行时机</h1>
+<p>虽然<code>defer</code>后面跟了一个闭包，但是它更多地像是一个语法糖，和我们所熟知的闭包特性不一样，<font color=red>并不会持有里面的值</font>：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">foo</span>() {
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">var</span> number = <span style="color:#ae81ff">1</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">defer</span> { print(<span style="color:#e6db74">&#34;Statement 2: </span><span style="color:#e6db74">\(</span>number<span style="color:#e6db74">)</span><span style="color:#e6db74">&#34;</span>) }
+</span></span><span style="display:flex;"><span>    number = <span style="color:#ae81ff">100</span>
+</span></span><span style="display:flex;"><span>    print(<span style="color:#e6db74">&#34;Statement 1: </span><span style="color:#e6db74">\(</span>number<span style="color:#e6db74">)</span><span style="color:#e6db74">&#34;</span>)
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p>上面代码将会输出：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span>Statement <span style="color:#ae81ff">1</span>: <span style="color:#ae81ff">100</span>
+</span></span><span style="display:flex;"><span>Statement <span style="color:#ae81ff">2</span>: <span style="color:#ae81ff">100</span>
+</span></span></code></pre></div><h1 id="执行时机">执行时机</h1>
 <p><code>defer</code>的执行时机紧接在离开作用域之后，但在其他语句之前。这个特性为<code>defer</code>带来了一些很“微妙”的使用方式，例如下面的代码是先执行返回语句，然后执行自增，所以输出为<code>0，1，2</code>而不是<code>1，2，3</code>：</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift"><span style="color:#66d9ef">class</span> <span style="color:#a6e22e">Foo</span> {
-    <span style="color:#66d9ef">var</span> num = <span style="color:#ae81ff">0</span>
-    <span style="color:#66d9ef">func</span> <span style="color:#a6e22e">foo</span>() -&gt; Int {
-        <span style="color:#66d9ef">defer</span> { num <span style="color:#f92672">+=</span> <span style="color:#ae81ff">1</span> }
-        <span style="color:#66d9ef">return</span> num
-    }
- }
-
-<span style="color:#66d9ef">let</span> f = Foo()
-f.foo() <span style="color:#75715e">//</span><span style="color:#75715e"> </span><span style="color:#75715e">0</span>
-f.foo() <span style="color:#75715e">//</span><span style="color:#75715e"> </span><span style="color:#75715e">1</span>
-f.num   <span style="color:#75715e">//</span><span style="color:#75715e"> </span><span style="color:#75715e">2</span>
-</code></pre></div><p><a href="https://onevcat.com/2018/11/defer/">参考资料</a></p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span><span style="color:#66d9ef">class</span> <span style="color:#a6e22e">Foo</span> {
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">var</span> num = <span style="color:#ae81ff">0</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">func</span> <span style="color:#a6e22e">foo</span>() -&gt; Int {
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">defer</span> { num <span style="color:#f92672">+=</span> <span style="color:#ae81ff">1</span> }
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">return</span> num
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span> }
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">let</span> f = Foo()
+</span></span><span style="display:flex;"><span>f.foo() <span style="color:#75715e">// 0</span>
+</span></span><span style="display:flex;"><span>f.foo() <span style="color:#75715e">// 1</span>
+</span></span><span style="display:flex;"><span>f.num   <span style="color:#75715e">// 2</span>
+</span></span></code></pre></div><p><a href="https://onevcat.com/2018/11/defer/">参考资料</a></p>
 
     </div>
     <footer class="post-footer">
@@ -505,6 +505,7 @@ f.num   <span style="color:#75715e">//</span><span style="color:#75715e"> </span
   <span class="with-love"><i class="fa fa-heart"></i></span>
   <span class="author" itemprop="copyrightHolder">Keep It Simple</span>
 </div>
+
 
 
 

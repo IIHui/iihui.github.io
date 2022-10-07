@@ -18,8 +18,8 @@
     <link href="https://iihui.github.io/js/vendor/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
     <link href="https://iihui.github.io/js/vendor/fancybox/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
     <link href="https://iihui.github.io/css/main.css" rel="stylesheet" type="text/css" />
-    <link href="https://iihui.github.io/css/custom.css" rel="stylesheet" type="text/css" />
     <link href="https://iihui.github.io/css/syntax.css" rel="stylesheet" type="text/css" />
+
     <script type="text/javascript" id="hexo.configuration">
   var NexT = window.NexT || {};
   var CONFIG = {
@@ -38,9 +38,9 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.1/languages/objectivec.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.1/languages/clojure.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.1/languages/cpp.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.1/languages/kotlin.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.1/languages/yaml.min.js"></script>
     <script>hljs.initHighlightingOnLoad();</script>
-
-
 </head>
 <body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
 <div class="container one-collumn sidebar-position-left page-home  ">
@@ -241,7 +241,7 @@ code.has-jax {
     <i class="fa fa-file-word-o"></i>
 </span>
 <span class="post-meta-item-text">字数: </span>
-<span class="leancloud-visitors-count">872</span>
+<span class="leancloud-visitors-count">875</span>
 &nbsp; | &nbsp;
 <span class="post-meta-item-icon">
     <i class="fa fa-coffee"></i>
@@ -257,43 +257,42 @@ code.has-jax {
 </blockquote>
 <h1 id="邮件发送崩溃日志">邮件发送崩溃日志</h1>
 <p>之前项目中使用<a href="https://github.com/microsoft/plcrashreporter">PLCrashReporter</a>来收集崩溃日志，但是相比于<code>KSCrash</code>，它对于导致崩溃的原因以及第三方<code>framework</code>的符号化相对较弱。下面是<code>KSCrash</code>使用邮件的方式来收集崩溃日志：</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift"><span style="color:#66d9ef">import</span> <span style="color:#a6e22e">KSCrash</span>
-<span style="color:#66d9ef">class</span> <span style="color:#a6e22e">CrashReporterService</span> {
-    <span style="color:#66d9ef">static</span> <span style="color:#66d9ef">var</span> shared = CrashReporterService()
-    <span style="color:#66d9ef">private</span> <span style="color:#66d9ef">let</span> emailAddress = <span style="color:#e6db74">&#34;</span><span style="color:#e6db74">xiaohui.sysu@qq.com</span><span style="color:#e6db74">&#34;</span>
-    <span style="color:#66d9ef">func</span> <span style="color:#a6e22e">startCrashReport</span>() {
-        <span style="color:#66d9ef">let</span> installation = KSCrashInstallationEmail.sharedInstance()
-        installation?.recipients = [emailAddress]
-        installation?.subject = <span style="color:#e6db74">&#34;</span><span style="color:#e6db74">Crash Report</span><span style="color:#e6db74">&#34;</span>
-        installation?.message = <span style="color:#e6db74">&#34;</span><span style="color:#e6db74">This is a crash report</span><span style="color:#e6db74">&#34;</span>
-        installation?.filenameFmt = <span style="color:#e6db74">&#34;</span><span style="color:#e6db74">crash-report-%d.crash.gz</span><span style="color:#e6db74">&#34;</span>
-        installation?.reportStyle = KSCrashEmailReportStyleApple
-        <span style="color:#75715e">//</span><span style="color:#75715e"> </span><span style="color:#75715e">K</span><span style="color:#75715e">S</span><span style="color:#75715e">C</span><span style="color:#75715e">r</span><span style="color:#75715e">a</span><span style="color:#75715e">s</span><span style="color:#75715e">h</span><span style="color:#75715e">.</span><span style="color:#75715e">s</span><span style="color:#75715e">h</span><span style="color:#75715e">a</span><span style="color:#75715e">r</span><span style="color:#75715e">e</span><span style="color:#75715e">d</span><span style="color:#75715e">I</span><span style="color:#75715e">n</span><span style="color:#75715e">s</span><span style="color:#75715e">t</span><span style="color:#75715e">a</span><span style="color:#75715e">n</span><span style="color:#75715e">c</span><span style="color:#75715e">e</span><span style="color:#75715e">(</span><span style="color:#75715e">)</span><span style="color:#75715e">?</span><span style="color:#75715e">.</span><span style="color:#75715e">d</span><span style="color:#75715e">e</span><span style="color:#75715e">l</span><span style="color:#75715e">e</span><span style="color:#75715e">t</span><span style="color:#75715e">e</span><span style="color:#75715e">B</span><span style="color:#75715e">e</span><span style="color:#75715e">h</span><span style="color:#75715e">a</span><span style="color:#75715e">v</span><span style="color:#75715e">i</span><span style="color:#75715e">o</span><span style="color:#75715e">r</span><span style="color:#75715e">A</span><span style="color:#75715e">f</span><span style="color:#75715e">t</span><span style="color:#75715e">e</span><span style="color:#75715e">r</span><span style="color:#75715e">S</span><span style="color:#75715e">e</span><span style="color:#75715e">n</span><span style="color:#75715e">d</span><span style="color:#75715e">A</span><span style="color:#75715e">l</span><span style="color:#75715e">l</span><span style="color:#75715e"> </span><span style="color:#75715e">=</span><span style="color:#75715e"> </span><span style="color:#75715e">K</span><span style="color:#75715e">S</span><span style="color:#75715e">C</span><span style="color:#75715e">D</span><span style="color:#75715e">e</span><span style="color:#75715e">l</span><span style="color:#75715e">e</span><span style="color:#75715e">t</span><span style="color:#75715e">e</span><span style="color:#75715e">O</span><span style="color:#75715e">n</span><span style="color:#75715e">S</span><span style="color:#75715e">u</span><span style="color:#75715e">c</span><span style="color:#75715e">e</span><span style="color:#75715e">s</span><span style="color:#75715e">s</span>
-        installation?.addConditionalAlert(withTitle: <span style="color:#e6db74">&#34;</span><span style="color:#e6db74">Crash Detected</span><span style="color:#e6db74">&#34;</span>,
-                                          message: <span style="color:#e6db74">&#34;</span><span style="color:#e6db74">The app crashed last time it was launched. Send a crash report?</span><span style="color:#e6db74">&#34;</span>,
-                                          yesAnswer: <span style="color:#e6db74">&#34;</span><span style="color:#e6db74">Sure!</span><span style="color:#e6db74">&#34;</span>,
-                                          noAnswer: <span style="color:#e6db74">&#34;</span><span style="color:#e6db74">No thanks</span><span style="color:#e6db74">&#34;</span>)
-        installation?.install()
-        installation?.sendAllReports { (reports, completed, error) -&gt; Void <span style="color:#66d9ef">in</span>
-            <span style="color:#66d9ef">if</span> completed, <span style="color:#66d9ef">let</span> count = reports?.count {
-                print(<span style="color:#e6db74">&#34;</span><span style="color:#e6db74">Sent </span><span style="color:#e6db74">\(</span>count<span style="color:#e6db74">)</span><span style="color:#e6db74"> reports</span><span style="color:#e6db74">&#34;</span>)
-            } <span style="color:#66d9ef">else</span> <span style="color:#66d9ef">if</span> <span style="color:#66d9ef">let</span> msg = error?.localizedDescription {
-                print(<span style="color:#e6db74">&#34;</span><span style="color:#e6db74">Failed to send reports: </span><span style="color:#e6db74">\(</span>msg<span style="color:#e6db74">)</span><span style="color:#e6db74">&#34;</span>)
-            }
-        }
-    }
-}
-</code></pre></div><p><a href="https://zhang759740844.github.io/2019/10/25/kscrash/">参考资料</a>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span><span style="color:#66d9ef">import</span> <span style="color:#a6e22e">KSCrash</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">class</span> <span style="color:#a6e22e">CrashReporterService</span> {
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">static</span> <span style="color:#66d9ef">var</span> shared = CrashReporterService()
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">private</span> <span style="color:#66d9ef">let</span> emailAddress = <span style="color:#e6db74">&#34;xiaohui.sysu@qq.com&#34;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">func</span> <span style="color:#a6e22e">startCrashReport</span>() {
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">let</span> installation = KSCrashInstallationEmail.sharedInstance()
+</span></span><span style="display:flex;"><span>        installation?.recipients = [emailAddress]
+</span></span><span style="display:flex;"><span>        installation?.subject = <span style="color:#e6db74">&#34;Crash Report&#34;</span>
+</span></span><span style="display:flex;"><span>        installation?.message = <span style="color:#e6db74">&#34;This is a crash report&#34;</span>
+</span></span><span style="display:flex;"><span>        installation?.filenameFmt = <span style="color:#e6db74">&#34;crash-report-%d.crash.gz&#34;</span>
+</span></span><span style="display:flex;"><span>        installation?.reportStyle = KSCrashEmailReportStyleApple
+</span></span><span style="display:flex;"><span>        <span style="color:#75715e">// KSCrash.sharedInstance()?.deleteBehaviorAfterSendAll = KSCDeleteOnSucess</span>
+</span></span><span style="display:flex;"><span>        installation?.addConditionalAlert(withTitle: <span style="color:#e6db74">&#34;Crash Detected&#34;</span>,
+</span></span><span style="display:flex;"><span>                                          message: <span style="color:#e6db74">&#34;The app crashed last time it was launched. Send a crash report?&#34;</span>,
+</span></span><span style="display:flex;"><span>                                          yesAnswer: <span style="color:#e6db74">&#34;Sure!&#34;</span>,
+</span></span><span style="display:flex;"><span>                                          noAnswer: <span style="color:#e6db74">&#34;No thanks&#34;</span>)
+</span></span><span style="display:flex;"><span>        installation?.install()
+</span></span><span style="display:flex;"><span>        installation?.sendAllReports { (reports, completed, error) -&gt; Void <span style="color:#66d9ef">in</span>
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">if</span> completed, <span style="color:#66d9ef">let</span> count = reports?.count {
+</span></span><span style="display:flex;"><span>                print(<span style="color:#e6db74">&#34;Sent </span><span style="color:#e6db74">\(</span>count<span style="color:#e6db74">)</span><span style="color:#e6db74"> reports&#34;</span>)
+</span></span><span style="display:flex;"><span>            } <span style="color:#66d9ef">else</span> <span style="color:#66d9ef">if</span> <span style="color:#66d9ef">let</span> msg = error?.localizedDescription {
+</span></span><span style="display:flex;"><span>                print(<span style="color:#e6db74">&#34;Failed to send reports: </span><span style="color:#e6db74">\(</span>msg<span style="color:#e6db74">)</span><span style="color:#e6db74">&#34;</span>)
+</span></span><span style="display:flex;"><span>            }
+</span></span><span style="display:flex;"><span>        }
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p><a href="https://zhang759740844.github.io/2019/10/25/kscrash/">参考资料</a>
 <a href="https://cloud.tencent.com/developer/article/1627563">参考资料</a>
 <a href="https://www.dazhuanlan.com/2020/02/03/5e37df1809016/">参考资料</a></p>
 <h2 id="行号为0">行号为0</h2>
-<p>如果源文件的行号为<code>0</code>，则表示回溯堆栈未能<!-- raw HTML omitted -->映射到原始代码中的特定代码行<!-- raw HTML omitted -->。这是因为编译器通过内联函数等方式对代码进行了优化，而崩溃时执行的代码与原始代码中的确切行并不对应，在这种情况下，只能利用函数名这个线索。</p>
+<p>如果源文件的行号为<code>0</code>，则表示回溯堆栈未能<font color=red>映射到原始代码中的特定代码行</font>。这是因为编译器通过内联函数等方式对代码进行了优化，而崩溃时执行的代码与原始代码中的确切行并不对应，在这种情况下，只能利用函数名这个线索。</p>
 <h1 id="修复崩溃">修复崩溃</h1>
 <h2 id="nsplaceholderarray">NSPlaceholderArray</h2>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-fallback" data-lang="fallback">*** -[__NSPlaceholderArray initWithCapacity:]: capacity (18446744073709549746) is ridiculous
-</code></pre></div><p>出现上面闪退，说明是在初始化的时候，使用的预设值太大。可能是数组初始化时容量过大，也可能是数组初始化时容量为负数。而在这个项目中，是因为设置<code>tableView</code>的<code>frame</code>时用到了<code>CGFloat.greatestFiniteMagnitude</code>：</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift">
-</code></pre></div><p><a href="https://github.com/xiaozhuxiong121/PGDatePicker/issues/128">参考资料</a>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-fallback" data-lang="fallback"><span style="display:flex;"><span>*** -[__NSPlaceholderArray initWithCapacity:]: capacity (18446744073709549746) is ridiculous
+</span></span></code></pre></div><p>出现上面闪退，说明是在初始化的时候，使用的预设值太大。可能是数组初始化时容量过大，也可能是数组初始化时容量为负数。而在这个项目中，是因为设置<code>tableView</code>的<code>frame</code>时用到了<code>CGFloat.greatestFiniteMagnitude</code>：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"></code></pre></div><p><a href="https://github.com/xiaozhuxiong121/PGDatePicker/issues/128">参考资料</a>
 <a href="https://stackoverflow.com/questions/9275371/heisenbug-nsinvalidargumentexception-capacity-is-ridiculous">参考资料</a>
 <a href="https://github.com/nicklockwood/SwipeView/issues/147">参考资料</a></p>
 <h2 id="nscamerausagedescription">NSCameraUsageDescription</h2>
@@ -494,6 +493,7 @@ code.has-jax {
   <span class="with-love"><i class="fa fa-heart"></i></span>
   <span class="author" itemprop="copyrightHolder">Keep It Simple</span>
 </div>
+
 
 
 
