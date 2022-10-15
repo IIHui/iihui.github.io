@@ -255,7 +255,7 @@ def change_string(str)  str.replace(&amp;#34;New string content!&amp;#34;) end s
 对于数组而言，即使调用了freeze方法，数组里面的某个对象仍然可能被改变：
 numbers = [&amp;#34;one&amp;#34;, &amp;#34;two&amp;#34;, &amp;#34;three&amp;#34;] numbers.freeze numbers[2].replace(&amp;#34;four&amp;#34;) p numbers  [&amp;#34;one&amp;#34;, &amp;#34;two&amp;#34;, &amp;#34;four&amp;#34;]   numbers = %w[one two three] numbers.freeze numbers[2].replace(&amp;#34;four&amp;#34;) p numbers 3 [&amp;#34;one&amp;#34;, &amp;#34;two&amp;#34;, &amp;#34;four&amp;#34;] 数组调用freeze的意思是不能改变数组，但是数组里面的对象是可以被改变的。
 Local variables and the things that look like them 当Ruby看到一个普通的单词（裸词标识符），例如s、ticket、puts或user_name，那么会将其理解为下面三种情况之一：
- 局部变量 关键字 方法调用  关键字是特殊的保留字，不能作为变量名。如果方法调用包含圆括号以及其中的参数，或者甚至是空圆括号，那么很明显，它不是一个局部变量。在其它情况下，可能会有一些含糊不清的地方，Ruby必须弄清楚：
+ 局部变量 关键字 方法调用  关键字是特殊的保留字，不能作为变量名。方法调用可以包含圆括号以及其中的参数，或者只是紧跟空圆括号。在其它情况下，可能会有一些含糊不清的地方，Ruby必须弄清楚：
  如果标识符是一个关键字，Ruby能够识别到，因为Ruby有一个内部的列表，可以识别它们。 如果标识符的右边有一个等号（=），那么它就是一个正在进行赋值的局部变量。 否则，标识符会被认为是一个局部变量或方法调用，Ruby解释器对这两者的处理方式相同。  Ruby将call推测的局部变量或方法，这导致标识符被评估。如果使用的标识符不是上面列出的三种东西中的任何一种，那么Ruby将以致命错误停止执行。
 Data, Expressions, and Flow Control 计算机程序几乎所有的时间都在操作数据或等待数据从其它地方送达。当输入文字、短语和数字，听音乐，看视频时计算机进行计算，作出决定，并向我们传递信息。要编写计算机程序，必须先了解数据及其操作的基本知识。
 Numbers and Expressions 编程时，表达式是数据（例如数字或字符串）、运算符（例如&#43;或-）和变量的组合。当计算机理解这些表达式时，会产生某种形式的结果。Ruby代码是由表达式组成的，每个表达式都会被评估为一个特定的值。下面这些都是表达式：
@@ -268,18 +268,18 @@ print(&amp;#34;hello &amp;#34;) puts(&amp;#34;world&amp;#34;) puts(&amp;#34;test
 5.times do puts &amp;#34;Test&amp;#34; end 另一种写法是用花括号代替do和end。尽管鼓励do和end用于多行代码块，但花括号使代码在单行上更易于阅读。因此，下面的代码的执行后结果完全相同：
 5.times { puts &amp;#34;Test&amp;#34;}  Test Test Test Test Test  5.times { puts _1 } 0 1 2 3 4 也就说，对于单行代码建议使用花括号，但对较长的代码块建议使用do和end。这是一个很好的习惯，几乎所有专业的Ruby开发者都遵循这种风格。
 在Ruby中，有一种创建循环的机制称为迭代器，一个迭代器是逐个遍历项目列表中的东西。还有其它迭代器可用于数值类型，下面是3个常用的迭代器：
-1.upto(5) { ...code to loop here... }  10.downto(5) { ...code to loop here... }  0.step(50, 5) { ...code to loop here... }   1.upto(5) { puts _1 } 1 2 3 4 5  9.downto(7) { puts _1 } 9 8 7  6.step(20, 6) { puts _1 } 6 12 18  30.step(9, -4) { puts _1 } 30 26 22 18 14 10  目前为止还不知道每一步迭代的数字，以便能在循环的代码中对它做一些事情。如果想打印出当前的迭代数呢？值得庆幸的是，刚才讲解的所有迭代器都会自动将迭代的状态作为参数传递给循环代码，然后可以将其提取到一个变量中使用：
-1.upto(5) do |number|  puts number end  6.downto(1) do |i|  puts i end  1.step(50, 10) do |i|  puts i end   10.times do |i|  puts i end 需要注意的是，有些方法会执行代码块并传递数据，然后这些数据能够捕获到变量中。在上面的示例代码中，对整数可用的upto方法将每次迭代的值传递到代码块中，我们将其&amp;quot;captured&amp;quot;到变量number中。
-Floating Point Numbers 默认情况下，Ruby将任何没有为小数点的数字视为整数。当使用10 / 3 时，实际上是要求Ruby将两个整数相除，而Ruby会给出一个整数作为结果。因此，下面的代码运行后的结果为3，而不是3.333：
-puts 10 / 3 如果将代码做一些小小的改动：
-puts 10 / 3.0 puts 10.0 / 3 puts 10.0 / 3.0 上面3个表达式输出的结果将会是3.3333333333333335。上面的代码中Ruby处理Float类型的数字对象，并返回一个Float，并提供期望的精度级别。
-在某些情况下，无法控制传入的数字，但仍希望将它们被视为浮点数。考虑下面这种情况，用户输入两个要除的数字，而这些数字需要一个精确的答案：
+1.upto(5) { ...code to loop here... }  10.downto(5) { ...code to loop here... }  0.step(50, 5) { ...code to loop here... }   1.upto(5) { puts _1 } 1 2 3 4 5  9.downto(7) { puts _1 } 9 8 7  6.step(20, 6) { puts _1 } 6 12 18  30.step(9, -4) { puts _1 } 30 26 22 18 14 10  目前为止还不知道每一步迭代的数字，以便能在循环的代码中使用迭代次数做一些事情。刚才讲解的所有迭代器都会自动将当前迭代的状态作为参数传递给循环代码，可以将其提取到一个变量中使用：
+1.upto(5) do |number|  puts number end  6.downto(1) do |i|  puts i end  1.step(50, 10) do |i|  puts i end   10.times do |i|  puts i end 需要注意的是，有些方法会执行代码块并传递数据，然后这些数据能够捕获到变量中。在上面的示例代码中，对整数可用的upto方法将每次迭代的值传递到代码块中，我们将其captured到变量number中，以便在代码中使用。
+Floating Point Numbers 默认情况下，Ruby将任何没有小数点的数字视为整数。当使用10 / 3 时，实际上是要求Ruby将两个整数相除，而Ruby会给出一个整数作为结果。因此，下面的代码运行后的结果为3，而不是3.333：
+puts 10 / 3 如果将代码做一些小小地改动：
+puts 10 / 3.0 puts 10.0 / 3 puts 10.0 / 3.0 那么，上面3个表达式输出的结果将会是3.3333333333333335。上面的代码中Ruby处理Float类型的数字对象，并返回一个Float，并提供期望的精度级别。
+在某些情况下，无法控制传入的数字，但仍希望将它们被视为浮点数。考虑下面这种情况，用户输入两个要除的数字，而这些数字需要一个精确的结果：
 x = 10 y = 3 puts x / y 上面代码中两个输入数字都是整数，所以结果只会是一个整数。幸运的是，整数有一种特殊的方法可以即时将自身转换为浮点数，只需像下面这样重写代码即可：
 x = 10 y = 3 puts x.to_f / y 相似地，浮点数也可以转换为整型，只要使用to_i方法即可：
-puts(5.7.to_i) puts(5.7.to_int) Constants 考虑一些永远不会改变的值——例如pi的值。这些不变的值称为常量，在Ruby中可以用以大写字母开头的变量名来表示：
-Pi = 3.141592 如果尝试改变Pi的值，虽然是可以的，但编译器会产生警告already initialized constant Pi（不是编译错误，只是一个警告）。
-实际上，目前在Ruby中可以改变常量的值，但编译器会发出明确的警告信息。将来，Ruby可能会对常量实施更严格的控制，因此请尊重这种使用方式，并尽量不要在程序中给常量重新赋值。
-Text and Strings 字符串是任意长度的文本字符（包括数字、字母、空格和符号）的集合。Ruby中的所有字符串都是String类型，可以通过调用字符串的类方法class的结果来证实：
+puts(5.7.to_i) puts(5.7.to_int) Constants 考虑一些永远不会改变的值——例如pi的值，这些不变的值称为常量。在Ruby中可以用以大写字母开头的变量名来表示：
+Pi = 3.141592 如果尝试改变Pi的值，虽然目前是可以的，但编译器会产生警告already initialized constant Pi。需要注意的是这种情况不是编译错误，只是一个警告。
+实际上，目前在Ruby中可以改变常量的值，但编译器会发出明确的警告信息。将来，Ruby可能会对常量实施更严格的控制，因此请尊重这种使用方式，尽量不要在程序中给常量重新赋值。
+Text and Strings 字符串是任意长度的文本字符（包括数字、字母、空格和符号）的集合。Ruby中的所有字符串都是String类型，可以通过调用字符串的类方法class来证实：
 puts &amp;#34;Hello world&amp;#34;.class # String 如同数值类型，字符串也可以使用操作符：
 x = &amp;#34;Test&amp;#34; y = &amp;#34;String&amp;#34; puts &amp;#34;Success!&amp;#34; if x &#43; y == &amp;#34;TestString&amp;#34; 使用双引号仅适用单行字符串，如果想要字符串文本跨越多行，可以使用如下方式：
 x = %q{This is a test of the multi line capabilities} puts x 在上面的例子中，多行字符串以%q{}包裹。实际上花括号是非必须的，可以使用&amp;lt;和&amp;gt;，或（和），或者简单地使用自己选择的其它两个定界符，例如！和！。下面这段代码将以完全相同的方式工作：
