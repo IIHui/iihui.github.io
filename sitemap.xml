@@ -251,12 +251,12 @@ str = &amp;#34;Hello&amp;#34; abc = str str = &amp;#34;Goodbye&amp;#34; puts str
 References and method arguments 下面的代码表明在change_string方法中，变量str被分配了一个指向字符串的引用。一旦方法持有了一个引用，它通过该引用对该对象所做的任何改变都是对其它引用都是可见的：
 def change_string(str)  str.replace(&amp;#34;New string content!&amp;#34;) end s = &amp;#34;Original string content!&amp;#34; puts s change_string(s) puts s  Original string content! New string content! 如果想保护对象不在方法中被改变，可以使用dup方法，该方法可以复制一个对象：
 def change_string(str)  str.replace(&amp;#34;New string content!&amp;#34;) end s = &amp;#34;Original string content!&amp;#34; puts s change_string(s.dup) puts s  Original string content! Original string content! 也可以冻结一个对象，这样可以防止它发生进一步变化:
-def change_string(str)  str.replace(&amp;#34;New string content!&amp;#34;) end s = &amp;#34;Original string content!&amp;#34; puts s s.freeze change_string(s) puts s  Uncaught exception: can&amp;#39;t modify frozen String: &amp;#34;Original string content!&amp;#34; 需要注意的是，freeze是永久的，没有对应的unfreeze方法。还有一个方法叫clone，它很像dup。不同的是，如果clone一个冻结的对象，克隆的对象也会被冻结，而如果复制一个冻结的对象，复制的对象不会被冻结。
-对于数组而言，即使调用了freeze方法，数组里面的对象仍然可能被改变：
-numbers = [&amp;#34;one&amp;#34;, &amp;#34;two&amp;#34;, &amp;#34;three&amp;#34;] numbers.freeze numbers[2].replace(&amp;#34;four&amp;#34;) p numbers  [&amp;#34;one&amp;#34;, &amp;#34;two&amp;#34;, &amp;#34;four&amp;#34;] 数组调用freeze的意思是不能改变数组，但是数组里面的字符串可以被改变。
-Local variables and the things that look like them 当Ruby看到一个普通的单词在那里（裸词标识符），像s、ticket、puts或user_name，那么它将其解释为三种情况之一：
- 局部变量 关键字 方法调用  关键字是特殊的保留字，不能作为变量名。如果方法调用包含圆括号以及其中的参数，或者甚至是空圆括号，那么很明显，它不是一个局部变量。在其他情况下，可能会有一些含糊不清的地方，Ruby必须弄清楚：
- 如果标识符是一个关键字，它就是一个关键字（Ruby有一个内部的列表，可以识别它们）。 如果标识符的右边有一个等号（=），那么它就是一个正在进行赋值的局部变量。 否则，标识符会被认为是一个局部变量或方法调用，Ruby解释器对这两者的处理方式相同。  Ruby将&amp;quot;call&amp;ldquo;推测的局部变量或方法，这导致标识符被评估。如果使用的标识符不是上面列出的三种东西中的任何一种，那么Ruby会以致命错误停止执行。
+def change_string(str)  str.replace(&amp;#34;New string content!&amp;#34;) end s = &amp;#34;Original string content!&amp;#34; puts s s.freeze change_string(s) puts s  Uncaught exception: can&amp;#39;t modify frozen String: &amp;#34;Original string content!&amp;#34; 需要注意的是，freeze是永久的，没有对应的unfreeze方法。还有一个方法叫clone，它很像dup。不同的是，如果clone一个冻结的对象，clone的对象也会被冻结；但如果dup一个冻结的对象，复制的对象不会被冻结。
+对于数组而言，即使调用了freeze方法，数组里面的某个对象仍然可能被改变：
+numbers = [&amp;#34;one&amp;#34;, &amp;#34;two&amp;#34;, &amp;#34;three&amp;#34;] numbers.freeze numbers[2].replace(&amp;#34;four&amp;#34;) p numbers  [&amp;#34;one&amp;#34;, &amp;#34;two&amp;#34;, &amp;#34;four&amp;#34;]   numbers = %w[one two three] numbers.freeze numbers[2].replace(&amp;#34;four&amp;#34;) p numbers 3 [&amp;#34;one&amp;#34;, &amp;#34;two&amp;#34;, &amp;#34;four&amp;#34;] 数组调用freeze的意思是不能改变数组，但是数组里面的对象是可以被改变的。
+Local variables and the things that look like them 当Ruby看到一个普通的单词（裸词标识符），例如s、ticket、puts或user_name，那么会将其理解为下面三种情况之一：
+ 局部变量 关键字 方法调用  关键字是特殊的保留字，不能作为变量名。如果方法调用包含圆括号以及其中的参数，或者甚至是空圆括号，那么很明显，它不是一个局部变量。在其它情况下，可能会有一些含糊不清的地方，Ruby必须弄清楚：
+ 如果标识符是一个关键字，Ruby能够识别到，因为Ruby有一个内部的列表，可以识别它们。 如果标识符的右边有一个等号（=），那么它就是一个正在进行赋值的局部变量。 否则，标识符会被认为是一个局部变量或方法调用，Ruby解释器对这两者的处理方式相同。  Ruby将call推测的局部变量或方法，这导致标识符被评估。如果使用的标识符不是上面列出的三种东西中的任何一种，那么Ruby将以致命错误停止执行。
 Data, Expressions, and Flow Control 计算机程序几乎所有的时间都在操作数据或等待数据从其它地方送达。当输入文字、短语和数字，听音乐，看视频时计算机进行计算，作出决定，并向我们传递信息。要编写计算机程序，必须先了解数据及其操作的基本知识。
 Numbers and Expressions 编程时，表达式是数据（例如数字或字符串）、运算符（例如&#43;或-）和变量的组合。当计算机理解这些表达式时，会产生某种形式的结果。Ruby代码是由表达式组成的，每个表达式都会被评估为一个特定的值。下面这些都是表达式：
 5 1 &#43; 2 &amp;#34;a&amp;#34; &#43; &amp;#34;b&amp;#34; &#43; &amp;#34;c&amp;#34; 100 - 5 * (2 - 1) x &#43; y 变量是占位符或对象的引用，包括数字、文本或创建的任何类型的对象。可以随心所欲地命名变量，只是有一些限制，必须满足下面3个条件：
