@@ -225,18 +225,17 @@ a = Object.new b = a puts &amp;#34;a&amp;#39;s id is #{a.object_id}and b&amp;#39
 Ruby提供了多种方法来比较不同类型对象的相等性，比较对象ID是否相等只是衡量对象相等性的一种方法。现在，我们转向先天方法列表中的下一个方法：respond_to?。在下面的代码中在发送talk消息时，可以先检查对象是否对talk响应：
 if obj.respond_to?(&amp;#34;talk&amp;#34;)  obj.talk else  puts &amp;#34;Sorry, the object doesn&amp;#39;t understand the &amp;#39;talk&amp;#39; message.&amp;#34; end 实际上respond_to?方法是introspection或reflection，这两个术语指的是在程序运行时检查程序的状态。 Ruby提供了许多用于introspection的工具。使用方法检查某个方法是否为对象的方法就是一种introspection或reflection技术。
 if ticket.respond_to?(request)  puts ticket.send(request) else  puts &amp;#34;No such information available&amp;#34; end send是一个广泛的概念：电子邮件被发送，数据被发送到I/O套接字等等。对于程序来说，定义一个叫做send的方法，与Ruby内置的send方法相冲突是很常见的事情。
-因此，Ruby给了一个send的替代方法__send__。一般来说，不会有人用这个名字定义一个方法，所以内置的Ruby版本总是可用的，并且永远不会与新写的方法发生冲突。它看起来很奇怪，但从方法名称冲突的角度来看，它比普通的send版本更安全。
-此外，还有一个安全的，但方式不同的send (或__send__) 版本，叫做public_send。普通send和public_send的区别在于send可以调用对象的私有方法，而public_send不能。
-很多情况下是使用点操作符来发送消息。但是，替代方法send可能是有用和强大的，也足够容易出错，以至于几乎总是先调用response_to?。在某些情况下，response_to?甚至可能过于宽泛而不安全，可能只向一个对象发送一个消息，如果该消息包含在一个预先确定的消息「允许列表」中。
-这在处理用户输入时尤其重要。从用户那里获取输入信息，并使用它来调用方法，这可能会出现意想不到的行为，甚至是恶意的攻击。指导原则是要小心向对象发送任意的消息，特别是当这些消息是基于用户的选择或输入时。
-当调用方法时，必须提供正确数目的实参，如果提供错误的参数，则会出现编译错误：
-obj = Object.new def obj.one_arg(x)  puts &amp;#34;I require one and only one argument!&amp;#34; end obj.one_arg(1, 2, 3)  Uncaught exception: wrong number of arguments 如果想要一个方法接受多个参数，可以在参数前面加*：
-obj = Object.new  def obj.multi_args(*x)  puts &amp;#34;I can take zero or more arguments!&amp;#34; end  obj.multi_args(1, 2, 3)  def two_or_more(a, b, *c)  puts &amp;#34;I require two or more arguments!&amp;#34;  puts &amp;#34;And sure enough, I got: &amp;#34;  p a, b, c end  two_or_more(1,2,3,4,5) 参数也可以添加默认值：
+因此，Ruby内置了send的一个替代方法__send__。一般来说，不会有人用这个名字定义一个新方法，所以内置的版本总是可用的。它看起来很奇怪，但从方法名称冲突的角度来看，它比普通的send版本更安全。
+此外，还有一个安全的，但方式不同的send 版本，叫做public_send方法。普通send和public_send的区别在于send可以调用对象的私有方法，而public_send不能。
+if person2.respond_to?(&amp;#34;talk&amp;#34;)  person2.__send__(&amp;#39;talk&amp;#39;)  person2.send(&amp;#39;talk&amp;#39;)  person2.public_send(&amp;#39;talk&amp;#39;) else  puts &amp;#34;Sorry, the object doesn&amp;#39;t understand the &amp;#39;talk&amp;#39; message.&amp;#34; end 很多情况下使用点操作符来发送消息。但是，替代方法send可能是有用和强大的，也足够容易出错，以至于几乎总是需要先调用response_to?方法。
+如果从用户那里获取输入信息，并使用它来调用方法，这可能会出现意想不到的行为，甚至是恶意的攻击。指导原则是要小心向对象发送任意的消息，特别是当这些消息是基于用户的选择或输入时。
+当调用方法时，必须提供正确数目的实参，如果提供错误数目的实参，则会出现编译错误。下面的one_arg的方法只能接受一个参数：
+obj = Object.new def obj.one_arg(x)  puts &amp;#34;I require one and only one argument!&amp;#34; end obj.one_arg(1, 2, 3)  Uncaught exception: wrong number of arguments 如果想要一个方法接受多个参数，可以在参数前面加一个*前缀：
+obj = Object.new  def obj.multi_args(*x)  puts &amp;#34;I can take zero or more arguments!&amp;#34; end  obj.multi_args(1, 2, 3)  def two_or_more(a, b, *c)  puts &amp;#34;I require two or more arguments!&amp;#34;  puts &amp;#34;And sure enough, I got: &amp;#34;  p a, b, c end  two_or_more(1,2,3,4,5)   I can take zero or more arguments! I require two or more arguments! And sure enough, I got: 1 2 [3, 4, 5] 方法中的参数也可以添加默认值：
 def default_args(a, b, c = 1)  puts &amp;#34;Values of variables: &amp;#34;, a, b, c end default_args(3,2)  3 2 1 参数顺序：
 def mixed_args(a, b, *c, d)  puts &amp;#34;Arguments:&amp;#34;  p a, b, c, d end  mixed_args(1, 2, 3, 4, 5)  1 2 [3, 4] 5  mixed_args(1,2,3)  1 2 [] 3 下图提供了一个参数分配逻辑的图形表示。下面框中列出的赋值显示了优先级的顺序：首先处理必需的参数，然后是默认值的可选参数，最后是可变参数：
 在Ruby中，所有参数都是有顺序的。必需的参数具有优先权，无论它们出现在列表的左边还是右边，所有可选参数必须出现在中间，但必须参数可以放在两边：
-def all_optional(*args)  def broken_args(x, *y, z = 1) end syntax error, unexpected &amp;#39;=&amp;#39;, expecting &amp;#39;)&amp;#39; d
-Local variables and variable assignment 局部变量以小写字母或下划线开始，并且以字母、数字和下划线开始。下面都是合法的局部变量名：x,_x,name,firs_name,plan9,user_ID,_。局部的意思是仅在程序的有限部分可见，例如方法定义。局部变量可以在多个地方重复使用。
+def all_optional(*args)  def broken_args(x, *y, z = 1) end syntax error, unexpected &amp;#39;=&amp;#39;, expecting &amp;#39;)&amp;#39; Local variables and variable assignment 局部变量以小写字母或下划线开始，并且以字母、数字和下划线开始。下面都是合法的局部变量名：x,_x,name,firs_name,plan9,user_ID,_。局部的意思是仅在程序的有限部分可见，例如方法定义。局部变量可以在多个地方重复使用。
 def say_goodbye  x = &amp;#34;Goodbye&amp;#34;  puts x end  def start_here  x = &amp;#34;Hello&amp;#34;  puts x  say_goodbye  puts &amp;#34;Let&amp;#39;s check whether x remained the same:&amp;#34;  puts x end  start_here  Hello Goodbye Let&amp;#39;s check whether x remained the same: Hello 变量赋值给人的感觉是使左边的变量被设置为右边的对象:
 str = &amp;#34;Hello&amp;#34; 在下面的代码中，虽然只是替换了变量str的值，但是abc的值也被替换了。这是因为变量不持有对象的值，只是对象的引用，因此str只是string对象的引用。
 在一次赋值中，如果左边是一个变量名，右边是一个对象，那么该变量收到的是该对象的一个引用。但在一个变量到另一个变量的赋值中（abc = str），左边的变量收到了储存在右边变量中的引用的副本，结果两个变量现在都指向同一个对象的引用。

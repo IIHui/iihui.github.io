@@ -241,7 +241,7 @@ code.has-jax {
     <i class="fa fa-file-word-o"></i>
 </span>
 <span class="post-meta-item-text">字数: </span>
-<span class="leancloud-visitors-count">24876</span>
+<span class="leancloud-visitors-count">24837</span>
 &nbsp; | &nbsp;
 <span class="post-meta-item-icon">
     <i class="fa fa-coffee"></i>
@@ -404,11 +404,18 @@ code.has-jax {
 </span></span><span style="display:flex;"><span>  puts <span style="color:#e6db74">&#34;No such information available&#34;</span>
 </span></span><span style="display:flex;"><span><span style="color:#66d9ef">end</span>
 </span></span></code></pre></div><p><code>send</code>是一个广泛的概念：电子邮件被发送，数据被发送到<code>I/O</code>套接字等等。对于程序来说，定义一个叫做<code>send</code>的方法，与<code>Ruby</code>内置的<code>send</code>方法相冲突是很常见的事情。</p>
-<p>因此，<code>Ruby</code>给了一个<code>send</code>的替代方法<code>__send__</code>。一般来说，不会有人用这个名字定义一个方法，所以内置的<code>Ruby</code>版本总是可用的，并且永远不会与新写的方法发生冲突。它看起来很奇怪，但从方法名称冲突的角度来看，它比普通的<code>send</code>版本更安全。</p>
-<p>此外，还有一个安全的，但方式不同的<code>send</code> (或<code>__send__</code>) 版本，叫做<code>public_send</code>。普通<code>send</code>和<code>public_send</code>的区别在于<code>send</code>可以调用对象的私有方法，而<code>public_send</code>不能。</p>
-<p>很多情况下是使用点操作符来发送消息。但是，替代方法<code>send</code>可能是有用和强大的，也足够容易出错，以至于几乎总是先调用<code>response_to?</code>。在某些情况下，<code>response_to?</code>甚至可能过于宽泛而不安全，可能只向一个对象发送一个消息，如果该消息包含在一个预先确定的消息「允许列表」中。</p>
-<p>这在处理用户输入时尤其重要。从用户那里获取输入信息，并使用它来调用方法，这可能会出现意想不到的行为，甚至是恶意的攻击。指导原则是要小心向对象发送任意的消息，特别是当这些消息是基于用户的选择或输入时。</p>
-<p>当调用方法时，必须提供正确数目的实参，如果提供错误的参数，则会出现编译错误：</p>
+<p>因此，<code>Ruby</code>内置了<code>send</code>的一个替代方法<code>__send__</code>。一般来说，不会有人用这个名字定义一个新方法，所以内置的版本总是可用的。它看起来很奇怪，但从方法名称冲突的角度来看，它比普通的<code>send</code>版本更安全。</p>
+<p>此外，还有一个安全的，但方式不同的<code>send</code> 版本，叫做<code>public_send</code>方法。<font color=red>普通<code>send</code>和<code>public_send</code>的区别在于<code>send</code>可以调用对象的私有方法，而<code>public_send</code>不能</font>。</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ruby" data-lang="ruby"><span style="display:flex;"><span><span style="color:#66d9ef">if</span> person2<span style="color:#f92672">.</span>respond_to?(<span style="color:#e6db74">&#34;talk&#34;</span>)  
+</span></span><span style="display:flex;"><span>  person2<span style="color:#f92672">.</span>__send__(<span style="color:#e6db74">&#39;talk&#39;</span>)  
+</span></span><span style="display:flex;"><span>  person2<span style="color:#f92672">.</span>send(<span style="color:#e6db74">&#39;talk&#39;</span>)  
+</span></span><span style="display:flex;"><span>  person2<span style="color:#f92672">.</span>public_send(<span style="color:#e6db74">&#39;talk&#39;</span>)  
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">else</span>  
+</span></span><span style="display:flex;"><span>  puts <span style="color:#e6db74">&#34;Sorry, the object doesn&#39;t understand the &#39;talk&#39; message.&#34;</span>  
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">end</span>
+</span></span></code></pre></div><p>很多情况下使用点操作符来发送消息。但是，替代方法<code>send</code>可能是有用和强大的，也足够容易出错，以至于几乎总是需要先调用<code>response_to?</code>方法。</p>
+<p>如果从用户那里获取输入信息，并使用它来调用方法，这可能会出现意想不到的行为，甚至是恶意的攻击。指导原则是<font color=red>要小心向对象发送任意的消息，特别是当这些消息是基于用户的选择或输入时</font>。</p>
+<p>当调用方法时，必须提供正确数目的实参，如果提供错误数目的实参，则会出现编译错误。下面的<code>one_arg</code>的方法只能接受一个参数：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ruby" data-lang="ruby"><span style="display:flex;"><span>obj <span style="color:#f92672">=</span> <span style="color:#66d9ef">Object</span><span style="color:#f92672">.</span>new
 </span></span><span style="display:flex;"><span><span style="color:#66d9ef">def</span> <span style="color:#a6e22e">obj</span><span style="color:#f92672">.</span><span style="color:#a6e22e">one_arg</span>(x)
 </span></span><span style="display:flex;"><span>  puts <span style="color:#e6db74">&#34;I require one and only one argument!&#34;</span>
@@ -416,7 +423,7 @@ code.has-jax {
 </span></span><span style="display:flex;"><span>obj<span style="color:#f92672">.</span>one_arg(<span style="color:#ae81ff">1</span>, <span style="color:#ae81ff">2</span>, <span style="color:#ae81ff">3</span>)
 </span></span><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span><span style="color:#66d9ef">Uncaught</span> <span style="color:#e6db74">exception</span>: wrong number of arguments
-</span></span></code></pre></div><p>如果想要一个方法接受多个参数，可以在参数前面加<code>*</code>：</p>
+</span></span></code></pre></div><p>如果想要一个方法接受多个参数，可以在参数前面加一个<code>*</code>前缀：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ruby" data-lang="ruby"><span style="display:flex;"><span>obj <span style="color:#f92672">=</span> <span style="color:#66d9ef">Object</span><span style="color:#f92672">.</span>new
 </span></span><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span><span style="color:#66d9ef">def</span> <span style="color:#a6e22e">obj</span><span style="color:#f92672">.</span><span style="color:#a6e22e">multi_args</span>(<span style="color:#f92672">*</span>x)
@@ -432,7 +439,15 @@ code.has-jax {
 </span></span><span style="display:flex;"><span><span style="color:#66d9ef">end</span>
 </span></span><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span>two_or_more(<span style="color:#ae81ff">1</span>,<span style="color:#ae81ff">2</span>,<span style="color:#ae81ff">3</span>,<span style="color:#ae81ff">4</span>,<span style="color:#ae81ff">5</span>)
-</span></span></code></pre></div><p>参数也可以添加默认值：</p>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>I can take zero <span style="color:#f92672">or</span> more arguments!
+</span></span><span style="display:flex;"><span>I require two <span style="color:#f92672">or</span> more arguments!
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">And</span> sure enough, I <span style="color:#e6db74">got</span>: 
+</span></span><span style="display:flex;"><span><span style="color:#ae81ff">1</span>
+</span></span><span style="display:flex;"><span><span style="color:#ae81ff">2</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">[</span><span style="color:#ae81ff">3</span>, <span style="color:#ae81ff">4</span>, <span style="color:#ae81ff">5</span><span style="color:#f92672">]</span>
+</span></span></code></pre></div><p>方法中的参数也可以添加默认值：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ruby" data-lang="ruby"><span style="display:flex;"><span><span style="color:#66d9ef">def</span> <span style="color:#a6e22e">default_args</span>(a, b, c <span style="color:#f92672">=</span> <span style="color:#ae81ff">1</span>)
 </span></span><span style="display:flex;"><span>  puts <span style="color:#e6db74">&#34;Values of variables: &#34;</span>, a, b, c
 </span></span><span style="display:flex;"><span><span style="color:#66d9ef">end</span>
@@ -461,14 +476,14 @@ code.has-jax {
 </span></span><span style="display:flex;"><span><span style="color:#f92672">[]</span>
 </span></span><span style="display:flex;"><span><span style="color:#ae81ff">3</span>
 </span></span></code></pre></div><p>下图提供了一个参数分配逻辑的图形表示。下面框中列出的赋值显示了优先级的顺序：<font color=red>首先处理必需的参数，然后是默认值的可选参数，最后是可变参数</font>：</p>
-<img src="https://iihui.github.io/Users/hui/Library/Application Support/typora-user-images/image-20220917175414668.png" alt="image-20220917175414668" style="zoom:57%;" />
+<img src="https://s2.loli.net/2022/10/22/W8ViKClYHBzbwFd.png" alt="W8ViKClYHBzbwFd" style="zoom:56%;" />
 <p>在<code>Ruby</code>中，所有参数都是有顺序的。必需的参数具有优先权，无论它们出现在列表的左边还是右边，<font color=red>所有可选参数必须出现在中间</font>，但必须参数可以放在两边：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ruby" data-lang="ruby"><span style="display:flex;"><span><span style="color:#66d9ef">def</span> <span style="color:#a6e22e">all_optional</span>(<span style="color:#f92672">*</span>args)
 </span></span><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span><span style="color:#66d9ef">def</span> <span style="color:#a6e22e">broken_args</span>(x, <span style="color:#f92672">*</span>y, z <span style="color:#f92672">=</span> <span style="color:#ae81ff">1</span>) 
 </span></span><span style="display:flex;"><span><span style="color:#66d9ef">end</span>
 </span></span><span style="display:flex;"><span>syntax error, unexpected <span style="color:#e6db74">&#39;=&#39;</span>, expecting <span style="color:#e6db74">&#39;)&#39;</span>
-</span></span></code></pre></div><p><img src="https://iihui.github.io/Users/hui/Library/Application Support/typora-user-images/image-20220917185840676.png" alt="image-20220917185840676" style="zoom:50%;" />d</p>
+</span></span></code></pre></div><img src="https://s2.loli.net/2022/10/22/KeiPxsyvCd89toE.png" alt="KeiPxsyvCd89toE" style="zoom:50%;" />
 <h2 id="local-variables-and-variable-assignment">Local variables and variable assignment</h2>
 <p>局部变量以小写字母或下划线开始，并且以字母、数字和下划线开始。下面都是合法的局部变量名：<code>x,_x,name,firs_name,plan9,user_ID,_</code>。局部的意思是仅在程序的有限部分可见，例如方法定义。局部变量可以在多个地方重复使用。</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ruby" data-lang="ruby"><span style="display:flex;"><span><span style="color:#66d9ef">def</span> <span style="color:#a6e22e">say_goodbye</span>
