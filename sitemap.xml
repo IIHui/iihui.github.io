@@ -233,9 +233,9 @@ if person2.respond_to?(&amp;#34;talk&amp;#34;)  person2.__send__(&amp;#39;talk&a
 obj = Object.new def obj.one_arg(x)  puts &amp;#34;I require one and only one argument!&amp;#34; end obj.one_arg(1, 2, 3)  Uncaught exception: wrong number of arguments 如果想要一个方法接受多个参数，可以在参数前面加一个*前缀：
 obj = Object.new  def obj.multi_args(*x)  puts &amp;#34;I can take zero or more arguments!&amp;#34; end  obj.multi_args(1, 2, 3)  def two_or_more(a, b, *c)  puts &amp;#34;I require two or more arguments!&amp;#34;  puts &amp;#34;And sure enough, I got: &amp;#34;  p a, b, c end  two_or_more(1,2,3,4,5)   I can take zero or more arguments! I require two or more arguments! And sure enough, I got: 1 2 [3, 4, 5] 方法中的参数也可以添加默认值：
 def default_args(a, b, c = 1)  puts &amp;#34;Values of variables: &amp;#34;, a, b, c end default_args(3,2)  3 2 1 参数顺序：
-def mixed_args(a, b, *c, d)  puts &amp;#34;Arguments:&amp;#34;  p a, b, c, d end  mixed_args(1, 2, 3, 4, 5)  1 2 [3, 4] 5  mixed_args(1,2,3)  1 2 [] 3 下图提供了一个参数分配逻辑的图形表示。下面框中列出的赋值显示了优先级的顺序：首先处理必需的参数，然后是默认值的可选参数，最后是可变参数：
-在Ruby中，所有参数都是有顺序的。必需的参数具有优先权，无论它们出现在列表的左边还是右边，所有可选参数必须出现在中间，但必须参数可以放在两边：
-def all_optional(*args)  def broken_args(x, *y, z = 1) end syntax error, unexpected &amp;#39;=&amp;#39;, expecting &amp;#39;)&amp;#39; Local variables and variable assignment 局部变量以小写字母或下划线开始，并且以字母、数字和下划线开始。下面都是合法的局部变量名：x,_x,name,firs_name,plan9,user_ID,_。局部的意思是仅在程序的有限部分可见，例如方法定义。局部变量可以在多个地方重复使用。
+def mixed_args(a, b, *c, d)  puts &amp;#34;Arguments:&amp;#34;  p a, b, c, d end  mixed_args(1, 2, 3, 4, 5)  1 2 [3, 4] 5  mixed_args(1,2,3)  1 2 [] 3 下图提供了一个参数分配逻辑的图形表示, 处理优先级顺序为：首先处理必需的参数，然后是默认值的可选参数，最后是可变参数：
+在Ruby中，所有参数都是有顺序的。必需的参数具有最高优先权，无论它们出现在参数列表的左边还是右边，所有可选参数必须出现在中间，但必须参数可以放在两边：
+def all_optional(*args)  def broken_args(x, *y, z = 1) end syntax error, unexpected &amp;#39;=&amp;#39;, expecting &amp;#39;)&amp;#39; Local variables and variable assignment 局部变量以小写字母或下划线开始，并且以字母、数字和下划线组成。下面都是合法的局部变量名：x,_x,name,firs_name,plan9,user_ID,_。局部的意思是仅在程序的有限部分可见，局部变量名可以在多个地方重复使用，局部变量的惯用命名法为下划线而非驼峰命名：
 def say_goodbye  x = &amp;#34;Goodbye&amp;#34;  puts x end  def start_here  x = &amp;#34;Hello&amp;#34;  puts x  say_goodbye  puts &amp;#34;Let&amp;#39;s check whether x remained the same:&amp;#34;  puts x end  start_here  Hello Goodbye Let&amp;#39;s check whether x remained the same: Hello 变量赋值给人的感觉是使左边的变量被设置为右边的对象:
 str = &amp;#34;Hello&amp;#34; 在下面的代码中，虽然只是替换了变量str的值，但是abc的值也被替换了。这是因为变量不持有对象的值，只是对象的引用，因此str只是string对象的引用。
 在一次赋值中，如果左边是一个变量名，右边是一个对象，那么该变量收到的是该对象的一个引用。但在一个变量到另一个变量的赋值中（abc = str），左边的变量收到了储存在右边变量中的引用的副本，结果两个变量现在都指向同一个对象的引用。
