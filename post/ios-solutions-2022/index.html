@@ -241,7 +241,7 @@ code.has-jax {
     <i class="fa fa-file-word-o"></i>
 </span>
 <span class="post-meta-item-text">字数: </span>
-<span class="leancloud-visitors-count">1761</span>
+<span class="leancloud-visitors-count">1946</span>
 &nbsp; | &nbsp;
 <span class="post-meta-item-icon">
     <i class="fa fa-coffee"></i>
@@ -419,8 +419,74 @@ code.has-jax {
 </span></span></code></pre></div><div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>nc -vz -w <span style="color:#ae81ff">2</span> ip port
 </span></span></code></pre></div><p><a href="https://zhuanlan.zhihu.com/p/577209888">https://zhuanlan.zhihu.com/p/577209888</a></p>
 <p><a href="https://superuser.com/questions/1749364/git-ssh-permission-denied-in-macos-13-ventura">https://superuser.com/questions/1749364/git-ssh-permission-denied-in-macos-13-ventura</a></p>
+<h1 id="删除xcode缓存">删除Xcode缓存</h1>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>rm -r ~/Library/Developer/Xcode/iOS<span style="color:#ae81ff">\ </span>DeviceSupport
-</span></span></code></pre></div>
+</span></span></code></pre></div><h1 id="url中文处理">url中文处理</h1>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span><span style="color:#66d9ef">extension</span> <span style="color:#a6e22e">String</span> {
+</span></span><span style="display:flex;"><span>     
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">// 转为合法的url</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">func</span> <span style="color:#a6e22e">urlEncoded</span>() -&gt; String {
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">let</span> encodeUrlString = <span style="color:#66d9ef">self</span>.addingPercentEncoding(withAllowedCharacters:
+</span></span><span style="display:flex;"><span>            .urlQueryAllowed)
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">return</span> encodeUrlString ?? <span style="color:#e6db74">&#34;&#34;</span>
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>     
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">// 还原</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">func</span> <span style="color:#a6e22e">urlDecoded</span>() -&gt; String {
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">return</span> <span style="color:#66d9ef">self</span>.removingPercentEncoding ?? <span style="color:#e6db74">&#34;&#34;</span>
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span><span style="color:#66d9ef">import</span> <span style="color:#a6e22e">UIKit</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">ShyView</span>: UIView {
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">lazy</span> <span style="color:#66d9ef">var</span> hiddenView: UIView? = {
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">let</span> hiddenView: UIView
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">let</span> textField = UITextField()
+</span></span><span style="display:flex;"><span>        textField.isSecureTextEntry = <span style="color:#66d9ef">true</span>
+</span></span><span style="display:flex;"><span>        hiddenView = textField.layer.sublayers?.first?.delegate <span style="color:#66d9ef">as</span>! UIView
+</span></span><span style="display:flex;"><span>        hiddenView.subviews.forEach { $0.removeFromSuperview() }
+</span></span><span style="display:flex;"><span>        hiddenView.isUserInteractionEnabled = <span style="color:#66d9ef">true</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">return</span> hiddenView
+</span></span><span style="display:flex;"><span>    }()
+</span></span><span style="display:flex;"><span>    
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">required</span> <span style="color:#66d9ef">init</span>?(coder: NSCoder) {
+</span></span><span style="display:flex;"><span>        fatalError(<span style="color:#e6db74">&#34;init(coder:) has not been implemented&#34;</span>)
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>    
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">init</span>?(<span style="color:#66d9ef">_</span> subview: UIView) {
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">super</span>.<span style="color:#66d9ef">init</span>(frame: .zero)
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">let</span> textField = UITextField()
+</span></span><span style="display:flex;"><span>        textField.isSecureTextEntry = <span style="color:#66d9ef">true</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">guard</span> <span style="color:#66d9ef">let</span> hiddenView = textField.layer.sublayers?.first?.delegate <span style="color:#66d9ef">as</span>? UIView
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">else</span> {
+</span></span><span style="display:flex;"><span>            print(<span style="color:#e6db74">&#34;Something doesn&#39;t work, please fill an issue with your OS and device version.&#34;</span>)
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">return</span> <span style="color:#66d9ef">nil</span>
+</span></span><span style="display:flex;"><span>        }
+</span></span><span style="display:flex;"><span>        hiddenView.subviews.forEach { $0.removeFromSuperview() }
+</span></span><span style="display:flex;"><span>        hiddenView.isUserInteractionEnabled = <span style="color:#66d9ef">true</span>
+</span></span><span style="display:flex;"><span>        backgroundColor = .clear
+</span></span><span style="display:flex;"><span>        hiddenView.translatesAutoresizingMaskIntoConstraints = <span style="color:#66d9ef">false</span>
+</span></span><span style="display:flex;"><span>        addSubview(hiddenView)
+</span></span><span style="display:flex;"><span>        NSLayoutConstraint.activate([
+</span></span><span style="display:flex;"><span>            hiddenView.leadingAnchor.constraint(equalTo: leadingAnchor),
+</span></span><span style="display:flex;"><span>            hiddenView.trailingAnchor.constraint(equalTo: trailingAnchor),
+</span></span><span style="display:flex;"><span>            hiddenView.bottomAnchor.constraint(equalTo: bottomAnchor),
+</span></span><span style="display:flex;"><span>            hiddenView.topAnchor.constraint(equalTo: topAnchor)
+</span></span><span style="display:flex;"><span>        ])
+</span></span><span style="display:flex;"><span>        
+</span></span><span style="display:flex;"><span>        subview.translatesAutoresizingMaskIntoConstraints = <span style="color:#66d9ef">false</span>
+</span></span><span style="display:flex;"><span>        hiddenView.addSubview(subview)
+</span></span><span style="display:flex;"><span>        NSLayoutConstraint.activate([
+</span></span><span style="display:flex;"><span>            hiddenView.leadingAnchor.constraint(equalTo: subview.leadingAnchor),
+</span></span><span style="display:flex;"><span>            hiddenView.trailingAnchor.constraint(equalTo: subview.trailingAnchor),
+</span></span><span style="display:flex;"><span>            hiddenView.bottomAnchor.constraint(equalTo: subview.bottomAnchor),
+</span></span><span style="display:flex;"><span>            hiddenView.topAnchor.constraint(equalTo: subview.topAnchor)
+</span></span><span style="display:flex;"><span>        ])
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p><a href="https://github.com/RyukieSama/Swifty">https://github.com/RyukieSama/Swifty</a></p>
+
     </div>
     <footer class="post-footer">
         
@@ -601,6 +667,8 @@ code.has-jax {
     <li><a href="#disable-entire-uimenucontroller-edit-menu-in-wkwebview">Disable entire UIMenuController edit menu in WKWebView</a></li>
     <li><a href="#disable-magnification-gesture-in-wkwebview">Disable magnification gesture in WKWebView</a></li>
     <li><a href="#swift_getobjecttype">swift_getObjectType</a></li>
+    <li><a href="#删除xcode缓存">删除Xcode缓存</a></li>
+    <li><a href="#url中文处理">url中文处理</a></li>
   </ul>
 </nav></div>
     </div>
