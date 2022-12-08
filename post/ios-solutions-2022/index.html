@@ -241,13 +241,13 @@ code.has-jax {
     <i class="fa fa-file-word-o"></i>
 </span>
 <span class="post-meta-item-text">字数: </span>
-<span class="leancloud-visitors-count">2511</span>
+<span class="leancloud-visitors-count">3522</span>
 &nbsp; | &nbsp;
 <span class="post-meta-item-icon">
     <i class="fa fa-coffee"></i>
 </span>
 <span class="post-meta-item-text">阅读: </span>
-<span class="leancloud-visitors-count">6 分钟</span>
+<span class="leancloud-visitors-count">8 分钟</span>
 </span>
       </div>
     </header>
@@ -670,6 +670,189 @@ code.has-jax {
 </span></span><span style="display:flex;"><span><span style="color:#66d9ef">self</span>?.tableView.reloadData()
 </span></span><span style="display:flex;"><span><span style="color:#75715e">// 去除无网络或若网情况下iOS 16出现的一小截短分割线_uitableviewcellseparatorview</span>
 </span></span><span style="display:flex;"><span><span style="color:#66d9ef">self</span>?.view.layoutIfNeeded()
+</span></span></code></pre></div><h2 id="水印">水印</h2>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span><span style="color:#75715e">/// 水印</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">MoWaterMarkView</span>: UIView {
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">/// 水平间距</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">private</span> <span style="color:#66d9ef">let</span> horzontalSpacing: CGFloat = <span style="color:#ae81ff">70</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">/// 竖直间距</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">private</span> <span style="color:#66d9ef">let</span> verticalSpacing: CGFloat = <span style="color:#ae81ff">85</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">/// 旋转角度(正旋45度 || 反旋45度)</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">private</span> <span style="color:#66d9ef">let</span> rotationAngle = <span style="color:#f92672">-</span>(CGFloat.pi <span style="color:#f92672">/</span> <span style="color:#ae81ff">4.0</span>)
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">/// 水印内容和时间的间距</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">private</span> <span style="color:#66d9ef">let</span> contentAndTimeSapcing: CGFloat = <span style="color:#ae81ff">5.0</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">/// 水印字体大小</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">private</span> <span style="color:#66d9ef">let</span> markFontSize: CGFloat = <span style="color:#ae81ff">15.0</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">/// 水印字体颜色</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">private</span> <span style="color:#66d9ef">let</span> markColor = UIColor(hex: <span style="color:#e6db74">&#34;000000&#34;</span>).withAlphaComponent(<span style="color:#ae81ff">0.05</span>)
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">/// 记录第一次show时的参数</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">private</span> <span style="color:#66d9ef">var</span> view: UIView?
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">/// 时间水印</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">private</span> <span style="color:#66d9ef">var</span> time: String?
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">/// 内容水印</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">private</span> <span style="color:#66d9ef">var</span> content: String?
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">private</span>(<span style="color:#66d9ef">set</span>) <span style="color:#66d9ef">lazy</span> <span style="color:#66d9ef">var</span> waterMarkImgView: UIImageView = {
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">let</span> imgView = UIImageView(frame: <span style="color:#66d9ef">self</span>.bounds)
+</span></span><span style="display:flex;"><span>        imgView.contentMode = .scaleAspectFill
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">return</span> imgView
+</span></span><span style="display:flex;"><span>    }()
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">override</span> <span style="color:#66d9ef">init</span>(frame: CGRect) {
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">super</span>.<span style="color:#66d9ef">init</span>(frame: frame)
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">self</span>.addSubview(waterMarkImgView)
+</span></span><span style="display:flex;"><span>        waterMarkImgView.snp.makeConstraints() { maker <span style="color:#66d9ef">in</span>
+</span></span><span style="display:flex;"><span>            maker.leading.trailing.top.bottom.equalToSuperview()
+</span></span><span style="display:flex;"><span>        }
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">deinit</span> {
+</span></span><span style="display:flex;"><span>        NotificationCenter.<span style="color:#66d9ef">default</span>.removeObserver(<span style="color:#66d9ef">self</span>)
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">required</span> <span style="color:#66d9ef">init</span>?(coder: NSCoder) {
+</span></span><span style="display:flex;"><span>        fatalError(<span style="color:#e6db74">&#34;init(coder:) has not been implemented&#34;</span>)
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>    
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">/// 显示固定水印内容: name,sapId以及时间</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">/// - Parameters:</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">///   - parent: 待添加水印的view，水印添加到该view上</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">///   - name: 姓名</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">///   - sapId: sapId</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">///   - time: 时间</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">static</span> <span style="color:#66d9ef">func</span> <span style="color:#a6e22e">add</span>(to parent: UIView, name: String, sapId: String, time: String) {
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">let</span> bounds = fetchBounds()
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">let</span> waterView = MoWaterMarkView(frame: bounds)
+</span></span><span style="display:flex;"><span>        waterView.view = parent
+</span></span><span style="display:flex;"><span>        waterView.content = sapId.isEmpty ? name : <span style="color:#e6db74">&#34;</span><span style="color:#e6db74">\(</span>name<span style="color:#e6db74">)</span><span style="color:#e6db74">/</span><span style="color:#e6db74">\(</span>sapId<span style="color:#e6db74">)</span><span style="color:#e6db74">&#34;</span>
+</span></span><span style="display:flex;"><span>        waterView.time = time
+</span></span><span style="display:flex;"><span>        waterView.waterMarkImgView.image = waterView.waterImage(size: bounds.size, content: waterView.content!, time: time)
+</span></span><span style="display:flex;"><span>        parent.addSubview(waterView)
+</span></span><span style="display:flex;"><span>        parent.bringSubviewToFront(waterView)
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>    
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">/// 显示定制水印内容+时间</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">/// - Parameters:</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">///   - view: 待添加水印的view</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">///   - content: 定制水印文字</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">///   - time: 添加水印时的时间</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">static</span> <span style="color:#66d9ef">func</span> <span style="color:#a6e22e">add</span>(to parent: UIView, content: String, time: String) {
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">let</span> bounds = fetchBounds()
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">let</span> waterView = MoWaterMarkView(frame: bounds)
+</span></span><span style="display:flex;"><span>        waterView.content = content
+</span></span><span style="display:flex;"><span>        waterView.time = time
+</span></span><span style="display:flex;"><span>        waterView.waterMarkImgView.image = waterView.waterImage(size: bounds.size, content: content, time: time)
+</span></span><span style="display:flex;"><span>        parent.addSubview(waterView)
+</span></span><span style="display:flex;"><span>        parent.bringSubviewToFront(waterView)
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>    
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">/// 从父view中移除水印view</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">private</span> <span style="color:#66d9ef">static</span> <span style="color:#66d9ef">func</span> <span style="color:#a6e22e">removeWaterView</span>(at parent: UIView?) {
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">if</span> <span style="color:#66d9ef">let</span> oldView = parent {
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">for</span> item <span style="color:#66d9ef">in</span> oldView.subviews <span style="color:#66d9ef">where</span> item <span style="color:#66d9ef">is</span> MoWaterMarkView {
+</span></span><span style="display:flex;"><span>                item.removeFromSuperview()
+</span></span><span style="display:flex;"><span>            }
+</span></span><span style="display:flex;"><span>        }
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>    
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">private</span> <span style="color:#66d9ef">static</span> <span style="color:#66d9ef">func</span> <span style="color:#a6e22e">fetchBounds</span>() -&gt; CGRect {
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">let</span> bounds = UIScreen.main.bounds
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">let</span> sideLength = <span style="color:#ae81ff">2</span><span style="color:#f92672">*</span>max(bounds.height, bounds.width)
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">return</span> CGRect(x: bounds.x, y: bounds.y, width: sideLength, height: sideLength)
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">/// 显示定制水印内容+时间</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">/// - Parameters:</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">///   - view: 待添加水印的view</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">///   - content: 定制水印文字</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">///   - time: 添加水印时的时间</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">func</span> <span style="color:#a6e22e">show</span>(view: UIView, content: String, time: String) {
+</span></span><span style="display:flex;"><span>        <span style="color:#75715e">// 添加水印之前移除旧的水印，避免多次添加</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">Self</span>.removeWaterView(at: <span style="color:#66d9ef">self</span>.view)
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">self</span>.view = view
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">self</span>.content = content
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">self</span>.time = time
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">let</span> image = waterImage(size: UIScreen.main.bounds.size, content: content, time: time)
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">self</span>.waterMarkImgView.image = image
+</span></span><span style="display:flex;"><span>        view.addSubview(<span style="color:#66d9ef">self</span>)
+</span></span><span style="display:flex;"><span>        view.bringSubviewToFront(<span style="color:#66d9ef">self</span>)
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">/// 生成水印图片</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">private</span> <span style="color:#66d9ef">func</span> <span style="color:#a6e22e">waterImage</span>(size: CGSize, content: String, time: String) -&gt; UIImage? {
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">let</span> imgW: CGFloat = size.width
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">let</span> imgH: CGFloat = size.height
+</span></span><span style="display:flex;"><span>        <span style="color:#75715e">// 开启上下文</span>
+</span></span><span style="display:flex;"><span>        UIGraphicsBeginImageContextWithOptions(size, <span style="color:#66d9ef">false</span>, <span style="color:#ae81ff">0</span>)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>        <span style="color:#75715e">// 文字内容</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">let</span> string1 = content
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">let</span> string2 = time
+</span></span><span style="display:flex;"><span>        <span style="color:#75715e">// 绘制文字的样式</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">let</span> paragraphStyle = NSParagraphStyle.<span style="color:#66d9ef">default</span>.mutableCopy() <span style="color:#66d9ef">as</span>? NSMutableParagraphStyle
+</span></span><span style="display:flex;"><span>        paragraphStyle?.alignment = NSTextAlignment.center
+</span></span><span style="display:flex;"><span>        paragraphStyle?.lineBreakMode = .byClipping
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">let</span> attributes1 = [NSAttributedString.Key.foregroundColor: markColor, NSAttributedString.Key.font: UIFont.systemFont(ofSize: markFontSize), NSAttributedString.Key.paragraphStyle: paragraphStyle]
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">let</span> attributes2 = [NSAttributedString.Key.foregroundColor: markColor, NSAttributedString.Key.font: UIFont.systemFont(ofSize: markFontSize <span style="color:#f92672">-</span> <span style="color:#ae81ff">3</span>), NSAttributedString.Key.paragraphStyle: paragraphStyle]
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">let</span> attrStr1 = NSAttributedString(string: string1, attributes: attributes1)
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">let</span> attrStr2 = NSAttributedString(string: string2, attributes: attributes2)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>        <span style="color:#75715e">// 绘制文字的宽高</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">let</span> str1Width = attrStr1.size().width
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">let</span> str1Height = attrStr1.size().height
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">let</span> str2Width = attrStr2.size().width
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">let</span> str2Height = attrStr2.size().height
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>        <span style="color:#75715e">// 获取当前上下文</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">guard</span> <span style="color:#66d9ef">let</span> context = UIGraphicsGetCurrentContext() <span style="color:#66d9ef">else</span> {
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">return</span> <span style="color:#66d9ef">nil</span>
+</span></span><span style="display:flex;"><span>        }
+</span></span><span style="display:flex;"><span>        <span style="color:#75715e">// 调整矩阵锚点到中心</span>
+</span></span><span style="display:flex;"><span>        context.concatenate(CGAffineTransform(translationX: imgW <span style="color:#f92672">*</span> <span style="color:#ae81ff">0.5</span>, y: imgH <span style="color:#f92672">*</span> <span style="color:#ae81ff">0.5</span>))
+</span></span><span style="display:flex;"><span>        <span style="color:#75715e">// 旋转矩阵</span>
+</span></span><span style="display:flex;"><span>        context.concatenate(CGAffineTransform(rotationAngle: rotationAngle))
+</span></span><span style="display:flex;"><span>        <span style="color:#75715e">// 恢复锚点位置到左上角</span>
+</span></span><span style="display:flex;"><span>        context.concatenate(CGAffineTransform(translationX: <span style="color:#f92672">-</span>imgW <span style="color:#f92672">*</span> <span style="color:#ae81ff">0.5</span>, y: <span style="color:#f92672">-</span>imgH <span style="color:#f92672">*</span> <span style="color:#ae81ff">0.5</span>))
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>        <span style="color:#75715e">// 对角线长度（实际绘制范围是对角线长度的正方形）</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">let</span> sqrtLength: CGFloat = sqrt(pow(imgW, <span style="color:#ae81ff">2</span>) <span style="color:#f92672">+</span> pow(imgH, <span style="color:#ae81ff">2</span>))
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>        <span style="color:#75715e">// 绘制的行数和列数</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">let</span> horCount: Int = Int(sqrtLength <span style="color:#f92672">/</span> CGFloat(max(str1Width, str2Width) <span style="color:#f92672">+</span> horzontalSpacing)) <span style="color:#f92672">+</span> <span style="color:#ae81ff">1</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">let</span> verCount: Int = Int(sqrtLength <span style="color:#f92672">/</span> CGFloat((str1Height <span style="color:#f92672">+</span> str2Height <span style="color:#f92672">+</span> contentAndTimeSapcing) <span style="color:#f92672">+</span> verticalSpacing)) <span style="color:#f92672">+</span> <span style="color:#ae81ff">1</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#75715e">// 此处计算出需要绘制水印文字的起始点，由于水印区域要大于图片区域所以起点在原有基础上移</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">let</span> orignX: CGFloat = <span style="color:#f92672">-</span>imgW <span style="color:#f92672">/</span> <span style="color:#ae81ff">2</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">let</span> orignY: CGFloat = <span style="color:#f92672">-</span>imgH <span style="color:#f92672">/</span> <span style="color:#ae81ff">2</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#75715e">// 在每列绘制时X坐标叠加</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">var</span> tempOrignX: CGFloat = orignX
+</span></span><span style="display:flex;"><span>        <span style="color:#75715e">// 在每行绘制时Y坐标叠加</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">var</span> tempOrignY: CGFloat = orignY
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">for</span> i <span style="color:#66d9ef">in</span> <span style="color:#ae81ff">0.</span>.&lt;verCount {
+</span></span><span style="display:flex;"><span>            tempOrignX = orignX
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">for</span> j <span style="color:#66d9ef">in</span> <span style="color:#ae81ff">0.</span>.&lt;horCount {
+</span></span><span style="display:flex;"><span>                string1.draw(<span style="color:#66d9ef">in</span>: CGRect(x: tempOrignX, y: tempOrignY, width: str1Width, height: str1Height), withAttributes: attributes1)
+</span></span><span style="display:flex;"><span>                string2.draw(<span style="color:#66d9ef">in</span>: CGRect(x: tempOrignX, y: tempOrignY <span style="color:#f92672">+</span> str1Height <span style="color:#f92672">+</span> contentAndTimeSapcing, width: str2Width, height: str2Height), withAttributes: attributes2)
+</span></span><span style="display:flex;"><span>                tempOrignX <span style="color:#f92672">+=</span> max(str1Width,str2Width) <span style="color:#f92672">+</span> horzontalSpacing
+</span></span><span style="display:flex;"><span>            }
+</span></span><span style="display:flex;"><span>            tempOrignY <span style="color:#f92672">+=</span> str1Height <span style="color:#f92672">+</span> str2Height <span style="color:#f92672">+</span> verticalSpacing <span style="color:#f92672">+</span> contentAndTimeSapcing
+</span></span><span style="display:flex;"><span>        }
+</span></span><span style="display:flex;"><span>        <span style="color:#75715e">// 上下文获取新图片</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">let</span> newImage = UIGraphicsGetImageFromCurrentImageContext()
+</span></span><span style="display:flex;"><span>        <span style="color:#75715e">// 关闭上下文</span>
+</span></span><span style="display:flex;"><span>        UIGraphicsEndImageContext()
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">return</span> newImage
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">override</span> <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">func</span> <span style="color:#a6e22e">hitTest</span>(<span style="color:#66d9ef">_</span> point: CGPoint, with event: UIEvent?) -&gt; UIView? {
+</span></span><span style="display:flex;"><span>        <span style="color:#75715e">// 水印view不响应触摸事件</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">nil</span>
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>}
 </span></span></code></pre></div>
     </div>
     <footer class="post-footer">
@@ -855,7 +1038,11 @@ code.has-jax {
     <li><a href="#url中文处理">url中文处理</a></li>
     <li><a href="#shyview">ShyView</a></li>
     <li><a href="#mach_vm_map">mach_vm_map</a></li>
-    <li><a href="#_uitableviewcellseparatorview">_uitableviewcellseparatorview</a></li>
+    <li><a href="#_uitableviewcellseparatorview">_uitableviewcellseparatorview</a>
+      <ul>
+        <li><a href="#水印">水印</a></li>
+      </ul>
+    </li>
   </ul>
 </nav></div>
     </div>
