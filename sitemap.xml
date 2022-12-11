@@ -2351,11 +2351,16 @@ class Car:  def __init__(self, make, model, year):  self.make = make  self.model
 class ElectriCar(Car):   def __init__(self, make, model, year):  super().__init__(make, model, year)  # 新属性  self.battery_size = 75   # 新方法  def describe_battery(self):  print(f&amp;#34;This car has {self.battery_size}-kWh battery&amp;#34;) 对于父类的方法，只要它不符合子类的行为，都可以进行重写：
 class ElectriCar(Car):   def __init__(self, make, model, year):  super().__init__(make, model, year)  # 新属性  self.battery_size = 75   # 新方法  def describe_battery(self):  print(f&amp;#34;This car has {self.battery_size}-kWh battery&amp;#34;)   # 重写父类的方法  def get_descriptive_name(self):  long_name = f&amp;#34;{self.year}{self.make}{self.model}{self.battery_size}&amp;#34;  return long_name.title()   my_tesla = ElectriCar(&amp;#39;tesla&amp;#39;, &amp;#39;models s&amp;#39;, 2019) print(my_tesla.get_descriptive_name()) 可根据需要在程序中文件中导入任意数量的类：
 # 导入文件中的所有类 from module_name import * # 导入文件中的多个类 from module_name import classA,classB,... 标准库 Python标准库是一组模块，如果想要使用标准库中的任何函数和类，只需要在程序开头包含一条简单的import语句：
-from random import randint, choice  print(randint(1, 6)) print(choice(players))  3 name 文件和异常 关键字with可以在不需要访问文件后将其关闭。在下面的程序中调用了open，但没有调用close。也可以调用open和close来打开或关闭文件，但这样做时，如果程序存在bug导致close未执行，文件将不会关闭。未妥善关闭文件可能导致数据丢失或受损：
+from random import randint, choice  print(randint(1, 6)) print(choice(players))  3 name 文件 关键字with可以在不需要访问文件后将其关闭。在下面的程序中调用了open，但没有调用close。也可以调用open和close来打开或关闭文件，但这样做时，如果程序存在bug导致close未执行，文件将不会关闭。未妥善关闭文件可能导致数据丢失或受损：
 with open(&amp;#39;pizza.py&amp;#39;) as file_object:  contents = file_object.read() print(contents) 相比于原始文件，该输出唯一不同的地方是末尾多了一个空行。因为read到达文件末尾时返回一个空字符串，而将这个空字符串显示出来就是一个空行。要删除多出来的空行，可在函数调用print中使用rstrip:
 with open(&amp;#39;pizza.py&amp;#39;) as file_object:  contents = file_object.read() print(contents.rstrip()) 读取文件时，可能需要检查其中的每一行：
 with open(&amp;#39;pizza.py&amp;#39;) as file_object:  for line in file_object:  print(line.rstrip())  with open(&amp;#39;pizza.py&amp;#39;) as file_object:  lines = file_object.readlines() for line in lines:  print(line.rstrip()) 函数readlines()从文件中读取每一行，并将其存储在一个列表中。在with代码块外，依然可使用这个变量。
-</content>
+打开文件时，可指定读取模式。要将文本写入文件，在调用open()时需要提供另一个实参w，告诉Python要写入打开的文件。如果写入的文件不存在，函数open()将自动创建它，如果指定的文件已存在，将在返回文件对象前清空该文件的内容：
+with open(&amp;#39;test.txt&amp;#39;, &amp;#39;w&amp;#39;) as file_object:  file_object.write(&amp;#39;I love programming&amp;#39;) 文件模式有读取模式r，写入模式w，附加模式a，写入模式r&#43;。函数write不会在写入的文本末尾添加换行符。如果要让字符串都单独占一行，需要在方法调用write中包含换行符：
+with open(&amp;#39;test.txt&amp;#39;, &amp;#39;w&amp;#39;) as file_object:  file_object.write(&amp;#39;I love programming\n&amp;#39;)  file_object.write(&amp;#39;I love creating new games.\n&amp;#39;) 异常 print(5 / 0)  ZeroDivisionError: division by zero 当认为可能会发生错误时，可编写一个try-except代码块来处理可能引发的异常。
+try:  print(5 / 0) except ZeroDivisionError:  print(&amp;#39;divide by zero&amp;#39;) 无异常的代码可以放到except后的else：
+try:  print(5 / 0) except ZeroDivisionError:  print(&amp;#39;divide by zero&amp;#39;) else:  print(&amp;#39;test&amp;#39;) 使用文件时，一种常见的问题是找不到文件：查找的文件可能在其他地方，文件名可能不正确，或者这个文件根本不存在。对于所有这些情形，都可使用try-except代码块以直观的方式处理：
+try:  with open(filename, encoding=&amp;#39;utf-8&amp;#39;) as f:  contents = f.read() except FileNotFoundError:  print(f&amp;#34;Sorry, the file{filename}does not exist&amp;#34;)  Sorry, the filealice.txt does not exist </content>
     </entry>
     
      <entry>
