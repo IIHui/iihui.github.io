@@ -241,7 +241,7 @@ code.has-jax {
     <i class="fa fa-file-word-o"></i>
 </span>
 <span class="post-meta-item-text">字数: </span>
-<span class="leancloud-visitors-count">26512</span>
+<span class="leancloud-visitors-count">26530</span>
 &nbsp; | &nbsp;
 <span class="post-meta-item-icon">
     <i class="fa fa-coffee"></i>
@@ -625,7 +625,7 @@ code.has-jax {
 </span></span><span style="display:flex;"><span>p numbers
 </span></span><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span><span style="color:#f92672">[</span><span style="color:#e6db74">&#34;one&#34;</span>, <span style="color:#e6db74">&#34;two&#34;</span>, <span style="color:#e6db74">&#34;four&#34;</span><span style="color:#f92672">]</span>
-</span></span></code></pre></div><p>数组调用<code>freeze</code>的意思是不能改变数组，即数组对象的引用但是<font color=red>数组里面的对象是可以被改变的</font>。</p>
+</span></span></code></pre></div><p>数组调用<code>freeze</code>的意思是不能改变数组，即指向数组对象的引用不能再被赋。但是，<font color=red>数组里面的某个对象还是可以被改变的</font>。</p>
 <h2 id="local-variables-and-the-things-that-look-like-them">Local variables and the things that look like them</h2>
 <p>当<code>Ruby</code>看到一个普通的单词（裸词标识符），例如<code>s、ticket、puts</code>或<code>user_name</code>这些词，会将其理解为下面三种情况之一：</p>
 <ul>
@@ -633,20 +633,21 @@ code.has-jax {
 <li>关键字</li>
 <li>方法调用</li>
 </ul>
-<p>关键字是特殊的保留字，不能用它们作为变量名。在<code>Ruby</code>中方法调用可以是普通的单词（不包含圆括号），或者是空圆括号中包含参数列表。如果普通单词后面跟上圆括号，显然不是局部变量。对于其它情况，可能会有一些含糊不清的地方，<code>Ruby</code>必须弄清楚：</p>
+<p>关键字是特殊的保留字，不能用它们作为变量名。在<code>Ruby</code>中方法调用可以是普通的单词（不包含圆括号），或者是一对圆括号中包含参数列表。如果普通单词后面跟上一对圆括号，显然不是局部变量。对于其它情况，可能会有一些含糊不清的地方，<code>Ruby</code>必须弄清楚：</p>
 <ul>
 <li>如果标识符是一个关键字，<code>Ruby</code>能够识别到（<code>Ruby</code>有一个内部关键字列表）。</li>
 <li>如果标识符的右边有一个等号（=），那么它就是一个正在进行赋值的局部变量。</li>
 <li>否则，标识符会被认为是一个局部变量或方法调用。<code>Ruby</code>解释器对<font color=red>这两者的处理方式是相同的</font>。</li>
 </ul>
-<p><code>Ruby</code>将<code>call</code>推测到的局部变量或方法，这会导致标识符被评估。如果使用的标识符不是上面列出的三种中的任何一种，那么<code>Ruby</code>将以致命错误停止执行。</p>
+<p><code>Ruby</code>将<code>call</code>推测到的局部变量或方法，这会导致标识符被评估。如果使用的标识符不是上面列出的三种中的任何一种，那么<code>Ruby</code>将以致命错误停止执行：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ruby" data-lang="ruby"><span style="display:flex;"><span>ruby <span style="color:#f92672">-</span>e <span style="color:#e6db74">&#34;x&#34;</span>
 </span></span><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span><span style="color:#66d9ef">Traceback</span> (most recent call last):
 </span></span><span style="display:flex;"><span><span style="color:#f92672">-</span><span style="color:#e6db74">e</span>:<span style="color:#ae81ff">1</span><span style="color:#e6db74">:in</span> <span style="color:#e6db74">`&lt;main&gt;&#39;: undefined local variable or method `</span>x<span style="color:#960050;background-color:#1e0010">&#39;</span> <span style="color:#66d9ef">for</span> <span style="color:#e6db74">main</span>:<span style="color:#66d9ef">Object</span> (<span style="color:#66d9ef">NameError</span>)
 </span></span></code></pre></div><h1 id="organizing-objects-with-classes">Organizing objects with classes</h1>
-<p>用<code>Object.new</code>创建一个新的对象，并为这个对象创建它自己的方法，一次定义一个新方法，这是感受<code>Ruby</code>以对象为中心编程的一个好方法。但是这种方法并不完全适用，如果在经营一个在线票房，而数据库需要处理成百上千的门票记录，必须找到另一种方法来在<code>Ruby</code>程序中创建和操作类似门票的对象。</p>
-<p>定义一个类可以把方法组合成方便的集合，这样就可以快速创建许多行为基本相同的对象。虽然可以为单个对象添加方法，但<font color=red>如果把我们的领域建模为类，就不必对每个对象都这样做了</font>。</p>
+<p>用<code>Object.new</code>创建一个新的对象，并<font color=red>为这个对象创建它自己的方法</font>，一次定义一个新方法，这是感受<code>Ruby</code>以对象为中心编程的一个好方法。</p>
+<p>但是这种方法并不完全是普适的，如果要经营一个在线票房，而数据库需要处理成百上千的门票记录，必须找到另一种方法来在<code>Ruby</code>程序中创建和操作类似门票的对象。</p>
+<p>定义一个类可以把方法组合成一个通用集合，这样就可以快速创建许多行为基本相同的对象。虽然可以为单个对象添加方法，但<font color=red>如果把我们的领域建模为类，就不必对每个对象都这样做了</font>。</p>
 <p>在<code>Ruby</code>中处理的所有东西要么是一个对象，要么是一个可以评估为对象的结构体，而每个对象都是某个类的实例。整数是一个类的实例，而类本身就是对象。</p>
 <p>一个典型的类是由方法定义的集合组成的。类的存在通常是为了被实例化，也就是说，创建的对象是类的实例。例如，之前创建了一个类的实例：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ruby" data-lang="ruby"><span style="display:flex;"><span>obj <span style="color:#f92672">=</span> <span style="color:#66d9ef">Object</span><span style="color:#f92672">.</span>new
