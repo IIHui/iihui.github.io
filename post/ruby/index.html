@@ -241,7 +241,7 @@ code.has-jax {
     <i class="fa fa-file-word-o"></i>
 </span>
 <span class="post-meta-item-text">字数: </span>
-<span class="leancloud-visitors-count">26525</span>
+<span class="leancloud-visitors-count">26495</span>
 &nbsp; | &nbsp;
 <span class="post-meta-item-icon">
     <i class="fa fa-coffee"></i>
@@ -1711,8 +1711,8 @@ code.has-jax {
 </span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">end</span>
 </span></span><span style="display:flex;"><span><span style="color:#66d9ef">end</span>
 </span></span></code></pre></div><p>在之前的示例代码中，使用<code>attr_accessor :name</code>来声明属性，并且能够十分简单地使用<code>name</code>。而上面的示例代码是为了说明封装的概念。</p>
-<p>在上面的代码中，<code>first_name</code>和<code>last_name</code>分别存储在<code>Person</code>类中，当<code>Person</code>实例生成时，<code>name</code>被分割为两部分，并分别赋值给<code>first_name</code>和<code>last_name</code>。</p>
-<p>一种可能的原因尽管我们想在应用程序中使用完整的<code>name</code>，但数据库设计可能要求把<code>first name</code>和<code>last name</code>放在不同的列中。因此，需要在类的代码中处理这个差异。</p>
+<p>在上面的代码中，<code>first_name</code>和<code>last_name</code>存储在<code>Person</code>类中，当<code>Person</code>实例生成时，<code>name</code>被分割为两部分，并分别赋值给<code>first_name</code>和<code>last_name</code>。</p>
+<p>一种可能的原因尽管我们想在应用程序中使用完整的<code>name</code>，但数据库设计可能要求把<code>first_name</code>和<code>last_name</code>放在不同列中。因此，需要在类的代码中处理这个差异。</p>
 <p>上面这种方法的另一个好处是，可以在把数据赋值给对象变量之前对其进行检查。例如，在<code>set_first_name</code>和<code>set_last_name</code>方法中，可以检查<code>name</code>是否包含足够的字符以被认为是有效的<code>name</code>。如果不满足，就可以引发一个错误。</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ruby" data-lang="ruby"><span style="display:flex;"><span>p <span style="color:#f92672">=</span> <span style="color:#66d9ef">Person</span><span style="color:#f92672">.</span>new(<span style="color:#e6db74">&#34;Fred Bloggs&#34;</span>)
 </span></span><span style="display:flex;"><span>puts p<span style="color:#f92672">.</span>name
@@ -1724,7 +1724,7 @@ code.has-jax {
 </span></span><span style="display:flex;"><span>puts p<span style="color:#f92672">.</span>name
 </span></span><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span><span style="color:#66d9ef">Fred</span> <span style="color:#66d9ef">Smith</span>
-</span></span></code></pre></div><p>实际上我们只想通过设置<code>name</code>来修改<code>first_name</code>和<code>last_name</code>，然而<code>set_first_name</code>和<code>set_last_name</code>方法依然是公开的，可以通过<code>Person</code>类的实例直接调用。幸运的是<font color=LightSeaGreen>可以使用封装来解决这个问题</font>：</p>
+</span></span></code></pre></div><p>实际上我们只想通过设置<code>name</code>来修改<code>first_name</code>和<code>last_name</code>，然而<code>set_first_name</code>和<code>set_last_name</code>这两个方法依然是公开的，可以通过<code>Person</code>的实例直接调用。幸运的是<font color=LightSeaGreen>可以使用封装来解决这个问题</font>：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ruby" data-lang="ruby"><span style="display:flex;"><span><span style="color:#66d9ef">class</span> <span style="color:#a6e22e">Person</span>
 </span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">def</span> <span style="color:#a6e22e">initialize</span>(name)
 </span></span><span style="display:flex;"><span>    set_name(name)
@@ -1752,11 +1752,10 @@ code.has-jax {
 </span></span><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span>p <span style="color:#f92672">=</span> <span style="color:#66d9ef">Person</span><span style="color:#f92672">.</span>new(<span style="color:#e6db74">&#34;Fred Bloggs&#34;</span>)
 </span></span><span style="display:flex;"><span>p<span style="color:#f92672">.</span>set_last_name(<span style="color:#e6db74">&#34;Smith&#34;</span>)
-</span></span><span style="display:flex;"><span>puts p<span style="color:#f92672">.</span>name
 </span></span><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span><span style="color:#66d9ef">Uncaught</span> <span style="color:#e6db74">exception</span>: <span style="color:#66d9ef">private</span> method set_last_name called <span style="color:#66d9ef">for</span> <span style="color:#e6db74">Person</span>:<span style="color:#ae81ff">0x00007fa79e101a60</span>
 </span></span></code></pre></div><p>上面添加了<code>private</code>关键字，它告诉<code>Ruby</code>从这个关键字出现的地方开始在这个类中声明的任何方法都应该保持私有。因此，上面的代码会出现编译错误：<code>Uncaught exception: private method set_last_name called for Person:0x00007fa79e101a60</code>。</p>
-<p>而<code>private</code>关键字的反面是<code>public</code>，可以在一个方法之前放上<code>private</code>关键字，那么其后的都是私有方法。之后再使用<code>public</code>关键字时，其后的都是公开的方法：</p>
+<p>而<code>private</code>关键字的反面是<code>public</code>，可以在一个方法之前放上<code>private</code>关键字，那么其后的都是私有方法。之后再使用<code>public</code>关键字时，其后的方法都是公开的：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ruby" data-lang="ruby"><span style="display:flex;"><span><span style="color:#66d9ef">class</span> <span style="color:#a6e22e">Person</span>
 </span></span><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">def</span> <span style="color:#a6e22e">anyone_can_access_this</span> 
@@ -1773,7 +1772,7 @@ code.has-jax {
 </span></span><span style="display:flex;"><span>    <span style="color:#f92672">...</span>
 </span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">end</span> 
 </span></span><span style="display:flex;"><span><span style="color:#66d9ef">end</span>
-</span></span></code></pre></div><p>也可以使用<code>private</code>作为一个命令，其后紧跟代表方法的符号。下面的示例代码的意思是告诉<code>Ruby</code>，方法<code>this_is_private</code>和<code>another_public_method</code>都是私有的：</p>
+</span></span></code></pre></div><p>也可以使用<code>private</code>作为一个命令，<font color=LightSeaGreen>其后紧跟代表方法的符号</font>。下面的示例代码的意思是告诉<code>Ruby</code>，方法<code>this_is_private</code>和<code>this_is_also_private</code>都是私有的：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ruby" data-lang="ruby"><span style="display:flex;"><span><span style="color:#66d9ef">class</span> <span style="color:#a6e22e">Person</span>
 </span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">def</span> <span style="color:#a6e22e">anyone_can_access_this</span>; <span style="color:#f92672">...</span>; <span style="color:#66d9ef">end</span>
 </span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">def</span> <span style="color:#a6e22e">this_is_private</span>; <span style="color:#f92672">...</span>; <span style="color:#66d9ef">end</span>
@@ -1781,8 +1780,9 @@ code.has-jax {
 </span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">def</span> <span style="color:#a6e22e">another_public_method</span>; <span style="color:#f92672">...</span>; <span style="color:#66d9ef">end</span>
 </span></span><span style="display:flex;"><span><span style="color:#66d9ef">private</span> <span style="color:#e6db74">:this_is_private</span>, <span style="color:#e6db74">:this_is_also_private</span> 
 </span></span><span style="display:flex;"><span><span style="color:#66d9ef">end</span>
-</span></span></code></pre></div><p>不管选择将<code>private</code>作为方法前的指令，还是直接将其放在方法名前，都是可以的。<font color=red>但需要注意的是<code>private</code>命令声明必须在方法被定义之后进行</font>。<code>Ruby</code>支持使用分号来分隔多行语句。</p>
-<p><code>Ruby</code>支持第三种形式的封装（除了<code>public</code>和<code>private</code>），叫做<code>protected</code>。它能使一个方法成为私有的，但是在一个类的范围内，而不是在一个单独的对象内。例如，你无法在该对象及其方法的范围之外直接调用一个<code>private</code>方法。然而，可以从任何对象的方法的范围内调用一个受保护的方法，该对象是同一个类的成员：</p>
+</span></span></code></pre></div><p>不管选择将<code>private</code>作为方法前的指令，还是直接将其放在方法名前，都是可以的。<font color=red>但需要注意的是<code>private</code>命令声明必须在方法定义之后</font>。</p>
+<p><code>Ruby</code>支持第三种形式的封装（除了<code>public</code>和<code>private</code>），叫做<code>protected</code>。它能使一个方法在类的范围内成为私有的，而不是在一个单独的对象内。</p>
+<p>例如，你无法在该对象及其方法的范围之外直接调用一个<code>private</code>方法。然而，可以从任何对象的方法的范围内调用一个受保护的方法，该对象是同一个类的成员：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ruby" data-lang="ruby"><span style="display:flex;"><span><span style="color:#66d9ef">class</span> <span style="color:#a6e22e">Person</span>
 </span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">def</span> <span style="color:#a6e22e">initialize</span>(age)
 </span></span><span style="display:flex;"><span>    @age <span style="color:#f92672">=</span> age
@@ -1805,7 +1805,7 @@ code.has-jax {
 </span></span><span style="display:flex;"><span>puts chris<span style="color:#f92672">.</span>age
 </span></span><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span><span style="color:#66d9ef">Uncaught</span> <span style="color:#e6db74">exception</span>: <span style="color:#66d9ef">protected</span> method <span style="color:#e6db74">`age&#39; called for #&lt;Person:0x00007fdb990660b8 @age=25&gt;
-</span></span></span></code></pre></div><p>在上面的例子中，使用<code>protected</code>指令设置的保护方法<code>age</code>不能直接使用，除非是在属于<code>Person</code>类对象的任何方法中使用。但是，如果把<code>age</code>变成私有的，前面的例子就会失败，因为<code>other_ person.age</code>将无法通过编译。这是因为<code>private</code>使得方法<font color=red>只能被特定对象的方法所访问</font>。</p>
+</span></span></span></code></pre></div><p>在上面的例子中，使用<code>protected</code>指令设置的保护方法<code>age</code>不能直接使用，除非是在属于<code>Person</code>类对象的方法中使用。但是，如果把<code>age</code>变成私有的，前面的例子就会失败，因为<code>other_ person.age</code>将无法通过编译。这是因为<code>private</code>使得方法<font color=red>只能被特定对象的方法所访问</font>。</p>
 <h2 id="polymorphism">Polymorphism</h2>
 <p>多态是指编写可以同时处理多种类型和类对象的代码的概念。例如，<code>+</code>方法适用于数字相加、字符串连接和数组相加，<code>+</code>的作用完全取决于你要把什么类型的东西加在一起。</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ruby" data-lang="ruby"><span style="display:flex;"><span><span style="color:#66d9ef">class</span> <span style="color:#a6e22e">Animal</span>
