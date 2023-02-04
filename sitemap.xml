@@ -468,16 +468,16 @@ class Person end  def add_accessor_to_person(accessor_name)  Person.class_eval %
 字符串插值使eval方法成为动态生成不同特征的强大工具。这种能力是大多数编程语言中看不到的一种能力，并且在诸如Ruby on Rails之类的系统中发挥了巨大的作用。
 可以在前面的例子中更进一步，通过class_eval强大功能放在一个新的方法中，定义在Class类中（所有其它的类都来自于此），为每个类添加一个add_accessor方法：
 class Class  def add_accessor(accessor_name)  self.class_eval %{ attr_accessor :#{accessor_name}}  end end  class Person end  person = Person.new Person.add_accessor :name Person.add_accessor :gender person.name = &amp;#34;Carleton DiLeo&amp;#34; person.gender = &amp;#34;male&amp;#34; puts &amp;#34;#{person.name}is #{person.gender}&amp;#34;  # 打印的结果 Carleton DiLeo is male 因为add_accessor是在一个类中使用的，这个方法调用将一直进行到Class类中定义的add_accessor方法。
-class SomethingElse  add_accessor :whatever end ever = SomethingElse.new ever.whatever = &amp;#34;test&amp;#34; puts ever.whatever  # 打印结果 test 回到更简单的技术，使用instance_eval有点像使用常规eval，但作用在对象（而不是方法）的上下文中。在下面示例中，使用instance_eval在对象范围内执行代码：
-class MyClass  def initialize  @my_variable = &amp;#39;Hello, world!&amp;#39;  end end  obj = MyClass.new obj.instance_eval { puts @my_variable } Creating Your Own Version of attr_accessor 到目前为止，已经在自定义的类中使用attr_accessor方法来快速生成实例变量的访问函数。例如，在可能手写下面这样的代码：
-class Person  def name  @name  end   def name=(name)  @name = name  end end 上面的代码允许使用puts person.name和person.name = &#39;Fred&#39;。可选的，也可以使用attr_accessor：
-class Person  attr_accessor :name end 这个版本的类更加简洁，并且具有与普通版本完全相同的功能。现在是时候问这个问题了，attr_accessor是如何工作的？
-class Class  def add_accessor(accessor_name)  self.class_eval %{ def #{accessor_name}@#{accessor_name}end def #{accessor_name}=(value) @#{accessor_name}= value end }  end end Running Other Programs from Ruby 有三种简单的方法可以从Ruby中运行另一个程序:
- system方法（定义在Kernel模块中） backtick syntax 限定的输入字元（%x{}）  x = system(&amp;#34;ls&amp;#34;) puts x x = `ls` #backtick syntax puts x  test.rb true test.rb 上面的第一行代码中，ls的输出会打印在控制台，并且x的值等于true。而在第3行中，x的值包含list命令的输出。也就是说，当我们想运行另一个程序而不关心它的输出时，使用system是理想的，而当你想返回程序的输出时，应该使用backticks。
+class SomethingElse  add_accessor :whatever end ever = SomethingElse.new ever.whatever = &amp;#34;test&amp;#34; puts ever.whatever  # 打印的结果 test 回到更简单的技术，使用instance_eval有点像使用常规eval，但作用在对象（而不是方法）的上下文中。在下面示例中，使用instance_eval在对象范围内执行代码：
+class MyClass  def initialize  @my_variable = &amp;#39;Hello, world!&amp;#39;  end end  obj = MyClass.new obj.instance_eval { puts @my_variable }  # 打印的结果 Hello, world! Creating Your Own Version of attr_accessor 到目前为止，已经在自定义的类中使用attr_accessor方法来快速生成实例变量的访问函数。例如，在可能手写下面这样的代码：
+class Person  def name  @name  end   def name=(name)  @name = name  end end 上面的代码允许使用puts person.name和person.name = &#39;Fred&#39;。同样地，也可以使用attr_accessor添加属性：
+class Person  attr_accessor :name end 这样定义的类更加简洁，并且与普通版本具有完全相同的功能。现在是时候问这个问题了，attr_accessor是如何工作的？
+class Class  def add_accessor(accessor_name)  self.class_eval %{ def #{accessor_name}@#{accessor_name}end def #{accessor_name}=(value) @#{accessor_name}= value end }  end end Running Other Programs from Ruby 有三种简单的方法运行另一个程序:
+ system方法（定义在Kernel模块中） backtick syntax 限定的输入字元（%x{}）  x = system(&amp;#34;ls&amp;#34;) puts x x = `ls` #backtick syntax puts x  # 执行结果 letter_stuff.rb	number_stuff.rb	test.rb true letter_stuff.rb number_stuff.rb test.rb 上面的第一行代码中，ls的输出会打印在控制台，并且x的值等于true。而在第3行中，x的值包含list命令的输出。也就是说，想运行另一个程序而不关心它的输出时，使用system是理想的，而当你想返回程序的输出时，应该使用backticks方式。
 %x{}的功能等同于使用backticks，例如%x{ls}:
-y = %x{ls} puts y  test.rb Transferring Execution to Another Program 有时，最好是立即跳到另一个程序，并停止当前程序的执行。如果你有一个多步骤的程序，并为每个程序编写了一个应用程序，这就很有用。要结束当前程序并调用另一个程序，只需使用exec方法来代替system:
-exec &amp;#34;ruby letter_stuff.rb&amp;#34; puts &amp;#34;This will never be displayed&amp;#34; Running Two Programs at the Same Time Forking是指一个程序的实例（一个进程）复制自己，导致该程序的两个进程同时运行。可以通过使用exec从这第二个进程中运行其他程序，而第一个（父）进程将继续运行原始程序。
-fork是Kernel模块提供的方法，用于创建当前进程的分叉。它在父进程中返回子进程的ID，但在子进程中返回nil&amp;ndash;可以用它来确定一个脚本在哪个进程中。下面的例子将当前进程分叉为两个进程，并且只在子进程（由分叉产生的进程）中执行exec命令：
+y = %x{ls} puts y  # 执行结果 letter_stuff.rb number_stuff.rb test.rb Transferring Execution to Another Program 有时想要停止当前程序的执行并立即跳到另一个程序。要结束当前程序并调用另一个程序，只需使用exec方法来代替system:
+exec &amp;#34;ruby letter_stuff.rb&amp;#34; # 下面代码不会执行，因为exec会结束当前程序 puts &amp;#34;This will never be displayed&amp;#34; Running Two Programs at the Same Time Forking是指一个程序的实例（一个进程）复制自己，导致该程序的两个进程同时运行。fork是Kernel模块提供的方法，用于创建当前进程的分叉。它在父进程中返回子进程的进程ID，但在子进程中返回nil&amp;ndash;可以用它来确定一个脚本在哪个进程中。
+下面的例子将当前进程分叉为两个进程，并且只在子进程（由分叉产生的进程）中执行exec命令：
 if fork.nil?  exec &amp;#34;ruby letter_stuff.rb&amp;#34; end puts &amp;#34;This Ruby script now runs alongside letter_stuff.rb&amp;#34; 如果另一个程序（被exec运行）预计在某个时间点完成，想在父程序中做某些事情之前等待它完成执行，可以使用Process.wait来等待所有子进程完成后再继续：
 child = fork do  sleep 3  puts &amp;#34;Child says &amp;#39;hi&amp;#39;!&amp;#34; end  puts &amp;#34;Waiting for the child process...&amp;#34; Process.wait child puts &amp;#34;All done!&amp;#34; 在Windows版本的Ruby中，分叉是不可能的，因为该平台上不支持POSIX-style分叉，应当使用对应的spawn()方法。
 Threads 线程是执行线程的简称。你用线程把一个程序的执行分成多个部分，可以同时运行。例如，一个被设计为同时给数千人发送电子邮件的程序可能会将任务分成20个不同的线程，这些线程都会同时发送电子邮件。
