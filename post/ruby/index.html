@@ -241,7 +241,7 @@ code.has-jax {
     <i class="fa fa-file-word-o"></i>
 </span>
 <span class="post-meta-item-text">字数: </span>
-<span class="leancloud-visitors-count">26641</span>
+<span class="leancloud-visitors-count">26657</span>
 &nbsp; | &nbsp;
 <span class="post-meta-item-icon">
     <i class="fa fa-coffee"></i>
@@ -2301,7 +2301,7 @@ code.has-jax {
 </span></span><span style="display:flex;"><span>  exec <span style="color:#e6db74">&#34;ruby letter_stuff.rb&#34;</span>
 </span></span><span style="display:flex;"><span><span style="color:#66d9ef">end</span>
 </span></span><span style="display:flex;"><span>puts <span style="color:#e6db74">&#34;This Ruby script now runs alongside letter_stuff.rb&#34;</span>
-</span></span></code></pre></div><p>如果另一个程序（被<code>exec</code>运行）预计在某个时间点完成，想在父程序中做某些事情之前等待它完成执行，可以使用<code>Process.wait</code>来等待所有子进程完成后再继续：</p>
+</span></span></code></pre></div><p>如果另一个程序（被<code>exec</code>执行后）预计在某个时间点完成，想在父程序中做某些事情之前等待它完成执行，可以使用<code>Process.wait</code>来等待所有子进程完成后再继续：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ruby" data-lang="ruby"><span style="display:flex;"><span>child <span style="color:#f92672">=</span> fork <span style="color:#66d9ef">do</span>
 </span></span><span style="display:flex;"><span>  sleep <span style="color:#ae81ff">3</span>
 </span></span><span style="display:flex;"><span>  puts <span style="color:#e6db74">&#34;Child says &#39;hi&#39;!&#34;</span>
@@ -2310,12 +2310,17 @@ code.has-jax {
 </span></span><span style="display:flex;"><span>puts <span style="color:#e6db74">&#34;Waiting for the child process...&#34;</span>
 </span></span><span style="display:flex;"><span><span style="color:#66d9ef">Process</span><span style="color:#f92672">.</span>wait child
 </span></span><span style="display:flex;"><span>puts <span style="color:#e6db74">&#34;All done!&#34;</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 执行结果</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">Waiting</span> <span style="color:#66d9ef">for</span> the child process<span style="color:#f92672">...</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">Child</span> says <span style="color:#e6db74">&#39;hi&#39;</span><span style="color:#f92672">!</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">All</span> done!
 </span></span></code></pre></div><p>在<code>Windows</code>版本的<code>Ruby</code>中，分叉是不可能的，因为该平台上不支持<code>POSIX-style</code>分叉，应当使用对应的<code>spawn()</code>方法。</p>
 <h2 id="threads">Threads</h2>
-<p>线程是执行线程的简称。你用线程把一个程序的执行分成多个部分，可以同时运行。例如，一个被设计为同时给数千人发送电子邮件的程序可能会将任务分成<code>20</code>个不同的线程，这些线程都会同时发送电子邮件。</p>
-<p>这种并行性比一个接一个地处理要快，特别是在有多个<code>CPU</code>的系统上，因为不同的执行线程可以在不同的处理器上运行。它也可以更快，因为与其浪费时间等待远程机器的响应，不如继续进行其他操作。</p>
-<p><code>Ruby 1.8</code>并不支持传统意义上的线程。通常，线程能力是由操作系统提供的，并且在不同的系统中有所不同。然而，<code>Ruby 1.8</code>直接提供了<code>Ruby</code>的线程能力，这意味着它们缺乏传统系统级线程的一些能力。在<code>Ruby 1.9</code>中，<code>Ruby</code>开始使用基于系统的线程，现在这已经是<code>Rubyists</code>中默认的期望。</p>
-<p>虽然<code>Ruby 1.9</code>和<code>2.x</code>的线程是系统（原生）线程，但为了与<code>1.8</code>代码保持兼容，全局解释器锁（<code>GIL</code>）被保留下来，所以线程不会真正同时运行。这意味着本节所涉及的所有内容都与<code>1.8、1.9、2.0</code>及以后的所有版本有关。本章的下一个主要部分将介绍<code>Ruby 1.9</code>及更高版本的替代品&ndash;<code>fibers</code>，它现在支持非阻塞并发。</p>
+<p>线程是执行线程的简称。用线程把一个程序的执行分成多个部分，可以同时运行。例如，一个被设计为同时给数千人发送电子邮件的程序可能会将任务分成<code>20</code>个不同的线程，这些线程都会同时发送电子邮件。</p>
+<p>这种并行性比一个接一个地处理要快，特别是在有多<code>CPU</code>的系统上，因为不同的执行线程可以在不同的处理器上运行。即使在单<code>CPU</code>上它也可以更快，因为与其浪费时间等待远程机器的响应，不如继续进行其它操作。</p>
+<p><code>Ruby 1.8</code>并不支持传统意义上的线程。通常，<font color=red>线程能力是由操作系统提供的，并且在不同的系统中有所不同</font>。然而，<code>Ruby 1.8</code>提供了<code>Ruby</code>的线程能力，这意味着它们缺乏传统系统级线程的一些能力。在<code>Ruby 1.9</code>中，<code>Ruby</code>开始使用基于系统的线程，这也是是<code>Rubyists</code>中所期望的结果。</p>
+<p>虽然<code>Ruby 1.9</code>和<code>2.x</code>的线程是系统（原生）线程，<font color=Blue>但为了与<code>1.8</code>代码保持兼容，全局解释器锁（<code>GIL</code>）被保留下来，所以线程不会真正同时运行</font>。这意味着本节所涉及的所有内容都与<code>1.8、1.9、2.0</code>及以后的所有版本有关。本章的下一个主要部分将介绍<code>Ruby 1.9</code>及更高版本的替代品&ndash;<code>fibers</code>，它现在支持非阻塞并发。</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ruby" data-lang="ruby"><span style="display:flex;"><span>threads <span style="color:#f92672">=</span> <span style="color:#f92672">[]</span>
 </span></span><span style="display:flex;"><span><span style="color:#ae81ff">10</span><span style="color:#f92672">.</span>times <span style="color:#66d9ef">do</span>
 </span></span><span style="display:flex;"><span>  thread <span style="color:#f92672">=</span> <span style="color:#66d9ef">Thread</span><span style="color:#f92672">.</span>new <span style="color:#66d9ef">do</span>
@@ -2327,10 +2332,10 @@ code.has-jax {
 </span></span><span style="display:flex;"><span>threads<span style="color:#f92672">.</span>each { <span style="color:#f92672">|</span>thread<span style="color:#f92672">|</span> thread<span style="color:#f92672">.</span>join }
 </span></span><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span><span style="color:#ae81ff">000000012301200114561111231234567</span><span style="color:#ae81ff">8234512323454279234233346648445756757567958586867689967987878989999</span>
-</span></span></code></pre></div><p>一旦创建了线程，就要等待所有的线程在程序结束前完成。可以通过循环浏览线程中的所有线程对象并调用每个线程的<code>join</code>方法来等待。<code>join</code>方法使主程序等待，直到一个线程的执行完成后再继续。通过这种方式，可以确保在退出之前所有的线程都完成了。</p>
+</span></span></code></pre></div><p>一旦创建了线程，就要等待所有的线程在程序结束前完成。可以通过循环浏览线程中的所有线程对象并调用每个线程的<code>join</code>方法来等待。<code>join</code>方法使主进程等待，直到一个线程的执行完成后再继续。通过这种方式，可以确保在退出之前所有的线程都完成了。</p>
 <h2 id="fibers">Fibers</h2>
-<p>在<code>Ruby 1.9</code>及以后的版本中，<code>Fibers</code>提供了线程的替代品。在<code>Ruby 3</code>中，<code>Fiber</code>被重写了，所以它不再对IO操作进行阻塞，并支持非阻塞的<code>fibers</code>。</p>
-<p><code>fibers</code>是轻量级的执行单元，可以控制自己的调度（通常被称为合作调度）。线程通常会持续运行，而<code>fibers</code>一旦执行完某些任务就会移交控制权。然而，与常规方法不同的是，一旦<code>fibers</code>交出控制权，它就会继续存在，并可以随意恢复。简而言之，<code>fibers</code>在实用上类似于线程，但<code>fibers</code>并不被安排在一起运行，必须手动控制调度。</p>
+<p>在<code>Ruby 1.9</code>及以后的版本中，<code>Fibers</code>提供了线程的替代品。在<code>Ruby 3</code>中<code>Fiber</code>被重写了，所以<font color=red>它不再对<code>IO</code>操作进行阻塞，并支持非阻塞的<code>fibers</code></font>。</p>
+<p><code>fibers</code>是轻量级的执行单元，它可以控制自己的调度（通常被称为合作调度）。线程通常会持续运行，而<code>fibers</code>一旦执行完某些任务就会移交控制权。与常规方法不同的是，一旦<code>fibers</code>交出控制权，<font color=Blue>它就会继续存在，并可以随意恢复</font>。简而言之，<code>fibers</code>在实用上类似于线程，但<code>fibers</code>并不被安排在一起运行，必须手动控制调度。</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ruby" data-lang="ruby"><span style="display:flex;"><span>sg <span style="color:#f92672">=</span> <span style="color:#66d9ef">Fiber</span><span style="color:#f92672">.</span>new <span style="color:#66d9ef">do</span>
 </span></span><span style="display:flex;"><span>  s <span style="color:#f92672">=</span> <span style="color:#ae81ff">0</span>
 </span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">loop</span> <span style="color:#66d9ef">do</span>
