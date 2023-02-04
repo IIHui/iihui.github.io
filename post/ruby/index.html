@@ -241,7 +241,7 @@ code.has-jax {
     <i class="fa fa-file-word-o"></i>
 </span>
 <span class="post-meta-item-text">字数: </span>
-<span class="leancloud-visitors-count">26657</span>
+<span class="leancloud-visitors-count">26653</span>
 &nbsp; | &nbsp;
 <span class="post-meta-item-icon">
     <i class="fa fa-coffee"></i>
@@ -2334,8 +2334,9 @@ code.has-jax {
 </span></span><span style="display:flex;"><span><span style="color:#ae81ff">000000012301200114561111231234567</span><span style="color:#ae81ff">8234512323454279234233346648445756757567958586867689967987878989999</span>
 </span></span></code></pre></div><p>一旦创建了线程，就要等待所有的线程在程序结束前完成。可以通过循环浏览线程中的所有线程对象并调用每个线程的<code>join</code>方法来等待。<code>join</code>方法使主进程等待，直到一个线程的执行完成后再继续。通过这种方式，可以确保在退出之前所有的线程都完成了。</p>
 <h2 id="fibers">Fibers</h2>
-<p>在<code>Ruby 1.9</code>及以后的版本中，<code>Fibers</code>提供了线程的替代品。在<code>Ruby 3</code>中<code>Fiber</code>被重写了，所以<font color=red>它不再对<code>IO</code>操作进行阻塞，并支持非阻塞的<code>fibers</code></font>。</p>
-<p><code>fibers</code>是轻量级的执行单元，它可以控制自己的调度（通常被称为合作调度）。线程通常会持续运行，而<code>fibers</code>一旦执行完某些任务就会移交控制权。与常规方法不同的是，一旦<code>fibers</code>交出控制权，<font color=Blue>它就会继续存在，并可以随意恢复</font>。简而言之，<code>fibers</code>在实用上类似于线程，但<code>fibers</code>并不被安排在一起运行，必须手动控制调度。</p>
+<p>在<code>Ruby 1.9</code>及以后的版本中提供了线程的替代品<code>Fibers</code>。在<code>Ruby 3</code>中<code>Fiber</code>被重写了，<font color=red>它不再对<code>IO</code>操作进行阻塞，并支持非阻塞的<code>fibers</code></font>。</p>
+<p><code>fibers</code>是轻量级的执行单元，它可以控制自己的调度（通常被称为合作调度）。线程通常会持续运行，而<code>fibers</code>一旦执行完某些任务就会移交控制权。</p>
+<p>与常规方法不同，一旦<code>fibers</code>交出控制权，<font color=Blue>它就会继续存在，并可以随意恢复</font>。简而言之，<code>fibers</code>在实用上类似于线程，但<code>fibers</code>并不被安排在一起运行，我们必须手动控制<code>fibers</code>的调度。</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ruby" data-lang="ruby"><span style="display:flex;"><span>sg <span style="color:#f92672">=</span> <span style="color:#66d9ef">Fiber</span><span style="color:#f92672">.</span>new <span style="color:#66d9ef">do</span>
 </span></span><span style="display:flex;"><span>  s <span style="color:#f92672">=</span> <span style="color:#ae81ff">0</span>
 </span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">loop</span> <span style="color:#66d9ef">do</span>
@@ -2345,8 +2346,20 @@ code.has-jax {
 </span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">end</span>
 </span></span><span style="display:flex;"><span><span style="color:#66d9ef">end</span>
 </span></span><span style="display:flex;"><span><span style="color:#ae81ff">10</span><span style="color:#f92672">.</span>times { puts sg<span style="color:#f92672">.</span>resume }
-</span></span></code></pre></div><p>在上面的代码中，我们使用<code>block</code>创建了一个<code>fiber</code>。创建的<code>fiber</code>将会完全独立运行，直到<code>Fiber.yield</code>方法被用来将控制权交还给最后告诉<code>fiber</code>运行的东西（在上面这个例子中，是<code>sg.resume</code>方法的调用）。另外，如果<code>fiber</code>&ldquo;结束&rdquo;，最后执行的表达式的值将被返回。</p>
-<p>当你恢复<code>fiber</code>的执行时，可以将数据传回<code>fiber</code>，也可以从<code>fiber</code>中接收数据。例如，让我们调整一下平方数发生器的<code>fiber</code>，以支持接收一个可选的新基数来提供平方数。</p>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 执行的结果</span>
+</span></span><span style="display:flex;"><span><span style="color:#ae81ff">0</span>
+</span></span><span style="display:flex;"><span><span style="color:#ae81ff">1</span>
+</span></span><span style="display:flex;"><span><span style="color:#ae81ff">4</span>
+</span></span><span style="display:flex;"><span><span style="color:#ae81ff">9</span>
+</span></span><span style="display:flex;"><span><span style="color:#ae81ff">16</span>
+</span></span><span style="display:flex;"><span><span style="color:#ae81ff">25</span>
+</span></span><span style="display:flex;"><span><span style="color:#ae81ff">36</span>
+</span></span><span style="display:flex;"><span><span style="color:#ae81ff">49</span>
+</span></span><span style="display:flex;"><span><span style="color:#ae81ff">64</span>
+</span></span><span style="display:flex;"><span><span style="color:#ae81ff">81</span>
+</span></span></code></pre></div><p>上面的代码中，使用<code>block</code>创建了一个<code>fiber</code>。创建的<code>fiber</code>将会完全独立运行，直到<code>Fiber.yield</code>方法将控制权交还给告诉<code>fiber</code>运行的东西（上面的代码是<code>sg.resume</code>方法的调用）。另外，若<code>fiber</code>运行结束，在<code>fiber</code>中最后执行表达式的值将被返回。</p>
+<p>当恢复<code>fiber</code>执行时，可以将数据传回<code>fiber</code>，也可以从<code>fiber</code>中接收数据。例如，调整一下平方数发生器的<code>fiber</code>以支持接收一个可选的新基数来提供平方数：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ruby" data-lang="ruby"><span style="display:flex;"><span>sg <span style="color:#f92672">=</span> <span style="color:#66d9ef">Fiber</span><span style="color:#f92672">.</span>new <span style="color:#66d9ef">do</span>
 </span></span><span style="display:flex;"><span>  s <span style="color:#f92672">=</span> <span style="color:#ae81ff">0</span>
 </span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">loop</span> <span style="color:#66d9ef">do</span>
@@ -2355,7 +2368,6 @@ code.has-jax {
 </span></span><span style="display:flex;"><span>    s <span style="color:#f92672">=</span> <span style="color:#66d9ef">Fiber</span><span style="color:#f92672">.</span>yield(square) <span style="color:#f92672">||</span> s
 </span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">end</span>
 </span></span><span style="display:flex;"><span><span style="color:#66d9ef">end</span>
-</span></span><span style="display:flex;"><span><span style="color:#75715e"># 10.times { puts sg.resume }</span>
 </span></span><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span>puts sg<span style="color:#f92672">.</span>resume
 </span></span><span style="display:flex;"><span>puts sg<span style="color:#f92672">.</span>resume
@@ -2368,7 +2380,7 @@ code.has-jax {
 </span></span><span style="display:flex;"><span>puts sg<span style="color:#f92672">.</span>resume
 </span></span><span style="display:flex;"><span>puts sg<span style="color:#f92672">.</span>resume
 </span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 执行后的结果</span>
 </span></span><span style="display:flex;"><span><span style="color:#ae81ff">0</span>
 </span></span><span style="display:flex;"><span><span style="color:#ae81ff">1</span>
 </span></span><span style="display:flex;"><span><span style="color:#ae81ff">4</span>
@@ -2379,7 +2391,7 @@ code.has-jax {
 </span></span><span style="display:flex;"><span><span style="color:#ae81ff">0</span>
 </span></span><span style="display:flex;"><span><span style="color:#ae81ff">1</span>
 </span></span><span style="display:flex;"><span><span style="color:#ae81ff">4</span>
-</span></span></code></pre></div><p><code>Ruby 3</code>引入了创建非阻塞<code>fiber</code>的能力。创建一个非阻塞<code>fiber</code>很简单：在构造函数中指定参数<code>blocking: false</code>。这个选项可以防止阻塞操作，如<code>I/O、sleep</code>等的阻塞。</p>
+</span></span></code></pre></div><p><code>Ruby 3</code>引入了创建非阻塞<code>fiber</code>的能力。创建一个非阻塞<code>fiber</code>很简单：在构造函数中指定参数<code>blocking </code>为<code>false</code>。这个选项可以防止阻塞操作，如<code>I/O、sleep</code>等的阻塞。</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ruby" data-lang="ruby"><span style="display:flex;"><span>non_blocking <span style="color:#f92672">=</span> <span style="color:#66d9ef">Fiber</span><span style="color:#f92672">.</span>new(<span style="color:#e6db74">blocking</span>: <span style="color:#66d9ef">false</span>) <span style="color:#66d9ef">do</span>
 </span></span><span style="display:flex;"><span>  puts <span style="color:#e6db74">&#34;Blocking Fiber? </span><span style="color:#e6db74">#{</span><span style="color:#66d9ef">Fiber</span><span style="color:#f92672">.</span>current<span style="color:#f92672">.</span>blocking?<span style="color:#e6db74">}</span><span style="color:#e6db74">&#34;</span>
 </span></span><span style="display:flex;"><span>  <span style="color:#75715e"># Will not block</span>
