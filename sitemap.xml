@@ -492,13 +492,13 @@ sg = Fiber.new do  s = 0  loop do  square = s * s  Fiber.yield square  s &#43;= 
 当恢复fiber执行时，可以将数据传回fiber，也可以从fiber中接收数据。例如，调整一下平方数发生器的fiber以支持接收一个可选的新基数来提供平方数：
 sg = Fiber.new do  s = 0  loop do  square = s * s  s &#43;= 1  s = Fiber.yield(square) || s  end end  puts sg.resume puts sg.resume puts sg.resume puts sg.resume puts sg.resume 40 puts sg.resume puts sg.resume puts sg.resume 0 puts sg.resume puts sg.resume  # 执行后的结果 0 1 4 9 1600 1681 1764 0 1 4 Ruby 3引入了创建非阻塞fiber的能力。创建一个非阻塞fiber很简单：在构造函数中指定参数blocking 为false。这个选项可以防止阻塞操作，如I/O、sleep等的阻塞。
 non_blocking = Fiber.new(blocking: false) do  puts &amp;#34;Blocking Fiber? #{Fiber.current.blocking?}&amp;#34;  # Will not block  sleep 2 end 1.times { puts non_blocking.resume }  # 打印结果 Blocking Fiber? false 2 当正确使用时，非阻塞fiber将提高性能，因为多个操作是一次性执行的。由于非阻塞fiber是选择加入的，Ruby 3不会破坏现有的代码。默认情况下，在Ruby 3中，fiber中的所有I/O操作都是无阻塞的。
-在某些情况下，使用fiber而不是线程的动机是效率。创建数百个fiber比创建同等的线程要快得多，因为线程是在操作系统层面创建的。此外，还有显著的内存效率优势。
+在某些情况下，使用fiber而不是线程的动机是效率。创建数百个fiber比创建同等的线程要快得多，因为线程是在操作系统层面创建的。此外，fiber还有显著的内存效率优势。
 Fiber最大的好处之一是在其他库中实现轻量级的I/O管理例程，所以即使你不直接使用fiber，你最终也可能从其他地方的使用中获益。
 Organizing objects with classes Object是一个内置类，当在一个类上使用点符号时，就是向这个类发送了一个信息。如同对象一样，类也可以接受消息。事实上，类就是对象。
-在类定义时，用class关键字。类是用常量来命名的，这是一种特殊的标识符，可以通过它以大写字母开头的事实来识别。常量用于存储信息和在程序运行过程中不会改变的值。
-class C  def m  puts &amp;#34;First definition of method m&amp;#34;  end   def m  puts &amp;#34;Second definition of method m&amp;#34;  end end  C.new.m Second definition of method m 上面代码运行后，将会看到打印的是Second definition of method m。即当我们override一个方法时，最新定义的版本才具有高优先级。
-Reopening classes 在大多数情况下，当定义一个类时会创建一个类定义块：
-class C  # class code here  end 但是，也可以重新打开一个类以增加一些或改变某些东西。在下面的代码中，首先打开了类的定义，增加了方法x，然后关闭。接着又打开，增加了方法y，然后关闭：
+在类定义时，用class关键字。类名是用常量名的规则来命名的，这是一种特殊的标识符。而常量用于存储信息和在程序运行过程中不会改变的值。
+class C  def m  puts &amp;#34;First definition of method m&amp;#34;  end   def m  puts &amp;#34;Second definition of method m&amp;#34;  end end  C.new.m  # 打印的结果 Second definition of method m 上面代码运行后，将会看到打印的是Second definition of method m。即当我们override一个方法时，最新定义的版本才具有高优先级。
+Reopening classes 在大多数情况下，定义一个类时会创建一个类的定义块：
+class C  # class code here  end 但是，也可以重新打开一个类以增加一些或改变某些东西。在下面的代码中，首先打开了类的定义，增加了方法x，然后关闭。接着又打开，增加了方法y，然后又关闭：
 class C  def x  end end  class C  def y  end end 分解类定义的一个原因是将它们分散在多个文件中。如果需要一个包含类定义的文件（也许在运行时从另一个文件中加载它），而在需要第二个文件的文件中也有同一个类的部分定义，这两个定义就会被合并。这不是你随意做的事情：这一定是程序的设计要求一个类部分地在一个地方定义，部分地在另一个地方定义的情况。
 Ruby有一个Time类，它可以操作时间，使他们格式化为时间戳。可以使用UNIX样式的日期格式字符串来获得所需的格式:
 puts Time.new.strftime(&amp;#34;%m-%d-%y&amp;#34;) 09-18-22 除了内置的Time类，Ruby还有一个名为time.rb的程序文件，其中包含对Time类的各种增强和补充。time.rb通过重新打开Time类来实现其增强Time类的目标。如果你在Ruby源代码树的lib子目录或Ruby安装中查找文件time.rb，将会看到：
