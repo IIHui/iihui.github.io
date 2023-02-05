@@ -1935,7 +1935,7 @@ String 变量名 = new String(&amp;#34;字符串&amp;#34;); String 变量名 = &
 public static void testString() {  String str0 = null;  System.out.println(str0 == null);  String str1 = &amp;#34;test&amp;#34;;  str1 = &amp;#34;Good&amp;#34;;  System.out.println(str1); } 在上面的例子中看起来是一个简单的字符串赋值，实际上重新申请了一个新的内存空间。首先产生str1的一个字符串对象，并在内存中分配了一段空间，由于又重新赋值，在原来的空间中已经不可能再追加新的内容，系统不得不将这个对象放弃，再重新生产新的对象，虽然str1指向的内存地址是同一个，但对象已经不再是同一个了。
 字符串池 Java程序在执行时会维护一个字符串池(string pool)，对于一些可共享的字符串对象，会先在字符串池中查找是否有相同的字符串内容，如果有就直接返回，而不是重新创建一个新的String对象，以减少内存占用。当在程序中直接使用双引号括起来的字符串时，该字符串就会在字符串池中。
 字符串判等 ==运算符用于比较两个变量本身的值，即两个对象在内存中的首地址；而equal()方法则是比较两个字符串中所包含的内容是否相同：
-public static void equalString() {  String s1, s2, s3 = &amp;#34;abc&amp;#34;, s4 = &amp;#34;abc&amp;#34;;  s1 = new String(&amp;#34;abc&amp;#34;);  s2 = new String(&amp;#34;abc&amp;#34;);  System.out.println(s1 == s2); //false  System.out.println(s1.equals(s2)); //true  System.out.println(s1 == s3); //false  System.out.println(s1.equals(s3)); //true  System.out.println(s3 == s4); //true，都在字符串池  System.out.println(s3.equals(s4)); //true  // 打印结果 false true false true true true } 而对于非字符串类型的变量来说，==运算符和equal()`方法都是用来比较其所指向的对象在堆内存中的首地址，即是否指向同一个对象:
+public static void equalString() {  String s1, s2, s3 = &amp;#34;abc&amp;#34;, s4 = &amp;#34;abc&amp;#34;;  s1 = new String(&amp;#34;abc&amp;#34;);  s2 = new String(&amp;#34;abc&amp;#34;);  System.out.println(s1 == s2); //false  System.out.println(s1.equals(s2)); //true  System.out.println(s1 == s3); //false  System.out.println(s1.equals(s3)); //true  System.out.println(s3 == s4); //true，都在字符串池  System.out.println(s3.equals(s4)); //true }  // 打印结果 false true false true true true 而对于非字符串类型的变量来说，==运算符和equal()`方法都是用来比较其所指向的对象在堆内存中的首地址，即是否指向同一个对象:
 Test a = new Test(); Test b = new Test(); System.out.println(a == b); //false System.out.println(a.equals(b)); //false 类与对象 类是对某一类事物的描述，是抽象的，概念上的定义；而对象则是实际存在的属于该类事物的具体个体，因而也称为实例instance。
 修饰符 类修饰符 一个类可以有多个修饰符，且无先后顺序之分，但abstract和final是对立的，所以不能同时将它们应用在一个类的定义中，各个修饰符定义如下：
    修饰符 含义     public 将一个类声明为公共类，它可以被任何对象访问   abstract 将一个类声明为抽象类，没有实现方法，需要子类提供方法的实现，所以不能创建该类的实例   final 将一个类声明为最终非继承类，不能被其他类继承   缺省 只有在相同的包中才能使用    成员变量修饰符 成员变量的修饰符有访问控制修饰符，静态修饰符，最终修饰符，过渡修饰符和易失修饰符。一个成员变量可以被两个以上的修饰符同时修饰，但有些不能同时存在，各个修饰符的含义如下所示：
@@ -1953,24 +1953,24 @@ Test a = new Test(); Test b = new Test(); System.out.println(a == b); //false Sy
   构造方法没有返回值，但不能写成void。
   构造方法的主要作用是完成类对象的初始化工作。
   构造方法一般不能显式调用，而是由new来调用。
-  默认构造方法 如果在定义类的时候，没有定义任何构造函数，编译器会自动生成一个默认构造函数，它没有参数，函数体中也没任何代码。如果class前面有public修饰，则默认构造方法也是public的。
+  默认构造方法 如果在定义类的时候，没有定义任何构造函数，编译器会自动生成一个默认构造函数，它没有参数，函数体中也没任何代码。如果class前面有public修饰，则编译器生成的默认构造方法也是public的。
 构造函数调用 构造函数可以重载，一个构造函数可以调用另一个构造函数，但是必须使用this关键字，否则编译会报错，而且this关键字必须写在构造方法内的第一行位置。
 class Test {  private String str;   public Test() {  System.out.println(&amp;#34;test&amp;#34;);  }   public Test(String str) {  this(); //this调用构造函数必须放在第一行  this.str = str;  } } 静态初始化器 静态初始化器是由关键字static修饰的一对花括号{}括起来的语句组。它的作用与类的构造方法有些相似，都是用来初始化工作的，但与构造方法有几点不同：
   构造方法是对新创建的对象进行初始化，而静态初始化器是对类自身进行初始化。
   静态初始化器一般不能由程序调用，是所属类被加载入内存时由系统调用执行。
   静态初始化器只执行一次，没有方法名，返回值和参数。
-  class Test {  private String str;   public Test() {  System.out.println(&amp;#34;test&amp;#34;);  }   public Test(String str) {  this();  this.str = str;  }   static {  System.out.println(&amp;#34;this is a test num&amp;#34;);  }   static {  System.out.println(&amp;#34;second&amp;#34;);  } } 在上面这个例子中，第一次使用Test类时，静态初始化器才会执行，不是在程序启动时就会执行。如果有多个静态初始化器，则它们在类的初始化时会依次执行。
-继承 Java中继是通过extends关键字来标识的，不支持多继承，一个类只能有一个直接父类。所有的类都直接或者间接继承java.lang.Object，即如果没有extends关键字则类默认继承自java.lang.Object。
-构造方法执行 class Person {  private String name;  private int age;   public Person() {  System.out.println(&amp;#34;person init&amp;#34;);  } }  class Student extends Person {  private String department;   public Student() {  System.out.println(&amp;#34;Student init&amp;#34;);  } } 上面的例子中，如果执行Student student = new Student();则先自动调用父类的构造方法，帮助继承父类的成员初始化做准备，随后才会执行子类的构造方法。
-在执行子类的构造方法之前，如果没有用super来调用父类的特定的构造函数，则会调用父类中没有参数的构造方法。如果父类只定义了有参构造方法，而子类的构造方法中又没用super来调用父类的构造函数，则会编译报错。
+  class Test {  private String str;   public Test() {  System.out.println(&amp;#34;test&amp;#34;);  }   public Test(String str) {  this();  this.str = str;  }   static {  System.out.println(&amp;#34;this is a test num&amp;#34;);  }   static {  System.out.println(&amp;#34;second&amp;#34;);  } }  # 打印的结果 this is a test num second 在上面这个例子中，第一次使用Test类时，静态初始化器才会执行，不是在程序启动时就会执行。如果有多个静态初始化器，则它们在类的初始化时会依次执行（从打印的结果来看是先定义的先执行）。
+继承 Java中继是通过extends关键字来标识的，不支持多继承，一个类只能有一个直接父类。所有类都直接或者间接继承java.lang.Object，即如果没有extends关键字则类默认继承自java.lang.Object。
+构造方法执行 class Person {  private String name;  private int age;   public Person() {  System.out.println(&amp;#34;person init&amp;#34;);  } }  class Student extends Person {  private String department;   public Student() {  System.out.println(&amp;#34;Student init&amp;#34;);  } }  Student stu = new Student(); System.out.println(stu.gender == null); // true 上面例子中，如果执行Student student = new Student();则先自动调用父类的构造方法，帮助继承父类的成员初始化做准备，随后才会执行子类的构造方法。
+在执行子类的构造方法之前，如果没有用super来调用父类的特定的构造函数，则会调用父类中没有参数的构造方法。如果父类只定义了有参构造方法，而子类的构造方法中又没用super来调用父类的构造函数，则会出现编译报错。
 方法覆盖 覆盖是指在子类中，定义名称、参数个数与类型均与父类完全相同的方法，用于重写父类里同名方法的功能。但子类不能覆盖父类中声明为final或static的方法。
 在子类中覆盖父类的方法时，可以扩大父类方法的权限，但不可以缩小父类方法的权限。在下面的例子中show方法在子类的权限可以改为public，但不能改为private:
-class Person {  private String name;  private int age;   public Person() {  System.out.println(&amp;#34;Person init&amp;#34;);  }   protected void show() {  System.out.println(&amp;#34;Person show&amp;#34;);  } }  class Student extends Person {  private String department;   public Student() {  System.out.println(&amp;#34;Student init&amp;#34;);  }   protected void show() {  System.out.println(&amp;#34;Student show&amp;#34;);  } } 所有已被private修饰符限定为私有的方法，以及所有包含在final类中的方法，都默认是final的，这些方法既不可能被子类继承，也不可能被覆盖。
+class Person {  private String name;  private int age;   public Person() {  System.out.println(&amp;#34;Person init&amp;#34;);  }   protected void show() {  System.out.println(&amp;#34;Person show&amp;#34;);  } }  class Student extends Person {  private String department;   public Student() {  System.out.println(&amp;#34;Student init&amp;#34;);  }   protected void show() {  System.out.println(&amp;#34;Student show&amp;#34;);  } } 所有被private修饰符限定的方法，以及所有包含在final类中的方法，都默认是final的，这些方法既不可能被子类继承，也不可能被覆盖。
 一个成员变量若被static final两个修饰符所限定时，它实际的含义就是常量。定义一个成员变量，若只用final修饰，而不用static修饰时，则必须且只能赋值一次。
 Object类 在Java中所有类都直接或者间接继承自java.lang.Object，它定义了public final Class getClass()方法，这个方法返回运行时对象所属的类:
 Class obj = a.getClass(); System.out.println(obj); //class test System.out.println(obj.getName()); //Test 在上面的例子中，首先通过Object类的实例方法getClass()获取类，然后通过Class类的实例方法getName()获取类的名字。
 可以通过对象运算符instanceof来测试一个指定对象是否是指定类或它的子类的实例，若是则返回true，否则返回false。
-抽象类 抽象类类似于模板的作用，目的是根据它的格式来创建和修改新的类。但是不能直接由抽象类创建对象，只能通过抽象类派生出新的子类，再由子类来创建对象。也就是说，抽象类是不能用new运算符来创建实例对象。抽象类的定义格式如下所示：
+Student stu = new Student(); System.out.println(stu instanceof Object);  # 打印的结果 true 抽象类 抽象类类似于模板的作用，目的是根据它的格式来创建和修改新的类。但是不能直接由抽象类创建对象，只能通过抽象类派生出新的子类，再由子类来创建对象。也就是说，抽象类是不能用new运算符来创建实例对象。抽象类的定义格式如下所示：
 abstract class 类名 {  声明成员变量;  返回值的数据类型 方法名(参数表) {  ...  }  abstract 返回值的数据类型 方法名(参数表); } 在抽象类中的方法分为两种，一种是一般的方法；另一种是抽象方法，它是以abstract关键字开头的方法，此方法只需声明放回值的数据类型，方法名称和所需的参数，但是没有方法体。也就是说，对抽象方法只需声明，而不需实现，即用;结尾，而不是用{}。
 当一个方法为抽象方法时，意味着这个方法必须被子类的方法所覆盖，否则子类仍然是abstract。抽象方法声明中修饰符static和abstract不能同时使用。
 抽象类中不一定包含抽象方法，但非包含抽象方法的类一定要声明为抽象类。抽象类可以有构造方法，且构造方法可以被子类的构造方法所调用，但构造方法不能被声明为抽象的。
