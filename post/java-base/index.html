@@ -241,13 +241,13 @@ code.has-jax {
     <i class="fa fa-file-word-o"></i>
 </span>
 <span class="post-meta-item-text">字数: </span>
-<span class="leancloud-visitors-count">15680</span>
+<span class="leancloud-visitors-count">16046</span>
 &nbsp; | &nbsp;
 <span class="post-meta-item-icon">
     <i class="fa fa-coffee"></i>
 </span>
 <span class="post-meta-item-text">阅读: </span>
-<span class="leancloud-visitors-count">32 分钟</span>
+<span class="leancloud-visitors-count">33 分钟</span>
 </span>
       </div>
     </header>
@@ -1042,6 +1042,7 @@ code.has-jax {
 </span></span></code></pre></div><p>在上面这个例子中，<font color=red>第一次使用<code>Test</code>类时，静态初始化器才会执行，不是在程序启动时就会执行</font>。如果有多个静态初始化器，则它们在类的初始化时会依次执行（从打印的结果来看是先定义的先执行）。</p>
 <h1 id="继承">继承</h1>
 <p><code>Java</code>中继是通过<code>extends</code>关键字来标识的，<font color=red>不支持多继承，一个类只能有一个直接父类</font>。所有类都直接或者间接继承<code>java.lang.Object</code>，即如果没有<code>extends</code>关键字则类默认继承自<code>java.lang.Object</code>。</p>
+<p>有一个简单的规则可以用来判断是否应该将数据设计为继承关系，就是<code>is-a</code>规则，它指出子类的每个对象也是超类的对象。<code>is-a</code>规则的另一种表述是替换原则，即程序中出现父类对象的任何地方都可以使用子类对象替换。</p>
 <h2 id="构造方法执行">构造方法执行</h2>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-java" data-lang="java"><span style="display:flex;"><span><span style="color:#66d9ef">class</span> <span style="color:#a6e22e">Person</span> <span style="color:#f92672">{</span>
 </span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">private</span> String name<span style="color:#f92672">;</span>
@@ -1070,6 +1071,8 @@ code.has-jax {
 </span></span><span style="display:flex;"><span><span style="color:#66d9ef">true</span>
 </span></span></code></pre></div><p>上面例子中，如果执行<code>Student student = new Student();</code>则先自动调用父类的构造方法，<font color=Blue>帮助继承父类的成员初始化做准备</font>，随后才会执行子类的构造方法。</p>
 <p>在执行子类的构造方法前，如果没有用<code>super</code>来调用父类的特定的构造函数，则会调用父类中<font color=Blue>没有参数的构造方法</font>。如果父类只定义了有参构造方法，而子类的构造方法中又没用<code>super</code>来调用父类的构造函数，则会出现编译错误。</p>
+<h2 id="this和super">this和super</h2>
+<p>关键字this有两个含义，一是指示隐式参数的引用；二是调用该类的其它构造器。类似super关键字也有两个含义，一是调用超类的方法，二是调用超类的构造器。如果是使用this或super调用构造器，都只能作为另一个构造器的第一条语句出现。</p>
 <h2 id="方法覆盖">方法覆盖</h2>
 <p>覆盖是指在子类中，定义名称、参数个数、类型均与父类完全相同的方法，用于重写父类里同名方法的功能。但<font color=red>子类不能覆盖父类中声明为<code>final</code>或<code>static</code>的方法</font>。</p>
 <p>在子类中覆盖父类方法时，<font color=Blue>可以扩大父类方法的权限，但不可以缩小父类方法的权限</font>。下面例子中<code>show</code>方法在子类的权限可以改为<code>public</code>，但不能改为<code>private</code>:</p>
@@ -1299,15 +1302,18 @@ code.has-jax {
 </span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>eat something
 </span></span><span style="display:flex;"><span>1 2 3 4 5
 </span></span></code></pre></div><h1 id="包">包</h1>
-<p><code>Java</code>使用包来确保类名的唯一性。为了保证包名的绝对唯一性，要用一个因特网域名以逆序的方式作为包名，对于不同工程使用不同的子包。例如域名<code>mac.com</code>，逆序就是<code>com.mac</code>，然后追加一个工程名，如<code>com.mac.study</code>，如果再把<code>Employee</code>类放在包里，那么这个类的全名就是<code>com.mac.study.Employee</code>。</p>
-<p>一个类可以使用所属包中的所有类，以及其它包中的公共类。</p>
-<p><font color=red>同一包中类名不能重复，不同包中的类名可以相同</font>。</p>
-<h2 id="创建包">创建包</h2>
-<p>若要创建自己的包，就必须以<code>package</code>语句作为<code>Java</code><font color=red>源文件的第一条语句</font>，指明该文件中定义类所在的包，格式为：</p>
+<p><code>Java</code>使用包来确保类名的唯一性。为了保证包名的绝对唯一性，要用一个因特网域名以逆序的方式作为包名，对于不同工程使用不同的子包。例如域名<code>mac.com</code>，逆序就是<code>com.mac</code>，然后追加一个工程名，如<code>com.mac.study</code>，如果再把<code>Employee</code>类放在包里，那么这个类的全名就是<code>com.mac.study.Employee</code>。一个类可以使用所属包中的所有类，以及其它包中的公共类。</p>
+<h2 id="静态导入">静态导入</h2>
+<p>有一种<code>import</code>语句允许导入静态方法和静态字段，而不只是类。如果在源文件顶部，添加如下指令，就可以使用<code>System</code>类的静态方法和静态字段：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-java" data-lang="java"><span style="display:flex;"><span><span style="color:#f92672">import static</span> java.lang.System.*<span style="color:#f92672">;</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>out<span style="color:#f92672">.</span><span style="color:#a6e22e">println</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;Hello World!&#34;</span><span style="color:#f92672">);</span>
+</span></span></code></pre></div><h2 id="创建包">创建包</h2>
+<p>如果没在源文件中放置<code>package</code>语句，这个源文件中的类就属于无名包(<code>unnamed package</code>)，无名包没有包名。若要创建自己的包，就必须以<code>package</code>语句作为<code>Java</code><font color=red>源文件的第一条语句</font>，指明该文件中定义类所在的包，格式为：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-java" data-lang="java"><span style="display:flex;"><span><span style="color:#f92672">package</span> 包名1<span style="color:#f92672">[.</span><span style="color:#a6e22e">包名2</span><span style="color:#f92672">][.</span><span style="color:#a6e22e">包名3</span><span style="color:#f92672">][...]</span>
 </span></span></code></pre></div><p>经过<code>package</code>声明后，同一文件内的所有类或接口都被纳入相同的包中。编译器将包对应于文件系统的文件夹进行管理，例如：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-java" data-lang="java"><span style="display:flex;"><span><span style="color:#f92672">package</span> Test.myPackage
-</span></span></code></pre></div><p>上面例子指定包中的文件存储在文件夹<code>test\myPackage</code>中。实际上创建包就是在当前文件夹中创建一个子文件夹，语句中的<code>.</code>代表文件分隔符，即上面的语句创建了两个文件夹。第一个文件夹是<code>test</code>，第二个是<code>myPackage</code>，当前包中所有的类就存放在这个文件夹中。</p>
+</span></span></code></pre></div><p>上面例子指定包中的文件存储在文件夹<code>test\myPackage</code>中。实际上创建包就是在当前文件夹中创建一个子文件夹，语句中的<code>.</code>代表文件分隔符，即上面的语句创建了两个文件夹。第一个文件夹是<code>test</code>，第二个是<code>myPackage</code>，当前包中所有的类就存放在这个文件夹中。<font color=red>同一包中类名不能重复，不同包中的类名可以相同</font>。</p>
 <h1 id="异常">异常</h1>
 <p>异常本质上是程序运行期间发生的事件，这个事件将中断程序的正常执行，当在<code>Java</code>方法内部发生异常时，这个方法就会<font color=red>创建一个异常对象，并把它传递给运行时环境</font>。</p>
 <p><code>Java</code>中所说的异常都是<code>Exception</code>类及其子类，异常处理通过<code>try,catch,finally,throw,throws</code>五个关键字来实现的。</p>
@@ -1789,6 +1795,7 @@ code.has-jax {
     <li><a href="#继承">继承</a>
       <ul>
         <li><a href="#构造方法执行">构造方法执行</a></li>
+        <li><a href="#this和super">this和super</a></li>
         <li><a href="#方法覆盖">方法覆盖</a></li>
         <li><a href="#object类">Object类</a></li>
       </ul>
@@ -1807,6 +1814,7 @@ code.has-jax {
     </li>
     <li><a href="#包">包</a>
       <ul>
+        <li><a href="#静态导入">静态导入</a></li>
         <li><a href="#创建包">创建包</a></li>
       </ul>
     </li>
