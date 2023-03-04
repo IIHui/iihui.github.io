@@ -2016,15 +2016,15 @@ abstract class 类名 {  声明成员变量;  返回值的数据类型 方法名
 class 类名称 implements 接口名表 {  ... } 上面是接口实现的语法，接口的实现类似于继承，但使用implements关键字。若一个类要实现一个接口，应该要注意如下问题：
   如果实现某接口的类不是抽象类，则在类定义部分必须实现指定接口的所有抽象方法，即非抽象类中不能存在抽象方法。
   一个类在实现某接口的抽象方法时，必须使用完全相同的方法头。否则，就是定义一个新方法，而不是实现已有的抽象方法。
-  接口可以作为一种引用类型来使用，任何实现了该接口的类实例都可以存储在该接口类型的变量中，通过接口变量可以访问类中所实现接口中的方法。
+  接口可以作为一种引用类型来使用，任何实现了该接口的类的实例都可以存储在该接口类型的变量中，通过接口变量可以访问类中所实现接口中的方法。
   接口的继承 接口也可以被继承。定义一个接口时可通过extends关键字声明该新接口是某个已存在父接口的子接口，它将继承父接口的所有变量与方法。
 与类继承不同的是，一个接口可以有一个以上的父接口，它们之间用逗号分隔，形成父接口列表，新接口将继承所有父接口中的变量与抽象方法。
 虽然Java只支持类的单重继承机制，即一个类只能有一个直接父类。但是，它可以同时实现若干个接口，实际上就可以获得多个父类，即实现了多重继承。
 内部类 内部类是定义在类中的类，主要作用是将逻辑上相关的类放到一起。而匿名类是一种特殊的内部类，它没有类名，在定义类的同时，就生成了该类的一个实例，由于不会在其它地方用到该类，所以不用取名字，因而又被称为匿名内部类。
 内部类定义 定义内部类时只需要将类的定义置于一个用于封装它的类的内部即可，但不能与外部类同名，如果内部类还有内部类，则不能与任何一层内部类同名。
-在封装它的类的内部使用内部类，与普通类的使用方式相同。但在外部使用内部类时，需要在内部类前冠以其所属外部类的名字才能使用：
-class Group {  private int age;   public class MoStu {  String name;   public MoStu(String name) {  this.name = name;  }   public void show() {  System.out.println(&amp;#34;MoStu show&amp;#34;);  }  }   public void show() {  System.out.println(&amp;#34;Group show&amp;#34;);  MoStu stu = new MoStu(&amp;#34;test&amp;#34;);  stu.show();  } } Group group = new Group(); group.show(); Java将内部类作为一个成员，就如同成员变量或成员方法。内部类可以被声明为private或protected。在内部类中可以直接引用它的外部类成员，包括静态成员、实例成员和私有成员。
-不能直接创建内部类的对象实例，必须使用外部类对象实例来创建内部类对象实例，对于上面的例子，可以使用如下方式在外部创建内部类的实例：
+在封装内部类的类中使用内部类，与普通类的使用方式相同。但在外部使用内部类时，需要在内部类前冠以其所属外部类的名字才能使用：
+class Group {  private int age;   public class MoStu {  String name;   public MoStu(String name) {  this.name = name;  }   public void show() {  System.out.println(&amp;#34;MoStu show&amp;#34;);  }  }   public void show() {  System.out.println(&amp;#34;Group show&amp;#34;);  MoStu stu = new MoStu(&amp;#34;test&amp;#34;);  stu.show();  } } Group group = new Group(); group.show(); Group.MoStu stu = group.new MoStu(&amp;#34;outside&amp;#34;); stu.show(); Java将内部类作为一个成员，就如同成员变量或成员方法。内部类可以被声明为private或protected。在内部类中可以直接引用它的外部类成员，包括静态成员、实例成员和私有成员。
+class Group {  private int age;   public class MoStu {  String name;   public MoStu(String name) {  this.name = name;  // 直接使用实例成员  age = 34;  }   public void show() {  System.out.println(&amp;#34;MoStu show&amp;#34;);  }  }  public int getAge() {  return age;  } }  Group group = new Group(); group.show(); Group.MoStu moStu = group.new MoStu(&amp;#34;outside&amp;#34;); moStu.show(); System.out.println(group.getAge()); 不能直接创建内部类的对象实例，必须使用外部类对象实例来创建内部类对象实例，对于上面的例子，可以使用如下方式在外部创建内部类的实例：
 Group.MoStu stu = group.new MoStu(&amp;#34;outside&amp;#34;); stu.show(); 匿名内部类 匿名内部类前不能有修饰符，也不能定义构造方法，因为它没有名字，也正是这个原因，在创建对象时也不能带参数，因为默认构造函数不带参数：
 class Group {  private int age;   // 内部类  public class MoStu {  String name;   public MoStu(String name) {  this.name = name;  }   public void show() {  System.out.println(&amp;#34;MoStu show&amp;#34;);  }  }   // 抽象类  abstract class Person {  public abstract void eat();  }   public void show() {  System.out.println(&amp;#34;Group show&amp;#34;);  MoStu stu = new MoStu(&amp;#34;test&amp;#34;);  stu.show();   // 匿名内部类  Person p = new Person() {  public void eat() {  System.out.println(&amp;#34;eat something&amp;#34;);  }  };  p.eat();   Thread t = new Thread() {  public void run() {  for (int i = 1; i &amp;lt;= 5; i&#43;&#43;) {  System.out.print(i &#43; &amp;#34; &amp;#34;);  }  }  };  t.start();  } }  // 执行的结果 eat something 1 2 3 4 5 包 Java使用包来确保类名的唯一性。为了保证包名的绝对唯一性，要用一个因特网域名以逆序的方式作为包名，对于不同工程使用不同的子包。例如域名mac.com，逆序就是com.mac，然后追加一个工程名，如com.mac.study，如果再把Employee类放在包里，那么这个类的全名就是com.mac.study.Employee。一个类可以使用所属包中的所有类，以及其它包中的公共类。
 静态导入 有一种import语句允许导入静态方法和静态字段，而不只是类。如果在源文件顶部，添加如下指令，就可以使用System类的静态方法和静态字段：
