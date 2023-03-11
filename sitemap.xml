@@ -1987,22 +1987,22 @@ class Employee {  private String name;  private Double salary;  private LocalDat
   构造方法一般不能显式调用，而是由new来调用。
   默认构造方法 如果在定义类时，没有定义任何构造函数，编译器会自动生成一个默认构造函数，它没有参数，函数体中也没任何代码。如果定义类的class关键字前有public修饰，则编译器生成的默认构造方法也是public的。
 构造函数调用 构造函数可以重载，一个构造函数可以调用另一个构造函数，但必须使用this关键字，而且this关键字必须写在构造方法内的第一行位置：
-class Test {  private String str;   public Test() {  System.out.println(&amp;#34;test&amp;#34;);  System.out.println(str == null);  }   public Test(String str) {  this(); //this调用构造函数必须放在第一行  this.str = str;  } } 对象初始化器 在一个类的声明中，可以包含任意多个代码块，只要构造这个类的实例，这些块就会执行。下面代码中定义的是实例初始化块：
+class Test {  private String str;   public Test() {  System.out.println(&amp;#34;test&amp;#34;);  System.out.println(str == null);  }   public Test(String str) {  this(); //this调用构造函数必须放在第一行  this.str = str;  } } 对象初始化器 在一个类的声明中，可以包含任意多个初始化代码块，只要构造这个类的实例，这些代码块就会执行。下面代码中定义的是实例初始化块：
 class Employee {  private String name;  private Double salary;  private LocalDate hireDay;   public void raiseSalary(double percent) {  this.salary &#43;= (this.salary * percent / 100);  }   {  name = &amp;#34;name&amp;#34;;  salary = 2.3;  hireDay = LocalDate.now();  }  }  // 构造对象实例时会调用对象初始化器 Employee object = new Employee(); 静态初始化器 静态初始化器是由关键字static修饰的一对花括号{}括起来的语句组。它的作用与类的构造方法有些相似，都是用来初始化工作的，但与构造方法有些不同：
   构造方法是对新创建的对象实例进行初始化，而静态初始化器是对类自身进行初始化。
   静态初始化器一般不能由程序调用，是所属类被加载进内存时由系统调用执行，也就是该类或类的实例使用时。
   静态初始化器只执行一次，没有方法名，没有返回值和参数。
   class Test {  private String str;   public Test() {  System.out.println(&amp;#34;test&amp;#34;);  }   public Test(String str) {  this();  this.str = str;  }   static {  System.out.println(&amp;#34;this is a test num&amp;#34;);  }   static {  System.out.println(&amp;#34;second&amp;#34;);  } }  // 打印的结果 this is a test num second 在上面这个例子中，第一次使用Test类时，静态初始化器才会执行，不是在程序启动时就会执行。如果有多个静态初始化器，则它们在类的初始化时会依次执行（从打印的结果来看是先定义的先执行）。
-继承 Java中继是通过extends关键字来标识的，不支持多继承，一个类只能有一个直接父类。所有类都直接或者间接继承java.lang.Object，即定义类时若没有extends关键字则该类默认继承自java.lang.Object。
+继承 Java中继承是通过extends关键字来实现的，不支持多继承，一个类只能有一个直接父类。所有类都直接或者间接继承java.lang.Object，即定义类时若没有extends关键字则该类默认继承自java.lang.Object。
 有一个简单的规则可以用来判断是否应该将数据设计为继承关系，即is-a规则，它指出子类的每个对象也是父类的对象。is-a规则的另一种表述是替换原则，即程序中出现父类对象的任何地方都可以使用子类对象替换。
-构造方法执行 class Person {  private String name;  private int age;  String gender;   public Person() {  System.out.println(&amp;#34;person init&amp;#34;);  } }  class Student extends Person {  private String department;   public Student() {  System.out.println(&amp;#34;Student init&amp;#34;);  } }  Student stu = new Student(); System.out.println(stu.gender == null); // true  // 打印的结果 Person init Student init true 上面例子中，如果执行Student student = new Student();则先自动调用父类的构造方法，帮助继承父类的成员初始化做准备，随后才会执行子类的构造方法。
-在执行子类的构造方法前，如果没用super来调用父类的构造函数，则默认会调用父类中没有参数的构造方法。如果父类只定义了有参构造方法，而子类的构造方法中又没用super来调用父类的构造函数，则会出现编译错误：
+构造方法执行 class Person {  private String name;  private int age;  String gender;   public Person() {  System.out.println(&amp;#34;person init&amp;#34;);  } }  class Student extends Person {  private String department;   public Student() {  System.out.println(&amp;#34;Student init&amp;#34;);  } }  Student stu = new Student(); System.out.println(stu.gender == null); // true  // 打印的结果 Person init Student init true 上面例子中，如果执行Student student = new Student();则会先自动调用父类的构造方法，帮助继承父类的成员初始化做准备，随后才会执行子类的构造方法。
+在执行子类的构造方法前，如果没用super来调用父类的构造函数，则默认会调用父类中无参数构造方法。如果父类只定义了有参构造方法，而子类的构造方法中又没用super来调用父类的构造函数，则会出现编译错误：
 class NewTest {  private int x;   NewTest(int x) {  this.x = x;  } }  class NewTest1 extends NewTest {  NewTest1() {  System.out.println(&amp;#34;NewTest1&amp;#34;);  } }  // NewTest只定义了有参构造函数，而NewTest1没有调用父类的构造函数，所以会出现编译错误 java: constructor NewTest in class NewTest cannot be applied to given types;  required: int  found: no arguments  reason: actual and formal argument lists differ in length this和super 关键字this有两个含义，一是指示隐式参数的引用；二是调用该类的其它构造器。相似的，super关键字也有两个含义，一是调用父类的方法，二是调用父类的构造器。如果是使用this或super调用构造器，都只能作为另一个构造器的第一条语句出现。
-方法覆盖 覆盖是指在子类中，定义名称、参数个数、类型均与父类完全相同的方法，用于重写父类里同名方法的功能。但子类不能覆盖父类中声明为final或static的方法。
+方法覆盖 方法覆盖是指在子类中定义名称、参数个数、类型均与父类完全相同的方法，用于重写父类里同名方法的功能。但子类不能覆盖父类中声明为final或static的方法。
 在子类中覆盖父类方法时，可以扩大父类方法的权限，但不可以缩小父类方法的权限。下面例子中show方法在子类的权限可以改为public，但不能改为private:
 class Person {  private String name;  private int age;   public Person() {  System.out.println(&amp;#34;Person init&amp;#34;);  }   protected void show() {  System.out.println(&amp;#34;Person show&amp;#34;);  } }  class Student extends Person {  private String department;   public Student() {  System.out.println(&amp;#34;Student init&amp;#34;);  }   protected void show() {  System.out.println(&amp;#34;Student show&amp;#34;);  } } 所有被private修饰符限定的方法以及所有包含在final类中的方法，都默认是final的，这些方法既不可能被子类继承，也不可能被覆盖。
 一个成员变量若被static final两个修饰符所限定时，它实际的含义就是常量。定义一个成员变量，若只用final修饰，而不用static修饰时，则必须且只能赋值一次。
-Object类 在Java中所有类都直接或者间接继承自java.lang.Object，它定义了public final Class getClass()方法，这个方法返回运行时对象所属的类:
+Object类 在Java中所有类都直接或者间接继承自java.lang.Object，它定义了public final Class getClass()方法。这个方法返回运行时对象所属的类，返回的class对象是被所属类的静态同步方法锁定的对象:
 Test a = new Test(); Class obj = a.getClass(); System.out.println(obj); //class test System.out.println(obj.getName()); //Test  // 打印的结果 class Test Test 在上面的例子中，首先通过类Object的实例方法getClass()获取类，然后通过Class类的实例方法getName()获取类的名字。
 可以使用Object类型的变量引用任何类型的对象，但它只能作为一个泛型容器。如果要想对其中的内容进行具体的操作，还需进行强制转换：
 Object object = new Employee(); ((Employee) object).raiseSalary(23); 在Java中，只有基本类型(primitive type)不是对象。例如，数值，字符和布尔类型的值都不是对象。所有的数组类型，不管是对象数组还是基本类型数组都扩展了Object类。
