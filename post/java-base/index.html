@@ -241,13 +241,13 @@ code.has-jax {
     <i class="fa fa-file-word-o"></i>
 </span>
 <span class="post-meta-item-text">字数: </span>
-<span class="leancloud-visitors-count">16776</span>
+<span class="leancloud-visitors-count">17211</span>
 &nbsp; | &nbsp;
 <span class="post-meta-item-icon">
     <i class="fa fa-coffee"></i>
 </span>
 <span class="post-meta-item-text">阅读: </span>
-<span class="leancloud-visitors-count">34 分钟</span>
+<span class="leancloud-visitors-count">35 分钟</span>
 </span>
       </div>
     </header>
@@ -1088,9 +1088,11 @@ code.has-jax {
 </span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">this</span> is a test num
 </span></span><span style="display:flex;"><span>second
 </span></span></code></pre></div><p>在上面这个例子中，<font color=red>第一次使用<code>Test</code>类时，静态初始化器才会执行，不是在程序启动时就会执行</font>。如果有多个静态初始化器，则它们在类的初始化时会依次执行（从打印的结果来看是先定义的先执行）。</p>
+<p>如果在构造器中没有显式为字段设置初值，那么就会被自动地赋初始值。数值为<code>0</code>，布尔值为<code>false</code>，对象引用为<code>null</code>。这与局部变量的初始化有重大区别。</p>
 <h1 id="继承">继承</h1>
 <p><code>Java</code>中继承是通过<code>extends</code>关键字来实现的，<font color=red>不支持多继承，一个类只能有一个直接父类</font>。所有类都直接或者间接继承<code>java.lang.Object</code>，即定义类时若没有<code>extends</code>关键字则该类默认继承自<code>java.lang.Object</code>。</p>
 <p>有一个简单的规则可以用来判断是否应该将数据设计为继承关系，即<code>is-a</code>规则，它指出子类的每个对象也是父类的对象。<code>is-a</code>规则的另一种表述是替换原则，即程序中出现父类对象的任何地方都可以使用子类对象替换。</p>
+<p>在<code>Java</code>中，对象变量是多态的，一个<code>Employee</code>类型的变量既可以引用一个<code>Employee</code>类型的对象，也可以引用<code>Employee</code>类的任何一个子类对象实例。</p>
 <h2 id="构造方法执行">构造方法执行</h2>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-java" data-lang="java"><span style="display:flex;"><span><span style="color:#66d9ef">class</span> <span style="color:#a6e22e">Person</span> <span style="color:#f92672">{</span>
 </span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">private</span> String name<span style="color:#f92672">;</span>
@@ -1262,6 +1264,48 @@ code.has-jax {
 </span></span><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span><span style="color:#75715e">// 打印结果
 </span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>tobj is NOT instance of Test
+</span></span></code></pre></div><p>子类引用的数组可以转换为父类引用的数组，而不需要使用强制类型转换：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-java" data-lang="java"><span style="display:flex;"><span>Student<span style="color:#f92672">[]</span> students <span style="color:#f92672">=</span> <span style="color:#66d9ef">new</span> Student<span style="color:#f92672">[</span>10<span style="color:#f92672">];</span>
+</span></span><span style="display:flex;"><span>Person<span style="color:#f92672">[]</span> persons <span style="color:#f92672">=</span> students<span style="color:#f92672">;</span>
+</span></span></code></pre></div><h2 id="阻止继承">阻止继承</h2>
+<p>如果想阻止某个类定义子类，可以使用final类。类中的某个特定方法也可以被声明为final，子类就不能覆盖这个方法（final类中的所有方法自动地成为final方法）。</p>
+<h2 id="main方法">main方法</h2>
+<p>每一个类可以有一个<code>main</code>方法，这是常用于对类进行单元测试的一个技巧。例如在<code>Employee</code>类中添加一个<code>main</code>方法：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-java" data-lang="java"><span style="display:flex;"><span><span style="color:#66d9ef">class</span> <span style="color:#a6e22e">Employee</span> <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">private</span> String name<span style="color:#f92672">;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">private</span> Double salary<span style="color:#f92672">;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">private</span> LocalDate hireDay<span style="color:#f92672">;</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">public</span> <span style="color:#a6e22e">Employee</span><span style="color:#f92672">(</span>String n<span style="color:#f92672">,</span> <span style="color:#66d9ef">double</span> s<span style="color:#f92672">,</span> <span style="color:#66d9ef">int</span> year<span style="color:#f92672">,</span> <span style="color:#66d9ef">int</span> month<span style="color:#f92672">,</span> <span style="color:#66d9ef">int</span> day<span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>        name <span style="color:#f92672">=</span> n<span style="color:#f92672">;</span>
+</span></span><span style="display:flex;"><span>        salary <span style="color:#f92672">=</span> s<span style="color:#f92672">;</span>
+</span></span><span style="display:flex;"><span>        hireDay <span style="color:#f92672">=</span> LocalDate<span style="color:#f92672">.</span><span style="color:#a6e22e">of</span><span style="color:#f92672">(</span>year<span style="color:#f92672">,</span> month<span style="color:#f92672">,</span> day<span style="color:#f92672">);</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">}</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">void</span> <span style="color:#a6e22e">raiseSalary</span><span style="color:#f92672">(</span><span style="color:#66d9ef">double</span> percent<span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">this</span><span style="color:#f92672">.</span><span style="color:#a6e22e">salary</span> <span style="color:#f92672">+=</span> <span style="color:#f92672">(</span><span style="color:#66d9ef">this</span><span style="color:#f92672">.</span><span style="color:#a6e22e">salary</span> <span style="color:#f92672">*</span> percent <span style="color:#f92672">/</span> 100<span style="color:#f92672">);</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">}</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>        name <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;name&#34;</span><span style="color:#f92672">;</span>
+</span></span><span style="display:flex;"><span>        salary <span style="color:#f92672">=</span> 2<span style="color:#f92672">.</span><span style="color:#a6e22e">3</span><span style="color:#f92672">;</span>
+</span></span><span style="display:flex;"><span>        hireDay <span style="color:#f92672">=</span> LocalDate<span style="color:#f92672">.</span><span style="color:#a6e22e">now</span><span style="color:#f92672">();</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">}</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">static</span> <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>        System<span style="color:#f92672">.</span><span style="color:#a6e22e">out</span><span style="color:#f92672">.</span><span style="color:#a6e22e">println</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;static block&#34;</span><span style="color:#f92672">);</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">}</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">static</span> <span style="color:#66d9ef">void</span> <span style="color:#a6e22e">test</span><span style="color:#f92672">()</span> <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>        System<span style="color:#f92672">.</span><span style="color:#a6e22e">out</span><span style="color:#f92672">.</span><span style="color:#a6e22e">println</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;HaHa&#34;</span><span style="color:#f92672">);</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">}</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">static</span> <span style="color:#66d9ef">void</span> <span style="color:#a6e22e">main</span><span style="color:#f92672">(</span>String<span style="color:#f92672">[]</span> args<span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>        var e <span style="color:#f92672">=</span> <span style="color:#66d9ef">new</span> Employee<span style="color:#f92672">(</span><span style="color:#e6db74">&#34;Romeo&#34;</span><span style="color:#f92672">,</span> 50000<span style="color:#f92672">,</span> 2003<span style="color:#f92672">,</span> 3<span style="color:#f92672">,</span> 31<span style="color:#f92672">);</span>
+</span></span><span style="display:flex;"><span>        e<span style="color:#f92672">.</span><span style="color:#a6e22e">raiseSalary</span><span style="color:#f92672">(</span>10<span style="color:#f92672">);</span>
+</span></span><span style="display:flex;"><span>        System<span style="color:#f92672">.</span><span style="color:#a6e22e">out</span><span style="color:#f92672">.</span><span style="color:#a6e22e">println</span><span style="color:#f92672">(</span>e<span style="color:#f92672">.</span><span style="color:#a6e22e">salary</span><span style="color:#f92672">);</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">}</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">}</span>
 </span></span></code></pre></div><h1 id="抽象类">抽象类</h1>
 <p>抽象类与模板的作用相似，可以根据它的格式来创建新的类。但不能直接用抽象类创建对象，<font color=red>只能通过抽象类派生出新的子类，再由子类来创建对象</font>。也就是说，抽象类不能用<code>new</code>运算符来创建实例对象。抽象类的定义格式如下：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-java" data-lang="java"><span style="display:flex;"><span><span style="color:#66d9ef">abstract</span> <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">类名</span> <span style="color:#f92672">{</span>
@@ -1467,7 +1511,7 @@ code.has-jax {
 <p><code>finally</code>块是可以省略的，若省略，则在<code>catch</code>块结束后，程序跳转到<code>try-catch</code>块之后的语句继续运行。</p>
 </li>
 <li>
-<p>当<code>catch</code>块中包含<code>System.exit(0)</code>语句时，则不执行<code>finally</code>语句块，程序直接终止。而当<code>catch</code>块中包含<code>return</code>语句时，则执行完执行<code>finally</code>语句块，再会终止程序。</p>
+<p>当<code>catch</code>块中包含<code>System.exit(0)</code>语句时，则不执行<code>finally</code>语句块，程序直接终止。而<font color=red>当<code>catch</code>块中包含<code>return</code>语句时，则执行完执行<code>finally</code>语句块，再会终止程序</font>。</p>
 </li>
 </ul>
 <h2 id="抛出异常">抛出异常</h2>
@@ -1568,7 +1612,7 @@ code.has-jax {
 </span></span><span style="display:flex;"><span>thread1正在运行<span style="color:#f92672">!</span>
 </span></span><span style="display:flex;"><span>thread2正在运行<span style="color:#f92672">!</span>
 </span></span><span style="display:flex;"><span>thread2正在运行<span style="color:#f92672">!</span>
-</span></span></code></pre></div><p>如果需要线程有序执行，就需要使用<code>join</code>方法。当某一线程调用<code>join</code>方法后，则其它线程会等到该线程结束后才开始执行：</p>
+</span></span></code></pre></div><p>如果需要线程有序执行，就需要使用<code>join</code>方法。当某一线程调用<code>join</code>方法后，则<font color=red>其它线程会等到该线程结束后才开始执行</font>：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-java" data-lang="java"><span style="display:flex;"><span><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">static</span> <span style="color:#66d9ef">void</span> <span style="color:#a6e22e">threadJoin</span><span style="color:#f92672">()</span> <span style="color:#f92672">{</span>
 </span></span><span style="display:flex;"><span>    ThreadTestMo test0 <span style="color:#f92672">=</span> <span style="color:#66d9ef">new</span> ThreadTestMo<span style="color:#f92672">(</span><span style="color:#e6db74">&#34;test0&#34;</span><span style="color:#f92672">);</span>
 </span></span><span style="display:flex;"><span>    ThreadTestMo test1 <span style="color:#f92672">=</span> <span style="color:#66d9ef">new</span> ThreadTestMo<span style="color:#f92672">(</span><span style="color:#e6db74">&#34;test1&#34;</span><span style="color:#f92672">);</span>
@@ -1666,11 +1710,11 @@ code.has-jax {
 </tr>
 <tr>
 <td>public void notify()</td>
-<td style="text-align:center">唤醒正在等待该对象互斥锁的第一个线程。</td>
+<td style="text-align:center">唤醒正在等待该对象互斥锁的第一个线程</td>
 </tr>
 <tr>
 <td>public void notifyAll()</td>
-<td style="text-align:center">唤醒正在等待该对象互斥锁的所有线程，优先级高的先被唤醒。</td>
+<td style="text-align:center">唤醒正在等待该对象互斥锁的所有线程，优先级高的先被唤醒</td>
 </tr>
 </tbody>
 </table>
@@ -1908,6 +1952,8 @@ code.has-jax {
         <li><a href="#this和super">this和super</a></li>
         <li><a href="#方法覆盖">方法覆盖</a></li>
         <li><a href="#object类">Object类</a></li>
+        <li><a href="#阻止继承">阻止继承</a></li>
+        <li><a href="#main方法">main方法</a></li>
       </ul>
     </li>
     <li><a href="#抽象类">抽象类</a></li>
