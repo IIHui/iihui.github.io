@@ -241,13 +241,13 @@ code.has-jax {
     <i class="fa fa-file-word-o"></i>
 </span>
 <span class="post-meta-item-text">字数: </span>
-<span class="leancloud-visitors-count">17975</span>
+<span class="leancloud-visitors-count">18414</span>
 &nbsp; | &nbsp;
 <span class="post-meta-item-icon">
     <i class="fa fa-coffee"></i>
 </span>
 <span class="post-meta-item-text">阅读: </span>
-<span class="leancloud-visitors-count">36 分钟</span>
+<span class="leancloud-visitors-count">37 分钟</span>
 </span>
       </div>
     </header>
@@ -1285,14 +1285,29 @@ code.has-jax {
 </span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>2524 990368553
 </span></span><span style="display:flex;"><span>2524 1452126962
 </span></span></code></pre></div><p>如果在类中重新定义了<code>equals</code>方法，就必须为对象重新定义<code>hashCode</code>方法。该方法应该返回一个整数（也可能为负数），要合理地组合实例字段的散列值，以便能够让不同对象产生的散列值<font color=Blue>分布更加均匀</font>。</p>
-<p>最好使用null安全的方法Objects.hashCode。如果其参数为null，这个方法会返回0，否则返回对参数调用hashCode的结果，另外使用静态方法Double.hashCode来避免创建Double对象：</p>
+<p>最好使用<code>null</code>安全的方法<code>Objects.hashCode</code>。如果其参数为<code>null</code>，这个方法会返回0，否则返回对参数调用<code>hashCode</code>的结果，另外使用静态方法<code>Double.hashCode</code>来避免创建<code>Double</code>对象：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-java" data-lang="java"><span style="display:flex;"><span><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">int</span> <span style="color:#a6e22e">hashCode</span><span style="color:#f92672">()</span> <span style="color:#f92672">{</span>
 </span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">return</span> 7 <span style="color:#f92672">*</span> Objects<span style="color:#f92672">.</span><span style="color:#a6e22e">hashCode</span><span style="color:#f92672">(</span>name<span style="color:#f92672">)</span> <span style="color:#f92672">+</span> 11 <span style="color:#f92672">*</span> Double<span style="color:#f92672">.</span><span style="color:#a6e22e">hashCode</span><span style="color:#f92672">(</span>salary<span style="color:#f92672">)</span> <span style="color:#f92672">+</span> 13 <span style="color:#f92672">*</span> Objects<span style="color:#f92672">.</span><span style="color:#a6e22e">hashCode</span><span style="color:#f92672">(</span>hireDay<span style="color:#f92672">);</span>
 </span></span><span style="display:flex;"><span><span style="color:#f92672">}</span>
-</span></span></code></pre></div><p>还有一个更好的做法，需要组合多个散列值时，可以调用Objects.hash并提供这些参数。这个方法会对各个参数调用Objects.hashCode，并组合这些散列值：</p>
+</span></span></code></pre></div><p>还有一个更好的做法，需要组合多个散列值时，可以调用<code>Objects.hash</code>并提供这些参数。这个方法会对各个参数调用<code>Objects.hashCode</code>，并组合这些散列值：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-java" data-lang="java"><span style="display:flex;"><span><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">int</span> <span style="color:#a6e22e">hashCode</span><span style="color:#f92672">()</span> <span style="color:#f92672">{</span>
 </span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">return</span> Objects<span style="color:#f92672">.</span><span style="color:#a6e22e">hash</span><span style="color:#f92672">(</span>name<span style="color:#f92672">,</span> salary<span style="color:#f92672">,</span> hireDay<span style="color:#f92672">);</span>
 </span></span><span style="display:flex;"><span><span style="color:#f92672">}</span>
+</span></span></code></pre></div><h2 id="tostring方法">toString方法</h2>
+<p>在<code>Object</code>中还有一个重要的方法，就是<code>toString</code>方法，它会返回表示对象值的一个字符串。大多数的<code>toString</code>方法都遵循这种格式：类的名字，随后是一对方括号括起来的字段值：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-java" data-lang="java"><span style="display:flex;"><span><span style="color:#66d9ef">public</span> String <span style="color:#a6e22e">toString</span><span style="color:#f92672">()</span> <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">return</span> <span style="color:#e6db74">&#34;Employee[name&#34;</span> <span style="color:#f92672">+</span> name <span style="color:#f92672">+</span> <span style="color:#e6db74">&#34;,salary=&#34;</span> <span style="color:#f92672">+</span> salary <span style="color:#f92672">+</span> <span style="color:#e6db74">&#34;,hireDay=&#34;</span> <span style="color:#f92672">+</span> hireDay <span style="color:#f92672">+</span> <span style="color:#e6db74">&#34;]&#34;</span><span style="color:#f92672">;</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">}</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>System<span style="color:#f92672">.</span><span style="color:#a6e22e">out</span><span style="color:#f92672">.</span><span style="color:#a6e22e">println</span><span style="color:#f92672">(</span>e<span style="color:#f92672">.</span><span style="color:#a6e22e">toString</span><span style="color:#f92672">());</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">// 执行的结果
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>Employee<span style="color:#f92672">[</span>nameRomeo<span style="color:#f92672">,</span>salary<span style="color:#f92672">=</span>55000<span style="color:#f92672">.</span><span style="color:#a6e22e">0</span><span style="color:#f92672">,</span>hireDay<span style="color:#f92672">=</span>2003<span style="color:#f92672">-</span>03<span style="color:#f92672">-</span>31<span style="color:#f92672">]</span>
+</span></span></code></pre></div><p>只要对象与一个字符串通过操作符<code>+</code>连接起来，<code>Java</code>编译器就会自动地调用<code>toString</code>方法来获得这个对象的字符串描述：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-java" data-lang="java"><span style="display:flex;"><span>System<span style="color:#f92672">.</span><span style="color:#a6e22e">out</span><span style="color:#f92672">.</span><span style="color:#a6e22e">println</span><span style="color:#f92672">(</span>e<span style="color:#f92672">);</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">// 执行的结果
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>Employee<span style="color:#f92672">[</span>nameRomeo<span style="color:#f92672">,</span>salary<span style="color:#f92672">=</span>55000<span style="color:#f92672">.</span><span style="color:#a6e22e">0</span><span style="color:#f92672">,</span>hireDay<span style="color:#f92672">=</span>2003<span style="color:#f92672">-</span>03<span style="color:#f92672">-</span>31<span style="color:#f92672">]</span>
 </span></span></code></pre></div><h2 id="main方法">main方法</h2>
 <p>每一个类可以有一个<code>main</code>方法，这是常用于对类进行单元测试的一个技巧。例如在<code>Employee</code>类中添加一个<code>main</code>方法：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-java" data-lang="java"><span style="display:flex;"><span><span style="color:#66d9ef">class</span> <span style="color:#a6e22e">Employee</span> <span style="color:#f92672">{</span>
@@ -1330,6 +1345,15 @@ code.has-jax {
 </span></span><span style="display:flex;"><span>        System<span style="color:#f92672">.</span><span style="color:#a6e22e">out</span><span style="color:#f92672">.</span><span style="color:#a6e22e">println</span><span style="color:#f92672">(</span>e<span style="color:#f92672">.</span><span style="color:#a6e22e">salary</span><span style="color:#f92672">);</span>
 </span></span><span style="display:flex;"><span>    <span style="color:#f92672">}</span>
 </span></span><span style="display:flex;"><span><span style="color:#f92672">}</span>
+</span></span></code></pre></div><h2 id="泛型数组列表">泛型数组列表</h2>
+<p>在<code>Java</code>中，它允许在运行时确定数组的大小。下面的代码一旦确定了数组的大小，就不能容易地改变它了：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-java" data-lang="java"><span style="display:flex;"><span><span style="color:#66d9ef">int</span> size <span style="color:#f92672">=</span> 10<span style="color:#f92672">;</span>
+</span></span><span style="display:flex;"><span>var staff <span style="color:#f92672">=</span> <span style="color:#66d9ef">new</span> Employee<span style="color:#f92672">[</span>size<span style="color:#f92672">];</span>
+</span></span></code></pre></div><p>解决这个问题最简单的方式是使用<code>ArrayList</code>，它是一个有类型参数的泛型类：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-java" data-lang="java"><span style="display:flex;"><span>var staff <span style="color:#f92672">=</span> <span style="color:#66d9ef">new</span> ArrayList<span style="color:#f92672">&lt;</span>Employee<span style="color:#f92672">&gt;();</span>
+</span></span><span style="display:flex;"><span>ArrayList<span style="color:#f92672">&lt;</span>Employee<span style="color:#f92672">&gt;</span> employees <span style="color:#f92672">=</span> <span style="color:#66d9ef">new</span> ArrayList<span style="color:#f92672">&lt;&gt;();</span>
+</span></span></code></pre></div><p>如果想要定义一个整型数组列表，尖括号中的类型不允许是基本类型。此时可以使用基本类型的包装器，这些包装器为：<code>Integer，Long，Float，Double，Short，Byte，Character</code>和<code>Boolean</code>。前6个类派生于公共的超类<code>Number</code>：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-java" data-lang="java"><span style="display:flex;"><span>var list <span style="color:#f92672">=</span> <span style="color:#66d9ef">new</span> ArrayList<span style="color:#f92672">&lt;</span>Integer<span style="color:#f92672">&gt;();</span>
 </span></span></code></pre></div><h1 id="抽象类">抽象类</h1>
 <p>抽象类与模板的作用相似，可以根据它的格式来创建新的类。但不能直接用抽象类创建对象，<font color=red>只能通过抽象类派生出新的子类，再由子类来创建对象</font>。也就是说，抽象类不能用<code>new</code>运算符来创建实例对象。抽象类的定义格式如下：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-java" data-lang="java"><span style="display:flex;"><span><span style="color:#66d9ef">abstract</span> <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">类名</span> <span style="color:#f92672">{</span>
@@ -1979,7 +2003,9 @@ code.has-jax {
         <li><a href="#object类">Object类</a></li>
         <li><a href="#阻止继承">阻止继承</a></li>
         <li><a href="#hashcode">hashCode</a></li>
+        <li><a href="#tostring方法">toString方法</a></li>
         <li><a href="#main方法">main方法</a></li>
+        <li><a href="#泛型数组列表">泛型数组列表</a></li>
       </ul>
     </li>
     <li><a href="#抽象类">抽象类</a></li>
