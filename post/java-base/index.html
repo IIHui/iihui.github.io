@@ -241,7 +241,7 @@ code.has-jax {
     <i class="fa fa-file-word-o"></i>
 </span>
 <span class="post-meta-item-text">字数: </span>
-<span class="leancloud-visitors-count">17758</span>
+<span class="leancloud-visitors-count">17975</span>
 &nbsp; | &nbsp;
 <span class="post-meta-item-icon">
     <i class="fa fa-coffee"></i>
@@ -1284,8 +1284,16 @@ code.has-jax {
 </span></span><span style="display:flex;"><span><span style="color:#75715e">// 打印结果
 </span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>2524 990368553
 </span></span><span style="display:flex;"><span>2524 1452126962
-</span></span></code></pre></div><p>如果在类中重新定义了<code>equals</code>方法，就必须为对象重新定义hashCode方法。该方法应该返回一个整数（也可能为负数），要合理地组合实例字段的散列值，以便能够让不同对象产生的散列值分布更加均匀。</p>
-<h2 id="main方法">main方法</h2>
+</span></span></code></pre></div><p>如果在类中重新定义了<code>equals</code>方法，就必须为对象重新定义<code>hashCode</code>方法。该方法应该返回一个整数（也可能为负数），要合理地组合实例字段的散列值，以便能够让不同对象产生的散列值<font color=Blue>分布更加均匀</font>。</p>
+<p>最好使用null安全的方法Objects.hashCode。如果其参数为null，这个方法会返回0，否则返回对参数调用hashCode的结果，另外使用静态方法Double.hashCode来避免创建Double对象：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-java" data-lang="java"><span style="display:flex;"><span><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">int</span> <span style="color:#a6e22e">hashCode</span><span style="color:#f92672">()</span> <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">return</span> 7 <span style="color:#f92672">*</span> Objects<span style="color:#f92672">.</span><span style="color:#a6e22e">hashCode</span><span style="color:#f92672">(</span>name<span style="color:#f92672">)</span> <span style="color:#f92672">+</span> 11 <span style="color:#f92672">*</span> Double<span style="color:#f92672">.</span><span style="color:#a6e22e">hashCode</span><span style="color:#f92672">(</span>salary<span style="color:#f92672">)</span> <span style="color:#f92672">+</span> 13 <span style="color:#f92672">*</span> Objects<span style="color:#f92672">.</span><span style="color:#a6e22e">hashCode</span><span style="color:#f92672">(</span>hireDay<span style="color:#f92672">);</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">}</span>
+</span></span></code></pre></div><p>还有一个更好的做法，需要组合多个散列值时，可以调用Objects.hash并提供这些参数。这个方法会对各个参数调用Objects.hashCode，并组合这些散列值：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-java" data-lang="java"><span style="display:flex;"><span><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">int</span> <span style="color:#a6e22e">hashCode</span><span style="color:#f92672">()</span> <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">return</span> Objects<span style="color:#f92672">.</span><span style="color:#a6e22e">hash</span><span style="color:#f92672">(</span>name<span style="color:#f92672">,</span> salary<span style="color:#f92672">,</span> hireDay<span style="color:#f92672">);</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">}</span>
+</span></span></code></pre></div><h2 id="main方法">main方法</h2>
 <p>每一个类可以有一个<code>main</code>方法，这是常用于对类进行单元测试的一个技巧。例如在<code>Employee</code>类中添加一个<code>main</code>方法：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-java" data-lang="java"><span style="display:flex;"><span><span style="color:#66d9ef">class</span> <span style="color:#a6e22e">Employee</span> <span style="color:#f92672">{</span>
 </span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">private</span> String name<span style="color:#f92672">;</span>
