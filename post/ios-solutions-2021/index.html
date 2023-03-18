@@ -241,7 +241,7 @@ code.has-jax {
     <i class="fa fa-file-word-o"></i>
 </span>
 <span class="post-meta-item-text">字数: </span>
-<span class="leancloud-visitors-count">16792</span>
+<span class="leancloud-visitors-count">16817</span>
 &nbsp; | &nbsp;
 <span class="post-meta-item-icon">
     <i class="fa fa-coffee"></i>
@@ -256,7 +256,7 @@ code.has-jax {
 <p>在开发过程中，会遇到各种问题，有时候某个问题当时已经找到了解决方案，但过了一段时间又可能会忘记。这篇文章记录一些问题的解决方案，以便后续查找。</p>
 </blockquote>
 <h1 id="强制竖屏">强制竖屏</h1>
-<p>最近在使用其它<code>SDK</code>，业务方要求打开其中的某个页面时强制竖屏，但发现按对方要求传了相应参数，依然未生效，仍然能够横竖屏切换。解决方案是首先在工程<code>info.plist</code>中添加<a href="https://stackoverflow.com/questions/34608826/what-is-the-impact-of-the-requires-full-screen-option-in-xcode-for-an-iphone-o">Require Full Screen</a>项，并将其值置为<code>YES</code>，然后在需要强制竖屏的<code>ViewController</code>中添加如下代码：</p>
+<p>最近在使用其它<code>SDK</code>，业务方要求打开其中的某个页面时强制竖屏，但发现按对方要求传了相应参数，依然未生效，还是能够横竖屏切换。解决方案是首先在工程<code>info.plist</code>中添加<a href="https://stackoverflow.com/questions/34608826/what-is-the-impact-of-the-requires-full-screen-option-in-xcode-for-an-iphone-o">Require Full Screen</a>项，并将其值置为<code>YES</code>，然后在需要强制竖屏的<code>ViewController</code>中添加如下代码：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span><span style="color:#66d9ef">class</span> <span style="color:#a6e22e">ViewController</span>: UIViewController {
 </span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">override</span> <span style="color:#66d9ef">func</span> <span style="color:#a6e22e">viewDidLoad</span>() {
 </span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">super</span>.viewDidLoad()
@@ -311,7 +311,7 @@ code.has-jax {
 </span></span><span style="display:flex;"><span>    <span style="color:#75715e">// If any sessions were discarded while the application was not running, this will be called shortly after application:didFinishLaunchingWithOptions.</span>
 </span></span><span style="display:flex;"><span>    <span style="color:#75715e">// Use this method to release any resources that were specific to the discarded scenes, as they will not return.</span>
 </span></span><span style="display:flex;"><span>}
-</span></span></code></pre></div><p>接着在<code>AppDelegate.swift</code>中添加属性<code>var window: UIWindow?</code>，补回原本在<code>SceneDelegate.swift</code>文件中声明的<code>var window: UIWindow?</code>的属性：</p>
+</span></span></code></pre></div><p>接着在<code>AppDelegate.swift</code>中添加属性<code>var window: UIWindow?</code>，以补回原本在<code>SceneDelegate.swift</code>文件中声明的<code>var window: UIWindow?</code>属性：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span><span style="color:#66d9ef">class</span> <span style="color:#a6e22e">AppDelegate</span>: UIResponder, UIApplicationDelegate {
 </span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">var</span> window: UIWindow?
 </span></span><span style="display:flex;"><span>
@@ -321,10 +321,10 @@ code.has-jax {
 </span></span><span style="display:flex;"><span>    }
 </span></span><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span>}
-</span></span></code></pre></div><p>最后在工程的<code>Info.plist</code>文件中删除<code>Application Scene Manifest</code>这一行，重新编译即可。如果编译依然报错，需要清除工程的缓存（使用<code>Shift+Command+K</code>快捷键即可），然后再编译：</p>
+</span></span></code></pre></div><p>最后在工程的<code>Info.plist</code>文件中删除<code>Application Scene Manifest</code>这一行，重新编译即可运行。如果编译后依然报错，需要再清除一下工程的缓存（使用<code>Shift+Command+K</code>快捷键即可），然后再编译：</p>
 <img src="https://i.loli.net/2020/12/26/8BwLCWr7XYesEv4.jpg" alt="-c" style="zoom:80%;" />
 <h1 id="禁用边缘返回手势">禁用边缘返回手势</h1>
-<p>对于以<code>push</code>方式打开的页面，该页面默认自动拥有系统提供的<font color=red>「边缘返回」</font>手势。如果要禁止系统的「边缘返回」手势，可以为<code>UIViewController</code>写一个如下的扩展方法：</p>
+<p>以<code>push</code>方式打开的页面，该页面默认自动拥有系统提供的<font color=red>「边缘返回」</font>手势。如果要禁止系统的「边缘返回」手势，可以为<code>UIViewController</code>写如下扩展方法：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span><span style="color:#75715e">// 参考自https://juejin.cn/post/6860656306630590477</span>
 </span></span><span style="display:flex;"><span><span style="color:#66d9ef">extension</span> <span style="color:#a6e22e">UIViewController</span> {
 </span></span><span style="display:flex;"><span>    <span style="color:#75715e">// 禁止系统的边缘返回手势</span>
@@ -335,7 +335,7 @@ code.has-jax {
 </span></span><span style="display:flex;"><span>    }
 </span></span><span style="display:flex;"><span>}
 </span></span></code></pre></div><h1 id="uiwebview特殊字符">UIWebView特殊字符</h1>
-<p>如果使用<code>UIWebView</code>加载的<code>html</code>文件中包含<code>\n</code>，<code>'</code>等特殊字符时，<font color=red>不做任何处理直接加载的话，将会出现白屏</font>，此时没有任何提示。因此，加载这种含有特殊字符的<code>html</code>文件时要特殊处理:</p>
+<p>使用<code>UIWebView</code>加载的<code>html</code>文件中包含<code>\n，'</code>等特殊字符时，如果<font color=red>不做任何处理直接加载的话，将会出现白屏</font>，并且此时没有任何错误提示。因此，加载这种含有特殊字符的<code>html</code>文件时要特殊处理:</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-Swift" data-lang="Swift"><span style="display:flex;"><span><span style="color:#66d9ef">class</span> <span style="color:#a6e22e">HTMLUtils</span> {
 </span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">static</span> <span style="color:#66d9ef">func</span> <span style="color:#a6e22e">escapsedHTML</span>(html: String) -&gt; String{
 </span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">var</span> result = html
@@ -380,7 +380,7 @@ code.has-jax {
 </span></span><span style="display:flex;"><span>}
 </span></span></code></pre></div><p><a href="https://www.jianshu.com/p/c9b897fb6936">参考资料</a></p>
 <h1 id="导航栏顶部黑屏">导航栏顶部黑屏</h1>
-<p>帮助中心中文版和英文版在<code>iOS 15</code>以上的系统表现不一致，发现是<code>Top Bar</code>设置不一致导致的：</p>
+<p>帮助中心中文版和英文版在<code>iOS 15</code>以上的系统表现不一致，发现是<code>Top Bar</code>设置不一致导致的。如下所示，只要改成相同就行：</p>
 <img src="https://s2.loli.net/2022/05/09/zYdLrRx8phPVNSk.png" alt="zYdLrRx8phPVNSk" style="zoom:50%;" />
 <h1 id="毫秒级时间戳距当前时间">毫秒级时间戳距当前时间</h1>
 <p>最近有个需求要将<font color=red>毫秒级的时间戳</font>转换为<code>xx</code>天前，<code>xx</code>小时前，<code>xx</code>分钟前以及<code>xx</code>秒前。下面代码将距离当前时间小于<code>60</code>秒转换为几秒前，小于<code>60</code>分钟转换为<code>xx</code>分钟前，小于<code>24</code>小时，转换为<code>xx</code>小时前，小于<code>10</code>天前转换为<code>xx</code>天前，否则显示<code>xxxx</code>年<code>xx</code>月<code>xx</code>日：</p>
@@ -613,7 +613,7 @@ code.has-jax {
 <p>自<code>iOS 10</code>开始<code>UIApplication.shared.openURL</code>被废弃了，需要使用<code>open func open(_ url: URL, options: [UIApplication.OpenExternalURLOptionsKey : Any] = [:], completionHandler completion: ((Bool) -&gt; Void)? = nil)</code>。</p>
 <p>上面的<code>options</code>有个参数是<code>universalLinksOnly</code>。如果包含<code>universalLinksOnly</code>选项，则只有在配置了某个应用程序打开<code>URL</code>时，<code>URL</code>才会打开。例如要打开<code>YouTube</code>视频，您必须安装<code>YouTube</code>应用。</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span>UIApplication.shared.open(url, options: [:], completionHandler: <span style="color:#66d9ef">nil</span>)
-</span></span></code></pre></div><p><a href="https://www.coder.work/article/438469">选项说明</a></p>
+</span></span></code></pre></div><p><a href="https://www.coder.work/article/438469">各个选项参数说明</a></p>
 <h1 id="安全下标">安全下标</h1>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span><span style="color:#66d9ef">extension</span> <span style="color:#a6e22e">Collection</span> {
 </span></span><span style="display:flex;"><span>    <span style="color:#75715e">/// Returns the element at the specified index if it is within bounds, otherwise nil.</span>
@@ -679,7 +679,7 @@ code.has-jax {
 </span></span><span style="display:flex;"><span>}
 </span></span></code></pre></div><h1 id="数组分片">数组分片</h1>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span><span style="color:#66d9ef">extension</span> <span style="color:#a6e22e">Array</span> {
-</span></span><span style="display:flex;"><span>    <span style="color:#75715e">// 数组分片</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">/// 数组分片</span>
 </span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">func</span> <span style="color:#a6e22e">chunked</span>(by distance: Int) -&gt; [[Element]] {
 </span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">return</span> stride(from: <span style="color:#ae81ff">0</span>, to: count, by: distance).map {
 </span></span><span style="display:flex;"><span>            Array(<span style="color:#66d9ef">self</span>[$0 ..<span style="color:#f92672">&lt;</span> Swift.min($0 <span style="color:#f92672">+</span> distance, count)])
@@ -794,8 +794,7 @@ code.has-jax {
 </span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">self</span>?.searchController.searchBar.frame.size.width = size.width
 </span></span><span style="display:flex;"><span>    }, completion: <span style="color:#66d9ef">nil</span>)
 </span></span><span style="display:flex;"><span>}
-</span></span></code></pre></div><p><a href="https://stackoverflow.com/questions/30131899/how-to-make-autolayout-for-uisearchcontroller-when-rotate-the-device">参考资料</a>
-<a href="https://www.codenong.com/36430104/">参考资料</a></p>
+</span></span></code></pre></div><p><a href="https://stackoverflow.com/questions/30131899/how-to-make-autolayout-for-uisearchcontroller-when-rotate-the-device">参考资料1</a><a href="https://www.codenong.com/36430104/">参考资料2</a></p>
 <h1 id="signatureplugin">SignaturePlugin</h1>
 <p>后台接口有时需要对接口的<code>query</code>参数进行签名。因此在使用<code>Moya</code>进行请求时，有必要定义一个对<code>query</code>参数进行签名的插件，即在请求发送前进行拦截：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">struct</span> <span style="color:#a6e22e">FigureSignaturePlugin</span>: PluginType {
