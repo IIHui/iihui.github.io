@@ -241,7 +241,7 @@ code.has-jax {
     <i class="fa fa-file-word-o"></i>
 </span>
 <span class="post-meta-item-text">字数: </span>
-<span class="leancloud-visitors-count">16817</span>
+<span class="leancloud-visitors-count">16815</span>
 &nbsp; | &nbsp;
 <span class="post-meta-item-icon">
     <i class="fa fa-coffee"></i>
@@ -256,7 +256,7 @@ code.has-jax {
 <p>在开发过程中，会遇到各种问题，有时候某个问题当时已经找到了解决方案，但过了一段时间又可能会忘记。这篇文章记录一些问题的解决方案，以便后续查找。</p>
 </blockquote>
 <h1 id="强制竖屏">强制竖屏</h1>
-<p>最近在使用其它<code>SDK</code>，业务方要求打开其中的某个页面时强制竖屏，但发现按对方要求传了相应参数，依然未生效，还是能够横竖屏切换。解决方案是首先在工程<code>info.plist</code>中添加<a href="https://stackoverflow.com/questions/34608826/what-is-the-impact-of-the-requires-full-screen-option-in-xcode-for-an-iphone-o">Require Full Screen</a>项，并将其值置为<code>YES</code>，然后在需要强制竖屏的<code>ViewController</code>中添加如下代码：</p>
+<p>最近使用其它<code>SDK</code>，业务方要求打开某个页面时强制竖屏，按对方要求传了相应参数未生效，依然能够横竖屏切换。解决方案是先在工程<code>info.plist</code>文件中添加<a href="https://stackoverflow.com/questions/34608826/what-is-the-impact-of-the-requires-full-screen-option-in-xcode-for-an-iphone-o">Require Full Screen</a>项，并将其值置为<code>YES</code>，然后在需要强制竖屏的<code>ViewController</code>中添加如下代码：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span><span style="color:#66d9ef">class</span> <span style="color:#a6e22e">ViewController</span>: UIViewController {
 </span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">override</span> <span style="color:#66d9ef">func</span> <span style="color:#a6e22e">viewDidLoad</span>() {
 </span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">super</span>.viewDidLoad()
@@ -296,7 +296,7 @@ code.has-jax {
 </span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">self</span>.keyWindow?.makeKeyAndVisible()
 </span></span><span style="display:flex;"><span>}
 </span></span></code></pre></div><h1 id="uialertview-deprecated">UIAlertView deprecated</h1>
-<p>测试<a href="https://github.com/kstenerud/KSCrash">KSCrash</a>组件时使用<code>XCode 12.3</code>新建了一个工程，写了相关代码之后出现：<code>UIAlertView is deprecated and unavailable for UIScene based applications, please use UIAlertController</code>错误，参照<a href="https://stackoverflow.com/questions/58188069/uialertview-is-deprecated-and-unavailable-for-uiscene-based-applications-please">Stack Overflow</a>上的回答，解决了报错问题。</p>
+<p>测试<a href="https://github.com/kstenerud/KSCrash">KSCrash</a>组件时使用<code>XCode 12.3</code>新建了一个<code>demo</code>工程，完成相关代码之后出现：<code>UIAlertView is deprecated and unavailable for UIScene based applications, please use UIAlertController</code>错误，参照<a href="https://stackoverflow.com/questions/58188069/uialertview-is-deprecated-and-unavailable-for-uiscene-based-applications-please">Stack Overflow</a>上的回答，解决了报错问题。</p>
 <p>解决这个问题的核心是要删除<code>UIScene</code>相关代码，让工程恢复到旧的<code>window</code>架构。这个过程主要分为四步，首先需要删除工程中的<code>SceneDelegate.swift</code>文件：</p>
 <img src="https://i.loli.net/2020/12/26/i2yRd81MkAP5347.jpg" style="zoom:60%;" />
 <p>然后在<code>AppDelegate.swift</code>文件中删除<code>UIScene</code>中相关的代码，即<code>application(_ application: UIApplication, configurationForConnecting connectingSceneSession: UISceneSession, options: UIScene.ConnectionOptions)</code>和<code> application(_ application: UIApplication, didDiscardSceneSessions sceneSessions: Set&lt;UISceneSession&gt;)</code>两个函数：</p>
@@ -321,7 +321,7 @@ code.has-jax {
 </span></span><span style="display:flex;"><span>    }
 </span></span><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span>}
-</span></span></code></pre></div><p>最后在工程的<code>Info.plist</code>文件中删除<code>Application Scene Manifest</code>这一行，重新编译即可运行。如果编译后依然报错，需要再清除一下工程的缓存（使用<code>Shift+Command+K</code>快捷键即可），然后再编译：</p>
+</span></span></code></pre></div><p>最后在工程的<code>Info.plist</code>文件中删除<code>Application Scene Manifest</code>这一行，重新编译即可运行。如果重新编译后依然报错，需要再清除一下工程的缓存（使用<code>Shift+Command+K</code>快捷键即可），然后再次编译。</p>
 <img src="https://i.loli.net/2020/12/26/8BwLCWr7XYesEv4.jpg" alt="-c" style="zoom:80%;" />
 <h1 id="禁用边缘返回手势">禁用边缘返回手势</h1>
 <p>以<code>push</code>方式打开的页面，该页面默认自动拥有系统提供的<font color=red>「边缘返回」</font>手势。如果要禁止系统的「边缘返回」手势，可以为<code>UIViewController</code>写如下扩展方法：</p>
