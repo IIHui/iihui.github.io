@@ -241,13 +241,13 @@ code.has-jax {
     <i class="fa fa-file-word-o"></i>
 </span>
 <span class="post-meta-item-text">字数: </span>
-<span class="leancloud-visitors-count">5494</span>
+<span class="leancloud-visitors-count">5785</span>
 &nbsp; | &nbsp;
 <span class="post-meta-item-icon">
     <i class="fa fa-coffee"></i>
 </span>
 <span class="post-meta-item-text">阅读: </span>
-<span class="leancloud-visitors-count">11 分钟</span>
+<span class="leancloud-visitors-count">12 分钟</span>
 </span>
       </div>
     </header>
@@ -288,9 +288,9 @@ code.has-jax {
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>/System/Library/Frameworks/Ruby.framework/Versions/2.6/usr/lib/ruby/2.6.0/rubygems.rb:283:in <span style="color:#e6db74">`</span>find_spec_for_exe<span style="color:#e6db74">&#39;: can&#39;</span>t find gem cocoapods <span style="color:#f92672">(</span>&gt;<span style="color:#f92672">=</span> 0.a<span style="color:#f92672">)</span> with executable pod <span style="color:#f92672">(</span>Gem::GemNotFoundException<span style="color:#f92672">)</span>
 </span></span><span style="display:flex;"><span>        from /System/Library/Frameworks/Ruby.framework/Versions/2.6/usr/lib/ruby/2.6.0/rubygems.rb:302:in <span style="color:#e6db74">`</span>activate_bin_path<span style="color:#e6db74">&#39;
 </span></span></span><span style="display:flex;"><span><span style="color:#e6db74">        from /usr/local/bin/pod:23:in `&lt;main&gt;&#39;</span>
-</span></span></code></pre></div><p>解决方案是执行<code>sudo gem install cocoapods</code>命令以安装<code>cocoapods</code>。</p>
+</span></span></code></pre></div><p>这是因为两个<code>ruby</code>版本是隔离，在原来版本上安装的<code>cocoapods</code>在新版上不适用。解决方案是重新执行<code>sudo gem install cocoapods</code>命令安装<code>cocoapods</code>。</p>
 <h1 id="find_cached_set">find_cached_set</h1>
-<p>本地系统版本使用的<code>ruby</code>版本为<code>2.7.2</code>，安装的<code>cocoapods</code>版本是<code>1.11.3</code>，执行<code>pod lib lint --verbose File.podspec</code>出现如下错误信息：</p>
+<p>使用的<code>ruby</code>版本为<code>2.7.2</code>，安装的<code>cocoapods</code>版本是<code>1.11.3</code>，执行<code>pod lib lint --verbose File.podspec</code>出现如下错误信息：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-fallback" data-lang="fallback"><span style="display:flex;"><span>ERROR | [iOS] xcodebuild: Returned an unsuccessful exit code.
 </span></span><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span>Pods workspace available at `/var/folders/ns/9rvphkg1387_4zqncdbkbml80000gn/T/CocoaPods-Lint-20221102-21787-112wnq-MoFile/App.xcworkspace` for inspection.
@@ -303,67 +303,47 @@ code.has-jax {
 </span></span><span style="display:flex;"><span>/Users/hui/.rvm/rubies/ruby-2.7.2/lib/ruby/gems/2.7.0/gems/cocoapods-1.11.3/bin/pod:55:in `&lt;top (required)&gt;&#39;
 </span></span><span style="display:flex;"><span>/Users/hui/.rvm/gems/ruby-2.7.2/bin/pod:23:in `load&#39;
 </span></span><span style="display:flex;"><span>/Users/hui/.rvm/gems/ruby-2.7.2/bin/pod:23:in `&lt;main&gt;&#39;
-</span></span></code></pre></div><p>经排查是<code>Xcode 14.0.1</code>导致<code>pod lib lint</code> 失败，<a href="https://github.com/getsentry/sentry-cocoa/issues/2254">解决方案</a>是将<code>xcodebuild</code>临时切到<code>Xcode 13.4.1</code>版本。可以在<code>Xcode--&gt;Preferences...--&gt;Locations--&gt;Command Line Tools</code>中切换，修改完成后使用下面命令查看：</p>
+</span></span></code></pre></div><p>排查后发现是升级<code>Xcode</code>到<code>14.0.1</code>导致<code>pod lib lint</code> 失败。<a href="https://github.com/getsentry/sentry-cocoa/issues/2254">解决方案</a>是将<code>xcodebuild</code>临时切到<code>Xcode 13.4.1</code>版本。可以在<code>Xcode--&gt;Preferences...--&gt;Locations--&gt;Command Line Tools</code>中切换版本，修改完成后使用下面命令查看当前版本：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>xcodebuild -version
 </span></span><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span><span style="color:#75715e"># 结果</span>
 </span></span><span style="display:flex;"><span>Xcode 13.4.1
 </span></span><span style="display:flex;"><span>Build version 13F100
-</span></span></code></pre></div><p>如果<code>xcodebuild -version</code>命令的输出依然是原来的<code>Xcode</code>版本，就要检查一下是否已经在终端的配置文件中将<code>DEVELOPER_DIR</code>写死为某个版本。因为本机使用的是<code>zsh</code>，所以查看主目录下的<code>.zshrc</code>发现之前已经写死了版本，改成<code>13.4.1</code>版本即可。</p>
+</span></span></code></pre></div><p>如果在终端中执行<code>xcodebuild -version</code>命令后输出依然是原来的<code>Xcode</code>版本，就要检查是否已经在终端的配置文件中将<code>DEVELOPER_DIR</code>写死为某个版本。因为本机使用的是<code>zsh</code>，查看主目录下的<code>.zshrc</code>后发现之前已经写死了版本，改成<code>13.4.1</code>版本即可。</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span><span style="color:#75715e"># 修改前</span>
 </span></span><span style="display:flex;"><span>export DEVELOPER_DIR<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;/Applications/XCode beta.app/Contents/Developer&#34;</span>
 </span></span><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span><span style="color:#75715e"># 修改后</span>
 </span></span><span style="display:flex;"><span>export DEVELOPER_DIR<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;/Applications/XCode 13.4.1.app/Contents/Developer&#34;</span>
 </span></span></code></pre></div><h1 id="rvm-command-not-found">rvm: command not found</h1>
-<p>在<code>Intellij IDEA</code>中运行<code>Python</code>脚本时，脚本中使用了<code>rvm</code>命令，出现如下所示报错。根源是当前工程未识别到<code>rvm</code>命令的路径，只需在环境变量中将该命令的路径加上即可：</p>
+<p>在<code>Intellij IDEA</code>中运行<code>Python</code>脚本时，出现如下所示报错。根源是当前工程未识别到<code>rvm</code>命令的路径，只需在环境变量中将该命令的路径加上即可：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>/bin/sh: rvm: command not found
 </span></span></code></pre></div><img src="https://s2.loli.net/2022/11/03/I3VvuMpmtJKR7rf.png" alt="I3VvuMpmtJKR7rf" style="zoom:50%;" />
 <h1 id="simulator-listed-or-otherwise-add-one">simulator listed or otherwise add one</h1>
-<p>使用<code>pod lib lint</code>命令检查<code>podspec</code>文件时出现了<code>Could not find a ios simulator (valid values: )</code>错误提示。根据报错信息提示，解决方案是在<code>Xcode--&gt;Window--&gt;Devices and Simulators</code>中至少添加一个模拟器。</p>
+<p>使用<code>pod lib lint</code>命令检查<code>podspec</code>文件时出现了<code>Could not find a ios simulator (valid values: )</code>错误提示。根据提示，只要在<code>Xcode--&gt;Window--&gt;Devices and Simulators</code>中添加一个模拟器即可解决问题。</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>ERROR | <span style="color:#f92672">[</span>iOS<span style="color:#f92672">]</span> unknown: Encountered an unknown error <span style="color:#f92672">(</span>Could not find a <span style="color:#e6db74">`</span>ios<span style="color:#e6db74">`</span> simulator <span style="color:#f92672">(</span>valid values: <span style="color:#f92672">)</span>. Ensure that Xcode -&gt; Window -&gt; Devices has at least one <span style="color:#e6db74">`</span>ios<span style="color:#e6db74">`</span> simulator listed or otherwise add one
-</span></span></code></pre></div><p><a href="http://gonghonglou.com/2021/03/09/xcode12-lint-error/">http://gonghonglou.com/2021/03/09/xcode12-lint-error/</a></p>
+</span></span></code></pre></div><p><a href="http://gonghonglou.com/2021/03/09/xcode12-lint-error/">参考资料</a></p>
 <h1 id="getcwd-errnoenoent">getcwd (Errno::ENOENT)</h1>
-<p>在某个目录下执行<code>sudo gem install cocoapods</code>命令时出现如下所示错误：</p>
+<p>在某个目录下执行<code>sudo gem install cocoapods</code>命令时出现如下错误。这是因为用于启动<code>getcwd</code>的目录不存在了。参考<a href="https://stackoverflow.com/questions/9243548/no-such-file-or-directory-getcwd-error-on-rubygems-on-mac-os-lion">这个方案</a>，只要执行一下<code>cd</code> 命令即可。</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>Error loading RubyGems plugin <span style="color:#e6db74">&#34;/Users/hui/.rvm/rubies/ruby-2.7.2/lib/ruby/gems/2.7.0/gems/gem-wrappers-1.4.0/lib/rubygems_plugin.rb&#34;</span>: No such file or directory - getcwd <span style="color:#f92672">(</span>Errno::ENOENT<span style="color:#f92672">)</span>
 </span></span><span style="display:flex;"><span>ERROR:  While executing gem ... <span style="color:#f92672">(</span>Errno::ENOENT<span style="color:#f92672">)</span>
 </span></span><span style="display:flex;"><span>    No such file or directory - getcwd
-</span></span></code></pre></div><p><a href="https://stackoverflow.com/questions/9243548/no-such-file-or-directory-getcwd-error-on-rubygems-on-mac-os-lion">解决方案</a>为执行一下<code>cd</code> 命令。</p>
-<h1 id="webkiterrordomain-code101">WebKitErrorDomain Code=101</h1>
+</span></span></code></pre></div><h1 id="webkiterrordomain-code101">WebKitErrorDomain Code=101</h1>
 <p>有个业务系统跳转时出现白屏，调试时出现<code>Error Domain=WebKitErrorDomain Code=101 &quot;无法显示URL&quot;</code>错误，具体信息如下：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-fallback" data-lang="fallback"><span style="display:flex;"><span>Error Domain=WebKitErrorDomain Code=101 &#34;无法显示URL&#34; UserInfo={_WKRecoveryAttempterErrorKey=&lt;WKReloadFrameErrorRecoveryAttempter: 0x2805ad7e0&gt;, NSErrorFailingURLStringKey=lc07sbfweb.xxx.xxx./xxx/xxx.html,
-</span></span></code></pre></div><p>根本原因是<code>url</code>没有带<code>http</code>或<code>https</code>前缀。<a href="https://cloud.tencent.com/developer/article/1365814">参考资料</a></p>
+</span></span></code></pre></div><p>最后排查发现是<code>url</code>没有<code>http</code>或<code>https</code>前缀，加上之后就能正常跳转。参考<a href="https://cloud.tencent.com/developer/article/1365814">这个资料</a>，出现这个错误，是因为<code>WebView</code>加载了它无法处理的请求。一般来说，出现此情况有以下几种情况：</p>
+<ul>
+<li>不合法的URL：①非http/https开头的url。②url中含有不合法的字符，此时需要用url编码进行编码。③url格式不正确。</li>
+<li>不合法的系统API。例如tel://写成了tell://。</li>
+<li>不合法的App跳转。①未在 LSApplicationQueriesSchemes 添加的第三方APP跳转。②未安装的App。</li>
+</ul>
 <h1 id="disable-entire-uimenucontroller-edit-menu-in-wkwebview">Disable entire UIMenuController edit menu in WKWebView</h1>
-<p>如果想要在<code>WKWebView</code>上禁止长按弹出复制、粘贴等选项，可以使用如下方式：</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span><span style="color:#66d9ef">override</span> <span style="color:#66d9ef">var</span> canBecomeFirstResponder: Bool {
-</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">return</span> <span style="color:#66d9ef">true</span>
-</span></span><span style="display:flex;"><span>}
-</span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span><span style="color:#66d9ef">override</span> <span style="color:#66d9ef">var</span> canResignFirstResponder: Bool {
-</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">return</span> <span style="color:#66d9ef">false</span>
-</span></span><span style="display:flex;"><span>}
-</span></span></code></pre></div><div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span> <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">override</span> <span style="color:#66d9ef">func</span> <span style="color:#a6e22e">canPerformAction</span>(<span style="color:#66d9ef">_</span> action: Selector, withSender sender: Any?) -&gt; Bool {
+<p>如果想要在<code>WKWebView</code>上禁止长按弹出原生的复制、粘贴等选项，可以覆写<code>canPerformAction</code>方法，让其返回<code>false</code>:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span> <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">override</span> <span style="color:#66d9ef">func</span> <span style="color:#a6e22e">canPerformAction</span>(<span style="color:#66d9ef">_</span> action: Selector, withSender sender: Any?) -&gt; Bool {
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">//UIMenuController.shared.isMenuVisible = false</span>
 </span></span><span style="display:flex;"><span>     <span style="color:#66d9ef">return</span> <span style="color:#66d9ef">false</span>
 </span></span><span style="display:flex;"><span> }
-</span></span></code></pre></div><div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span>NotificationCenter.<span style="color:#66d9ef">default</span>.addObserver(<span style="color:#66d9ef">self</span>, selector: <span style="color:#66d9ef">#selector</span>(willShowMenu(<span style="color:#66d9ef">_</span>:)), name: UIMenuController.willShowMenuNotification, object: <span style="color:#66d9ef">nil</span>)
-</span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span><span style="color:#66d9ef">@objc</span> <span style="color:#66d9ef">private</span> <span style="color:#66d9ef">func</span> <span style="color:#a6e22e">willShowMenu</span>(<span style="color:#66d9ef">_</span> notification: NSNotification) {
-</span></span><span style="display:flex;"><span>     UIMenuController.shared.isMenuVisible = <span style="color:#66d9ef">false</span>
-</span></span><span style="display:flex;"><span>     UIMenuController.shared.update()
-</span></span><span style="display:flex;"><span>}
-</span></span></code></pre></div><div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-fallback" data-lang="fallback"><span style="display:flex;"><span>https://developer.apple.com/forums/thread/691568
-</span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span>* {
-</span></span><span style="display:flex;"><span>  user-select: none;
-</span></span><span style="display:flex;"><span>  -webkit-user-select: none;
-</span></span><span style="display:flex;"><span>  -webkit-touch-callout: none;
-</span></span><span style="display:flex;"><span>}
-</span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span>textarea, input {
-</span></span><span style="display:flex;"><span>  user-select: text;
-</span></span><span style="display:flex;"><span>  -webkit-user-select: text;
-</span></span><span style="display:flex;"><span>}
-</span></span></code></pre></div><p><a href="https://stackoverflow.com/questions/33243230/disable-entire-uimenucontroller-edit-menu-in-wkwebview/42510788#42510788">参考资料</a></p>
+</span></span></code></pre></div><p>也可以通过注入<code>js</code>的方法，不让用户选择和长按：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span><span style="color:#75715e">// 禁止选择 css 配置相关</span>
 </span></span><span style="display:flex;"><span><span style="color:#66d9ef">let</span> css = <span style="color:#e6db74">&#34;body{-webkit-user-select:none;-webkit-user-drag:none;user-select: none;}&#34;</span>
 </span></span><span style="display:flex;"><span> 
@@ -381,7 +361,27 @@ code.has-jax {
 </span></span><span style="display:flex;"><span><span style="color:#75715e">// javascript 注入</span>
 </span></span><span style="display:flex;"><span><span style="color:#66d9ef">let</span> noneSelectScript = WKUserScript(source: javascript, injectionTime: .atDocumentEnd, forMainFrameOnly: <span style="color:#66d9ef">false</span>)
 </span></span><span style="display:flex;"><span>wkConfig.userContentController.addUserScript(noneSelectScript)
-</span></span></code></pre></div><h1 id="disable-magnification-gesture-in-wkwebview">Disable magnification gesture in WKWebView</h1>
+</span></span></code></pre></div><div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span><span style="color:#66d9ef">override</span> <span style="color:#66d9ef">var</span> canBecomeFirstResponder: Bool {
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">return</span> <span style="color:#66d9ef">true</span>
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">override</span> <span style="color:#66d9ef">var</span> canResignFirstResponder: Bool {
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">return</span> <span style="color:#66d9ef">false</span>
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-fallback" data-lang="fallback"><span style="display:flex;"><span>https://developer.apple.com/forums/thread/691568
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>* {
+</span></span><span style="display:flex;"><span>  user-select: none;
+</span></span><span style="display:flex;"><span>  -webkit-user-select: none;
+</span></span><span style="display:flex;"><span>  -webkit-touch-callout: none;
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>textarea, input {
+</span></span><span style="display:flex;"><span>  user-select: text;
+</span></span><span style="display:flex;"><span>  -webkit-user-select: text;
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p><a href="https://stackoverflow.com/questions/33243230/disable-entire-uimenucontroller-edit-menu-in-wkwebview/42510788#42510788">参考资料</a></p>
+<h1 id="disable-magnification-gesture-in-wkwebview">Disable magnification gesture in WKWebView</h1>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span><span style="color:#66d9ef">class</span> <span style="color:#a6e22e">MyClass</span> {
 </span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">let</span> webView = WKWebView()
 </span></span><span style="display:flex;"><span>
