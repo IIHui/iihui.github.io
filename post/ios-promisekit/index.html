@@ -241,7 +241,7 @@ code.has-jax {
     <i class="fa fa-file-word-o"></i>
 </span>
 <span class="post-meta-item-text">字数: </span>
-<span class="leancloud-visitors-count">3714</span>
+<span class="leancloud-visitors-count">3713</span>
 &nbsp; | &nbsp;
 <span class="post-meta-item-icon">
     <i class="fa fa-coffee"></i>
@@ -256,7 +256,7 @@ code.has-jax {
 <p><code>PromiseKit</code>是简化异步编程的一种<font color=LightSeaGreen>非必要方式</font>，使用它可以提高代码的可读性和维护性，让代码更加优雅，它主要用于解决<a href="https://juejin.cn/post/6844903600444047368">回调地狱</a>问题。</p>
 </blockquote>
 <h1 id="回调地狱">回调地狱</h1>
-<p>为了保证异步代码按顺序执行，通常将异步代码嵌套在回调函数中。如果异步方法过多，就会产生过多的回调，一层一层的嵌套，使得代码不清晰，难以维护。即产生所谓的回调地狱<code>callback hell</code>问题。下面的<code>fetchJSON</code>中，产生了<code>3</code>次回调，导致代码看起来比较费劲，可读性较差：</p>
+<p>为了保证异步代码按顺序执行，通常将异步代码嵌套在回调函数中。如果异步方法过多，就会产生过多的回调，一层一层嵌套，使得代码不清晰，难以维护。即产生所谓的回调地狱<code>callback hell</code>问题。下面的<code>fetchJSON</code>中，产生了<code>3</code>次回调，导致代码看起来比较费劲，可读性较差：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span>fetchJSON(fromURL: <span style="color:#e6db74">&#34;someURL&#34;</span>) { response, results, error <span style="color:#66d9ef">in</span>
 </span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">switch</span> response {
 </span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">case</span> .success:
@@ -307,11 +307,23 @@ code.has-jax {
 </span></span><span style="display:flex;"><span>}.<span style="color:#66d9ef">catch</span> {
 </span></span><span style="display:flex;"><span>    <span style="color:#75715e">// handle error here 所有被rejected的承诺都会集中在这里处理</span>
 </span></span><span style="display:flex;"><span>}
-</span></span></code></pre></div><p>其中<code>firstly</code>是可选的，它只能放在第一个，是为了代码能更加优雅和整齐，它的<code>block</code>也是返回一个<code>Promise</code>。</p>
-<p>其中<code>then</code>是接在中间的，也是要求返回一个<code>promise</code>，可以有无限多个<code>then</code>相互连接。任何一个<code>then</code>都可以抛出一个<code>error</code>。</p>
+</span></span></code></pre></div><ul>
+<li>
+<p>其中<code>firstly</code>是可选的，它<font color=red>只能放在第一行</font>，是为了代码能更加优雅和整齐，它的也是需要返回一个<code>Promise</code>对象。</p>
+</li>
+<li>
+<p>其中<code>then</code>是放在中间的，它也是要求返回一个<code>promise</code>，可以有无限多个<code>then</code>相互连接。任何一个<code>then</code>都可以抛出一个<code>error</code>。</p>
+</li>
+<li>
 <p><code>ensure</code>类似于<code>finally</code>，<font color=red>不管事件是否错误，它都一定会得到执行</font>，<code>ensure</code>不同于<code>finally</code>的是，它<font color=red>可以放在任何位置</font>。</p>
+</li>
+<li>
 <p><code>done</code>是事件结束的标志，它是<font color=red>必须要有的</font>，只有上面的事件都执行成功时，才会最终执行<code>done</code>。</p>
+</li>
+<li>
 <p>而<code>catch</code>用于捕获异常，<code>done</code>之前的任何事件出现错误，都会直接进入<code>catch</code>块。</p>
+</li>
+</ul>
 <h1 id="promise对象状态">promise对象状态</h1>
 <p>在<code>PromiseKit</code>中<code>promise</code>是一个对象。它保存异步数据操作，同时提供统一的异步数据操作事件处理的接口，<code>PromiseKit</code>对象。</p>
 <ul>
@@ -405,7 +417,7 @@ code.has-jax {
 </span></span></code></pre></div><h1 id="firstly">firstly</h1>
 <p><code>firstly</code>是可选的，它<font color=red>只能放在第一个</font>，是为了代码能更加的优雅和整齐，他的<code>block</code>里也是返回一个一个<code>Promise</code>。</p>
 <h1 id="then">then</h1>
-<p><code>then</code>是接在中间的，可以<font color=red>无限多个then相互连接</font>。顾名思义，就像我们讲故事可以不断地有然后、然后、然后&hellip;<code>then</code>也是要求返回一个<code>Promise</code>对象的，也就是说，任何一个<code>then</code>都可以抛出一个<code>error</code>，中断事件。</p>
+<p><code>then</code>是接在中间的，可以<font color=red>无限多个<code>then</code>相互连接</font>。顾名思义，就像我们讲故事可以不断地有然后、然后、然后&hellip;<code>then</code>也是要求返回一个<code>Promise</code>对象的，也就是说，任何一个<code>then</code>都可以抛出一个<code>error</code>，中断事件。</p>
 <h1 id="ensure">ensure</h1>
 <p>无论<code>chain</code>在哪里结束，成功或者失败。<code>ensure</code>终将被执行，也可以使用<code>finally</code>来完成相同的功能，区别是<code>finally</code>没有返回值并且<code>ensure</code>可以放在任何位置。</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span>firstly {
@@ -429,7 +441,7 @@ code.has-jax {
 </span></span><span style="display:flex;"><span>    <span style="color:#75715e">//...</span>
 </span></span><span style="display:flex;"><span>}
 </span></span></code></pre></div><h1 id="finally">finally</h1>
-<p>执行完<code>then</code>，或者处理完<code>error</code>后，还有一些操作（比如关闭活动指示器），那么就可以放到<code>finally</code>里面去执行。也就是说不管前面是<code>fulfill</code>还是<code>reject，最终都会进入到 </code>finally`方法里来。</p>
+<p>执行完<code>then</code>，或者处理完<code>error</code>后，还有一些操作（比如关闭活动指示器），那么就可以放到<code>finally</code>里面去执行。也就是说不管前面是<code>fulfill</code>还是<code>reject</code>，最终都会进入到 <code>finally</code>方法里来。</p>
 <h1 id="done">done</h1>
 <p><code>done</code>是事件结束的标志，它是必须要有的，只有上面的事件都执行成功时，才会最终执行<code>done</code>。在<code>promise</code>链中，<code>done</code>不返回<code>promise</code>，它用于前面所有的<code>promise</code>都<code>success</code>，表示调用链无错误的运行，而<code>then</code>会返回<code>promise</code>对象：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span>firstly {
@@ -460,7 +472,7 @@ code.has-jax {
 </span></span><span style="display:flex;"><span>}.done { location <span style="color:#66d9ef">in</span>
 </span></span><span style="display:flex;"><span>    <span style="color:#75715e">//…</span>
 </span></span><span style="display:flex;"><span>}
-</span></span></code></pre></div><p><a href="https://juejin.cn/post/6844903741112451080">摘抄自</a></p>
+</span></span></code></pre></div><p><a href="https://juejin.cn/post/6844903741112451080">参考资料</a></p>
 <h1 id="throw">throw</h1>
 <p>如果<code>then</code>中需要抛出异常，一种方法是在<code>Promise</code>中调用reject，另一种比较简便的方法就是直接<code>throw</code>：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span>firstly {

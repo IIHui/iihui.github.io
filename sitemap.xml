@@ -2166,19 +2166,19 @@ layoutIfNeeded layoutIfNeeded方法一被调用，主线程会立即强制重新
           <tag>iOS</tag>
         </tags>
         <content type="html">  PromiseKit是简化异步编程的一种非必要方式，使用它可以提高代码的可读性和维护性，让代码更加优雅，它主要用于解决回调地狱问题。
- 回调地狱 为了保证异步代码按顺序执行，通常将异步代码嵌套在回调函数中。如果异步方法过多，就会产生过多的回调，一层一层的嵌套，使得代码不清晰，难以维护。即产生所谓的回调地狱callback hell问题。下面的fetchJSON中，产生了3次回调，导致代码看起来比较费劲，可读性较差：
+ 回调地狱 为了保证异步代码按顺序执行，通常将异步代码嵌套在回调函数中。如果异步方法过多，就会产生过多的回调，一层一层嵌套，使得代码不清晰，难以维护。即产生所谓的回调地狱callback hell问题。下面的fetchJSON中，产生了3次回调，导致代码看起来比较费劲，可读性较差：
 fetchJSON(fromURL: &amp;#34;someURL&amp;#34;) { response, results, error in  switch response {  case .success:  fetchUserData(for: results) { response, results, error in  switch response {  case .success:  loginUser(user: results) { response, _, error in  switch response {  case .success:  // finally all of the callbacks are finished  print(&amp;#34;Handle logic here&amp;#34;)  case .fail:  print(error)  }  }  case .fail:  print(error)  }  }  case .fail:  print(error)  } } promise设计模式 promise设计模式，借用生活中的「承诺」一词来描述异步编程中的回调模型。「承诺」是一种对未来的期许，它有以下两个特点：
   描述未来的一种状态或动作。
   承诺具有不确定性，可以被兑现fullfill，也可能被拒绝rejected。
   因为网络操作一般都是异步的，如果需要编写一个方法从网络获取图片，可以使用承诺模式实现这个方法。首先定义一个返回承诺对象的方法，它不直接返回Image，只有当请求到需要的图片时，这个承诺才会兑现，然后将Image传递到承诺对象中，否则承诺被拒绝（网络错误或者图片不存在）。
 无论兑现还是拒绝，这个承诺对象都会标记为已解决（resolve)，已解决的承诺会被销毁。如果既不兑现，也不拒绝，则这个承诺会一直有效，即未解决。
 PromiseKit链 在PromiseKit中，通过promise对象将异步任务串接起来的，一个典型的promise链如下所示：
-firstly {  promise1() }.then {  promise2() }.then {  promise3() }.ensure {  // something that should happen whatever the outcome 无论承诺是否兑现，都会执行ensure }.done {  // all promises are success resolved }.catch {  // handle error here 所有被rejected的承诺都会集中在这里处理 } 其中firstly是可选的，它只能放在第一个，是为了代码能更加优雅和整齐，它的block也是返回一个Promise。
-其中then是接在中间的，也是要求返回一个promise，可以有无限多个then相互连接。任何一个then都可以抛出一个error。
-ensure类似于finally，不管事件是否错误，它都一定会得到执行，ensure不同于finally的是，它可以放在任何位置。
-done是事件结束的标志，它是必须要有的，只有上面的事件都执行成功时，才会最终执行done。
-而catch用于捕获异常，done之前的任何事件出现错误，都会直接进入catch块。
-promise对象状态 在PromiseKit中promise是一个对象。它保存异步数据操作，同时提供统一的异步数据操作事件处理的接口，PromiseKit对象。
+firstly {  promise1() }.then {  promise2() }.then {  promise3() }.ensure {  // something that should happen whatever the outcome 无论承诺是否兑现，都会执行ensure }.done {  // all promises are success resolved }.catch {  // handle error here 所有被rejected的承诺都会集中在这里处理 }   其中firstly是可选的，它只能放在第一行，是为了代码能更加优雅和整齐，它的也是需要返回一个Promise对象。
+  其中then是放在中间的，它也是要求返回一个promise，可以有无限多个then相互连接。任何一个then都可以抛出一个error。
+  ensure类似于finally，不管事件是否错误，它都一定会得到执行，ensure不同于finally的是，它可以放在任何位置。
+  done是事件结束的标志，它是必须要有的，只有上面的事件都执行成功时，才会最终执行done。
+  而catch用于捕获异常，done之前的任何事件出现错误，都会直接进入catch块。
+  promise对象状态 在PromiseKit中promise是一个对象。它保存异步数据操作，同时提供统一的异步数据操作事件处理的接口，PromiseKit对象。
   fulfilled指的是promise对象当前处理的异步事件已经成功完成
   rejected表示promise对象当前处理的异步事件没有成功
   promise对象执行完then和catch方法后，这两个方法会返回先前的promise对象，同时根据异步操作结果改变promise对象的状态。
@@ -2188,11 +2188,11 @@ func promiseFetchUserData(user: String: Any]) -&amp;gt; Promise&amp;lt;User&amp;
 firstly {  promiseFetchJSON() }.then { json in  promiseFetchUserData(user: json) }.then { user in  promiseLoginUser(user: user) }.ensure {  // something that should happen whatever the outcome }.done { _ in  // all promises are success resolved  // handle final logic here }.catch { _ in  // handle error here } firstly firstly是可选的，它只能放在第一个，是为了代码能更加的优雅和整齐，他的block里也是返回一个一个Promise。
 then then是接在中间的，可以无限多个then相互连接。顾名思义，就像我们讲故事可以不断地有然后、然后、然后&amp;hellip;then也是要求返回一个Promise对象的，也就是说，任何一个then都可以抛出一个error，中断事件。
 ensure 无论chain在哪里结束，成功或者失败。ensure终将被执行，也可以使用finally来完成相同的功能，区别是finally没有返回值并且ensure可以放在任何位置。
-firstly {  // ... }.then {  // ... }.done {  // ... }.ensure {  // ... }.catch {  // ... } firstly {  // ... }.done {  // ... }.catch {  // ... }.finally {  //... } finally 执行完then，或者处理完error后，还有一些操作（比如关闭活动指示器），那么就可以放到finally里面去执行。也就是说不管前面是fulfill还是reject，最终都会进入到 finally`方法里来。
+firstly {  // ... }.then {  // ... }.done {  // ... }.ensure {  // ... }.catch {  // ... } firstly {  // ... }.done {  // ... }.catch {  // ... }.finally {  //... } finally 执行完then，或者处理完error后，还有一些操作（比如关闭活动指示器），那么就可以放到finally里面去执行。也就是说不管前面是fulfill还是reject，最终都会进入到 finally方法里来。
 done done是事件结束的标志，它是必须要有的，只有上面的事件都执行成功时，才会最终执行done。在promise链中，done不返回promise，它用于前面所有的promise都success，表示调用链无错误的运行，而then会返回promise对象：
 firstly {  login() }.then { creds in  fetch(avatar: creds.user) }.done { image in  self.imageView = image } catch处理 每个promise都是一个表示单个异步任务的对象。如果任务失败，它的promise将成为rejected。产生rejected promises将跳过所有的then，执行后续所有catch。
 firstly {  login() }.then { creds in  //... }.done { image in  //... }.catch {  // 整个 chain 上的错误都到了这里 } recover recover能从异常中拯救任务，可以判定某些错误就忽略，当做正常结果返回，剩下的错误继续抛出异常。
-CLLocationManager.requestLocation().recover { error -&amp;gt; Promise&amp;lt;CLLocation&amp;gt; in  guard error == MyError.airplaneMode else {  throw error  }  return .value(CLLocation.savannah) }.done { location in  //… } 摘抄自
+CLLocationManager.requestLocation().recover { error -&amp;gt; Promise&amp;lt;CLLocation&amp;gt; in  guard error == MyError.airplaneMode else {  throw error  }  return .value(CLLocation.savannah) }.done { location in  //… } 参考资料
 throw 如果then中需要抛出异常，一种方法是在Promise中调用reject，另一种比较简便的方法就是直接throw：
 firstly {  foo() }.then { baz in  bar(baz) }.then { result in  guard !result.isBad else { throw MyError.myIssue }  //…  return doOtherThing() } 如果调用的方法可能会抛出异常，try也会让异常直达catch：
 foo().then { baz in  bar(baz) }.then { result in  try doOtherThing() }.catch { error in  // if doOtherThing() throws, we end up here } get 如果想要在异步链路中取值用于其他操作，可以使用get或者tap方法，它们不会影响到原有的链路逻辑。get方法只有前面是完成状态（fulfill）时才会调用，它得到的是具体结果。
