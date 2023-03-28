@@ -3020,7 +3020,38 @@ Cloning into &amp;#39;/usr/local/Homebrew/Library/Taps/homebrew/homebrew-core&am
 加速访问github 可以通过修改host文件的方式将加快github的访问。首先下载SwithHosts工具，然后点点击&#43;，Hosts类型选择远程，输入title和URL即可，如下图所示：
 https://raw.hellogithub.com/hosts https://gitee.com/fliu2476/github-hosts/raw/main/hosts Replace CDN 访问stackoverflow.com很慢，是因为它使用了Google的CDN。一种解决方案是将Google的CDN替换为国内的。具体按下面这个操作即可：
   下载 ReplaceGoogleCDN 然后解压，找到 extension 子目录。 打开Chrome，输入: chrome://extensions/。 勾选Developer Mode。 选择Load unpacked extension... 然后定位到刚才解压的文件夹里面的extension目录，点击确定。 这就安装好了，去掉 Developer Mode 勾选。   fatal: not in a git directory fatal: not in a git directory Error: Command failed with exit 128: git git config --global --add safe.directory /usr/local/Homebrew git config --global --add safe.directory /usr/local/Homebrew/Library/Taps/homebrew/homebrew-cask git config --global --add safe.directory /usr/local/Homebrew/Library/Taps/homebrew/homebrew-core Error: No such file or directory @ rb_sysopen 执行了上面的命令后，还是出现Error: No such file or directory @ rb_sysopen，解决方案是单独使用brew命令安装依赖：
-==&amp;gt; Installing dependencies for node: icu4c and libuv ==&amp;gt; Installing node dependency: icu4c ==&amp;gt; Pouring icu4c-70.1.monterey.bottle.tar.gz Error: No such file or directory @ rb_sysopen - /Users/hui/Library/Caches/Homebrew/downloads/2d9f30e8aed78118c54346d53e7e5b9ed0e04385816d1cf0453f22b6644f14ad--icu4c-70.1.monterey.bottle.tar.gz brew install icu4c brew install libuv </content>
+==&amp;gt; Installing dependencies for node: icu4c and libuv ==&amp;gt; Installing node dependency: icu4c ==&amp;gt; Pouring icu4c-70.1.monterey.bottle.tar.gz Error: No such file or directory @ rb_sysopen - /Users/hui/Library/Caches/Homebrew/downloads/2d9f30e8aed78118c54346d53e7e5b9ed0e04385816d1cf0453f22b6644f14ad--icu4c-70.1.monterey.bottle.tar.gz brew install icu4c brew install libuv 同步远程已经删除的分支 git remote prune origin curl: (79) Error in the SSH layer 出现这个报错是因为查看的是目录，而不是文件:
+curl -k --user xxx sftp://192.168.1.101/home 参考资料
+curl -u &amp;lt;username&amp;gt;: --key ~/.ssh/id_rsa --pubkey ~/.ssh/id_rsa.pub sftp://&amp;lt;remote_host&amp;gt;/&amp;lt;remote_path&amp;gt;  curl --key ~/.ssh/id_rsa --pubkey ~/.ssh/id_rsa.pub sftp://user@remote-server/path/to/file -T local-file curl -k sftp://root@127.0.0.1 要使用curl设置SFTP免密码登录，您可以按照以下步骤操作：
+  使用
+ssh-keygen
+命令生成公钥/私钥对。这将在您的主目录中创建一个公钥文件（通常命名为
+id_rsa.pub
+）和一个私钥文件（通常命名为
+id_rsa
+）。
+  使用
+ssh-copy-id
+命令将公钥复制到远程服务器。这将把您的公钥添加到远程服务器上的
+authorized_keys
+文件中，允许您无需密码登录。
+ssh-copy-id user@remote-server
+  运行以下命令测试无密码登录：
+sftp user@remote-server
+如果一切设置正确，您应该能够无需密码登录。
+  如果您想使用curl在SFTP上传输文件而无需密码，可以使用
+&amp;ndash;key
+和
+&amp;ndash;pubkey
+选项分别指定私钥和公钥的位置。例如：
+curl &amp;ndash;key ~/.ssh/id_rsa &amp;ndash;pubkey ~/.ssh/id_rsa.pub sftp://user@remote-server/path/to/file -T local-file
+这将使用SFTP将
+local-file
+传输到位于
+/path/to/file
+的远程服务器上，而无需密码。
+希望这可以帮助您！如果您有任何进一步的问题，请告诉我。
+</content>
     </entry>
     
      <entry>
