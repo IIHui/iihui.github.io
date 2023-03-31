@@ -2166,11 +2166,11 @@ layoutIfNeeded layoutIfNeeded方法一被调用，主线程会立即强制重新
           <tag>iOS</tag>
         </tags>
         <content type="html">  PromiseKit是简化异步编程的一种非必要方式，使用它可以提高代码的可读性和维护性，让代码更加优雅，它主要用于解决回调地狱问题。
- 回调地狱 为了保证异步代码按顺序执行，通常将异步代码嵌套在回调函数中。如果异步方法过多，就会产生过多的回调，一层一层嵌套，使得代码不清晰，难以维护。即产生所谓的回调地狱callback hell问题。下面的fetchJSON中，产生了3次回调，导致代码看起来比较费劲，可读性较差：
+ 回调地狱 为了保证异步代码按顺序执行，通常将异步代码嵌套在回调函数中。如果异步方法过多，就会产生过多的回调，一层一层嵌套，使得代码不清晰，难以维护。即产生所谓的回调地狱callback hell问题。下面的fetchJSON有3次回调，代码看起来比较费劲，可读性较差：
 fetchJSON(fromURL: &amp;#34;someURL&amp;#34;) { response, results, error in  switch response {  case .success:  fetchUserData(for: results) { response, results, error in  switch response {  case .success:  loginUser(user: results) { response, _, error in  switch response {  case .success:  // finally all of the callbacks are finished  print(&amp;#34;Handle logic here&amp;#34;)  case .fail:  print(error)  }  }  case .fail:  print(error)  }  }  case .fail:  print(error)  } } promise设计模式 promise设计模式，借用生活中的「承诺」一词来描述异步编程中的回调模型。「承诺」是一种对未来的期许，它有以下两个特点：
   描述未来的一种状态或动作。
   承诺具有不确定性，可以被兑现fullfill，也可能被拒绝rejected。
-  因为网络操作一般都是异步的，如果需要编写一个方法从网络获取图片，可以使用承诺模式实现这个方法。首先定义一个返回承诺对象的方法，它不直接返回Image，只有当请求到需要的图片时，这个承诺才会兑现，然后将Image传递到承诺对象中，否则承诺被拒绝（网络错误或者图片不存在）。
+  因为网络操作一般都是异步的，如果要写一个方法从网络获取图片，可以使用承诺模式实现这个方法。首先定义一个返回承诺对象的方法，但它不直接返回Image，只有当请求到图片时，这个承诺才会兑现，然后将Image传递到承诺对象中，否则承诺被拒绝（网络错误或者图片不存在）。
 无论兑现还是拒绝，这个承诺对象都会标记为已解决（resolve)，已解决的承诺会被销毁。如果既不兑现，也不拒绝，则这个承诺会一直有效，即未解决。
 PromiseKit链 在PromiseKit中，通过promise对象将异步任务串接起来的，一个典型的promise链如下所示：
 firstly {  promise1() }.then {  promise2() }.then {  promise3() }.ensure {  // something that should happen whatever the outcome 无论承诺是否兑现，都会执行ensure }.done {  // all promises are success resolved }.catch {  // handle error here 所有被rejected的承诺都会集中在这里处理 }   其中firstly是可选的，它只能放在第一行，是为了代码能更加优雅和整齐，它的也是需要返回一个Promise对象。
