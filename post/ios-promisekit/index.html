@@ -241,13 +241,13 @@ code.has-jax {
     <i class="fa fa-file-word-o"></i>
 </span>
 <span class="post-meta-item-text">字数: </span>
-<span class="leancloud-visitors-count">3526</span>
+<span class="leancloud-visitors-count">3477</span>
 &nbsp; | &nbsp;
 <span class="post-meta-item-icon">
     <i class="fa fa-coffee"></i>
 </span>
 <span class="post-meta-item-text">阅读: </span>
-<span class="leancloud-visitors-count">8 分钟</span>
+<span class="leancloud-visitors-count">7 分钟</span>
 </span>
       </div>
     </header>
@@ -281,7 +281,7 @@ code.has-jax {
 </span></span><span style="display:flex;"><span>    }
 </span></span><span style="display:flex;"><span>}
 </span></span></code></pre></div><h1 id="promise设计模式">promise设计模式</h1>
-<p><code>promise</code>设计模式，借用生活中的「承诺」一词来描述异步编程中的回调模型。「承诺」是一种对未来的期许，它有以下两个特点：</p>
+<p><code>promise</code>借用生活中的「承诺」一词来描述异步编程中的回调模型。「承诺」是一种对未来的期许，它有以下两个特点：</p>
 <ul>
 <li>
 <p>描述未来的一种状态或动作。</p>
@@ -290,7 +290,7 @@ code.has-jax {
 <p>承诺具有不确定性，可以被兑现<code>fullfill</code>，也可能被拒绝<code>rejected</code>。</p>
 </li>
 </ul>
-<p>网络操作一般都是异步的，如果写一个方法从网络获取图片，可以使用承诺模式来实现这个方法。首先定义一个返回承诺对象的方法，但它不直接返回<code>Image</code>，只有当请求到图片时，这个承诺才会兑现，然后将<code>Image</code>传递到承诺对象中，否则承诺被拒绝（网络错误或者图片不存在）。</p>
+<p>网络操作一般都是异步的，如果写一个方法从网络获取图片，可以使用承诺模式来实现。定义一个返回承诺对象的方法，它不直接返回<code>Image</code>，只有当请求到图片时，这个承诺才会兑现，然后将<code>Image</code>传递到承诺对象中，否则承诺被拒绝（网络错误或者图片不存在）。</p>
 <p>无论兑现还是拒绝，这个承诺对象都会标记为已解决（<code>resolve</code>)，已解决的承诺会被销毁。如果既不兑现，也不拒绝，<font color=red>则这个承诺会一直有效，即未解决</font>。</p>
 <img src="https://i.loli.net/2020/11/05/F5xbjRlevtufmaX.jpg" alt="-c" style="zoom:68%;" />
 <p><code>promise</code>对象执行完<code>then</code>和<code>catch</code>方法后，这两个方法会返回先前的<code>promise</code>对象，同时根据异步操作结果改变<code>promise</code>对象的状态。</p>
@@ -311,16 +311,16 @@ code.has-jax {
 </span></span><span style="display:flex;"><span>}
 </span></span></code></pre></div><ul>
 <li>
-<p>其中<code>firstly</code>是可选的，但它<font color=red>只能放在第一行</font>，是为了代码能更加优雅和整齐，它需要返回一个<code>Promise</code>对象。</p>
+<p>其中<code>firstly</code>是可选的，但它<font color=red>只能放在第一行</font>，需要返回一个<code>Promise</code>对象。</p>
 </li>
 <li>
-<p>其中的<code>then</code>是放在中间的，它也要求返回一个<code>promise</code>，可以有无限多个<code>then</code>相互连接。任何一个<code>then</code>都可以抛出一个<code>error</code>。</p>
+<p><code>then</code>是放在中间的，它也要求返回一个<code>promise</code>，可以有无限多个<code>then</code>相互连接。任何一个<code>then</code>都可以抛出一个<code>error</code>。</p>
 </li>
 <li>
-<p><code>ensure</code>类似于<code>finally</code>，<font color=red>不管事件是否错误，它都一定会得到执行</font>。不同于<code>finally</code>，它<font color=red>可以放在任何位置</font>。</p>
+<p><code>ensure</code>类似于<code>finally</code>，<font color=red>不管事件是否错误，它都一定会得到执行</font>。不同于<code>finally</code>，<code>ensure</code><font color=red>可以放在任何位置</font>。</p>
 </li>
 <li>
-<p><code>done</code>是事件结束的标志，它是<font color=red>必须要有的</font>，只有上面所有事件<font color=red>都执行成功时</font>，才会执行<code>done</code>。</p>
+<p><code>done</code>是事件结束的标志，它是<font color=red>必须要有的</font>，只有前面所有事件<font color=red>都执行成功</font>时，才会执行<code>done</code>。</p>
 </li>
 <li>
 <p>而<code>catch</code>用于捕获异常，<code>done</code>之前的任何事件出现错误，都会直接进入<code>catch</code>块。</p>
@@ -350,7 +350,7 @@ code.has-jax {
 </span></span><span style="display:flex;"><span>        print(error)
 </span></span><span style="display:flex;"><span>    }
 </span></span><span style="display:flex;"><span>}
-</span></span></code></pre></div><p>上面的<code>fetchJSON</code>方法有<code>3</code>个回调，按照<code>PromiseKit</code>链接结构可以将上面的方法改造成<code>3</code>个方法，每个方法都返回一个<code>promise</code>对象，然后依次串接起来，如下所示：</p>
+</span></span></code></pre></div><p>上面<code>fetchJSON</code>方法有<code>3</code>个回调，按照<code>PromiseKit</code>链结构可以将上面的方法改造成<code>3</code>个方法，每个方法都返回一个<code>promise</code>对象，然后依次串接起来：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">promiseFetchJSON</span>() -&gt; Promise&lt;String: Any]<span style="color:#f92672">&gt;</span> {
 </span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">return</span> Promise&lt;String: Any]<span style="color:#f92672">&gt;</span> { seal <span style="color:#66d9ef">in</span>
 </span></span><span style="display:flex;"><span>        fetchJSON(fromURL: <span style="color:#e6db74">&#34;someURL&#34;</span>, completion: { response, results, error <span style="color:#66d9ef">in</span>
@@ -409,7 +409,7 @@ code.has-jax {
 <h1 id="then">then</h1>
 <p><code>then</code>是接在中间的，可以<font color=red>无限多个<code>then</code>相互连接</font>。顾名思义，就像我们讲故事可以不断地有然后、然后、然后&hellip;<code>then</code>也是要求返回一个<code>Promise</code>对象的，也就是说，任何一个<code>then</code>都可以抛出一个<code>error</code>，中断事件。</p>
 <h1 id="ensure">ensure</h1>
-<p>无论调用链在哪里结束，成功或者失败。<code>ensure</code>终将被执行，也可以使用<code>finally</code>来完成相同的功能，区别是<code>finally</code>没有返回值并且<code>ensure</code>可以放在任何位置。</p>
+<p>无论调用链在哪里结束，成功或者失败。<code>ensure</code>终将被执行，也可以使用<code>finally</code>来完成相同功能，区别是<code>finally</code>没有返回值并且<code>ensure</code>可以放在任何位置。</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span>firstly {
 </span></span><span style="display:flex;"><span>    <span style="color:#75715e">// ...</span>
 </span></span><span style="display:flex;"><span>}.then {
@@ -483,7 +483,7 @@ code.has-jax {
 </span></span><span style="display:flex;"><span>    <span style="color:#75715e">// if doOtherThing() throws, we end up here</span>
 </span></span><span style="display:flex;"><span>}
 </span></span></code></pre></div><h1 id="get">get</h1>
-<p>如果想要在异步链路中取值用于其他操作，可以使用<code>get</code>或者<code>tap</code>方法，它们不会影响到原有的链路逻辑。<code>get</code>方法只有前面是完成状态（<code>fulfill</code>）时才会调用，它得到的是具体结果。</p>
+<p>如果想要在异步链路中取值用于其他操作，可以使用<code>get</code>或者<code>tap</code>方法，它们不会影响到原有的链路逻辑。<code>get</code>方法只有<font color=red>前面是<code>fulfill</code>时才会调用</font>。</p>
 <p><a href="https://www.hangge.com/blog/cache/detail_2231.html">参考资料</a></p>
 <h1 id="tap">tap</h1>
 <p>而<code>tap</code>方法是不管前面是完成<code>fulfill</code>还是失败<code>reject</code>，它都会被调用，同时它得到的是<code>Result&lt;T&gt;</code>。它是一个无侵入操作，不会影响事件的任何属性，只是在适当的时机做一些不影响主线的事情，适用于打点：</p>
