@@ -241,13 +241,13 @@ code.has-jax {
     <i class="fa fa-file-word-o"></i>
 </span>
 <span class="post-meta-item-text">字数: </span>
-<span class="leancloud-visitors-count">2335</span>
+<span class="leancloud-visitors-count">2600</span>
 &nbsp; | &nbsp;
 <span class="post-meta-item-icon">
     <i class="fa fa-coffee"></i>
 </span>
 <span class="post-meta-item-text">阅读: </span>
-<span class="leancloud-visitors-count">5 分钟</span>
+<span class="leancloud-visitors-count">6 分钟</span>
 </span>
       </div>
     </header>
@@ -349,58 +349,38 @@ code.has-jax {
 </span></span></code></pre></div><div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>brew install icu4c
 </span></span><span style="display:flex;"><span>brew install libuv
 </span></span></code></pre></div><h1 id="同步远程已经删除分支">同步远程已经删除分支</h1>
+<p>最近发现本地存在很多在远端已经删除的分支，为了同步服务端的分支，可以在终端下执行如下命令：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>git remote prune origin
 </span></span></code></pre></div><h1 id="curl-79-error-in-the-ssh-layer">curl: (79) Error in the SSH layer</h1>
-<p>使用<code>curl</code>的过程中出现这个报错是因为查看的是目录，而不是文件:</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>curl -k --user xxx sftp://192.168.1.101/home
-</span></span></code></pre></div><p><a href="https://www.jscape.com/blog/setting-up-sftp-public-key-authentication-command-line#:~:text=Setting%20Up%20SFTP%20Public%20Key%20Authentication%20On%20The,5.%20Login%20SFTP%20SSH%20Key%20Based%20Authentication%20">参考资料</a></p>
-<p>如果</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>curl -u &lt;username&gt;: --key ~/.ssh/id_rsa --pubkey ~/.ssh/id_rsa.pub sftp://&lt;remote_host&gt;/&lt;remote_path&gt;
-</span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span>curl --key ~/.ssh/id_rsa --pubkey ~/.ssh/id_rsa.pub sftp://user@remote-server/path/to/file -T local-file
-</span></span></code></pre></div><div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>curl -k sftp://root@127.0.0.1
-</span></span></code></pre></div><p>要使用curl设置SFTP免密码登录，您可以按照以下步骤操作：</p>
+<p>使用<code>curl</code>的过程中遇到下面这个报错，查<a href="https://www.jscape.com/blog/setting-up-sftp-public-key-authentication-command-line#:~:text=Setting%20Up%20SFTP%20Public%20Key%20Authentication%20On%20The,5.%20Login%20SFTP%20SSH%20Key%20Based%20Authentication%20">资料</a>发现是因为查看的是目录，而不是文件:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>curl: <span style="color:#f92672">(</span>79<span style="color:#f92672">)</span> Error in the SSH layer
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 查看的是目录</span>
+</span></span><span style="display:flex;"><span>curl -k --user xxx sftp://192.168.1.101/home
+</span></span></code></pre></div><p>如果使用curl的时候想使用sftp无密码的方式上传文件到某个服务器时，可以使用如下命令，即使用sftp将<code>local-file</code>传输到位于<code>/path/to/file</code>的远程服务器上，而无需密码。需要注意的是，这种方式不支持目录上传，只支持文件：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>curl --key ~/.ssh/id_rsa --pubkey ~/.ssh/id_rsa.pub sftp://user@remote-server/path/to/file -T local-file
+</span></span></code></pre></div><p>如果已经将ssh-key公钥加入到远程主机<code>authorized_keys</code>，则可以去掉上面的<code>--key</code>和<code>--pubkey</code>。如果要使用curl设置SFTP免密码登录，可以按照以下步骤操作：</p>
 <ol>
 <li>
-<p>使用</p>
-<p>ssh-keygen</p>
-<p>命令生成公钥/私钥对。这将在您的主目录中创建一个公钥文件（通常命名为</p>
-<p>id_rsa.pub</p>
-<p>）和一个私钥文件（通常命名为</p>
-<p>id_rsa</p>
-<p>）。</p>
+<p>使用ssh-keygen命令生成公钥/私钥对。这将在主目录中创建一个公钥文件（通常命名为id_rsa.pub）和一个私钥文件（通常命名为id_rsa）。</p>
 </li>
 <li>
-<p>使用</p>
-<p>ssh-copy-id</p>
-<p>命令将公钥复制到远程服务器。这将把您的公钥添加到远程服务器上的</p>
-<p>authorized_keys</p>
-<p>文件中，允许您无需密码登录。</p>
-<p>ssh-copy-id user@remote-server</p>
-</li>
-<li>
-<p>运行以下命令测试无密码登录：</p>
-<p>sftp user@remote-server</p>
-<p>如果一切设置正确，您应该能够无需密码登录。</p>
-</li>
+<p>使用ssh-copy-id命令将公钥复制到远程服务器。这将把公钥添加到远程服务器上的authorized_keys文件中，允许无需密码登录。</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"></code></pre></div></li>
 </ol>
-<p>如果您想使用curl在SFTP上传输文件而无需密码，可以使用</p>
-<p>&ndash;key</p>
-<p>和</p>
-<p>&ndash;pubkey</p>
-<p>选项分别指定私钥和公钥的位置。例如：</p>
-<p>curl &ndash;key ~/.ssh/id_rsa &ndash;pubkey ~/.ssh/id_rsa.pub sftp://user@remote-server/path/to/file -T local-file</p>
-<p>这将使用SFTP将</p>
-<p>local-file</p>
-<p>传输到位于</p>
-<p>/path/to/file</p>
-<p>的远程服务器上，而无需密码。</p>
-<p>希望这可以帮助您！如果您有任何进一步的问题，请告诉我。</p>
+<p>ssh-copy-id user@remote-server</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-fallback" data-lang="fallback"><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>3. 运行以下命令测试无密码登录：
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>```shell
+</span></span><span style="display:flex;"><span>sftp user@remote-server
+</span></span></code></pre></div><p>如果一切设置正确，您应该能够无需密码登录。</p>
 <h1 id="scp-host-key-verification-failed">scp Host key verification failed.</h1>
+<p>在已经将当前机器的ssh-key公钥加入到远程主机<code>authorized_keys</code>目录的前提下，使用scp命令复制本地文件到远程机器上时，出现如下错误：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>Host key verification failed.
 </span></span><span style="display:flex;"><span>scp: Connection closed
-</span></span></code></pre></div><p><a href="https://www.howtouselinux.com/post/fix-host-key-verification-failed">解决方案</a></p>
-
+</span></span></code></pre></div><p>参照这个<a href="https://www.howtouselinux.com/post/fix-host-key-verification-failed">解决方案</a>，可以在使用scp命令时添加如下选项，即可解决：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>ssh -o StrictHostKeyChecking<span style="color:#f92672">=</span>no
+</span></span></code></pre></div>
     </div>
     <footer class="post-footer">
         
