@@ -241,7 +241,7 @@ code.has-jax {
     <i class="fa fa-file-word-o"></i>
 </span>
 <span class="post-meta-item-text">字数: </span>
-<span class="leancloud-visitors-count">308</span>
+<span class="leancloud-visitors-count">380</span>
 &nbsp; | &nbsp;
 <span class="post-meta-item-icon">
     <i class="fa fa-coffee"></i>
@@ -252,7 +252,8 @@ code.has-jax {
       </div>
     </header>
     <div class="post-body" itemprop="articleBody">
-    <h1 id="asyn--await">asyn &amp; await</h1>
+    <h1 id="第1本">第1本</h1>
+<h2 id="asyn--await">asyn &amp; await</h2>
 <p>方法定义中的<code>async</code>关键字让编译器知道代码是在一个异步上下文中运行。换句话说，它表示代码可以随意暂停和恢复。另外，无论该方法需要多长时间完成，<font color=red>它最终都会像同步方法一样返回一个值</font>。</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">availableSymbols</span>() async <span style="color:#66d9ef">throws</span> -&gt; [String] { 
 </span></span><span style="display:flex;"><span>	<span style="color:#66d9ef">guard</span> <span style="color:#66d9ef">let</span> url = URL(string: <span style="color:#e6db74">&#34;http://localhost:8080/littlejohn/symbols&#34;</span>) <span style="color:#66d9ef">else</span> { 
@@ -264,7 +265,36 @@ code.has-jax {
 </span></span></code></pre></div><p>上面调用异步方法<code>URLSession.data(from:delegate:)</code>后，会暂停<code>availableSymbols()</code>，并在从服务器获取数据后恢复它。</p>
 <img src="https://s2.loli.net/2023/04/02/HGuAmkztQPYFgMD.png" style="zoom:50%;" />
 <p>使用<code>await</code>会给运行时提供一个暂停点：暂停当前方法，并考虑是否有其它任务要先运行，然后继续运行你的代码。这样做是非常方便的，因为可以进行异步调用，而不必担心线程或闭包传递。</p>
-
+<h1 id="第2本">第2本</h1>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span><span style="color:#66d9ef">struct</span> <span style="color:#a6e22e">Entry</span>: Identifiable {
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">let</span> id = UUID()
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">let</span> imageName: String
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">errorEntry</span>() -&gt; Entry {
+</span></span><span style="display:flex;"><span>    Entry(imageName: <span style="color:#e6db74">&#34;circle.slash&#34;</span>)
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">extension</span> <span style="color:#a6e22e">Entry</span>: Equatable {
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">static</span> <span style="color:#66d9ef">func</span> == (lhs: Entry, rhs: Entry) -&gt; Bool {
+</span></span><span style="display:flex;"><span>        lhs.imageName == rhs.imageName
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">extension</span> <span style="color:#a6e22e">Entry</span> {
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">static</span> <span style="color:#66d9ef">var</span> exampleEntry: Entry {
+</span></span><span style="display:flex;"><span>        Entry(imageName: <span style="color:#e6db74">&#34;1.circle&#34;</span>)
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">static</span> <span style="color:#66d9ef">var</span> exampleEntries: [Entry] {
+</span></span><span style="display:flex;"><span>        [Entry(imageName: <span style="color:#e6db74">&#34;1.circle&#34;</span>),
+</span></span><span style="display:flex;"><span>         Entry(imageName: <span style="color:#e6db74">&#34;2.circle&#34;</span>),
+</span></span><span style="display:flex;"><span>         Entry(imageName: <span style="color:#e6db74">&#34;3.circle&#34;</span>),
+</span></span><span style="display:flex;"><span>         Entry(imageName: <span style="color:#e6db74">&#34;4.circle&#34;</span>),
+</span></span><span style="display:flex;"><span>         errorEntry()]
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div>
     </div>
     <footer class="post-footer">
         
@@ -420,7 +450,12 @@ code.has-jax {
     <div class="post-toc">
         <div class="post-toc-content"><nav id="TableOfContents">
   <ul>
-    <li><a href="#asyn--await">asyn &amp; await</a></li>
+    <li><a href="#第1本">第1本</a>
+      <ul>
+        <li><a href="#asyn--await">asyn &amp; await</a></li>
+      </ul>
+    </li>
+    <li><a href="#第2本">第2本</a></li>
   </ul>
 </nav></div>
     </div>
