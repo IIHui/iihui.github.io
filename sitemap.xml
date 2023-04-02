@@ -1824,17 +1824,18 @@ PWA 参考资料 参考资料 参考资料 传闻即将支持 支持
         <tags>
           <tag>iOS</tag>
         </tags>
-        <content type="html"> Chapter 1 单个词的变量名可能很好，但有时希望使用多个单词来使变量或常量名有更好的可读性。当组合多个单词形成变量或常量名时，Swift程序员通常使用camelCase命名法：
-var ageOfPet: Int = 8 var weightInKilograms: Double = 13.48 var directionToTurn: String = &amp;#34;Right&amp;#34; 除了将相关项目进行物理分组，如函数和变量放一起，也可以通过使用//MARK: 注释来使得搜索相关代码组变得更容易。通过放置一个//MARK: 注释，后面紧跟描述性文字，那么通过Xcode的下拉菜单可以很容易从一段代码跳转到另一段：
-在SwiftUI中设计用户界面时，通常会创建一个视图（如Text），然后应用修改器。如果需要反复使用相同的修改器，可以为多个视图重复这些修改器代码。但是，重复使用同样的修改器代码会占用空间：
-Text(&amp;#34;This is the first line&amp;#34;)  .font(.title)  .foregroundColor(.yellow)  .background(Color.blue)  .cornerRadius(6)  .padding()  Text(&amp;#34;Second line here&amp;#34;)  .font(.title)  .foregroundColor(.yellow)  .background(Color.blue)  .cornerRadius(6)  .padding() 除了用重复的代码占用空间，另一个问题是如果想改变一个或多个修改器，如改变字体大小或背景颜色。使用重复的修改器，需要修改每一个副本，增加了不小心忘记修改一个或多个副本的概率。
-一个更好的解决方案是将常用的修改器组一起存储在一个定义为ViewModifier的独立结构中。然后可以将这个ViewModifier结构应用于多个视图。现在如果需要改变这些修改器，可以在一个地方改变它们，而不是在整个代码的多个地方。
-struct MyStyle: ViewModifier {  func body(content: Content) -&amp;gt; some View {  content  .font(.title)  .foregroundColor(.yellow)  .background(Color.blue)  .cornerRadius(6)  .padding()  } } 这个ViewModifier结构包含了所有的修改器，然后可以通过使用.modifier跟在结构名称后面来应用于任何视图，像这样：
+        <content type="html"> Chapter 1 单个词的变量名可能很好，但有时希望使用多个单词来使变量或常量名有更好的可读性。当组合多个单词形成变量或常量名时，通常使用camelCase命名法：
+var ageOfPet: Int = 8 var weightInKilograms: Double = 13.48 var directionToTurn: String = &amp;#34;Right&amp;#34; 除了将相关项目进行物理分组，如函数和变量分别放在一起，也可以通过添加//MARK: 注释使得搜索代码块变得更容易。放置一个//MARK: 注释，后面紧跟描述性文字，那么通过Xcode的下拉菜单可以很容易从一段代码跳转到另一段，如下所示：
+在SwiftUI中设计用户界面时，通常会创建一个视图（如Text），然后应用对应的修改器。如果需要反复使用相同的修改器，可以为多个视图重复这些修改器代码。但是，重复使用同样的修改器代码会使代码看起来冗长：
+Text(&amp;#34;This is the first line&amp;#34;)  .font(.title)  .foregroundColor(.yellow)  .background(Color.blue)  .cornerRadius(6)  .padding()  Text(&amp;#34;Second line here&amp;#34;)  .font(.title)  .foregroundColor(.yellow)  .background(Color.blue)  .cornerRadius(6)  .padding() 除了用重复的代码占用空间，还会带来另一个问题。如果想改变一个或多个修改器，如改变字体大小或背景颜色。使用重复的修改器，需要修改每一个副本，增加了忘记修改一个或多个副本的概率。
+一个更好的解决方案是将常用的修改器组一起存储在一个定义为ViewModifier的独立struct中。然后可以将这个ViewModifier结构应用于多个view。现在如果需要改变这些修改器，可以在一个地方改变它们，而不是在多个地方。
+struct MyStyle: ViewModifier {  func body(content: Content) -&amp;gt; some View {  content  .font(.title)  .foregroundColor(.yellow)  .background(Color.blue)  .cornerRadius(6)  .padding()  } } 上面定义的这个ViewModifier结构包含了所有的修改器，然后可以通过使用.modifier跟着结构名称来应用于任何视图，像下面这样:
 struct ContentView: View {   var body: some View {  VStack {  Text(&amp;#34;This is the first line&amp;#34;)  .modifier(MyStyle())  Text(&amp;#34;Second line here&amp;#34;)  .modifier(MyStyle())  }  } } Charpter3 Closures 把函数改写成闭包的一种方法是去掉func关键字和函数名，然后把其余的代码用大括号括起来，像下面这样：
-let y = { (x: Int) -&amp;gt; Int in  return x * 2 }  let z = {x in return x * 2}  let w = {x in x * 2}  let v = {$0 * 2} 当申明一个函数时，需要显式定义每个参数的类型：
-func addNumbers(x: Int, y: Int) -&amp;gt; Int {  return x &#43; y } 在使用闭包时，需要把所有的参数放在括号里。在许多情况下，不需要定义每个参数的数据类型，因为Swift可以根据返回值的数据类型来推断该值。例如，如果返回值的数据类型是整数，Swift就会推断出传递的参数也必须是整数，例如：
-{(x, y) -&amp;gt; Int in return x &#43; y} 但是，如果有任何不明确的地方，必须明确地定义参数的数据类型：
-{(x: Int, y: Int) in return x &#43; y} {(x: Int, y: Int) in x &#43; y} {$0 as Int &#43; $1 as Int} Understanding Value Capturing 当在一个函数中声明变量和常量时，它们只能在该函数中被访问。然而，当在一个函数之外声明一个变量或常量时，该函数可以访问该值:
+let y = { (x: Int) -&amp;gt; Int in  return x * 2 } 还可以将上面的方法简写为如下形式：
+let z = {x in return x * 2}  let w = {x in x * 2}  let v = {$0 * 2} 当声明一个函数时，需要显式定义每个参数的类型：
+func addNumbers(x: Int, y: Int) -&amp;gt; Int {  return x &#43; y } 使用闭包时，需要把所有的参数放在括号里。在许多情况下，不需要定义每个参数的数据类型，因为Swift可以根据返回值的数据类型来推断类型。例如，如果返回值数据类型是整数，Swift就会推断出传递的参数也必是整型，例如：
+{(x, y) -&amp;gt; Int in return x &#43; y} 但是，如果有任何不明确的地方，就必须明确地定义参数的数据类型：
+{(x: Int, y: Int) in return x &#43; y} {(x: Int, y: Int) in x &#43; y} {$0 as Int &#43; $1 as Int} Understanding Value Capturing 当在一个函数中声明变量和常量时，它们只能在该函数中被访问。然而，当在一个函数之外声明一个变量或常量时，该函数可以访问该值：
 也许闭包最通用的用法是把它们当作数据块，可以像使用任何固定值一样使用它们。这意味着可以将一个闭包作为一个函数（或另一个闭包）的参数来传递，将闭包存储在像数组这样的数据结构中，或者将闭包分配给一个变量。
 let addNumbers1 = { (x, y) -&amp;gt; Int in  return x &#43; y } let addNumbers2 = { (x: Int, y: Int) in  return x &#43; y } let addNumbers3 = { (x: Int, y: Int) in  x &#43; y } let addNumbers4 = {  $0 as Int &#43; $1 as Int } Chapeter 4 Multithreaded Programming Using Grand Central Dispatch </content>
     </entry>
