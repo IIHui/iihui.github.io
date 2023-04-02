@@ -2797,10 +2797,10 @@ struct Stack {  var items = [Int]()  mutating func push(_ item:Int){  items.appe
         <content type="html">  从语言设计上来说，defer是为了进行资源清理和返回前避免重复执行相关的代码，而不是用来取巧的实现某些功能，这样做只会让代码的可读性降低。
  典型用法 Swift中defer声明的block会在当前代码执行退出后调用，这种延迟调用特性，一般用来进行资源释放或者销毁。
 func operateOnFile(descriptor: Int32) {  let fileHandle = FileHandle(fileDescriptor: descriptor)   let data = fileHandle.readDataToEndOfFile()   if /* onlyRead */ {  fileHandle.closeFile()  return  }   let shouldWrite = /* 是否需要写文件 */  guard shouldWrite else {  fileHandle.closeFile()  return  }   fileHandle.seekToEndOfFile()  fileHandle.write(someData)  fileHandle.closeFile() } 上面代码在不同的地方调用fileHandle.closeFile()来关闭文件，更好的方法是使用defer来统一处理。这不仅可以就近在资源申请的地方就声明释放，也减少了未来添加代码时忘记释放资源的可能性，如下所示：
-func operateOnFile(descriptor: Int32) {  let fileHandle = FileHandle(fileDescriptor: descriptor)  defer { fileHandle.closeFile() }  let data = fileHandle.readDataToEndOfFile()   if /* onlyRead */ { return }   let shouldWrite = /* 是否需要写文件 */  guard shouldWrite else { return }   fileHandle.seekToEndOfFile()  fileHandle.write(someData) } 作用域 一般都人defer是在函数退出的时候调用，其实它是在是当前scope退出的时候调用。在 if，guard，for，try这些语句中使用defer时，应该要特别注意。
-defer闭包不持有值 虽然defer后面跟了一个闭包，但是它更多地像是一个语法糖，和我们所熟知的闭包特性不一样，并不会持有里面的值：
+func operateOnFile(descriptor: Int32) {  let fileHandle = FileHandle(fileDescriptor: descriptor)  defer { fileHandle.closeFile() }  let data = fileHandle.readDataToEndOfFile()   if /* onlyRead */ { return }   let shouldWrite = /* 是否需要写文件 */  guard shouldWrite else { return }   fileHandle.seekToEndOfFile()  fileHandle.write(someData) } 作用域 一般认为defer是在函数退出时调用，其实它是在当前scope退出的时候调用。在 if，guard，for，try这些语句中使用defer时，应该要特别注意。
+defer闭包不持有值 虽然defer后面跟了一个闭包，但是它更多地像是一个语法糖，和我们所熟知的闭包不一样，它并不会捕获持有里面的值：
 func foo() {  var number = 1  defer { print(&amp;#34;Statement 2: \(number)&amp;#34;) }  number = 100  print(&amp;#34;Statement 1: \(number)&amp;#34;) } 上面代码将会输出：
-Statement 1: 100 Statement 2: 100 执行时机 defer的执行时机紧接在离开作用域之后，但在其他语句之前。这个特性为defer带来了一些很“微妙”的使用方式，例如下面的代码是先执行返回语句，然后执行自增，所以输出为0，1，2而不是1，2，3：
+Statement 1: 100 Statement 2: 100 执行时机 defer的执行时机紧接在离开作用域之后，但在其他语句之前。这个特性为defer带来了一些很微妙的使用方式。下面的代码是先执行返回语句，然后执行自增，所以输出为0，1，2而不是1，2，3：
 class Foo {  var num = 0  func foo() -&amp;gt; Int {  defer { num &#43;= 1 }  return num  }  }  let f = Foo() f.foo() // 0 f.foo() // 1 f.num // 2 参考资料
 </content>
     </entry>
