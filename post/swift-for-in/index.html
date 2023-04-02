@@ -241,7 +241,7 @@ code.has-jax {
     <i class="fa fa-file-word-o"></i>
 </span>
 <span class="post-meta-item-text">字数: </span>
-<span class="leancloud-visitors-count">643</span>
+<span class="leancloud-visitors-count">658</span>
 &nbsp; | &nbsp;
 <span class="post-meta-item-icon">
     <i class="fa fa-coffee"></i>
@@ -255,7 +255,6 @@ code.has-jax {
     <blockquote>
 <p><code>Swift</code>中只有一种形式<code>for</code>循环，即<code>for in</code>。但是<code>for-in</code>有多种形式，既包括常规用法又包括区间循环。</p>
 </blockquote>
-<!-- more -->
 <h2 id="常规用法">常规用法</h2>
 <p>常规用法一般用于直接访问数组中的元素，可以分为直接访问和按索引访问：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span><span style="color:#66d9ef">let</span> arr = [<span style="color:#ae81ff">34</span>,<span style="color:#ae81ff">78</span>,<span style="color:#ae81ff">789</span>,<span style="color:#f92672">-</span><span style="color:#ae81ff">12</span>]
@@ -271,7 +270,7 @@ code.has-jax {
 </span></span><span style="display:flex;"><span>}
 </span></span></code></pre></div><hr>
 <h2 id="区间循环">区间循环</h2>
-<p>在<code>Swift</code>中<code>...</code>表示闭区间，例如<code>0...10</code>表示<code>0，1，2，...，10</code>；而<code>..&lt;</code>表示前闭后开区间，例如<code>0..&lt;10</code>表示<code>0，1，2，...，9</code>。</p>
+<p>在<code>Swift</code>中<code>...</code>表示闭区间，例如<code>0...10</code>表示<code>0，1，2，...，10</code>；而<code>..&lt;</code>表示前闭后开区间，例如<code>0..&lt;10</code>表示<code>0，1，2，...，9</code>，它不包含。</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span><span style="color:#66d9ef">for</span> i  <span style="color:#66d9ef">in</span> <span style="color:#ae81ff">0.</span>..<span style="color:#ae81ff">10</span>{
 </span></span><span style="display:flex;"><span>    print(i)
 </span></span><span style="display:flex;"><span>}
@@ -279,7 +278,7 @@ code.has-jax {
 </span></span><span style="display:flex;"><span><span style="color:#66d9ef">for</span> i <span style="color:#66d9ef">in</span> <span style="color:#ae81ff">0.</span>.&lt;<span style="color:#ae81ff">10</span>{
 </span></span><span style="display:flex;"><span>    print(i)
 </span></span><span style="display:flex;"><span>}
-</span></span></code></pre></div><p>如果要使用倒序，则需要将顺序区间进行<code>reversed()</code>，在<code>...</code>和<code>..&lt;</code>这两种表示中<font color=Blue>要求左边界小于等于右边界</font>。</p>
+</span></span></code></pre></div><p>如果要使用倒序，则需要将顺序区间进行<code>reversed()</code>。需要注意的是在<code>...</code>和<code>..&lt;</code>这两种表示中<font color=Blue>要求左边界小于等于右边界</font>。</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span><span style="color:#66d9ef">for</span> i <span style="color:#66d9ef">in</span> (<span style="color:#ae81ff">0</span> ... <span style="color:#ae81ff">10</span>).reversed() {
 </span></span><span style="display:flex;"><span>    print(i)
 </span></span><span style="display:flex;"><span>}
@@ -299,16 +298,14 @@ code.has-jax {
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span><span style="color:#66d9ef">for</span> i <span style="color:#66d9ef">in</span> stride(from: <span style="color:#ae81ff">10</span>, through: <span style="color:#ae81ff">0</span>, by: <span style="color:#f92672">-</span><span style="color:#ae81ff">2</span>){
 </span></span><span style="display:flex;"><span>    print(i, terminator: <span style="color:#e6db74">&#34;</span><span style="color:#ae81ff">\t</span><span style="color:#e6db74">&#34;</span>)  <span style="color:#75715e">//10    8    6    4    2    0</span>
 </span></span><span style="display:flex;"><span>}
-</span></span></code></pre></div><p>如果中途改变<code>by</code>的值，不会起作用，查看源码发现<code>by</code>是以传值的方式传递到<code>stride</code>函数中的：</p>
+</span></span></code></pre></div><p>需要注意的是：如果中途改变<code>by</code>的值，不会起作用，查看源码发现<code>by</code>是以传值的方式传递到<code>stride</code>函数中的：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span><span style="color:#66d9ef">var</span> step = <span style="color:#f92672">-</span><span style="color:#ae81ff">3</span>
 </span></span><span style="display:flex;"><span><span style="color:#66d9ef">for</span> i <span style="color:#66d9ef">in</span> stride(from: <span style="color:#ae81ff">10</span>, through: <span style="color:#ae81ff">0</span>, by: step){
-</span></span><span style="display:flex;"><span>    print(i, terminator: <span style="color:#e6db74">&#34;</span><span style="color:#ae81ff">\t</span><span style="color:#e6db74">&#34;</span>)  <span style="color:#75715e">//10    7    4    1</span>
-</span></span><span style="display:flex;"><span>    step <span style="color:#f92672">-=</span> <span style="color:#ae81ff">2</span>    <span style="color:#75715e">//虽然改变了step但结果依然是10    7    4    1</span>
+</span></span><span style="display:flex;"><span>    print(i, terminator: <span style="color:#e6db74">&#34;</span><span style="color:#ae81ff">\t</span><span style="color:#e6db74">&#34;</span>)  <span style="color:#75715e">// 10    7    4    1</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">//虽然改变了step但结果依然是10    7    4    1</span>
+</span></span><span style="display:flex;"><span>    step <span style="color:#f92672">-=</span> <span style="color:#ae81ff">2</span>    
 </span></span><span style="display:flex;"><span>}
-</span></span></code></pre></div><hr>
-<h2 id="参考资料">参考资料</h2>
-<p><a href="https://www.jianshu.com/p/35e08768d356">参考资料</a></p>
-<hr>
+</span></span></code></pre></div><p><a href="https://www.jianshu.com/p/35e08768d356">参考资料</a></p>
 
     </div>
     <footer class="post-footer">
@@ -469,7 +466,6 @@ code.has-jax {
       <ul>
         <li><a href="#常规用法">常规用法</a></li>
         <li><a href="#区间循环">区间循环</a></li>
-        <li><a href="#参考资料">参考资料</a></li>
       </ul>
     </li>
   </ul>
