@@ -241,7 +241,7 @@ code.has-jax {
     <i class="fa fa-file-word-o"></i>
 </span>
 <span class="post-meta-item-text">字数: </span>
-<span class="leancloud-visitors-count">66015</span>
+<span class="leancloud-visitors-count">66019</span>
 &nbsp; | &nbsp;
 <span class="post-meta-item-icon">
     <i class="fa fa-coffee"></i>
@@ -1084,7 +1084,7 @@ code.has-jax {
 </span></span><span style="display:flex;"><span>doThis() { ()  <span style="color:#66d9ef">in</span> <span style="color:#75715e">// 省略了箭头操作符和返回值类型</span>
 </span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">return</span> <span style="color:#e6db74">&#34;doThis&#34;</span>
 </span></span><span style="display:flex;"><span>}
-</span></span></code></pre></div><p>编译器可能无法推断出匿名函数的返回类型，此时会出现编译错误。如果发生这种情况，就不能使用这种省略箭头操作符和返回值的便捷方式，而应该提供一个具有明确返回类型的<code>in</code>表达式。</p>
+</span></span></code></pre></div><p>编译器有时可能无法推断出匿名函数的返回类型，此时会出现编译错误。如果发生这种情况，就不能使用这种省略箭头操作符和返回值的便捷方式，而应该提供一个具有明确返回类型的<code>in</code>表达式。</p>
 <h4 id="省略in关键字">省略in关键字</h4>
 <p>如果一个<font color=red>匿名函数没有参数，并且箭头操作符和返回类型（一起的）可以省略</font>，那么关键字<code>in</code>也可以省略。在下面代码中传递给<code>animations</code>的匿名函数省略了返回类型和<code>in</code>关键字:</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span>UIView.animate(withDuration: <span style="color:#ae81ff">0.4</span>, animations: {  <span style="color:#75715e">// 没有参数省略了箭头操作符和返回值类型以及 in</span>
@@ -1393,21 +1393,21 @@ code.has-jax {
 <p>相反<code>ct</code>声明在匿名函数外，<code>ct</code>被初始化为<code>0</code>一次，然后被匿名函数捕获。这个变量作为<code>countedGreet</code>环境的一部分被保存下来—它在<code>countedGreet</code>之外的某个神秘的环境保护世界中，所以每次<code>countedGreet</code>被调用时它都能被递增。</p>
 <p>值在闭包中被捕获，这意味着在代码块被执行之前，代码块都能引用这些值。</p>
 <h2 id="escaping-closures">Escaping Closures</h2>
-<p>如果作为值传递的函数<font color=red>将被保存供以后执行，而不是直接调用，那么它是一个随时间推移捕获并保存其环境的闭包</font>。这样的闭包被称为逃逸闭包(<code>escaping closure</code>)。</p>
+<p>如果作为值传递的函数<font color=red>将被保存供以后执行，而不是立即调用，那么它是一个随时间推移捕获并保存其环境的闭包</font>。这样的闭包被称为逃逸闭包(<code>escaping closure</code>)。</p>
 <p><em>A closure is said to escape a function when the closure is passed as an argument to the function, but is called after the function returns.</em></p>
-<p>换句话说，代码块逃逸了，可能在你的方法结束之前代码块没有被调用。在编写异步代码时经常会出现这种情况。</p>
+<p><a href="https://www.avanderlee.com/swift/weak-self/">换句话说</a>，代码块逃逸了，可能在你的方法结束之前代码块还没有被调用。在编写异步代码时经常会出现这种情况。</p>
 <p>在某些场景下，函数的类型必须标记为<code>escaping</code>。编译器会检测违反这个规则的情况，所以如果你觉得对于是否需要加<code>escaping</code>有所疑惑，不用担心，只要让编译器检查并添加就可以了。</p>
 <p>下面函数是合法的，因为**<font color=red>它接受一个函数作为参数，并且在函数体内直接调用了这个函数</font>**：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">funcCaller</span>(f: () -&gt; ()) {
 </span></span><span style="display:flex;"><span>    f()
 </span></span><span style="display:flex;"><span>}
-</span></span></code></pre></div><p>下面这个函数也是合法的，即使它返回一个稍后执行的函数，因为**<font color=red>它也是在函数内部创建了那个匿名函数</font>**。它返回的函数是一个逃逸闭包，但函数返回值的类型不必标记为<code>@escaping</code>：</p>
+</span></span></code></pre></div><p>下面这个函数也是合法的，即使它返回一个稍后执行的函数，因为**<font color=red>它是在函数内部创建了那个匿名函数</font>**。它返回的函数是一个逃逸闭包，但函数返回值的类型不必标记为<code>@escaping</code>：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">funcMaker</span>() -&gt; () -&gt; () {
 </span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">return</span> {
 </span></span><span style="display:flex;"><span>        print(<span style="color:#e6db74">&#34;hello world&#34;</span>)
 </span></span><span style="display:flex;"><span>    }
 </span></span><span style="display:flex;"><span>}
-</span></span></code></pre></div><p>但是，下面的函数是非法的。它接受了一个函数参数，并且立即返回了这个函数供后续执行：</p>
+</span></span></code></pre></div><p>但是，下面的函数是非法的。因为它接受了一个函数参数，并且立即返回了这个函数供后续执行：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">funcPasser</span>(f: () -&gt; ()) -&gt; () -&gt; () { <span style="color:#75715e">// compile error</span>
 </span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">return</span> f
 </span></span><span style="display:flex;"><span>}
