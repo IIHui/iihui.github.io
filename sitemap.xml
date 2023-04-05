@@ -1887,7 +1887,7 @@ if isRestaurantOpen {  print(&amp;#34;Restaurant is open.&amp;#34;) } 集合 var
 let myClosure = { (item: Int) in  return item * item }  var numbersArray = [2, 4, 6, 7] let mappedNumbers = numbersArray.map(myClosure) debugPrint(mappedNumbers) 上面的闭包可以进一步简化：
 var numbersArray = [2, 4, 6, 7] let mappedNumbers = numbersArray.map { (item: Int) -&amp;gt; Int in  return item * item }  debugPrint(mappedNumbers) 当闭包中参数的类型已经知道的时候，可以省略类型，进行进一步简化：
 var numbersArray = [2, 4, 6, 7] let mappedNumbers = numbersArray.map({ item in  item * item })  debugPrint(mappedNumbers) 当闭包是函数中的唯一参数，可以省略括号：
-var numbersArray = [2, 4, 6, 7] let mappedNumbers = numbersArray.map { item in  item * item }  debugPrint(mappedNumbers)  代码组织 程序被重写和修改的频率远远超过它们被创建的频率。这意味着大多数时候开发人员将修改由其他人编写或由自己在过去某个时间编写的现有代码。由于您可能正在编写您或其他人最终将在未来修改的代码，因此您需要确保您组织代码以使其易于理解。
+var numbersArray = [2, 4, 6, 7] let mappedNumbers = numbersArray.map { item in  item * item }  debugPrint(mappedNumbers) 代码组织 程序被重写和修改的频率远远超过它们被创建的频率。这意味着大多数时候开发人员将修改由其他人编写或由自己在过去某个时间编写的现有代码。由于您可能正在编写您或其他人最终将在未来修改的代码，因此您需要确保您组织代码以使其易于理解。
 </content>
     </entry>
     
@@ -2806,8 +2806,8 @@ func remove(_ id: ID, acquireLock: Bool) {  if acquireLock {  lock.lock()  lock.
 func deferTest(need: Bool) {  if need {  defer {  print(&amp;#34;defer&amp;#34;)  }  }  print(&amp;#34;outside&amp;#34;) }  deferTest(need: false) deferTest(need: true)  执行后的结果 outside defer outside defer闭包不持有值 虽然defer后面跟了一个闭包，但是它更多地像是一个语法糖，和我们所熟知的闭包不一样，它并不会捕获持有里面的值：
 func foo() {  var number = 1  defer { print(&amp;#34;Statement 2: \(number)&amp;#34;) }  number = 100  print(&amp;#34;Statement 1: \(number)&amp;#34;) } 上面代码将会输出：
 Statement 1: 100 Statement 2: 100 如果在defer中要依赖某个变量时，需要自行进行复制：
-func foo() {  var number = 1  var closureNumber = number  defer { print(&amp;#34;Statement 2: \(closureNumber)&amp;#34;) }  number = 100  print(&amp;#34;Statement 1: \(number)&amp;#34;) }  foo()  Statement 1: 100 Statement 2: 1 执行时机 defer的执行时机紧接在离开作用域之后，但在其他语句之前。这个特性为defer带来了一些很微妙的使用方式。下面的代码是先执行返回语句，然后执行自增，所以输出为0，1，2而不是1，2，3：
-class Foo {  var num = 0  func foo() -&amp;gt; Int {  defer { num &#43;= 1 }  return num  }  }  let f = Foo() f.foo() // 0 f.foo() // 1 f.num // 2 参考资料
+func foo() {  var number = 1  var closureNumber = number  defer { print(&amp;#34;Statement 2: \(closureNumber)&amp;#34;) }  number = 100  print(&amp;#34;Statement 1: \(number)&amp;#34;) }  foo()  Statement 1: 100 Statement 2: 1 执行时机 defer的执行时机紧接在离开作用域之后，但在其他语句之前。这个特性为defer带来了一些很微妙的使用方式。下面代码先执行返回语句，然后自增，所以输出为0，1，2而不是1，2，3：
+class Foo {  var num = 0  func foo() -&amp;gt; Int {  defer { num &#43;= 1 }  return num  }  }  let f = Foo() f.foo() // 返回值为0，然后num再自增 f.foo() // 返回值为1，然后num再自增 f.num // 最后num的值为2 参考资料
 </content>
     </entry>
     
