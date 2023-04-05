@@ -241,7 +241,7 @@ code.has-jax {
     <i class="fa fa-file-word-o"></i>
 </span>
 <span class="post-meta-item-text">字数: </span>
-<span class="leancloud-visitors-count">65909</span>
+<span class="leancloud-visitors-count">66015</span>
 &nbsp; | &nbsp;
 <span class="post-meta-item-icon">
     <i class="fa fa-coffee"></i>
@@ -1207,13 +1207,12 @@ code.has-jax {
 </span></span><span style="display:flex;"><span><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">performAndPrint</span>(<span style="color:#66d9ef">_</span> f: () -&gt; String) {
 </span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">let</span> s = f()
 </span></span><span style="display:flex;"><span>    print(s)
-</span></span><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span>}
 </span></span><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span>performAndPrint {
 </span></span><span style="display:flex;"><span>    greeting() <span style="color:#75715e">// meaning: return greeting()</span>
 </span></span><span style="display:flex;"><span>}
-</span></span></code></pre></div><p>在编写匿名函数时，会经常发现自己已经利用了所有允许的省略写法。此外，有时会通过将整个匿名函数与函数调用放在一行中来缩短代码行数。因此，涉及匿名函数的<code>Swift</code>代码可以非常紧凑：</p>
+</span></span></code></pre></div><p>在编写匿名函数时，会经常发现已经利用了所有允许的省略写法。此外，有时会通过将整个匿名函数与函数调用放在一行中来缩短代码行数。因此，涉及匿名函数的<code>Swift</code>代码可以非常紧凑：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span><span style="color:#66d9ef">let</span> arr = [<span style="color:#ae81ff">2</span>, <span style="color:#ae81ff">4</span>, <span style="color:#ae81ff">6</span>, <span style="color:#ae81ff">8</span>]
 </span></span><span style="display:flex;"><span><span style="color:#66d9ef">let</span> arr2 = arr.map {$0<span style="color:#f92672">*</span><span style="color:#ae81ff">2</span>}
 </span></span></code></pre></div><h2 id="define-and-call">Define and Call</h2>
@@ -1249,7 +1248,7 @@ code.has-jax {
 <li>对于上面的<code>bark</code>函数来说，<code>whatThisDogSays</code>是一个外部变量，因为它是在<code>bark</code>函数体之外声明的，但*<font color=red>它的作用域仍在<code>bark</code>函数体内</font>*，因此<code>bark</code>函数内部的代码可以看到它。</li>
 <li>函数体内的代码引用了外部变量<code>whatThisDogSays</code>。</li>
 </ul>
-<p>到目前为止还挺好，但是我们知道函数<code>bark</code>可以作为值传递。实际上，<font color=LightSeaGreen>它可以从一种环境传播到另一种环境</font>。当它发生时，对<code>whatThisDogSays</code>的引用会发生什么？让我们来了解一下：</p>
+<p>到目前为止还正常，但是我们知道函数<code>bark</code>是可以作为值传递的。也就是说，<font color=LightSeaGreen>它可以从一种环境传播到另一种环境</font>。当这种事情发生时，对<code>whatThisDogSays</code>的引用会发生什么？首先来看一下下面代码：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">doThis</span>(<span style="color:#66d9ef">_</span> f: () -&gt; ()) {
 </span></span><span style="display:flex;"><span>    f()
 </span></span><span style="display:flex;"><span>}
@@ -1262,7 +1261,7 @@ code.has-jax {
 <p><code>whatThisDogSays</code>是<code>Dog</code>的实例属性，在函数<code>doThis</code>中并没有<code>whatThisDogSays</code>属性。事实上，在<code>doThis</code>函数中也没有<code>Dog</code>的实例。然而，调用<code>f()</code>仍然能正常。<strong><font color=red>函数<code>d.bark</code>，当它被传递的时候，显然是把变量<code>whatThisDogSays</code>一起传递的</font></strong>。</p>
 <p>当我们创建了<code>Dog</code>的实例<code>d</code>和变量<code>barkFunction</code>，更改<code>d</code>的属性会改变<code>barkFunction</code>的输出，怎么会这样？显然当<code>d.bark</code>赋值给<code>barkFunction</code>后，<font color=LightSeaGreen>实例<code>d</code>和<code>barkFunction</code>都持有对同一个<code>Dog</code>实例的引用</font>。这是因为*<font color=red>我们赋值给<code>barkFunction</code>的<code>d.bark</code>引用了<code>self</code>，也就是<code>Dog</code>实例</font>*。当我们说函数是一个闭包并且它捕获在其主体中引用的外部变量时，这就是我们的意思。</p>
 <h2 id="how-closures-improve-code">How Closures Improve Code</h2>
-<p>可以<font color=red>使用函数是闭包这一事实来使你的代码更通用，从而更有用</font>。为了说明函数是闭包的作用，使用之前的一个函数示例，它接受绘图指令并执行它们以生成图像：</p>
+<p>可以<font color=red>使用函数是闭包这一事实来使你的代码更通用，从而更有用</font>。为了说明函数是闭包，使用之前的一个函数示例，它接受绘图指令并执行它们以生成图像：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">imageOfSize</span>(<span style="color:#66d9ef">_</span> size: CGSize, <span style="color:#66d9ef">_</span> whatToDraw: () -&gt; ()) -&gt; UIImage {
 </span></span><span style="display:flex;"><span>    UIGraphicsBeginImageContextWithOptions(size, <span style="color:#66d9ef">false</span>, <span style="color:#ae81ff">0</span>)
 </span></span><span style="display:flex;"><span>    whatToDraw()
@@ -1390,16 +1389,19 @@ code.has-jax {
 </span></span><span style="display:flex;"><span>howdy
 </span></span><span style="display:flex;"><span>count <span style="color:#66d9ef">is</span> <span style="color:#ae81ff">3</span>
 </span></span><span style="display:flex;"><span>howdy
-</span></span></code></pre></div><p>显然，<code>countAdder</code>已经为传递给它的函数添加了报告调用次数的能力。维持这个计数的变量到底在哪里？在<code>countAdder</code>中，<code>ct</code>是一个局部变量，它并未声明在匿名函数内部，这是故意的。如果它是在匿名函数中声明的，那么每次调用<code>countedGreet</code>时<code>ct</code>将被设置为<code>0</code>。</p>
-<p>相反<code>ct</code>声明在匿名函数外，<code>ct</code>被初始化为<code>0</code>一次，然后被匿名函数捕获。这个变量作为<code>countedGreet</code>环境的一部分被保存下来&ndash;它在<code>countedGreet</code>之外的某个神秘的环境保护世界中，所以每次<code>countedGreet</code>被调用时它都能被递增。</p>
+</span></span></code></pre></div><p>显然，<code>countAdder</code>已经为传递给它的函数<font color=red>添加了报告调用次数的能力</font>。维持这个计数的变量到底在哪里？在<code>countAdder</code>中，<code>ct</code>是一个局部变量，它并未声明在匿名函数内部，这是故意的。如果它是在匿名函数中声明的，那么每次调用<code>countedGreet</code>时<code>ct</code>将被设置为<code>0</code>。</p>
+<p>相反<code>ct</code>声明在匿名函数外，<code>ct</code>被初始化为<code>0</code>一次，然后被匿名函数捕获。这个变量作为<code>countedGreet</code>环境的一部分被保存下来—它在<code>countedGreet</code>之外的某个神秘的环境保护世界中，所以每次<code>countedGreet</code>被调用时它都能被递增。</p>
+<p>值在闭包中被捕获，这意味着在代码块被执行之前，代码块都能引用这些值。</p>
 <h2 id="escaping-closures">Escaping Closures</h2>
 <p>如果作为值传递的函数<font color=red>将被保存供以后执行，而不是直接调用，那么它是一个随时间推移捕获并保存其环境的闭包</font>。这样的闭包被称为逃逸闭包(<code>escaping closure</code>)。</p>
+<p><em>A closure is said to escape a function when the closure is passed as an argument to the function, but is called after the function returns.</em></p>
+<p>换句话说，代码块逃逸了，可能在你的方法结束之前代码块没有被调用。在编写异步代码时经常会出现这种情况。</p>
 <p>在某些场景下，函数的类型必须标记为<code>escaping</code>。编译器会检测违反这个规则的情况，所以如果你觉得对于是否需要加<code>escaping</code>有所疑惑，不用担心，只要让编译器检查并添加就可以了。</p>
 <p>下面函数是合法的，因为**<font color=red>它接受一个函数作为参数，并且在函数体内直接调用了这个函数</font>**：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">funcCaller</span>(f: () -&gt; ()) {
 </span></span><span style="display:flex;"><span>    f()
 </span></span><span style="display:flex;"><span>}
-</span></span></code></pre></div><p>而下面这个函数也是合法的，即使它返回一个稍后执行的函数，因为**<font color=red>它也是在函数内部创建了那个匿名函数</font>**。它返回的函数是一个逃逸闭包，但函数返回值的类型不必标记为<code>@escaping</code>：</p>
+</span></span></code></pre></div><p>下面这个函数也是合法的，即使它返回一个稍后执行的函数，因为**<font color=red>它也是在函数内部创建了那个匿名函数</font>**。它返回的函数是一个逃逸闭包，但函数返回值的类型不必标记为<code>@escaping</code>：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">funcMaker</span>() -&gt; () -&gt; () {
 </span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">return</span> {
 </span></span><span style="display:flex;"><span>        print(<span style="color:#e6db74">&#34;hello world&#34;</span>)
@@ -1443,7 +1445,7 @@ code.has-jax {
 </span></span><span style="display:flex;"><span>x1 = <span style="color:#ae81ff">1</span>
 </span></span><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span>f1() <span style="color:#75715e">// 0</span>
-</span></span></code></pre></div><p>因为使用了捕获列表，<code>f</code>在声明时已经将变量<code>x</code>的值捕获为<code>0</code>。实际上，<code>x</code>的行为类似于传递给<code>f</code>的普通参数，它是一个常量。另一种理解方式是，如果<code>f</code>尝试设置<code>x</code>的值，编译器会报错：“无法设置<code>x</code>值，因为<code>x</code>是不可变的捕获。”</p>
+</span></span></code></pre></div><p>因为使用了捕获列表，<code>f</code>在声明时已经将变量<code>x</code>的值捕获为<code>0</code>。实际上，<code>x</code>的行为类似于传递给<code>f</code>的普通参数，它是一个常量。另一种理解方式是，如果<code>f</code>尝试设置<code>x</code>的值，编译器会报错：“无法设置<code>x</code>值，因为<code>x</code>是不可变的捕获。“</p>
 <p>对捕获列表中的值<font color=red>重命名也是合法的</font>。捕获列表可以使用<code>[y=x1]</code>来重命名捕获的值，这种方式好像将<code>x1</code>作为参数传递给匿名函数，但现在该参数的名称为<code>y</code>。当原始名称有问题时，或者当要传入的值是需要在赋值的时候被计算时，这种方式很有用：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span><span style="color:#66d9ef">self</span>.undoer.registerUndo(withTarget: <span style="color:#66d9ef">self</span>) { [oldCenter = <span style="color:#66d9ef">self</span>.center] myself <span style="color:#66d9ef">in</span>
 </span></span><span style="display:flex;"><span>    myself.setCenterUndoably(oldCenter)
