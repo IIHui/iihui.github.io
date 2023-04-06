@@ -241,7 +241,7 @@ code.has-jax {
     <i class="fa fa-file-word-o"></i>
 </span>
 <span class="post-meta-item-text">字数: </span>
-<span class="leancloud-visitors-count">66019</span>
+<span class="leancloud-visitors-count">66042</span>
 &nbsp; | &nbsp;
 <span class="post-meta-item-icon">
     <i class="fa fa-coffee"></i>
@@ -1259,7 +1259,7 @@ code.has-jax {
 </span></span><span style="display:flex;"><span>doThis(barkFunction) <span style="color:#75715e">// arf</span>
 </span></span></code></pre></div><p>上面的结果看起来是正常的，但是我们没有直接调用<code>d.dark</code>，而是创建了一个<code>Dog</code>的实例，并把它的<code>bark</code>函数作为值传给函数<code>doThis</code>函数。在函数<code>doThis</code>中，<code>bark</code>函数被调用。</p>
 <p><code>whatThisDogSays</code>是<code>Dog</code>的实例属性，在函数<code>doThis</code>中并没有<code>whatThisDogSays</code>属性。事实上，在<code>doThis</code>函数中也没有<code>Dog</code>的实例。然而，调用<code>f()</code>仍然能正常。<strong><font color=red>函数<code>d.bark</code>，当它被传递的时候，显然是把变量<code>whatThisDogSays</code>一起传递的</font></strong>。</p>
-<p>当我们创建了<code>Dog</code>的实例<code>d</code>和变量<code>barkFunction</code>，更改<code>d</code>的属性会改变<code>barkFunction</code>的输出，怎么会这样？显然当<code>d.bark</code>赋值给<code>barkFunction</code>后，<font color=LightSeaGreen>实例<code>d</code>和<code>barkFunction</code>都持有对同一个<code>Dog</code>实例的引用</font>。这是因为*<font color=red>我们赋值给<code>barkFunction</code>的<code>d.bark</code>引用了<code>self</code>，也就是<code>Dog</code>实例</font>*。当我们说函数是一个闭包并且它捕获在其主体中引用的外部变量时，这就是我们的意思。</p>
+<p>当创建了<code>Dog</code>的实例<code>d</code>和变量<code>barkFunction</code>，更改<code>d</code>的属性也会改变<code>barkFunction</code>的输出。显然当<code>d.bark</code>赋值给<code>barkFunction</code>后，<font color=LightSeaGreen>实例<code>d</code>和<code>barkFunction</code>都持有对同一个<code>Dog</code>实例的引用</font>。这是因为*<font color=red>我们赋值给<code>barkFunction</code>的<code>d.bark</code>引用了<code>self</code>，也就是<code>Dog</code>实例</font>*。当我们说函数是一个闭包并且它捕获在其函数体中引用的外部变量时，就是这个意思。</p>
 <h2 id="how-closures-improve-code">How Closures Improve Code</h2>
 <p>可以<font color=red>使用函数是闭包这一事实来使你的代码更通用，从而更有用</font>。为了说明函数是闭包，使用之前的一个函数示例，它接受绘图指令并执行它们以生成图像：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">imageOfSize</span>(<span style="color:#66d9ef">_</span> size: CGSize, <span style="color:#66d9ef">_</span> whatToDraw: () -&gt; ()) -&gt; UIImage {
@@ -1396,13 +1396,14 @@ code.has-jax {
 <p>如果作为值传递的函数<font color=red>将被保存供以后执行，而不是立即调用，那么它是一个随时间推移捕获并保存其环境的闭包</font>。这样的闭包被称为逃逸闭包(<code>escaping closure</code>)。</p>
 <p><em>A closure is said to escape a function when the closure is passed as an argument to the function, but is called after the function returns.</em></p>
 <p><a href="https://www.avanderlee.com/swift/weak-self/">换句话说</a>，代码块逃逸了，可能在你的方法结束之前代码块还没有被调用。在编写异步代码时经常会出现这种情况。</p>
-<p>在某些场景下，函数的类型必须标记为<code>escaping</code>。编译器会检测违反这个规则的情况，所以如果你觉得对于是否需要加<code>escaping</code>有所疑惑，不用担心，只要让编译器检查并添加就可以了。</p>
+<p>在某些场景下，函数的类型必须标记为<code>escaping</code>。编译器会检测违反这个规则的情况，所以如果觉得对于是否需要加<code>escaping</code>有所疑惑，不用担心，只要让编译器检查并添加就可以了。</p>
 <p>下面函数是合法的，因为**<font color=red>它接受一个函数作为参数，并且在函数体内直接调用了这个函数</font>**：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">funcCaller</span>(f: () -&gt; ()) {
 </span></span><span style="display:flex;"><span>    f()
 </span></span><span style="display:flex;"><span>}
 </span></span></code></pre></div><p>下面这个函数也是合法的，即使它返回一个稍后执行的函数，因为**<font color=red>它是在函数内部创建了那个匿名函数</font>**。它返回的函数是一个逃逸闭包，但函数返回值的类型不必标记为<code>@escaping</code>：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">funcMaker</span>() -&gt; () -&gt; () {
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">// 内部创建的匿名函数</span>
 </span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">return</span> {
 </span></span><span style="display:flex;"><span>        print(<span style="color:#e6db74">&#34;hello world&#34;</span>)
 </span></span><span style="display:flex;"><span>    }
@@ -1459,6 +1460,13 @@ code.has-jax {
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span><span style="color:#66d9ef">let</span> f2 = funcPasser { [<span style="color:#66d9ef">self</span>] <span style="color:#66d9ef">in</span>
 </span></span><span style="display:flex;"><span>    print(view.bounds) <span style="color:#75715e">// ok </span>
 </span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span>download(imageURL, completion: { [<span style="color:#66d9ef">weak</span> imageViewController] result <span style="color:#66d9ef">in</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">// ...</span>
+</span></span><span style="display:flex;"><span>})
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>download(imageURL, completion: { [<span style="color:#66d9ef">weak</span> imageViewController, <span style="color:#66d9ef">weak</span> imageFinalizer] result <span style="color:#66d9ef">in</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">// ...</span>
+</span></span><span style="display:flex;"><span>})
 </span></span></code></pre></div><h2 id="curried-function">curried function</h2>
 <p>当一个函数<font color=red>返回一个带参数的函数</font>，那么它被称为<code>curried</code>函数（以计算机科学家<code>Haskell Curry</code>命名）。下面是一个简单的<code>curried</code>函数：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">makeRoundedRectangleMaker</span>(<span style="color:#66d9ef">_</span> sz: CGSize) -&gt; (CGFloat) -&gt; UIImage {
