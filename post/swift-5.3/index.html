@@ -241,7 +241,7 @@ code.has-jax {
     <i class="fa fa-file-word-o"></i>
 </span>
 <span class="post-meta-item-text">字数: </span>
-<span class="leancloud-visitors-count">2174</span>
+<span class="leancloud-visitors-count">2190</span>
 &nbsp; | &nbsp;
 <span class="post-meta-item-icon">
     <i class="fa fa-coffee"></i>
@@ -348,7 +348,7 @@ code.has-jax {
 </span></span><span style="display:flex;"><span>}
 </span></span></code></pre></div><h1 id="枚举comparable">枚举Comparable</h1>
 <h2 id="之前">之前</h2>
-<p>在<code>Swift 5.3</code>之前，如果需要比较<code>enum</code>，则需要<code>enum</code>遵循<code>Comparable</code>协议，并且需要实现<code>&lt;</code>和<code>minimum</code>方法，但是这种代码极难维护，因为如果添加一个枚举值，则需要更新<code>&lt;</code>和<code>minimum</code>方法，才能比较<code>enum</code>，否则会报错：</p>
+<p>在<code>Swift 5.3</code>之前，如果需要比较<code>enum</code>，则需要<code>enum</code>遵循<code>Comparable</code>协议，并且需要实现<code>&lt;</code>和<code>minimum</code>方法，但是这种代码极难维护，因为如果添加一个枚举值，则需要更新<code>&lt;</code>和<code>minimum</code>方法，才能比较<code>enum</code>，否则会出现编译错误：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span><span style="color:#66d9ef">enum</span> <span style="color:#a6e22e">Volume</span>: Comparable {
 </span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">case</span> low
 </span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">case</span> medium
@@ -385,7 +385,7 @@ code.has-jax {
 </span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">return</span> lhs.comparableValue <span style="color:#f92672">&lt;</span> rhs.comparableValue
 </span></span><span style="display:flex;"><span>}
 </span></span></code></pre></div><h2 id="现在-2">现在</h2>
-<p>在<code>Swift 5.3</code>中，只要<code>enum</code>没有关联值或者只有一个<code>Comparable</code>的关联值，则会自动实现实现<code>&lt;</code>和<code>minimum</code>方法，定义的<code>enum</code>直接可以进行比较：</p>
+<p>在<code>Swift 5.3</code>中，只要<code>enum</code>没有关联值或者只有一个<code>Comparable</code>的关联值，则会自动实现<code>&lt;</code>和<code>minimum</code>方法，定义的<code>enum</code>直接可以进行比较：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span><span style="color:#66d9ef">enum</span> <span style="color:#a6e22e">Size</span>: Comparable {
 </span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">case</span> small(Int)
 </span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">case</span> medium
@@ -412,8 +412,10 @@ code.has-jax {
 </span></span><span style="display:flex;"><span>        }
 </span></span><span style="display:flex;"><span>    }
 </span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>SomeStruct().test()
 </span></span></code></pre></div><h2 id="现在-3">现在</h2>
-<p>而在<code>Swift 5.3</code>中，在闭包中对当前对象的属性或方法的引用没有这样的限制，可以去除<code>self</code>，直接使用属性和方法，如下所示：</p>
+<p>而在<code>Swift 5.3</code>中，在闭包中<font color=red>对当前对象的属性或方法的引用没有这样的限制</font>，可以去除<code>self</code>，直接使用属性和方法，如下所示：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span><span style="color:#66d9ef">struct</span> <span style="color:#a6e22e">SomeStruct</span> {
 </span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">var</span> x = <span style="color:#ae81ff">0</span>
 </span></span><span style="display:flex;"><span>
@@ -423,10 +425,12 @@ code.has-jax {
 </span></span><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">func</span> <span style="color:#a6e22e">test</span>() {
 </span></span><span style="display:flex;"><span>        doSomething {
+</span></span><span style="display:flex;"><span>            <span style="color:#75715e">// 无需再显式添加self</span>
 </span></span><span style="display:flex;"><span>            debugPrint(x)
 </span></span><span style="display:flex;"><span>        }
 </span></span><span style="display:flex;"><span>    }
 </span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>SomeStruct().test()
 </span></span></code></pre></div><p>还有一种新的方法在捕获列表中使用<code>self</code>，只需在捕获列表中加入<code>[self]</code>。这样就可以<font color=red>避免在闭包中反复使用<code>self</code></font>，如下所示：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span><span style="color:#66d9ef">class</span> <span style="color:#a6e22e">SomeClass</span> {
 </span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">var</span> x = <span style="color:#ae81ff">0</span>
