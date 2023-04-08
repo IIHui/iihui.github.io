@@ -784,7 +784,8 @@ func greet() {  print(&amp;#34;howdy&amp;#34;) }  let countedGreet = countAdder(
 count is 1 howdy count is 2 howdy count is 3 howdy 显然，countAdder已经为传递给它的函数添加了报告调用次数的能力。维持这个计数的变量到底在哪里？在countAdder中，ct是一个局部变量，它并未声明在匿名函数内部，这是故意的。如果它是在匿名函数中声明的，那么每次调用countedGreet时ct将被设置为0。
 相反ct声明在匿名函数外，ct被初始化为0一次，然后被匿名函数捕获。这个变量作为countedGreet环境的一部分被保存下来—它在countedGreet之外的某个神秘的环境保护世界中，所以每次countedGreet被调用时它都能被递增。
 值在闭包中被捕获，这意味着在代码块被执行之前，代码块都能引用这些值。
-Escaping Closures 如果作为值传递的函数将被保存供以后执行，而不是立即调用，那么它是一个随时间推移捕获并保存其环境的闭包。这样的闭包被称为逃逸闭包(escaping closure)。
+Escaping Closures A closure is supposed to be no escaping when the closure is passed as an argument to the function, and is called before the function returns. The closure isn’t used outside of the function.
+如果作为值传递的函数将被保存供以后执行，而不是立即调用，那么它是一个随时间推移捕获并保存其环境的闭包。这样的闭包被称为逃逸闭包(escaping closure)。
 A closure is said to escape a function when the closure is passed as an argument to the function, but is called after the function returns.
 换句话说，代码块逃逸了，可能在你的方法结束之前代码块还没有被调用。在编写异步代码时经常会出现这种情况。
 在某些场景下，函数的类型必须标记为escaping。编译器会检测违反这个规则的情况，所以如果觉得对于是否需要加escaping有所疑惑，不用担心，只要让编译器检查并添加就可以了。
