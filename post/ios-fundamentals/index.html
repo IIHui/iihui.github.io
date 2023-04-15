@@ -241,13 +241,13 @@ code.has-jax {
     <i class="fa fa-file-word-o"></i>
 </span>
 <span class="post-meta-item-text">字数: </span>
-<span class="leancloud-visitors-count">68361</span>
+<span class="leancloud-visitors-count">69099</span>
 &nbsp; | &nbsp;
 <span class="post-meta-item-icon">
     <i class="fa fa-coffee"></i>
 </span>
 <span class="post-meta-item-text">阅读: </span>
-<span class="leancloud-visitors-count">137 分钟</span>
+<span class="leancloud-visitors-count">138 分钟</span>
 </span>
       </div>
     </header>
@@ -1575,6 +1575,83 @@ code.has-jax {
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span>NotificationCenter.<span style="color:#66d9ef">default</span>.addObserver(forName: <span style="color:#e6db74">&#34;humanEnteredKrakensLair&#34;</span>, object: <span style="color:#66d9ef">nil</span>, queue: .main) { [<span style="color:#66d9ef">weak</span> <span style="color:#66d9ef">self</span>] notification <span style="color:#66d9ef">in</span> <span style="color:#75715e">//The retain cycle is fixed by using capture lists!</span>
 </span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">self</span>?.eatHuman() <span style="color:#75715e">//self is now an optional!</span>
 </span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p>需要使用weak和unowned的另一个地方是使用协议在类之间进行代理，因为类是引用类型。在<code>Swift</code>中结构体和枚举也可以遵循协议，但它们是值语义。</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span><span style="color:#66d9ef">class</span> <span style="color:#a6e22e">Kraken</span>: LossOfLimbDelegate {
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">let</span> tentacle = Tentacle()
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">init</span>() {
+</span></span><span style="display:flex;"><span>        tentacle.delegate = <span style="color:#66d9ef">self</span>
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">func</span> <span style="color:#a6e22e">limbHasBeenLost</span>() {
+</span></span><span style="display:flex;"><span>        startCrying()
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">func</span> <span style="color:#a6e22e">startCrying</span>() {
+</span></span><span style="display:flex;"><span>        <span style="color:#75715e">//</span>
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">deinit</span> {
+</span></span><span style="display:flex;"><span>        debugPrint(<span style="color:#e6db74">&#34;Kraken&#34;</span>)
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">protocol</span> <span style="color:#a6e22e">LossOfLimbDelegate</span> {
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">func</span> <span style="color:#a6e22e">limbHasBeenLost</span>()
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">class</span> <span style="color:#a6e22e">Tentacle</span> {
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">var</span> delegate: LossOfLimbDelegate?
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">func</span> <span style="color:#a6e22e">cutOffTentacle</span>() {
+</span></span><span style="display:flex;"><span>        delegate?.limbHasBeenLost()
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">deinit</span> {
+</span></span><span style="display:flex;"><span>        debugPrint(<span style="color:#e6db74">&#34;Tentacle&#34;</span>)
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>lef f = {
+</span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">let</span> k1 = Kraken()
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p>在上面代码中，<code>Tentacle</code>以代理属性的方式强持有了<code>Kraken</code>。与此同时，<code>Kraken</code>中也强引用了<code>Tentacle</code>的实例（属性）。</p>
+<p>在上面的场景中，在定义delegate属性时，使用weak即可破解这种循环引用：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span><span style="color:#66d9ef">weak</span> <span style="color:#66d9ef">var</span> delegate: LossOfLimbDelegate?
+</span></span></code></pre></div><p>但是，加上<code>weak</code>后会出现编译错误<code>'weak' must not be applied to non-class-bound 'any LossOfLimbDelegate'; consider adding a protocol conformance that has a class bound</code>。这种情况，必须限定协议，让协议继承<code>class</code>。</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span><span style="color:#66d9ef">protocol</span> <span style="color:#a6e22e">LossOfLimbDelegate</span>: <span style="color:#66d9ef">class</span> { <span style="color:#75715e">//The protocol now inherits class</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">func</span> <span style="color:#a6e22e">limbHasBeenLost</span>()
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p><em>Use a class-only protocol when the behavior defined by that protocol’s requirements assumes or requires that a conforming type has reference semantics rather than value semantics</em></p>
+<p>使用weak和unowned引用大致相同，但还是有些区别。unowned引用和weak引用，都不会增加对应的引用计数。在Swift中unowned引用有一个额外的好处，它不是一个可选对象，这使得它们更容易管理（不用使用optional绑定）。</p>
+<p>此外，unowned引用是不归零的，这意味着当对象被释放时，不会将指针清零。这意味着某些情况下，使用unowned引用，可能会导致指针悬空的情况。</p>
+<p><em>Use a weak reference whenever it is valid for that reference to become nil at some point during its lifetime. Conversely, use an unowned reference when you know that the reference will never be nil once it has been set during initialization.</em></p>
+<p>如同隐式解包optional，如果能够保证引用不会为nil，可以使用unowned，否则使用weak。</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span><span style="color:#66d9ef">class</span> <span style="color:#a6e22e">RetainCycle</span> {
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">var</span> closure: (() -&gt; Void)<span style="color:#f92672">!</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">var</span> string = <span style="color:#e6db74">&#34;Hello&#34;</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">init</span>() {
+</span></span><span style="display:flex;"><span>        closure = {
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">self</span>.string = <span style="color:#e6db74">&#34;Hello, World!&#34;</span>
+</span></span><span style="display:flex;"><span>        }
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">deinit</span> {
+</span></span><span style="display:flex;"><span>        debugPrint(<span style="color:#e6db74">&#34;deinit RetainCycle&#34;</span>)
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">let</span> f1 = {
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">// Initialize the class and activate the retain cycle.</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">let</span> retainCycleInstance = RetainCycle()
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">// At this point we can guarantee the captured self inside the closure will not be nil.</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">// Any further code after this (especially code that alters self&#39;s reference) needs to be judged on whether or not unowned still works here.</span>
+</span></span><span style="display:flex;"><span>    retainCycleInstance.closure()
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>f1()
 </span></span></code></pre></div><h2 id="curried-function">curried function</h2>
 <p>当一个函数<font color=red>返回一个带参数的函数</font>，那么它被称为<code>curried</code>函数（以计算机科学家<code>Haskell Curry</code>命名）。下面是一个<code>curried</code>函数。</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">makeRoundedRectangleMaker</span>(<span style="color:#66d9ef">_</span> sz: CGSize) -&gt; (CGFloat) -&gt; UIImage {
