@@ -241,13 +241,13 @@ code.has-jax {
     <i class="fa fa-file-word-o"></i>
 </span>
 <span class="post-meta-item-text">字数: </span>
-<span class="leancloud-visitors-count">69099</span>
+<span class="leancloud-visitors-count">69702</span>
 &nbsp; | &nbsp;
 <span class="post-meta-item-icon">
     <i class="fa fa-coffee"></i>
 </span>
 <span class="post-meta-item-text">阅读: </span>
-<span class="leancloud-visitors-count">138 分钟</span>
+<span class="leancloud-visitors-count">140 分钟</span>
 </span>
       </div>
     </header>
@@ -1634,6 +1634,7 @@ code.has-jax {
 </span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">init</span>() {
 </span></span><span style="display:flex;"><span>        closure = {
 </span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">self</span>.string = <span style="color:#e6db74">&#34;Hello, World!&#34;</span>
+</span></span><span style="display:flex;"><span>            debugPrint(<span style="color:#66d9ef">self</span>.string)
 </span></span><span style="display:flex;"><span>        }
 </span></span><span style="display:flex;"><span>    }
 </span></span><span style="display:flex;"><span>
@@ -1652,6 +1653,45 @@ code.has-jax {
 </span></span><span style="display:flex;"><span>}
 </span></span><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span>f1()
+</span></span></code></pre></div><p>在上面的例子中，闭包中捕获了<code>self</code>，并且是强引用。而在<code>self</code>中，也是强引用了<code>closure</code>。此时，可以使用[unowned self]来打破循环引用：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span>closure = { [<span style="color:#66d9ef">unowned</span> <span style="color:#66d9ef">self</span>] <span style="color:#66d9ef">in</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">self</span>.string = <span style="color:#e6db74">&#34;Hello, World!&#34;</span>
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p>这种情况我们假设了self不会被置为nil，这是因为我们生成<code>RetainCycle</code>的实例后，立即调用了它的closure。</p>
+<p><em>Define a capture in a closure as an unowned reference when the closure and the instance it captures will always refer to each other, and will always be deallocated at the same time</em></p>
+<p>如果知道你的引用将被正确清零，并且两个引用是相互依赖的（一个不能没有另一个），那么应该选择unowned的而不是weak的，因为你不会想要处理你的程序试图不必要地清零你的引用指针的开销。</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span><span style="color:#66d9ef">class</span> <span style="color:#a6e22e">Kraken</span> {
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">let</span> petName = <span style="color:#e6db74">&#34;Krakey-poo&#34;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">lazy</span> <span style="color:#66d9ef">var</span> businessCardName: () -&gt; String = { [<span style="color:#66d9ef">unowned</span> <span style="color:#66d9ef">self</span>] <span style="color:#66d9ef">in</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">return</span> <span style="color:#e6db74">&#34;Mr. Kraken AKA &#34;</span> <span style="color:#f92672">+</span> <span style="color:#66d9ef">self</span>.petName
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p>上面代码中，使用<code>unowned self</code> 以解决循环引用。Kraken在它的生命周期内持有businessCardName闭包，同时businessCardName闭包在它的生命周期内也持有Karaken。它们相互依赖的，所以它们总是在同一时间被删除。但这个不能与闭包的lazy属性相混淆：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span><span style="color:#66d9ef">class</span> <span style="color:#a6e22e">Kraken</span> {
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">let</span> petName = <span style="color:#e6db74">&#34;Krakey-poo&#34;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">lazy</span> <span style="color:#66d9ef">var</span> businessCardName: String = {
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">return</span> <span style="color:#e6db74">&#34;Mr. Kraken AKA &#34;</span> <span style="color:#f92672">+</span> <span style="color:#66d9ef">self</span>.petName
+</span></span><span style="display:flex;"><span>    }()
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p>在上面的定义中，<code>unowned self</code>是不需要的，因为实际上没有任何东西持有生成<code>lazy</code>变量的闭包。只是将闭包的结果分配给变量，并在第一次使用立即取消闭包（并会减去捕获的self的引用技术）。</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span><span style="color:#66d9ef">class</span> <span style="color:#a6e22e">Kraken2</span> {
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">let</span> petName = <span style="color:#e6db74">&#34;Krakey-poo&#34;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">lazy</span> <span style="color:#66d9ef">var</span> businessCardName: String = {
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">return</span> <span style="color:#e6db74">&#34;Mr. Kraken AKA &#34;</span> <span style="color:#f92672">+</span> <span style="color:#66d9ef">self</span>.petName
+</span></span><span style="display:flex;"><span>    }()
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">init</span>() {
+</span></span><span style="display:flex;"><span>        debugPrint(<span style="color:#e6db74">&#34;Create Kraken2&#34;</span>)
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">deinit</span> {
+</span></span><span style="display:flex;"><span>        debugPrint(<span style="color:#e6db74">&#34;Kraken2&#34;</span>)
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">var</span> kraken: Kraken2? = Kraken2()
+</span></span><span style="display:flex;"><span>kraken = Kraken2()
+</span></span><span style="display:flex;"><span>kraken?.businessCardName
+</span></span><span style="display:flex;"><span>kraken = <span style="color:#66d9ef">nil</span>
 </span></span></code></pre></div><h2 id="curried-function">curried function</h2>
 <p>当一个函数<font color=red>返回一个带参数的函数</font>，那么它被称为<code>curried</code>函数（以计算机科学家<code>Haskell Curry</code>命名）。下面是一个<code>curried</code>函数。</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">makeRoundedRectangleMaker</span>(<span style="color:#66d9ef">_</span> sz: CGSize) -&gt; (CGFloat) -&gt; UIImage {
