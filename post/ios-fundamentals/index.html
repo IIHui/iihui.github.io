@@ -241,7 +241,7 @@ code.has-jax {
     <i class="fa fa-file-word-o"></i>
 </span>
 <span class="post-meta-item-text">字数: </span>
-<span class="leancloud-visitors-count">71235</span>
+<span class="leancloud-visitors-count">71285</span>
 &nbsp; | &nbsp;
 <span class="post-meta-item-icon">
     <i class="fa fa-coffee"></i>
@@ -1532,12 +1532,12 @@ code.has-jax {
 </span></span><span style="display:flex;"><span><span style="color:#66d9ef">class</span> <span style="color:#a6e22e">Sucker</span> {
 </span></span><span style="display:flex;"><span>  <span style="color:#75715e">//</span>
 </span></span><span style="display:flex;"><span>}
-</span></span></code></pre></div><p>上面是一个线性层次结构。<code>Kraken</code>有对<code>Tentacle</code>实例的引用是一个强引用，并且后者对<code>Sucker</code>实例的也是强引用。这个流程从父<code>Kraken</code>一直到子<code>Sucker</code>。</p>
-<p>同样地，在动画的<code>blocks</code>中，引用的层次也是相似的。因为<code>animateWithDuration</code>是一个<code>UIView</code>静态方法，上面的闭包是<code>parent</code>，<code>self</code>是<code>child</code>。</p>
+</span></span></code></pre></div><p>上面是一个线性层次结构。<code>Kraken</code>中对<code>Tentacle</code>的引用是一个强引用，并且<code>Tentacle</code>对<code>Sucker</code>实例也是强引用。这个流程从父<code>Kraken</code>一直到子<code>Sucker</code>。</p>
+<p>同样地，在动画的<code>blocks</code>中，引用的层次也是相似的。因为<code>animateWithDuration</code>是一个<code>UIView</code>静态方法，下面的闭包是<code>parent</code>，<code>self</code>是<code>child</code>：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span>UIView.animate(withDuration: <span style="color:#ae81ff">0.3</span>) {
 </span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">self</span>.view.alpha = <span style="color:#ae81ff">0.0</span>
 </span></span><span style="display:flex;"><span>}
-</span></span></code></pre></div><p>弱引用只是一个指向对象的指针，它不保护该对象不被<code>ARC</code>释放。虽然强引用会使对象的保留计数增加<code>1</code>，但<font color=red>弱引用不会</font>。此外，弱引用在成功被释放时，会将若引用的指针清零。这确保了当访问弱引用时，它要么是一个有效的对象，要么是<code>nil</code>。</p>
+</span></span></code></pre></div><p>弱引用只是一个指向对象的指针，它不保护该对象不被<code>ARC</code>释放。虽然强引用会使对象的保留计数增加<code>1</code>，但<font color=red>弱引用不会</font>。此外，弱引用在成功被释放时，会将弱引用的指针清零，即置为<code>nil</code>。这确保了当访问弱引用时，它要么是一个有效的对象，要么是<code>nil</code>。</p>
 <p>在<code>Swift</code>中，所有的弱引用都是非常量<code>optional</code>的，因为当不再有任何东西强持有这个对象，弱引用可能并且终将被置为<code>nil</code>。例如，下面代码编译时会报错<code>'weak' must be a mutable variable, because it may change at runtime</code>：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span><span style="color:#66d9ef">class</span> <span style="color:#a6e22e">Kraken</span> {
 </span></span><span style="display:flex;"><span>    <span style="color:#75715e">//let is a constant! All weak variables MUST be mutable.</span>
@@ -1806,8 +1806,25 @@ code.has-jax {
 </span></span><span style="display:flex;"><span>        }
 </span></span><span style="display:flex;"><span>    }
 </span></span><span style="display:flex;"><span>}
-</span></span></code></pre></div><p>当涉及到闭包捕获时，值类型的处理有时会比较复杂，因为<font color=red>它们是作为副本而不是作为引用传递给外部作用域的</font>。尽管这正是 <code>Swift</code> 的值类型的强大之处，但在下面这种情况下，它可能会产生一些意想不到的后果&ndash;在这种情况下，我们在给一个按钮分配一个处理程序闭包时要捕获一个发送者和消息属性：</p>
-<p><a href="https://www.swiftbysundell.com/articles/swifts-closure-capturing-mechanics/#implicit-capturing">参考资料</a></p>
+</span></span></code></pre></div><p>当涉及到闭包捕获时，值类型的处理有时会比较复杂，因为<font color=red>它们是作为副本而不是作为引用传递给外部作用域的</font>。尽管这正是 <code>Swift</code> 的值类型的强大之处，但在下面这种情况下，它可能会产生一些意想不到的后果。在下面这种情况下，给一个按钮的<code>handler</code>赋值一个闭包时要捕获了<code>sender</code>和<code>message</code>属性：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span><span style="color:#66d9ef">class</span> <span style="color:#a6e22e">MessageComposerViewController</span>: UIViewController {
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">private</span> <span style="color:#66d9ef">let</span> sender: MessageSender
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">private</span> <span style="color:#66d9ef">var</span> message = Message()
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">private</span> <span style="color:#66d9ef">lazy</span> <span style="color:#66d9ef">var</span> sendButton = ActionButton()
+</span></span><span style="display:flex;"><span>    
+</span></span><span style="display:flex;"><span>    ...
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">override</span> <span style="color:#66d9ef">func</span> <span style="color:#a6e22e">viewDidLoad</span>() {
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">super</span>.viewDidLoad()
+</span></span><span style="display:flex;"><span>        
+</span></span><span style="display:flex;"><span>        ...
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>        sendButton.handler = { [sender, message] <span style="color:#66d9ef">in</span>
+</span></span><span style="display:flex;"><span>            sender.send(message)
+</span></span><span style="display:flex;"><span>        }
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p><a href="https://www.swiftbysundell.com/articles/swifts-closure-capturing-mechanics/#implicit-capturing">参考资料</a></p>
 <h2 id="curried-function">curried function</h2>
 <p>当一个函数<font color=red>返回一个带参数的函数</font>，那么它被称为<code>curried</code>函数（以计算机科学家<code>Haskell Curry</code>命名）。下面是一个<code>curried</code>函数。</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">makeRoundedRectangleMaker</span>(<span style="color:#66d9ef">_</span> sz: CGSize) -&gt; (CGFloat) -&gt; UIImage {
