@@ -241,7 +241,7 @@ code.has-jax {
     <i class="fa fa-file-word-o"></i>
 </span>
 <span class="post-meta-item-text">字数: </span>
-<span class="leancloud-visitors-count">68163</span>
+<span class="leancloud-visitors-count">68361</span>
 &nbsp; | &nbsp;
 <span class="post-meta-item-icon">
     <i class="fa fa-coffee"></i>
@@ -1564,6 +1564,16 @@ code.has-jax {
 <p>其它可能发生这种情况是在<code>NSTimers</code>和<code>NSThread</code>等地方。修复方法是在闭包的捕获列表中使用一个对<code>self</code>的弱引用，这就打破了强引用的循环：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span><span style="color:#66d9ef">let</span> closure = { [<span style="color:#66d9ef">weak</span> <span style="color:#66d9ef">self</span>] <span style="color:#66d9ef">in</span> 
 </span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">self</span>?.doSomething() <span style="color:#75715e">//Remember, all weak variables are Optionals!</span>
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p>为什么对self的弱引用在方括号内，这看起来很奇怪。在<code>Swift</code>中，看到方括号就会想到<code>Arrays</code>。可以在闭包中指定多个捕获值：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span><span style="color:#75715e">//Look at that sweet, sweet Array of capture values.</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">let</span> closure = { [<span style="color:#66d9ef">weak</span> <span style="color:#66d9ef">self</span>, <span style="color:#66d9ef">unowned</span> krakenInstance] <span style="color:#66d9ef">in</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">self</span>?.doSomething() <span style="color:#75715e">//weak variables are Optionals!</span>
+</span></span><span style="display:flex;"><span>    krakenInstance.eatMoreHumans() <span style="color:#75715e">//unowned variables are not.</span>
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p>这看起来更像一个数组。所以，现在你知道为什么捕获值要放在方括号里了。可以通过在闭包的捕获列表中添加<code>[weak self]</code>来修复上面发布的通知代码中的循环引用：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span>NotificationCenter.<span style="color:#66d9ef">default</span>.addObserver(forName: <span style="color:#e6db74">&#34;humanEnteredKrakensLair&#34;</span>, object: <span style="color:#66d9ef">nil</span>, queue: .main) { [<span style="color:#66d9ef">weak</span> <span style="color:#66d9ef">self</span>] notification <span style="color:#66d9ef">in</span> <span style="color:#75715e">//The retain cycle is fixed by using capture lists!</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">self</span>?.eatHuman() <span style="color:#75715e">//self is now an optional!</span>
 </span></span><span style="display:flex;"><span>}
 </span></span></code></pre></div><h2 id="curried-function">curried function</h2>
 <p>当一个函数<font color=red>返回一个带参数的函数</font>，那么它被称为<code>curried</code>函数（以计算机科学家<code>Haskell Curry</code>命名）。下面是一个<code>curried</code>函数。</p>
