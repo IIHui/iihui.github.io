@@ -241,7 +241,7 @@ code.has-jax {
     <i class="fa fa-file-word-o"></i>
 </span>
 <span class="post-meta-item-text">字数: </span>
-<span class="leancloud-visitors-count">66893</span>
+<span class="leancloud-visitors-count">66899</span>
 &nbsp; | &nbsp;
 <span class="post-meta-item-icon">
     <i class="fa fa-coffee"></i>
@@ -1411,26 +1411,26 @@ code.has-jax {
 <p>如果将一个作为值传递的函数<font color=red>保存供以后某个时刻执行，而不是立即调用它，那么它是一个随时间推移捕获并保存其环境的闭包</font>。这样的闭包被称为逃逸闭包(<code>escaping closure</code>)。</p>
 <p><em>A closure is said to escape a function when the closure is passed as an argument to the function, but is called after the function returns.</em></p>
 <p><a href="https://www.avanderlee.com/swift/weak-self/">换句话说</a>，说一个闭包逃逸了，就是在传入闭包的方法结束之前该闭包还没有被调用。在编写异步代码时经常会出现这种情况。</p>
-<p>在某些场景下，闭包的类型必须标记为<code>escaping</code>。编译器将会检测违反这个规则的情况，如果觉得对于是否需要加<code>escaping</code>有疑惑，请不用担心，只要让编译器检查并添加就可以了。</p>
+<p>在某些场景下，闭包的类型必须标记为<code>escaping</code>。编译器会检测违反这个规则的情况，如果觉得对于是否需要加<code>escaping</code>有疑惑，不用担心，只要让编译器检查并添加就可以了。</p>
 <p>下面函数是合法的，无需标记为<code>escaping</code>。因为**<font color=red>它接受一个函数作为参数，并且在函数体内直接调用了这个函数</font>**，即<code>funcCaller</code>方法结束之前会调用<code>f</code>：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">funcCaller</span>(f: () -&gt; ()) {
 </span></span><span style="display:flex;"><span>    f()
 </span></span><span style="display:flex;"><span>}
-</span></span></code></pre></div><p>下面这个函数也是合法的，即使它返回一个稍后执行的函数，因为**<font color=red>它是在函数内部创建了那个匿名函数</font>**，而不是传递进来的。它返回的函数是一个逃逸闭包，但函数返回值的类型不必标记为<code>@escaping</code>：</p>
+</span></span></code></pre></div><p>下面这个函数也是合法的，即使它返回一个稍后执行的函数，因为**<font color=red>它是在函数内部创建了那个匿名函数</font>**，而不是作为参数传递进来的。它返回的函数是一个逃逸闭包，但函数返回值的类型不必标记为<code>@escaping</code>：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">funcMaker</span>() -&gt; () -&gt; () {
 </span></span><span style="display:flex;"><span>    <span style="color:#75715e">// 内部创建的匿名函数</span>
 </span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">return</span> {
 </span></span><span style="display:flex;"><span>        print(<span style="color:#e6db74">&#34;hello world&#34;</span>)
 </span></span><span style="display:flex;"><span>    }
 </span></span><span style="display:flex;"><span>}
-</span></span></code></pre></div><p>但是，下面的函数是不合法的。因为它接受了一个函数作为入参，并且返回了这个函数供后续某个时刻执行。如果不标记为逃逸，则会出现编译错误：</p>
+</span></span></code></pre></div><p>但是，下面的函数是不合法的，会出现编译错误。因为它接受了一个函数作为入参，并且返回了这个函数供后续某个时刻执行。如果不标记为逃逸，则会出现编译错误：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">funcPasser</span>(f: () -&gt; ()) -&gt; () -&gt; () { 
 </span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">return</span> f
 </span></span><span style="display:flex;"><span>}
 </span></span><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span><span style="color:#75715e">// 出现如下的编译错误</span>
 </span></span><span style="display:flex;"><span>Using non<span style="color:#f92672">-</span>escaping parameter <span style="color:#960050;background-color:#1e0010">&#39;</span>f<span style="color:#960050;background-color:#1e0010">&#39;</span> <span style="color:#66d9ef">in</span> a context expecting an @escaping closure
-</span></span></code></pre></div><p>解决的方案是将函数入参标f记为<code>@escaping</code>，编译器也会提醒我们需要这样做：</p>
+</span></span></code></pre></div><p>解决的方案是将函数入参标<code>f</code>记为<code>@escaping</code>，编译器也会提醒需要这样做：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">funcPasser</span>(f: @escaping () -&gt; ()) -&gt; () -&gt; () { 
 </span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">return</span> f
 </span></span><span style="display:flex;"><span>}
@@ -1464,7 +1464,7 @@ code.has-jax {
 </span></span><span style="display:flex;"><span>x = <span style="color:#ae81ff">1</span>
 </span></span><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span>f() <span style="color:#75715e">// 0</span>
-</span></span></code></pre></div><p>因为使用了捕获列表，<code>f</code>在声明时已经将变量<code>x</code>的值捕获为<code>0</code>。实际上，<code>x</code>的行为类似于传递给<code>f</code>的普通参数，它是一个常量。另一种理解方式是，如果<code>f</code>尝试设置<code>x</code>的值，编译器会报错：<em>“Cannot assign to value: &lsquo;x&rsquo; is an immutable capture。“</em></p>
+</span></span></code></pre></div><p>因为使用了捕获列表，<code>f</code>在声明时已经将变量<code>x</code>的值捕获为<code>0</code>。实际上，<code>x</code>的行为类似于传递给<code>f</code>的普通参数，它是一个常量。另一种理解方式是，如果<code>f</code>尝试设置<code>x</code>的值，编译器会报错：<em>Cannot assign to value: &lsquo;x&rsquo; is an immutable capture。</em></p>
 <p>对捕获列表中的值<font color=red>重命名也是合法的</font>。捕获列表可以使用<code>[y=x]</code>来重命名捕获的值，这种方式好像将<code>x</code>作为参数传递给匿名函数，但现在该参数的名称为<code>y</code>。当原始名称有问题时，或者当要传入的值是需要在赋值的时候被计算时，这种方式很有用：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span><span style="color:#66d9ef">var</span> x = <span style="color:#ae81ff">0</span>
 </span></span><span style="display:flex;"><span><span style="color:#66d9ef">let</span> f: () -&gt; () = { [ y = x] <span style="color:#66d9ef">in</span>
@@ -1475,7 +1475,7 @@ code.has-jax {
 </span></span><span style="display:flex;"><span>x = <span style="color:#ae81ff">1</span>
 </span></span><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span>f() <span style="color:#75715e">// 0</span>
-</span></span></code></pre></div><p>下面代码中，使用捕获的变量计算出一个新的常量<code>y</code>，计算的时机发生在<code>f</code>定义时，因此不管在定义后x是否被重新赋值，y的计算都是在f定义的时候：</p>
+</span></span></code></pre></div><p>下面代码中，使用捕获的变量计算出一个新的常量<code>y</code>，计算的时机发生在<code>f</code>定义时，因此不管在定义后<code>x</code>是否被重新赋值，<code>y</code>的计算都是在<code>f</code>定义的时候：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span><span style="color:#66d9ef">var</span> x = <span style="color:#ae81ff">0</span>
 </span></span><span style="display:flex;"><span><span style="color:#66d9ef">let</span> f: () -&gt; () = { [ y = x <span style="color:#f92672">+</span> <span style="color:#ae81ff">5</span>] <span style="color:#66d9ef">in</span>
 </span></span><span style="display:flex;"><span>    print(x0)
@@ -1505,7 +1505,7 @@ code.has-jax {
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span><span style="color:#66d9ef">let</span> f2 = funcPasser {
 </span></span><span style="display:flex;"><span>    print(<span style="color:#66d9ef">self</span>.view.bounds)
 </span></span><span style="display:flex;"><span>}
-</span></span></code></pre></div><p>从<code>Swift 5.3</code>开始，有一个风格上选择方案：如果把<code>self</code>放在捕获列表中，这会满足编译器的要求，并且不必将<code>self</code>写为函数体中的隐式目标：</p>
+</span></span></code></pre></div><p>从<code>Swift 5.3</code>开始，可以把<code>self</code>放在捕获列表中，这会满足编译器的要求，并且也不必将<code>self</code>写为函数体中的隐式目标，即可以省略<code>self</code>：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span><span style="color:#66d9ef">let</span> f2 = funcPasser { [<span style="color:#66d9ef">self</span>] <span style="color:#66d9ef">in</span>
 </span></span><span style="display:flex;"><span>    print(view.bounds) <span style="color:#75715e">// ok </span>
 </span></span><span style="display:flex;"><span>}
