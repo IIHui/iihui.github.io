@@ -241,7 +241,7 @@ code.has-jax {
     <i class="fa fa-file-word-o"></i>
 </span>
 <span class="post-meta-item-text">字数: </span>
-<span class="leancloud-visitors-count">69702</span>
+<span class="leancloud-visitors-count">69733</span>
 &nbsp; | &nbsp;
 <span class="post-meta-item-icon">
     <i class="fa fa-coffee"></i>
@@ -1538,7 +1538,7 @@ code.has-jax {
 </span></span><span style="display:flex;"><span>}
 </span></span></code></pre></div><p>因为<code>animateWithDuration</code>是一个<code>UIView</code>静态方法，上面的闭包是<code>parent</code>，<code>self</code>是<code>child</code>。</p>
 <p>弱引用只是一个指向对象的指针，它不保护该对象不被<code>ARC</code>释放。虽然强引用会使对象的保留计数增加1，但<font color=red>弱引用不会</font>。此外，弱引用在成功被释放时，会将若引用的指针清零。这确保了当访问弱引用时，它要么是一个有效的对象，要么是<code>nil</code>。</p>
-<p>在Swift中，所有的弱引用都是非常量<code>optional</code>的，因为当不再有任何东西强持有这个对象，弱引用可能并且终将被置为<code>nil</code>。例如，下面代码编译时会报错<code>'weak' must be a mutable variable, because it may change at runtime</code>：</p>
+<p>在<code>Swift</code>中，所有的弱引用都是非常量<code>optional</code>的，因为当不再有任何东西强持有这个对象，弱引用可能并且终将被置为<code>nil</code>。例如，下面代码编译时会报错<code>'weak' must be a mutable variable, because it may change at runtime</code>：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span><span style="color:#66d9ef">class</span> <span style="color:#a6e22e">Kraken</span> {
 </span></span><span style="display:flex;"><span>    <span style="color:#75715e">//let is a constant! All weak variables MUST be mutable.</span>
 </span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">weak</span> <span style="color:#66d9ef">let</span> tentacle = Tentacle()
@@ -1546,7 +1546,7 @@ code.has-jax {
 </span></span></code></pre></div><p>上面代码中<code>tentacle</code>定义为一个常量，它在初始化后不能在被赋值。因为如果没有持有对这个对象的强引用，那么弱引用变量就会置为<code>nil</code>，所以<code>Swift</code>编译器要求在定义弱变量时使用<code>var</code>，而不是使用<code>let</code>。</p>
 <p>使用弱变量的重要地方是在有潜在的循环引用（<code>retain cycles</code>）的情况下。循环引用是指两个对象相互强引用对方。如果两个对象之间存在强引用，<code>ARC</code>将不会在每个实例上生成适当的释放信息代码，因为它们在保持彼此的生命：</p>
 <img src="https://s2.loli.net/2023/04/15/7NiY1z5gtUrGPkF.png" style="zoom:50%;" />
-<p>看一下下面的代码：</p>
+<p>首先来看下面代码：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span><span style="color:#66d9ef">class</span> <span style="color:#a6e22e">Kraken</span> {
 </span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">var</span> notificationObserver: ((Notification) -&gt; Void)?
 </span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">init</span>() {
@@ -1575,7 +1575,7 @@ code.has-jax {
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span>NotificationCenter.<span style="color:#66d9ef">default</span>.addObserver(forName: <span style="color:#e6db74">&#34;humanEnteredKrakensLair&#34;</span>, object: <span style="color:#66d9ef">nil</span>, queue: .main) { [<span style="color:#66d9ef">weak</span> <span style="color:#66d9ef">self</span>] notification <span style="color:#66d9ef">in</span> <span style="color:#75715e">//The retain cycle is fixed by using capture lists!</span>
 </span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">self</span>?.eatHuman() <span style="color:#75715e">//self is now an optional!</span>
 </span></span><span style="display:flex;"><span>}
-</span></span></code></pre></div><p>需要使用weak和unowned的另一个地方是使用协议在类之间进行代理，因为类是引用类型。在<code>Swift</code>中结构体和枚举也可以遵循协议，但它们是值语义。</p>
+</span></span></code></pre></div><p>需要使用<code>weak</code>和<code>unowned</code>的另一个地方是使用协议在类之间进行代理，因为类是引用类型。在<code>Swift</code>中结构体和枚举也可以遵循协议，但它们是值语义，不会出现循环引用。</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span><span style="color:#66d9ef">class</span> <span style="color:#a6e22e">Kraken</span>: LossOfLimbDelegate {
 </span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">let</span> tentacle = Tentacle()
 </span></span><span style="display:flex;"><span>
@@ -1615,18 +1615,18 @@ code.has-jax {
 </span></span><span style="display:flex;"><span>lef f = {
 </span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">let</span> k1 = Kraken()
 </span></span><span style="display:flex;"><span>}
-</span></span></code></pre></div><p>在上面代码中，<code>Tentacle</code>以代理属性的方式强持有了<code>Kraken</code>。与此同时，<code>Kraken</code>中也强引用了<code>Tentacle</code>的实例（属性）。</p>
-<p>在上面的场景中，在定义delegate属性时，使用weak即可破解这种循环引用：</p>
+</span></span></code></pre></div><p>在上面代码中，<code>Tentacle</code>以代理属性的方式强持有了<code>Kraken</code>。与此同时，<code>Kraken</code>中也强引用了<code>Tentacle</code>的实例（属性）。在上面的场景中，定义<code>delegate</code>属性时，使用<code>weak</code>即可破解这种循环引用：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span><span style="color:#66d9ef">weak</span> <span style="color:#66d9ef">var</span> delegate: LossOfLimbDelegate?
 </span></span></code></pre></div><p>但是，加上<code>weak</code>后会出现编译错误<code>'weak' must not be applied to non-class-bound 'any LossOfLimbDelegate'; consider adding a protocol conformance that has a class bound</code>。这种情况，必须限定协议，让协议继承<code>class</code>。</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span><span style="color:#66d9ef">protocol</span> <span style="color:#a6e22e">LossOfLimbDelegate</span>: <span style="color:#66d9ef">class</span> { <span style="color:#75715e">//The protocol now inherits class</span>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span><span style="color:#75715e">// The protocol now inherits class</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">protocol</span> <span style="color:#a6e22e">LossOfLimbDelegate</span>: <span style="color:#66d9ef">class</span> { 
 </span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">func</span> <span style="color:#a6e22e">limbHasBeenLost</span>()
 </span></span><span style="display:flex;"><span>}
 </span></span></code></pre></div><p><em>Use a class-only protocol when the behavior defined by that protocol’s requirements assumes or requires that a conforming type has reference semantics rather than value semantics</em></p>
-<p>使用weak和unowned引用大致相同，但还是有些区别。unowned引用和weak引用，都不会增加对应的引用计数。在Swift中unowned引用有一个额外的好处，它不是一个可选对象，这使得它们更容易管理（不用使用optional绑定）。</p>
+<p>使用<code>weak</code>和<code>unowned</code>大致相同，但还是有些区别。<code>unowned</code>和<code>weak</code>引用，都不会增加对应的引用计数。在<code>Swift</code>中<code>unowned</code>引用有一个额外的好处，它确保引用的对象不是一个可选对象，这使得它们不用在使用前不用判断是否为<code>nil</code>。</p>
 <p>此外，unowned引用是不归零的，这意味着当对象被释放时，不会将指针清零。这意味着某些情况下，使用unowned引用，可能会导致指针悬空的情况。</p>
 <p><em>Use a weak reference whenever it is valid for that reference to become nil at some point during its lifetime. Conversely, use an unowned reference when you know that the reference will never be nil once it has been set during initialization.</em></p>
-<p>如同隐式解包optional，如果能够保证引用不会为nil，可以使用unowned，否则使用weak。</p>
+<p>如同隐式解包<code>optional</code>类型，如果能够保证引用不会被置为<code>nil</code>，可以使用<code>unowned</code>，否则就需要使用<code>weak</code>来接触循环引用。</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span><span style="color:#66d9ef">class</span> <span style="color:#a6e22e">RetainCycle</span> {
 </span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">var</span> closure: (() -&gt; Void)<span style="color:#f92672">!</span>
 </span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">var</span> string = <span style="color:#e6db74">&#34;Hello&#34;</span>
@@ -1653,27 +1653,27 @@ code.has-jax {
 </span></span><span style="display:flex;"><span>}
 </span></span><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span>f1()
-</span></span></code></pre></div><p>在上面的例子中，闭包中捕获了<code>self</code>，并且是强引用。而在<code>self</code>中，也是强引用了<code>closure</code>。此时，可以使用[unowned self]来打破循环引用：</p>
+</span></span></code></pre></div><p>在上面例子中，闭包中捕获了<code>self</code>，并且是强引用。而在<code>RetainCycle</code>中，也是强引用了<code>closure</code>闭包。此时，可以使用<code>[unowned self]</code>来打破循环引用：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span>closure = { [<span style="color:#66d9ef">unowned</span> <span style="color:#66d9ef">self</span>] <span style="color:#66d9ef">in</span>
 </span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">self</span>.string = <span style="color:#e6db74">&#34;Hello, World!&#34;</span>
 </span></span><span style="display:flex;"><span>}
-</span></span></code></pre></div><p>这种情况我们假设了self不会被置为nil，这是因为我们生成<code>RetainCycle</code>的实例后，立即调用了它的closure。</p>
+</span></span></code></pre></div><p>这种情况我们假设了<code>self</code>不会被置为<code>nil</code>，这是因为生成<code>RetainCycle</code>实例后，立即调用了它的<code>closure</code>闭包。</p>
 <p><em>Define a capture in a closure as an unowned reference when the closure and the instance it captures will always refer to each other, and will always be deallocated at the same time</em></p>
-<p>如果知道你的引用将被正确清零，并且两个引用是相互依赖的（一个不能没有另一个），那么应该选择unowned的而不是weak的，因为你不会想要处理你的程序试图不必要地清零你的引用指针的开销。</p>
+<p>如果知道这个引用将被正确清零，并且两个引用是相互依赖的（一个不能没有另一个），那么应该选择<code>unowned</code>的而不是<code>weak</code>：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span><span style="color:#66d9ef">class</span> <span style="color:#a6e22e">Kraken</span> {
 </span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">let</span> petName = <span style="color:#e6db74">&#34;Krakey-poo&#34;</span>
 </span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">lazy</span> <span style="color:#66d9ef">var</span> businessCardName: () -&gt; String = { [<span style="color:#66d9ef">unowned</span> <span style="color:#66d9ef">self</span>] <span style="color:#66d9ef">in</span>
 </span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">return</span> <span style="color:#e6db74">&#34;Mr. Kraken AKA &#34;</span> <span style="color:#f92672">+</span> <span style="color:#66d9ef">self</span>.petName
 </span></span><span style="display:flex;"><span>    }
 </span></span><span style="display:flex;"><span>}
-</span></span></code></pre></div><p>上面代码中，使用<code>unowned self</code> 以解决循环引用。Kraken在它的生命周期内持有businessCardName闭包，同时businessCardName闭包在它的生命周期内也持有Karaken。它们相互依赖的，所以它们总是在同一时间被删除。但这个不能与闭包的lazy属性相混淆：</p>
+</span></span></code></pre></div><p>在上面代码中，使用<code>unowned self</code> 解决循环引用问题。<code>Kraken</code>在它的生命周期内持有<code>businessCardName</code>闭包，同时<code>businessCardName</code>闭包在它的生命周期内也持有<code>Karaken</code>。它们是相互依赖的，所以它们总是在同一时间被删除。但这个千万不能与闭包的<code>lazy</code>属性相混淆：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span><span style="color:#66d9ef">class</span> <span style="color:#a6e22e">Kraken</span> {
 </span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">let</span> petName = <span style="color:#e6db74">&#34;Krakey-poo&#34;</span>
 </span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">lazy</span> <span style="color:#66d9ef">var</span> businessCardName: String = {
 </span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">return</span> <span style="color:#e6db74">&#34;Mr. Kraken AKA &#34;</span> <span style="color:#f92672">+</span> <span style="color:#66d9ef">self</span>.petName
 </span></span><span style="display:flex;"><span>    }()
 </span></span><span style="display:flex;"><span>}
-</span></span></code></pre></div><p>在上面的定义中，<code>unowned self</code>是不需要的，因为实际上没有任何东西持有生成<code>lazy</code>变量的闭包。只是将闭包的结果分配给变量，并在第一次使用立即取消闭包（并会减去捕获的self的引用技术）。</p>
+</span></span></code></pre></div><p>在上面定义中，<code>unowned self</code>是不需要的。因为实际上没有任何东西持有生成<code>lazy</code>变量的闭包，只是将闭包生成的结果分配给变量，并在第一次使用后立即取消闭包（并会减去捕获的<code>self</code>的引用计数）。</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span><span style="color:#66d9ef">class</span> <span style="color:#a6e22e">Kraken2</span> {
 </span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">let</span> petName = <span style="color:#e6db74">&#34;Krakey-poo&#34;</span>
 </span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">lazy</span> <span style="color:#66d9ef">var</span> businessCardName: String = {
@@ -1692,7 +1692,14 @@ code.has-jax {
 </span></span><span style="display:flex;"><span>kraken = Kraken2()
 </span></span><span style="display:flex;"><span>kraken?.businessCardName
 </span></span><span style="display:flex;"><span>kraken = <span style="color:#66d9ef">nil</span>
-</span></span></code></pre></div><h2 id="curried-function">curried function</h2>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">// 执行后的结果，两个实例都正常释放了</span>
+</span></span><span style="display:flex;"><span><span style="color:#e6db74">&#34;Create Kraken2&#34;</span>
+</span></span><span style="display:flex;"><span><span style="color:#e6db74">&#34;Create Kraken2&#34;</span>
+</span></span><span style="display:flex;"><span><span style="color:#e6db74">&#34;Kraken2&#34;</span>
+</span></span><span style="display:flex;"><span><span style="color:#e6db74">&#34;Kraken2&#34;</span>
+</span></span></code></pre></div><p><a href="https://krakendev.io/blog/weak-and-unowned-references-in-swift#:~:text=To%20use%20weak%20and%20unowned%20variables%20in%20a,self%3F.doSomething%28%29%20%2F%2FRemember%2C%20all%20weak%20variables%20are%20Optionals%21%20%7D">参考资料</a></p>
+<h2 id="curried-function">curried function</h2>
 <p>当一个函数<font color=red>返回一个带参数的函数</font>，那么它被称为<code>curried</code>函数（以计算机科学家<code>Haskell Curry</code>命名）。下面是一个<code>curried</code>函数。</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">makeRoundedRectangleMaker</span>(<span style="color:#66d9ef">_</span> sz: CGSize) -&gt; (CGFloat) -&gt; UIImage {
 </span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">return</span> { r <span style="color:#66d9ef">in</span>
