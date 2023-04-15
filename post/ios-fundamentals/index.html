@@ -241,13 +241,13 @@ code.has-jax {
     <i class="fa fa-file-word-o"></i>
 </span>
 <span class="post-meta-item-text">字数: </span>
-<span class="leancloud-visitors-count">66921</span>
+<span class="leancloud-visitors-count">67255</span>
 &nbsp; | &nbsp;
 <span class="post-meta-item-icon">
     <i class="fa fa-coffee"></i>
 </span>
 <span class="post-meta-item-text">阅读: </span>
-<span class="leancloud-visitors-count">134 分钟</span>
+<span class="leancloud-visitors-count">135 分钟</span>
 </span>
       </div>
     </header>
@@ -1509,7 +1509,7 @@ code.has-jax {
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span><span style="color:#66d9ef">let</span> f2 = funcPasser { [<span style="color:#66d9ef">self</span>] <span style="color:#66d9ef">in</span>
 </span></span><span style="display:flex;"><span>    print(view.bounds) <span style="color:#75715e">// ok </span>
 </span></span><span style="display:flex;"><span>}
-</span></span></code></pre></div><p>可以在闭包中也可以直接使用<code>weak</code>接受变量 :</p>
+</span></span></code></pre></div><p>在闭包中也可以直接使用<code>weak</code>接收外部变量 :</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span>download(imageURL, completion: { [<span style="color:#66d9ef">weak</span> imageViewController] result <span style="color:#66d9ef">in</span>
 </span></span><span style="display:flex;"><span>    <span style="color:#75715e">// ...</span>
 </span></span><span style="display:flex;"><span>})
@@ -1517,7 +1517,22 @@ code.has-jax {
 </span></span><span style="display:flex;"><span>download(imageURL, completion: { [<span style="color:#66d9ef">weak</span> imageViewController, <span style="color:#66d9ef">weak</span> imageFinalizer] result <span style="color:#66d9ef">in</span>
 </span></span><span style="display:flex;"><span>    <span style="color:#75715e">// ...</span>
 </span></span><span style="display:flex;"><span>})
-</span></span></code></pre></div><h2 id="curried-function">curried function</h2>
+</span></span></code></pre></div><h1 id="weak-strong-unowned">weak strong unowned</h1>
+<p><code>ARC</code>是一个编译时的功能，是苹果的自动内存管理版本。它代表的是自动引用计数。这意味着，只有<font color=red>当对象的强引用为零时，它才会释放出内存</font>。</p>
+<p>强引用本质上是一个普通的引用，但它本身很特别，因为它通过增加ARC的保留计数来保护被引用的对象不被释放。</p>
+<p>强引用在<code>Swift</code>中几乎到处都有使用。事实上，一个属性的声明默认是强引用类型。 一般来说，<font color=red>当对象的层次关系是线性的，我们使用强引用是安全的</font>。当强引用的层次结构从父流向子时，那么使用强引用总是可以的。</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span><span style="color:#66d9ef">class</span> <span style="color:#a6e22e">Kraken</span> {
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">let</span> tentacle = Tentacle() <span style="color:#75715e">//strong reference to child.</span>
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">class</span> <span style="color:#a6e22e">Tentacle</span> {
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">let</span> sucker = Sucker() <span style="color:#75715e">//strong reference to child</span>
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">class</span> <span style="color:#a6e22e">Sucker</span> {
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p>上面是一个线性的层次结构在起作用。<code>Kraken</code>有一个对<code>Tentacle</code>实例的强引用，后者有一个对<code>Sucker</code>实例的强引用。这个流程从父（<code>Kraken</code>）一直到子（<code>Sucker</code>）。</p>
+<h2 id="curried-function">curried function</h2>
 <p>当一个函数<font color=red>返回一个带参数的函数</font>，那么它被称为<code>curried</code>函数（以计算机科学家<code>Haskell Curry</code>命名）。下面是一个<code>curried</code>函数。</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">makeRoundedRectangleMaker</span>(<span style="color:#66d9ef">_</span> sz: CGSize) -&gt; (CGFloat) -&gt; UIImage {
 </span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">return</span> { r <span style="color:#66d9ef">in</span>
@@ -4501,6 +4516,10 @@ code.has-jax {
         <li><a href="#closure-preserving-captured-environment">Closure Preserving Captured Environment</a></li>
         <li><a href="#escaping-closures">Escaping Closures</a></li>
         <li><a href="#capture-lists">Capture Lists</a></li>
+      </ul>
+    </li>
+    <li><a href="#weak-strong-unowned">weak strong unowned</a>
+      <ul>
         <li><a href="#curried-function">curried function</a></li>
         <li><a href="#function-references-and-selectors">Function References and Selectors</a></li>
         <li><a href="#function-reference-scope">Function Reference Scope</a></li>
