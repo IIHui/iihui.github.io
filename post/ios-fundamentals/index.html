@@ -241,13 +241,13 @@ code.has-jax {
     <i class="fa fa-file-word-o"></i>
 </span>
 <span class="post-meta-item-text">字数: </span>
-<span class="leancloud-visitors-count">69727</span>
+<span class="leancloud-visitors-count">71235</span>
 &nbsp; | &nbsp;
 <span class="post-meta-item-icon">
     <i class="fa fa-coffee"></i>
 </span>
 <span class="post-meta-item-text">阅读: </span>
-<span class="leancloud-visitors-count">140 分钟</span>
+<span class="leancloud-visitors-count">143 分钟</span>
 </span>
       </div>
     </header>
@@ -1509,7 +1509,7 @@ code.has-jax {
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span><span style="color:#66d9ef">let</span> f2 = funcPasser { [<span style="color:#66d9ef">self</span>] <span style="color:#66d9ef">in</span>
 </span></span><span style="display:flex;"><span>    print(view.bounds) <span style="color:#75715e">// ok </span>
 </span></span><span style="display:flex;"><span>}
-</span></span></code></pre></div><p>在闭包中也可以直接使用<code>weak</code>接收外部变量 :</p>
+</span></span></code></pre></div><p>在闭包中也可以直接使用<code>weak</code>接收<a href="https://www.avanderlee.com/swift/weak-self/">外部变量</a> :</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span>download(imageURL, completion: { [<span style="color:#66d9ef">weak</span> imageViewController] result <span style="color:#66d9ef">in</span>
 </span></span><span style="display:flex;"><span>    <span style="color:#75715e">// ...</span>
 </span></span><span style="display:flex;"><span>})
@@ -1517,7 +1517,7 @@ code.has-jax {
 </span></span><span style="display:flex;"><span>download(imageURL, completion: { [<span style="color:#66d9ef">weak</span> imageViewController, <span style="color:#66d9ef">weak</span> imageFinalizer] result <span style="color:#66d9ef">in</span>
 </span></span><span style="display:flex;"><span>    <span style="color:#75715e">// ...</span>
 </span></span><span style="display:flex;"><span>})
-</span></span></code></pre></div><h1 id="weak-strong-unowned">weak strong unowned</h1>
+</span></span></code></pre></div><h2 id="weak-strong-unowned">weak strong unowned</h2>
 <p><code>ARC</code>是一个编译时的功能，是苹果的自动内存管理版本。它代表的是自动引用计数。这意味着，只有<font color=red>当对象的强引用为零时，它才会释放出内存</font>。</p>
 <p>强引用本质上是一个普通的引用，但它本身很特别，因为它通过增加<code>ARC</code>的引用计数来保护被引用的对象不被释放。强引用在<code>Swift</code>中几乎到处都有在使用。</p>
 <p>事实上，声明一个属性默认是强引用类型。 一般来说，<font color=red>当对象的层次关系是线性的，使用强引用是安全的</font>。当强引用的层次结构从父流向子时，那么使用强引用总是可以的。</p>
@@ -1699,6 +1699,115 @@ code.has-jax {
 </span></span><span style="display:flex;"><span><span style="color:#e6db74">&#34;Kraken2&#34;</span>
 </span></span><span style="display:flex;"><span><span style="color:#e6db74">&#34;Kraken2&#34;</span>
 </span></span></code></pre></div><p><a href="https://krakendev.io/blog/weak-and-unowned-references-in-swift#:~:text=To%20use%20weak%20and%20unowned%20variables%20in%20a,self%3F.doSomething%28%29%20%2F%2FRemember%2C%20all%20weak%20variables%20are%20Optionals%21%20%7D">参考资料</a></p>
+<h2 id="implicit-capturing">Implicit capturing</h2>
+<p>当定义一个逃逸闭包时，也就是说，一个闭包要么被存储在一个属性中，要么被另一个逃逸闭包所捕获。逃逸闭包将隐含地捕获任何在其内被引用的对象、值和函数。由于这样的闭包可能会在稍后的时间被执行，它们需要保持对其所有依赖关系的强引用，以防止它们在此期间被释放。</p>
+<p><em>Whenever we’re defining an escaping closure — that is, a closure that either gets stored in a property, or captured by another escaping closure — it’ll implicitly capture any objects, values and functions that are referenced within it. Since such closures may be executed at a later time, they need to maintain strong references to all of their dependencies in order to prevent them from being deallocated in the meantime.</em></p>
+<p>由于将下面代码执行延迟了几秒钟，所以当闭包实际运行时，<code>presenter</code>视图控制器有可能已经从应用程序的视图层次中删除了。虽然在这种情况下，这不会是一场灾难，但可以说，只有当视图控制器仍然被其它对象（大概是其父视图控制器或窗口）保留时，才会更好地显示确认按钮。</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">presentDelayedConfirmation</span>(<span style="color:#66d9ef">in</span> presenter: UIViewController) {
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">let</span> queue = DispatchQueue.main
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    queue.asyncAfter(deadline: .now() <span style="color:#f92672">+</span> <span style="color:#ae81ff">3</span>) {
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">let</span> alert = UIAlertController(
+</span></span><span style="display:flex;"><span>            title: <span style="color:#e6db74">&#34;...&#34;</span>,
+</span></span><span style="display:flex;"><span>            message: <span style="color:#e6db74">&#34;...&#34;</span>,
+</span></span><span style="display:flex;"><span>            preferredStyle: .alert
+</span></span><span style="display:flex;"><span>        )
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>        <span style="color:#75715e">// By simply refering to &#39;presenter&#39; here, our closure</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#75715e">// will automatically capture that instance, and retain</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#75715e">// it until the closure itself gets released from memory:</span>
+</span></span><span style="display:flex;"><span>        presenter.present(alert, animated: <span style="color:#66d9ef">true</span>)
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p>这就是捕获列表的作用，它使我们能够自定义一个给定的闭包如何捕获它所指向的任何对象或值。使用捕获列表，可以指示上面的闭包以弱方式捕获<code>presenter</code>视图控制器，而不是强方式（这是默认的）。</p>
+<p>这样，如果不被我们代码库中的任何其他部分引用，视图控制器就会被删除，从而使内存更快地被释放，并且没有不必要的操作被执行：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">presentDelayedConfirmation</span>(<span style="color:#66d9ef">in</span> presenter: UIViewController) {
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">let</span> queue = DispatchQueue.main
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">// A capture list is defined using a set of square brackets</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">// directly following a closure&#39;s opening curly bracket:</span>
+</span></span><span style="display:flex;"><span>    queue.asyncAfter(deadline: .now() <span style="color:#f92672">+</span> <span style="color:#ae81ff">3</span>) { [<span style="color:#66d9ef">weak</span> presenter] <span style="color:#66d9ef">in</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#75715e">// Here we verify that our presenter is still in memory,</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#75715e">// otherwise we can return early:</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">guard</span> <span style="color:#66d9ef">let</span> presenter = presenter <span style="color:#66d9ef">else</span> { <span style="color:#66d9ef">return</span> }
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">let</span> alert = UIAlertController(
+</span></span><span style="display:flex;"><span>            title: <span style="color:#e6db74">&#34;...&#34;</span>,
+</span></span><span style="display:flex;"><span>            message: <span style="color:#e6db74">&#34;...&#34;</span>,
+</span></span><span style="display:flex;"><span>            preferredStyle: .alert
+</span></span><span style="display:flex;"><span>        )
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>        presenter.present(alert, animated: <span style="color:#66d9ef">true</span>)
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p>当需要引用<code>self</code>时，捕获列表也许更加有用，特别是当这样做会导致循环引用时，也就是两个对象或闭包互相引用—防止它们都被删除（因为它们不能达到引用次数为零）。</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span><span style="color:#66d9ef">class</span> <span style="color:#a6e22e">UserModelController</span> {
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">let</span> storage: UserStorage
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">private</span> <span style="color:#66d9ef">var</span> user: User { <span style="color:#66d9ef">didSet</span> { userDidChange() } }
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">init</span>(user: User, storage: UserStorage) {
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">self</span>.storage = storage
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">self</span>.user = user
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>        storage.addObserver(forID: user.id) { [<span style="color:#66d9ef">weak</span> <span style="color:#66d9ef">self</span>] user <span style="color:#66d9ef">in</span>
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">self</span>?.user = user
+</span></span><span style="display:flex;"><span>        }
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p>如果不使用<code>weak</code>捕获<code>self</code>，上述的闭包最终会导致一个循环引用。因为<code>self</code>持有了<code>storage</code>，在<code>storage</code>中也持有了<code>self</code>。</p>
+<p>另外，也可以将上述<code>user</code>属性转换成一个使用其关键路径的函数——因为我们在观察闭包中所做的只是更新该属性的值。</p>
+<h3 id="weak-references-are-not-always-the-answer">Weak references are not always the answer</h3>
+<p>如果处理的是非常短暂的闭包，比如传递给<code>UIView.animate</code> 的闭包（它只是被执行以执行动画的插值，然后释放），捕获<code>self</code>真的不是问题，而且很可能导致代码更容易阅读：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span><span style="color:#66d9ef">extension</span> <span style="color:#a6e22e">ProductViewController</span> {
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">func</span> <span style="color:#a6e22e">expandImageView</span>() {
+</span></span><span style="display:flex;"><span>        UIView.animate(withDuration: <span style="color:#ae81ff">0.3</span>) {
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">self</span>.imageView.frame = <span style="color:#66d9ef">self</span>.view.bounds
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">self</span>.showImageCloseButton()
+</span></span><span style="display:flex;"><span>        }
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p>请注意，当在<font color=red>一个逃逸闭包中访问实例方法和属性时，总是需要明确地引用<code>self</code></font>。这是一件好事，因为它要求我们做出明确的决定来捕获<code>self</code>，考虑到这样做可能产生的后果。</p>
+<p>还有许多种情况，我们可能希望保留<code>self</code>甚至更长的时间。例如，如果当前对象被要求执行一个闭合的工作，就像在这个案例中：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span><span style="color:#66d9ef">extension</span> <span style="color:#a6e22e">NetworkingController</span> {
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">func</span> <span style="color:#a6e22e">makeImageUploadingTask</span>(<span style="color:#66d9ef">for</span> image: Image) -&gt; Task {
+</span></span><span style="display:flex;"><span>        Task { handler <span style="color:#66d9ef">in</span>
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">let</span> request = Request(
+</span></span><span style="display:flex;"><span>                endpoint: .imageUpload,
+</span></span><span style="display:flex;"><span>                payload: image
+</span></span><span style="display:flex;"><span>            )
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>            <span style="color:#75715e">// The current NetworkingController is required here,</span>
+</span></span><span style="display:flex;"><span>            <span style="color:#75715e">// so for as long the returned task is retained,</span>
+</span></span><span style="display:flex;"><span>            <span style="color:#75715e">// we&#39;ll also retain its underlying controller:</span>
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">self</span>.perform(request, then: handler)
+</span></span><span style="display:flex;"><span>        }
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p>上述代码不会导致任何循环引用，因为<code>NetworkingController</code>不会引用它所创建的任务。</p>
+<p>还可以直接捕获一个闭包的每个依赖项，而不是引用self。同样使用捕获列表。例如，在这里我们捕获了一个图片加载器的缓存属性，以便在图片被成功下载后能够使用它：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span><span style="color:#66d9ef">class</span> <span style="color:#a6e22e">ImageLoader</span> {
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">private</span> <span style="color:#66d9ef">let</span> cache = Cache&lt;URL, Image&gt;()
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">func</span> <span style="color:#a6e22e">loadImage</span>(
+</span></span><span style="display:flex;"><span>        from url: URL,
+</span></span><span style="display:flex;"><span>        then handler: @escaping (Result&lt;Image, Error&gt;) -&gt; Void
+</span></span><span style="display:flex;"><span>    ) {
+</span></span><span style="display:flex;"><span>        <span style="color:#75715e">// Here we capture our image loader&#39;s cache without</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#75715e">// capturing &#39;self&#39;, and without having to deal with</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#75715e">// any optionals or weak references:</span>
+</span></span><span style="display:flex;"><span>        request(url) { [cache] result <span style="color:#66d9ef">in</span>
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">do</span> {
+</span></span><span style="display:flex;"><span>                <span style="color:#66d9ef">let</span> image = <span style="color:#66d9ef">try</span> result.decodedAsImage()
+</span></span><span style="display:flex;"><span>                cache.insert(image, forKey: url)
+</span></span><span style="display:flex;"><span>                handler(.success(image))
+</span></span><span style="display:flex;"><span>            } <span style="color:#66d9ef">catch</span> {
+</span></span><span style="display:flex;"><span>                handler(.failure(error))
+</span></span><span style="display:flex;"><span>            }
+</span></span><span style="display:flex;"><span>        }
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p>当涉及到闭包捕获时，值类型的处理有时会比较复杂，因为<font color=red>它们是作为副本而不是作为引用传递给外部作用域的</font>。尽管这正是 <code>Swift</code> 的值类型的强大之处，但在下面这种情况下，它可能会产生一些意想不到的后果&ndash;在这种情况下，我们在给一个按钮分配一个处理程序闭包时要捕获一个发送者和消息属性：</p>
+<p><a href="https://www.swiftbysundell.com/articles/swifts-closure-capturing-mechanics/#implicit-capturing">参考资料</a></p>
 <h2 id="curried-function">curried function</h2>
 <p>当一个函数<font color=red>返回一个带参数的函数</font>，那么它被称为<code>curried</code>函数（以计算机科学家<code>Haskell Curry</code>命名）。下面是一个<code>curried</code>函数。</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">makeRoundedRectangleMaker</span>(<span style="color:#66d9ef">_</span> sz: CGSize) -&gt; (CGFloat) -&gt; UIImage {
@@ -4683,10 +4792,12 @@ code.has-jax {
         <li><a href="#closure-preserving-captured-environment">Closure Preserving Captured Environment</a></li>
         <li><a href="#escaping-closures">Escaping Closures</a></li>
         <li><a href="#capture-lists">Capture Lists</a></li>
-      </ul>
-    </li>
-    <li><a href="#weak-strong-unowned">weak strong unowned</a>
-      <ul>
+        <li><a href="#weak-strong-unowned">weak strong unowned</a></li>
+        <li><a href="#implicit-capturing">Implicit capturing</a>
+          <ul>
+            <li><a href="#weak-references-are-not-always-the-answer">Weak references are not always the answer</a></li>
+          </ul>
+        </li>
         <li><a href="#curried-function">curried function</a></li>
         <li><a href="#function-references-and-selectors">Function References and Selectors</a></li>
         <li><a href="#function-reference-scope">Function Reference Scope</a></li>
