@@ -811,10 +811,10 @@ var x = 0 let f: () -&amp;gt; () = { [ y = x &#43; 5] in  print(x0) } f() // 5  
 self.undoer.registerUndo(withTarget: self) { [oldCenter = self.center] myself in  myself.setCenterUndoably(oldCenter) } 捕获列表的另一个用途是解决在逃逸闭包中需要明确使用self关键字的要求。下面代码中，需要明确地使用self，因为这是一个逃逸闭包。但是很多人不喜欢明确地使用self，如果这个匿名函数多次隐含地使用self，则可能需要多次明确地使用self。
 let f2 = funcPasser {  print(self.view.bounds) } 从Swift 5.3开始，可以把self放在捕获列表中，这会满足编译器的要求，并且也不必将self写为函数体中的隐式目标，即可以省略self：
 let f2 = funcPasser { [self] in  print(view.bounds) // ok  } 在闭包中也可以直接使用weak接收外部变量 :
-download(imageURL, completion: { [weak imageViewController] result in  // ... })  download(imageURL, completion: { [weak imageViewController, weak imageFinalizer] result in  // ... }) weak strong unowned ARC是一个编译时的功能，是苹果的自动内存管理版本。它代表的是自动引用计数。这意味着，只有当对象的强引用为零时，它才会释放出内存。
+download(imageURL, completion: { [weak imageViewController] result in  // ... })  download(imageURL, completion: { [weak imageViewController, weak imageFinalizer] result in  // ... }) weak strong unowned ARC是一个编译时功能，是苹果的自动内存管理版本。它代表的是自动引用计数。这意味着，只有当对象的强引用计数为零时，它才会释放出内存。
 强引用本质上是一个普通的引用，但它本身很特别，因为它通过增加ARC的引用计数来保护被引用的对象不被释放。强引用在Swift中几乎到处都有在使用。
-事实上，声明一个属性默认是强引用类型。 一般来说，当对象的层次关系是线性的，使用强引用是安全的。当强引用的层次结构从父流向子时，那么使用强引用总是可以的。
-class Kraken {  let tentacle = Tentacle() //strong reference to child. }  class Tentacle {  let sucker = Sucker() //strong reference to child }  class Sucker {  // } 上面是一个线性层次结构。Kraken中对Tentacle的引用是一个强引用，并且Tentacle对Sucker实例也是强引用。这个流程从父Kraken一直到子Sucker。
+事实上，声明一个属性默认是强引用类型。 一般来说，当对象的层次关系是线性的，使用强引用是安全的。当强引用的层次结构从父流向子时，使用强引用总是安全的。
+class Kraken {  let tentacle = Tentacle() //strong reference to child. }  class Tentacle {  let sucker = Sucker() //strong reference to child }  class Sucker {  // } 上面是一个线性层次结构。Kraken中对Tentacle的引用是一个强引用，并且Tentacle对Sucker的引用也是强引用。这个流程从父Kraken一直到子Sucker。
 同样地，在动画的blocks中，引用的层次也是相似的。因为animateWithDuration是一个UIView静态方法，下面的闭包是parent，self是child：
 UIView.animate(withDuration: 0.3) {  self.view.alpha = 0.0 } 弱引用只是一个指向对象的指针，它不保护该对象不被ARC释放。虽然强引用会使对象的保留计数增加1，但弱引用不会。此外，弱引用在成功被释放时，会将弱引用的指针清零，即置为nil。这确保了当访问弱引用时，它要么是一个有效的对象，要么是nil。
 在Swift中，所有的弱引用都是非常量optional的，因为当不再有任何东西强持有这个对象，弱引用可能并且终将被置为nil。例如，下面代码编译时会报错&#39;weak&#39; must be a mutable variable, because it may change at runtime：
