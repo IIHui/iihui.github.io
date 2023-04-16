@@ -241,13 +241,13 @@ code.has-jax {
     <i class="fa fa-file-word-o"></i>
 </span>
 <span class="post-meta-item-text">字数: </span>
-<span class="leancloud-visitors-count">71696</span>
+<span class="leancloud-visitors-count">72272</span>
 &nbsp; | &nbsp;
 <span class="post-meta-item-icon">
     <i class="fa fa-coffee"></i>
 </span>
 <span class="post-meta-item-text">阅读: </span>
-<span class="leancloud-visitors-count">144 分钟</span>
+<span class="leancloud-visitors-count">145 分钟</span>
 </span>
       </div>
     </header>
@@ -1809,7 +1809,7 @@ code.has-jax {
 </span></span><span style="display:flex;"><span>        }
 </span></span><span style="display:flex;"><span>    }
 </span></span><span style="display:flex;"><span>}
-</span></span></code></pre></div><p>当涉及到闭包捕获时，值类型的处理有时会比较复杂，因为<font color=red>它们是作为副本而不是作为引用传递给外部作用域的</font>。尽管这正是 <code>Swift</code> 值类型的强大之处，但在下面这种情况下，它可能会产生一些意想不到的后果。在下面代码，一个按钮的<code>handler</code>赋值一个闭包时会捕获<code>sender</code>和<code>message</code>属性：</p>
+</span></span></code></pre></div><p>当涉及到闭包捕获列表时，值类型的处理有时会比较复杂，因为<font color=red>它们是作为副本而不是作为引用传递给外部作用域的</font>。尽管这正是 <code>Swift</code> 值类型的强大之处，但在下面这种情况下，它可能会产生一些意想不到的后果。在下面代码，一个按钮的<code>handler</code>赋值一个闭包时会捕获<code>sender</code>和<code>message</code>属性：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span><span style="color:#66d9ef">class</span> <span style="color:#a6e22e">MessageComposerViewController</span>: UIViewController {
 </span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">private</span> <span style="color:#66d9ef">let</span> sender: MessageSender
 </span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">private</span> <span style="color:#66d9ef">var</span> message = Message()
@@ -1834,7 +1834,61 @@ code.has-jax {
 </span></span><span style="display:flex;"><span>    message.map(sender.send)
 </span></span><span style="display:flex;"><span>}
 </span></span></code></pre></div><p>但是，上面实际上只有在处理可变值时才会出现问题。如果只是处理常量，像下面的例子一样，那么可以毫无问题地将这些属性添加到任何闭包的捕获列表中（因为它们的值不会改变）：</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-fallback" data-lang="fallback"></code></pre></div><p><a href="https://www.swiftbysundell.com/articles/swifts-closure-capturing-mechanics/#implicit-capturing">参考资料</a></p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span><span style="color:#66d9ef">class</span> <span style="color:#a6e22e">ProductViewController</span>: UIViewController {
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">private</span> <span style="color:#66d9ef">let</span> productManager: ProductManager
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">private</span> <span style="color:#66d9ef">let</span> product: Product
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    ...
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">override</span> <span style="color:#66d9ef">func</span> <span style="color:#a6e22e">viewDidLoad</span>() {
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">super</span>.viewDidLoad()
+</span></span><span style="display:flex;"><span>        
+</span></span><span style="display:flex;"><span>        ...
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>        buyButton.handler = { [productManager, product] <span style="color:#66d9ef">in</span>
+</span></span><span style="display:flex;"><span>            productManager.startCheckout(<span style="color:#66d9ef">for</span>: product)
+</span></span><span style="display:flex;"><span>        }
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p>最后，让我们来看看当涉及到局部变量时，值是如何被捕获的。<font color=red>与基于值的属性捕获方式相反，局部变量在被同一作用域内的闭包捕获时，仍然保持着与原始声明的联系</font>。这对于跟踪各种状态来说是非常有用的。</p>
+<p>例如，假设想扩展 <code>Swift</code> 的 <code>Collection</code> 协议，使我们能够使用由当前元素和下一个元素组成的缓冲区来迭代任何集合。这可以通过将标准库的<code>AnySequence</code>和<code>AnyIterator</code>类型与本地捕获的值相结合来实现：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span><span style="color:#66d9ef">extension</span> <span style="color:#a6e22e">Collection</span> {
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">typealias</span> Buffer = (current: Element, next: Element?)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">var</span> buffered: AnySequence&lt;Buffer&gt; {
+</span></span><span style="display:flex;"><span>        AnySequence { () -&gt; AnyIterator&lt;Buffer&gt; <span style="color:#66d9ef">in</span>
+</span></span><span style="display:flex;"><span>            <span style="color:#75715e">// We define our state as local variables:</span>
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">var</span> iterator = <span style="color:#66d9ef">self</span>.makeIterator()
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">var</span> next: Element?
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">return</span> AnyIterator { () -&gt; Buffer? <span style="color:#66d9ef">in</span>
+</span></span><span style="display:flex;"><span>                <span style="color:#75715e">// We can then use our state to make decisions by</span>
+</span></span><span style="display:flex;"><span>                <span style="color:#75715e">// capturing them within our iterator&#39;s closure:</span>
+</span></span><span style="display:flex;"><span>                <span style="color:#66d9ef">guard</span> <span style="color:#66d9ef">let</span> current = next ?? iterator.next() <span style="color:#66d9ef">else</span> {
+</span></span><span style="display:flex;"><span>                    <span style="color:#66d9ef">return</span> <span style="color:#66d9ef">nil</span>
+</span></span><span style="display:flex;"><span>                }
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>                next = iterator.next()
+</span></span><span style="display:flex;"><span>                <span style="color:#66d9ef">return</span> (current, next)
+</span></span><span style="display:flex;"><span>            }
+</span></span><span style="display:flex;"><span>        }
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p>也就是说，<font color=red>当使用捕获列表捕获时，数值会被复制，而当直接引用时，它们不会被复制</font>。例如，当作为属性访问时，或者当一个局部变量在它被定义的同一范围内被捕获时。</p>
+<p>如同弱引用一样，<code>unowned</code>也只能应用于引用类型。它的效果与强制解包<code>optional</code>类型一样，因为它让我们把弱引用当作非<code>optional</code>的，如果相应的对象被释放了，再通过<code>unowned</code>访问会出现闪退。</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span><span style="color:#66d9ef">class</span> <span style="color:#a6e22e">UserModelController</span> {
+</span></span><span style="display:flex;"><span>    ...
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">init</span>(user: User, storage: UserStorage) {
+</span></span><span style="display:flex;"><span>        ...
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>        storage.addObserver(forID: user.id) { [<span style="color:#66d9ef">unowned</span> <span style="color:#66d9ef">self</span>] user <span style="color:#66d9ef">in</span>
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">self</span>.user = user
+</span></span><span style="display:flex;"><span>        }
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p>虽然使用<code>unowned</code>可以让我们摆脱<code>optional</code>的<code>nil</code>判断，某种程度上来说也是非常方便的。但当引用悬空的时候，会出现闪退。这就使得它相当危险。</p>
+<p><a href="https://www.swiftbysundell.com/articles/swifts-closure-capturing-mechanics/#implicit-capturing">参考资料</a></p>
 <h2 id="curried-function">curried function</h2>
 <p>当一个函数<font color=red>返回一个带参数的函数</font>，那么它被称为<code>curried</code>函数（以计算机科学家<code>Haskell Curry</code>命名）。下面是一个<code>curried</code>函数。</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">makeRoundedRectangleMaker</span>(<span style="color:#66d9ef">_</span> sz: CGSize) -&gt; (CGFloat) -&gt; UIImage {
