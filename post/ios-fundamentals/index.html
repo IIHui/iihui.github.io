@@ -241,7 +241,7 @@ code.has-jax {
     <i class="fa fa-file-word-o"></i>
 </span>
 <span class="post-meta-item-text">字数: </span>
-<span class="leancloud-visitors-count">71285</span>
+<span class="leancloud-visitors-count">71301</span>
 &nbsp; | &nbsp;
 <span class="post-meta-item-icon">
     <i class="fa fa-coffee"></i>
@@ -1518,33 +1518,35 @@ code.has-jax {
 </span></span><span style="display:flex;"><span>    <span style="color:#75715e">// ...</span>
 </span></span><span style="display:flex;"><span>})
 </span></span></code></pre></div><h2 id="weak-strong-unowned">weak strong unowned</h2>
-<p><code>ARC</code>是一个编译时功能，是苹果的自动内存管理版本。它代表的是自动引用计数。这意味着，只有<font color=red>当对象的强引用计数为零时，它才会释放出内存</font>。</p>
-<p>强引用本质上是一个普通的引用，但它本身很特别，因为它通过增加<code>ARC</code>的引用计数来保护被引用的对象不被释放。强引用在<code>Swift</code>中几乎到处都有在使用。</p>
-<p>事实上，声明一个属性默认是强引用类型。 一般来说，<font color=red>当对象的层次关系是线性的，使用强引用是安全的</font>。当强引用的层次结构从父流向子时，使用强引用总是安全的。</p>
+<p><code>ARC</code>是一个编译时功能，是苹果的自动内存管理版本。它代表的是自动引用计数，这意味着只有<font color=red>当对象的强引用计数为零时，对象才会释放出内存</font>。</p>
+<p>强引用本质上是一个普通的引用，但它本身很特别，因为它通过增加<code>ARC</code>的引用计数来保护被引用的对象不被释放。强引用在<code>Swift</code>中几乎到处都在使用。</p>
+<p>事实上，声明一个属性默认是强引用类型。 一般来说，<font color=red>当对象的层次关系是线性的，使用强引用就是安全的</font>。也就是说，当强引用的层次结构从<code>parent</code>流向<code>child</code>时，使用强引用总是安全的。</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span><span style="color:#66d9ef">class</span> <span style="color:#a6e22e">Kraken</span> {
-</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">let</span> tentacle = Tentacle() <span style="color:#75715e">//strong reference to child.</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">// strong reference to child.</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">let</span> tentacle = Tentacle() 
 </span></span><span style="display:flex;"><span>}
 </span></span><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span><span style="color:#66d9ef">class</span> <span style="color:#a6e22e">Tentacle</span> {
-</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">let</span> sucker = Sucker() <span style="color:#75715e">//strong reference to child</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">// strong reference to child</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">let</span> sucker = Sucker()
 </span></span><span style="display:flex;"><span>}
 </span></span><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span><span style="color:#66d9ef">class</span> <span style="color:#a6e22e">Sucker</span> {
-</span></span><span style="display:flex;"><span>  <span style="color:#75715e">//</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">//</span>
 </span></span><span style="display:flex;"><span>}
-</span></span></code></pre></div><p>上面是一个线性层次结构。<code>Kraken</code>中对<code>Tentacle</code>的引用是一个强引用，并且<code>Tentacle</code>对<code>Sucker</code>的引用也是强引用。这个流程从父<code>Kraken</code>一直到子<code>Sucker</code>。</p>
-<p>同样地，在动画的<code>blocks</code>中，引用的层次也是相似的。因为<code>animateWithDuration</code>是一个<code>UIView</code>静态方法，下面的闭包是<code>parent</code>，<code>self</code>是<code>child</code>：</p>
+</span></span></code></pre></div><p>上面是一个线性层次结构。<code>Kraken</code>中对<code>Tentacle</code>的引用是一个强引用，并且<code>Tentacle</code>对<code>Sucker</code>的引用也是强引用。这个从父<code>Kraken</code>一直到子<code>Sucker</code>。</p>
+<p>同样地，在动画的<code>blocks</code>中，引用的层次也是相似的。因为<code>animateWithDuration</code>是<code>UIView</code>静态方法，下面的闭包是<code>parent</code>，<code>self</code>是<code>child</code>：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span>UIView.animate(withDuration: <span style="color:#ae81ff">0.3</span>) {
 </span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">self</span>.view.alpha = <span style="color:#ae81ff">0.0</span>
 </span></span><span style="display:flex;"><span>}
 </span></span></code></pre></div><p>弱引用只是一个指向对象的指针，它不保护该对象不被<code>ARC</code>释放。虽然强引用会使对象的保留计数增加<code>1</code>，但<font color=red>弱引用不会</font>。此外，弱引用在成功被释放时，会将弱引用的指针清零，即置为<code>nil</code>。这确保了当访问弱引用时，它要么是一个有效的对象，要么是<code>nil</code>。</p>
-<p>在<code>Swift</code>中，所有的弱引用都是非常量<code>optional</code>的，因为当不再有任何东西强持有这个对象，弱引用可能并且终将被置为<code>nil</code>。例如，下面代码编译时会报错<code>'weak' must be a mutable variable, because it may change at runtime</code>：</p>
+<p>在<code>Swift</code>中，所有的弱引用都是非常量，并且是<code>optional</code>的，因为当不再有任何东西强持有这个对象时，弱引用可能并且终将被置为<code>nil</code>。例如，下面代码编译时会出现<code>'weak' must be a mutable variable, because it may change at runtime</code>错误：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span><span style="color:#66d9ef">class</span> <span style="color:#a6e22e">Kraken</span> {
-</span></span><span style="display:flex;"><span>    <span style="color:#75715e">//let is a constant! All weak variables MUST be mutable.</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">// let is a constant! All weak variables MUST be mutable.</span>
 </span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">weak</span> <span style="color:#66d9ef">let</span> tentacle = Tentacle()
 </span></span><span style="display:flex;"><span>}
-</span></span></code></pre></div><p>上面代码中<code>tentacle</code>定义为一个常量，它在初始化后不能在被赋值。因为如果没有持有对这个对象的强引用，那么弱引用变量就会置为<code>nil</code>，所以<code>Swift</code>编译器要求在定义弱变量时使用<code>var</code>，而不是使用<code>let</code>。</p>
-<p>使用弱变量的重要地方是在有潜在的循环引用（<code>retain cycles</code>）的情况下。循环引用是指两个对象相互强引用对方。如果两个对象之间存在强引用，<code>ARC</code>将不会在每个实例上生成适当的释放信息代码，因为它们在保持彼此的生命：</p>
+</span></span></code></pre></div><p>上面代码中<code>tentacle</code>被定义为一个常量，它在初始化后不能再被赋值。因为如果没有持有这个对象的强引用后，那么弱引用变量就会置为<code>nil</code>，所以<code>Swift</code>编译器要求在定义弱变量时使用<code>var</code>，而不是使用<code>let</code>。</p>
+<p>在可能存在循环引用（<code>retain cycles</code>）的场景，应当使用弱变量。<font color=red>循环引用是指两个对象相互强引用对方</font>。如果两个对象之间存在强引用，<code>ARC</code>将不会在每个实例上生成适当的释放信息代码，因为它们在保持彼此的生命：</p>
 <img src="https://s2.loli.net/2023/04/15/7NiY1z5gtUrGPkF.png" style="zoom:50%;" />
 <p>首先来看下面代码：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span><span style="color:#66d9ef">class</span> <span style="color:#a6e22e">Kraken</span> {
@@ -1559,7 +1561,7 @@ code.has-jax {
 </span></span><span style="display:flex;"><span>        NotificationCenter.<span style="color:#66d9ef">default</span>.removeObserver(notificationObserver)
 </span></span><span style="display:flex;"><span>    }
 </span></span><span style="display:flex;"><span>}
-</span></span></code></pre></div><p>上面的代码产生了一个循环引用。如果任何变量是在闭包的作用域之外声明的，那么在闭包的作用域内引用该变量就会对该对象产生另一个强引用。唯一的例外是使用值语义的变量，如<code>Swift</code>中的<code>Ints</code>、<code>Strings</code>、<code>Arrays</code>和<code>Dictionaries</code>。</p>
+</span></span></code></pre></div><p>上面代码产生了一个循环引用。如果任何变量是在闭包的作用域之外声明的，那么在闭包的作用域内引用该变量就会对该对象产生另一个强引用。唯一的例外是使用值语义的变量，如<code>Swift</code>中的<code>Ints</code>、<code>Strings</code>、<code>Arrays</code>和<code>Dictionaries</code>。</p>
 <p>在上面代码中，<code>notificationObserver</code>持有的闭包，当调用<code>eatHuman</code>时，在这个闭包中会捕获到<code>self</code>，并强持有它。最好的方法是在<code>deinit</code>函数中清理通知观察者，但<code>deinit</code>不会被<code>ARC</code>调用，因为闭包中有一个对<code>Kraken</code>实例的强引用。</p>
 <p>其它可能发生这种情况是在<code>NSTimers</code>和<code>NSThread</code>等地方。修复方法是在闭包的捕获列表中使用一个对<code>self</code>的弱引用，这就打破了强引用的循环：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span><span style="color:#66d9ef">let</span> closure = { [<span style="color:#66d9ef">weak</span> <span style="color:#66d9ef">self</span>] <span style="color:#66d9ef">in</span> 

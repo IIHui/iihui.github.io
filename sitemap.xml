@@ -811,17 +811,17 @@ var x = 0 let f: () -&amp;gt; () = { [ y = x &#43; 5] in  print(x0) } f() // 5  
 self.undoer.registerUndo(withTarget: self) { [oldCenter = self.center] myself in  myself.setCenterUndoably(oldCenter) } 捕获列表的另一个用途是解决在逃逸闭包中需要明确使用self关键字的要求。下面代码中，需要明确地使用self，因为这是一个逃逸闭包。但是很多人不喜欢明确地使用self，如果这个匿名函数多次隐含地使用self，则可能需要多次明确地使用self。
 let f2 = funcPasser {  print(self.view.bounds) } 从Swift 5.3开始，可以把self放在捕获列表中，这会满足编译器的要求，并且也不必将self写为函数体中的隐式目标，即可以省略self：
 let f2 = funcPasser { [self] in  print(view.bounds) // ok  } 在闭包中也可以直接使用weak接收外部变量 :
-download(imageURL, completion: { [weak imageViewController] result in  // ... })  download(imageURL, completion: { [weak imageViewController, weak imageFinalizer] result in  // ... }) weak strong unowned ARC是一个编译时功能，是苹果的自动内存管理版本。它代表的是自动引用计数。这意味着，只有当对象的强引用计数为零时，它才会释放出内存。
-强引用本质上是一个普通的引用，但它本身很特别，因为它通过增加ARC的引用计数来保护被引用的对象不被释放。强引用在Swift中几乎到处都有在使用。
-事实上，声明一个属性默认是强引用类型。 一般来说，当对象的层次关系是线性的，使用强引用是安全的。当强引用的层次结构从父流向子时，使用强引用总是安全的。
-class Kraken {  let tentacle = Tentacle() //strong reference to child. }  class Tentacle {  let sucker = Sucker() //strong reference to child }  class Sucker {  // } 上面是一个线性层次结构。Kraken中对Tentacle的引用是一个强引用，并且Tentacle对Sucker的引用也是强引用。这个流程从父Kraken一直到子Sucker。
-同样地，在动画的blocks中，引用的层次也是相似的。因为animateWithDuration是一个UIView静态方法，下面的闭包是parent，self是child：
+download(imageURL, completion: { [weak imageViewController] result in  // ... })  download(imageURL, completion: { [weak imageViewController, weak imageFinalizer] result in  // ... }) weak strong unowned ARC是一个编译时功能，是苹果的自动内存管理版本。它代表的是自动引用计数，这意味着只有当对象的强引用计数为零时，对象才会释放出内存。
+强引用本质上是一个普通的引用，但它本身很特别，因为它通过增加ARC的引用计数来保护被引用的对象不被释放。强引用在Swift中几乎到处都在使用。
+事实上，声明一个属性默认是强引用类型。 一般来说，当对象的层次关系是线性的，使用强引用就是安全的。也就是说，当强引用的层次结构从parent流向child时，使用强引用总是安全的。
+class Kraken {  // strong reference to child.  let tentacle = Tentacle() }  class Tentacle {  // strong reference to child  let sucker = Sucker() }  class Sucker {  // } 上面是一个线性层次结构。Kraken中对Tentacle的引用是一个强引用，并且Tentacle对Sucker的引用也是强引用。这个从父Kraken一直到子Sucker。
+同样地，在动画的blocks中，引用的层次也是相似的。因为animateWithDuration是UIView静态方法，下面的闭包是parent，self是child：
 UIView.animate(withDuration: 0.3) {  self.view.alpha = 0.0 } 弱引用只是一个指向对象的指针，它不保护该对象不被ARC释放。虽然强引用会使对象的保留计数增加1，但弱引用不会。此外，弱引用在成功被释放时，会将弱引用的指针清零，即置为nil。这确保了当访问弱引用时，它要么是一个有效的对象，要么是nil。
-在Swift中，所有的弱引用都是非常量optional的，因为当不再有任何东西强持有这个对象，弱引用可能并且终将被置为nil。例如，下面代码编译时会报错&#39;weak&#39; must be a mutable variable, because it may change at runtime：
-class Kraken {  //let is a constant! All weak variables MUST be mutable.  weak let tentacle = Tentacle() } 上面代码中tentacle定义为一个常量，它在初始化后不能在被赋值。因为如果没有持有对这个对象的强引用，那么弱引用变量就会置为nil，所以Swift编译器要求在定义弱变量时使用var，而不是使用let。
-使用弱变量的重要地方是在有潜在的循环引用（retain cycles）的情况下。循环引用是指两个对象相互强引用对方。如果两个对象之间存在强引用，ARC将不会在每个实例上生成适当的释放信息代码，因为它们在保持彼此的生命：
+在Swift中，所有的弱引用都是非常量，并且是optional的，因为当不再有任何东西强持有这个对象时，弱引用可能并且终将被置为nil。例如，下面代码编译时会出现&#39;weak&#39; must be a mutable variable, because it may change at runtime错误：
+class Kraken {  // let is a constant! All weak variables MUST be mutable.  weak let tentacle = Tentacle() } 上面代码中tentacle被定义为一个常量，它在初始化后不能再被赋值。因为如果没有持有这个对象的强引用后，那么弱引用变量就会置为nil，所以Swift编译器要求在定义弱变量时使用var，而不是使用let。
+在可能存在循环引用（retain cycles）的场景，应当使用弱变量。循环引用是指两个对象相互强引用对方。如果两个对象之间存在强引用，ARC将不会在每个实例上生成适当的释放信息代码，因为它们在保持彼此的生命：
 首先来看下面代码：
-class Kraken {  var notificationObserver: ((Notification) -&amp;gt; Void)?  init() {  notificationObserver = NotificationCenter.default.addObserver(forName: &amp;#34;humanEnteredKrakensLair&amp;#34;, object: nil, queue: .main) { notification in  self.eatHuman()  }  }   deinit {  NotificationCenter.default.removeObserver(notificationObserver)  } } 上面的代码产生了一个循环引用。如果任何变量是在闭包的作用域之外声明的，那么在闭包的作用域内引用该变量就会对该对象产生另一个强引用。唯一的例外是使用值语义的变量，如Swift中的Ints、Strings、Arrays和Dictionaries。
+class Kraken {  var notificationObserver: ((Notification) -&amp;gt; Void)?  init() {  notificationObserver = NotificationCenter.default.addObserver(forName: &amp;#34;humanEnteredKrakensLair&amp;#34;, object: nil, queue: .main) { notification in  self.eatHuman()  }  }   deinit {  NotificationCenter.default.removeObserver(notificationObserver)  } } 上面代码产生了一个循环引用。如果任何变量是在闭包的作用域之外声明的，那么在闭包的作用域内引用该变量就会对该对象产生另一个强引用。唯一的例外是使用值语义的变量，如Swift中的Ints、Strings、Arrays和Dictionaries。
 在上面代码中，notificationObserver持有的闭包，当调用eatHuman时，在这个闭包中会捕获到self，并强持有它。最好的方法是在deinit函数中清理通知观察者，但deinit不会被ARC调用，因为闭包中有一个对Kraken实例的强引用。
 其它可能发生这种情况是在NSTimers和NSThread等地方。修复方法是在闭包的捕获列表中使用一个对self的弱引用，这就打破了强引用的循环：
 let closure = { [weak self] in  self?.doSomething() //Remember, all weak variables are Optionals! } 为什么对self的弱引用在方括号内，这看起来很奇怪。在Swift中，看到方括号就会想到Arrays。可以在闭包中指定多个捕获值：
