@@ -241,13 +241,13 @@ code.has-jax {
     <i class="fa fa-file-word-o"></i>
 </span>
 <span class="post-meta-item-text">字数: </span>
-<span class="leancloud-visitors-count">4016</span>
+<span class="leancloud-visitors-count">3798</span>
 &nbsp; | &nbsp;
 <span class="post-meta-item-icon">
     <i class="fa fa-coffee"></i>
 </span>
 <span class="post-meta-item-text">阅读: </span>
-<span class="leancloud-visitors-count">9 分钟</span>
+<span class="leancloud-visitors-count">8 分钟</span>
 </span>
       </div>
     </header>
@@ -262,16 +262,15 @@ code.has-jax {
 </span></span><span style="display:flex;"><span><span style="color:#66d9ef">let</span> electricCars2 = cars.filter { $0[keyPath: <span style="color:#960050;background-color:#1e0010">\</span>Car.isElectric] }
 </span></span><span style="display:flex;"><span><span style="color:#66d9ef">let</span> electricCars3 = cars.filter(<span style="color:#960050;background-color:#1e0010">\</span>.isElectric)
 </span></span></code></pre></div><h2 id="the-power-of-key-paths-in-swift">The power of key paths in Swift</h2>
-<p>由于Swift在设计之初就非常注重编译时的安全性和静态类型，所以它大多缺乏在Objective-C、Ruby和JavaScript等更注重运行时的语言中常见的那种动态特性。</p>
-<p>值得庆幸的是，Swift不断获得越来越多的动态功能，同时仍然保留了对类型安全的关注。其中一个功能就是关键路径。</p>
-<p>关键路径本质上让我们把任何实例属性作为一个单独的值来引用。因此，它们可以被传递，在表达式中使用，并使一段代码能够获得或设置一个属性，而不需要实际知道它所处理的确切属性。</p>
-<p>key paths有3种主要的变体：</p>
+<p><code>Swift</code>是静态类型语言，在设计之初就非常注重编译时的安全性，所以它缺乏<code>Objective-C、Ruby</code>和<code>JavaScript</code>等运行时常见的那种动态特性。值得庆幸的是，<code>Swift</code>获得越来越多的动态功能，同时保留了对类型安全的关注。</p>
+<p>其中一个功能就是关键路径。关键路径本质上是<font color=red>把实例属性作为一个单独的值来引用</font>。因此，它可以被传递，在表达式中使用，并用一段代码能够获取或设置一个属性，而不需要实际知道它所处理的是哪个属性。</p>
+<p><code>key paths</code>有3种主要的变体：</p>
 <ul>
-<li>KeyPath：只读方式访问属性。</li>
-<li>WriteableKeyPath： 读写的方式访问值语义的可变属性（值类型，非引用类型）</li>
-<li>ReferenceWritableKeyPath：读写的方式访问引用类型属性。</li>
+<li><code>KeyPath</code>：只读方式访问属性。</li>
+<li><code>WriteableKeyPath</code>： 读写方式访问值语义的可变属性（值类型，非引用类型）。</li>
+<li><code>ReferenceWritableKeyPath</code>：读写方式访问引用类型属性。</li>
 </ul>
-<p>实际上，还有一些额外的关键路径类型，它们的存在是为了减少内部代码的重复，并帮助类型擦除。</p>
+<p>实际上，还有一些另外的关键路径类型，它们的存在是为了减少内部代码的重复，并帮助类型擦除。</p>
 <h3 id="functional-shorthands">Functional shorthands</h3>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span><span style="color:#66d9ef">struct</span> <span style="color:#a6e22e">Article</span> {
 </span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">let</span> id: UUID
@@ -279,20 +278,19 @@ code.has-jax {
 </span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">let</span> title: String
 </span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">let</span> body: String
 </span></span><span style="display:flex;"><span>}
-</span></span></code></pre></div><p>如果存在一个Article的数组，我们通常会使用如下方式提取单一的属性形成新的数组：</p>
+</span></span></code></pre></div><p>如果存在一个<code>Article</code>类型的数组，通常会使用如下方式提取单一属性值生成新的数组：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span><span style="color:#66d9ef">let</span> articleIDs = articles.map { $0.id }
 </span></span><span style="display:flex;"><span><span style="color:#66d9ef">let</span> articleSources = articles.map { $0.source }
-</span></span></code></pre></div><p>虽然上面的方法完全可行，但由于我们只是对从每个元素中提取单个值感兴趣，我们并不真正需要闭包的全部功能，所以使用关键路径代替可能是一个很好的选择。</p>
+</span></span></code></pre></div><p>虽然上面的方法完全可行，但我们只对提取单个属性值感兴趣，并不真正需要闭包的全部功能，所以使用关键路径可能是一个很好的选择：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span><span style="color:#66d9ef">extension</span> <span style="color:#a6e22e">Sequence</span> {
 </span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">func</span> <span style="color:#a6e22e">map</span>&lt;T&gt;(<span style="color:#66d9ef">_</span> keyPath: KeyPath&lt;Element, T&gt;) -&gt; [T] {
 </span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">return</span> map { $0[keyPath: keyPath] }
 </span></span><span style="display:flex;"><span>    }
 </span></span><span style="display:flex;"><span>}
-</span></span></code></pre></div><p>如果是使用<code>Swift 5.2</code>或之后的版本，上面的扩展方法实际上是不需要的，因为<code>key paths</code>现在可以自动转换为函数了。</p>
+</span></span></code></pre></div><p>如果使用<code>Swift 5.2</code>或之后的版本，上面的扩展方法实际上是不需要的，因为<code>key paths</code>现在<font color=red>可以自动转换为函数了</font>。</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span><span style="color:#66d9ef">let</span> articleIDs = articles.map(<span style="color:#960050;background-color:#1e0010">\</span>.id)
 </span></span><span style="display:flex;"><span><span style="color:#66d9ef">let</span> articleSources = articles.map(<span style="color:#960050;background-color:#1e0010">\</span>.source)
-</span></span></code></pre></div><p>标准库能够自动对任何包含<code>Sortable</code>元素的序列进行排序，但是对于所有其它类型的序列，必须提供我们自己的排序闭包。</p>
-<p>基于一个可比较值的关键路径，也可以很容易地添加对任何序列的排序的支持。在序列上添加一个扩展，将给定的关键路径转换为一个排序表达式闭包：</p>
+</span></span></code></pre></div><p>标准库能够自动对包含<code>Sortable</code>元素的序列进行排序，但对于其它类型序列，必须提供自己的排序闭包。基于一个可比较值的关键路径，能够容易地添加对任何序列的排序支持。在序列上添加一个扩展，将给定的关键路径转换为一个排序表达式闭包：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span><span style="color:#66d9ef">extension</span> <span style="color:#a6e22e">Sequence</span> {
 </span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">func</span> <span style="color:#a6e22e">sorted</span>&lt;T: Comparable&gt;(by keyPath: KeyPath&lt;Element, T&gt;) -&gt; [Element] {
 </span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">return</span> sorted { a, b <span style="color:#66d9ef">in</span>
@@ -300,22 +298,23 @@ code.has-jax {
 </span></span><span style="display:flex;"><span>        }
 </span></span><span style="display:flex;"><span>    }
 </span></span><span style="display:flex;"><span>}
-</span></span></code></pre></div><p>使用上述方法，现在能够快速、轻松地对任何序列进行排序，只需给出我们想要排序的关键路径。如果我们正在构建的应用程序涉及任何形式的可排序列表。现在可以根据任何可比较的属性（甚至是嵌套的）自由地对列表进行排序：</p>
+</span></span></code></pre></div><p>使用上述方法，现在能够快速、轻松地对任何序列进行排序，只需给出想要排序的关键路径。如果正在构建的应用程序涉及任何形式的可排序列表，现在可以根据可比较的属性（甚至是嵌套的）自由地对列表进行排序：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span>playlist.songs.sorted(by: <span style="color:#960050;background-color:#1e0010">\</span>.name)
 </span></span><span style="display:flex;"><span>playlist.songs.sorted(by: <span style="color:#960050;background-color:#1e0010">\</span>.dateAdded)
 </span></span><span style="display:flex;"><span>playlist.songs.sorted(by: <span style="color:#960050;background-color:#1e0010">\</span>.ratings.worldWide)
-</span></span></code></pre></div><p>上面这样做似乎只是简单地添加了语法糖，但既可以使我们一些处理序列的更复杂的代码更容易阅读，也可以帮助减少代码的重复，因为我们现在能够为任何属性重复使用相同的排序代码。</p>
+</span></span></code></pre></div><p>上面这样做似乎只是简单地添加了一个语法糖，但这样既可以使一些复杂的代码更容易阅读，也可以帮助减少重复的代码。</p>
 <h3 id="no-instance-required">No instance required</h3>
-<p>虽然适量的语法糖是很好的，但关键路径的真正力量来自于这样一个事实，即它们<font color=red>让我们引用一个属性而不需要将其与任何特定的实例联系起来</font>。现在假设我们正在开发一个显示歌曲列表的应用程序，为了在用户界面中为这样一个列表配置一个UITableViewCell，使用一个配置器类型，看起来像这样：</p>
+<p>虽然适量的语法糖是很好的，但关键路径的真正力量来自于这样一个事实，即它们<font color=red>引用一个属性而不需要将其与任何特定的实例联系起来</font>。现在假设正在开发一个显示歌曲列表的应用程序，为了在用户界面中为这个列表配置一个<code>UITableViewCell</code>，并使用一个配置器类型：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span><span style="color:#66d9ef">struct</span> <span style="color:#a6e22e">SongCellConfigurator</span> {
+</span></span><span style="display:flex;"><span>  
 </span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">func</span> <span style="color:#a6e22e">configure</span>(<span style="color:#66d9ef">_</span> cell: UITableViewCell, <span style="color:#66d9ef">for</span> song: Song) {
 </span></span><span style="display:flex;"><span>        cell.textLabel?.text = song.name
 </span></span><span style="display:flex;"><span>        cell.detailTextLabel?.text = song.artistName
 </span></span><span style="display:flex;"><span>        cell.imageView?.image = song.albumArtwork
 </span></span><span style="display:flex;"><span>    }
 </span></span><span style="display:flex;"><span>}
-</span></span></code></pre></div><p>同样，上面的代码没有任何问题，但我们想以类似的方式渲染其他模型的可能性很大（许多表视图单元格倾向于渲染标题、副标题和图像，而不管它们代表什么模型），所以让我们看看我们是否可以利用关键路径的力量来创建一个可以用于任何模型的共享配置器实现。</p>
-<p>我们创建一个叫做CellConfigurator的通用类型，由于想为不同的模型渲染不同的数据，我们将给它一组基于路径的关键属性—为我们想要渲染的每一块数据都有一个：</p>
+</span></span></code></pre></div><p>上面代码没有任何问题，但想以类似的方式渲染其它模型的可能性很大（许多表视图单元格倾向于渲染标题、副标题和图像，而不管它们代表什么模型）。所以让我们看看是否可以利用关键路径的力量来创建一个用于任何模型的共享配置器实现。</p>
+<p>下面创建一个叫做<code>CellConfigurator</code>的通用类型，由于想为不同的模型渲染不同的数据，将给它一组基于路径的关键属性：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span><span style="color:#66d9ef">struct</span> <span style="color:#a6e22e">CellConfigurator</span>&lt;Model&gt; {
 </span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">let</span> titleKeyPath: KeyPath&lt;Model, String&gt;
 </span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">let</span> subtitleKeyPath: KeyPath&lt;Model, String&gt;
@@ -327,7 +326,7 @@ code.has-jax {
 </span></span><span style="display:flex;"><span>        cell.imageView?.image = model[keyPath: imageKeyPath]
 </span></span><span style="display:flex;"><span>    }
 </span></span><span style="display:flex;"><span>}
-</span></span></code></pre></div><p>上述方法的好处是，我们现在可以很容易地为每个模型使用相同的轻量级关键路径语法来专门化我们的通用CellConfigurator，像下面这样：</p>
+</span></span></code></pre></div><p>上述方法的好处是，现在可以很容易地为每个模型使用相同的轻量级关键路径语法来特化通用的<code>CellConfigurator</code>类型，像下面这样：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span><span style="color:#66d9ef">let</span> songCellConfigurator = CellConfigurator&lt;Song&gt;(
 </span></span><span style="display:flex;"><span>    titleKeyPath: <span style="color:#960050;background-color:#1e0010">\</span>.name,
 </span></span><span style="display:flex;"><span>    subtitleKeyPath: <span style="color:#960050;background-color:#1e0010">\</span>.artistName,
@@ -339,9 +338,10 @@ code.has-jax {
 </span></span><span style="display:flex;"><span>    subtitleKeyPath: <span style="color:#960050;background-color:#1e0010">\</span>.authorName,
 </span></span><span style="display:flex;"><span>    imageKeyPath: <span style="color:#960050;background-color:#1e0010">\</span>.artwork
 </span></span><span style="display:flex;"><span>)
-</span></span></code></pre></div><p>就像标准库的功能操作，如<code>map</code>和<code>sorted</code>，我们本可以使用闭包来实现<code>CellConfigurator</code>。然而，通过关键路径，我们能够实现一个非常好的语法&ndash;而且我们也不要求我们的任何特殊化实际上必须处理模型实例&ndash;使它们既简单又更具声明性。</p>
+</span></span></code></pre></div><p>就像标准库的功能操作，如<code>map</code>和<code>sorted</code>，我们本可以使用闭包来实现<code>CellConfigurator</code>。但是，通过关键路径，能够实现一个非常好的语法糖。</p>
 <h3 id="converting-to-functions">Converting to functions</h3>
-<p>到目前为止，我们只是用键路径来读取数值，但现在让我们看看如何用它们来动态地写入数值。在许多不同的代码库中，有一个非常常见的模式，就像下面这个例子一样。我们正在加载一个列表，在ListViewController中呈现，当加载操作完成后，我们只需将加载的项目赋值给视图控制器的一个属性：</p>
+<p>到目前为止，只是用键路径来读取属性，但现在可以看看如何用它们来动态地写入数值。在许多不同的代码库中，有一个非常常见的模式，就像下面这个例子一样。</p>
+<p>正在加载一个列表，在<code>ListViewController</code>中显示，当加载操作完成后，只需将加载的项目赋值给视图控制器的一个属性：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span><span style="color:#66d9ef">class</span> <span style="color:#a6e22e">ListViewController</span> {
 </span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">private</span> <span style="color:#66d9ef">var</span> items = [Item]() { <span style="color:#66d9ef">didSet</span> { render() } }
 </span></span><span style="display:flex;"><span>
@@ -351,9 +351,9 @@ code.has-jax {
 </span></span><span style="display:flex;"><span>        }
 </span></span><span style="display:flex;"><span>    }
 </span></span><span style="display:flex;"><span>}
-</span></span></code></pre></div><p>既然我们在上面所做的只是把传递给闭包的值分配给视图控制器上的一个属性，如果我们能够把这个属性的设置器作为一个函数来传递，那不是很酷吗？这样，我们就可以直接将该函数作为完成处理程序传递给我们的加载方法，一切都会顺利进行。</p>
-<p>为了实现这一点，首先定义一个函数，把任何可写的关键路径转换成一个设置该关键路径属性的闭包。这次我们将使用ReferenceWritableKeyPath类型，因为我们想把这个功能只限制在引用类型上（否则就只能对一个值的拷贝进行修改）。</p>
-<p>给定一个对象和该对象的关键路径，然后我们将自动捕获该对象作为一个弱引用，并在我们的函数被调用时分配与关键路径相匹配的属性：</p>
+</span></span></code></pre></div><p>既然在上面所做的只是把传递给闭包的值分配给视图控制器上的一个属性，如果能够把这个属性的设置器作为一个函数来传递，那不是更好吗？如果这样，就可以直接将该函数传递进去。</p>
+<p>为了实现这一点，首先定义一个函数，把任何可写的关键路径转换成一个设置该关键路径属性的闭包。这次将使用<code>ReferenceWritableKeyPath</code>类型，因为想把这个功能只限制在引用类型上（否则就只能对一个值的拷贝进行修改）。</p>
+<p>给定一个对象和该对象的关键路径，然后将自动捕获该对象作为一个弱引用，并在我们的函数被调用时分配与关键路径相匹配的属性：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">setter</span>&lt;Object: AnyObject, Value&gt;(
 </span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">for</span> object: Object,
 </span></span><span style="display:flex;"><span>    keyPath: ReferenceWritableKeyPath&lt;Object, Value&gt;
@@ -362,7 +362,7 @@ code.has-jax {
 </span></span><span style="display:flex;"><span>        object?[keyPath: keyPath] = value
 </span></span><span style="display:flex;"><span>    }
 </span></span><span style="display:flex;"><span>}
-</span></span></code></pre></div><p>使用上述方法，我们现在可以简化之前的代码，得到一个看起来相当干净的语法：</p>
+</span></span></code></pre></div><p>使用上述方法，现在可以简化之前的代码，得到一个看起来相当简洁的语法：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span><span style="color:#66d9ef">class</span> <span style="color:#a6e22e">ListViewController</span> {
 </span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">private</span> <span style="color:#66d9ef">var</span> items = [Item]() { <span style="color:#66d9ef">didSet</span> { render() } }
 </span></span><span style="display:flex;"><span>
