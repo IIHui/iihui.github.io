@@ -241,7 +241,7 @@ code.has-jax {
     <i class="fa fa-file-word-o"></i>
 </span>
 <span class="post-meta-item-text">字数: </span>
-<span class="leancloud-visitors-count">71314</span>
+<span class="leancloud-visitors-count">71614</span>
 &nbsp; | &nbsp;
 <span class="post-meta-item-icon">
     <i class="fa fa-coffee"></i>
@@ -1702,9 +1702,9 @@ code.has-jax {
 </span></span><span style="display:flex;"><span><span style="color:#e6db74">&#34;Kraken2&#34;</span>
 </span></span></code></pre></div><p><a href="https://krakendev.io/blog/weak-and-unowned-references-in-swift#:~:text=To%20use%20weak%20and%20unowned%20variables%20in%20a,self%3F.doSomething%28%29%20%2F%2FRemember%2C%20all%20weak%20variables%20are%20Optionals%21%20%7D">参考资料</a></p>
 <h2 id="implicit-capturing">Implicit capturing</h2>
-<p>当定义一个逃逸闭包时，也就是说，一个闭包要么被存储在一个属性中，要么被另一个逃逸闭包所捕获。逃逸闭包将隐含地捕获任何在其内被引用的对象、值和函数。由于这样的闭包可能会在稍后的时间被执行，它们需要保持对其所有依赖关系的强引用，以防止它们在此期间被释放。</p>
+<p>当定义一个逃逸闭包时，即<font color=red>一个闭包要么被存储在一个属性中，要么被另一个逃逸闭包所捕获</font>。逃逸闭包<font color=LightSeaGreen>将隐含地捕获任何在其内被引用的对象、值和函数</font>。由于这样的闭包可能会在后面某个时间点被执行，它们<font color=red>需要保持对其所有依赖关系的强引用，以防止它们在此期间被释放</font>。</p>
 <p><em>Whenever we’re defining an escaping closure — that is, a closure that either gets stored in a property, or captured by another escaping closure — it’ll implicitly capture any objects, values and functions that are referenced within it. Since such closures may be executed at a later time, they need to maintain strong references to all of their dependencies in order to prevent them from being deallocated in the meantime.</em></p>
-<p>由于将下面代码执行延迟了几秒钟，所以当闭包实际运行时，<code>presenter</code>视图控制器有可能已经从应用程序的视图层次中删除了。虽然在这种情况下，这不会是一场灾难，但可以说，只有当视图控制器仍然被其它对象（大概是其父视图控制器或窗口）保留时，才会更好地显示确认按钮。</p>
+<p>在下面代码中，延迟了几秒钟执行闭包，所以当闭包实际运行时，<code>presenter</code>视图控制器<font color=Blue>有可能已经从应用程序的视图层次中删除了</font>。虽然在这种情况下，这不会是一场灾难，但可以说，只有当视图控制器仍然被其它对象（大概是其父视图控制器或窗口）保留时，才应该显示确认按钮。</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">presentDelayedConfirmation</span>(<span style="color:#66d9ef">in</span> presenter: UIViewController) {
 </span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">let</span> queue = DispatchQueue.main
 </span></span><span style="display:flex;"><span>
@@ -1721,8 +1721,8 @@ code.has-jax {
 </span></span><span style="display:flex;"><span>        presenter.present(alert, animated: <span style="color:#66d9ef">true</span>)
 </span></span><span style="display:flex;"><span>    }
 </span></span><span style="display:flex;"><span>}
-</span></span></code></pre></div><p>这就是捕获列表的作用，它使我们能够自定义一个给定的闭包如何捕获它所指向的任何对象或值。使用捕获列表，可以指示上面的闭包以弱方式捕获<code>presenter</code>视图控制器，而不是强方式（这是默认的）。</p>
-<p>这样，如果不被我们代码库中的任何其他部分引用，视图控制器就会被删除，从而使内存更快地被释放，并且没有不必要的操作被执行：</p>
+</span></span></code></pre></div><p>这就是捕获列表的作用，它使我们能够<font color=red>自定义一个给定的闭包如何捕获它所指向的任何对象或值</font>。使用捕获列表，可以指示上面的闭包以弱引用方式捕获<code>presenter</code>视图控制器，而不是强方式（这是默认的）。</p>
+<p>这样，如果<code>presenter</code>不被代码中的其它部分引用，视图控制器就会被释放，从而使内存更快地被释放，并且也不会有非必要的操作被执行：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">presentDelayedConfirmation</span>(<span style="color:#66d9ef">in</span> presenter: UIViewController) {
 </span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">let</span> queue = DispatchQueue.main
 </span></span><span style="display:flex;"><span>
@@ -1742,7 +1742,8 @@ code.has-jax {
 </span></span><span style="display:flex;"><span>        presenter.present(alert, animated: <span style="color:#66d9ef">true</span>)
 </span></span><span style="display:flex;"><span>    }
 </span></span><span style="display:flex;"><span>}
-</span></span></code></pre></div><p>当需要引用<code>self</code>时，捕获列表也许更加有用，特别是当这样做会导致循环引用时，也就是两个对象或闭包互相引用—防止它们都被删除（因为它们不能达到引用次数为零）。</p>
+</span></span></code></pre></div><p>当需要引用<code>self</code>时，捕获列表也许更加有用，特别是在闭包中引用<code>self</code>会导致循环引用时。循环引用是指两个对象或闭包互相引用，这会导致它们都被释放（因为它们不能达到强引用计数为零）。</p>
+<p>在下面代码中使用捕获列表来避免在闭包中强引用<code>self</code>：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span><span style="color:#66d9ef">class</span> <span style="color:#a6e22e">UserModelController</span> {
 </span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">let</span> storage: UserStorage
 </span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">private</span> <span style="color:#66d9ef">var</span> user: User { <span style="color:#66d9ef">didSet</span> { userDidChange() } }
@@ -1757,9 +1758,9 @@ code.has-jax {
 </span></span><span style="display:flex;"><span>    }
 </span></span><span style="display:flex;"><span>}
 </span></span></code></pre></div><p>如果不使用<code>weak</code>捕获<code>self</code>，上述的闭包最终会导致一个循环引用。因为<code>self</code>持有了<code>storage</code>，在<code>storage</code>中也持有了<code>self</code>。</p>
-<p>另外，也可以将上述<code>user</code>属性转换成一个使用其关键路径的函数——因为我们在观察闭包中所做的只是更新该属性的值。</p>
 <h3 id="weak-references-are-not-always-the-answer">Weak references are not always the answer</h3>
-<p>如果处理的是非常短暂的闭包，比如传递给<code>UIView.animate</code> 的闭包（它只是被执行以执行动画的插值，然后释放），捕获<code>self</code>真的不是问题，而且很可能导致代码更容易阅读：</p>
+<p>虽然上面的两个示例代码可能会让人觉得使用<code>[weak self]</code>总是正确的方式，但事实绝对不是这样。像其它的内存管理一样，必须仔细考虑在每种情况下如何使用<code>self</code>，以及<font color=red>希望每个逃逸的闭包在内存中保留多长时间</font>。</p>
+<p>如果处理的是非常短暂的闭包，比如传递给<code>UIView.animate</code> 的闭包（这些代码只是为了执行动画，然后被释放），捕获<code>self</code>不是问题，而且代码也更容易阅读：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span><span style="color:#66d9ef">extension</span> <span style="color:#a6e22e">ProductViewController</span> {
 </span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">func</span> <span style="color:#a6e22e">expandImageView</span>() {
 </span></span><span style="display:flex;"><span>        UIView.animate(withDuration: <span style="color:#ae81ff">0.3</span>) {
@@ -1768,8 +1769,8 @@ code.has-jax {
 </span></span><span style="display:flex;"><span>        }
 </span></span><span style="display:flex;"><span>    }
 </span></span><span style="display:flex;"><span>}
-</span></span></code></pre></div><p>请注意，当在<font color=red>一个逃逸闭包中访问实例方法和属性时，总是需要明确地引用<code>self</code></font>。这是一件好事，因为它要求我们做出明确的决定来捕获<code>self</code>，考虑到这样做可能产生的后果。</p>
-<p>还有许多种情况，我们可能希望保留<code>self</code>甚至更长的时间。例如，如果当前对象被要求执行一个闭合的工作，就像在这个案例中：</p>
+</span></span></code></pre></div><p>请注意，当在<font color=red>一个逃逸闭包中访问实例方法和属性时，总是需要明确地引用<code>self</code></font>。这是一件好事，因为它要求我们做出明确的决定来捕获<code>self</code>，并考虑这样做可能产生的后果。</p>
+<p>还有许多种情况，我们可能希望保留<code>self</code>甚至更长的时间。例如，如果当前对象被要求执行一个闭包的工作，就像下面这样：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span><span style="color:#66d9ef">extension</span> <span style="color:#a6e22e">NetworkingController</span> {
 </span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">func</span> <span style="color:#a6e22e">makeImageUploadingTask</span>(<span style="color:#66d9ef">for</span> image: Image) -&gt; Task {
 </span></span><span style="display:flex;"><span>        Task { handler <span style="color:#66d9ef">in</span>
@@ -1785,8 +1786,8 @@ code.has-jax {
 </span></span><span style="display:flex;"><span>        }
 </span></span><span style="display:flex;"><span>    }
 </span></span><span style="display:flex;"><span>}
-</span></span></code></pre></div><p>上述代码不会导致任何循环引用，因为<code>NetworkingController</code>不会引用它所创建的任务。</p>
-<p>还可以直接捕获一个闭包的每个依赖项，而不是引用self。同样使用捕获列表。例如，在这里我们捕获了一个图片加载器的缓存属性，以便在图片被成功下载后能够使用它：</p>
+</span></span></code></pre></div><p>上述代码不会导致任何循环引用，因为<code>NetworkingController</code>引用它所创建的任务。</p>
+<p>还可以直接捕获一个闭包的每个依赖项，而不只是捕获<code>self</code>（同样使用捕获列表）。例如，在这里我们捕获了一个图片加载器的缓存属性，以便在图片被成功下载后能够使用它：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span><span style="color:#66d9ef">class</span> <span style="color:#a6e22e">ImageLoader</span> {
 </span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">private</span> <span style="color:#66d9ef">let</span> cache = Cache&lt;URL, Image&gt;()
 </span></span><span style="display:flex;"><span>
@@ -1808,7 +1809,7 @@ code.has-jax {
 </span></span><span style="display:flex;"><span>        }
 </span></span><span style="display:flex;"><span>    }
 </span></span><span style="display:flex;"><span>}
-</span></span></code></pre></div><p>当涉及到闭包捕获时，值类型的处理有时会比较复杂，因为<font color=red>它们是作为副本而不是作为引用传递给外部作用域的</font>。尽管这正是 <code>Swift</code> 的值类型的强大之处，但在下面这种情况下，它可能会产生一些意想不到的后果。在下面这种情况下，给一个按钮的<code>handler</code>赋值一个闭包时要捕获了<code>sender</code>和<code>message</code>属性：</p>
+</span></span></code></pre></div><p>当涉及到闭包捕获时，值类型的处理有时会比较复杂，因为<font color=red>它们是作为副本而不是作为引用传递给外部作用域的</font>。尽管这正是 <code>Swift</code> 值类型的强大之处，但在下面这种情况下，它可能会产生一些意想不到的后果。在下面代码，一个按钮的<code>handler</code>赋值一个闭包时会捕获<code>sender</code>和<code>message</code>属性：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span><span style="color:#66d9ef">class</span> <span style="color:#a6e22e">MessageComposerViewController</span>: UIViewController {
 </span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">private</span> <span style="color:#66d9ef">let</span> sender: MessageSender
 </span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">private</span> <span style="color:#66d9ef">var</span> message = Message()
@@ -1825,6 +1826,12 @@ code.has-jax {
 </span></span><span style="display:flex;"><span>            sender.send(message)
 </span></span><span style="display:flex;"><span>        }
 </span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p>乍一看，上面代码没什么问题。然而，<code>Message</code>类型是作为一个结构体来实现的，所以它是值语义的。这意味着我们在将其添加到捕获列表时<font color=red>只是捕获其当前值</font>。因此，即使该值在视图控制器的生命周期中可能发生变化，一旦<code>sendButton</code>被点击，仍然会使用捕获到的原始值。</p>
+<p>解决上述问题的一个方法，同时仍然避免任何额外的防护语句，就是只捕获<code>self</code>，以便能够访问它的<code>message</code>属性，然后将该值直接映射到发送方的发送方法，像下面这样：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span>sendButton.handler = { [<span style="color:#66d9ef">weak</span> <span style="color:#66d9ef">self</span>, sender] <span style="color:#66d9ef">in</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">let</span> message = <span style="color:#66d9ef">self</span>?.message
+</span></span><span style="display:flex;"><span>    message.map(sender.send)
 </span></span><span style="display:flex;"><span>}
 </span></span></code></pre></div><p><a href="https://www.swiftbysundell.com/articles/swifts-closure-capturing-mechanics/#implicit-capturing">参考资料</a></p>
 <h2 id="curried-function">curried function</h2>
