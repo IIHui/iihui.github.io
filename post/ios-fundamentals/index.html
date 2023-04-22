@@ -241,7 +241,7 @@ code.has-jax {
     <i class="fa fa-file-word-o"></i>
 </span>
 <span class="post-meta-item-text">字数: </span>
-<span class="leancloud-visitors-count">72687</span>
+<span class="leancloud-visitors-count">72750</span>
 &nbsp; | &nbsp;
 <span class="post-meta-item-icon">
     <i class="fa fa-coffee"></i>
@@ -1429,27 +1429,35 @@ code.has-jax {
 </span></span><span style="display:flex;"><span>        f()
 </span></span><span style="display:flex;"><span>    }
 </span></span><span style="display:flex;"><span>}
-</span></span></code></pre></div><p>上面的函数<code>countAdder</code>接受一个函数入参（使用<code>@escaping</code>标记），并且返回一个函数作为调用它的结果。它<font color=Blue>返回的函数调用它接收的函数参数</font>，并做了额外工作：它增加一个变量并报告结果。所以现在试着猜测当我们运行这段代码时会发生什么：</p>
+</span></span></code></pre></div><p>上面的函数<code>countAdder</code>接受一个函数入参（使用<code>@escaping</code>标记），并且返回一个函数作为调用它的结果。它<font color=Blue>返回的函数调用它接收的函数参数</font>，并做了额外工作：它增加一个变量并报告结果。所以现在试着猜测当运行下面这段代码时会发生什么：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">greet</span>() {
 </span></span><span style="display:flex;"><span>    print(<span style="color:#e6db74">&#34;howdy&#34;</span>)
 </span></span><span style="display:flex;"><span>}
 </span></span><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span><span style="color:#66d9ef">let</span> countedGreet = countAdder(greet)
-</span></span><span style="display:flex;"><span>countedGreet() <span style="color:#75715e">// count is 1</span>
+</span></span><span style="display:flex;"><span>countedGreet() 
 </span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span>countedGreet() <span style="color:#75715e">// count is 2</span>
+</span></span><span style="display:flex;"><span>countedGreet() 
 </span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span>countedGreet() <span style="color:#75715e">// count is 3</span>
-</span></span></code></pre></div><p>函数<code>countAdder</code>返回一个新函数，我们将其命名为<code>countedGreet</code>。然后调用<code>countedGreet</code> 函数三次。以下是控制台中打印的内容：</p>
+</span></span><span style="display:flex;"><span>countedGreet() 
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">// 运行结果</span>
+</span></span><span style="display:flex;"><span>count <span style="color:#66d9ef">is</span> <span style="color:#ae81ff">1</span>
+</span></span><span style="display:flex;"><span>howdy
+</span></span><span style="display:flex;"><span>count <span style="color:#66d9ef">is</span> <span style="color:#ae81ff">2</span>
+</span></span><span style="display:flex;"><span>howdy
+</span></span><span style="display:flex;"><span>count <span style="color:#66d9ef">is</span> <span style="color:#ae81ff">3</span>
+</span></span><span style="display:flex;"><span>howdy
+</span></span></code></pre></div><p>上面定义了一个函数<code>greet</code>，在这个函数中打印<code>howdy</code>。函数<code>countAdder</code>返回一个新函数，我们将其命名为<code>countedGreet</code>。然后调用<code>countedGreet</code> 三次，以下是控制台打印的内容：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span>count <span style="color:#66d9ef">is</span> <span style="color:#ae81ff">1</span>
 </span></span><span style="display:flex;"><span>howdy
 </span></span><span style="display:flex;"><span>count <span style="color:#66d9ef">is</span> <span style="color:#ae81ff">2</span>
 </span></span><span style="display:flex;"><span>howdy
 </span></span><span style="display:flex;"><span>count <span style="color:#66d9ef">is</span> <span style="color:#ae81ff">3</span>
 </span></span><span style="display:flex;"><span>howdy
-</span></span></code></pre></div><p>显然，<code>countAdder</code>已经为传递给它的函数<font color=red>添加了报告调用次数的能力</font>。维持这个计数的变量到底在哪里？在<code>countAdder</code>中，<code>ct</code>是一个局部变量，它并未声明在匿名函数内部，这是故意的。如果它是在匿名函数中声明的，那么每次调用<code>countedGreet</code>时<code>ct</code>将被设置为<code>0</code>。</p>
-<p>相反<code>ct</code>声明在匿名函数外，<code>ct</code>被初始化为<code>0</code>一次，然后被匿名函数捕获。这个变量作为<code>countedGreet</code>环境的一部分被保存下来—它在<code>countedGreet</code>之外的某个神秘的环境保护世界中，所以每次<code>countedGreet</code>被调用时它都能被递增。</p>
-<p>值在闭包中被捕获，这意味着在代码块被执行之前，代码块都能引用这些值。</p>
+</span></span></code></pre></div><p>显然，<code>countAdder</code>已经为传递给它的函数<font color=red>添加了报告调用次数的能力</font>。维持这个计数的变量到底在哪里？在<code>countAdder</code>中，<code>ct</code>是一个局部变量，它并未声明在匿名函数内部，这是故意的。如果它在匿名函数中声明，那么每次调用<code>countedGreet</code>时<code>ct</code>将被设置为<code>0</code>，将不会正常计数。</p>
+<p>相反<code>ct</code>声明在匿名函数外，只被初始化为<code>0</code>一次，然后被匿名函数捕获。这个变量作为<code>countedGreet</code>环境的一部分被保存下来（它在<code>countedGreet</code>之外的某个神秘的保留变量的环境世界中），所以每次<code>countedGreet</code>被调用时它都能被递增。</p>
+<p>一个值在闭包中被捕获，这意味着在代码块被执行前，代码块都能引用这些值。</p>
 <h2 id="escaping-closures">Escaping Closures</h2>
 <p><em>A closure is supposed to be no escaping when the closure is passed as an argument to the function, and is called before the function returns. The closure isn’t used outside of the function.</em></p>
 <p>如果将一个作为值传递的函数<font color=red>保存供以后某个时刻执行，而不是立即调用它，那么它是一个随时间推移捕获并保存其环境的闭包</font>。这样的闭包被称为逃逸闭包(<code>escaping closure</code>)。</p>
@@ -1460,7 +1468,7 @@ code.has-jax {
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">funcCaller</span>(f: () -&gt; ()) {
 </span></span><span style="display:flex;"><span>    f()
 </span></span><span style="display:flex;"><span>}
-</span></span></code></pre></div><p>下面这个函数也是合法的，即使它返回一个稍后执行的函数，因为**<font color=red>它是在函数内部创建了那个匿名函数</font>**，而不是作为参数传递进来的。它返回的函数是一个逃逸闭包，但函数返回值的类型不必标记为<code>@escaping</code>：</p>
+</span></span></code></pre></div><p>下面这个函数也是合法的，即使它返回一个稍后执行的函数，因为**<font color=red>它是在函数内部创建了那个匿名函数</font>**，而不是作为参数传递进来的。它返回的函数是一个逃逸闭包，但函数返回值的类型不必标记为<code>@escaping</code>，也就是说<code>@escaping</code>标记只针对于入参：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">funcMaker</span>() -&gt; () -&gt; () {
 </span></span><span style="display:flex;"><span>    <span style="color:#75715e">// 内部创建的匿名函数</span>
 </span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">return</span> {

@@ -792,18 +792,18 @@ func makeRoundedRectangleMaker(_ sz: CGSize) -&amp;gt; () -&amp;gt; UIImage {  {
 func pass100(_ f: (Int) -&amp;gt; ()) {  f(100) }  var x = 0 print(x) // 0 func setX(newX: Int) {  x = newX }  pass100(setX) print(x) // 100 上面的代码中，因为传入到pass100中的函数setX包含了x，不仅包含它，而且能够捕获它，并且修改了x的值。函数pass100函数能够像直接调用setX一样轻松地设置x。
 Closure Preserving Captured Environment When a closure captures its environment, it preserves that environment even if nothing else does.
 当一个闭包捕获它所在的环境，即使其它什么都不做，闭包也会保留该环境。下面是一个让你大吃一惊的例子：一个修改函数的函数：
-func countAdder(_ f: @escaping () -&amp;gt; ()) -&amp;gt; () -&amp;gt; () {  var ct = 0  return {  ct = ct &#43; 1  print(&amp;#34;count is \(ct)&amp;#34;)  f()  } } 上面的函数countAdder接受一个函数入参（使用@escaping标记），并且返回一个函数作为调用它的结果。它返回的函数调用它接收的函数参数，并做了额外工作：它增加一个变量并报告结果。所以现在试着猜测当我们运行这段代码时会发生什么：
-func greet() {  print(&amp;#34;howdy&amp;#34;) }  let countedGreet = countAdder(greet) countedGreet() // count is 1  countedGreet() // count is 2  countedGreet() // count is 3 函数countAdder返回一个新函数，我们将其命名为countedGreet。然后调用countedGreet 函数三次。以下是控制台中打印的内容：
-count is 1 howdy count is 2 howdy count is 3 howdy 显然，countAdder已经为传递给它的函数添加了报告调用次数的能力。维持这个计数的变量到底在哪里？在countAdder中，ct是一个局部变量，它并未声明在匿名函数内部，这是故意的。如果它是在匿名函数中声明的，那么每次调用countedGreet时ct将被设置为0。
-相反ct声明在匿名函数外，ct被初始化为0一次，然后被匿名函数捕获。这个变量作为countedGreet环境的一部分被保存下来—它在countedGreet之外的某个神秘的环境保护世界中，所以每次countedGreet被调用时它都能被递增。
-值在闭包中被捕获，这意味着在代码块被执行之前，代码块都能引用这些值。
+func countAdder(_ f: @escaping () -&amp;gt; ()) -&amp;gt; () -&amp;gt; () {  var ct = 0  return {  ct = ct &#43; 1  print(&amp;#34;count is \(ct)&amp;#34;)  f()  } } 上面的函数countAdder接受一个函数入参（使用@escaping标记），并且返回一个函数作为调用它的结果。它返回的函数调用它接收的函数参数，并做了额外工作：它增加一个变量并报告结果。所以现在试着猜测当运行下面这段代码时会发生什么：
+func greet() {  print(&amp;#34;howdy&amp;#34;) }  let countedGreet = countAdder(greet) countedGreet()  countedGreet()  countedGreet()  // 运行结果 count is 1 howdy count is 2 howdy count is 3 howdy 上面定义了一个函数greet，在这个函数中打印howdy。函数countAdder返回一个新函数，我们将其命名为countedGreet。然后调用countedGreet 三次，以下是控制台打印的内容：
+count is 1 howdy count is 2 howdy count is 3 howdy 显然，countAdder已经为传递给它的函数添加了报告调用次数的能力。维持这个计数的变量到底在哪里？在countAdder中，ct是一个局部变量，它并未声明在匿名函数内部，这是故意的。如果它在匿名函数中声明，那么每次调用countedGreet时ct将被设置为0，将不会正常计数。
+相反ct声明在匿名函数外，只被初始化为0一次，然后被匿名函数捕获。这个变量作为countedGreet环境的一部分被保存下来（它在countedGreet之外的某个神秘的保留变量的环境世界中），所以每次countedGreet被调用时它都能被递增。
+一个值在闭包中被捕获，这意味着在代码块被执行前，代码块都能引用这些值。
 Escaping Closures A closure is supposed to be no escaping when the closure is passed as an argument to the function, and is called before the function returns. The closure isn’t used outside of the function.
 如果将一个作为值传递的函数保存供以后某个时刻执行，而不是立即调用它，那么它是一个随时间推移捕获并保存其环境的闭包。这样的闭包被称为逃逸闭包(escaping closure)。
 A closure is said to escape a function when the closure is passed as an argument to the function, but is called after the function returns.
 换句话说，说一个闭包逃逸了，就是在传入闭包的方法结束之前该闭包还没有被调用。在编写异步代码时经常会出现这种情况。
 在某些场景下，闭包的类型必须标记为escaping。编译器会检测违反这个规则的情况，如果觉得对于是否需要加escaping有疑惑，不用担心，只要让编译器检查并添加就可以了。
 下面函数是合法的，无需标记为escaping。因为**它接受一个函数作为参数，并且在函数体内直接调用了这个函数**，即funcCaller方法结束之前会调用f：
-func funcCaller(f: () -&amp;gt; ()) {  f() } 下面这个函数也是合法的，即使它返回一个稍后执行的函数，因为**它是在函数内部创建了那个匿名函数**，而不是作为参数传递进来的。它返回的函数是一个逃逸闭包，但函数返回值的类型不必标记为@escaping：
+func funcCaller(f: () -&amp;gt; ()) {  f() } 下面这个函数也是合法的，即使它返回一个稍后执行的函数，因为**它是在函数内部创建了那个匿名函数**，而不是作为参数传递进来的。它返回的函数是一个逃逸闭包，但函数返回值的类型不必标记为@escaping，也就是说@escaping标记只针对于入参：
 func funcMaker() -&amp;gt; () -&amp;gt; () {  // 内部创建的匿名函数  return {  print(&amp;#34;hello world&amp;#34;)  } } 但是，下面的函数是不合法的，会出现编译错误。因为它接受了一个函数作为入参，并且返回了这个函数供后续某个时刻执行。如果不标记为逃逸，则会出现编译错误：
 func funcPasser(f: () -&amp;gt; ()) -&amp;gt; () -&amp;gt; () {  return f }  // 出现如下的编译错误 Using non-escaping parameter &amp;#39;f&amp;#39; in a context expecting an @escaping closure 解决的方案是将函数入参标f记为@escaping，编译器也会提醒需要这样做：
 func funcPasser(f: @escaping () -&amp;gt; ()) -&amp;gt; () -&amp;gt; () {  return f } 逃逸闭包的第二个特点是当在函数体内引用self的属性或方法时，编译器可能会坚持需要明确地使用self。那是因为这样的引用捕获了self，编译器希望通过使用self来承认这个事实：
