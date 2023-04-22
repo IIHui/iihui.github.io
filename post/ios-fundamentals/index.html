@@ -241,7 +241,7 @@ code.has-jax {
     <i class="fa fa-file-word-o"></i>
 </span>
 <span class="post-meta-item-text">字数: </span>
-<span class="leancloud-visitors-count">72603</span>
+<span class="leancloud-visitors-count">72638</span>
 &nbsp; | &nbsp;
 <span class="post-meta-item-icon">
     <i class="fa fa-coffee"></i>
@@ -1366,7 +1366,7 @@ code.has-jax {
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span><span style="color:#66d9ef">let</span> maker = makeRoundedRectangleMaker(CGSize(width:<span style="color:#ae81ff">45</span>, height:<span style="color:#ae81ff">20</span>)) 
 </span></span></code></pre></div><p>这就是为什么<code>maker</code>现在是一个函数，当它被调用时，创建和返回了<code>size</code>为<code>(45,20)</code>的图片，生成图像大小值已被纳入到<code>maker</code>中。</p>
 <p>从另一角度，<code>makeRoundedRectangleMaker</code>是一个工厂函数，用于创建类似于<code>maker</code>的系列函数，每个函数都生成一个特定大小的图像。这个函数说明了闭包的力量。</p>
-<p>实际上，可以以更快捷的方式重写<code>makeRoundedRectangleMaker</code>，在<code>makeRoundedRectangleMaker</code>中，没有必要创建<code>im</code>变量，可以直接返回<code>imageOfSize</code>：</p>
+<p>实际上，可以以更<code>Swiftier</code>的方式重写<code>makeRoundedRectangleMaker</code>，在函数<code>f</code>中，没有必要创建<code>im</code>变量，可以直接返回<code>imageOfSize</code>：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">makeRoundedRectangleMaker</span>(<span style="color:#66d9ef">_</span> sz: CGSize) -&gt; () -&gt; UIImage {
 </span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">func</span> <span style="color:#a6e22e">f</span>() -&gt; UIImage {
 </span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">return</span> imageOfSize(sz) {
@@ -1376,17 +1376,25 @@ code.has-jax {
 </span></span><span style="display:flex;"><span>    }
 </span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">return</span> f
 </span></span><span style="display:flex;"><span>}
-</span></span></code></pre></div><p>实际上也没有必要生成和返回<code>f</code>，可以直接返回匿名函数：</p>
+</span></span></code></pre></div><p>实际上也没有必要声明<code>f</code>，然后再返回<code>f</code>，可以直接返回匿名函数：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">makeRoundedRectangleMaker</span>(<span style="color:#66d9ef">_</span> sz: CGSize) -&gt; () -&gt; UIImage {
 </span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">return</span> {
-</span></span><span style="display:flex;"><span>        imageOfSize(sz) {
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">return</span> imageOfSize(sz) {
 </span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">let</span> p = UIBezierPath(roundedRect: CGRect(origin: CGPoint.zero, size: sz), cornerRadius: <span style="color:#ae81ff">8</span>)
 </span></span><span style="display:flex;"><span>            p.stroke()
 </span></span><span style="display:flex;"><span>        }
 </span></span><span style="display:flex;"><span>    }
 </span></span><span style="display:flex;"><span>}
-</span></span></code></pre></div><p>但是我们的匿名函数除了一个<code>return</code>语句，没有其它语句。<code>imageOfSize</code>中的匿名函数由多个语句组成，但<code>imageOfSize</code>调用本身仍然只是一个语句。我们可以省略关键字<code>return</code>（也可以省略剩余的<code>return</code>，但我不想这样做，因为这样看起来很不直观）。</p>
-<h2 id="closure-setting-a-captured-variable">Closure Setting a Captured Variable</h2>
+</span></span></code></pre></div><p>但在上面的匿名函数中除了一个<code>return</code>语句，没有其它语句。<code>imageOfSize</code>中的匿名函数参数由多个语句组成，但<code>imageOfSize</code>调用本身仍然只是一个语句。因此可以省略<code>imageOfSize</code>前的<code>return</code>关键字。我们也可以省略最后的那个<code>return</code>，但不建议这样做，因为这样看起来很不直观。</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">makeRoundedRectangleMaker</span>(<span style="color:#66d9ef">_</span> sz: CGSize) -&gt; () -&gt; UIImage {
+</span></span><span style="display:flex;"><span>    {
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">return</span> imageOfSize(sz) {
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">let</span> p = UIBezierPath(roundedRect: CGRect(origin: CGPoint.zero, size: sz), cornerRadius: <span style="color:#ae81ff">8</span>)
+</span></span><span style="display:flex;"><span>            p.stroke()
+</span></span><span style="display:flex;"><span>        }
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><h2 id="closure-setting-a-captured-variable">Closure Setting a Captured Variable</h2>
 <p>闭包通过其捕捉环境的能力所获得的力量甚至比到目前为止所展示的还要大。<font color=LightSeaGreen>如果闭包能够捕获一个外部变量的引用，并且该变量是可设置的，则闭包可以设置该变量</font>：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">pass100</span>(<span style="color:#66d9ef">_</span> f: (Int) -&gt; ()) {
 </span></span><span style="display:flex;"><span>    f(<span style="color:#ae81ff">100</span>)
