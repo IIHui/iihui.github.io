@@ -610,9 +610,9 @@ var two = 2 用let声明的是一个常量，它的值只能分配一次（可�
 变量都有一个类型，这个类型是在变量声明时就确定了的，并且不能被更改。在下面的例子中，变量two声明时的类型是Int，因此不能使用String类型来覆盖它：
 var two = 2 two = &amp;#34;hello&amp;#34; // 编译错误：Cannot assign value of type &amp;#39;String&amp;#39; to type &amp;#39;Int&amp;#39; Functions 一般来说，可执行代码必须放在一个函数体内。但有一个例外，在main.swift文件中，可以在其顶层（任何函数体之外）放置可执行代码。
 一个函数是一批可执行语句的集合，可以作为一个批次来运行。函数体由大括号包围，通常一个函数有一个名字（也有匿名函数），通过函数声明获得这个名字:
-func sum(a: Int, b: Int) -&amp;gt; Int {  return a &#43; b } 文件结构 一个Swift程序可以由一个或多个文件组成。在Swift中，一个文件是一个有意义的单元，而且对于可以放在文件里的代码结构有明确的规定。通常来说，只有下面的东西可以放在文件的顶层：
-  模块导入语句，例如：import UIKit
-  全局变量和常量声明：文件顶层声明的变量，被称为全局变量，包括以let和var声明的变量:
+func sum(a: Int, b: Int) -&amp;gt; Int {  return a &#43; b } The Structure of a Swift File 一个Swift程序可以由一个或多个文件组成。在Swift中，一个文件是一个有意义的单元，而且对于可以放在文件里的代码结构有明确的规则。通常来说，只有下面的东西可以放在Swift文件的顶层：
+  模块导入语句，例如：import UIKit。module是更高层次的单元，一个模块包含多个文件，默认这些文件能够自动看到各自的。一个App属于一个module，能够看到各自。一个module，不通过import不能看到另外一个module中的文件。
+  全局变量和常量声明：文件顶层声明的变量，被称为全局变量，包括以let和var声明的变量。同一个模块中任何文件中的所有代码都将能够看到并访问它，而无需依赖任何对象。
 var str = &amp;#34;test&amp;#34; let cons = 13   全局函数声明：在文件顶层声明的函数为全局函数，默认情况下，同一个模块中的任何文件中的代码都可以看到并访问它，而无需依赖任何对象。
   对象类型声明：包括class,struct,enum,protocol等对象类型的声明。
   import UIKit var one = 1 let constant = 1 func changeOne() {  // ... } class Manny {  // ... } struct Moe {  // ... } enum Jack {  // ... } 在上面的例子中，花括号里的内容可以是变量声明、函数声明和对象类型声明。事实上，任何花括号里面都可以包含变量声明、函数声明和对象类型的声明。
@@ -1676,11 +1676,11 @@ debugPrint(Float16.pi) //3.14 debugPrint(Float32.pi) //3.1415925 </content>
         </tags>
         <content type="html">  Swift 5.2于2020.03.24发布，新增了许多新的特性，专注于改善开发体验并增加了一些新功能，新功能大部分以增强函数式编程风格为导向。
  KeyPath 在Swift 5.2中允许使用key path表达式替代key path函数。下面代码中，使用了cars.filter(\.isElectric)来代替key path函数：
-let cars: [Car] = [Car(brand: &amp;#34;Tesla&amp;#34;, isElectric: true), Car(brand: &amp;#34;Ford&amp;#34;, isElectric: false)] let electricCars1 = cars.filter { $0.isElectric } let electricCars2 = cars.filter { $0[keyPath: \Car.isElectric] } let electricCars3 = cars.filter(\.isElectric) The power of key paths in Swift Swift是静态类型语言，在设计之初就非常注重编译时的安全性，所以它缺乏Objective-C、Ruby和JavaScript等语言运行时常见的那种动态特性。值得庆幸的是，Swift获得越来越多的动态功能，同时保留了对类型安全的关注。
+let cars: [Car] = [Car(brand: &amp;#34;Tesla&amp;#34;, isElectric: true), Car(brand: &amp;#34;Ford&amp;#34;, isElectric: false)] let electricCars1 = cars.filter { $0.isElectric } let electricCars2 = cars.filter { $0[keyPath: \Car.isElectric] } let electricCars3 = cars.filter(\.isElectric) The power of key paths in Swift Swift是静态类型语言，在设计之初就非常注重编译时的安全性，所以它缺乏Objective-C、Ruby和JavaScript等动态语言运行时常见的那种动态特性。值得庆幸的是，Swift获得越来越多的动态功能，同时保留了对类型安全的关注。
 其中一个功能就是关键路径。关键路径本质上是把实例属性作为一个单独的值来引用。因此，它可以被传递，也可以在表达式中使用，用一段代码能够获取或设置一个属性，而不需要实际知道它所处理的是哪个属性。
 key paths有3种主要的变体：
  KeyPath：只读方式访问属性。 WriteableKeyPath： 读写方式访问值语义的可变属性（值类型，非引用类型）。 ReferenceWritableKeyPath：读写方式访问引用类型属性。  实际上，还有一些另外的关键路径类型，它们的存在是为了减少内部代码的重复，并帮助类型擦除。
-Functional shorthands struct Article {  let id: UUID  let source: URL  let title: String  let body: String } 如果存在一个Article类型的数组，通常会使用如下方式提取单一属性值生成新的数组：
+Functional shorthands struct Article {  let id: UUID  let source: URL  let title: String  let body: String } 如果存在一个Article类型的数组，通常会使用如下方式提取某个属性生成新的数组：
 let articleIDs = articles.map { $0.id } let articleSources = articles.map { $0.source } 虽然上面的方法完全可行，但我们只对提取单个属性值感兴趣，并不真正需要闭包的全部功能，所以使用关键路径可能是一个很好的选择：
 extension Sequence {  func map&amp;lt;T&amp;gt;(_ keyPath: KeyPath&amp;lt;Element, T&amp;gt;) -&amp;gt; [T] {  return map { $0[keyPath: keyPath] }  } } 如果使用Swift 5.2或之后的版本，上面的扩展方法实际上是不需要的，因为key paths现在可以自动转换为函数了。
 let articleIDs = articles.map(\.id) let articleSources = articles.map(\.source) 标准库能够自动对包含Sortable元素的序列进行排序，但对于其它类型序列，必须提供自己的排序闭包。基于一个可比较值的关键路径，能够容易地添加对任何序列的排序支持。在序列上添加一个扩展，将给定的关键路径转换为一个排序表达式闭包：
