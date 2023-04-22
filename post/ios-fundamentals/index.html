@@ -241,7 +241,7 @@ code.has-jax {
     <i class="fa fa-file-word-o"></i>
 </span>
 <span class="post-meta-item-text">字数: </span>
-<span class="leancloud-visitors-count">72486</span>
+<span class="leancloud-visitors-count">72536</span>
 &nbsp; | &nbsp;
 <span class="post-meta-item-icon">
     <i class="fa fa-coffee"></i>
@@ -1287,7 +1287,7 @@ code.has-jax {
 </span></span><span style="display:flex;"><span>    )
 </span></span><span style="display:flex;"><span>}
 </span></span></code></pre></div><h2 id="how-closures-improve-code">How Closures Improve Code</h2>
-<p>可以<font color=red>使用函数是闭包这一事实让代码变得更通用</font>。为了说明函数是闭包，使用之前的一个函数示例，它接受绘图指令并执行它们以生成图像：</p>
+<p>可以<font color=red>使用函数是闭包这一事实</font>让代码变得更通用。为了说明函数是闭包，使用之前的一个示例，它接受绘图指令并执行以生成图像：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">imageOfSize</span>(<span style="color:#66d9ef">_</span> size: CGSize, <span style="color:#66d9ef">_</span> whatToDraw: () -&gt; ()) -&gt; UIImage {
 </span></span><span style="display:flex;"><span>    UIGraphicsBeginImageContextWithOptions(size, <span style="color:#66d9ef">false</span>, <span style="color:#ae81ff">0</span>)
 </span></span><span style="display:flex;"><span>    whatToDraw()
@@ -1300,15 +1300,16 @@ code.has-jax {
 </span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">let</span> p = UIBezierPath(roundedRect: CGRect(x: <span style="color:#ae81ff">0</span>, y: <span style="color:#ae81ff">0</span>, width: <span style="color:#ae81ff">45</span>, height: <span style="color:#ae81ff">20</span>), cornerRadius: <span style="color:#ae81ff">8</span>)
 </span></span><span style="display:flex;"><span>    p.stroke()
 </span></span><span style="display:flex;"><span>}
-</span></span></code></pre></div><p>但上面包含了重复代码，即<code>CGSize(width:45, height:20)</code>重复了两次：</p>
+</span></span></code></pre></div><p>上面代码调用创建了给定大小的并包含指定大小圆角的图片。但上面包含了重复代码，即<code>CGSize(width:45, height:20)</code>重复了两次。为了防止重复，可以在一开始就把<code>size</code>放到一个变量中：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span><span style="color:#66d9ef">let</span> sz = CGSize(width: <span style="color:#ae81ff">45</span>, height: <span style="color:#ae81ff">20</span>)
 </span></span><span style="display:flex;"><span><span style="color:#66d9ef">let</span> image = imageOfSize(sz) {
 </span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">let</span> p = UIBezierPath(roundedRect: CGRect(origin: CGPoint.zero, size: sz), cornerRadius: <span style="color:#ae81ff">8</span>)
 </span></span><span style="display:flex;"><span>    p.stroke()
 </span></span><span style="display:flex;"><span>}
 </span></span></code></pre></div><p>在上面的代码中，常量<code>sz</code>是<font color=Blue>在比匿名函数更高层次声明的，因此在匿名函数中能够看见和引用它</font>。但需要注意的是，匿名函数只是一个函数体，如果<code>imageOfSize</code>不调用，匿名函数就不会被执行。</p>
-<p>当函数体内部的表达式<code>CGRect(origin:CGPoint.zero, size:sz)</code>中引用<code>sz</code>时，因为函数体是一个闭包，我们现在捕获了它的值。当函数<code>imageOfSize</code>调用<code>whatToDraw</code>时，<code>whatToDraw</code>变成了一个函数，函数体内引用了变量<code>sz</code>，这是没有问题，尽管在<code>imageOfSize</code>附近没有<code>sz</code>。</p>
-<p>到目前为止，我们一直在硬编码所需圆角矩形的大小。不过，想象一下，如果创建各种大小的圆角矩形图像是我们经常要做的事情。那么将这段代码打包成一个函数是  有意义的，其中<code>sz</code>不是一个固定值，而是一个入参，然后该函数将返回图像：</p>
+<p>当在函数体内的表达式<code>CGRect(origin:CGPoint.zero, size:sz)</code>中引用<code>sz</code>时，因为函数体是一个闭包，现在捕获了它的值。</p>
+<p>当函数<code>imageOfSize</code>调用<code>whatToDraw</code>时，<code>whatToDraw</code>变成了一个函数，函数体内引用了变量<code>sz</code>，这是没有问题，尽管在<code>imageOfSize</code>附近没有<code>sz</code>。</p>
+<p>再进一步，到目前为止我们一直在硬编码所需圆角矩形的大小。不过，我们经常要创建各种大小的圆角矩形图像。那么将上面代码打包成一个函数是有意义的，其中<code>sz</code>不是一个固定值，而是一个入参，然后该函数将返回一个图像：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">makeRoundedRectangle</span>(<span style="color:#66d9ef">_</span> sz: CGSize) -&gt; UIImage {
 </span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">let</span> image = imageOfSize(sz) {
 </span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">let</span> p = UIBezierPath(roundedRect: CGRect(origin: CGPoint.zero, size: sz), cornerRadius: <span style="color:#ae81ff">8</span>)
@@ -1316,8 +1317,8 @@ code.has-jax {
 </span></span><span style="display:flex;"><span>    }
 </span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">return</span> image
 </span></span><span style="display:flex;"><span>}
-</span></span></code></pre></div><p>在上面的<code>makeRoundedRectangle</code>函数中，参数<code>sz</code>不再是硬编码值，事先我们并不知道它将会是什么。当调用<code>makeRoundedRectangle</code>时，<code>sz</code>将会有一个值，并且<font color=LightSeaGreen>匿名函数会捕获<code>sz</code>，所以当<code>imageOfSize</code>调用匿名函数时，该匿名函数内部的<code>sz</code>将具有传递给<code>makeRoundedRectangle</code>的值</font>。</p>
-<p>上面的代码变得非常紧凑。要调用<code>makeRoundedRectangle</code>，先提供<code>size</code>，返回图像。可以一次完成调用、获取图像并显示该图像：</p>
+</span></span></code></pre></div><p>在上面的<code>makeRoundedRectangle</code>函数中，参数<code>sz</code>不再是硬编码值（固定值），事先我们并不知道它将会是什么。当调用<code>makeRoundedRectangle</code>时，<code>sz</code>将会有一个值，并且在<font color=LightSeaGreen>匿名函数会捕获<code>sz</code>，所以当<code>imageOfSize</code>调用匿名函数时，匿名函数内的<code>sz</code>的值和传递给<code>makeRoundedRectangle</code>的值一样</font>。</p>
+<p>上面的代码变得非常紧凑。要调用<code>makeRoundedRectangle</code>，先提供<code>size</code>，然后返回图像。可以一次完成调用、获取图像并显示该图像：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span><span style="color:#66d9ef">self</span>.iv.image = makeRoundedRectangle(CGSize(width:<span style="color:#ae81ff">45</span>, height:<span style="color:#ae81ff">20</span>))
 </span></span></code></pre></div><h2 id="function-returning-function">Function Returning Function</h2>
 <p>实际上可以更进一步，相比于返回一个图像，函数可以返回一个生成指定大小圆角矩形图片的函数。函数可以用作值，我们已经将一个函数作为参数传递给另一个函数。</p>
