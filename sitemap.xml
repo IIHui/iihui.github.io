@@ -801,14 +801,14 @@ Escaping Closures A closure is supposed to be no escaping when the closure is pa
 A closure is said to escape a function when the closure is passed as an argument to the function, but is called after the function returns.
 如果将一个作为值传递的函数被保存供以后某个时刻执行，而不是立即调用它，那么它是一个随时间推移捕获并保存其环境的闭包。这样的闭包被称为逃逸闭包(escaping closure)。
 换句话说，说一个闭包逃逸了，就是在传入闭包的方法结束之前该闭包还没有被调用。在编写异步代码时经常会出现这种情况。
-在某些情况下，闭包的类型必须标记为escaping。编译器会检测违反这个规则的情况，如果觉得对于是否需要加escaping有疑惑，不必担心，只要让编译器检查并提示添加就可以了。
+在某些情况下，闭包的类型必须标记为escaping。编译器会检测违反这个规则的情况，如果对于是否需要加escaping有疑惑，不必担心，只要让编译器检查并提示添加就可以了。
 下面函数是合法的，无需标记为escaping。因为**它接受一个函数作为参数，并且在函数内直接调用了这个函数**，即funcCaller方法结束之前会调用f：
 func funcCaller(f: () -&amp;gt; ()) {  f() } 下面函数也是合法的，尽管它返回一个稍后执行的函数，但**它是在函数内部创建了那个匿名函数**，而不是作为参数传递进来的。它返回的函数是一个逃逸闭包，但函数返回值的类型不必标记为@escaping，也就是说@escaping标记只针对于入参：
 func funcMaker() -&amp;gt; () -&amp;gt; () {  // 内部创建的匿名函数  return {  print(&amp;#34;hello world&amp;#34;)  } } 但是，下面的函数是不合法的，会出现编译错误。因为它接受了一个函数作为入参，并且返回了这个函数供后续某个时刻执行：
 func funcPasser(f: () -&amp;gt; ()) -&amp;gt; () -&amp;gt; () {  return f }  // 出现如下的编译错误 Using non-escaping parameter &amp;#39;f&amp;#39; in a context expecting an @escaping closure 解决方案是将函数入参标f记为@escaping，编译器也会提醒需要这样做：
 func funcPasser(f: @escaping () -&amp;gt; ()) -&amp;gt; () -&amp;gt; () {  return f } 逃逸闭包的第二个特点是当在函数体内引用self的属性或方法时，编译器会坚持需要明确地使用self。那是因为这样的引用捕获了self，编译器希望通过使用self来承认这个事实：
-let f1 = funcPasser {  print(view.bounds) // Implicit use of &amp;#39;self&amp;#39; in closure; use &amp;#39;self.&amp;#39; to make capture semantics explicit }  let f2 = funcPasser {  print(self.view.bounds) // ok } Capture Lists 有时，可能希望一个函数引用自身外部的变量，只是为了获取它的值，但不捕获该变量。Swift提供了一种巧妙的语法来做到这一点，但这种方式**仅限于函数是匿名函数时**才能使用。在匿名函数体的开头，放置方括号，其中包含对外部环境中变量的引用的逗号分隔列表，这称为捕获列表。
-如果在匿名函数中有一个捕获列表，那么必须在它后面加上关键字in。如果已经存在in表达式，则捕获列表位于任何参数名称之前即可。
+let f1 = funcPasser {  print(view.bounds) // Implicit use of &amp;#39;self&amp;#39; in closure; use &amp;#39;self.&amp;#39; to make capture semantics explicit }  let f2 = funcPasser {  print(self.view.bounds) // ok } Capture Lists 有时，可能希望一个函数引用外部的变量，只是为了获取它的值，但不捕获该变量。Swift提供了一种巧妙的语法来做到这一点，但这种方式**仅限于函数是匿名函数时**才能使用。在匿名函数体的开头，放置方括号，里面包含对外部环境中变量的引用的逗号分隔列表，这称为捕获列表。
+如果在匿名函数中有一个捕获列表，那么必须在它后面加上关键字in。如果已经存在in表达式，则捕获列表位于参数名称之前即可。
 捕获列表就好像这些值已作为参数而不是通过闭包捕获传递给匿名函数一样。这就像是用let声明的参数一样。首先看一下没有捕获列表的情况：
 var x = 0 let f: () -&amp;gt; () = {  print(x) } f() // 0  x = 1  f() // 1 在上面的函数中，由于捕获到了变量的值，那么打印的值分别是0和1。而在下面的代码中，因为添加了捕获列表，下面代码执行两次打印的值均为0:
 var x = 0 let f: () -&amp;gt; () = { [x] in  print(x) } f() // 0  x = 1  f() // 0 因为使用了捕获列表，f在声明时已经将变量x的值捕获为0。实际上，x的行为类似于传递给f的普通参数，它是一个常量。
