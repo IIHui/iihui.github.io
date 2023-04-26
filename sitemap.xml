@@ -820,12 +820,12 @@ var x = 0 let f: () -&amp;gt; () = { [ y = x &#43; 5] in  print(x0) } f() // 5  
 self.undoer.registerUndo(withTarget: self) { [oldCenter = self.center] myself in  myself.setCenterUndoably(oldCenter) } 捕获列表的另一个用途是解决在逃逸闭包中需要明确添加self关键字的硬性要求。下面代码中，需要明确地添加self，因为这是一个逃逸闭包。但是很多人不喜欢明确地使用self，如果这个匿名函数多次隐含地使用self，则可能需要多次明确地使用self。
 let f2 = funcPasser {  print(self.view.bounds) } 从Swift 5.3开始，可以把self放在捕获列表中，这能够满足编译器的要求，并且也不必明确使用self来访问属性和方法，即可以省略self：
 let f2 = funcPasser { [self] in  print(view.bounds) // ok  } 在闭包中也可以直接使用weak接收外部变量 ，不仅仅是self:
-download(imageURL, completion: { [weak imageViewController] result in  // ... })  download(imageURL, completion: { [weak imageViewController, weak imageFinalizer] result in  // ... }) weak strong unowned ARC是一个编译时功能，它是苹果的自动内存管理版本。它代表的是自动引用计数Automatic Reference Counting，这意味着只有当对象的强引用计数为零时，对象才能被释放出内存。
-强引用本质上是一个普通的引用，但它本身很特别，因为它通过增加引用计数来保护被引用的对象不被释放。强引用在Swift中几乎到处都在使用。
-事实上，声明一个属性默认就是强引用的。 一般来说，当对象的层次关系是线性的，使用强引用就是安全的。也就是说，当强引用的层次结构从parent流向child时，使用强引用总是安全的。
+download(imageURL, completion: { [weak imageViewController] result in  // ... })  download(imageURL, completion: { [weak imageViewController, weak imageFinalizer] result in  // ... }) weak strong unowned ARC是一个编译时功能，它是苹果的自动内存管理工具，代表的是自动引用计数Automatic Reference Counting，这意味着只有当对象的强引用计数为零时，对象才能被释放出内存。
+强引用本质上是一个普通的引用，但它本身很特别，因为它通过增加引用计数来保护被引用的对象不被释放。强引用在Swift中几乎随处可见。
+事实上，声明一个属性默认就是强引用的。 一般来说，当对象的层次关系是线性的，使用强引用就是安全的。也就是说，当强引用的层次结构总是从上到下时，使用强引用总是安全的。
 class Kraken {  // strong reference to child.  let tentacle = Tentacle() }  class Tentacle {  // strong reference to child  let sucker = Sucker() }  class Sucker {  // } 上面示例是一个线性层次结构。Kraken的定义中对Tentacle实例的引用是一个强引用，并且Tentacle对Sucker实例的引用也是强引用。这个层次结构从Kraken一直到Sucker。
 同样地，在动画的blocks中，引用的层次也是相似的。因为animateWithDuration是UIView静态方法，下面的闭包是parent，self是child：
-UIView.animate(withDuration: 0.3) {  self.view.alpha = 0.0 } 弱引用只是一个指向对象的指针，它不保护指向的对象不被ARC释放。强引用会使对象的引用计数增加1，但弱引用不会。
+UIView.animate(withDuration: 0.3) {  self.view.alpha = 0.0 } 弱引用只是一个指向对象的指针，它不保护指向的对象不被ARC释放。强引用会使对象的引用计数增加1，但弱引用不会增加计数。
 此外，当对象被成功被释放时，弱引用会自动被置为nil。这确保了当访问弱引用时，要么访问的是一个有效的对象，要么是nil。
 在Swift中，所有的弱引用都不是常量，并且是optional的，因为当不再有任何强引用这个对象时，弱引用终将被置为nil。下面代码编译时会出现&#39;weak&#39; must be a mutable variable, because it may change at runtime错误：
 class Kraken {  // let is a constant! All weak variables MUST be mutable.  weak let tentacle = Tentacle() } 上面代码中tentacle被定义为一个常量，它在初始化后不能再被赋值。因为如果没有持有这个对象的强引用后，那么弱引用就会被置为nil，所以Swift编译器要求在定义弱变量时使用var，而不能使用let。
