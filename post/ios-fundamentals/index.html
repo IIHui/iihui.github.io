@@ -241,7 +241,7 @@ code.has-jax {
     <i class="fa fa-file-word-o"></i>
 </span>
 <span class="post-meta-item-text">字数: </span>
-<span class="leancloud-visitors-count">73402</span>
+<span class="leancloud-visitors-count">73416</span>
 &nbsp; | &nbsp;
 <span class="post-meta-item-icon">
     <i class="fa fa-coffee"></i>
@@ -2380,7 +2380,7 @@ code.has-jax {
 </span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">return</span> <span style="color:#66d9ef">false</span>
 </span></span><span style="display:flex;"><span>    }
 </span></span><span style="display:flex;"><span>}()
-</span></span></code></pre></div><p>当一个实例属性也需要执行一些代码去获得初始值时，也可以使用<code>define-and-call initializer</code>方法进行初始化。下面的<code>cellBackgroundImage</code>属性需要用到多次，但初始化时需要执行一些其它代码，因此通过定义和调用一个匿名函数来初始化这个属性：</p>
+</span></span></code></pre></div><p>当一个实例属性也需要执行一些代码去获得初始值时，也可以使用<code>define-and-call initializer</code>进行初始化。下面的<code>cellBackgroundImage</code>属性需要用到多次，但初始化时需要执行一些其它代码，因此通过定义和调用一个匿名函数来初始化这个属性：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span><span style="color:#66d9ef">class</span> <span style="color:#a6e22e">RootViewController</span>: UITableViewController {
 </span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">let</span> cellBackgroundImage: UIImage = {
 </span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">return</span> imageOfSize(CGSize(width: <span style="color:#ae81ff">320</span>, height: <span style="color:#ae81ff">44</span>)) { 
@@ -2388,9 +2388,10 @@ code.has-jax {
 </span></span><span style="display:flex;"><span>        }
 </span></span><span style="display:flex;"><span>    }() 
 </span></span><span style="display:flex;"><span>}
-</span></span></code></pre></div><p>你可能会好奇，与其使用<code>define-and-call initializer</code>，为什么不直接定义一个实例方法来初始化实例属性。因为定义一个实例方法来初始化实例属性是非法的，会出现编译错误：</p>
+</span></span></code></pre></div><p>你可能会好奇，与其使用<code>define-and-call initializer</code>，为什么不直接定义一个实例方法来初始化实例属性。因为定义一个实例方法来初始化实例属性是非法的，将会出现编译错误：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span><span style="color:#66d9ef">class</span> <span style="color:#a6e22e">RootViewController</span>: UITableViewController {
-</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">let</span> cellBackgroundImage: UIImage = <span style="color:#66d9ef">self</span>.makeTheImage() <span style="color:#75715e">// compile error </span>
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">// Cannot use instance member &#39;self&#39; within property initializer; property initializers run before &#39;self&#39; is available</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">let</span> cellBackgroundImage: UIImage = <span style="color:#66d9ef">self</span>.makeTheImage() 
 </span></span><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">func</span> <span style="color:#a6e22e">makeTheImage</span>() -&gt; UIImage {
 </span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">return</span> imageOfSize(CGSize(width: <span style="color:#ae81ff">320</span>, height: <span style="color:#ae81ff">44</span>)) {
@@ -2399,9 +2400,9 @@ code.has-jax {
 </span></span><span style="display:flex;"><span>    }
 </span></span><span style="display:flex;"><span>  
 </span></span><span style="display:flex;"><span>}
-</span></span></code></pre></div><p>这是因为**<font color=Blue>实例属性声明初始化时，实例尚未生成</font>**。因此，<font color=LightSeaGreen>不能在属性声明的初始化器中引用自己</font>。定义和调用匿名函数是合法的，但需要注意的是<font color=Blue>定义和调用匿名函数仍然不能在函数体中引用<code>self</code></font>，否则也会出现编译错误，如果需要在函数体中使用<code>self</code>，需要将属性声明为<code>lazy</code>。</p>
+</span></span></code></pre></div><p>这是因为<font color=red>实例属性声明初始化时，实例尚未生成</font>。因此，<font color=LightSeaGreen>不能在属性声明的初始化器中引用自己</font>。定义和调用匿名函数是合法的，但需要注意的是<font color=Blue>定义和调用匿名函数仍然不能在函数体中隐式或显式引用<code>self</code></font>，否则也会出现编译错误，如果需要在函数体中使用<code>self</code>，需要将属性声明为<code>lazy</code>。</p>
 <h2 id="computed-variables">Computed Variables</h2>
-<p>除了正常的存储变量，<code>Swift</code>中的变量还可以是计算的。这意味着变量不是一个简单值，而是包含计算函数。计算变量中包括<code>setter</code>和<code>getter</code>函数，<code>setter</code>函数在变量被赋值自动调用，<code>getter</code>函数在变量被引用时被自动调用:</p>
+<p>除了正常的存储变量，<code>Swift</code>中的变量还可以是计算的。这意味着变量不是一个值，而是一个函数。计算变量中包括<code>setter</code>和<code>getter</code>函数，<code>setter</code>函数在变量被赋值自动调用，<code>getter</code>函数在变量被引用时自动调用:</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span><span style="color:#66d9ef">var</span> now: String { <span style="color:#75715e">// ①</span>
 </span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">get</span> { <span style="color:#75715e">// ② </span>
 </span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">return</span> Date().description <span style="color:#75715e">// ③</span>
@@ -2412,20 +2413,20 @@ code.has-jax {
 </span></span><span style="display:flex;"><span>}
 </span></span></code></pre></div><ol>
 <li>变量<font color=red>必须使用<code>var</code>声明（不能使用<code>let</code>），同时类型必须显式声明</font>，类型后面紧跟花括号。</li>
-<li>其中的<code>getter</code>函数被称为<code>get</code>。<code>getter</code>函数没有正式的函数声明，<code>get</code>这个词后面紧跟着函数体。</li>
+<li>其中的<code>getter</code>函数被称为<code>get</code>。<code>getter</code>函数没有正式的函数声明，<code>get</code>这个词后面紧跟着花括号中的函数体。</li>
 <li>其中的<code>getter</code>函数必须返回一个与该变量类型相同的值。从<code>Swift 5.1</code>开始，当<code>getter</code>只有一个单一语句时，省略关键字<code>return</code>是合法的。</li>
 <li>其中的<code>setter</code>函数被称为<code>set</code>。<code>setter</code>函数也没有正式的函数声明，<code>set</code>这个词后面紧跟着函数体。</li>
-<li>其中<code>setter</code>函数的行为就像接受一个参数的函数。默认情况下，该参数以<code>newValue</code>这个名字进入<code>setter</code>函数体中。</li>
+<li>其中<code>setter</code>函数就像接受一个参数的函数。默认情况下，该参数以<code>newValue</code>这个名字进入<code>setter</code>函数体中。</li>
 </ol>
-<p>这里有一些代码说明了计算变量的使用。对待它与任何其它变量没有任何不同。如果要赋值给变量，能够直接赋值给它；如果要使用变量，能够直接使用它。但是，在幕后都是调用了<code>setter</code>和<code>getter</code>函数。</p>
+<p>这里有一些代码说明了计算变量的使用。对待它可以与任何其它变量相同。如果要赋值给变量，能够直接赋值给它；如果要使用变量，能够直引用它。但是，在幕后都是调用了<code>setter</code>和<code>getter</code>函数。</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span>now = <span style="color:#e6db74">&#34;Howdy&#34;</span> <span style="color:#75715e">// Howdy</span>
 </span></span><span style="display:flex;"><span>print(now) <span style="color:#75715e">// 2022-08-07 04:03:21 +0000</span>
 </span></span></code></pre></div><ul>
-<li>上面代码中赋值给<code>now</code>时，<code>set</code>将被自动调用，参数就是将要赋值的值。在上面的代码就是<code>Howdy</code>，该值作为 <code>newValue</code>到达<code>set</code>函数。</li>
-<li>获取<code>now</code>的值时，<code>get</code>将被自动调用。</li>
+<li>上面代码中赋值给<code>now</code>时，<code>setter</code>函数将被自动被调用，参数就是将要赋值的值。在上面的代码就是<code>Howdy</code>，该值作为参数 <code>newValue</code>实参到达<code>set</code>函数。</li>
+<li>获取<code>now</code>的值时，<code>getter</code>将被自动调用。</li>
 </ul>
-<p>对于<code>set</code>函数来说，默认的参数可以不是<code>newValue</code>。如果需要指定一个不同的名称，<font color=Blue>把新名字放在<code>set</code>后面的括号里就可以</font>，下面就是用新名字<code>val</code>代替默认的<code>newValue</code>：</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span><span style="color:#66d9ef">var</span> nowTest: String = <span style="color:#e6db74">&#34;first&#34;</span> <span style="color:#75715e">// 需要先初始化，否则报错</span>
+<p>对于<code>setter</code>函数来说，默认的参数名可以不是<code>newValue</code>。如果需要指定一个不同的名称，<font color=Blue>把新名字放在<code>set</code>后面的括号里就可以</font>，下面是用新名字<code>val</code>代替默认的<code>newValue</code>：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span><span style="color:#66d9ef">var</span> nowTest: String = <span style="color:#e6db74">&#34;&#34;</span>
 </span></span><span style="display:flex;"><span><span style="color:#66d9ef">var</span> now: String {
 </span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">get</span> {
 </span></span><span style="display:flex;"><span>        <span style="color:#e6db74">&#34;test&#34;</span>
@@ -2434,7 +2435,7 @@ code.has-jax {
 </span></span><span style="display:flex;"><span>        nowTest = val
 </span></span><span style="display:flex;"><span>    }
 </span></span><span style="display:flex;"><span>}
-</span></span></code></pre></div><p>如果<code>setter</code>函数省略，那么这个计算变量就成为了一个只读变量，等同于一个<code>let</code>常量，一旦试图去改变这个变量的值就会出现编译错误。即使只有一个<code>get</code>函数，<font color=red>计算变量声明的时候也必须使用<code>var</code></font>。</p>
+</span></span></code></pre></div><p>如果<code>setter</code>函数省略，那么这个计算变量就成为了一个只读变量，等同于一个<code>let</code>常量，一旦试图去改变这个变量的值就会出现编译错误。即使只有一个<code>getter</code>函数，<font color=red>计算变量声明的时候也必须使用<code>var</code></font>。</p>
 <p>计算变量<font color=red>必须有一个<code>getter</code>函数。如果计算变量中没有<code>setter</code>函数</font>，<code>get</code>这个词和它后面的花括号可以省略。下面是一个合法的只读计算变量的声明：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span><span style="color:#66d9ef">var</span> now: String {
 </span></span><span style="display:flex;"><span>    Date().description
