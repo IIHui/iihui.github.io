@@ -192,7 +192,7 @@ code.has-jax {
   <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
     <header class="post-header">
       <h1 class="post-title" itemprop="name headline">
-        <a class="post-title-link" href="https://iihui.github.io/post/ios-fundamentals/" itemprop="url">
+        <a class="post-title-link" href="https://iihui.github.io/post/ios-fundamentals.md-2/" itemprop="url">
         iOS 14 编程基础
         </a>
       </h1>
@@ -241,13 +241,13 @@ code.has-jax {
     <i class="fa fa-file-word-o"></i>
 </span>
 <span class="post-meta-item-text">字数: </span>
-<span class="leancloud-visitors-count">73656</span>
+<span class="leancloud-visitors-count">73527</span>
 &nbsp; | &nbsp;
 <span class="post-meta-item-icon">
     <i class="fa fa-coffee"></i>
 </span>
 <span class="post-meta-item-text">阅读: </span>
-<span class="leancloud-visitors-count">148 分钟</span>
+<span class="leancloud-visitors-count">147 分钟</span>
 </span>
       </div>
     </header>
@@ -2482,8 +2482,8 @@ code.has-jax {
 </span></span><span style="display:flex;"><span>}
 </span></span></code></pre></div><p>一个实例的<font color=LightSeaGreen>计算属性<code>getter</code>函数或<code>setter</code>函数可以引用其它实例成员</font>。这一点很重要，因为一般来说，存储属性的初始化器不能这样做。对于一个计算属性来说，它是合法的，<em><font color=red>因为<code>getter</code>和<code>setter</code>函数在实例实际生成前不会被调用</font></em>。</p>
 <h2 id="property-wrappers">Property Wrappers</h2>
-<p>如果有几个存储幌子的计算属性实际上做了同样的事情，那么最终会有大量的重复代码。想象一下，像上一节中，用一个<code>clamped</code>的<code>setter</code>实现多个<code>Int</code>属性。如果能把这些共同的功能移到一个地方就更好了，可以用一个属性包装器来实现。</p>
-<p>一个属性包装器是被声明为一个标有<code>@propertyWrapper</code>属性的类型，并且必须有一个<code>wrappedValue</code>的计算属性。下面是一个实现&quot;clamped&quot;模式的属性包装器。</p>
+<p>如果有几个存储幌子的计算属性实际上做了同样的事情，那么最终会有大量的重复代码。想象一下，像上一节中那样，用一个<code>clamped</code>的<code>setter</code>实现多个<code>Int</code>属性。如果能把这些共同的功能移到一个地方就更好了。我们可以用一个属性包装器来实现。</p>
+<p>一个属性包装器被声明为一个标有<code>@propertyWrapper</code>属性的类型，并且必须有一个<code>wrappedValue</code>的计算属性。下面是一个实现&quot;钳制&quot;模式的属性包装器。</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span>@propertyWrapper <span style="color:#66d9ef">struct</span> <span style="color:#a6e22e">Clamped</span> {
 </span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">private</span> <span style="color:#66d9ef">var</span> _i: Int = <span style="color:#ae81ff">0</span>
 </span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">var</span> wrappedValue: Int {
@@ -2491,17 +2491,16 @@ code.has-jax {
 </span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">self</span>._i
 </span></span><span style="display:flex;"><span>        }
 </span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">set</span> {
+</span></span><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">self</span>._i = Swift.max(Swift.min(newValue, <span style="color:#ae81ff">5</span>), <span style="color:#ae81ff">0</span>)
 </span></span><span style="display:flex;"><span>        }
 </span></span><span style="display:flex;"><span>    }
 </span></span><span style="display:flex;"><span>}
-</span></span></code></pre></div><p>上面声明的结果是现在可以声明一个用自定义属性标记的计算属性，该属性的名称与该结构(<code>@Clamped</code>) 相同，没有<code>getter</code>或<code>setter</code>函数：</p>
+</span></span></code></pre></div><p>结果是我们可以声明一个用自定义属性标记的计算属性，该属性的名称与该结构 (<code>@Clamped</code>) 相同，没有<code>getter</code>或<code>setter</code>：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span>@Clamped <span style="color:#66d9ef">var</span> p
-</span></span></code></pre></div><p>上面的属性<code>p</code>不需要被初始化，因为它是一个计算属性，也不需要<code>getter</code>或<code>setter</code>函数。实际上，它都不需要类型声明，因为<code>Clamped</code>结构体的<code>wrappedValue</code>计算属性提供了类型。</p>
-<p>多亏了属性包装器，我们封装了计算属性，这意味着可以声明另外一个<code>@Clamped</code>属性。此外，这个模式现在有了一个名字：声明<code>@Clamped var</code>告诉我们这个计算属性的行为将会是什么。</p>
+</span></span></code></pre></div><p>上面的属性<code>p</code>不需要被初始化，因为它是一个计算属性，它也不需要<code>getter</code>或<code>setter</code>，实际上它都不需要类型声明，因为因为<code>Clamped</code>结构的<code>WrappedValue</code>计算属性提供了类型。</p>
 <h2 id="setter-observers">Setter Observers</h2>
-<p>计算变量并不经常需要作为一个存储变量的幌子。这是因为<code>Swift</code>有另一个功能，可以让你在<font color=red>存储变量</font>的<code>setter</code>函数中注入<code>setter observers</code>功能。</p>
-<p><code>setter observers</code>是<font color=Blue>在设置存储变量之前和之后调用的函数</font>，可以添加一个<code>willSet</code>函数，或一个<code>didSet</code>函数，或两者均有：</p>
+<p>计算变量并不经常需要作为一个存储变量的<code>立面</code>。这是因为<code>Swift</code>有另一个功能，可以让你在<font color=red>存储变量</font>的<code>setter</code>中注入<code>setter observers</code>功能。<code>setter observers</code>是<font color=Blue>在设置存储变量之前和之后调用的函数</font>，可以有一个<code>willSet</code>函数，或一个<code>didSet</code>函数，或两者均有：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span><span style="color:#66d9ef">var</span> s = <span style="color:#e6db74">&#34;whatever&#34;</span> { <span style="color:#75715e">// ①</span>
 </span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">willSet</span> { <span style="color:#75715e">// ②</span>
 </span></span><span style="display:flex;"><span>        debugPrint(newValue) <span style="color:#75715e">// ③</span>
@@ -2516,17 +2515,16 @@ code.has-jax {
 <p>变量<font color=red>必须使用<code>var</code>声明</font>，不能使用<code>let</code>声明，并且可以被赋予一个初始值。</p>
 </li>
 <li>
-<p>如果<code>willSet</code>函数存在的话，就是单词<code>willSet</code>后面紧跟着函数体。当其它代码设置该变量时，在该变量实际收到其新值之前<code>willSet</code>函数被调用。</p>
+<p>如果<code>willSet</code>函数存在的话，就是单词<code>willSet</code>后面紧跟着函数体。当其他代码设置该变量时，在该变量实际收到其新值之前<code>willSet</code>函数被调用。</p>
 </li>
 <li>
 <p>默认情况下，<code>willSet</code>函数接受即将设置的新值，这个新值的名字是<code>newValue</code>。也可以通过在<code>willSet</code>后面的<font color=Blue>括号里写一个不同的名字来自定义接受到的新值名字</font>。旧值仍然在存储变量中，<code>willSet</code>函数中依然可以访问旧值。</p>
 </li>
 <li>
-<p>如果在<code>willSet</code>中<font color=red>将存储变量设置为不同的值时，不会生效</font>，并会收到警告提示：</p>
+<p>如果在<code>willSet</code>中<font color=red>将存储变量设置为不同的值时，不会生效</font>：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span><span style="color:#66d9ef">var</span> newStr: String = <span style="color:#e6db74">&#34;new&#34;</span> {
 </span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">willSet</span> {
 </span></span><span style="display:flex;"><span>        debugPrint(newValue)
-</span></span><span style="display:flex;"><span>        <span style="color:#75715e">// Attempting to store to property &#39;s&#39; within its own willSet, which is about to be overwritten by the new value</span>
 </span></span><span style="display:flex;"><span>        newStr = <span style="color:#e6db74">&#34;test&#34;</span>
 </span></span><span style="display:flex;"><span>    }
 </span></span><span style="display:flex;"><span>}
@@ -2537,10 +2535,10 @@ code.has-jax {
 </span></span><span style="display:flex;"><span><span style="color:#75715e">// name</span>
 </span></span></code></pre></div></li>
 <li>
-<p>如果<code>didSet</code>函数存在的话，就是<code>didSet</code>这个词后面紧跟着函数体。当其它代码设置该变量时，<font color=LightSeaGreen>在该变量实际收到其新值之后被调用</font>。</p>
+<p>如果<code>didSet</code>函数存在的话，就是<code>didSet</code>这个词后面紧跟着函数体。当其他代码设置该变量时，在该变量实际收到其新值之后被调用。</p>
 </li>
 <li>
-<p>默认情况下，<code>didSet</code>函数接收旧的值，名字为<code>oldValue</code>，此时新值已经完成替换。可以通过在<code>didSet</code>后面的括号里写一个不同的名字以自定义接受到的旧值。</p>
+<p>默认情况下，<code>didSet</code>函数接收旧的值，名字为<code>oldValue</code>，此时新值已经完成替换。可以通过在<code>didSet</code>后面的括号里写一个不同的名字来自定义接受到的旧值名字。</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span><span style="color:#66d9ef">var</span> now1: String = <span style="color:#e6db74">&#34;now1&#34;</span> {
 </span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">willSet</span>(val) {
 </span></span><span style="display:flex;"><span>        debugPrint(now1)
@@ -2559,7 +2557,7 @@ code.has-jax {
 </span></span><span style="display:flex;"><span><span style="color:#75715e">//&#34;133&#34;</span>
 </span></span></code></pre></div></li>
 <li>
-<p>新的值已经在存储的变量中，<code>didSet</code>函数中可以访问新值。此外，在<code>didSet</code>函数中<font color=red>将存储变量设置为不同的值也是合法的</font>，但不会再次调用<code>Setter Observers</code>。</p>
+<p>新的值已经在存储的变量中，<code>didSet</code>函数中可以访问新值。此外，在<code>didSet</code>函数中<font color=red>将存储变量设置为不同的值也是合法的</font>，但不会再调用<code>Setter Observers</code>。</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span><span style="color:#66d9ef">var</span> newStr: String = <span style="color:#e6db74">&#34;new&#34;</span> {
 </span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">willSet</span> {
 </span></span><span style="display:flex;"><span>        debugPrint(newValue)
@@ -2576,15 +2574,15 @@ code.has-jax {
 </span></span><span style="display:flex;"><span><span style="color:#75715e">// dddd</span>
 </span></span></code></pre></div></li>
 </ol>
-<p>需要特别注意的是，当<font color=red>存储变量初始化时或<code>didSet</code>函数中再次改变存储变量的值时，不会调用<code>setter observers</code>函数</font>，否则会产生无限循环。</p>
-<p>在实际的<code>iOS</code>编程中，你可能想要可见的界面反应对象的状态。一个<code>setter</code>观察器是一种简单而强大的方式，可以使界面与一个属性同步。</p>
-<p>在下面这个例子中，有一个<code>view</code>类的实例属性，决定了该视图应该被旋转多少。每次这个实例属性发生变化时，我们都会改变界面来反映它，即设置<code>self.transform</code>使视图被旋转相应的角度：</p>
+<p>需要特别注意的是，当**<font color=red>存储变量初始化时或<code>didSet</code>函数中再次改变存储变量的值时，不会调用<code>setter observers</code>函数</font>**，否则会产生无限循环。</p>
+<p>在实际的<code>iOS</code>编程中，你可能想要可见的接口反应你的对象的状态。一个<code>setter</code>观察器是一种简单而强大的方式，可以使接口与一个属性同步。</p>
+<p>在下面这个例子中，我们有一个视图类的实例属性，决定了视图应该被旋转多少。每次这个属性发生变化时，我们都会改变界面来反映它，即设置<code>self.transform</code>使视图被旋转相应的角度：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span><span style="color:#66d9ef">var</span> angle: CGFloat = <span style="color:#ae81ff">0</span> {
 </span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">didSet</span> { <span style="color:#75715e">// modify interface to match </span>
 </span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">self</span>.transform = CGAffineTransform(rotationAngle: <span style="color:#66d9ef">self</span>.angle)
 </span></span><span style="display:flex;"><span>    }
 </span></span><span style="display:flex;"><span>}
-</span></span></code></pre></div><p><font color=red>计算变量不能有<code>setter observers</code></font>，因为它已经有了<code>setter</code>函数，任何在设置过程中需要发生的额外事情都可以直接写入<code>setter</code>函数中。但<font color=LightSeaGreen>一个被属性包装器包裹的计算变量可以有<code>setter observers</code></font>。</p>
+</span></span></code></pre></div><p>计算变量或者属性不能有<code>setter observers</code>，因为它已经有了<code>setter</code>函数，任何在设置过程中需要发生的额外事情都可以直接写入<code>setter</code>函数中。但<font color=LightSeaGreen>一个被属性包装器包裹的计算变量可以有<code>setter observers</code></font>。</p>
 <h2 id="lazy-initialization">Lazy Initialization</h2>
 <p>如果一个存储变量声明的时候分配了一个初始值，并且它使用了<code>Lazy Initialization</code>（懒初始化），那么在运行代码访问该变量的值之前，初始值实际上还不会有。在<code>Swift</code>中，有三种类型的变量可以被懒初始化<code>Lazy Initialization</code>。</p>
 <ul>
@@ -4771,16 +4769,16 @@ code.has-jax {
         <div class="post-nav">
     <div class="post-nav-next post-nav-item">
     
-        <a href="https://iihui.github.io/post/tool-rider/" rel="next" title="Rider 使用">
-        <i class="fa fa-chevron-left"></i> Rider 使用
+        <a href="https://iihui.github.io/post/ios-fundamentals/" rel="next" title="iOS 14 编程基础">
+        <i class="fa fa-chevron-left"></i> iOS 14 编程基础
         </a>
     
     </div>
 
     <div class="post-nav-prev post-nav-item">
     
-        <a href="https://iihui.github.io/post/ios-fundamentals.md-2/" rel="prev" title="iOS 14 编程基础">
-        iOS 14 编程基础 <i class="fa fa-chevron-right"></i>
+        <a href="https://iihui.github.io/post/ios-protocol/" rel="prev" title="Swift协议">
+        Swift协议 <i class="fa fa-chevron-right"></i>
         </a>
     
     </div>
@@ -4797,7 +4795,7 @@ code.has-jax {
                 标题：iOS 14 编程基础
                 <br />作者：阿呆<a target="_blank" href="https://iihui.github.io/"></a>
                 
-                <br />地址：https://iihui.github.io/post/ios-fundamentals/
+                <br />地址：https://iihui.github.io/post/ios-fundamentals.md-2/
                 <br />声明：自由转载-非商用-保持署名（创作共享4.0许可证）
             </p>
         </div>
