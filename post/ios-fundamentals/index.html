@@ -241,7 +241,7 @@ code.has-jax {
     <i class="fa fa-file-word-o"></i>
 </span>
 <span class="post-meta-item-text">字数: </span>
-<span class="leancloud-visitors-count">73670</span>
+<span class="leancloud-visitors-count">73714</span>
 &nbsp; | &nbsp;
 <span class="post-meta-item-icon">
     <i class="fa fa-coffee"></i>
@@ -2732,44 +2732,46 @@ code.has-jax {
 <p>到目前为止，所举的例子很容易解决，但如果算术表达式较长，事情就会变得更加复杂，而且这个问题会因为其它数字类型的存在而变得更加复杂，这些数字类型是与<code>Cocoa</code>兼容所需要的。</p>
 <h3 id="other-numeric-types">Other numeric types</h3>
 <p>如果只是在某个孤立的、抽象的世界中使用<code>Swift</code>，可能只使用<code>Int</code>和<code>Double</code>就能完成所有必要的算术运算。但是，如果是在进行<code>iOS</code>编程，就会遇到<code>Cocoa</code>，它里面包含了许多其它的数字类型，而<code>Swift</code>有与每一种类型相匹配的类型。</p>
-<p>除了<code>Int</code>，还有各种大小的有符号整数类型——<code>Int8、Int16、Int32、Int64</code>。加上无符号整数类型<code>UInt</code>以及 <code>UInt8、UInt16、UInt32</code>和<code>UInt64</code>。除了<code>Double</code>，还有低精度<code>Float</code>（<code>32</code>位存储，大约<code>6</code>或<code>7</code>个小数位精度）、更低精度的<code>Float16</code>、扩展精度<code>Float80</code> 和来自<code>Core Graphics</code>框架<code>CGFloat</code>。</p>
-<p>在试图与<code>C</code>语言<code>API</code>对接时，也可能遇到<code>C</code>语言的数字类型。就<code>Swift</code>而言，这些类型只是类型别名，也就是说，它们是另一种类型的替代名称：<code>CDouble</code>（对应<code>C</code>语言的<code>double</code>）只是<code>Double</code>的另一个名字，<code>CLong</code>（<code>C</code>语言的<code>long</code>）是<code>Int</code>等等。</p>
-<p>在各种<code>Cocoa</code>框架中会出现许多其它的数字类型的别名，例如，<code>TimeInterval</code>（<code>Objective-C</code>的<code>NSTimeInterval</code>）只是<code>Double</code>的一个类型别名。</p>
+<p>除了<code>Int</code>，还有各种大小的有符号整数类型—<code>Int8、Int16、Int32、Int64</code>。加上无符号整数类型<code>UInt</code>以及 <code>UInt8、UInt16、UInt32</code>和<code>UInt64</code>。除了<code>Double</code>，还有低精度<code>Float</code>（<code>32</code>位存储，大约<code>6</code>或<code>7</code>个小数位精度）、更低精度的<code>Float16</code>、扩展精度<code>Float80</code> 和来自<code>Core Graphics</code>框架<code>CGFloat</code>。</p>
+<p>在试图与<code>C</code>语言<code>API</code>对接时，也可能遇到<code>C</code>语言的数字类型。就<code>Swift</code>而言，这些类型只是类型别名，例如<code>CDouble</code>（对应<code>C</code>语言的<code>double</code>）只是<code>Double</code>的另一个名字，<code>CLong</code>（<code>C</code>语言的<code>long</code>）是<code>Int</code>。</p>
+<p>在各种<code>Cocoa</code>框架中会出现许多其它数字类型的别名，例如，<code>TimeInterval</code>（<code>Objective-C</code>的<code>NSTimeInterval</code>）只是<code>Double</code>的一个类型别名。</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span><span style="color:#66d9ef">let</span> percentage = pt.x <span style="color:#f92672">/</span> s.bounds.size.width
-</span></span></code></pre></div><p>不能在变量赋值、传递或组合时使用不同数值类型的值，必须将这些值显式强制为正确的类型。但现在事实证明，有时被<code>Cocoa</code>淹没了许多类型的数值。<code>Cocoa</code>通常会给你一个既不是<code>Int</code>也不是<code>Double</code>的数值——你不一定会意识到这一点，直到编译器阻止你因为某种类型不匹配而终止编译。然后，必须弄清楚哪个类型错误了，并将所有内容强制为同一类型。</p>
-<p>这是一个应用程序中的一个典型示例。界面中的一个滑块是一个<code>UISlider</code>，它的<code>minimumValue</code>和<code>maximumValue</code>是<code>Floats</code>。在下面这段代码中<code>s</code>是<code>UISlider</code>，<code>g</code>是<code>UIGestureRecognizer</code>，我们尝试使用手势识别器将滑块的“拇指”移动到用户在滑块内点击的任何位置：</p>
+</span></span></code></pre></div><p>不能在变量赋值、传递或组合不同类型的数值时，必须将这些值显式强制转换为正确的类型。<code>Cocoa</code>有很多的数值类型，<code>Cocoa</code>通常会给你一个既不是<code>Int</code>也不是<code>Double</code>的数值。</p>
+<p>你不一定能意识到这一点，直到编译器因为某种类型不匹配而终止编译。然后，必须弄清楚哪个类型错误了，并将所有内容强制为同一类型。</p>
+<p>下面是一个应用程序中的一个典型示例。界面中的一个滑块是一个<code>UISlider</code>，它的<code>minimumValue</code>和<code>maximumValue</code>是<code>Floats</code>。在下面代码中<code>s</code>是<code>UISlider</code>，<code>g</code>是<code>UIGestureRecognizer</code>，尝试使用手势识别器将滑块移动到用户在滑块内点击的任何位置：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span><span style="color:#66d9ef">let</span> pt = g.location(<span style="color:#66d9ef">in</span>:s) 
 </span></span><span style="display:flex;"><span><span style="color:#66d9ef">let</span> percentage = pt.x <span style="color:#f92672">/</span> s.bounds.size.width 
 </span></span><span style="display:flex;"><span><span style="color:#66d9ef">let</span> delta = percentage <span style="color:#f92672">*</span> (s.maximumValue <span style="color:#f92672">-</span> s.minimumValue) <span style="color:#75715e">// compile error</span>
-</span></span></code></pre></div><p>上面代码发生编译错误，是因为<code>pt.x</code>的类型是<code>CGFloat，s.bounds.size.width</code>也是<code>CGFloat</code>，因此<code>percentage</code>的类型也是<code>CGFloat</code>，但是<code>maximumValue</code>和<code>minimumValue</code>是<code>Float</code>。所以<code>percentage</code>和<code>(s.maximumValue - s.minimumValue)</code>是不同类型。在<code>Swift</code>中<code>Float</code>和<code>CGFloat</code>是不同类型，必须显式强制转换：</p>
+</span></span></code></pre></div><p>上面代码会发生编译错误，是因为<code>pt.x</code>的类型是<code>CGFloat，s.bounds.size.width</code>也是<code>CGFloat</code>，因此<code>percentage</code>的类型也是<code>CGFloat</code>，但是<code>maximumValue</code>和<code>minimumValue</code>是<code>Float</code>。所以<code>percentage</code>和<code>(s.maximumValue - s.minimumValue)</code>是不同类型。在<code>Swift</code>中<code>Float</code>和<code>CGFloat</code>是不同类型，必须显式强制类型转换：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span><span style="color:#66d9ef">let</span> delta = Float(percentage) <span style="color:#f92672">*</span> (s.maximumValue <span style="color:#f92672">-</span> s.minimumValue)
-</span></span></code></pre></div><p><code>CGFloat</code>是一个特殊的例子。它根据架构的位数（<code>32</code>位或<code>64</code>位）解析为<code>Float</code>或<code>Double</code>的大小。但这种区分已经不那么重要了，因为现在<code>32</code>位架构已经很少了，而且无论如何它都能有效地处理<code>Doubles</code>。</p>
-<p>从<code>Swift 5.5</code>开始，<code>Double</code>和<code>CGFloat</code>是可以互换的。你可以在他们被期望的地方互换，而不需要强制转换，这使<code>iOS</code>程序员减少了相当多的不便。</p>
+</span></span></code></pre></div><p><code>CGFloat</code>是一个特殊的例子。它根据架构的位数（<code>32</code>位或<code>64</code>位）解析为<code>Float</code>或<code>Double</code>的位数大小。但这种区别已经不那么重要了，因为现在<code>32</code>位架构已经很少了，而且无论如何它都能有效地处理<code>Doubles</code>。</p>
+<p>从<code>Swift 5.5</code>开始，<font color=red><code>Double</code>和<code>CGFloat</code>是可以互换的</font>。可以在它们被期望的地方互换，而不需要强制类型转换，这使<code>iOS</code>程序员减少了相当多的不便性。</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span><span style="color:#66d9ef">var</span> cfg : CGFloat = <span style="color:#ae81ff">1</span>
 </span></span><span style="display:flex;"><span><span style="color:#66d9ef">var</span> d1 : Double = <span style="color:#ae81ff">2</span>
 </span></span><span style="display:flex;"><span>cfg = d1 <span style="color:#75715e">// legal</span>
 </span></span><span style="display:flex;"><span>d1 = cfg <span style="color:#f92672">+</span> d1 <span style="color:#75715e">//  legal</span>
 </span></span><span style="display:flex;"><span><span style="color:#66d9ef">let</span> x2 = cfg <span style="color:#f92672">+</span> d1 <span style="color:#75715e">// x is inferred as Double</span>
-</span></span></code></pre></div><p>不是所有的数值型的能够强制转换为另一个类型。例如，Int8.max是127，如果尝试将&gt;=128的字面量赋值给Int8是不合法的：</p>
+</span></span></code></pre></div><p>不是所有的数值都能够强制转换为另一个类型的数值。特别是，各种尺寸的整数相对于其它尺寸的整数类型来说可能会超出范围。例如，<code>Int8.max</code>是<code>127</code>，如果尝试将<code>&gt;=128</code>的字面量赋值给<code>Int8</code>是不合法的，下面将会出现编译错误：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span><span style="color:#66d9ef">let</span> tx: Int8 = <span style="color:#ae81ff">128</span> <span style="color:#75715e">// Integer literal &#39;128&#39; overflows when stored into &#39;Int8&#39;</span>
-</span></span></code></pre></div><p>上面的例子中因为128是一个字面量，所以编译器能够判断溢出了。但进行类型强制转换时，编译器无法事先判断出来，所以在运行时才会报错：</p>
+</span></span></code></pre></div><p>上面的例子中因为<code>128</code>是一个数字字面量，所以编译器能够提前判断溢出了。但进行类型强制转换时，编译器无法事先判断是否出溢出，所以在运行时才会报错：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span><span style="color:#66d9ef">let</span> i : Int16 = <span style="color:#ae81ff">128</span> 
 </span></span><span style="display:flex;"><span><span style="color:#66d9ef">let</span> i1 = Int8(i)
 </span></span><span style="display:flex;"><span><span style="color:#75715e">// Swift/Integers.swift:3564: Fatal error: Not enough bits to represent the passed value</span>
-</span></span></code></pre></div><p>对于上面的情况，解决方案是调用一个可失败的初始化器。下面的代码虽然不会发生崩溃，但是需要测试转换是否成功：</p>
+</span></span></code></pre></div><p>对于上面的情况，解决方案是调用一个<font color=red>可失败的初始化器</font>。下面的代码在运行时虽然不会发生崩溃，但是需要测试转换是否成功：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span><span style="color:#66d9ef">let</span> i : Int16 = <span style="color:#ae81ff">128</span>
 </span></span><span style="display:flex;"><span><span style="color:#66d9ef">let</span> i1 = Int8(exactly: i)
 </span></span><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span><span style="color:#66d9ef">if</span> <span style="color:#66d9ef">let</span> i = i1 {
 </span></span><span style="display:flex;"><span>    debugPrint(i1)
 </span></span><span style="display:flex;"><span>}
-</span></span></code></pre></div><p>另外一种解决方案是使用<code>clamping</code>初始化器，这个初始化器总是会成功的，因为超出范围的值被迫落入范围内：</p>
+</span></span></code></pre></div><p>另外一种解决方案是使用<code>clamping</code>初始化器，<font color=red>这个初始化器总是会成功的</font>，因为超出范围的值会强制落入正常范围内，下面代码执行后打印的结果为<code>127</code>：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span><span style="color:#66d9ef">let</span> i : Int16 = <span style="color:#ae81ff">128</span>
 </span></span><span style="display:flex;"><span><span style="color:#66d9ef">let</span> i1 = Int8(clamping: i)
 </span></span><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span>debugPrint(i1) <span style="color:#75715e">//127</span>
-</span></span></code></pre></div><p>当浮点类型（例如<code>Double</code>）被强制转换为整数类型时，小数点后的内容会先被丢弃，然后再尝试强制转换。<code>Int8(127.9)</code> 成功，因为<code>127</code>在界限内。</p>
-<h3 id="arithmetic-operations">Arithmetic operations</h3>
+</span></span></code></pre></div><p>当浮点类型（例如<code>Double</code>）被强制转换为整数类型时，<font color=red>小数点后的内容会先被丢弃，然后再尝试强制转换</font>。例如，<code>Int8(127.9)</code> 会转换成功，因为<code>127</code>在界限内。</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span>debugPrint(Int8(<span style="color:#ae81ff">127.9</span>))
+</span></span></code></pre></div><h3 id="arithmetic-operations">Arithmetic operations</h3>
 <p>从技术上讲，如果整数是无符号的，<font color=red>移位运算符执行逻辑移位，如果整数是有符号的，则执行算术移位</font>。整数溢出或下溢——例如，两个<code>Int</code>值的和超过<code>Int.max</code>——是运行时错误（应用程序将崩溃）：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span><span style="color:#66d9ef">let</span> i = Int.max <span style="color:#f92672">-</span> <span style="color:#ae81ff">2</span>
 </span></span><span style="display:flex;"><span><span style="color:#66d9ef">let</span> j = i <span style="color:#f92672">+</span> <span style="color:#ae81ff">12</span><span style="color:#f92672">/</span><span style="color:#ae81ff">2</span> <span style="color:#75715e">// crash</span>

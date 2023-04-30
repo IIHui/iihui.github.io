@@ -1019,20 +1019,21 @@ let i = 10 let n = 3.0 let x = i / n // compile error:Binary operator &amp;#39;/
 let i = 10 let n = 3.0 let x = Double(i) / n 这些规则是Swift强类型的结果。对于现代计算机语言来说，它们构成了对数值非同寻常的处理，而且可能会在短时间内把你逼疯。
 到目前为止，所举的例子很容易解决，但如果算术表达式较长，事情就会变得更加复杂，而且这个问题会因为其它数字类型的存在而变得更加复杂，这些数字类型是与Cocoa兼容所需要的。
 Other numeric types 如果只是在某个孤立的、抽象的世界中使用Swift，可能只使用Int和Double就能完成所有必要的算术运算。但是，如果是在进行iOS编程，就会遇到Cocoa，它里面包含了许多其它的数字类型，而Swift有与每一种类型相匹配的类型。
-除了Int，还有各种大小的有符号整数类型——Int8、Int16、Int32、Int64。加上无符号整数类型UInt以及 UInt8、UInt16、UInt32和UInt64。除了Double，还有低精度Float（32位存储，大约6或7个小数位精度）、更低精度的Float16、扩展精度Float80 和来自Core Graphics框架CGFloat。
-在试图与C语言API对接时，也可能遇到C语言的数字类型。就Swift而言，这些类型只是类型别名，也就是说，它们是另一种类型的替代名称：CDouble（对应C语言的double）只是Double的另一个名字，CLong（C语言的long）是Int等等。
-在各种Cocoa框架中会出现许多其它的数字类型的别名，例如，TimeInterval（Objective-C的NSTimeInterval）只是Double的一个类型别名。
-let percentage = pt.x / s.bounds.size.width 不能在变量赋值、传递或组合时使用不同数值类型的值，必须将这些值显式强制为正确的类型。但现在事实证明，有时被Cocoa淹没了许多类型的数值。Cocoa通常会给你一个既不是Int也不是Double的数值——你不一定会意识到这一点，直到编译器阻止你因为某种类型不匹配而终止编译。然后，必须弄清楚哪个类型错误了，并将所有内容强制为同一类型。
-这是一个应用程序中的一个典型示例。界面中的一个滑块是一个UISlider，它的minimumValue和maximumValue是Floats。在下面这段代码中s是UISlider，g是UIGestureRecognizer，我们尝试使用手势识别器将滑块的“拇指”移动到用户在滑块内点击的任何位置：
-let pt = g.location(in:s) let percentage = pt.x / s.bounds.size.width let delta = percentage * (s.maximumValue - s.minimumValue) // compile error 上面代码发生编译错误，是因为pt.x的类型是CGFloat，s.bounds.size.width也是CGFloat，因此percentage的类型也是CGFloat，但是maximumValue和minimumValue是Float。所以percentage和(s.maximumValue - s.minimumValue)是不同类型。在Swift中Float和CGFloat是不同类型，必须显式强制转换：
-let delta = Float(percentage) * (s.maximumValue - s.minimumValue) CGFloat是一个特殊的例子。它根据架构的位数（32位或64位）解析为Float或Double的大小。但这种区分已经不那么重要了，因为现在32位架构已经很少了，而且无论如何它都能有效地处理Doubles。
-从Swift 5.5开始，Double和CGFloat是可以互换的。你可以在他们被期望的地方互换，而不需要强制转换，这使iOS程序员减少了相当多的不便。
-var cfg : CGFloat = 1 var d1 : Double = 2 cfg = d1 // legal d1 = cfg &#43; d1 // legal let x2 = cfg &#43; d1 // x is inferred as Double 不是所有的数值型的能够强制转换为另一个类型。例如，Int8.max是127，如果尝试将&amp;gt;=128的字面量赋值给Int8是不合法的：
-let tx: Int8 = 128 // Integer literal &amp;#39;128&amp;#39; overflows when stored into &amp;#39;Int8&amp;#39; 上面的例子中因为128是一个字面量，所以编译器能够判断溢出了。但进行类型强制转换时，编译器无法事先判断出来，所以在运行时才会报错：
-let i : Int16 = 128 let i1 = Int8(i) // Swift/Integers.swift:3564: Fatal error: Not enough bits to represent the passed value 对于上面的情况，解决方案是调用一个可失败的初始化器。下面的代码虽然不会发生崩溃，但是需要测试转换是否成功：
-let i : Int16 = 128 let i1 = Int8(exactly: i)  if let i = i1 {  debugPrint(i1) } 另外一种解决方案是使用clamping初始化器，这个初始化器总是会成功的，因为超出范围的值被迫落入范围内：
-let i : Int16 = 128 let i1 = Int8(clamping: i)  debugPrint(i1) //127 当浮点类型（例如Double）被强制转换为整数类型时，小数点后的内容会先被丢弃，然后再尝试强制转换。Int8(127.9) 成功，因为127在界限内。
-Arithmetic operations 从技术上讲，如果整数是无符号的，移位运算符执行逻辑移位，如果整数是有符号的，则执行算术移位。整数溢出或下溢——例如，两个Int值的和超过Int.max——是运行时错误（应用程序将崩溃）：
+除了Int，还有各种大小的有符号整数类型—Int8、Int16、Int32、Int64。加上无符号整数类型UInt以及 UInt8、UInt16、UInt32和UInt64。除了Double，还有低精度Float（32位存储，大约6或7个小数位精度）、更低精度的Float16、扩展精度Float80 和来自Core Graphics框架CGFloat。
+在试图与C语言API对接时，也可能遇到C语言的数字类型。就Swift而言，这些类型只是类型别名，例如CDouble（对应C语言的double）只是Double的另一个名字，CLong（C语言的long）是Int。
+在各种Cocoa框架中会出现许多其它数字类型的别名，例如，TimeInterval（Objective-C的NSTimeInterval）只是Double的一个类型别名。
+let percentage = pt.x / s.bounds.size.width 不能在变量赋值、传递或组合不同类型的数值时，必须将这些值显式强制转换为正确的类型。Cocoa有很多的数值类型，Cocoa通常会给你一个既不是Int也不是Double的数值。
+你不一定能意识到这一点，直到编译器因为某种类型不匹配而终止编译。然后，必须弄清楚哪个类型错误了，并将所有内容强制为同一类型。
+下面是一个应用程序中的一个典型示例。界面中的一个滑块是一个UISlider，它的minimumValue和maximumValue是Floats。在下面代码中s是UISlider，g是UIGestureRecognizer，尝试使用手势识别器将滑块移动到用户在滑块内点击的任何位置：
+let pt = g.location(in:s) let percentage = pt.x / s.bounds.size.width let delta = percentage * (s.maximumValue - s.minimumValue) // compile error 上面代码会发生编译错误，是因为pt.x的类型是CGFloat，s.bounds.size.width也是CGFloat，因此percentage的类型也是CGFloat，但是maximumValue和minimumValue是Float。所以percentage和(s.maximumValue - s.minimumValue)是不同类型。在Swift中Float和CGFloat是不同类型，必须显式强制类型转换：
+let delta = Float(percentage) * (s.maximumValue - s.minimumValue) CGFloat是一个特殊的例子。它根据架构的位数（32位或64位）解析为Float或Double的位数大小。但这种区别已经不那么重要了，因为现在32位架构已经很少了，而且无论如何它都能有效地处理Doubles。
+从Swift 5.5开始，Double和CGFloat是可以互换的。可以在它们被期望的地方互换，而不需要强制类型转换，这使iOS程序员减少了相当多的不便性。
+var cfg : CGFloat = 1 var d1 : Double = 2 cfg = d1 // legal d1 = cfg &#43; d1 // legal let x2 = cfg &#43; d1 // x is inferred as Double 不是所有的数值都能够强制转换为另一个类型的数值。特别是，各种尺寸的整数相对于其它尺寸的整数类型来说可能会超出范围。例如，Int8.max是127，如果尝试将&amp;gt;=128的字面量赋值给Int8是不合法的，下面将会出现编译错误：
+let tx: Int8 = 128 // Integer literal &amp;#39;128&amp;#39; overflows when stored into &amp;#39;Int8&amp;#39; 上面的例子中因为128是一个数字字面量，所以编译器能够提前判断溢出了。但进行类型强制转换时，编译器无法事先判断是否出溢出，所以在运行时才会报错：
+let i : Int16 = 128 let i1 = Int8(i) // Swift/Integers.swift:3564: Fatal error: Not enough bits to represent the passed value 对于上面的情况，解决方案是调用一个可失败的初始化器。下面的代码在运行时虽然不会发生崩溃，但是需要测试转换是否成功：
+let i : Int16 = 128 let i1 = Int8(exactly: i)  if let i = i1 {  debugPrint(i1) } 另外一种解决方案是使用clamping初始化器，这个初始化器总是会成功的，因为超出范围的值会强制落入正常范围内，下面代码执行后打印的结果为127：
+let i : Int16 = 128 let i1 = Int8(clamping: i)  debugPrint(i1) //127 当浮点类型（例如Double）被强制转换为整数类型时，小数点后的内容会先被丢弃，然后再尝试强制转换。例如，Int8(127.9) 会转换成功，因为127在界限内。
+debugPrint(Int8(127.9)) Arithmetic operations 从技术上讲，如果整数是无符号的，移位运算符执行逻辑移位，如果整数是有符号的，则执行算术移位。整数溢出或下溢——例如，两个Int值的和超过Int.max——是运行时错误（应用程序将崩溃）：
 let i = Int.max - 2 let j = i &#43; 12/2 // crash 在某些情况下，我们可能想要强制此类操作成功，因此提供了特殊的上溢/下溢方法。这些方法返回一个元组，下面代码中over打印的值为true：
 let i = Int.max - 2 let (j, over) = i.addingReportingOverflow(12/2) debugPrint(over) 上面的代码执行后，j的值变成了Int.min&#43;3，因为该值已从Int.max环绕到Int.min。如果不关心是否存在上溢/下溢，可以使用特殊的算术运算符来抑制错误：&amp;amp;&#43;、&amp;amp;-、&amp;amp;*。
 经常希望将现有变量的值与另一个值进行算术组合，并将结果存储在同一个变量中。为此，您需要将变量声明为var：
