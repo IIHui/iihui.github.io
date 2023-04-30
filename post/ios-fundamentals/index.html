@@ -241,7 +241,7 @@ code.has-jax {
     <i class="fa fa-file-word-o"></i>
 </span>
 <span class="post-meta-item-text">字数: </span>
-<span class="leancloud-visitors-count">73714</span>
+<span class="leancloud-visitors-count">73710</span>
 &nbsp; | &nbsp;
 <span class="post-meta-item-icon">
     <i class="fa fa-coffee"></i>
@@ -2772,23 +2772,23 @@ code.has-jax {
 </span></span></code></pre></div><p>当浮点类型（例如<code>Double</code>）被强制转换为整数类型时，<font color=red>小数点后的内容会先被丢弃，然后再尝试强制转换</font>。例如，<code>Int8(127.9)</code> 会转换成功，因为<code>127</code>在界限内。</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span>debugPrint(Int8(<span style="color:#ae81ff">127.9</span>))
 </span></span></code></pre></div><h3 id="arithmetic-operations">Arithmetic operations</h3>
-<p>从技术上讲，如果整数是无符号的，<font color=red>移位运算符执行逻辑移位，如果整数是有符号的，则执行算术移位</font>。整数溢出或下溢——例如，两个<code>Int</code>值的和超过<code>Int.max</code>——是运行时错误（应用程序将崩溃）：</p>
+<p>从技术上讲，如果整数是无符号的，<font color=red>移位运算符执行逻辑移位，如果整数是有符号的，则执行算术移位</font>。整数上溢或下溢是运行时错误（应用程序将崩溃）例如，两个<code>Int</code>值的和超过<code>Int.max</code>：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span><span style="color:#66d9ef">let</span> i = Int.max <span style="color:#f92672">-</span> <span style="color:#ae81ff">2</span>
-</span></span><span style="display:flex;"><span><span style="color:#66d9ef">let</span> j = i <span style="color:#f92672">+</span> <span style="color:#ae81ff">12</span><span style="color:#f92672">/</span><span style="color:#ae81ff">2</span> <span style="color:#75715e">// crash</span>
-</span></span></code></pre></div><p>在某些情况下，我们可能想要强制此类操作成功，因此提供了特殊的上溢/下溢方法。这些方法返回一个元组，下面代码中over打印的值为true：</p>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">let</span> j = i <span style="color:#f92672">+</span> <span style="color:#ae81ff">12</span><span style="color:#f92672">/</span><span style="color:#ae81ff">2</span> <span style="color:#75715e">// 会发生crash</span>
+</span></span></code></pre></div><p>在某些情况下，我们可能想要强制此类操作成功，因此<font color=red>提供了特殊的上溢/下溢方法</font>。这些方法返回一个元组，下面代码中<code>over</code>打印的值为<code>true</code>：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span><span style="color:#66d9ef">let</span> i = Int.max <span style="color:#f92672">-</span> <span style="color:#ae81ff">2</span>
 </span></span><span style="display:flex;"><span><span style="color:#66d9ef">let</span> (j, over) = i.addingReportingOverflow(<span style="color:#ae81ff">12</span><span style="color:#f92672">/</span><span style="color:#ae81ff">2</span>)
 </span></span><span style="display:flex;"><span>debugPrint(over)
 </span></span></code></pre></div><p>上面的代码执行后，<code>j</code>的值变成了<code>Int.min+3</code>，因为该值已从<code>Int.max</code>环绕到<code>Int.min</code>。如果不关心是否存在上溢/下溢，可以使用特殊的算术运算符来抑制错误：<code>&amp;+、&amp;-、&amp;*</code>。</p>
-<p>经常希望将现有变量的值与另一个值进行算术组合，并将结果存储在同一个变量中。为此，您需要将变量声明为<code>var</code>：</p>
+<p>经常希望将现有变量的值与另一个值进行算术组合，并将结果存储在同一个变量中。为此，需要将变量声明为<code>var</code>：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span><span style="color:#66d9ef">var</span> i = <span style="color:#ae81ff">1</span>
 </span></span><span style="display:flex;"><span>i = i <span style="color:#f92672">+</span> <span style="color:#ae81ff">7</span>
-</span></span></code></pre></div><p>实际上有个更简单的写法，提供了一次执行算术运算和赋值的运算符：</p>
+</span></span></code></pre></div><p>实际上有个速记法，提供了一次执行算术运算和赋值的运算符：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span><span style="color:#66d9ef">var</span> i = <span style="color:#ae81ff">1</span>
 </span></span><span style="display:flex;"><span>i <span style="color:#f92672">+=</span> <span style="color:#ae81ff">7</span>
 </span></span></code></pre></div><p>速记（复合）赋值算术运算符有<code>+=, -=, *=, /=, %=, &amp;=,|=, ^=, &lt;&lt;=, &gt;&gt;=</code>。</p>
 <h3 id="comparison">Comparison</h3>
-<p>对于两个不同类型的整数，虽然他们不能在不能在算术运算中组合它们，但可以比较不同整数类型的值：</p>
+<p>对于两个不同类型的整数，虽然他们不能在算术运算中组合它们，但可以比较不同整数类型的值：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span><span style="color:#66d9ef">let</span> i1: Int = <span style="color:#ae81ff">1</span>
 </span></span><span style="display:flex;"><span><span style="color:#66d9ef">let</span> i2: UInt8 = <span style="color:#ae81ff">2</span>
 </span></span><span style="display:flex;"><span><span style="color:#66d9ef">let</span> ok = i <span style="color:#f92672">&lt;</span> i2 <span style="color:#75715e">// true</span>

@@ -1033,13 +1033,13 @@ let tx: Int8 = 128 // Integer literal &amp;#39;128&amp;#39; overflows when store
 let i : Int16 = 128 let i1 = Int8(i) // Swift/Integers.swift:3564: Fatal error: Not enough bits to represent the passed value 对于上面的情况，解决方案是调用一个可失败的初始化器。下面的代码在运行时虽然不会发生崩溃，但是需要测试转换是否成功：
 let i : Int16 = 128 let i1 = Int8(exactly: i)  if let i = i1 {  debugPrint(i1) } 另外一种解决方案是使用clamping初始化器，这个初始化器总是会成功的，因为超出范围的值会强制落入正常范围内，下面代码执行后打印的结果为127：
 let i : Int16 = 128 let i1 = Int8(clamping: i)  debugPrint(i1) //127 当浮点类型（例如Double）被强制转换为整数类型时，小数点后的内容会先被丢弃，然后再尝试强制转换。例如，Int8(127.9) 会转换成功，因为127在界限内。
-debugPrint(Int8(127.9)) Arithmetic operations 从技术上讲，如果整数是无符号的，移位运算符执行逻辑移位，如果整数是有符号的，则执行算术移位。整数溢出或下溢——例如，两个Int值的和超过Int.max——是运行时错误（应用程序将崩溃）：
-let i = Int.max - 2 let j = i &#43; 12/2 // crash 在某些情况下，我们可能想要强制此类操作成功，因此提供了特殊的上溢/下溢方法。这些方法返回一个元组，下面代码中over打印的值为true：
+debugPrint(Int8(127.9)) Arithmetic operations 从技术上讲，如果整数是无符号的，移位运算符执行逻辑移位，如果整数是有符号的，则执行算术移位。整数上溢或下溢是运行时错误（应用程序将崩溃）例如，两个Int值的和超过Int.max：
+let i = Int.max - 2 let j = i &#43; 12/2 // 会发生crash 在某些情况下，我们可能想要强制此类操作成功，因此提供了特殊的上溢/下溢方法。这些方法返回一个元组，下面代码中over打印的值为true：
 let i = Int.max - 2 let (j, over) = i.addingReportingOverflow(12/2) debugPrint(over) 上面的代码执行后，j的值变成了Int.min&#43;3，因为该值已从Int.max环绕到Int.min。如果不关心是否存在上溢/下溢，可以使用特殊的算术运算符来抑制错误：&amp;amp;&#43;、&amp;amp;-、&amp;amp;*。
-经常希望将现有变量的值与另一个值进行算术组合，并将结果存储在同一个变量中。为此，您需要将变量声明为var：
-var i = 1 i = i &#43; 7 实际上有个更简单的写法，提供了一次执行算术运算和赋值的运算符：
+经常希望将现有变量的值与另一个值进行算术组合，并将结果存储在同一个变量中。为此，需要将变量声明为var：
+var i = 1 i = i &#43; 7 实际上有个速记法，提供了一次执行算术运算和赋值的运算符：
 var i = 1 i &#43;= 7 速记（复合）赋值算术运算符有&#43;=, -=, *=, /=, %=, &amp;amp;=,|=, ^=, &amp;lt;&amp;lt;=, &amp;gt;&amp;gt;=。
-Comparison 对于两个不同类型的整数，虽然他们不能在不能在算术运算中组合它们，但可以比较不同整数类型的值：
+Comparison 对于两个不同类型的整数，虽然他们不能在算术运算中组合它们，但可以比较不同整数类型的值：
 let i1: Int = 1 let i2: UInt8 = 2 let ok = i &amp;lt; i2 // true  let ok2 = i1 == i2 // false debugPrint(ok2) //false 由于计算机存储数字的方式，Double值的相等比较可能不会在您期望的地方成功。举一个经典的例子，将0.1加十次与0.1乘以10的结果不同：
 let f2 = 0.1 var sum = 0.0 for _ in 0..&amp;lt;10 {  sum &#43;= f2 } let product = f2 * 10 let ok3 = sum == product // false debugPrint(ok3) //false 解决这类问题并不容易。通常的方法是检查两个值是否足够接近，但这引出了什么构成足够接近的问题。一个有用的公式是:
 let ok = sum &amp;gt;= product.nextDown &amp;amp;&amp;amp; sum &amp;lt;= product.nextUp // true String 在Swift中，字符串String也是结构体类型。表示字符串值的最简单方法是使用字面量，使用双引号分隔：
