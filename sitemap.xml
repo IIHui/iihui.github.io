@@ -991,23 +991,24 @@ class MyClass {  static let shared = MyClass()  private init() {  //  } } 在代
 通常，我们希望实例属性是Lazy Initialization的。因为实例属性初始值的生成所花费的代价可能是昂贵的，所以除非确实需要用到的时候，一般会避免提前生成。但还有另一个原因更重要，懒初始化可以做普通初始化器不能做的事情。
 最重要的是懒初始化可以访问实例本身，而普通的初始化器是不能这样做的，因为在普通初始化器运行的时候，实例尚未生成。在下面的代码中，如果arrow属性不声明为lazy，将会出现编译错误Cannot use instance member &#39;self&#39; within property initializer; property initializers run before &#39;self&#39; is available：
 class MyView: UIView {  lazy var arrow = self.arrowImage() // legal  func arrowImage() -&amp;gt; UIImage {  // ... big image-generating code goes here ...  } } 一个常见的习惯是定义和调用匿名函数来初始化一个lazy实例属性。一旦加上lazy，那么在这个匿名函数中就可以引用实例本身self：
-class MyView: UIView {  lazy var prog: UIProgressView = {  let p = UIProgressView(progressViewStyle: .default)  p.alpha = 0.7  p.trackTintColor = UIColor.clear  p.progressTintColor = UIColor.black  p.frame = CGRect(x: 0, y: 0, width: self.view.bounds.size.width, height: 20) // legal   p.progress = 1.0  return p  }() } 因为不能将lazy加在let声明的属性上，所以不要让一个lazy的实例属性成为只读的。与自动lazy的全局变量和静态变量不同，标记为lazy的实例属性是线程不安全的。当在多线程环境中使用时，lazy的实例属性可能会导致多次初始化，甚至闪退。
-没有lazy let实例属性，因此不能轻易地将lazy实例属性设置为只读。这是不幸的，因为有一些常见的情况会从这样的功能中受益。
-假设我们想用一个helper属性来武装self，该属性持有一个Helper类的实例，需要一个对self的引用。我们还想让这个Helper实例在self的整个生命周期内持续存在。我们可以通过让helper成为一个let属性并在其声明中初始化它来执行这一规则。
-但是我们不能把self传递给Helper的初始化器，因为我们不能在属性声明中引用self。我们可以通过声明helper属性为lazy来解决这个问题。但问题是，我们必须使用var来声明helper，也就是说这个helper是可能被其他代码改变。当然，我们会尽量不让它发生，但问题是，lazy var这样的表达方式无法执行所需的策略。
-Built-In Simple Types 每一个变量和每一个字面量都必须有一个类型。Swift内置的简单类型有Bool,Numbers，String，Character，Range，Tuple等。
-与许多计算机语言不同，Swift中没有任何其它东西能被隐含地转换为Bool。例如，在C语言中，布尔值实际上是一个数字，0代表false，非0代表true。而在Swift中，只有false是false，true为true。
+class MyView: UIView {  lazy var prog: UIProgressView = {  let p = UIProgressView(progressViewStyle: .default)  p.alpha = 0.7  p.trackTintColor = UIColor.clear  p.progressTintColor = UIColor.black  p.frame = CGRect(x: 0, y: 0, width: self.view.bounds.size.width, height: 20) // legal   p.progress = 1.0  return p  }() } 因为不能将lazy加在用let声明的属性上，所以不要让一个lazy的实例属性成为只读的。
+与自动lazy的全局变量和静态变量不同，标记为lazy的实例属性是线程不安全的。当在多线程环境中使用时，lazy的实例属性可能会导致多次初始化，甚至闪退。
+没有lazy let实例属性，因此不能欣然地将lazy实例属性设置为只读。这是不幸的，因为有一些常见的情况会从这样的功能中受益。
+假设想用一个helper属性添加到self中，它持有一个Helper类实例，并需要一个对self的引用。我们还想让这个Helper实例在self的整个生命周期内持续存在。可以通过让helper成为一个let属性并在其声明中初始化它来执行这一规则。
+但是不能把self传递给Helper的初始化器，因为不能在属性声明中引用self。可以通过声明helper属性为lazy来解决这个问题。但是必须使用var来声明helper，也就是说这个helper是可能被其它代码改变。当然，我们可以尽量不让它发生，但问题是lazy var这样的表达方式无法执行我们所需的策略。
+Built-In Simple Types 每一个变量和每一个字面量都必须有一个类型。Swift内置的简单类型有Bool,Numbers，String，Character，Range，Tuple等。其中Bool类型是一个结构体，只有两个值，一个是true，一个是false：
+@frozen public struct Bool : Sendable {  public init()  @inlinable public init(_ value: Bool)  @inlinable public static func random&amp;lt;T&amp;gt;(using generator: inout T) -&amp;gt; Bool where T : RandomNumberGenerator  @inlinable public static func random() -&amp;gt; Bool } 与许多计算机语言不同，Swift中没有任何其它东西能被隐含地转换为Bool。例如，在C语言中，布尔值实际上是一个数字，0代表false，非0代表true。而在Swift中，只有false是false，true为true。
 一个常见的情况：一个存储在某个var变量中的Bool，我们想反转它的值。即如果它是false的就变成true，如果它是true就变成false。
-v.isUserInteractionEnabled = !v.isUserInteractionEnabled 上面的方式很麻烦，也容易忘记加取非符号!。有一个更简单的方法，即在Bool变量上调用toggle方法。上面的代码可以直接使用v.isUserInteractionEnabled.toggle()来实现。
+v.isUserInteractionEnabled = !v.isUserInteractionEnabled 上面的方式很麻烦，也容易忘记加取非符号!。有一个更简单的方法，即在Bool变量上调用toggle方法:
 v.isUserInteractionEnabled.toggle() 主要的数字类型是Int和Double，我们一般会使用这些类型。其它数字类型的存在主要是为了与C和Objective-C API兼容。
-Int对象类型（一个结构体类型）表示Int.min和Int.max之间的一个整数。最小和最大限制的实际值取决于应用程序运行的平台和架构，它们并不是绝对的。
-表示一个Int值最简单的方法是作为一个数字字头。一个没有小数点的数字默认为Int。内部下划线也是合法的这对长数字的可读性很有用。前导零是合法的，这对于在代码中填充和对齐数值很有用。
-var x = 1000_000_000 var y = 00001 可以用二进制、八进制或十六进制的数字来写Int。要做到这一点，需要分别以0b、0o或0x开始。例如，0x10是十六进制表示，代表十进制的16。
+Int对象类型也是一个结构体类型，表示Int.min和Int.max之间的一个整数。实际限制值取决于应用程序运行的平台和架构，它们并不是绝对的。
+表示一个Int值最简单的方法是使用一个字面量。没有小数点的数字字面量默认为Int。内部下划线也是合法的，内部下划线对长数字的可读性很有用。前导零也是合法的，这对于在代码中填充和对齐数值很有用。
+var x = 1000_000_000 var y = 00001 可以用二进制、八进制或十六进制的字面量来表示Int。要做到这一点，需要分别以0b、0o或0x开始。例如，0x10是十六进制表示，代表十进制的16。
 负数以二进制补码格式存储。可以写一个看起来像底层存储的二进制字面量，但要使用它，必须通过Int(bitPattern:)初始化器。
-在Swift中Double是一个结构体类型，表示一个精度约为15位小数的浮点数（使用64位存储）。含有小数点的数字默认为Double类型，并且Double类型的内部下划线和前导零是合法的。
+在Swift中Double是一个结构体类型，表示一个精度约为15位小数的浮点数（使用64位存储）。含有小数点的数字默认为Double类型，并且Double类型的内部下划线和前导零也是合法的。
 Double字面量不能以小数点开头（与C和Objective-C不同）。如果要表示的值介于0和1之间，则以0开头。Double有静态属性Double.infinity和Double.pi，也有一个实例属性isZero。
 可以使用科学计数法写Double字面量，字母e之后的所有内容都是10的指数。如果小数位为零，则可以省略小数点。例如，3e2 是300。
-可以用十六进制数字写一个Double字面量。要这样做，以0x开头。也可以在使用指数法（同样，可以省略小数点，字母p后面的所有内容都是2的指数。 例如，0x10p2是十进制64。
+可以用十六进制数字写一个Double字面量。要这样做，需要以0x开头。也可以在使用指数法（同样，可以省略小数点，字母p后面的所有内容都是2的指数。 例如，0x10p2是十进制64。
 Numeric coercion 强制转换是指从一种类型转换为另一种类型。Swift并没有显式的类型强制转换，但它使用实例化能够完成同样的效果。Swift的数字类型提供了初始化器，这些初始化器将另一个数字类型实例作为参数：
 let i = 10 //an Int let x = Double(i) debugPrint(x) // 10.0, a Double let y = 3.8 //a Double let j = Int(y) debugPrint(j) // 3, an Int 当数值被赋值给变量或作为参数传递给函数时，Swift只对字面数字量进行隐式强制转换。下面这段代码是合法的，虽然10默认是Int类型，但因为它是字面数字量，因此能够隐式地转换为Double类型：
 let d : Double = 10 但下面这段代码是不合法的，编译器会报错。因为所赋值的是一个不同类型的变量，而不是字面数字。问题的根源是i为Int实例，d是一个Double实例，二者不能自动进行隐式转换：
@@ -1040,7 +1041,7 @@ var i = 1 i &#43;= 7 速记（复合）赋值算术运算符有&#43;=, -=, *=, /
 Comparison 对于两个不同类型的整数，虽然他们不能在不能在算术运算中组合它们，但可以比较不同整数类型的值：
 let i1: Int = 1 let i2: UInt8 = 2 let ok = i &amp;lt; i2 // true  let ok2 = i1 == i2 // false debugPrint(ok2) //false 由于计算机存储数字的方式，Double值的相等比较可能不会在您期望的地方成功。举一个经典的例子，将0.1加十次与0.1乘以10的结果不同：
 let f2 = 0.1 var sum = 0.0 for _ in 0..&amp;lt;10 {  sum &#43;= f2 } let product = f2 * 10 let ok3 = sum == product // false debugPrint(ok3) //false 解决这类问题并不容易。通常的方法是检查两个值是否足够接近，但这引出了什么构成足够接近的问题。一个有用的公式是:
-let ok = sum &amp;gt;= product.nextDown &amp;amp;&amp;amp; sum &amp;lt;= product.nextUp // true String 在Swift中，字符串String是结构体类型。表示字符串值的最简单方法是使用字面量，使用双引号分隔：
+let ok = sum &amp;gt;= product.nextDown &amp;amp;&amp;amp; sum &amp;lt;= product.nextUp // true String 在Swift中，字符串String也是结构体类型。表示字符串值的最简单方法是使用字面量，使用双引号分隔：
 let greeting = &amp;#34;hello&amp;#34; Swift中的字符串是完全现代的，它使用Unicode编码，可以在字符串字面量中直接包含任何字符（如表情符号）。如果知道一个字符的Unicode码点，并且不嫌麻烦，可以使用\u{...}，需要注意的是在花括号的内容至多为八位十六进制数字：
 let leftTripleArrow = &amp;#34;\u{21DA}&amp;#34; 该字符串中的反斜杠是转义字符。它的意思是，“我不是一个真正的反斜杠，表示下一个字符会得到特殊待遇。”各种不可打印和不明确的字符作为转义字符输入，最重要的是以下字符：
  \n：一个Unix换行符。 \t：制表符。 \&amp;quot;：引号（转义以表明这不是字符串文字的结尾）。 \\：反斜杠（因为单独的反斜杠是转义字符而转义）。  转义的引号和反斜线会很快使你的字符串字面意义变得难看和难以辨认。这个问题尤其出现在正则表达式模式等情况下。例如，模式\b\d\d\b（一个由两个数字组成的词）必须写成&amp;quot;\\b\d\d\b&amp;quot;。但是你可以在引号和反斜杠之前省略转义字符，用一个或多个哈希字符（#）包围你的字面，下面这些都是相同的字符串：
