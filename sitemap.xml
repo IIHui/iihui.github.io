@@ -1050,8 +1050,17 @@ let pattold = &amp;#34;\\b\\d\\d\\b&amp;#34; let pattnew = #&amp;#34;\b\d\d\b&am
 let hello = #&amp;#34;hello\nthere&amp;#34;# debugPrint(hello)  // &amp;#34;hello\\nthere&amp;#34;  let hello = #&amp;#34;hello\#nthere&amp;#34;# debugPrint(hello)  // &amp;#34;hello\nthere&amp;#34; 可以将包含换行符的字符串字面量输入为多行，而不是包含\n字符的单行表达式，这称为多行字符串字面量。使用的规则如下：
  多行字符串字面量必须在开始和结束处用三重双引号 (&amp;quot;&amp;quot;&amp;quot;) 分隔。 任何字符都不能跟在同一行的开头分隔符后面。 除了空格之外，其它任何字符都不能与结束分隔符出现在同一行。 结束分隔符之前的最后一个隐式换行符会被忽略。 结束分隔符的缩进决定了文本行的缩进，它必须至少缩进到结束分隔符（整个空行除外）。  func ff() {  let s = &amp;#34;&amp;#34;&amp;#34; Line 1 Line 2 Line 3 &amp;#34;&amp;#34;&amp;#34; // ... } 在上面字符串s包含3行字符串，第1和第3行没有以空格开始，第2行以4个空格开始，第1行和第2行后面包含换行符。如果要在第3行后添加换行，可以输入一个空行，或者写一个转义的\n。
 在多行字符串字面量中，双引号不需要转义。以反斜杠结尾的一行与下一行相连。在下面这段代码中，字符串s仅由两行文字组成，第二行由四个空格开始，后面紧跟着 &amp;ldquo;Line 2 and this is still line 2&amp;rdquo;：
-func f() {  let s = &amp;#34;&amp;#34;&amp;#34; Line &amp;#34;1&amp;#34; Line 2 and this is still Line 2 &amp;#34;&amp;#34;&amp;#34;  // ...  debugPrint(s) } 可以用#字符包围一个多行字符串字头，使之成为一个原始的多行字符串字头；但你不太可能这样做。
-Range Range对象类型是一个结构体，代表一对端点。形成Range字面量的操作符有两个，提供一个开始值和一个结束值，在它们之间有一个Range操作符：
+func f() {  let s = &amp;#34;&amp;#34;&amp;#34; Line &amp;#34;1&amp;#34; Line 2 and this is still Line 2 &amp;#34;&amp;#34;&amp;#34;  // ...  debugPrint(s) } 可以使用#包围住多行字符串字面量，使之成为一个原始的多行字符串字头，但通常不太可能这样做。
+字符串插值允许在字符串字面量中嵌入任何值，即使这个值本身不是字符串，使用转义圆括号来实现：
+let n = 5 let s = &amp;#34;You have \(n)widgets.&amp;#34; 如果是在一个字符串中插值，那么字符串中的引号不需要被转义：
+let s = &amp;#34;You have \(&amp;#34;numerous&amp;#34;.uppercased())widgets&amp;#34; debugPrint(s)  // &amp;#34;You have NUMEROUS widgets&amp;#34; 字符串插值在多行字符串是合法的。在以#包围的原始字符串中插值也是合法的，但反斜杠后面必须有相同数量的#字符，以表明它是转义字符。
+字符串插值的语法可以定制，以接受额外的参数，重定义第一个参数应该如何转换。这种形式的表达式可以是合法的：
+let n = 5 let s = &amp;#34;You have \(n, roman: true)widgets&amp;#34; debugPrint(s) 连接两个字符串，最简单的方式是使用&#43;操作符：
+let s = &amp;#34;hello&amp;#34; let s2 = &amp;#34; world&amp;#34; let greeting = s &#43; s2 debugPrint(greeting) 这种便捷的标识可以成为可能，是因为操作符&#43;是重载的。所有的运算符都可以被重载，可以重载某个操作符，以某种适当的方式对自己的类型进行操作。
+字符串和Int之间的强制转换是可能的。要创建一个代表Int的字符串，只需使用字符串插值就可以了。或者使用以Int为参数的String初始化器：
+let i = 7 let s = String(i) // &amp;#34;7&amp;#34; debugPrint(s)  // 7 字符串也可以代表其它基数的Int，只需在初始化器中，提供一个表达基数的radix: 参数：
+let i = 31 let s = String(i, radix: 16) // &amp;#34;1f&amp;#34; debugPrint(s) 一个代表数字的字符串，可以强制转换为数值类型，一个整数类型能接受一个表达基数的radix: 参数。强制转换可能会失败的，因为字符串可能不代表数字。所以，结果不是一个数字，而是一个包裹着数字的Optional。
+let s = &amp;#34;31&amp;#34; let i = Int(s) // Optional(31) let s2 = &amp;#34;1f&amp;#34; let i2 = Int(s2, radix: 16) // Optional(31) debugPrint(i, i2) Range Range对象类型是一个结构体，代表一对端点。形成Range字面量的操作符有两个，提供一个开始值和一个结束值，在它们之间有一个Range操作符：
   ...闭range操作符：a...b意味着a到b的一切，包括b。
   ..&amp;lt;半开range操作符：a..&amp;lt;b意味着a到b的一切，但不包括b。
   在Range操作符两边添加空格是合法的，例如1...3或1 ... 3都是合法的。一个Range的端点的类型通常是某种数字，最常见的是整型。
