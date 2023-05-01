@@ -911,12 +911,12 @@ class ViewController: UIViewController {   @IBOutlet var button: UIButton!   fun
   如果使用#selector的代码能够编译，将保证将传递给此参数的实际选择器是正确的。手动写方法字符串可能会形成错误的选择器，但编译器不会，它所产生的selector不可能与方法不匹配，也不可能出现unrecognized selector崩溃。
   尽管十分少见，但在某些情况下，可能需要手动创建一个选择器。要做到这一点可以使用一个方法字符串，或者可以用字符串作为参数来实例化Selector类型：
 Selector(&amp;#34;woohoo:&amp;#34;) 使用#selector(...)语法，仍然*可能通过向错误的target发送action信息而发送崩溃*。在前面的例子中，如果把addTarget调用的第一个参数self改为self.button，将会在运行时以unrecognized selector崩溃。因为buttonPressed方法是在ViewController中声明的，而不是在UIButton类型中声明的。
-Variables and Simple Types 变量是一个命名的shoebox，其包含的值必须是单一的并且已经定义好的类型。每个变量都必须事先明确且正式地声明。如果想要将值放入shoebox中，以使用变量名引用该值，可以将值赋值给该变量。此后，这个变量名成为对该值的引用。
-一个变量不仅给它所指对象一个名字，还根据声明的位置赋予其所指对象特定的作用范围（可见性）和生命周期。给变量赋值是一种确保这个值被需要看到它的代码看到它的一种方式。作用域和生命周期分为三个层次：全局变量，属性，局部变量。
-全局变量声明在Swift文件顶部，它的生命周期和所在的文件一样长。一个全局变量默认（默认是internal访问权限）在它声明所在module任何地方都是可见的，这就是全局的意思。它对同一文件中的所有代码都是可见的，因为它处于最高级别。
+Variables and Simple Types 变量是一个具名的shoebox，其包含的值必须是单一的并且已经定义好的类型，每个变量都必须事先明确且正式地声明。如果想要将值放入shoebox中，以使用变量名引用该值，那么可以将值赋给该变量。此后，这个变量名便成为该值的引用。
+一个变量不仅给它所指对象一个名字，还根据声明的位置赋予其所指对象特定的作用域（可见性）和生命周期。给变量赋值是一种确保这个值被需要看到它的代码能看到它的一种方式。作用域和生命周期分为三个层次：全局变量，属性，局部变量。
+全局变量声明在Swift文件顶部，它的生命周期和所在文件一样长。一个全局变量默认（internal访问权限）在它声明所在module任何地方都是可见的，这就是全局的意思。它对同一文件中的所有代码都是可见的，因为它处于最高级别。
 此外，默认情况下全局变量对于**同一模块中任何其它文件中的所有代码也都是可见的**，因为同一模块中的Swift文件可以自动看到彼此，所以也可以看到彼此顶层声明的全局变量：
-// File1: let globalVariable = &amp;#34;global&amp;#34;  class Dog {  func debugPrintGlobal() {  debugPrint(globalVariable)  } }  // File2:  class Cat {  func debugPrintGlobal() {  debugPrint(globalVariable)  } } 属性是在对象类型声明（枚举、结构或类）的顶层声明的变量。有两种类型的属性，一种的是实例属性，另一种是静态/类属性。如果属性声明时未加static或class关键字，就是实例属性。
-实例属性的值对于每个实例都可以是不同的，它的生命周期和实例的生命周期相同。一个实例是对一个对象类型实例化而来，该实例以及其属性的生命周期主要取决于它赋值的变量的生命周期。
+// File1: let globalVariable = &amp;#34;global&amp;#34;  class Dog {  func debugPrintGlobal() {  debugPrint(globalVariable)  } }  // File2:  class Cat {  func debugPrintGlobal() {  debugPrint(globalVariable)  } } 属性是在对象类型声明（枚举、结构或类）的顶层声明的变量。有两种类型的属性，一种是实例属性，另一种是静态/类属性。如果属性声明时未加static或class关键字，就是实例属性。
+实例属性的值对于每个实例都可以是不同的，它的生命周期和实例的生命周期相同。一个实例是对一个对象类型实例化而来，该实例以及其属性的生命周期主要取决于赋值的变量的生命周期。
 如果一个属性在声明的时候加上static或者class，那就是静态/类属性，它的生命周期和该对象类型的生命周期相同。如果对象类型声明在一个文件的顶层，那么只要该该静态/类属性使用过一次，那么该属性就会一直存在。
 属性只能通过对象才能看到，对象的方法能够直接看到属性，在方法内部可以使用self.x这种方式访问实例属性。默认情况下，实例属性对于其它代码也是可见的，前提是要有这个实例的引用。同样地，默认情况下，一个静态/类属性对其它可以看到这个对象类型的代码也是可见的：
 // File1:  class Dog {  static let staticProperty = &amp;#34;staticProperty&amp;#34;  let instanceProperty = &amp;#34;instanceProperty&amp;#34;   func debugPrintInstanceProperty() {  debugPrint(self.instanceProperty)  }  }  // File2:  class Cat {  func debugPrintDogStaticProperty() {  debugPrint(Dog.staticProperty)  }   func debugPrintDogInstanceProperty() {  let dog = Dog()  debugPrint(dog.instanceProperty)  }  } 局部变量是指声明在花括号内部的变量，它的生命周期与包含它的花括号一样长。当程序执行到局部变量声明的范围时，局部变量才会真正生成，当程序执行离开这个范围时，局部变量就会自动消失。
@@ -924,16 +924,16 @@ Variables and Simple Types 变量是一个命名的shoebox，其包含的值必�
 class Dog {  func printLocalVariable() {  let localVariable = &amp;#34;local&amp;#34;  print(localVariable)  } } Variable Declaration 变量声明时使用关键字let或者var。使用let声明的是常量，常量的意思是*当第一次被赋值之后就不再允许被改变*。使用var声明的变量是真正的变量，它的值可以通过后续赋值来改变。
 一个变量的声明常常伴随着初始化—使用=赋一个值给变量。但在Swift中**变量声明时没有强制立即初始化，即使使用let关键字声明也一样**。
 对于let x : Int这样的声明是完全合法的。可以后面再给这个变量分配一个初始值，因为这个特殊的变量是一个常量，所以一旦有了初始值，那么这个初始值将是它以后的唯一值，不能再被改变。
-声明一个变量而没有给定类型是不合法的，变量必须从一开始就具有一个类型，并且永远不能更改该类型。用var声明的变量可以通过后续赋值改变其值，但新值必须同变量的类型一样。
-显式声明类型 声明时，在变量名称之后，添加一个冒号和类型的名称，就是显式变量类型声明：
+声明一个变量而没有给定类型是不合法的，变量必须从一开始就具有一个类型，并且永远不能更改该类型。用var声明的变量可以通过赋值改变它的值，但新值必须同变量的类型一样。
+显式声明类型 变量声明时，在名称之后添加一个冒号和类型的名称，就是显式变量类型声明：
 var x : Int 隐式声明类型 如果将变量初始化为声明的一部分，并且没有提供明确的类型，Swift会根据它被初始化的值来推断变量的类型：
 var x = 1 // and now x is an Int 完全可以一次性显式声明变量的类型并为其分配初始值：
-var x : Int = 1 在上面的代码中，显式的类型声明是多余的，因为变量类型可以从其初始值推断出来。有些情况，即使在有初始值的情况下显式声明一个类型不是多余的。
-第一种场景是Swift推断的类型是错误的。一种常见的场景是使用数字字面量作为初始值，Swift编译器会将它们推断为Int或Double类型（区别为是否有小数点），但实际上有很多数字类型：
-let value : Float = 2.0 //字面量2.0默认是Double类型 另一种场景是如果不明确地告诉编译器变量类型，编译器就无法通过初始值的推断出类型。一个常见的场景是options集合：
-var opts = [.autoreverse, .repeat] // compile error: Reference to member &amp;#39;autoreverse&amp;#39; cannot be resolved without a contextual type let opts : UIView.AnimationOptions = [.autoreverse, .repeat] 即使编译器可以从变量的初始值正确推断出变量的类型，这种推断也是需要时间的。可以通过在变量声明时提供显式类型来减少编译时间。
-正如之前所说的，即使声明的变量是常量，也不必在声明时对其进行初始化，即下面的写法是合法的：
-let x : Int 现在x是一个空shoebox——没有初始值的Int变量。可以稍后为该变量分配一个初始值。由于这个特定的变量是一个常量，从赋值那刻起，该初始值将是它的唯一值，之后不能被改变。
+var x : Int = 1 在上面的代码中，显式的类型声明是多余的，因为变量类型可以从初始值推断出来。但有些情况，即使在有初始值的情况下显式声明一个类型也不是多余的。
+第一种场景是Swift推断出来的类型是错误的。一种常见的场景是使用数字字面量作为初始值，Swift编译器会将它们推断为Int或Double类型（区别为是否有小数点），但实际上有很多数字类型：
+let value : Float = 2.0 //字面量2.0默认是Double类型 另一种场景是如果不明确地告诉编译器变量的类型，编译器就无法通过初始值推断出类型。一个常见的场景是options集合：
+var opts = [.autoreverse, .repeat] // compile error: Reference to member &amp;#39;autoreverse&amp;#39; cannot be resolved without a contextual type let opts : UIView.AnimationOptions = [.autoreverse, .repeat] 即使编译器可以从变量的初始值正确推断出变量的类型，这种推断也是需要时间的。在变量声明时提供显式类型可以减少编译时间。
+如之前所说的，即使声明的变量是常量，也不必在声明时对其进行初始化，即下面的写法是合法的：
+let x : Int 现在x是一个空的shoebox，即没有初始值的Int变量，可以稍后为该变量分配一个初始值。由于这个特定的变量是一个常量，从赋值那刻起，该初始值将是它的唯一值，之后不能被改变。
 对于属性来说，先声明后初始化是很常见的，因为属性的初始化可以通过对象类型的初始化函数来实现。但对于局部变量来说，通常是声明的时候同时初始化。
 当局部变量遇到需要conditional initialization时，也可以先声明后初始化。这是因为，有时在进行某种条件测试之前，并不知道某个变量的初始值。因为变量只能被声明一次，所以它必须提前声明，之后再进行条件初始化：
 let timed: Bool if val == 1 {  timed = true } else {  timed = false } 如果一个变量的地址被当作参数传递给一个函数时，这个变量必须在传递之前先声明并且在传递之前已经被初始化，也就是说即使初始化值是假的占位符也必须先给一个初始值，否则会出现编译错误：
@@ -1104,8 +1104,12 @@ func realStringExpecter(_ s: String) {  // } let stringMaybe: String? = &amp;#34
 如果Optional包裹着某个类型，不能直接向它发送这个类型的消息，必须先解开这个Optional，也就是要解开stringMaybe取它里面的String：
 let stringMaybe : String? = &amp;#34;howdy&amp;#34; let upper = stringMaybe.uppercased() // compile error // Value of optional type &amp;#39;String?&amp;#39; must be unwrapped to refer to member &amp;#39;uppercased&amp;#39; of wrapped base type &amp;#39;String&amp;#39;  let stringMaybe: String? = &amp;#34;howdy&amp;#34; let upper = stringMaybe!.uppercased() // compile error Swift提供了另一种使用Optional的方式，即在预期使用包裹的类型是的地方使用隐式解包类型。隐式解包类型也是一种Optional，但是编译器允许它直接在期望包裹类型的地方。
 实际上，也可以对一个隐式解包类型进行解包，但没必要这样做，因为如果试图在期望解包类型的地方使用它，将自动解包。
-请记住，一个隐式解包的Optional仍然是一个Optional。这只是一种方便，通过将某些东西声明为隐式解包的Optional，是在请求编译器，如果碰巧在预期的包装类型中使用这个值，请原谅你并为你解包这个值。
-在与nil以外的东西进行相等比较时，Optional得到了特殊的待遇：真正被比较的是被包裹的值，而不是Optional本身被比较：
+请记住，一个隐式解包的Optional仍然是一个Optional。通过将某些东西声明为隐式解包的Optional，就是在请求编译器，如果碰巧在预期的包装类型中使用这个值，请原谅并自动解包这个值。
+实际上，一个隐式解包的Optional类型并不是一个真正的独立类型。它只是一个以特殊方式标记的Optional，允许它在预期解包类型的地方被使用。由于这个原因，隐式解包并不通过赋值传播。
+如果self是一个UIViewController，那么self.view的类型就是UIView！。因此，下面这个表达式是合法的（假设v是一个UIView）：
+self.view.addSubview(v) 但是，下面是不合法的，因为隐式解包并不通过赋值传播：
+let mainview = self.view let v = UIView() mainview.addSubview(v) // compile error 也可以在一开始就显式地解开隐式解包的Optional：
+let mainview = self.view! mainview.addSubview(v) The keyword nil 在与nil以外的东西进行相等比较时，Optional得到了特殊的待遇：真正被比较的是被包裹的值，而不是Optional本身被比较：
 let s: String? = &amp;#34;Howdy&amp;#34; if s == &amp;#34;Howdy&amp;#34; { // ... they _are_ equal!  debugPrint(true) } 上面的例子中，Swift不会将Optional本身与&amp;quot;Howdy&amp;quot;进行比较，而是自动地（安全地）将其包装值（如果有）与&amp;quot;Howdy&amp;quot;进行比较。如果包裹的值是&amp;quot;Howdy&amp;quot;，则比较成功。如果被包装的值不是&amp;quot;Howdy&amp;quot;，则比较失败。如果没有被包装的值（也就是为nil），那么比较也会安全地失败。
 能够使用==操作符，则被包裹的类型必须遵循Equatable协议。如果没有遵守这个协议，编译器会阻止一个Optional类型使用==进行比较。
 对象类型 Swift中有三种对象（object）类型，它们分别是enum,struct,class。对象类型的作用域取决于它声明所在的位置，可能出现的位置有三种：
