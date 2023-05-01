@@ -241,13 +241,13 @@ code.has-jax {
     <i class="fa fa-file-word-o"></i>
 </span>
 <span class="post-meta-item-text">字数: </span>
-<span class="leancloud-visitors-count">74575</span>
+<span class="leancloud-visitors-count">75340</span>
 &nbsp; | &nbsp;
 <span class="post-meta-item-icon">
     <i class="fa fa-coffee"></i>
 </span>
 <span class="post-meta-item-text">阅读: </span>
-<span class="leancloud-visitors-count">149 分钟</span>
+<span class="leancloud-visitors-count">151 分钟</span>
 </span>
       </div>
     </header>
@@ -2884,7 +2884,7 @@ code.has-jax {
 </span></span><span style="display:flex;"><span>debugPrint(s)
 </span></span><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span><span style="color:#75715e">// 7</span>
-</span></span></code></pre></div><p>字符串也可以代表其它基数的<code>Int</code>，只需在初始化器中，提供一个表达基数的<code>radix:</code> 参数：</p>
+</span></span></code></pre></div><p>字符串也可以代表其它基数的<code>Int</code>，只需在初始化器中，提供一个表示基数的<code>radix:</code> 参数：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span><span style="color:#66d9ef">let</span> i = <span style="color:#ae81ff">31</span>
 </span></span><span style="display:flex;"><span><span style="color:#66d9ef">let</span> s = String(i, radix: <span style="color:#ae81ff">16</span>) <span style="color:#75715e">// &#34;1f&#34;</span>
 </span></span><span style="display:flex;"><span>debugPrint(s)
@@ -2894,7 +2894,42 @@ code.has-jax {
 </span></span><span style="display:flex;"><span><span style="color:#66d9ef">let</span> s2 = <span style="color:#e6db74">&#34;1f&#34;</span>
 </span></span><span style="display:flex;"><span><span style="color:#66d9ef">let</span> i2 = Int(s2, radix: <span style="color:#ae81ff">16</span>) <span style="color:#75715e">// Optional(31)</span>
 </span></span><span style="display:flex;"><span>debugPrint(i, i2)
-</span></span></code></pre></div><h2 id="range">Range</h2>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">// Optional(31) Optional(31)</span>
+</span></span></code></pre></div><p>表示字符串长度的属性是<code>count</code>，而不是<code>length</code>。字符串由<code>Unicode</code>码点序列组成，但多个<code>Unicode</code>码点可以组合成一个字符。因此，为了知道这样一个码点序列代表多少个字符，实际上必须遍历这个序列并将其分解成它所代表的字符。</p>
+<p>同样地，我们也可以遍历字符串中的字符，最简单的方式是使用<code>for in</code>结构：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span><span style="color:#66d9ef">let</span> s = <span style="color:#e6db74">&#34;hello&#34;</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">for</span> c <span style="color:#66d9ef">in</span> s {
+</span></span><span style="display:flex;"><span>    print(c) <span style="color:#75715e">// print each Character on its own line }</span>
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p>在更深的层次上，可以使用<code>utf8</code>和<code>utf16</code>属性，将一个字符串分解成<code>UTF-8</code>码点或<code>UTF-16</code>码点：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span><span style="color:#66d9ef">let</span> s = <span style="color:#e6db74">&#34;\u{BF}Qui\u{E9}n?&#34;</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">for</span> i <span style="color:#66d9ef">in</span> s.utf8 {
+</span></span><span style="display:flex;"><span>    debugPrint(i) <span style="color:#75715e">// 194, 191, 81, 117, 105, 195, 169, 110, 63</span>
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">for</span> i <span style="color:#66d9ef">in</span> s.utf16 {
+</span></span><span style="display:flex;"><span>    debugPrint(i) <span style="color:#75715e">// 191, 81, 117, 105, 233, 110, 63</span>
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>debugPrint(s)
+</span></span></code></pre></div><p>还有一个<code>unicodeScalars</code>属性，代表一个以<code>UnicodeScalar</code>结构表示的字符串<code>UTF-32</code>码点的集合（<code>String.UnicodeScalarView</code>）。为了说明问题，这里有一个实用的函数，可以将一个两个字母的国家缩写变成其国旗的表情符号表示：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">flag</span>(country: String) -&gt; String {
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">let</span> base: UInt32 = <span style="color:#ae81ff">127397</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">var</span> s = <span style="color:#e6db74">&#34;&#34;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">for</span> v <span style="color:#66d9ef">in</span> country.unicodeScalars {
+</span></span><span style="display:flex;"><span>        s.unicodeScalars.append(UnicodeScalar(base <span style="color:#f92672">+</span> v.value)<span style="color:#f92672">!</span>)
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">return</span> String(s)
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>debugPrint(flag(country:<span style="color:#e6db74">&#34;CN&#34;</span>))
+</span></span></code></pre></div><p>奇怪的是，没有更多的方法用于标准的字符串操作。将一个字符串变成大写，或者判断一个字符串是否包含一个给定的子串？大多数现代编程语言都会有一个紧凑、方便的方法来做这样的事情，但<code>Swift</code>没有。</p>
+<p>原因似乎是缺失的功能是由<code>Foundation</code>框架提供的，在现实生活中，总与<code>Foundation</code>挂钩（导入<code>UIKit</code>也会导入<code>Foundation</code>）。</p>
+<p>一个<code>Swift</code>字符串被桥接到一个<code>Foundation</code> 的<code>NSString</code>。这意味着，在很大程度上，只要使用<code>Swift</code>字符串，<code>Foundation NSString</code>的属性和方法就会神奇地涌现出来：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span><span style="color:#66d9ef">let</span> s = <span style="color:#e6db74">&#34;hello world&#34;</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">let</span> s2 = s.capitalized <span style="color:#75715e">// &#34;Hello World&#34;</span>
+</span></span><span style="display:flex;"><span>debugPrint(s2)
+</span></span></code></pre></div><p>字符串的<code>capitalized</code>属性来自于<code>Foundation</code>框架，由<code>Cocoa</code>提供，而不是<code>Swift</code>提供，它实际上是<code>NSString</code>的属性。</p>
+<h2 id="range">Range</h2>
 <p><code>Range</code>对象类型是一个结构体，代表一对端点。形成<code>Range</code>字面量的操作符有两个，提供一个开始值和一个结束值，在它们之间有一个<code>Range</code>操作符：</p>
 <ul>
 <li>
