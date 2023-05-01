@@ -1102,7 +1102,10 @@ func realStringExpecter(_ s: String) {  // } let stringMaybe: String? = &amp;#34
 已经看到了不止一种将一个对象包裹在一个Optional中的方法。但是相反的过程呢？如何解开一个Optional来获取它里面包裹的对象呢？一种方法是使用unwrap操作符（或强制unwrap操作符），它是一个后缀的感叹号：
 func realStringExpecter(_ s: String) {  // } let stringMaybe: String? = &amp;#34;howdy&amp;#34; realStringExpecter(stringMaybe!) 在上面这段代码中，stringMaybe！语法表达了在Optional stringMaybe内部的操作，即获取被包裹的值。由于stringMaybe是一个包裹着String的Optional，它里面的东西就是一个String。这正是realStringExpecter函数想要的实参。stringMaybe是一个包裹着字符串 &amp;quot;howdy &amp;quot;的Optional，但stringMaybe！是字符串 &amp;quot;howdy&amp;quot;。
 如果Optional包裹着某个类型，不能直接向它发送这个类型的消息，必须先解开这个Optional，也就是要解开stringMaybe取它里面的String：
-let stringMaybe : String? = &amp;#34;howdy&amp;#34; let upper = stringMaybe.uppercased() // compile error // Value of optional type &amp;#39;String?&amp;#39; must be unwrapped to refer to member &amp;#39;uppercased&amp;#39; of wrapped base type &amp;#39;String&amp;#39;  let stringMaybe: String? = &amp;#34;howdy&amp;#34; let upper = stringMaybe!.uppercased() // compile error 在与nil以外的东西进行相等比较时，Optional得到了特殊的待遇：真正被比较的是被包裹的值，而不是Optional本身被比较：
+let stringMaybe : String? = &amp;#34;howdy&amp;#34; let upper = stringMaybe.uppercased() // compile error // Value of optional type &amp;#39;String?&amp;#39; must be unwrapped to refer to member &amp;#39;uppercased&amp;#39; of wrapped base type &amp;#39;String&amp;#39;  let stringMaybe: String? = &amp;#34;howdy&amp;#34; let upper = stringMaybe!.uppercased() // compile error Swift提供了另一种使用Optional的方式，即在预期使用包裹的类型是的地方使用隐式解包类型。隐式解包类型也是一种Optional，但是编译器允许它直接在期望包裹类型的地方。
+实际上，也可以对一个隐式解包类型进行解包，但没必要这样做，因为如果试图在期望解包类型的地方使用它，将自动解包。
+请记住，一个隐式解包的Optional仍然是一个Optional。这只是一种方便，通过将某些东西声明为隐式解包的Optional，是在请求编译器，如果碰巧在预期的包装类型中使用这个值，请原谅你并为你解包这个值。
+在与nil以外的东西进行相等比较时，Optional得到了特殊的待遇：真正被比较的是被包裹的值，而不是Optional本身被比较：
 let s: String? = &amp;#34;Howdy&amp;#34; if s == &amp;#34;Howdy&amp;#34; { // ... they _are_ equal!  debugPrint(true) } 上面的例子中，Swift不会将Optional本身与&amp;quot;Howdy&amp;quot;进行比较，而是自动地（安全地）将其包装值（如果有）与&amp;quot;Howdy&amp;quot;进行比较。如果包裹的值是&amp;quot;Howdy&amp;quot;，则比较成功。如果被包装的值不是&amp;quot;Howdy&amp;quot;，则比较失败。如果没有被包装的值（也就是为nil），那么比较也会安全地失败。
 能够使用==操作符，则被包裹的类型必须遵循Equatable协议。如果没有遵守这个协议，编译器会阻止一个Optional类型使用==进行比较。
 对象类型 Swift中有三种对象（object）类型，它们分别是enum,struct,class。对象类型的作用域取决于它声明所在的位置，可能出现的位置有三种：
