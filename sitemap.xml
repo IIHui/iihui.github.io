@@ -1048,7 +1048,10 @@ let leftTripleArrow = &amp;#34;\u{21DA}&amp;#34; 该字符串中的反斜杠是�
  \n：一个Unix换行符。 \t：制表符。 \&amp;quot;：引号（转义以表明这不是字符串文字的结尾）。 \\：反斜杠（因为单独的反斜杠是转义字符）。  转义的引号和反斜线会使字符串字面意义变得难看和难以辨认，尤其在正则表达式中。例如，模式\b\d\d\b（由两个数字组成的单词）必须写成&amp;quot;\\b\\d\\d\\b&amp;quot;。可以在引号和反斜杠之前省略转义字符，用一个或多个哈希字符（#）围住字面量，下面这些都是相同的字符串：
 let pattold = &amp;#34;\\b\\d\\d\\b&amp;#34; let pattnew = #&amp;#34;\b\d\d\b&amp;#34;# // same thing let pattnew2 = ##&amp;#34;\b\d\d\b&amp;#34;## // same thing 这称为原始字符串字面量。缺点是，如果想在原始字符串字面量中使用反斜杠作为转义字符，则必须在反斜杠后面加上用于包围字符串字面量相同数量的#字符。字符串#&amp;quot;hello\nthere&amp;quot;#不包含换行符(\n)，但#&amp;quot;hello\#nthere&amp;quot;#包含。
 let hello = #&amp;#34;hello\nthere&amp;#34;# debugPrint(hello)  // &amp;#34;hello\\nthere&amp;#34;  let hello = #&amp;#34;hello\#nthere&amp;#34;# debugPrint(hello)  // &amp;#34;hello\nthere&amp;#34; 可以将包含换行符的字符串字面量输入为多行，而不是包含\n字符的单行表达式，这称为多行字符串字面量。使用的规则如下：
- 多行字符串文字必须在开始和结束处用三重双引号 (&amp;quot;&amp;quot;&amp;quot;) 分隔。 任何字符都不能跟在同一行的开头分隔符后面。 除了空格之外，其他任何字符都不能与结束分隔符出现在同一行。 关闭分隔符之前的最后一个隐式换行符会被忽略。 结束分隔符的缩进决定了文本行的缩进，它必须至少缩进到结束分隔符（完全空行除外）。  func ff() {  let s = &amp;#34;&amp;#34;&amp;#34; Line 1 Line 2 Line 3 &amp;#34;&amp;#34;&amp;#34; // ... } // &amp;#34;Line 1 \n Line 2 \nLine 3 &amp;#34; Range Range对象类型是一个结构体，代表一对端点。形成Range字面量的操作符有两个，提供一个开始值和一个结束值，在它们之间有一个Range操作符：
+ 多行字符串字面量必须在开始和结束处用三重双引号 (&amp;quot;&amp;quot;&amp;quot;) 分隔。 任何字符都不能跟在同一行的开头分隔符后面。 除了空格之外，其它任何字符都不能与结束分隔符出现在同一行。 结束分隔符之前的最后一个隐式换行符会被忽略。 结束分隔符的缩进决定了文本行的缩进，它必须至少缩进到结束分隔符（整个空行除外）。  func ff() {  let s = &amp;#34;&amp;#34;&amp;#34; Line 1 Line 2 Line 3 &amp;#34;&amp;#34;&amp;#34; // ... } 在上面字符串s包含3行字符串，第1和第3行没有以空格开始，第2行以4个空格开始，第1行和第2行后面包含换行符。如果要在第3行后添加换行，可以输入一个空行，或者写一个转义的\n。
+在多行字符串字面量中，双引号不需要转义。以反斜杠结尾的一行与下一行相连。在下面这段代码中，字符串s仅由两行文字组成，第二行由四个空格开始，后面紧跟着 &amp;ldquo;Line 2 and this is still line 2&amp;rdquo;：
+func f() {  let s = &amp;#34;&amp;#34;&amp;#34; Line &amp;#34;1&amp;#34; Line 2 and this is still Line 2 &amp;#34;&amp;#34;&amp;#34;  // ...  debugPrint(s) } 可以用#字符包围一个多行字符串字头，使之成为一个原始的多行字符串字头；但你不太可能这样做。
+Range Range对象类型是一个结构体，代表一对端点。形成Range字面量的操作符有两个，提供一个开始值和一个结束值，在它们之间有一个Range操作符：
   ...闭range操作符：a...b意味着a到b的一切，包括b。
   ..&amp;lt;半开range操作符：a..&amp;lt;b意味着a到b的一切，但不包括b。
   在Range操作符两边添加空格是合法的，例如1...3或1 ... 3都是合法的。一个Range的端点的类型通常是某种数字，最常见的是整型。
