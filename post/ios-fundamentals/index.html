@@ -241,7 +241,7 @@ code.has-jax {
     <i class="fa fa-file-word-o"></i>
 </span>
 <span class="post-meta-item-text">字数: </span>
-<span class="leancloud-visitors-count">76920</span>
+<span class="leancloud-visitors-count">77082</span>
 &nbsp; | &nbsp;
 <span class="post-meta-item-icon">
     <i class="fa fa-coffee"></i>
@@ -3398,7 +3398,10 @@ code.has-jax {
 </span></span><span style="display:flex;"><span>    }()
 </span></span><span style="display:flex;"><span>}
 </span></span></code></pre></div><h2 id="methods">Methods</h2>
-<p>在静态/类成员和实例成员之间存在着一种隔阂，尽管它们被声明在同一个对象类型中，但属于不同的世界。一个静态/类方法不能引用<code>实例</code>，因为静态方法中没有实例。因此，一个静态/类方法<font color=red>不能直接引用任何实例属性或调用任何实例方法</font>。另一方面，一个实例方法可以引用类型，因此可以访问静态/类的属性，能调用静态/类方法。</p>
+<p>在静态/类成员和实例成员之间存在着一种隔阂，尽管它们被声明在同一个对象类型中，但属于不同的世界。一个静态/类方法不能引用<code>instance</code>，因为在静态方法中没有实例。</p>
+<p>因此，一个静态/类方法<font color=red>不能直接引用任何实例属性或调用任何实例方法</font>。另一方面，一个实例方法可以引用类型，因此可以访问静态/类的属性，能调用静态/类方法。</p>
+<h4 id="the-secret-life-of-instance-methods">The Secret Life of Instance Methods</h4>
+<p>实际上，实例方法也是静态/类方法。在下面的代码中，尽管<code>store</code>是一个实例方法，但可以通过类型来调用，<font color=LightSeaGreen>只需把一个实例参数传进去</font>：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span><span style="color:#66d9ef">class</span> <span style="color:#a6e22e">MyClass</span> {
 </span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">var</span> s = <span style="color:#e6db74">&#34;&#34;</span>
 </span></span><span style="display:flex;"><span>
@@ -3413,12 +3416,13 @@ code.has-jax {
 </span></span><span style="display:flex;"><span><span style="color:#66d9ef">let</span> f = MyClass.store(m) <span style="color:#75715e">// what just happened!?</span>
 </span></span><span style="display:flex;"><span>f(<span style="color:#e6db74">&#34;s&#34;</span>)
 </span></span><span style="display:flex;"><span>debugPrint(m.s)
-</span></span></code></pre></div><p>实际上，<font color=red>实例方法也是一种静态/类方法</font>。在上面的代码中，尽管<code>store</code>是一个实例方法，但可以通过类型来调用，<font color=LightSeaGreen>只需把一个实例参数传进去</font>。</p>
-<h2 id="下标">下标</h2>
+</span></span></code></pre></div><p>原因是，<font color=red>一个实例方法实际上是一个柯里化的静态/类函数</font>。一个函数接受一个实例，另一个函数接受实例方法的参数。在上面代码中，<code>f</code>是第二个函数，并可以作为传递参数给实例<code>m</code>的<code>store</code>方法的一种方式被调用：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span>f(<span style="color:#e6db74">&#34;howdy&#34;</span>)
+</span></span><span style="display:flex;"><span>debugPrint(m.s)
+</span></span></code></pre></div><h2 id="subscripts">Subscripts</h2>
 <p>下标是一种方法，它通过将包含参数的方括号直接附加到一个对象的引用上来调用。可以把这个功能用于任何你喜欢的地方，但它特别适用于这样的情况：一个对象类型，<font color=Blue>其元素可以通过键或索引来访问</font>。</p>
-<p>声明下标方法有点像普通函数的声明又有点像计算属性的声明。它<font color=red>可以接受参数，当下标方法被调用时，参数可以出现在方括号中</font>。一个下标就像一个计算属性，它的调用就像对一个属性的引用：你可以获取它的值，也可以向它赋值：</p>
+<p>声明下标方法有点像普通函数的声明又有点像计算属性的声明。它<font color=red>可以接受参数，当下标方法被调用时，参数可以出现在方括号中</font>。一个下标就像一个计算属性，它的调用就像引用一个属性，可以获取它的值，也可以向它赋值：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span><span style="color:#66d9ef">struct</span> <span style="color:#a6e22e">Digit</span> {
-</span></span><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">var</span> number: Int
 </span></span><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">init</span>(<span style="color:#66d9ef">_</span> n: Int) {
@@ -3435,19 +3439,19 @@ code.has-jax {
 </span></span><span style="display:flex;"><span>}
 </span></span></code></pre></div><ol>
 <li>
-<p>关键字<code>sbuscript</code>后面紧跟参数列表，说明方括号内要出现哪些参数。默认情况下，参数名不会被外化。如果要外化参数名，需要在内部参数前外化。</p>
+<p>关键字<code>sbuscript</code>后面紧跟参数列表，说明方括号内要出现哪些参数。默认情况下，<font color=red>参数名不会被外化</font>。如果要外化参数名，需要在内部参数前外化，即使它们的名字是相同的<code>subscript(ix ix:Int)</code>，这一点和普通函数的参数外化十分不同。</p>
 </li>
 <li>
-<p>然后是传出（调用<code>getter</code>函数时）或传入（调用<code>setter</code>函数时）值的类型。</p>
+<p>然后箭头后面紧跟的传出（调用<code>getter</code>函数时）或传入（调用<code>setter</code>函数时）值的类型。</p>
 </li>
 <li>
-<p>最后是花括号，其内容与计算属性的内容完全一样。可以用<code>get</code>和花括号表示<code>getter</code>函数，用<code>set</code>和花括号表示<code>setter</code>函数。<code>setter</code>函数可以被省略，在这种情况下，<code>get</code>这个词和它的花括号可以被省略。如果<code>getter</code>函数<font color=Blue>只由一条语句组成，可以省略关键字<code>return</code></font>。<code>setter</code>函数接收的新值是<code>newValue</code>，但可以通过在<code>set</code>这个词后面的小括号里提供一个不同的名字来实现自定义名字。</p>
+<p>最后是花括号，其内容与计算属性的内容完全一样。可以用<code>get</code>和花括号表示<code>getter</code>函数，用<code>set</code>和花括号表示<code>setter</code>函数。<code>setter</code>函数可以被省略，在这种情况下，<code>get</code>这个词和它的花括号可以一同被省略。如果<code>getter</code>函数<font color=Blue>只由一条语句组成，可以省略关键字<code>return</code></font>。<code>setter</code>函数接收的新值是<code>newValue</code>，但可以通过在<code>set</code>这个词后面的圆括号里提供一个不同的名字来实现自定义名字。</p>
 </li>
 </ol>
 <p>下面代码调用了<code>subscript</code>中的<code>getter</code>的方法。在<code>Digit</code>实例后面跟着方括号，方括号里面有<code>Int</code>参数：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span><span style="color:#66d9ef">var</span> d = Digit(<span style="color:#ae81ff">1234</span>)
-</span></span><span style="display:flex;"><span><span style="color:#66d9ef">let</span> a Digit = d[<span style="color:#ae81ff">1</span>]
-</span></span></code></pre></div><p>下面的代码中<code>Digit</code>类型中包含了<code>subscript</code>下标方法，并且下标方法中也包含了<code>setter</code>，可以使用<code>d[0] = 2</code>这样的语句来访问下标的<code>setter</code>：</p>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">let</span> aDigit = d[<span style="color:#ae81ff">1</span>]
+</span></span></code></pre></div><p>下面代码中<code>Digit</code>类型中包含了<code>subscript</code>下标方法，并且下标方法中也包含了<code>setter</code>，可以使用<code>d[0] = 2</code>这样的语句来访问下标的<code>setter</code>：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span><span style="color:#66d9ef">struct</span> <span style="color:#a6e22e">Digit</span> {
 </span></span><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">var</span> number: Int
@@ -5225,8 +5229,16 @@ code.has-jax {
             </li>
           </ul>
         </li>
-        <li><a href="#methods">Methods</a></li>
-        <li><a href="#下标">下标</a></li>
+        <li><a href="#methods">Methods</a>
+          <ul>
+            <li>
+              <ul>
+                <li><a href="#the-secret-life-of-instance-methods">The Secret Life of Instance Methods</a></li>
+              </ul>
+            </li>
+          </ul>
+        </li>
+        <li><a href="#subscripts">Subscripts</a></li>
         <li><a href="#内嵌类型">内嵌类型</a></li>
       </ul>
     </li>
