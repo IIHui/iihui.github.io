@@ -241,7 +241,7 @@ code.has-jax {
     <i class="fa fa-file-word-o"></i>
 </span>
 <span class="post-meta-item-text">字数: </span>
-<span class="leancloud-visitors-count">76433</span>
+<span class="leancloud-visitors-count">76490</span>
 &nbsp; | &nbsp;
 <span class="post-meta-item-icon">
     <i class="fa fa-coffee"></i>
@@ -2367,12 +2367,20 @@ code.has-jax {
 </span></span><span style="display:flex;"><span>bti = UIApplication.shared.beginBackgroundTask() {
 </span></span><span style="display:flex;"><span>    UIApplication.shared.endBackgroundTask(bti)
 </span></span><span style="display:flex;"><span>}
-</span></span></code></pre></div><p>这里真正的问题是<code>beginBackgroundTask</code>相当古老了。更现代的方法可能会将返回值直接传递给函数参数。<code>Cocoa</code>的<code>UIAction</code>初始化方法<code>init(title:handler:)</code>就是一个例子：</p>
+</span></span></code></pre></div><p>这里真正的问题是<code>beginBackgroundTask</code>相当古老了，更现代的方法是将返回值直接传递给函数作为参数。<code>Cocoa</code>的<code>UIAction</code>初始化方法<code>init(title:handler:)</code>就是一个例子：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span><span style="color:#66d9ef">let</span> myAction = UIAction(title: <span style="color:#e6db74">&#34;Hello&#34;</span>) { action <span style="color:#66d9ef">in</span> 
 </span></span><span style="display:flex;"><span>      print(action)
 </span></span><span style="display:flex;"><span>}
-</span></span></code></pre></div><p>在上面的代码中，<code>action</code>就是<code>myAction</code>，因此匿名函数体<code>handler:</code>中可以直接引用<code>action</code>，而不使用<code>myAction</code>（使用<code>myAction</code>是非法的）。（<font color=red>这种方法还可以防止可能的循环引用</font>）。</p>
-<h2 id="computed-variable-initialization">Computed Variable Initialization</h2>
+</span></span></code></pre></div><p>在上面的代码中，<code>action</code>就是<code>myAction</code>，因此匿名函数体<code>handler:</code>中可以直接引用<code>action</code>，而不使用<code>myAction</code>（<font color=red>这种方法还可以防止可能的循环引用</font>）。</p>
+<p>在<code>UIAction</code>初始化器中的<code>handler</code>参数中使用<code>myAction</code>是非法的，下面代码会出现编译错误：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span><span style="color:#66d9ef">let</span> myAction = UIAction(title: <span style="color:#e6db74">&#34;Hello&#34;</span>) { action <span style="color:#66d9ef">in</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">if</span> myAction === action {
+</span></span><span style="display:flex;"><span>        debugPrint(<span style="color:#e6db74">&#34;test&#34;</span>)
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>    print(action)
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span><span style="color:#75715e">// Closure captures &#39;myAction&#39; before it is declared</span>
+</span></span></code></pre></div><h2 id="computed-variable-initialization">Computed Variable Initialization</h2>
 <p>有时需要先执行一些代码去才能获得变量的初始值，一个简洁的解决方案是<font color=red>定义和调用匿名函数来进行初始化</font>，这种方式称为<code>define-and-call initializer</code>。下面代码中定义了一个匿名函数并立即执行来初始化常量<code>timed</code>：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span><span style="color:#66d9ef">let</span> val = <span style="color:#ae81ff">0</span>
 </span></span><span style="display:flex;"><span><span style="color:#66d9ef">let</span> timed: Bool = {
@@ -2390,7 +2398,7 @@ code.has-jax {
 </span></span><span style="display:flex;"><span>        }
 </span></span><span style="display:flex;"><span>    }() 
 </span></span><span style="display:flex;"><span>}
-</span></span></code></pre></div><p>你可能会好奇，与其使用<code>define-and-call initializer</code>，为什么不直接定义一个实例方法来初始化实例属性。因为定义一个实例方法来初始化实例属性是非法的，将会出现编译错误：</p>
+</span></span></code></pre></div><p>你可能会好奇，与其使用<code>define-and-call initializer</code>，<font color=red>为什么不直接定义一个实例方法来初始化实例属性</font>。因为定义一个实例方法来初始化实例属性是非法的，将会出现编译错误：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span><span style="color:#66d9ef">class</span> <span style="color:#a6e22e">RootViewController</span>: UITableViewController {
 </span></span><span style="display:flex;"><span>    <span style="color:#75715e">// Cannot use instance member &#39;self&#39; within property initializer; property initializers run before &#39;self&#39; is available</span>
 </span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">let</span> cellBackgroundImage: UIImage = <span style="color:#66d9ef">self</span>.makeTheImage() 
@@ -2402,7 +2410,7 @@ code.has-jax {
 </span></span><span style="display:flex;"><span>    }
 </span></span><span style="display:flex;"><span>  
 </span></span><span style="display:flex;"><span>}
-</span></span></code></pre></div><p>这是因为<font color=red>实例属性声明初始化时，实例尚未生成</font>。因此，<font color=LightSeaGreen>不能在属性声明的初始化器中引用<code>self</code></font>。但定义和调用匿名函数是合法的，需要注意的是<font color=Blue>定义和调用匿名函数仍然不能在函数体中隐式或显式引用<code>self</code></font>，否则也会出现编译错误，如果需要在函数体中使用<code>self</code>，需要将属性声明为<code>lazy</code>。</p>
+</span></span></code></pre></div><p>因为<font color=red>实例属性声明初始化时，此时实例尚未生成</font>。因此，<font color=LightSeaGreen>不能在属性声明初始时引用<code>self</code></font>。但定义和调用匿名函数是合法的，需要注意的是<font color=Blue>定义和调用匿名函数仍然不能在函数体中隐式或显式引用<code>self</code></font>，否则也会出现编译错误，如果需要在函数体中使用<code>self</code>，需要将属性声明为<code>lazy</code>。</p>
 <h2 id="computed-variables">Computed Variables</h2>
 <p>除了正常的存储变量，<code>Swift</code>中的变量还可以是计算的。这意味着变量不是一个值，而是一个函数。计算变量中包括<code>setter</code>和<code>getter</code>函数，<code>setter</code>函数在变量被赋值自动调用，<code>getter</code>函数在变量被引用时自动调用:</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span><span style="color:#66d9ef">var</span> now: String { <span style="color:#75715e">// ①</span>
