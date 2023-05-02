@@ -241,7 +241,7 @@ code.has-jax {
     <i class="fa fa-file-word-o"></i>
 </span>
 <span class="post-meta-item-text">字数: </span>
-<span class="leancloud-visitors-count">76808</span>
+<span class="leancloud-visitors-count">76920</span>
 &nbsp; | &nbsp;
 <span class="post-meta-item-icon">
     <i class="fa fa-coffee"></i>
@@ -3317,14 +3317,15 @@ code.has-jax {
 </span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">self</span>.license = license
 </span></span><span style="display:flex;"><span>    }
 </span></span><span style="display:flex;"><span>}
-</span></span></code></pre></div><h2 id="属性">属性</h2>
-<p>实例属性在声明的同时可以进行初始化，但**<font color=red>初始化某个实例属性时不能获取其它实例属性或调用一个实例方法，因为此时实例尚未生成</font>**。下面代码会产生编译错误：</p>
+</span></span></code></pre></div><h2 id="properties">Properties</h2>
+<h4 id="property-initialization-and-self">Property initialization and self</h4>
+<p>实例属性在声明的同时可以进行初始化，但<font color=red>初始化某个实例属性时不能获取其它实例属性或调用一个实例方法，因为此时实例尚未生成</font>。下面代码会出现编译错误：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span><span style="color:#66d9ef">class</span> <span style="color:#a6e22e">Moi</span> {
 </span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">let</span> first = <span style="color:#e6db74">&#34;Matt&#34;</span>
 </span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">let</span> last = <span style="color:#e6db74">&#34;Neuburg&#34;</span>
 </span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">let</span> whole = <span style="color:#66d9ef">self</span>.first <span style="color:#f92672">+</span> <span style="color:#e6db74">&#34; &#34;</span> <span style="color:#f92672">+</span> <span style="color:#66d9ef">self</span>.last <span style="color:#75715e">// compile error: Cannot find &#39;self&#39; in scope</span>
 </span></span><span style="display:flex;"><span>}
-</span></span></code></pre></div><p>解决上面的编译报错有三种方法，第一种是把<code>whole</code>声明为计算属性而非存储属性，因为**<font color=red>计算属性是在实例初始化完成之后才会被调用的</font>**：</p>
+</span></span></code></pre></div><p>解决上面编译错误有三种方法，第一种是把<code>whole</code>声明为计算属性而非存储属性，因为<font color=red>计算属性是在实例初始化完成之后才会被调用的</font>：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span><span style="color:#66d9ef">class</span> <span style="color:#a6e22e">Moi</span> {
 </span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">let</span> first = <span style="color:#e6db74">&#34;Matt&#34;</span>
 </span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">let</span> last = <span style="color:#e6db74">&#34;Neuburg&#34;</span>
@@ -3360,13 +3361,20 @@ code.has-jax {
 </span></span><span style="display:flex;"><span>}
 </span></span><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span>debugPrint(Greeting.ambivalent)
-</span></span></code></pre></div><p>上面的代码中，静态属性进行初始化的时候省略了<code>self</code>，这是因为它隐含地包含了<code>self</code>。对于静态属性来说，它的<code>self</code>表示类型本身。实际上在静态属性初始化时，如果要引用其它静态属性，前面加上自身的类型会有更好的可读性：</p>
+</span></span></code></pre></div><p>上面的代码中，静态属性进行初始化的时候省略了<code>self</code>，这是因为它隐含地包含了<code>self</code>，但是上面代码中不能使用<code>self</code>（认为是编译器的一个<code>bug</code>）。</p>
+<p>对于静态属性来说，大写开头的<code>Self</code>表示类型本身。实际上在静态属性初始化时，如果要引用其它静态属性，前面加上自身的类型会有更好的可读性：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span><span style="color:#66d9ef">struct</span> <span style="color:#a6e22e">Greeting</span> {
 </span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">static</span> <span style="color:#66d9ef">let</span> friendly = <span style="color:#e6db74">&#34;hello there&#34;</span>
 </span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">static</span> <span style="color:#66d9ef">let</span> hostile = <span style="color:#e6db74">&#34;go away&#34;</span>
 </span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">static</span> <span style="color:#66d9ef">let</span> ambivalent = Greeting.friendly <span style="color:#f92672">+</span> <span style="color:#e6db74">&#34; but &#34;</span> <span style="color:#f92672">+</span> Greeting.hostile
 </span></span><span style="display:flex;"><span>}
-</span></span></code></pre></div><p>需要特别注意的是，在声明静态计算变量时，<strong><font color=LightSeaGreen>如果使用匿名函数的<code>define-and-call</code>初始化，不能在匿名函数中使用<code>self</code>（认为这是一个系统<code>bug</code>）</font></strong>：</p>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">struct</span> <span style="color:#a6e22e">Greeting</span> {
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">static</span> <span style="color:#66d9ef">let</span> friendly = <span style="color:#e6db74">&#34;hello there&#34;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">static</span> <span style="color:#66d9ef">let</span> hostile = <span style="color:#e6db74">&#34;go away&#34;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">static</span> <span style="color:#66d9ef">let</span> ambivalent = <span style="color:#66d9ef">Self</span>.friendly <span style="color:#f92672">+</span> <span style="color:#e6db74">&#34; but &#34;</span> <span style="color:#f92672">+</span> <span style="color:#66d9ef">Self</span>.hostile
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p>需要特别注意的是，在声明静态计算变量时，<font color=red>如果使用匿名函数的<code>define-and-call</code>初始化，不能在匿名函数中使用<code>self</code>（认为这是一个系统<code>bug</code>）</font>，而是应该使用<code>Self</code>：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span><span style="color:#66d9ef">struct</span> <span style="color:#a6e22e">Greeting</span> {
 </span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">static</span> <span style="color:#66d9ef">let</span> friendly = <span style="color:#e6db74">&#34;hello there&#34;</span>
 </span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">static</span> <span style="color:#66d9ef">let</span> hostile = <span style="color:#e6db74">&#34;go away&#34;</span>
@@ -3381,7 +3389,15 @@ code.has-jax {
 </span></span><span style="display:flex;"><span>        friendly <span style="color:#f92672">+</span> <span style="color:#e6db74">&#34; but &#34;</span> <span style="color:#f92672">+</span> hostile <span style="color:#75715e">// 省略self才不会报错</span>
 </span></span><span style="display:flex;"><span>    }()
 </span></span><span style="display:flex;"><span>}
-</span></span></code></pre></div><h2 id="方法">方法</h2>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">struct</span> <span style="color:#a6e22e">Greeting</span> {
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">static</span> <span style="color:#66d9ef">let</span> friendly = <span style="color:#e6db74">&#34;hello there&#34;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">static</span> <span style="color:#66d9ef">let</span> hostile = <span style="color:#e6db74">&#34;go away&#34;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">static</span> <span style="color:#66d9ef">var</span> ambivalent: String = {
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">Self</span>.friendly <span style="color:#f92672">+</span> <span style="color:#e6db74">&#34; but &#34;</span> <span style="color:#f92672">+</span> <span style="color:#66d9ef">Self</span>.hostile <span style="color:#75715e">// 或者使用大写开头Selfscope</span>
+</span></span><span style="display:flex;"><span>    }()
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><h2 id="methods">Methods</h2>
 <p>在静态/类成员和实例成员之间存在着一种隔阂，尽管它们被声明在同一个对象类型中，但属于不同的世界。一个静态/类方法不能引用<code>实例</code>，因为静态方法中没有实例。因此，一个静态/类方法<font color=red>不能直接引用任何实例属性或调用任何实例方法</font>。另一方面，一个实例方法可以引用类型，因此可以访问静态/类的属性，能调用静态/类方法。</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span><span style="color:#66d9ef">class</span> <span style="color:#a6e22e">MyClass</span> {
 </span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">var</span> s = <span style="color:#e6db74">&#34;&#34;</span>
@@ -3909,7 +3925,7 @@ code.has-jax {
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span><span style="color:#66d9ef">let</span> t2 = Test(name: <span style="color:#e6db74">&#34;matt&#34;</span>, age: <span style="color:#ae81ff">65</span>)
 </span></span></code></pre></div><p>如果在结构体声明的时候，<font color=red>有自定义的初始化器或者属性声明为<code>private</code>(使用<code>let</code>声明并且已经初始化的属性除外)</font>，则编译器不会自动生成的<code>memberwise initializer</code>。</p>
 <p>结构体中声明的<font color=LightSeaGreen>存储属性必须全部初始化</font>，不管是声明的时候初始化还是在所有的初始化器中初始化。如果一个结构体有多个初始化器，则可以在初始化器中通过<code>self.init()</code>调用其他初始化器。</p>
-<h2 id="properties">Properties</h2>
+<h2 id="properties-1">Properties</h2>
 <p>结构体可以有实例属性或者静态属性，二者都可以声明为存储或者计算属性。如果代码中想重新设置一个结构体实例属性的值，则该实例变量必须使用<code>var</code>声明，否则会出现编译错误：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span><span style="color:#66d9ef">var</span> d = Test(name: <span style="color:#e6db74">&#34;ddd&#34;</span>,age: <span style="color:#ae81ff">34</span>)
 </span></span><span style="display:flex;"><span>d.name = <span style="color:#e6db74">&#34;new test&#34;</span>
@@ -5200,8 +5216,16 @@ code.has-jax {
             <li><a href="#failable-initializers">Failable initializers</a></li>
           </ul>
         </li>
-        <li><a href="#属性">属性</a></li>
-        <li><a href="#方法">方法</a></li>
+        <li><a href="#properties">Properties</a>
+          <ul>
+            <li>
+              <ul>
+                <li><a href="#property-initialization-and-self">Property initialization and self</a></li>
+              </ul>
+            </li>
+          </ul>
+        </li>
+        <li><a href="#methods">Methods</a></li>
         <li><a href="#下标">下标</a></li>
         <li><a href="#内嵌类型">内嵌类型</a></li>
       </ul>
@@ -5219,7 +5243,7 @@ code.has-jax {
     <li><a href="#结构体">结构体</a>
       <ul>
         <li><a href="#init">init</a></li>
-        <li><a href="#properties">Properties</a></li>
+        <li><a href="#properties-1">Properties</a></li>
         <li><a href="#method-1">method</a></li>
         <li><a href="#struct-as-namespace">Struct as Namespace</a></li>
       </ul>
