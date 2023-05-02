@@ -994,7 +994,7 @@ class MyView: UIView {  lazy var prog: UIProgressView = {  let p = UIProgressVie
 假设想用一个helper属性添加到self中，它持有一个Helper类实例，并需要一个对self的引用。我们还想让这个Helper实例在self的整个生命周期内持续存在。可以通过让helper成为一个let属性并在其声明中初始化它来执行这一规则。
 但是不能把self传递给Helper的初始化器，因为不能在属性声明中引用self。可以通过声明helper属性为lazy来解决这个问题。但是必须使用var来声明helper，也就是说这个helper可能被其它代码改变。当然，可以尽量不让这种情况发生，但问题是lazy var这样的表达方式无法执行我们真正所需的策略。
 Built-In Simple Types 每一个变量和每一个字面量都必须有一个类型。Swift内置的简单类型有Bool,Numbers，String，Character，Range，Tuple等。其中Bool类型是一个结构体，只有两个值，一个是true，一个是false：
-@frozen public struct Bool : Sendable {  public init()  @inlinable public init(_ value: Bool)  @inlinable public static func random&amp;lt;T&amp;gt;(using generator: inout T) -&amp;gt; Bool where T : RandomNumberGenerator  @inlinable public static func random() -&amp;gt; Bool } 与许多计算机语言不同，Swift中没有任何其它东西能被隐含地转换为Bool。例如，在C语言中，布尔值实际上是一个数字，0代表false，非0代表true。而在Swift中，只有false是false，true为true。
+@frozen public struct Bool : Sendable {   public init()   @inlinable public init(_ value: Bool)   @inlinable public static func random&amp;lt;T&amp;gt;(using generator: inout T) -&amp;gt; Bool where T : RandomNumberGenerator   @inlinable public static func random() -&amp;gt; Bool } 与许多计算机语言不同，Swift中没有任何其它东西能被隐含地转换为Bool。例如，在C语言中，布尔值实际上是一个数字，0代表false，非0代表true。而在Swift中，只有false是false，true为true。
 一个常见的情况：一个存储在某个var变量中的Bool，我们想反转它的值。即如果它是false的就变成true，如果它是true就变成false。
 v.isUserInteractionEnabled = !v.isUserInteractionEnabled 上面的方式很麻烦，也容易忘记加取非符号!。有一个更简单的方法，即在Bool变量上调用toggle方法:
 v.isUserInteractionEnabled.toggle() 主要的数字类型是Int和Double，我们一般会使用这些类型。其它数字类型的存在主要是为了与C和Objective-C API兼容。
@@ -1009,11 +1009,11 @@ Double字面量不能以小数点开头（与C和Objective-C不同）。如果�
 Numeric coercion 强制转换是指从一种类型转换为另一种类型。Swift并没有显式的类型强制转换，但它使用实例化能够完成同样的效果。Swift的数字类型提供了初始化器，这些初始化器将另一个数字类型实例作为参数：
 let i = 10 //an Int let x = Double(i) debugPrint(x) // 10.0, a Double let y = 3.8 //a Double let j = Int(y) debugPrint(j) // 3, an Int 当数值被赋值给变量或作为参数传递给函数时，Swift只对字面数字量进行隐式强制转换。下面这段代码是合法的，虽然10默认是Int类型，但因为它是字面量，因此能够隐式地转换为Double类型：
 let d : Double = 10 但下面这段代码是不合法的，编译器会报错。因为所赋值的是一个不同类型的变量，而不是字面量数字。问题的根源是i为Int实例，d是一个Double实例，二者不能自动进行隐式转换：
-let i = 10 let d : Double = i 解决方案是在赋值或传递变量时进行显式强制转换（即实例化）：
-let i = 10 let d : Double = Double(i) 当数字值被算术运算合并时，同样的规则也适用。Swift只对字面数字量进行隐式强制转换。例如，一个Int字面量与一个Double字面量运算时，Int字面量会隐式地转换为Double：
+let i = 10 let d : Double = i // Cannot convert value of type &amp;#39;Int&amp;#39; to specified type &amp;#39;Double&amp;#39; 解决方案是在赋值或传递变量时进行显式强制类型转换（即实例化）：
+let i = 10 let d : Double = Double(i) 当数字字面量被算术运算组合时，同样的规则也适用。Swift只对字面数字量进行隐式强制转换。例如，一个Int字面量与一个Double字面量运算时，Int字面量会隐式地转换为Double：
 let x = 10/3.0 debugPrint(x) // 3.33333333333333 但是，如果想在算术运算中组合不同类型的数字类型变量，则必须显式强制转换以保证它们是相同的类型。如下所示，因为i和n是不同类型的变量，会出现编译错误：
-let i = 10 let n = 3.0 let x = i / n // compile error:Binary operator &amp;#39;/&amp;#39; cannot be applied to operands of type &amp;#39;Int&amp;#39; and &amp;#39;Double&amp;#39; 解决方案是将变量i的类型强制转换为Double：
-let i = 10 let n = 3.0 let x = Double(i) / n 这些规则是Swift强类型的结果。对于现代计算机语言来说，它们构成了对数值非同寻常的处理，而且可能会在短时间内把你逼疯。
+let i = 10 // Int类型 let n = 3.0 // Double类型 let x = i / n // compile error:Binary operator &amp;#39;/&amp;#39; cannot be applied to operands of type &amp;#39;Int&amp;#39; and &amp;#39;Double&amp;#39; 解决方案是将变量i的类型强制转换为Double：
+let i = 10 let n = 3.0 let x = Double(i) / n 这些规则都是Swift强类型的结果。对于现代计算机语言来说，它们构成了对数值非同寻常的处理，而且可能会在短时间内把你逼疯。
 到目前为止，所举的例子很容易解决，但如果算术表达式较长，事情就会变得更加复杂，而且这个问题会因为其它数字类型的存在而变得更加复杂，这些数字类型是与Cocoa兼容所需要的。
 Other numeric types 如果只是在某个孤立的、抽象的世界中使用Swift，可能只使用Int和Double就能完成所有必要的算术运算。但是，如果是在进行iOS编程，就会遇到Cocoa，它里面包含了许多其它的数字类型，而Swift有与每一种类型相匹配的类型。
 除了Int，还有各种大小的有符号整数类型—Int8、Int16、Int32、Int64。加上无符号整数类型UInt以及 UInt8、UInt16、UInt32和UInt64。除了Double，还有低精度Float（32位存储，大约6或7个小数位精度）、更低精度的Float16、扩展精度Float80 和来自Core Graphics框架CGFloat。
@@ -1024,9 +1024,9 @@ let percentage = pt.x / s.bounds.size.width 不能在变量赋值、传递或组
 下面是一个应用程序中的一个典型示例。界面中的一个滑块是一个UISlider，它的minimumValue和maximumValue是Floats。在下面代码中s是UISlider，g是UIGestureRecognizer，尝试使用手势识别器将滑块移动到用户在滑块内点击的任何位置：
 let pt = g.location(in:s) let percentage = pt.x / s.bounds.size.width let delta = percentage * (s.maximumValue - s.minimumValue) // compile error 上面代码会发生编译错误，是因为pt.x的类型是CGFloat，s.bounds.size.width也是CGFloat，因此percentage的类型也是CGFloat，但是maximumValue和minimumValue是Float。所以percentage和(s.maximumValue - s.minimumValue)是不同类型。在Swift中Float和CGFloat是不同类型，必须显式强制类型转换：
 let delta = Float(percentage) * (s.maximumValue - s.minimumValue) CGFloat是一个特殊的例子。它根据架构的位数（32位或64位）解析为Float或Double的位数大小。但这种区别已经不那么重要了，因为现在32位架构已经很少了，而且无论如何它都能有效地处理Doubles。
-从Swift 5.5开始，Double和CGFloat是可以互换的。可以在它们被期望的地方互换，而不需要强制类型转换，这使iOS程序员减少了相当多的不便性。
-var cfg : CGFloat = 1 var d1 : Double = 2 cfg = d1 // legal d1 = cfg &#43; d1 // legal let x2 = cfg &#43; d1 // x is inferred as Double 不是所有的数值都能够强制转换为另一个类型的数值。特别是，各种尺寸的整数相对于其它尺寸的整数类型来说可能会超出范围。例如，Int8.max是127，如果尝试将&amp;gt;=128的字面量赋值给Int8是不合法的，下面将会出现编译错误：
-let tx: Int8 = 128 // Integer literal &amp;#39;128&amp;#39; overflows when stored into &amp;#39;Int8&amp;#39; 上面的例子中因为128是一个数字字面量，所以编译器能够提前判断溢出了。但进行类型强制转换时，编译器无法事先判断是否出溢出，所以在运行时才会报错：
+从Swift 5.5开始，Double和CGFloat是可以互换的。可以在它们被期望的地方互换，而不需要强制类型转换，这使iOS程序员减少了相当多的不便性：
+var cfg : CGFloat = 1 var d1 : Double = 2 cfg = d1 // legal d1 = cfg &#43; d1 // legal let x2 = cfg &#43; d1 // x is inferred as Double 不是所有的数值都能够强制转换为另一个类型的数值。特别是，不同整数类型转换时可能会超出范围。例如，Int8.max是127，如果尝试将&amp;gt;=128的字面量赋值给Int8是不合法的，下面将会出现编译错误：
+let tx: Int8 = 128 // Integer literal &amp;#39;128&amp;#39; overflows when stored into &amp;#39;Int8&amp;#39; 上面的例子中，因为128是一个数字字面量，所以编译器能够提前判断溢出了。但进行类型强制转换时，编译器无法事先判断是否出溢出，所以在运行时才会崩溃：
 let i : Int16 = 128 let i1 = Int8(i) // Swift/Integers.swift:3564: Fatal error: Not enough bits to represent the passed value 对于上面的情况，解决方案是调用一个可失败的初始化器。下面的代码在运行时虽然不会发生崩溃，但是需要测试转换是否成功：
 let i : Int16 = 128 let i1 = Int8(exactly: i)  if let i = i1 {  debugPrint(i1) } 另外一种解决方案是使用clamping初始化器，这个初始化器总是会成功的，因为超出范围的值会强制落入正常范围内，下面代码执行后打印的结果为127：
 let i : Int16 = 128 let i1 = Int8(clamping: i)  debugPrint(i1) //127 当浮点类型（例如Double）被强制转换为整数类型时，小数点后的内容会先被丢弃，然后再尝试强制转换。例如，Int8(127.9) 会转换成功，因为127在界限内。
@@ -1045,10 +1045,10 @@ let leftTripleArrow = &amp;#34;\u{21DA}&amp;#34; 该字符串中的反斜杠是�
  \n：一个Unix换行符。 \t：制表符。 \&amp;quot;：引号（转义以表明这不是字符串文字的结尾）。 \\：反斜杠（因为单独的反斜杠是转义字符）。  转义的引号和反斜线会使字符串字面意义变得难看和难以辨认，尤其在正则表达式中。例如，模式\b\d\d\b（由两个数字组成的单词）必须写成&amp;quot;\\b\\d\\d\\b&amp;quot;。可以在引号和反斜杠之前省略转义字符，用一个或多个哈希字符（#）围住字面量，下面这些都是相同的字符串：
 let pattold = &amp;#34;\\b\\d\\d\\b&amp;#34; let pattnew = #&amp;#34;\b\d\d\b&amp;#34;# // same thing let pattnew2 = ##&amp;#34;\b\d\d\b&amp;#34;## // same thing 这称为原始字符串字面量。缺点是，如果想在原始字符串字面量中使用反斜杠作为转义字符，则必须在反斜杠后面加上用于包围字符串字面量相同数量的#字符。字符串#&amp;quot;hello\nthere&amp;quot;#不包含换行符(\n)，但#&amp;quot;hello\#nthere&amp;quot;#包含。
 let hello = #&amp;#34;hello\nthere&amp;#34;# debugPrint(hello)  // &amp;#34;hello\\nthere&amp;#34;  let hello = #&amp;#34;hello\#nthere&amp;#34;# debugPrint(hello)  // &amp;#34;hello\nthere&amp;#34; 可以将包含换行符的字符串字面量输入为多行，而不是包含\n字符的单行表达式，这称为多行字符串字面量。使用的规则如下：
- 多行字符串字面量必须在开始和结束处用三重双引号 (&amp;quot;&amp;quot;&amp;quot;) 分隔。 任何字符都不能跟在同一行的开头分隔符后面。 除了空格之外，其它任何字符都不能与结束分隔符出现在同一行。 结束分隔符之前的最后一个隐式换行符会被忽略。 结束分隔符的缩进决定了文本行的缩进，它必须至少缩进到结束分隔符（整个空行除外）。  func ff() {  let s = &amp;#34;&amp;#34;&amp;#34; Line 1 Line 2 Line 3 &amp;#34;&amp;#34;&amp;#34; // ... } 在上面字符串s包含3行字符串，第1和第3行没有以空格开始，第2行以4个空格开始，第1行和第2行后面包含换行符。如果要在第3行后添加换行，可以输入一个空行，或者写一个转义的\n。
-在多行字符串字面量中，双引号不需要转义。以反斜杠结尾的一行与下一行相连。在下面这段代码中，字符串s仅由两行文字组成，第二行由四个空格开始，后面紧跟着 &amp;ldquo;Line 2 and this is still line 2&amp;rdquo;：
+ 多行字符串字面量必须在开始和结束处用三重引号 (&amp;quot;&amp;quot;&amp;quot;) 分隔。 任何字符都不能跟在同一行的开头分隔符后面。 除了空格之外，其它任何字符都不能与结束分隔符出现在同一行。 结束分隔符之前的最后一个隐式换行符会被忽略。 结束分隔符的缩进决定了文本行的缩进，它必须至少缩进到结束分隔符（整个空行除外）。  func ff() {  let s = &amp;#34;&amp;#34;&amp;#34; Line 1 Line 2 Line 3 &amp;#34;&amp;#34;&amp;#34; // ... } 在上面字符串s包含3行字符串，第1和第3行没有以空格开始，第2行以4个空格开始，第1行和第2行后面包含换行符。如果要在第3行后添加换行，可以输入一个空行，或者写一个转义的\n。
+在多行字符串字面量中，双引号不需要转义。以反斜杠结尾的一行与下一行相连。在下面这段代码中，字符串s仅由两行文字组成，第二行由四个空格开始，后面紧跟着 &amp;quot;Line 2 and this is still line 2&amp;quot;：
 func f() {  let s = &amp;#34;&amp;#34;&amp;#34; Line &amp;#34;1&amp;#34; Line 2 and this is still Line 2 &amp;#34;&amp;#34;&amp;#34;  // ...  debugPrint(s) } 可以使用#包围住多行字符串字面量，使之成为一个原始的多行字符串字头，但通常不太可能这样做。
-字符串插值允许在字符串字面量中嵌入任何值，即使这个值本身不是字符串，使用转义圆括号来实现：
+字符串插值允许在字符串字面量中嵌入任何值，即使这个值本身不是字符串，也可以使用转义圆括号来实现：
 let n = 5 let s = &amp;#34;You have \(n)widgets.&amp;#34; 如果是在一个字符串中插值，那么字符串中的引号不需要被转义：
 let s = &amp;#34;You have \(&amp;#34;numerous&amp;#34;.uppercased())widgets&amp;#34; debugPrint(s)  // &amp;#34;You have NUMEROUS widgets&amp;#34; 字符串插值在多行字符串是合法的。在以#包围的原始字符串中插值也是合法的，但反斜杠后面必须有相同数量的#字符，以表明它是转义字符。
 字符串插值的语法可以定制，以接受额外的参数，重定义第一个参数应该如何转换。这种形式的表达式可以是合法的：
@@ -1069,17 +1069,17 @@ Range Range对象类型是一个结构体，代表一对端点。形成Range字�
   ...闭range操作符：a...b意味着a到b的一切，包括b。
   ..&amp;lt;半开range操作符：a..&amp;lt;b意味着a到b的一切，但不包括b。
   在Range操作符两边添加空格是合法的，例如1...3或1 ... 3都是合法的。一个Range的端点的类型通常是某种数字，最常见的是整型。
-let r = 1...3 如果结束值是一个负数，它必须用括号括起来或在操作符前面加上空格。let r = -1000 ... -1和let r = -1000...(-1)都是可以的。Range的常用场景是for ... in语句:
+let r = 1...3 如果结束值是一个负数，它必须用圆括号括起来或在操作符前面加上空格。let r = -1000 ... -1和let r = -1000...(-1)都是可以的。Range的常用场景是for ... in语句:
 debugPrint(-1000...-1) // compile error: Ambiguous missing whitespace between unary and binary operators debugPrint(-1000...(-1)) debugPrint(-1000 ... -1) debugPrint(1 ... 1000) for ix in 1...3 {  debugPrint(ix) // 1, then 2, then 3  }  for i in -1...1 {  debugPrint(i) } 在Swift中，没有反向的Range，即Range的起始值不能大于结束值。一旦出现这种情况，编译器不会报错，但运行的时候会发生崩溃。在实际的编程上，可以使用Range的reversed()方法来实现相同的效果：
 for i in 1 ... -1 {  debugPrint(i) // 运行时发生崩溃 Fatal error: Range requires lowerBound &amp;lt;= upperBound }  for ix in (1...3).reversed() {  debugPrint(ix) // 3，2，1 } 在实际编程中，可以使用Range的contains(_:)实例方法来测试一个值是否在给定的范围内。例如，可以测试某个数字是否在某个范围内：
 let ix = 2 // ... an Int ... if (1...3).contains(ix) {  // ... } 如果只是想测试Range中是否包含某个数字，Range的端点数值可以为Double类型。下面的代码中，测试变量d是否在(0.1...0.9)中是可行的：
 let d = 0.3 // ... a Double ... if (0.1...0.9).contains(d) {  debugPrint(&amp;#34;contains \(d)&amp;#34;) } // &amp;#34;contains 0.3&amp;#34; Range的另一个常见用途是对一个序列进行索引。下面是获取一个字符串的第二、第三和第四个字符的一种方法。如果把字符串转换为一个字符数组，可以用一个Int Range作为该数组的索引：
-let s = &amp;#34;hello&amp;#34; let arr = Array(s) let result = arr[1...3] let s2 = String(result) // &amp;#34;ell&amp;#34; debugPrint(arr) // [&amp;#34;h&amp;#34;, &amp;#34;e&amp;#34;, &amp;#34;l&amp;#34;, &amp;#34;l&amp;#34;, &amp;#34;o&amp;#34;] debugPrint(s2) // &amp;#34;ell&amp;#34; 字符串本身是一个字符序列，所以可以使用Range来直接索引字符串，但是它必须是一个String.Index的Range，但是它很难获取。通过操作String.Index值，可以形成一个适当类型的Range，并使用它通过下标提取一个子字符串：
-let s = &amp;#34;hello&amp;#34; let ix1 = s.index(s.startIndex, offsetBy:1) let ix2 = s.index(ix1, offsetBy:2) let s2 = s[ix1...ix2] // &amp;#34;ell&amp;#34; debugPrint(s2) 可以在Range字面常量上省略一个端点，形成一个部分Range。有三种部分Range表达式，对应三种类型的Range结构，分别是省略前端点的的..&amp;lt;,省略前端点的...以及省略后端点的...:
+let s = &amp;#34;hello&amp;#34; let arr = Array(s) let result = arr[1...3] let s2 = String(result) // &amp;#34;ell&amp;#34; debugPrint(arr) // [&amp;#34;h&amp;#34;, &amp;#34;e&amp;#34;, &amp;#34;l&amp;#34;, &amp;#34;l&amp;#34;, &amp;#34;o&amp;#34;] debugPrint(s2) // &amp;#34;ell&amp;#34; 字符串本身是一个字符序列，所以可以使用Range来直接索引字符串，但必须是一个String.Index的Range，但是它很难获取。通过操作String.Index值，可以形成一个适当类型的Range，并使用它通过下标提取一个子字符串：
+let s = &amp;#34;hello&amp;#34; let ix1 = s.index(s.startIndex, offsetBy:1) let ix2 = s.index(ix1, offsetBy:2) let s2 = s[ix1...ix2] // 闭区间，结果是&amp;#34;ell&amp;#34; debugPrint(s2) 可以在Range字面常量上省略一个端点，形成一个部分Range。有三种形式部分Range表达式，对应三种类型的Range结构，分别是省略前端点的的..&amp;lt;,省略前端点的...以及省略后端点的...:
 let str = &amp;#34;hello&amp;#34; let range1 = str.startIndex..&amp;lt;str.endIndex // Range let range2 = ..&amp;lt;str.endIndex // PartialRangeUpTo let range3 = ...str.index(before: str.endIndex) // PartialRangeUpThrough let range4 = str.startIndex... // PartialRangeFrom  debugPrint(str) debugPrint(str[range1]) debugPrint(str[range2]) debugPrint(str[range3]) debugPrint(str[range4])  &amp;#34;hello&amp;#34; &amp;#34;hello&amp;#34; &amp;#34;hello&amp;#34; &amp;#34;hello&amp;#34; &amp;#34;hello&amp;#34; 如果需要将一个部分Range转换为一个Range，可以调用relative(to:)方法。但一般来说，不需要这样做，因为部分Range可以用在任何需要使用Range的地方：
-let s = &amp;#34;hello&amp;#34; let ix2 = s.index(before: s.endIndex) let s2 = s[..&amp;lt;ix2] // &amp;#34;hell&amp;#34;  debugPrint(s2) // &amp;#34;hell&amp;#34; debugPrint(s[s.startIndex..&amp;lt;s.endIndex]) //&amp;#34;hello&amp;#34; debugPrint((..&amp;lt;s.endIndex).relative(to: s) == s.startIndex ..&amp;lt; s.endIndex) // true Tuple 元组是一个由多个值组成的轻量级自定义有序集合。作为一种类型，它的表达方式是用圆括号包围所含类型，用逗号分隔开。下面是一个元组变量的声明，其类型是一个Int和一个String：
+let s = &amp;#34;hello&amp;#34; let ix2 = s.index(before: s.endIndex) let s2 = s[..&amp;lt;ix2] // &amp;#34;hell&amp;#34;  debugPrint(s2) // &amp;#34;hell&amp;#34; debugPrint(s[s.startIndex..&amp;lt;s.endIndex]) //&amp;#34;hello&amp;#34; debugPrint((..&amp;lt;s.endIndex).relative(to: s) == s.startIndex ..&amp;lt; s.endIndex) // true Tuple 元组是一个由多个值组成的轻量级自定义有序集合。作为一种类型，它的表达方式是用圆括号包围所含类型，用逗号分隔开各种类型。下面是一个元组变量的声明，其类型是一个Int和一个String：
 var pair : (Int, String) 元组字面量也以同样的方式表达，用圆括号包含值，每个值以逗号隔开。但这些值的类型也可以由编译器推断出来，无需显式声明：
-var pair1 : (Int, String) = (1, &amp;#34;Two&amp;#34;) var pair2 = (1, &amp;#34;Two&amp;#34;) 元组是Swift语言特有的，与Cocoa和Objective-C不兼容。元组是解决一个函数只能返回一个值这个问题的好方法。元组是一个特殊的值，但它里面包含了多个值，所以可以使用元组作为一个函数的返回类型以返回多个值。
+var pair1 : (Int, String) = (1, &amp;#34;Two&amp;#34;) var pair2 = (1, &amp;#34;Two&amp;#34;) 元组是Swift语言特有的，与Cocoa和Objective-C不兼容。元组是解决一个函数只能返回一个值这个问题的好方法。元组是一个特殊的值，它里面包含了多个值，所以可以使用元组作为一个函数的返回类型以返回多个值。
 元组也提供了很多语言上便利性，可以一次同时赋值多个不同类型的变量，也可以一次同时声明和初始化多个不同类型的变量，如下所示：
 let ix: Int let s: String (ix, s) = (1, &amp;#34;Two&amp;#34;) let (ix, s) = (1, &amp;#34;Two&amp;#34;) var (ix1, s1) = (12, &amp;#34;name&amp;#34;) 如果要将元组中的值赋给某些变量，但又要忽略元组中的某个值的时候，可以在对应位置使用下划线。下面的代码就是只取元组中的第二个值：
 let pair = (1, &amp;#34;Two&amp;#34;) let (_, s) = pair // now s is &amp;#34;Two 使用元组可以不借助临时变量来交换两个变量的值，同时也是安全的。使用元组来交换两个变量时，只需要交换元组中变量的位置即可：
@@ -1109,7 +1109,7 @@ let mainview = self.view let v = UIView() mainview.addSubview(v) // compile erro
 let mainview = self.view! mainview.addSubview(v) The keyword nil 在与nil以外的东西进行相等比较时，Optional得到了特殊的待遇：真正被比较的是被包裹的值，而不是Optional本身被比较：
 let s: String? = &amp;#34;Howdy&amp;#34; if s == &amp;#34;Howdy&amp;#34; { // ... they _are_ equal!  debugPrint(true) } 上面的例子中，Swift不会将Optional本身与&amp;quot;Howdy&amp;quot;进行比较，而是自动地（安全地）将其包装值（如果有）与&amp;quot;Howdy&amp;quot;进行比较。如果包裹的值是&amp;quot;Howdy&amp;quot;，则比较成功。如果被包装的值不是&amp;quot;Howdy&amp;quot;，则比较失败。如果没有被包装的值（也就是为nil），那么比较也会安全地失败。
 能够使用==操作符，则被包裹的类型必须遵循Equatable协议。如果没有遵守这个协议，编译器会阻止一个Optional类型使用==进行比较。
-对象类型 Swift中有三种对象（object）类型，它们分别是enum,struct,class。对象类型的作用域取决于它声明所在的位置，可能出现的位置有三种：
+Object Types Swift中有三种对象（object）类型，它们分别是enum,struct,class。对象类型的作用域取决于它声明所在的位置，可能出现的位置有三种：
   顶层声明：声明在文件顶部，默认情况下对于同一个module中的所有文件都是可见的。
   另一个类型中内嵌：在另一个类型的声明中内嵌声明一个类型是很有用的，相当于给这个内嵌类型一个命名空间。
   函数体中：在函数体中声明的对象类型的生命周期只存在于包含它的花括号内，这样的声明是合法的，但使用场景较少。
