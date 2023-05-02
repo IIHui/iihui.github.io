@@ -1123,14 +1123,18 @@ let fido = Dog(name: &amp;#34;Fido&amp;#34;) let rover = Dog(license: 1234) let 
 class Dog {  var name = &amp;#34;&amp;#34;  var license = 0  init() {  //  }   init(name: String) {  self.name = name  }   init(license: Int) {  self.license = license  }   init(name: String, license: Int) {  self.name = name  self.license = license  } } 当实例生成时，如果实例属性还没有初始值，则编译器会报错。因此，一个属性可以作为其声明的一部分被初始化，或被其中的每个初始化器初始化，否则会出现编译错误。
 Swift编译器强制要求所有的实例属性都要正确地初始化，这是Swift的一个重要特征。相比之下，Objective-C的实例属性可以不初始化，而且经常会这样，导致可能出现奇怪的错误。
 因为在初始化器中设置一个实例属性也算作初始化，所以即使实例属性是用let声明的常量也是合法的。下面代码将name和license都声明为常量属性，在初始化器中再初始化也是合法的：
-class Dog {  let name: String  let license: Int   init(name: String, license: Int) {  self.name = name  self.license = license  } } 有时，在初始化过程中，暂时不能初始化一个实例属性为有意义的值。也许这个属性的初始值要在这个实例出现后的某个时间点才能得到。这种情况与所有实例属性在其声明中或通过初始化器进行初始化的要求相冲突。可以通过分配一个默认的初始值来规避这个问题，但此时无法向你自己的代码传达这样一个事实：这个默认值不是真实有效的值。
-一个常见的解决方案是将实例属性声明为一个Optional类型的var。Optional类型有一个值nil，表示没有提供真实有效的值，并且一个Optional var会自动初始化为nil。
-因此，代码中可以用nil来测试这个Optional的实例属性，如果它是nil，就暂时不要使用这个属性。该属性会在某个时候被赋予真实有效的值，这个值是被包裹在Optional中的。
-一个初始化器可以引用一个已经初始化的实例属性，也可以引用一个未初始化的实例属性，以便初始化它。除了这种情况，在所有实例属性被初始化之前，初始化器不得显式或隐式地引用自己。这条规则保证了实例在使用之前已经完全形成。
-代理初始化器 在初始化器中，如果调用了另一个初始化器，那这个初始化器被称为代理初始化器。代理初始化器调用的其它初始化器必须已经将所有的存储属性初始化，否则会出现编译错误。
-代理初始化器似乎是过早使用self调用函数的一个反例，但事实并不是这样，它使用self调用函数是为了初始化储存属性。而且代理初始化器在调用其它初始化器之前不能使用self，即使是给存储属性赋初值也不行。
+class Dog {  let name: String  let license: Int   init(name: String, license: Int) {  self.name = name  self.license = license  } } Deferred initialization of properties 有时，在初始化时还不能初始化一个实例属性为有意义的值。也许这个属性的初始值要在这个实例生成后的某个时间点才能得到。这种情况与所有实例属性在其声明中初始化或通过初始化器进行初始化的要求相冲突。
+可以通过分配一个默认的初始值来规避这个问题，但此时无法向你自己的代码传达这样一个事实：这个默认值不是real的值。
+一个常见的解决方案是将实例属性声明为Optional类型的var。Optional类型有一个值nil，表示没有提供真real的值，并且一个Optional var会自动初始化为`nil。
+因此，代码中可以用nil来测试这个Optional实例属性，如果它是nil，就暂时不要使用这个属性。该属性会在某个时刻被赋予real的值，这个值是被包裹在Optional中的。
+// this property will be set automatically when the nib loads @IBOutlet var myButton: UIButton!  // this property will be set after time-consuming gathering of data  var albums : [MPMediaItemCollection]? Referring to self 一个初始化器可以引用一个已经初始化的实例属性，也可以引用一个未初始化的实例属性，以便初始化它。除了这种情况，在所有实例属性被初始化之前，初始化器不得显式或隐式地引用self。这条规则保证了实例在使用之前已经完全生成。
+struct Cat {  var name: String  var license: Int  init(name: String, license: Int) {  self.name = name  meow() // too soon - compile error  self.license = license  }   func meow() {  print(&amp;#34;meow&amp;#34;)  } } 上面的代码会出现编译错误&#39;self&#39; used before all stored properties are initialized，因为license属性还未初始化之前已经调用了meow。
+Delegating initializers 在初始化器中，如果调用了另一个初始化器，那这个初始化器被称为代理初始化器。代理初始化器调用的其它初始化器必须已经将所有的存储属性初始化，否则会出现编译错误。
+当一个初始化器进行委托时，另一个初始化器（它所委托的那个），必须先完全初始化实例，然后委托的初始化器可以对完全初始化的实例进行处理，可能会再次设置已经被它所委托的初始化器设置的var属性。
+代理初始化器看起来是过早使用self调用函数的一个反例，但事实并不是这样，代理初始化使用self调用函数是为了初始化储存属性。
+代理初始化器在调用其它初始化器之前不能使用self，即使是给存储属性赋初值也不行。下面代理初始化器中，第一行是初始化meaningOfLife，会出现编译错误：
 struct Digit {   var number: Int  var meaningOfLife: Bool   init(number: Int) {  self.number = number  self.meaningOfLife = false  }   init() { // this is a delegating initializer  self.meaningOfLife = false //&amp;#39;self&amp;#39; used before &amp;#39;self.init&amp;#39; call or assignment to &amp;#39;self&amp;#39;  self.init(number: 42)  self.meaningOfLife = true  }  } 在代理初始化器中，不能再对let常量属性赋值，因为调用其它初始化器时已经将常量属性赋了初始值，如果再次对其赋值会出现编译错误。因为在代理初始化器中可以调用其它初始化器，千万不要形成递归调用，下面代码就会产生递归引用：
-struct Digit { // do not do this!   var number: Int = 100   init(value: Int) {  self.init(number: value)  }   init(number: Int) {  self.init(value: number  }  } 可失败的初始化器 一个初始化器可以返回一个可选的新实例，如果返回nil表示初始化失败，这种初始化器被称为可失败的初始化器。声明可失败的初始化器很简单，只要在init后面添加一个?即可:
+// do not do this! struct Digit {   var number: Int = 100   init(value: Int) {  self.init(number: value)  }   init(number: Int) {  self.init(value: number)  }  } Failable initializers 一个初始化器可以返回一个可选的新实例，如果返回nil表示初始化失败，这种初始化器被称为可失败的初始化器。声明可失败的初始化器很简单，只要在init后面添加一个?即可:
 class Dog {   let name: String  let license: Int   init?(name: String, license: Int) {  if name.isEmpty {  return nil // 返回nil  }  if license &amp;lt;= 0 {  return nil  }  self.name = name  self.license = license  } } 属性 实例属性在声明的同时可以进行初始化，但**初始化某个实例属性时不能获取其它实例属性或调用一个实例方法，因为此时实例尚未生成**。下面代码会产生编译错误：
 class Moi {  let first = &amp;#34;Matt&amp;#34;  let last = &amp;#34;Neuburg&amp;#34;  let whole = self.first &#43; &amp;#34; &amp;#34; &#43; self.last // compile error: Cannot find &amp;#39;self&amp;#39; in scope } 解决上面的编译报错有三种方法，第一种是把whole声明为计算属性而非存储属性，因为**计算属性是在实例初始化完成之后才会被调用的**：
 class Moi {  let first = &amp;#34;Matt&amp;#34;  let last = &amp;#34;Neuburg&amp;#34;   var whole: String {  self.first &#43; &amp;#34; &amp;#34; &#43; self.last  } } 第二种方法是把whole声明为lazy的var变量。同计算变量一样，lazy变量也是要等实例初始化完成之后才会被调用：
