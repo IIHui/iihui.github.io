@@ -966,37 +966,33 @@ Property Wrappers 如果有几个带有存储变量幌子的计算属性实际�
 @propertyWrapper struct Clamped {  private var _i: Int = 0  var wrappedValue: Int {  get {  self._i  }  set {  self._i = Swift.max(Swift.min(newValue, 5), 0)  }  } } 上面声明的结果是，现在可以声明一个用自定义属性标记的计算属性，该属性的名称与该结构(@Clamped) 相同，没有getter或setter函数：
 @Clamped var p 上面的属性p不需要被初始化，因为它是一个计算属性，也不需要getter或setter函数。实际上，它都不需要类型声明，因为Clamped结构体的wrappedValue计算属性提供了类型。
 多亏了属性包装器，我们封装了计算属性，这意味着可以声明另外一个@Clamped属性。此外，这个模式现在有了一个名字：声明@Clamped var告诉我们这个计算属性的行为将会是什么。
-Setter Observers 计算变量并不经常需要作为一个存储变量的幌子。这是因为Swift有另一个功能，可以让你在存储变量的setter函数中注入setter observers功能。
-setter observers是在设置存储变量之前和之后调用的函数，可以添加一个willSet函数，或一个didSet函数，或两者均有：
+Setter Observers 计算变量并不经常需要作为一个存储变量的幌子。这是因为Swift有另一个功能，可以在存储变量的setter函数中注入setter observers功能。
+setter observers是在设置存储变量之前和之后调用的函数。即在存储变量中添加一个willSet函数，或一个didSet函数，或两者均有：
 var s = &amp;#34;whatever&amp;#34; { // ①  willSet { // ②  debugPrint(newValue) // ③  }  didSet { // ④  debugPrint(oldValue) // ⑤  // self.s = &amp;#34;something else&amp;#34;  } }   变量必须使用var声明，不能使用let声明，并且可以被赋予一个初始值。
-  如果willSet函数存在的话，就是单词willSet后面紧跟着函数体。当其它代码设置该变量时，在该变量实际收到其新值之前willSet函数被调用。
-  默认情况下，willSet函数接受即将设置的新值，这个新值的名字是newValue。也可以通过在willSet后面的括号里写一个不同的名字来自定义接受到的新值名字。旧值仍然在存储变量中，willSet函数中依然可以访问旧值。
+  如果willSet函数存在的话，就是单词willSet后面紧跟着函数体。当在其它地方设置该变量时，在该变量收到其新值之前willSet函数被调用。
+  默认情况下，willSet函数接受即将设置的新值，这个新值的名字是newValue。也可以通过在willSet后面的括号里写一个不同的名字来自定义接受到新值名字。旧值仍然在存储变量中，willSet函数中依然可以访问旧值。
   如果在willSet中将存储变量设置为不同的值时，不会生效，并会收到编译警告：
 var newStr: String = &amp;#34;new&amp;#34; {  willSet {  debugPrint(newValue)  // Attempting to store to property &amp;#39;s&amp;#39; within its own willSet, which is about to be overwritten by the new value  newStr = &amp;#34;test&amp;#34;  } }  newStr = &amp;#34;name&amp;#34; debugPrint(newStr) // name // name   如果didSet函数存在的话，就是didSet这个词后面紧跟着函数体。当其它代码设置该变量时，在该变量实际收到其新值之后被调用。
-  默认情况下，didSet函数接收旧的值，名字为oldValue，此时新值已经完成替换。可以通过在didSet后面的括号里写一个不同的名字以自定义接受到的旧值。
+  默认情况下，didSet函数接收旧的值，名字为oldValue，此时新值已经完成替换。可以通过在didSet后面的括号里写一个不同的名字以自定义接收到的旧值。
 var now1: String = &amp;#34;now1&amp;#34; {  willSet(val) {  debugPrint(now1)  debugPrint(val)  }  didSet(val) {  debugPrint(val)  debugPrint(now1)  } }  debugPrint(now1 = &amp;#34;133&amp;#34;) //&amp;#34;now1&amp;#34; //&amp;#34;133&amp;#34; //&amp;#34;now1&amp;#34; //&amp;#34;133&amp;#34;   新的值已经在存储的变量中，didSet函数中可以访问新值。此外，在didSet函数中将存储变量设置为不同的值也是合法的，但不会再次调用Setter Observers。
 var newStr: String = &amp;#34;new&amp;#34; {  willSet {  debugPrint(newValue)  newStr = &amp;#34;test&amp;#34;  }  didSet {  newStr = &amp;#34;dddd&amp;#34;  } }  newStr = &amp;#34;name&amp;#34; debugPrint(newStr) // name // dddd   需要特别注意的是，当存储变量初始化时或didSet函数中再次改变存储变量的值时，不会调用setter observers函数，否则会产生死循环。
 在实际的iOS编程中，可能想要可见的界面反应对象的状态。一个setter观察器是一种简单而强大的方式，可以使界面与一个属性同步。
 在下面这个例子中，有一个view类的实例属性，决定了该视图应该被旋转多少。每次这个实例属性发生变化时，我们都会改变界面来反映它，即设置self.transform使视图被旋转相应的角度：
 var angle: CGFloat = 0 {  didSet { // modify interface to match   self.transform = CGAffineTransform(rotationAngle: self.angle)  } } 计算变量不能有setter observers，因为它已经有了setter函数，任何在设置过程中需要发生的额外事情都可以直接写入setter函数中。但一个被属性包装器包裹的计算变量可以有setter observers。
 Lazy Initialization 如果一个存储变量声明时赋了一个初始值，并且使用了Lazy Initialization（懒初始化），那么在运行代码访问该变量的值之前，初始值实际上还不会有。在Swift中，有三种类型的变量可以被懒初始化。
-  全局变量。全局变量是自动Lazy Initialization的，一个全局变量的初始化在其他代码首次引用该全局变量时才会发生，这种初始化只会执行一次，同时又是线程安全的。
-  静态属性。静态属性也是自动Lazy Initialization的，它的行为和全局变量完全一样，而且原因也基本相同。所以在Swift中类属性不能再加lazy关键字。
-  实例属性默认不是lazy的，但可以在声明的时候显式加上关键字lazy。此时，这个属性必须使用var来声明而不能用let。如果没有任何代码获取属性的值，属性的初始化器可能永远不会执行。
-  从Swift 5.5开始，局部变量可以使用lazy var声明了。
-  如果你的代码从未引用懒初始化的变量，那么这个变量的初始化器永远不会运行。显然，如果初始值的生成成本很高时，那么这个特性很有用。
-如果懒惰初始化变量的第一个引用重新设置了该变量会怎么样？对于全局变量或静态属性，初始值会被计算，然后立即被新设置的值所取代。下面的代码执行后，控制台打印了firstStatic和secondStatic：
-struct Assist {  var value: String   init(value: String) {  self.value = value  debugPrint(self.value)  } }  class NewTest {  static var staticTest = Assist(value: &amp;#34;firstStatic&amp;#34;)  func changeTest() {  self.test = Assist(value: &amp;#34;secondTime&amp;#34;)  } } NewTest.staticTest = Assist(value: &amp;#34;secondStatic&amp;#34;) // firstStatic // secondStatic 但是对于懒加载的实例属性或局部变量的初始化器将永远不会赋初始值，如果该变量在被获取之前被重新设置。下面的代码执行后，控制台只打印了一个secondTime：
-struct Assist {  var value: String   init(value: String) {  self.value = value  debugPrint(self.value)  } }  class NewTest {  lazy var test = Assist(value: &amp;#34;firstTime&amp;#34;)  func changeTest() {  self.test = Assist(value: &amp;#34;secondTime&amp;#34;)  } } NewTest().changeTest() // secondTime Singleton Lazy Initialization常用于实现单例。单例是一种设计模式，所有的代码都能够访问某个类的单一共享实例。下面代码就是一个简单的单例实现：
-class MyClass {  static let shared = MyClass()  private init() {  //  } } 在代码第一次使用MyClass.shared前，单例都不会被创建。只要单例创建成功后，无论其它代码多少次使用MyClass.shared，返回的实例总是同一个实例。如果使用的是一个只读计算属性，其getter调用MyClass()并返回该实例，则不会返回同一个实例。
-通常，我们希望实例属性是Lazy Initialization的。因为实例属性初始值的生成所花费的代价可能是昂贵的，所以除非确实需要用到的时候，一般会避免提前生成。但还有另一个原因更重要，懒初始化可以做普通初始化器不能做的事情。
-最重要的是懒初始化可以访问实例本身，而普通的初始化器是不能这样做的，因为在普通初始化器运行的时候，实例尚未生成。在下面的代码中，如果arrow属性不声明为lazy，将会出现编译错误Cannot use instance member &#39;self&#39; within property initializer; property initializers run before &#39;self&#39; is available：
+ 全局变量。全局变量是自动Lazy Initialization的，一个全局变量的初始化在其他代码首次引用该全局变量时才会发生，这种初始化只会执行一次，同时又是线程安全的。 静态属性。静态属性也是自动Lazy Initialization的，它的行为和全局变量完全一样，而且原因也基本相同。所以在Swift中类属性不能再加lazy关键字。 实例属性默认不是lazy的，但可以在声明的时候显式加上关键字lazy。此时，这个属性必须使用var来声明而不能用let。如果没有任何代码获取属性的值，属性的初始化器可能永远不会执行。 从Swift 5.5开始，局部变量可以使用lazy var声明了。  如果你的代码从未引用懒初始化的变量，那么这个变量的初始化器永远不会运行。显然，如果初始值的生成成本很高时，那么这个特性很有用。
+如果懒惰初始化变量的第一个引用重新设置了该变量会怎么样？对于全局变量或静态属性，初始值会被计算，然后立即被新设置的值所取代。下面代码执行后，控制台打印了firstStatic和secondStatic：
+struct Assist {  var value: String   init(value: String) {  self.value = value  debugPrint(self.value)  } }  class NewTest {  static var staticTest = Assist(value: &amp;#34;firstStatic&amp;#34;) } NewTest.staticTest = Assist(value: &amp;#34;secondStatic&amp;#34;) // firstStatic // secondStatic 但是对于懒加载的实例属性或局部变量的初始化器将永远不会赋初始值，如果该变量在被获取之前被重新设置。下面的代码执行后，控制台只打印了一个secondTime：
+struct Assist {  var value: String   init(value: String) {  self.value = value  debugPrint(self.value)  } }  class NewTest {  lazy var test = Assist(value: &amp;#34;firstTime&amp;#34;)  func changeTest() {  self.test = Assist(value: &amp;#34;secondTime&amp;#34;)  } }  // 下面代码执行完后，只会打印secondTime，不会打印firstTime NewTest().changeTest() Singleton Lazy Initialization常用于实现单例。单例是一种设计模式，所有的代码都能够访问某个类的单一共享实例。下面代码就是一个最简单的单例实现：
+class MyClass {  static let shared = MyClass()  private init() {  //  } } 在代码第一次使用MyClass.shared前，单例不会被创建。只要单例创建成功后，无论其它代码多少次使用MyClass.shared，返回的实例总是同一个实例。如果使用的是一个只读计算属性，其getter函数调用MyClass()并返回该实例，那么每次返回的是不同的实例。
+通常，我们希望实例属性是Lazy Initialization的。因为实例属性初始值的生成所花费的代价可能是昂贵的，所以除非确实需要用到的时候，一般会避免提前生成。
+还有另一个原因更重要，懒初始化可以做普通初始化器不能做的事情，即懒初始化可以访问实例本身，而普通的初始化器是不能这样做的，因为在普通初始化器运行的时候，实例尚未生成。
+下面的代码中，如果arrow属性不声明为lazy，将会出现编译错误Cannot use instance member &#39;self&#39; within property initializer; property initializers run before &#39;self&#39; is available：
 class MyView: UIView {  lazy var arrow = self.arrowImage() // legal  func arrowImage() -&amp;gt; UIImage {  // ... big image-generating code goes here ...  } } 一个常见的习惯是定义和调用匿名函数来初始化一个lazy实例属性。一旦加上lazy，那么在这个匿名函数中就可以引用实例本身self：
-class MyView: UIView {  lazy var prog: UIProgressView = {  let p = UIProgressView(progressViewStyle: .default)  p.alpha = 0.7  p.trackTintColor = UIColor.clear  p.progressTintColor = UIColor.black  p.frame = CGRect(x: 0, y: 0, width: self.view.bounds.size.width, height: 20) // legal   p.progress = 1.0  return p  }() } 因为不能将lazy加在用let声明的属性上，所以不要让一个lazy的实例属性成为只读的。
-与自动lazy的全局变量和静态变量不同，标记为lazy的实例属性是线程不安全的。当在多线程环境中使用时，lazy的实例属性可能会导致多次初始化，甚至闪退。
-没有lazy let实例属性，因此不能欣然地将lazy实例属性设置为只读。这是不幸的，因为有一些常见的情况会从这样的功能中受益。
+class MyView: UIView {  lazy var prog: UIProgressView = {  let p = UIProgressView(progressViewStyle: .default)  p.alpha = 0.7  p.trackTintColor = UIColor.clear  p.progressTintColor = UIColor.black  p.frame = CGRect(x: 0, y: 0, width: self.view.bounds.size.width, height: 20) // legal   p.progress = 1.0  return p  }() } 与自动lazy的全局变量和静态变量不同，标记为lazy的实例属性是线程不安全的。当在多线程环境中使用时，lazy的实例属性可能会导致多次初始化，甚至闪退。
+因为不能将lazy加在用let声明的属性上，所以不能让一个lazy的实例属性成为只读的。没有lazy let实例属性是不幸的，因为有一些常见的情况会从这样的功能中受益。
 假设想用一个helper属性添加到self中，它持有一个Helper类实例，并需要一个对self的引用。我们还想让这个Helper实例在self的整个生命周期内持续存在。可以通过让helper成为一个let属性并在其声明中初始化它来执行这一规则。
-但是不能把self传递给Helper的初始化器，因为不能在属性声明中引用self。可以通过声明helper属性为lazy来解决这个问题。但是必须使用var来声明helper，也就是说这个helper是可能被其它代码改变。当然，我们可以尽量不让它发生，但问题是lazy var这样的表达方式无法执行我们所需的策略。
+但是不能把self传递给Helper的初始化器，因为不能在属性声明中引用self。可以通过声明helper属性为lazy来解决这个问题。但是必须使用var来声明helper，也就是说这个helper可能被其它代码改变。当然，可以尽量不让这种情况发生，但问题是lazy var这样的表达方式无法执行我们真正所需的策略。
 Built-In Simple Types 每一个变量和每一个字面量都必须有一个类型。Swift内置的简单类型有Bool,Numbers，String，Character，Range，Tuple等。其中Bool类型是一个结构体，只有两个值，一个是true，一个是false：
 @frozen public struct Bool : Sendable {  public init()  @inlinable public init(_ value: Bool)  @inlinable public static func random&amp;lt;T&amp;gt;(using generator: inout T) -&amp;gt; Bool where T : RandomNumberGenerator  @inlinable public static func random() -&amp;gt; Bool } 与许多计算机语言不同，Swift中没有任何其它东西能被隐含地转换为Bool。例如，在C语言中，布尔值实际上是一个数字，0代表false，非0代表true。而在Swift中，只有false是false，true为true。
 一个常见的情况：一个存储在某个var变量中的Bool，我们想反转它的值。即如果它是false的就变成true，如果它是true就变成false。
