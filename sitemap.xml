@@ -960,7 +960,7 @@ var now: String {  Date().description } Computed Properties 在实际的编程�
 var mp: MPMusicPlayerController {  MPMusicPlayerController.systemMusicPlayer } var nowPlayingItem: MPMediaItem? {  self.mp.nowPlayingItem } 一个计算变量的getter函数可以封装多行代码，其实质是把一个方法变成了一个属性。下面是从xml文件中提取作者信息，本可以将其声明为方法func authorOfItem() -&amp;gt; String?，但方法表达了一个过程，而计算属性则能更直观地描述它是一个事物：
 var authorOfItem: String? {  guard let authorNodes = self.extensionElements(withXMLNamespace: &amp;#34;http://www.tidbits.com/dummy&amp;#34;, elementName: &amp;#34;app_author_name&amp;#34;) else {  return nil  }  guard let authorNode = authorNodes.last as? FPExtensionNode else {  return nil  }  return authorNode.stringValue } 一个计算变量可以位于一个或多个存储变量的前面，充当这些存储变量设置和获取时的守门员，这与Objective-C的的访问器类似。通常，一个计算变量由一个私有的存储变量来支持：
 private var _pp: Int = 0 var pp: Int {  get {  self._pp  }  set {  self._pp = newValue  } } 上面代码是合法的，但是毫无意义。当在获取或设置存储变量的同时做其它事情的时候，存储变量的幌子变得有用了。
-private var _pp: Int = 0 var pp: Int {  get {  self._pp  }  set {  self._pp = max(min(newValue, 5), 0)  } } 一个实例的计算属性getter函数或setter函数可以引用其它实例成员。这一点很重要，因为一般来说，存储属性的初始化器不能这样做。对于一个计算属性来说，隐式或显式使用self合法的，因为getter和setter函数在实例实际生成前不会被调用。
+private var _pp: Int = 0 var pp: Int {  get {  self._pp  }  set {  self._pp = max(min(newValue, 5), 0)  } } 一个实例的计算属性getter函数或setter函数可以引用其它实例成员。这一点很重要，因为一般来说，存储属性的初始化时不能引用self。对于一个计算属性来说，隐式或显式使用self合法的，因为getter或setter函数在实例实际生成前不会被调用。
 Property Wrappers 如果有几个带有存储变量幌子的计算属性实际上做了同样的事情，那么最终将会有大量的重复代码。如果能把这些共同的功能移到一个地方就更好了。实际上，可以用一个属性包装器来实现。
 一个属性包装器是在声明结构体时标记@propertyWrapper，并且必须有一个wrappedValue的计算属性。下面是一个实现&amp;quot;clamped&amp;quot;模式的属性包装器。
 @propertyWrapper struct Clamped {  private var _i: Int = 0  var wrappedValue: Int {  get {  self._i  }  set {  self._i = Swift.max(Swift.min(newValue, 5), 0)  }  } } 上面声明的结果是，现在可以声明一个用自定义属性标记的计算属性，该属性的名称与该结构(@Clamped) 相同，没有getter或setter函数：
@@ -980,7 +980,11 @@ var newStr: String = &amp;#34;new&amp;#34; {  willSet {  debugPrint(newValue)  n
 在下面这个例子中，有一个view类的实例属性，决定了该视图应该被旋转多少。每次这个实例属性发生变化时，我们都会改变界面来反映它，即设置self.transform使视图被旋转相应的角度：
 var angle: CGFloat = 0 {  didSet { // modify interface to match   self.transform = CGAffineTransform(rotationAngle: self.angle)  } } 计算变量不能有setter observers，因为它已经有了setter函数，任何在设置过程中需要发生的额外事情都可以直接写入setter函数中。但一个被属性包装器包裹的计算变量可以有setter observers。
 Lazy Initialization 如果一个存储变量声明时赋了一个初始值，并且使用了Lazy Initialization（懒初始化），那么在运行代码访问该变量的值之前，初始值实际上还不会有。在Swift中，有三种类型的变量可以被懒初始化。
- 全局变量。全局变量是自动Lazy Initialization的，一个全局变量的初始化在其他代码首次引用该全局变量时才会发生，这种初始化只会执行一次，同时又是线程安全的。 静态属性。静态属性也是自动Lazy Initialization的，它的行为和全局变量完全一样，而且原因也基本相同。所以在Swift中类属性不能再加lazy关键字。 实例属性默认不是lazy的，但可以在声明的时候显式加上关键字lazy。此时，这个属性必须使用var来声明而不能用let。如果没有任何代码获取属性的值，属性的初始化器可能永远不会执行。 从Swift 5.5开始，局部变量可以使用lazy var声明了。  如果你的代码从未引用懒初始化的变量，那么这个变量的初始化器永远不会运行。显然，如果初始值的生成成本很高时，那么这个特性很有用。
+  全局变量。全局变量是自动Lazy Initialization的，一个全局变量的初始化在其他代码首次引用该全局变量时才会发生，这种初始化只会执行一次，同时又是线程安全的。
+  静态属性。静态属性也是自动Lazy Initialization的，它的行为和全局变量完全一样，而且原因也基本相同。所以在Swift中类属性不能再加lazy关键字。
+  实例属性默认不是lazy的，但可以在声明的时候显式加上关键字lazy。此时，这个属性必须使用var来声明而不能用let。如果没有任何代码获取属性的值，属性的初始化器可能永远不会执行。
+  从Swift 5.5开始，局部变量可以使用lazy var声明了。下面代码中，dog并不会被实例化。
+do {  lazy var dog = Dog(name: &amp;#34;123&amp;#34;, license: 456) }   如果代码从未引用懒初始化的变量，那么这个变量的初始化器永远不会运行。显然，如果初始值的生成成本很高时，那么这个特性很有用。
 如果懒惰初始化变量的第一个引用重新设置了该变量会怎么样？对于全局变量或静态属性，初始值会被计算，然后立即被新设置的值所取代。下面代码执行后，控制台打印了firstStatic和secondStatic：
 struct Assist {  var value: String   init(value: String) {  self.value = value  debugPrint(self.value)  } }  class NewTest {  static var staticTest = Assist(value: &amp;#34;firstStatic&amp;#34;) } NewTest.staticTest = Assist(value: &amp;#34;secondStatic&amp;#34;) // firstStatic // secondStatic 但是对于懒加载的实例属性或局部变量的初始化器将永远不会赋初始值，如果该变量在被获取之前被重新设置。下面的代码执行后，控制台只打印了一个secondTime：
 struct Assist {  var value: String   init(value: String) {  self.value = value  debugPrint(self.value)  } }  class NewTest {  lazy var test = Assist(value: &amp;#34;firstTime&amp;#34;)  func changeTest() {  self.test = Assist(value: &amp;#34;secondTime&amp;#34;)  } }  // 下面代码执行完后，只会打印secondTime，不会打印firstTime NewTest().changeTest() Singleton Lazy Initialization常用于实现单例。单例是一种设计模式，所有的代码都能够访问某个类的单一共享实例。下面代码就是一个最简单的单例实现：

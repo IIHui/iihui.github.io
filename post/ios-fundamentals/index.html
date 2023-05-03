@@ -241,7 +241,7 @@ code.has-jax {
     <i class="fa fa-file-word-o"></i>
 </span>
 <span class="post-meta-item-text">字数: </span>
-<span class="leancloud-visitors-count">77358</span>
+<span class="leancloud-visitors-count">77387</span>
 &nbsp; | &nbsp;
 <span class="post-meta-item-icon">
     <i class="fa fa-coffee"></i>
@@ -2494,7 +2494,7 @@ code.has-jax {
 </span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">self</span>._pp = max(min(newValue, <span style="color:#ae81ff">5</span>), <span style="color:#ae81ff">0</span>)
 </span></span><span style="display:flex;"><span>    }
 </span></span><span style="display:flex;"><span>}
-</span></span></code></pre></div><p>一个实例的<font color=LightSeaGreen>计算属性<code>getter</code>函数或<code>setter</code>函数可以引用其它实例成员</font>。这一点很重要，因为一般来说，存储属性的初始化器不能这样做。对于一个计算属性来说，隐式或显式使用<code>self</code>合法的，<em><font color=red>因为<code>getter</code>和<code>setter</code>函数在实例实际生成前不会被调用</font></em>。</p>
+</span></span></code></pre></div><p>一个实例的<font color=LightSeaGreen>计算属性<code>getter</code>函数或<code>setter</code>函数可以引用其它实例成员</font>。这一点很重要，因为一般来说，存储属性的初始化时不能引用<code>self</code>。对于一个计算属性来说，隐式或显式使用<code>self</code>合法的，<em><font color=red>因为<code>getter</code>或<code>setter</code>函数在实例实际生成前不会被调用</font></em>。</p>
 <h2 id="property-wrappers">Property Wrappers</h2>
 <p>如果有几个带有存储变量幌子的计算属性实际上做了同样的事情，那么最终将会有大量的重复代码。如果能把这些共同的功能移到一个地方就更好了。实际上，可以用一个属性包装器来实现。</p>
 <p>一个属性包装器是在声明结构体时标记<code>@propertyWrapper</code>，并且必须有一个<code>wrappedValue</code>的计算属性。下面是一个实现<code>&quot;clamped&quot;</code>模式的属性包装器。</p>
@@ -2602,12 +2602,23 @@ code.has-jax {
 <h2 id="lazy-initialization">Lazy Initialization</h2>
 <p>如果一个<font color=red>存储变量声明</font>时赋了一个初始值，并且使用了<code>Lazy Initialization</code>（懒初始化），那么在运行代码访问该变量的值之前，初始值实际上还不会有。在<code>Swift</code>中，有三种类型的变量可以被懒初始化。</p>
 <ul>
-<li>全局变量。全局变量是自动<code>Lazy Initialization</code>的，一个全局变量的初始化在<font color=red>其他代码首次引用该全局变量时才会发生</font>，这种初始化只会执行一次，同时又是<font color=red>线程安全</font>的。</li>
-<li>静态属性。静态属性也是自动<code>Lazy Initialization</code>的，它的行为和全局变量完全一样，而且原因也基本相同。所以在<code>Swift</code>中类属性不能再加<code>lazy</code>关键字。</li>
-<li>实例属性默认不是<code>lazy</code>的，但可以在声明的时候显式加上关键字<code>lazy</code>。此时，这个属性必须使用<code>var</code>来声明而不能用<code>let</code>。如果没有任何代码获取属性的值，属性的初始化器可能永远不会执行。</li>
-<li>从<code>Swift 5.5</code>开始，<font color=red>局部变量可以使用<code>lazy var</code>声明了</font>。</li>
+<li>
+<p>全局变量。全局变量是自动<code>Lazy Initialization</code>的，一个全局变量的初始化在<font color=red>其他代码首次引用该全局变量时才会发生</font>，这种初始化只会执行一次，同时又是<font color=red>线程安全</font>的。</p>
+</li>
+<li>
+<p>静态属性。静态属性也是自动<code>Lazy Initialization</code>的，它的行为和全局变量完全一样，而且原因也基本相同。所以在<code>Swift</code>中类属性不能再加<code>lazy</code>关键字。</p>
+</li>
+<li>
+<p>实例属性默认不是<code>lazy</code>的，但可以在声明的时候显式加上关键字<code>lazy</code>。此时，这个属性必须使用<code>var</code>来声明而不能用<code>let</code>。如果没有任何代码获取属性的值，属性的初始化器可能永远不会执行。</p>
+</li>
+<li>
+<p>从<code>Swift 5.5</code>开始，<font color=red>局部变量可以使用<code>lazy var</code>声明了</font>。下面代码中，<code>dog</code>并不会被实例化。</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span><span style="color:#66d9ef">do</span> {
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">lazy</span> <span style="color:#66d9ef">var</span> dog = Dog(name: <span style="color:#e6db74">&#34;123&#34;</span>, license: <span style="color:#ae81ff">456</span>)
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div></li>
 </ul>
-<p>如果你的代码从未引用懒初始化的变量，那么这个变量的初始化器永远不会运行。显然，如果初始值的生成成本很高时，那么这个特性很有用。</p>
+<p>如果代码从未引用懒初始化的变量，那么这个变量的初始化器永远不会运行。显然，如果初始值的生成成本很高时，那么这个特性很有用。</p>
 <p>如果懒惰初始化变量的第一个引用重新设置了该变量会怎么样？<font color=red>对于全局变量或静态属性，初始值会被计算，然后立即被新设置的值所取代。</font>下面代码执行后，控制台打印了<code>firstStatic</code>和<code>secondStatic</code>：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span><span style="color:#66d9ef">struct</span> <span style="color:#a6e22e">Assist</span> {
 </span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">var</span> value: String
@@ -2624,7 +2635,7 @@ code.has-jax {
 </span></span><span style="display:flex;"><span>NewTest.staticTest = Assist(value: <span style="color:#e6db74">&#34;secondStatic&#34;</span>)
 </span></span><span style="display:flex;"><span><span style="color:#75715e">// firstStatic</span>
 </span></span><span style="display:flex;"><span><span style="color:#75715e">// secondStatic</span>
-</span></span></code></pre></div><p>但是对于<font color=LightSeaGreen>懒加载的实例属性或局部变量的初始化器将永远不会赋初始值，如果该变量在被获取之前被重新设置</font>。下面的代码执行后，控制台只打印了一个<code>secondTime</code>：</p>
+</span></span></code></pre></div><p>但是对于<font color=red>懒加载的实例属性或局部变量的初始化器将永远不会赋初始值，如果该变量在被获取之前被重新设置</font>。下面的代码执行后，控制台只打印了一个<code>secondTime</code>：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span><span style="color:#66d9ef">struct</span> <span style="color:#a6e22e">Assist</span> {
 </span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">var</span> value: String
 </span></span><span style="display:flex;"><span>
