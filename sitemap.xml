@@ -917,7 +917,7 @@ Variables and Simple Types 变量是一个具名的shoebox，其包含的值必�
 此外，默认情况下全局变量对于**同一模块中任何其它文件中的所有代码也都是可见的**，因为同一模块中的Swift文件可以自动看到彼此，所以也可以看到彼此顶层声明的全局变量：
 // File1: let globalVariable = &amp;#34;global&amp;#34;  class Dog {  func debugPrintGlobal() {  debugPrint(globalVariable)  } }  // File2:  class Cat {  func debugPrintGlobal() {  debugPrint(globalVariable)  } } 属性是在对象类型声明（枚举、结构或类）的顶层声明的变量。有两种类型的属性，一种是实例属性，另一种是静态/类属性。如果属性声明时未加static或class关键字，就是实例属性，也就是说默认是实例属性。
 实例属性的值对于每个实例都可以是不同的，它的生命周期和实例的生命周期相同。一个实例是对一个对象类型实例化而来，该实例以及其属性的生命周期主要取决于赋值的变量的生命周期。
-如果一个属性在声明的时候加上static或class，那就是静态/类属性，它的生命周期和该对象类型的生命周期相同。如果对象类型声明在一个文件的顶层，那么只要该该静态/类属性使用过一次，那么该属性就会一直存在。
+如果一个属性在声明的时候加上static或class，那就是静态/类属性，它的生命周期和该对象类型的生命周期相同。如果对象类型声明在一个文件的顶层，那么只要该静态/类属性使用过一次，那么该属性就会一直存在。
 属性只能通过对象才能看到，对象的方法能够直接看到属性，在方法内部可以使用self.x这种方式访问实例属性。默认情况下，实例属性对于其它代码也是可见的，前提是有这个实例的引用。同样地，默认情况下，一个静态/类属性对其它可以看到这个对象类型的代码也都是可见的：
 // File1:  class Dog {  static let staticProperty = &amp;#34;staticProperty&amp;#34;  let instanceProperty = &amp;#34;instanceProperty&amp;#34;   func debugPrintInstanceProperty() {  debugPrint(self.instanceProperty)  }  }  // File2:  class Cat {  func debugPrintDogStaticProperty() {  debugPrint(Dog.staticProperty)  }   func debugPrintDogInstanceProperty() {  let dog = Dog()  debugPrint(dog.instanceProperty)  }  } 局部变量是指声明在花括号内部的变量，它的生命周期与包含它的花括号一样长。当程序执行到局部变量声明的范围时，局部变量才会真正生成，当程序执行离开这个范围时，局部变量就会自动消失。
 有时，局部变量也被称为自动变量，以表示它们会自动出现和消失。一个局部变量只能被同一作用域中的后续代码看到（也包括同一作用域中后续更深层次的作用域）。
@@ -1129,7 +1129,7 @@ Swift编译器强制要求所有的实例属性都要正确地初始化，这是
 因为在初始化器中设置一个实例属性也算作初始化，所以即使实例属性是用let声明的常量也是合法的。下面代码将name和license都声明为常量属性，在初始化器中再初始化也是合法的：
 class Dog {  let name: String  let license: Int   init(name: String, license: Int) {  self.name = name  self.license = license  } } Deferred initialization of properties 有时，在初始化时还不能初始化一个实例属性为有意义的值。也许这个属性的初始值要在这个实例生成后的某个时间点才能得到。这种情况与所有实例属性在其声明中初始化或通过初始化器进行初始化的要求相冲突。
 可以通过分配一个默认的初始值来规避这个问题，但此时无法向你自己的代码传达这样一个事实：这个默认值不是real的值。
-一个常见的解决方案是将实例属性声明为Optional类型的var。Optional类型有一个值nil，表示没有提供真real的值，并且一个Optional var会自动初始化为`nil。
+一个常见的解决方案是将实例属性声明为Optional类型的var。Optional类型有一个值nil，表示没有提供real的值，并且一个Optional var会自动初始化为`nil。
 因此，代码中可以用nil来测试这个Optional实例属性，如果它是nil，就暂时不要使用这个属性。该属性会在某个时刻被赋予real值，这个值是被包裹在Optional中的。
 // this property will be set automatically when the nib loads @IBOutlet var myButton: UIButton!  // this property will be set after time-consuming gathering of data  var albums : [MPMediaItemCollection]? Referring to self 一个初始化器可以引用一个已经初始化的实例属性，也可以引用一个未初始化的实例属性，以便初始化它。除了这种情况，在所有实例属性被初始化之前，初始化器不得显式或隐式地引用self。这条规则保证了实例在使用之前已经完全生成。
 struct Cat {  var name: String  var license: Int  init(name: String, license: Int) {  self.name = name  meow() // too soon - compile error  self.license = license  }   func meow() {  print(&amp;#34;meow&amp;#34;)  } } 上面代码会出现编译错误&#39;self&#39; used before all stored properties are initialized，因为license属性还未初始化前就已经调用了meow。
