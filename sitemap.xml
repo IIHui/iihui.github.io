@@ -1019,16 +1019,16 @@ let x = 10/3.0 debugPrint(x) // 3.33333333333333 但是，如果想在算术运�
 let i = 10 // Int类型 let n = 3.0 // Double类型 let x = i / n // compile error:Binary operator &amp;#39;/&amp;#39; cannot be applied to operands of type &amp;#39;Int&amp;#39; and &amp;#39;Double&amp;#39; 解决方案是将变量i的类型强制转换为Double：
 let i = 10 let n = 3.0 let x = Double(i) / n 这些规则都是Swift强类型的结果。对于现代计算机语言来说，它们构成了对数值不同寻常的处理，而且可能会在短时间内把你逼疯。
 到目前为止，所举的例子很容易解决，但如果算术表达式较长，事情就会变得更加复杂，而且这个问题会因为其它数字类型的存在而变得更加复杂，这些数字类型是与Cocoa兼容所需要的。
-Other numeric types 如果只是在某个孤立的、抽象的世界中使用Swift，可能只使用Int和Double就能完成所有必要的算术运算。但是，如果是在进行iOS编程，就会遇到Cocoa，它里面包含了许多其它的数字类型，而Swift有与每一种类型相匹配的类型。
-除了Int，还有各种大小的有符号整数类型—Int8、Int16、Int32、Int64。加上无符号整数类型UInt以及 UInt8、UInt16、UInt32和UInt64。除了Double，还有低精度Float（32位存储，大约6或7个小数位精度）、更低精度的Float16、扩展精度Float80 和来自Core Graphics框架CGFloat。
-在试图与C语言API对接时，也可能遇到C语言的数字类型。就Swift而言，这些类型只是类型别名，例如CDouble（对应C语言的double）只是Double的另一个名字，CLong（C语言的long）是Int。
-在各种Cocoa框架中会出现许多其它数字类型的别名，例如，TimeInterval（Objective-C的NSTimeInterval）只是Double的一个类型别名。
-let percentage = pt.x / s.bounds.size.width 不能在变量赋值、传递或组合不同类型的数值时，必须将这些值显式强制转换为正确的类型。Cocoa有很多的数值类型，Cocoa通常会给你一个既不是Int也不是Double的数值。
-你不一定能意识到这一点，直到编译器因为某种类型不匹配而终止编译。然后，必须弄清楚哪个类型错误了，并将所有内容强制为同一类型。
-下面是一个应用程序中的一个典型示例。界面中的一个滑块是一个UISlider，它的minimumValue和maximumValue是Floats。在下面代码中s是UISlider，g是UIGestureRecognizer，尝试使用手势识别器将滑块移动到用户在滑块内点击的任何位置：
-let pt = g.location(in:s) let percentage = pt.x / s.bounds.size.width let delta = percentage * (s.maximumValue - s.minimumValue) // compile error 上面代码会发生编译错误，是因为pt.x的类型是CGFloat，s.bounds.size.width也是CGFloat，因此percentage的类型也是CGFloat，但是maximumValue和minimumValue是Float。所以percentage和(s.maximumValue - s.minimumValue)是不同类型。在Swift中Float和CGFloat是不同类型，必须显式强制类型转换：
+Other numeric types 如果只是在某个孤立的、抽象的世界中使用Swift，可能只使用Int和Double就能完成所有必要的算术运算。但是，如果是在进行iOS编程，就会遇到Cocoa，它里面包含了许多其它的数字类型，而Swift中都有与之相匹配的类型。
+除了Int，还有各种大小的有符号整数类型—Int8、Int16、Int32、Int64。加上无符号整数类型UInt、UInt8、UInt16、UInt32和UInt64。除了Double，还有低精度Float（32位存储，大约6或7个小数位精度）、更低精度的Float16、扩展精度Float80 和来自Core Graphics框架的CGFloat。
+在尝试与C语言API对接时，也可能遇到C语言的数字类型。就Swift而言，这些类型只是类型别名，例如CDouble（对应C语言的double）只是Double的另一个名字，CLong（C语言的long）是Int。
+在各种Cocoa框架中会出现许多其它数字类型的别名，例如，TimeInterval（Objective-C的NSTimeInterval）只是Double的类型别名。
+let percentage = pt.x / s.bounds.size.width 在变量赋值、参数传递或操作符组合不同类型的数值时，必须将这些值显式强制转换为正确的类型。Cocoa有很多数值类型，但Cocoa通常会给你一个既不是Int也不是Double的数值。
+但我们不一定能意识到这一点，直到编译器因为某种类型不匹配而出现报错，我们才会意识到。然后，弄清楚哪个类型错误了，并将所有内容强制转换为同一类型。
+下面是一个典型示例。界面中滑块是一个UISlider，它的minimumValue和maximumValue是Floats。下面代码中s是UISlider，g是UIGestureRecognizer，尝试使用手势识别器将滑块移动到用户在滑块内点击的任何位置：
+let pt = g.location(in:s) let percentage = pt.x / s.bounds.size.width let delta = percentage * (s.maximumValue - s.minimumValue) // compile error 上面代码会发生编译错误，因为pt.x的类型是CGFloat，s.bounds.size.width也是CGFloat，因此percentage的类型也是CGFloat，但是maximumValue和minimumValue是Float。所以percentage和(s.maximumValue - s.minimumValue)为不同类型。在Swift中Float和CGFloat是不同类型，必须进行显式强制类型转换：
 let delta = Float(percentage) * (s.maximumValue - s.minimumValue) CGFloat是一个特殊的例子。它根据架构的位数（32位或64位）解析为Float或Double的位数大小。但这种区别已经不那么重要了，因为现在32位架构已经很少了，而且无论如何它都能有效地处理Doubles。
-从Swift 5.5开始，Double和CGFloat是可以互换的。可以在它们被期望的地方互换，而不需要强制类型转换，这使iOS程序员减少了相当多的不便性：
+从Swift 5.5开始，Double和CGFloat是可以互换的。在它们被期望的地方可以互换，而不需要强制类型转换，这使iOS程序员减少了相当多的不便性：
 var cfg : CGFloat = 1 var d1 : Double = 2 cfg = d1 // legal d1 = cfg &#43; d1 // legal let x2 = cfg &#43; d1 // x is inferred as Double 不是所有的数值都能够强制转换为另一个类型的数值。特别是，不同整数类型转换时可能会超出范围。例如，Int8.max是127，如果尝试将&amp;gt;=128的字面量赋值给Int8是不合法的，下面将会出现编译错误：
 let tx: Int8 = 128 // Integer literal &amp;#39;128&amp;#39; overflows when stored into &amp;#39;Int8&amp;#39; 上面的例子中，因为128是一个数字字面量，所以编译器能够提前判断溢出了。但进行类型强制转换时，编译器无法事先判断是否出溢出，所以在运行时才会崩溃：
 let i : Int16 = 128 let i1 = Int8(i) // Swift/Integers.swift:3564: Fatal error: Not enough bits to represent the passed value 对于上面的情况，解决方案是调用一个可失败的初始化器。下面代码在运行时虽然不会发生崩溃，但是需要测试转换是否成功：
@@ -1042,8 +1042,8 @@ var i = 1 i = i &#43; 7 实际上有个速记法，提供了一次执行算术�
 var i = 1 i &#43;= 7 速记（复合）赋值算术运算符有&#43;=, -=, *=, /=, %=, &amp;amp;=,|=, ^=, &amp;lt;&amp;lt;=, &amp;gt;&amp;gt;=。
 Comparison 对于两个不同类型的整数，虽然不能在算术运算中组合它们，但可以比较不同整数类型的值，如下所示i是Int，i2是UInt8类型，但它们可以比较：
 let i: Int = 1 let i2: UInt8 = 2 let ok = i &amp;lt; i2 // true let ok2 = i == i2 // false  debugPrint(ok2) //false 由于计算机存储数字的方式，Double数值的相等比较可能不会像我们期望的那样。举一个经典的例子，将0.1加十次与0.1乘以10的结果不同：
-let f2 = 0.1 var sum = 0.0 for _ in 0..&amp;lt;10 {  sum &#43;= f2 } let product = f2 * 10 let ok3 = sum == product // false debugPrint(ok3) //false 解决这类问题并不容易。通常的方法是检查两个值是否足够接近，但这就引出了怎么判断足够接近的问题。一个有用的公式是:
-let ok = sum &amp;gt;= product.nextDown &amp;amp;&amp;amp; sum &amp;lt;= product.nextUp // true String 在Swift中，字符串String也是结构体类型。表示字符串值最简单方法是使用字面量，使用双引号分隔：
+let f2 = 0.1 var sum = 0.0 for _ in 0..&amp;lt;10 {  sum &#43;= f2 } let product = f2 * 10 let ok3 = sum == product // false debugPrint(ok3) //false 解决这类问题并不容易。通常的方法是检查两个值是否足够接近，但又引出了该怎么判断足够接近的问题。一个有用的公式为:
+let ok = sum &amp;gt;= product.nextDown &amp;amp;&amp;amp; sum &amp;lt;= product.nextUp // true String 在Swift中，字符串String也是结构体类型。表示字符串值最简单方法是使用字符串字面量，使用双引号分隔：
 let greeting = &amp;#34;hello&amp;#34; Swift中的字符串是完全现代的，它使用Unicode编码，可以在字符串字面量中包含任何字符（如表情符）。如果知道一个字符的Unicode码点，并且不嫌麻烦，可以使用\u{...}，需要注意的是在花括号的内容至多为八位十六进制数字：
 let leftTripleArrow = &amp;#34;\u{21DA}&amp;#34; 该字符串中的反斜杠是转义字符。它的意思是，“我不是一个真正的反斜杠，紧接着的下一个字符需要特殊处理。”各种不可打印和不明确的字符作为转义字符输入，最重要的是以下这些字符：
  \n：一个Unix换行符。 \t：制表符。 \&amp;quot;：引号（转义以表明这不是字符串文字的结尾）。 \\：反斜杠（因为单独的反斜杠是转义字符）。  转义的引号和反斜线会使字符串字面意义变得难看和难以辨认，尤其在正则表达式中。例如，模式\b\d\d\b（由两个数字组成的单词）必须写成&amp;quot;\\b\\d\\d\\b&amp;quot;。可以在引号和反斜杠之前省略转义字符，用一个或多个哈希字符（#）围住字面量，下面这些都是相同的字符串：
@@ -1094,16 +1094,16 @@ var pair = (first: 1, second: &amp;#34;Two&amp;#34;) debugPrint(pair.first, pair
 let s = &amp;#34;hello&amp;#34; for (index, c) in s.enumerated() {  debugPrint(&amp;#34;character \(index)is \(c)&amp;#34;) }  //character 0 is h //character 1 is e //character 2 is l //character 3 is l //character 4 is o  for t in s.enumerated() {  debugPrint(&amp;#34;character \(t.offset)is \(t.element)&amp;#34;) }  //character 0 is h //character 1 is e //character 2 is l //character 3 is l //character 4 is o 需要特别注意的是，可以将一个没有标签的元组赋值给一个有标签的对应元组。相反，也可以将一个有标签的元组赋值给一个没有标签的元组，下面代码都是可行的：
 var pair = (1, &amp;#34;Two&amp;#34;) var pairWithNames: (first: Int, second: String) = pair let ix = pairWithNames.first // 1 pair = pairWithNames 但是，如果两个元组包含的相同的类型，但声明的标签不同，则不能相互赋值。如下所示，虽然pair1和pair2的类型相同，但标签不同，会出现编译错误：
 var pair1 = (first: 1, second: &amp;#34;test&amp;#34;) debugPrint(pair1.first, pair1.0, pair1.second, pair1.1) var pair2 = (test1: 1, test2: &amp;#34;test2&amp;#34;) debugPrint(pair1.first, pair1.0, pair1.second, pair1.1) pair1 = pair2 // Cannot assign value of type &amp;#39;(test1: Int, test2: String)&amp;#39; to type &amp;#39;(first: Int, second: String)&amp;#39; 可以在函数中传递元组，也可以在一个函数中返回一个没有标签的元组，即使这个函数声明的返回值是带标签的元组，如下所示：
-func tupleMaker() -&amp;gt; (first: Int, second: String) {  return (1, &amp;#34;Two&amp;#34;) // no labels here }  let tuple = tupleMaker() debugPrint(tuple.first, tuple.second, tuple.0, tuple.1) // 1 &amp;#34;Two&amp;#34; 1 &amp;#34;Two&amp;#34; 可选类型 可选对象类型（实质上是一个枚举）包裹着另一个对象，这个被包裹的对象的类型可以为任何类型。可以使用Optional声明或者赋值一个可选变量：
+func tupleMaker() -&amp;gt; (first: Int, second: String) {  return (1, &amp;#34;Two&amp;#34;) // no labels here }  let tuple = tupleMaker() debugPrint(tuple.first, tuple.second, tuple.0, tuple.1) // 1 &amp;#34;Two&amp;#34; 1 &amp;#34;Two&amp;#34; Optional 可选对象类型（实质上是一个枚举）包裹着另一个对象，这个被包裹的对象的类型可以为任何类型。可以使用Optional声明或者赋值一个可选变量：
 var stringMaybe = Optional(&amp;#34;howdy&amp;#34;) debugPrint(stringMaybe) stringMaybe = Optional(&amp;#34;fareWell&amp;#34;) debugPrint(stringMaybe) var stringMaybe1: String? = Optional(&amp;#34;test&amp;#34;) // optional可选值 debugPrint(stringMaybe1) stringMaybe1 = &amp;#34;name&amp;#34; debugPrint(stringMaybe1)  //Optional(&amp;#34;howdy&amp;#34;) //Optional(&amp;#34;fareWell&amp;#34;) //Optional(&amp;#34;test&amp;#34;) //Optional(&amp;#34;name&amp;#34;) 声明可选值，通常不使用Optional初始化器，而是将某种类型的值分配或传递给一个已经声明成Optional的引用。在上面代码中，一旦stringMaybe被类型化为一个包裹着String的Optional，那么直接向其赋一个String是合法的，赋值的字符串被自动包装成一个Optional。
 从形式上看，Optional是一个泛型，所以包裹一个字符串的Optional是一个Optional&amp;lt;String&amp;gt;。实际上，不必这样写，Swift语言支持用语法糖来表达一个Optional类型：被包装类型的名称后面跟一个问号：
 var stringMaybe : String? 如果期望是一个Optional包装的某种类型，可以传递一个包装类型的值来代替。这是因为参数传递就像赋值一样：一个未被包裹的值会被隐含地包裹起来。如果一个函数期望一个包裹着字符串的Optional参数，可以直接传递一个字符串参数，它将自动地转换成Optional：
 func optionalExpecter(_ s: String?) { // ... here, s will be an Optional wrapping a String ...   debugPrint(s) } optionalExpecter(&amp;#34;howdy&amp;#34;) // console debugPrints: Optional(&amp;#34;howdy&amp;#34;) 如果期望的是一个非Optional的类型，实际上却传递了一个Optional的类型，那么编译器将会报错。下面代码将会出现编译错误：
 func realStringExpecter(_ s: String) {  // } let stringMaybe: String? = &amp;#34;howdy&amp;#34; // compile error: Value of optional type &amp;#39;String?&amp;#39; must be unwrapped to a value of type &amp;#39;String&amp;#39; realStringExpecter(stringMaybe) 如果想使用一个Optional，它所包裹的东西的类型是预期的，必须解开这个Optional。也就是说，必须进入它的内部，取出它所包裹的实际东西。
-已经看到了不止一种将一个对象包裹在一个Optional中的方法。但是相反的过程呢？如何解开一个Optional来获取它里面包裹的对象呢？一种方法是使用unwrap操作符（或强制unwrap操作符），它是一个后缀的感叹号：
+Unwrapping an Optional 已经看到了不止一种将一个对象包裹在一个Optional中的方法。但是相反的过程呢？如何解开一个Optional来获取它里面包裹的对象呢？一种方法是使用unwrap操作符（或强制unwrap操作符），它是一个后缀的感叹号：
 func realStringExpecter(_ s: String) {  // } let stringMaybe: String? = &amp;#34;howdy&amp;#34; realStringExpecter(stringMaybe!) 在上面这段代码中，stringMaybe！语法表达了在Optional stringMaybe内部的操作，即获取被包裹的值。由于stringMaybe是一个包裹着String的Optional，它里面的东西就是一个String。这正是realStringExpecter函数想要的实参。stringMaybe是一个包裹着字符串 &amp;quot;howdy &amp;quot;的Optional，但stringMaybe！是字符串 &amp;quot;howdy&amp;quot;。
 如果Optional包裹着某个类型，不能直接向它发送这个类型的消息，必须先解开这个Optional，也就是要解开stringMaybe取它里面的String：
-let stringMaybe : String? = &amp;#34;howdy&amp;#34; let upper = stringMaybe.uppercased() // compile error // Value of optional type &amp;#39;String?&amp;#39; must be unwrapped to refer to member &amp;#39;uppercased&amp;#39; of wrapped base type &amp;#39;String&amp;#39;  let stringMaybe: String? = &amp;#34;howdy&amp;#34; let upper = stringMaybe!.uppercased() // compile error Swift提供了另一种使用Optional的方式，即在预期使用包裹的类型是的地方使用隐式解包类型。隐式解包类型也是一种Optional，但是编译器允许它直接在期望包裹类型的地方。
+let stringMaybe : String? = &amp;#34;howdy&amp;#34; let upper = stringMaybe.uppercased() // compile error // Value of optional type &amp;#39;String?&amp;#39; must be unwrapped to refer to member &amp;#39;uppercased&amp;#39; of wrapped base type &amp;#39;String&amp;#39;  let stringMaybe: String? = &amp;#34;howdy&amp;#34; let upper = stringMaybe!.uppercased() // compile error Implicitly unwrapped Optional Swift提供了另一种使用Optional的方式，即在预期使用包裹的类型是的地方使用隐式解包类型。隐式解包类型也是一种Optional，但是编译器允许它直接在期望包裹类型的地方。
 实际上，也可以对一个隐式解包类型进行解包，但没必要这样做，因为如果试图在期望解包类型的地方使用它，将自动解包。
 请记住，一个隐式解包的Optional仍然是一个Optional。通过将某些东西声明为隐式解包的Optional，就是在请求编译器，如果碰巧在预期的包装类型中使用这个值，请原谅并自动解包这个值。
 实际上，一个隐式解包的Optional类型并不是一个真正的独立类型。它只是一个以特殊方式标记的Optional，允许它在预期解包类型的地方被使用。由于这个原因，隐式解包并不通过赋值传播。
