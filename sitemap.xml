@@ -1031,7 +1031,7 @@ let delta = Float(percentage) * (s.maximumValue - s.minimumValue) CGFloat是一�
 从Swift 5.5开始，Double和CGFloat是可以互换的。可以在它们被期望的地方互换，而不需要强制类型转换，这使iOS程序员减少了相当多的不便性：
 var cfg : CGFloat = 1 var d1 : Double = 2 cfg = d1 // legal d1 = cfg &#43; d1 // legal let x2 = cfg &#43; d1 // x is inferred as Double 不是所有的数值都能够强制转换为另一个类型的数值。特别是，不同整数类型转换时可能会超出范围。例如，Int8.max是127，如果尝试将&amp;gt;=128的字面量赋值给Int8是不合法的，下面将会出现编译错误：
 let tx: Int8 = 128 // Integer literal &amp;#39;128&amp;#39; overflows when stored into &amp;#39;Int8&amp;#39; 上面的例子中，因为128是一个数字字面量，所以编译器能够提前判断溢出了。但进行类型强制转换时，编译器无法事先判断是否出溢出，所以在运行时才会崩溃：
-let i : Int16 = 128 let i1 = Int8(i) // Swift/Integers.swift:3564: Fatal error: Not enough bits to represent the passed value 对于上面的情况，解决方案是调用一个可失败的初始化器。下面的代码在运行时虽然不会发生崩溃，但是需要测试转换是否成功：
+let i : Int16 = 128 let i1 = Int8(i) // Swift/Integers.swift:3564: Fatal error: Not enough bits to represent the passed value 对于上面的情况，解决方案是调用一个可失败的初始化器。下面代码在运行时虽然不会发生崩溃，但是需要测试转换是否成功：
 let i : Int16 = 128 let i1 = Int8(exactly: i)  if let i = i1 {  debugPrint(i1) } 另外一种解决方案是使用clamping初始化器，这个初始化器总是会成功的，因为超出范围的值会强制落入正常范围内，下面代码执行后打印的结果为127：
 let i : Int16 = 128 let i1 = Int8(clamping: i)  debugPrint(i1) //127 当浮点类型（例如Double）被强制转换为整数类型时，小数点后的内容会先被丢弃，然后再尝试强制转换。例如，Int8(127.9) 会转换成功，因为127在界限内。
 debugPrint(Int8(127.9)) Arithmetic operations 从技术上讲，如果整数是无符号的，移位运算符执行逻辑移位，如果整数是有符号的，则执行算术移位。整数上溢或下溢是运行时错误（应用程序将崩溃）例如，两个Int值的和超过Int.max：
@@ -1122,22 +1122,22 @@ Object Types Swift中有三种对象（object）类型，它们分别是enum,str
 class Dog {  // } let dog = Dog() 上面的代码中，Dog()调用了一个初始化器，尽管Dog类没有声明任何初始化器，但并没有编译错误。这是因为，如果没有自定义初始化器，则编译器会自动生成一个无参数的初始化器。
 除了使用编译器自动生成的初始化器，也可以编写自己的初始化器。初始化器是一种特殊的函数，有特殊的声明语法，不需要使用func关键字、箭头符号以及返回值类型。
 自定义初始化器的声明使用关键字init和一个参数列表，然后紧跟函数体。一个对象类型可以有多个初始化器，以其参数（个数和类型以及顺序）来区分：
-class Dog {  var name = &amp;#34;&amp;#34;  var license = 0   init(name: String) {  self.name = name  }   init(license: Int) {  self.license = license  }   init(name: String, license: Int) {  self.name = name  self.license = license  } } 上面自定义了三个初始化器，即提供了三种方式创建Dog实例。现在已经不能使用没有初始化参数的初始化器了，因为一旦有自定义的初始化器，编译器就不会再自动生成无参的初始化器了：
-let fido = Dog(name: &amp;#34;Fido&amp;#34;) let rover = Dog(license: 1234) let spot = Dog(name: &amp;#34;Spot&amp;#34;, license: 1357) 也可以显式声明一个无参的自定义初始化器，以避免使用没有参数的初始化器时出现编译报错。下面代码声明了一个无参的初始化器init():
+class Dog {  var name = &amp;#34;&amp;#34;  var license = 0   init(name: String) {  self.name = name  }   init(license: Int) {  self.license = license  }   init(name: String, license: Int) {  self.name = name  self.license = license  } } 上面自定义了三个初始化器，即提供了三种方式创建Dog实例。但现在已经不能使用没有参数的初始化器了，因为一旦有了自定义的初始化器，编译器就不会再自动生成无参的初始化器了：
+let fido = Dog(name: &amp;#34;Fido&amp;#34;) let rover = Dog(license: 1234) let spot = Dog(name: &amp;#34;Spot&amp;#34;, license: 1357) 也可以显式声明一个无参的自定义初始化器，以避免使用使用无参初始化器时出现编译报错。下面代码声明了一个无参初始化器init():
 class Dog {  var name = &amp;#34;&amp;#34;  var license = 0  init() {  //  }   init(name: String) {  self.name = name  }   init(license: Int) {  self.license = license  }   init(name: String, license: Int) {  self.name = name  self.license = license  } } 当实例生成时，如果实例属性还没有初始值，则编译器会报错。因此，一个属性可以作为其声明的一部分被初始化，或被其中的每个初始化器初始化，否则会出现编译错误。
 Swift编译器强制要求所有的实例属性都要正确地初始化，这是Swift的一个重要特征。相比之下，Objective-C的实例属性可以不初始化，而且经常会这样，导致可能出现奇怪的错误。
 因为在初始化器中设置一个实例属性也算作初始化，所以即使实例属性是用let声明的常量也是合法的。下面代码将name和license都声明为常量属性，在初始化器中再初始化也是合法的：
 class Dog {  let name: String  let license: Int   init(name: String, license: Int) {  self.name = name  self.license = license  } } Deferred initialization of properties 有时，在初始化时还不能初始化一个实例属性为有意义的值。也许这个属性的初始值要在这个实例生成后的某个时间点才能得到。这种情况与所有实例属性在其声明中初始化或通过初始化器进行初始化的要求相冲突。
 可以通过分配一个默认的初始值来规避这个问题，但此时无法向你自己的代码传达这样一个事实：这个默认值不是real的值。
 一个常见的解决方案是将实例属性声明为Optional类型的var。Optional类型有一个值nil，表示没有提供真real的值，并且一个Optional var会自动初始化为`nil。
-因此，代码中可以用nil来测试这个Optional实例属性，如果它是nil，就暂时不要使用这个属性。该属性会在某个时刻被赋予real的值，这个值是被包裹在Optional中的。
+因此，代码中可以用nil来测试这个Optional实例属性，如果它是nil，就暂时不要使用这个属性。该属性会在某个时刻被赋予real值，这个值是被包裹在Optional中的。
 // this property will be set automatically when the nib loads @IBOutlet var myButton: UIButton!  // this property will be set after time-consuming gathering of data  var albums : [MPMediaItemCollection]? Referring to self 一个初始化器可以引用一个已经初始化的实例属性，也可以引用一个未初始化的实例属性，以便初始化它。除了这种情况，在所有实例属性被初始化之前，初始化器不得显式或隐式地引用self。这条规则保证了实例在使用之前已经完全生成。
-struct Cat {  var name: String  var license: Int  init(name: String, license: Int) {  self.name = name  meow() // too soon - compile error  self.license = license  }   func meow() {  print(&amp;#34;meow&amp;#34;)  } } 上面的代码会出现编译错误&#39;self&#39; used before all stored properties are initialized，因为license属性还未初始化之前已经调用了meow。
+struct Cat {  var name: String  var license: Int  init(name: String, license: Int) {  self.name = name  meow() // too soon - compile error  self.license = license  }   func meow() {  print(&amp;#34;meow&amp;#34;)  } } 上面代码会出现编译错误&#39;self&#39; used before all stored properties are initialized，因为license属性还未初始化前就已经调用了meow。
 Delegating initializers 在初始化器中，如果调用了另一个初始化器，那这个初始化器被称为代理初始化器。代理初始化器调用的其它初始化器必须已经将所有的存储属性初始化，否则会出现编译错误。
 当一个初始化器进行委托时，另一个初始化器（它所委托的那个），必须先完全初始化实例，然后委托的初始化器可以对完全初始化的实例进行处理，可能会再次设置已经被它所委托的初始化器设置的var属性。
 代理初始化器看起来是过早使用self调用函数的一个反例，但事实并不是这样，代理初始化使用self调用函数是为了初始化储存属性。
 代理初始化器在调用其它初始化器之前不能使用self，即使是给存储属性赋初值也不行。下面代理初始化器中，第一行是初始化meaningOfLife，会出现编译错误：
-struct Digit {   var number: Int  var meaningOfLife: Bool   init(number: Int) {  self.number = number  self.meaningOfLife = false  }   init() { // this is a delegating initializer  self.meaningOfLife = false //&amp;#39;self&amp;#39; used before &amp;#39;self.init&amp;#39; call or assignment to &amp;#39;self&amp;#39;  self.init(number: 42)  self.meaningOfLife = true  }  } 在代理初始化器中，不能再对let常量属性赋值，因为调用其它初始化器时已经将常量属性赋了初始值，如果再次对其赋值会出现编译错误。因为在代理初始化器中可以调用其它初始化器，千万不要形成递归调用，下面代码就会产生递归引用：
+struct Digit {   var number: Int  var meaningOfLife: Bool   init(number: Int) {  self.number = number  self.meaningOfLife = false  }   init() { // this is a delegating initializer  self.meaningOfLife = false //&amp;#39;self&amp;#39; used before &amp;#39;self.init&amp;#39; call or assignment to &amp;#39;self&amp;#39;  self.init(number: 42)  }  } 在代理初始化器中，不能再对let常量属性赋值，因为调用其它初始化器时已经将常量属性赋了初始值，如果再次对其赋值会出现编译错误。因为在代理初始化器中可以调用其它初始化器，千万不要形成递归调用，下面代码就会产生递归引用：
 // do not do this! struct Digit {   var number: Int = 100   init(value: Int) {  self.init(number: value)  }   init(number: Int) {  self.init(value: number)  }  } Failable initializers 一个初始化器可以返回一个可选的新实例，如果返回nil表示初始化失败，这种初始化器被称为可失败的初始化器。声明可失败的初始化器很简单，只要在init后面添加一个?即可:
 class Dog {   let name: String  let license: Int   init?(name: String, license: Int) {  if name.isEmpty {  return nil // 返回nil  }  if license &amp;lt;= 0 {  return nil  }  self.name = name  self.license = license  } } Properties Property initialization and self 实例属性在声明的同时可以进行初始化，但初始化某个实例属性时不能获取其它实例属性或调用一个实例方法，因为此时实例尚未生成。下面代码会出现编译错误：
 class Moi {  let first = &amp;#34;Matt&amp;#34;  let last = &amp;#34;Neuburg&amp;#34;  let whole = self.first &#43; &amp;#34; &amp;#34; &#43; self.last // compile error: Cannot find &amp;#39;self&amp;#39; in scope } 解决上面编译错误有三种方法，第一种是把whole声明为计算属性而非存储属性，因为计算属性是在实例初始化完成之后才会被调用的：
