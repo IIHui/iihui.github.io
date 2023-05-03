@@ -912,13 +912,13 @@ class ViewController: UIViewController {   @IBOutlet var button: UIButton!   fun
   尽管十分少见，但在某些情况下，可能需要手动创建一个选择器。要做到这一点可以使用一个方法字符串，或者可以用字符串作为参数来实例化Selector类型：
 Selector(&amp;#34;woohoo:&amp;#34;) 使用#selector(...)语法，仍然*可能通过向错误的target发送action信息而发送崩溃*。在前面的例子中，如果把addTarget调用的第一个参数self改为self.button，将会在运行时以unrecognized selector崩溃。因为buttonPressed方法是在ViewController中声明的，而不是在UIButton类型中声明的。
 Variables and Simple Types 变量是一个具名的shoebox，其包含的值必须是单一的并且已经定义好的类型，每个变量都必须事先明确且正式地声明。如果想要将值放入shoebox中，以使用变量名引用该值，那么可以将值赋给该变量。此后，这个变量名便成为该值的引用。
-一个变量不仅给它所指对象一个名字，还根据声明的位置赋予其所指对象特定的作用域（可见性）和生命周期。给变量赋值是一种确保这个值被需要看到它的代码能看到它的一种方式。作用域和生命周期分为三个层次：全局变量，属性，局部变量。
+一个变量不仅给它所指对象一个名字，还根据声明的位置赋予它所指对象特定的作用域（可见性）和生命周期。给变量赋值是一种确保这个值能被需要看到它的代码能看到它的一种方式。作用域和生命周期分为三个层次：全局变量，属性，局部变量。
 全局变量声明在Swift文件顶部，它的生命周期和所在文件一样长。一个全局变量默认（internal访问权限）在它声明所在module任何地方都是可见的，这就是全局的意思。它对同一文件中的所有代码都是可见的，因为它处于最高级别。
 此外，默认情况下全局变量对于**同一模块中任何其它文件中的所有代码也都是可见的**，因为同一模块中的Swift文件可以自动看到彼此，所以也可以看到彼此顶层声明的全局变量：
-// File1: let globalVariable = &amp;#34;global&amp;#34;  class Dog {  func debugPrintGlobal() {  debugPrint(globalVariable)  } }  // File2:  class Cat {  func debugPrintGlobal() {  debugPrint(globalVariable)  } } 属性是在对象类型声明（枚举、结构或类）的顶层声明的变量。有两种类型的属性，一种是实例属性，另一种是静态/类属性。如果属性声明时未加static或class关键字，就是实例属性。
+// File1: let globalVariable = &amp;#34;global&amp;#34;  class Dog {  func debugPrintGlobal() {  debugPrint(globalVariable)  } }  // File2:  class Cat {  func debugPrintGlobal() {  debugPrint(globalVariable)  } } 属性是在对象类型声明（枚举、结构或类）的顶层声明的变量。有两种类型的属性，一种是实例属性，另一种是静态/类属性。如果属性声明时未加static或class关键字，就是实例属性，也就是说默认是实例属性。
 实例属性的值对于每个实例都可以是不同的，它的生命周期和实例的生命周期相同。一个实例是对一个对象类型实例化而来，该实例以及其属性的生命周期主要取决于赋值的变量的生命周期。
-如果一个属性在声明的时候加上static或者class，那就是静态/类属性，它的生命周期和该对象类型的生命周期相同。如果对象类型声明在一个文件的顶层，那么只要该该静态/类属性使用过一次，那么该属性就会一直存在。
-属性只能通过对象才能看到，对象的方法能够直接看到属性，在方法内部可以使用self.x这种方式访问实例属性。默认情况下，实例属性对于其它代码也是可见的，前提是要有这个实例的引用。同样地，默认情况下，一个静态/类属性对其它可以看到这个对象类型的代码也是可见的：
+如果一个属性在声明的时候加上static或class，那就是静态/类属性，它的生命周期和该对象类型的生命周期相同。如果对象类型声明在一个文件的顶层，那么只要该该静态/类属性使用过一次，那么该属性就会一直存在。
+属性只能通过对象才能看到，对象的方法能够直接看到属性，在方法内部可以使用self.x这种方式访问实例属性。默认情况下，实例属性对于其它代码也是可见的，前提是有这个实例的引用。同样地，默认情况下，一个静态/类属性对其它可以看到这个对象类型的代码也都是可见的：
 // File1:  class Dog {  static let staticProperty = &amp;#34;staticProperty&amp;#34;  let instanceProperty = &amp;#34;instanceProperty&amp;#34;   func debugPrintInstanceProperty() {  debugPrint(self.instanceProperty)  }  }  // File2:  class Cat {  func debugPrintDogStaticProperty() {  debugPrint(Dog.staticProperty)  }   func debugPrintDogInstanceProperty() {  let dog = Dog()  debugPrint(dog.instanceProperty)  }  } 局部变量是指声明在花括号内部的变量，它的生命周期与包含它的花括号一样长。当程序执行到局部变量声明的范围时，局部变量才会真正生成，当程序执行离开这个范围时，局部变量就会自动消失。
 有时，局部变量也被称为自动变量，以表示它们会自动出现和消失。一个局部变量只能被同一作用域中的后续代码看到（也包括同一作用域中后续更深层次的作用域）。
 class Dog {  func printLocalVariable() {  let localVariable = &amp;#34;local&amp;#34;  print(localVariable)  } } Variable Declaration 变量声明时使用关键字let或者var。使用let声明的是常量，常量的意思是*当第一次被赋值之后就不再允许被改变*。使用var声明的变量是真正的变量，它的值可以通过后续赋值来改变。
