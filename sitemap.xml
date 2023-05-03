@@ -921,19 +921,19 @@ Variables and Simple Types 变量是一个具名的shoebox，其包含的值必�
 属性只能通过对象才能看到，对象的方法能够直接看到属性，在方法内部可以使用self.x这种方式访问实例属性。默认情况下，实例属性对于其它代码也是可见的，前提是有这个实例的引用。同样地，默认情况下，一个静态/类属性对其它可以看到这个对象类型的代码也都是可见的：
 // File1:  class Dog {  static let staticProperty = &amp;#34;staticProperty&amp;#34;  let instanceProperty = &amp;#34;instanceProperty&amp;#34;   func debugPrintInstanceProperty() {  debugPrint(self.instanceProperty)  }  }  // File2:  class Cat {  func debugPrintDogStaticProperty() {  debugPrint(Dog.staticProperty)  }   func debugPrintDogInstanceProperty() {  let dog = Dog()  debugPrint(dog.instanceProperty)  }  } 局部变量是指声明在花括号内部的变量，它的生命周期与包含它的花括号一样长。当程序执行到局部变量声明的范围时，局部变量才会真正生成，当程序执行离开这个范围时，局部变量就会自动消失。
 有时，局部变量也被称为自动变量，以表示它们会自动出现和消失。一个局部变量只能被同一作用域中的后续代码看到（也包括同一作用域中后续更深层次的作用域）。
-class Dog {  func printLocalVariable() {  let localVariable = &amp;#34;local&amp;#34;  print(localVariable)  } } Variable Declaration 变量声明时使用关键字let或者var。使用let声明的是常量，常量的意思是*当第一次被赋值之后就不再允许被改变*。使用var声明的变量是真正的变量，它的值可以通过后续赋值来改变。
-一个变量的声明常常伴随着初始化—使用=赋一个值给变量。但在Swift中**变量声明时没有强制立即初始化，即使使用let关键字声明也一样**。
+class Dog {  func printLocalVariable() {  let localVariable = &amp;#34;local&amp;#34;  print(localVariable)  } } Variable Declaration 变量声明时使用关键字let或者var。使用let声明的是常量，常量的意思是*当第一次被赋值之后就不再允许被修改*。使用var声明的变量是真正的变量，它的值可以通过后续赋值来改变。
+一个变量的声明常常伴随着初始化—使用操作符=赋一个值给变量。但在Swift中**变量声明时没有强制立即初始化，即使使用let关键字声明也一样**。
 对于let x : Int这样的声明是完全合法的。可以后面再给这个变量分配一个初始值，因为这个特殊的变量是一个常量，所以一旦有了初始值，那么这个初始值将是它以后的唯一值，不能再被改变。
 声明一个变量而没有给定类型是不合法的，变量必须从一开始就具有一个类型，并且永远不能更改该类型。用var声明的变量可以通过赋值改变它的值，但新值必须同变量的类型一样。
 显式声明类型 变量声明时，在名称之后添加一个冒号和类型的名称，就是显式变量类型声明：
 var x : Int 隐式声明类型 如果将变量初始化为声明的一部分，并且没有提供明确的类型，Swift会根据它被初始化的值来推断变量的类型：
 var x = 1 // and now x is an Int 完全可以一次性显式声明变量的类型并为其分配初始值：
-var x : Int = 1 在上面的代码中，显式的类型声明是多余的，因为变量类型可以从初始值推断出来。但有些情况，即使在有初始值的情况下显式声明一个类型也不是多余的。
+var x : Int = 1 在上面的代码中，显式的类型声明是多余的，因为大多数情况变量类型可以从初始值推断出来。但有些情况，即使在有初始值的情况下显式声明一个类型也不是多余的。
 第一种场景是Swift推断出来的类型是错误的。一种常见的场景是使用数字字面量作为初始值，Swift编译器会将它们推断为Int或Double类型（区别为是否有小数点），但实际上有很多数字类型：
-let value : Float = 2.0 //字面量2.0默认是Double类型 另一种场景是如果不明确地告诉编译器变量的类型，编译器就无法通过初始值推断出类型。一个常见的场景是options集合：
-var opts = [.autoreverse, .repeat] // compile error: Reference to member &amp;#39;autoreverse&amp;#39; cannot be resolved without a contextual type let opts : UIView.AnimationOptions = [.autoreverse, .repeat] 即使编译器可以从变量的初始值正确推断出变量的类型，这种推断也是需要时间的。在变量声明时提供显式类型可以减少编译时间。
-如之前所说的，即使声明的变量是常量，也不必在声明时对其进行初始化，即下面的写法是合法的：
-let x : Int 现在x是一个空的shoebox，即没有初始值的Int变量，可以稍后为该变量分配一个初始值。由于这个特定的变量是一个常量，从赋值那刻起，该初始值将是它的唯一值，之后不能被改变。
+let value : Float = 2.0 // 带小数点的数字字面量2.0默认是Double类型 另一种场景是如果不明确地告诉编译器变量的类型，编译器就无法通过初始值推断出类型。一个常见的场景是options集合：
+let opts = [.autoreverse, .repeat] // compile error: Reference to member &amp;#39;autoreverse&amp;#39; cannot be resolved without a contextual type let opts : UIView.AnimationOptions = [.autoreverse, .repeat] 即使编译器可以从变量的初始值正确推断出变量的类型，这种推断也是需要时间的。因此，在变量声明时提供显式类型可以减少编译时间。
+如前所述，即使声明的变量是常量，也不必在声明时对其进行初始化，即下面的写法是合法的：
+let x : Int 现在x是一个空的shoebox，即没有初始值的Int变量，可以稍后为该变量分配一个初始值。由于这个特定的变量是一个常量，从赋值那刻起，该初始值将是它的唯一值，之后不能再被改变。
 对于属性来说，先声明后初始化是很常见的，因为属性的初始化可以通过对象类型的初始化函数来实现。但对于局部变量来说，通常是声明的时候同时初始化。
 当局部变量遇到需要conditional initialization时，也可以先声明后初始化。这是因为，有时在进行某种条件测试之前，并不知道某个变量的初始值。因为变量只能声明一次，所以它必须提前声明，之后再进行条件初始化：
 let timed: Bool if val == 1 {  timed = true } else {  timed = false } 如果一个变量的地址被当作参数传递给一个函数时，这个变量必须在传递之前先声明并且在传递之前已经被初始化，也就是说即使初始化值是假的占位符也必须先给一个初始值，否则会出现编译错误：
@@ -945,17 +945,17 @@ func beginBackgroundTask(expirationHandler handler: (() -&amp;gt; Void)? = nil) 
 let bti = UIApplication.shared.beginBackgroundTask {  UIApplication.shared.endBackgroundTask(bti) } // 编译错误：Closure captures &amp;#39;bti&amp;#39; before it is declared 因此，需要提前声明变量。在上面的代码中，如果只是提前声明变量，依然会有问题，编译时会报variable captured by a closure before being initialized：
 var bti: UIBackgroundTaskIdentifier bti = UIApplication.shared.beginBackgroundTask {  UIApplication.shared.endBackgroundTask(bti) } // error: variable captured by a closure before being initialized 一种解决方案是提前声明变量，并且声明时给变量一个假的初始值作为占位符。如下所示，给了变量bti一个假的初始值.invalid用来占位：
 var bti: UIBackgroundTaskIdentifier = .invalid bti = UIApplication.shared.beginBackgroundTask() {  UIApplication.shared.endBackgroundTask(bti) } 这里真正的问题是beginBackgroundTask相当古老了，更现代的方法是将返回值直接传递给函数作为参数。Cocoa的UIAction初始化方法init(title:handler:)就是一个例子：
-let myAction = UIAction(title: &amp;#34;Hello&amp;#34;) { action in  print(action) } 在上面的代码中，action就是myAction，因此匿名函数体handler:中可以直接引用action，而不使用myAction（这种方法还可以防止可能的循环引用）。
+let myAction = UIAction(title: &amp;#34;Hello&amp;#34;) { action in  print(action) } 在上面的代码中，action就是myAction，因此在匿名函数参数handler:中可以直接引用action，而不使用myAction（这种方法还可以防止可能的循环引用）。
 在UIAction初始化器中的handler参数中使用myAction是非法的，下面代码会出现编译错误：
 let myAction = UIAction(title: &amp;#34;Hello&amp;#34;) { action in  if myAction === action {  debugPrint(&amp;#34;test&amp;#34;)  }  print(action) } // Closure captures &amp;#39;myAction&amp;#39; before it is declared Computed Variable Initialization 有时需要先执行一些代码去才能获得变量的初始值，一个简洁的解决方案是定义和调用匿名函数来进行初始化，这种方式称为define-and-call initializer。下面代码中定义了一个匿名函数并立即执行来初始化常量timed：
 let val = 0 let timed: Bool = {  if val == 1 {  return true  } else {  return false  } }() 当一个实例属性也需要执行一些代码去获得初始值时，也可以使用define-and-call initializer进行初始化。下面的cellBackgroundImage属性需要用到多次，但初始化时需要执行一些其它代码，因此通过定义和调用一个匿名函数来初始化这个属性：
 class RootViewController: UITableViewController {  let cellBackgroundImage: UIImage = {  return imageOfSize(CGSize(width: 320, height: 44)) {  // ... drawing goes here ...  }  }() } 你可能会好奇，与其使用define-and-call initializer，为什么不直接定义一个实例方法来初始化实例属性。因为定义一个实例方法来初始化实例属性是非法的，将会出现编译错误：
 class RootViewController: UITableViewController {  // Cannot use instance member &amp;#39;self&amp;#39; within property initializer; property initializers run before &amp;#39;self&amp;#39; is available  let cellBackgroundImage: UIImage = self.makeTheImage()   func makeTheImage() -&amp;gt; UIImage {  return imageOfSize(CGSize(width: 320, height: 44)) {  // ... drawing goes here ...  }  }  } 因为实例属性声明初始化时，此时实例尚未生成。因此，不能在属性声明初始时引用self。但定义和调用匿名函数是合法的，需要注意的是定义和调用匿名函数仍然不能在函数体中隐式或显式引用self，否则也会出现编译错误，如果需要在函数体中使用self，需要将属性声明为lazy。
 Computed Variables 除了正常的存储变量，Swift中的变量还可以是计算的。这意味着变量不是一个值，而是一个函数。计算变量中包括setter和getter函数，setter函数在变量被赋值自动调用，getter函数在变量被引用时自动调用:
-var now: String { // ①  get { // ②   return Date().description // ③  }  set { // ④  debugPrint(newValue) // ⑤  } }  变量必须使用var声明（不能使用let），同时类型必须显式声明，类型后面紧跟花括号。 其中的getter函数被称为get。getter函数没有正式的函数声明，get这个词后面紧跟着花括号中的函数体。 其中的getter函数必须返回一个与该变量类型相同的值。从Swift 5.1开始，当getter只有一个单一语句时，省略关键字return是合法的。 其中的setter函数被称为set。setter函数也没有正式的函数声明，set这个词后面紧跟着函数体。 其中setter函数就像接受一个参数的函数。默认情况下，该参数以newValue这个名字进入setter函数体中。  对待计算变量可以与任何其它变量相同。如果要赋值给变量，能够直接赋值给它；如果要使用变量，能够直引用它。但是，在幕后是调用了setter和getter函数。
-now = &amp;#34;Howdy&amp;#34; // Howdy print(now) // 2022-08-07 04:03:21 &#43;0000  赋值给now时，setter函数将被自动被调用，参数就是将要赋的值。在上面的代码就是Howdy，该值作为参数newValue的实参传到set函数。 获取now的值时，getter将被自动调用。  对于setter函数来说，默认的参数名可以不是newValue。如果需要指定一个不同的名称，把新名字放在set后面的括号里就可以，下面是用新名字val代替默认的newValue：
+var now: String { // ①  get { // ②   return Date().description // ③  }  set { // ④  debugPrint(newValue) // ⑤  } }  变量必须使用var声明（不能使用let），同时类型必须显式声明，类型后面紧跟花括号。 其中的getter函数被称为get。getter函数没有正式的函数声明，get这个词后面紧跟着花括号中的函数体。 其中的getter函数必须返回一个与该变量类型相同的值。从Swift 5.1开始，当getter只有一个单一语句时，省略关键字return是合法的。 其中的setter函数被称为set。setter函数也没有正式的函数声明，set这个词后面紧跟着函数体。 其中setter函数就像接受一个参数的函数。默认情况下，该参数以newValue这个名字进入setter函数体中。  对待计算变量可以与任何其它变量相同。如果要赋值给变量，能够直接赋值给它；如果要使用变量，能够直接引用它。但是，在幕后是调用了setter和getter函数。
+now = &amp;#34;Howdy&amp;#34; // Howdy print(now) // 2022-08-07 04:03:21 &#43;0000  赋值给now时，setter函数将被自动被调用，参数就是将要赋的值。在上面的代码就是Howdy，该值作为参数newValue的实参传到set函数。 获取now的值时，getter将被自动调用。  对于setter函数来说，默认的参数名可以不是newValue。如果需要指定一个不同的名称，把新名字放在set后面的括号里就可以，下面代码用新名字val代替默认的newValue：
 var nowTest: String = &amp;#34;&amp;#34; var now: String {  get {  &amp;#34;test&amp;#34;  }  set(val) {  nowTest = val  } } 如果setter函数省略，那么这个计算变量就成为了一个只读变量，等同于一个let常量，一旦试图去改变这个变量的值就会出现编译错误:
-var newDate: String {  return Date().description }  newDate = &amp;#34;ddd&amp;#34; // Cannot assign to property: &amp;#39;newDate&amp;#39; is a get-only property 即使只有一个getter函数，计算变量声明时也必须使用var。计算变量必须有一个getter函数。如果计算变量中没有setter函数，get这个词和它后面的花括号可以省略。下面是一个合法的只读计算变量的声明：
+var newDate: String {  return Date().description }  newDate = &amp;#34;ddd&amp;#34; // Cannot assign to property: &amp;#39;newDate&amp;#39; is a get-only property 即使只有一个getter函数，计算变量声明时也必须使用var。计算变量必须有一个getter函数。如果计算变量中没有setter函数，get这个词和它后面的花括号可以省略。如果get中只有一行，return也可以省略：
 var now: String {  Date().description } Computed Properties 在实际的编程中，对于计算变量的使用场景几乎都是实例属性。当一个值在每次需要使用时可以很容易地计算出来，将其表达为一个只读的计算变量往往更简单，实际上这是对一个较长表达式的速记法：
 var mp: MPMusicPlayerController {  MPMusicPlayerController.systemMusicPlayer } var nowPlayingItem: MPMediaItem? {  self.mp.nowPlayingItem } 一个计算变量的getter函数可以封装多行代码，其实质是把一个方法变成了一个属性。下面是从xml文件中提取作者信息，本可以将其声明为方法func authorOfItem() -&amp;gt; String?，但方法表达了一个过程，而计算属性则能更直观地描述它是一个事物：
 var authorOfItem: String? {  guard let authorNodes = self.extensionElements(withXMLNamespace: &amp;#34;http://www.tidbits.com/dummy&amp;#34;, elementName: &amp;#34;app_author_name&amp;#34;) else {  return nil  }  guard let authorNode = authorNodes.last as? FPExtensionNode else {  return nil  }  return authorNode.stringValue } 一个计算变量可以位于一个或多个存储变量的前面，充当这些存储变量设置和获取时的守门员，这与Objective-C的的访问器类似。通常，一个计算变量由一个私有的存储变量来支持：
