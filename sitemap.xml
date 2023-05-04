@@ -932,14 +932,14 @@ var x : Int = 1 在上面的代码中，显式的类型声明是多余的，因�
 第一种场景是Swift推断出来的类型是错误的。一种常见的场景是使用数字字面量作为初始值，Swift编译器会将它们推断为Int或Double类型（区别为是否有小数点），但实际上有很多数字类型：
 let value : Float = 2.0 // 带小数点的数字字面量2.0默认是Double类型 另一种场景是如果不明确地告诉编译器变量的类型，编译器就无法通过初始值推断出类型。一个常见的场景是options集合：
 let opts = [.autoreverse, .repeat] // compile error: Reference to member &amp;#39;autoreverse&amp;#39; cannot be resolved without a contextual type let opts : UIView.AnimationOptions = [.autoreverse, .repeat] 即使编译器可以从变量的初始值正确推断出变量的类型，这种推断也是需要时间的。因此，在变量声明时提供显式类型可以减少编译时间。
-如前所述，即使声明的变量是常量，也不必在声明时对其进行初始化，即下面的写法是合法的：
+如前所述，即使声明的变量是常量，也不必在声明时对其进行初始化，即下面的写法是合法的，不会出现编译错误：
 let x : Int 现在x是一个空的shoebox，即没有初始值的Int变量，可以稍后为该变量分配一个初始值。由于这个特定的变量是一个常量，从赋值那刻起，该初始值将是它的唯一值，之后不能再被改变。
 对于属性来说，先声明后初始化是很常见的，因为属性的初始化可以通过对象类型的初始化函数来实现。但对于局部变量来说，通常是声明的时候同时初始化。
 当局部变量遇到需要conditional initialization时，也可以先声明后初始化。这是因为，有时在进行某种条件测试之前，并不知道某个变量的初始值。因为变量只能声明一次，所以它必须提前声明，之后再进行条件初始化：
 let timed: Bool if val == 1 {  timed = true } else {  timed = false } 如果一个变量的地址被当作参数传递给一个函数时，这个变量必须在传递之前先声明并且在传递之前已经被初始化，也就是说即使初始化值是假的占位符也必须先给一个初始值，否则会出现编译错误：
 var r: CGFloat = 0 var g: CGFloat = 0 var b: CGFloat = 0 var a: CGFloat = 0 c.getRed(&amp;amp;r, green: &amp;amp;g, blue: &amp;amp;b, alpha: &amp;amp;a) 在上面的代码中，4个CGFloat传入到getRed中后，它们的值可能会被改变。而给定的初始值只是临时占位符，用以满足编译器的要求。
 特别需要注意的是：传入到函数的普通参数，也必须先初始化，否则编译器也会报错。下面代码中tt1未初始化就传入到oneParameter会出现编译错误：
-func oneParameter(test: String)  debugPrint(test) } var tt1: String oneParameter(test: tt1) // 出现编译错误：Variable &amp;#39;tt1&amp;#39; used before being initialized   func oneParameter(test: String) {  debugPrint(test) } var tt2: String = &amp;#34;name&amp;#34; // 传递给函数前进行了初始化，不再出现编译错误 oneParameter(test: tt2) 如果一个变量要传入到以inout修饰的函数参数中，也必须使用var声明，并且也必须先初始化（与变量地址传入那一类相似）：
+func oneParameter(test: String)  debugPrint(test) } var tt1: String oneParameter(test: tt1) // 出现编译错误：Variable &amp;#39;tt1&amp;#39; used before being initialized   func oneParameter(test: String) {  debugPrint(test) } var tt2: String = &amp;#34;name&amp;#34; // 传递给函数前进行了初始化，不再出现编译错误 oneParameter(test: tt2) 如果一个变量需要传入到以inout修饰的函数参数中，必须使用var声明，并且传入前也必须先初始化（与变量地址传入那一类相似）：
 func testMain(test: inout String) {  test = &amp;#34;name&amp;#34;  debugPrint(test) }  var newTest :String testMain(test: &amp;amp;newTest) // 编译错误：Variable &amp;#39;newTest&amp;#39; passed by reference before being initialized   var newTest1 :String = &amp;#34;name&amp;#34; testMain(test: &amp;amp;newTest1) 极少数情况下，会遇到这样一种情况：调用一个有返回值的Cocoa方法，然后在传递给这个方法的函数参数中又要使用这个返回值。Cocoa有一个UIApplication实例方法是下面这样声明的：
 func beginBackgroundTask(expirationHandler handler: (() -&amp;gt; Void)? = nil) -&amp;gt; UIBackgroundTaskIdentifier 上面的beginBackgroundTask(expirationHandler:)会返回一个UIBackgroundTaskIdentifier对象，然后会在expirationHandler函数中使用这个对象。Swift的安全规则不允许在一条语句中声明变量，同时又在声明语句中的匿名函数中使用它：
 let bti = UIApplication.shared.beginBackgroundTask {  UIApplication.shared.endBackgroundTask(bti) } // 编译错误：Closure captures &amp;#39;bti&amp;#39; before it is declared 因此，需要提前声明变量。在上面的代码中，如果只是提前声明变量，依然会有问题，编译时会报variable captured by a closure before being initialized：
