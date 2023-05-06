@@ -1072,8 +1072,8 @@ let s = &amp;#34;hello world&amp;#34; let s2 = s.capitalized // &amp;#34;Hello W
 Range Range对象类型是一个结构体，代表一对端点。形成Range字面量的操作符有两个，提供一个开始值和一个结束值，在它们之间有一个Range操作符：
   ...闭range操作符：a...b意味着a到b的一切，包括b。
   ..&amp;lt;半开range操作符：a..&amp;lt;b意味着a到b的一切，但不包括b。
-  在Range操作符两边添加空格是合法的，例如1...3或1 ... 3都是合法的。一个Range的端点的类型通常是某种数字，最常见的是整型。
-let r = 1...3 如果结束值是一个负数，它必须用圆括号括起来或在操作符前面加上空格。let r = -1000 ... -1和let r = -1000...(-1)都是可以的。Range的常用场景是for ... in语句:
+  在Range操作符两边同时添加空格是合法的，例如1...3或1 ... 3都是合法的。一个Range的端点的类型通常是某种数字，最常见的是整型。但是如果只有一边添加空格，则会报错：
+let r = 1...3 // 正常  let range = 1... 3 // 编译错误 Consecutive statements on a line must be separated by &amp;#39;;&amp;#39; 如果结束值是一个负数，它必须用圆括号括起来或在操作符前面加上空格。let r = -1000 ... -1和let r = -1000...(-1)都是可以的。Range的常用场景是for ... in语句:
 debugPrint(-1000...-1) // compile error: Ambiguous missing whitespace between unary and binary operators debugPrint(-1000...(-1)) debugPrint(-1000 ... -1) debugPrint(1 ... 1000) for ix in 1...3 {  debugPrint(ix) // 1, then 2, then 3  }  for i in -1...1 {  debugPrint(i) } 在Swift中，没有反向的Range，即Range的起始值不能大于结束值。一旦出现这种情况，编译器不会报错，但运行的时候会发生崩溃。在实际的编程上，可以使用Range的reversed()方法来实现相同的效果：
 for i in 1 ... -1 {  debugPrint(i) // 运行时发生崩溃 Fatal error: Range requires lowerBound &amp;lt;= upperBound }  for ix in (1...3).reversed() {  debugPrint(ix) // 3，2，1 } 在实际编程中，可以使用Range的contains(_:)实例方法来测试一个值是否在给定的范围内。例如，可以测试某个数字是否在某个范围内：
 let ix = 2 // ... an Int ... if (1...3).contains(ix) {  // ... } 如果只是想测试Range中是否包含某个数字，Range的端点数值可以为Double类型。下面的代码中，测试变量d是否在(0.1...0.9)中是可行的：
