@@ -1203,16 +1203,16 @@ enum Shape {  case rectangle  case ellipse  case diamond   func addShape(to p: C
 enum Filter: String, CaseIterable {  case albums = &amp;#34;Albums&amp;#34;  case playlists = &amp;#34;Playlists&amp;#34;  case podcasts = &amp;#34;Podcasts&amp;#34;  case books = &amp;#34;Audiobooks&amp;#34;   static subscript(ix: Int) -&amp;gt; Filter {  guard ix &amp;gt;= 0 &amp;amp;&amp;amp; ix &amp;lt; Filter.allCases.count else {  return .albums  }  return Filter.allCases[ix]  } }  debugPrint(Filter[2]) 如果枚举的某个实例方法想要修改枚举实例本身，则声明的时候要标记为mutating，因为它也是一种值类型。例如，一个枚举的实例方法可能会赋值给self的一个实例属性，即使这是一个计算属性，这种赋值也是非法的，除非该方法被标记为mutating，需要注意的是调用mutating方法的实例变量也必须声明为var。
 在一个mutating枚举实例方法中，可以改变自身，方法是将另一个实例分配给self。下面的代码在advance方法中改变了自身：
 enum Filter: String, CaseIterable {   case albums = &amp;#34;Albums&amp;#34;  case playlists = &amp;#34;Playlists&amp;#34;  case podcasts = &amp;#34;Podcasts&amp;#34;  case books = &amp;#34;Audiobooks&amp;#34;   static subscript(ix: Int) -&amp;gt; Filter {  guard ix &amp;gt;= 0 &amp;amp;&amp;amp; ix &amp;lt; Filter.allCases.count else {  return .albums  }  return Filter.allCases[ix]  }   mutating func advance() {  let cases = Filter.allCases  guard var ix = cases.firstIndex(of: self) else {  return  }  ix = (ix &#43; 1) % cases.count  self = cases[ix]  } }  var type = Filter.books type.advance() // type is now Filter.albums 在上面代码中，type声明时使用var，如果使用let声明会出现编译错误。下标或计算属性的setter默认是mutating的，不需要特殊标记。如果一个计算属性的getter中设置另一个属性，那么必须标记为mutating。
-structs 结构体是Swift对象类型中的佼佼者，而枚举由固定的case集合组成，是一种简化的、专门的对象。在另一个极端，类往往会被证明是多余的，它包含了一些结构体所缺乏的功能，但如果不需要这些功能，结构体可能是更好的选择。
-在Swift头文件中声明的200多种对象类型中，可能有半打是类，有几十个是枚举，其余的都是结构体。String是一个结构体，Int是结构体，Range是结构体，Array也是一个结构体。
+structs 结构体是Swift对象类型中的佼佼者，而枚举由固定的case集合组成，是一种简化的、特化的对象。在另一个极端，类往往会被证明是过度的，它包含了一些结构体所缺乏的功能，但如果是不需要这些功能的场景，结构体可能是更好的选择。
+在Swift头文件中声明的200多种对象类型中，可能有半打是类，有几十个是枚举，其余的都是结构体。String是一个结构体，Int是结构体，Range是结构体，Array也是结构体。
 Struct Initializers 如果结构体没有存储属性或者全部的存储属性在声明的时候已经有默认值，则会自动生成一个无参的初始化器init()。下面代码中，编译器会为Digit结构体自动生成一个无参初始化器init()：
-struct Digit {  var number = 42 } 一旦在代码中增加了新的初始化器，编译器将不会自动生成无参的初始化器。下面代码中，已经在Digit增加一个有参的初始化器，则编译器不会生成无参的初始化器：
-struct Digit {  var number = 42  init(number: Int) {  self.number = number  } } 此时，如果想要使用Digit()进行初始化，将会出现编译报错。此时，需要手动声明一个无参的初始化器，才能通过编译：
+struct Digit {  var number = 42 } 一旦在代码中增加了新的自定义初始化器，编译器将不会自动生成无参的初始化器。下面代码中，已经在Digit增加一个有参的初始化器，则编译器不会生成无参的初始化器：
+struct Digit {  var number = 42  init(number: Int) {  self.number = number  } } 此时，如果想要使用Digit()生成新的实例，将会出现编译报错。需要手动再声明一个无参的初始化器，才能通过编译：
 struct Digit {  var number = 42   init() {  //  }   init(number: Int) {  self.number = number  } } 有存储属性且没有显式初始化器的结构体会自动获得一个从其实例属性派生的隐式初始化器，这称为memberwise initializer(成员初始化器)：
-struct Test {  var number = 42  var name: String  let age: Int  let greeting = &amp;#34;Hello&amp;#34; } 上面代码是合法，虽然看起来没有履行在声明或者初始化器中初始化所有储存属性的契约。实际上，因为没有自定义的初始化器，编译器会自动生成一个memberwise initializer(成员初始化器)，这个memberwise initializer初始化了所有未初始化的属性：
+struct Test {  var number = 42  var name: String  let age: Int  let greeting = &amp;#34;Hello&amp;#34; } 上面代码是合法，虽然看起来没有履行在声明或者初始化器中初始化所有储存属性的契约。实际上，因为没有自定义初始化器，编译器会根据实例属性自动生成一个隐式初始化器，这个初始化器被称为memberwise initializer(成员初始化器)，这个memberwise initializer初始化了所有未初始化的属性：
 struct Test {  var number = 42  var name: String  let age: Int  let greeting = &amp;#34;Hello&amp;#34; }  let t1 = Test(number: 42, name: &amp;#34;matt&amp;#34;, age: 65) let t2 = Test(name: &amp;#34;matt&amp;#34;, age: 65) 上面自动生成的memberwise initializer包含了number,name,age，不包括greeting。这是因为greeting是使用let声明的，在声明的时候已经初始化了。
-因为number使用var声明，并且在声明的同时已经被初始化了，因此从Swift 5.1后调用memberwise initializer时可以省略这种用var声明并且已经初始化了的属性：
-let t2 = Test(name: &amp;#34;matt&amp;#34;, age: 65) 如果在结构体声明的时候，有自定义的初始化器或者属性声明为private(使用let声明并且已经初始化的属性除外)，则编译器不会自动生成memberwise initializer。
+因为number使用var声明，并且在声明的同时已经被初始化了，从Swift 5.1后调用memberwise initializer时可以省略这种用var声明并且已经初始化了的属性：
+let t2 = Test(name: &amp;#34;matt&amp;#34;, age: 65) 如果在结构体声明的时候，声明了自定义的初始化器或者属性声明为private(使用let声明并且已经初始化的属性除外)，则编译器不会自动生成memberwise initializer。
 结构体中声明的存储属性必须全部初始化，不管是声明的时候初始化还是在所有的初始化器中初始化。如果一个结构体有多个初始化器，则可以在初始化器中通过self.init()调用其它初始化器。
 Struct Properties 结构体可以有实例属性或者静态属性，二者都可以声明为存储或者计算属性。如果代码中想重新设置一个结构体实例属性的值，则该实例变量必须使用var声明，否则会出现编译错误：
 var d = Test(name: &amp;#34;ddd&amp;#34;,age: 34) d.name = &amp;#34;new test&amp;#34; Struct Methods 结构体可以有实例方法和静态方法，包括subscript(下标)，如果一个实例方法想要设置结构体中某个属性的值，那么这个方法一定要声明为mutating，并且调用这个方法的实例也必须使用var声明，否则会出现编译错误：
