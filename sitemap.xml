@@ -1212,15 +1212,16 @@ struct Digit {  var number = 42   init() {  //  }   init(number: Int) {  self.nu
 struct Test {  var number = 42  var name: String  let age: Int  let greeting = &amp;#34;Hello&amp;#34; } 上面代码是合法，虽然看起来没有履行在声明或者初始化器中初始化所有储存属性的契约。实际上，因为没有自定义初始化器，编译器会根据实例属性自动生成一个隐式初始化器，这个初始化器被称为memberwise initializer(成员初始化器)，这个memberwise initializer初始化了所有未初始化的属性：
 struct Test {  var number = 42  var name: String  let age: Int  let greeting = &amp;#34;Hello&amp;#34; }  let t1 = Test(number: 42, name: &amp;#34;matt&amp;#34;, age: 65) let t2 = Test(name: &amp;#34;matt&amp;#34;, age: 65) 上面自动生成的memberwise initializer包含了number,name,age，不包括greeting。这是因为greeting是使用let声明的，在声明的时候已经初始化了。
 因为number使用var声明，并且在声明的同时已经被初始化了，从Swift 5.1后调用memberwise initializer时可以省略这种用var声明并且已经初始化了的属性：
-let t2 = Test(name: &amp;#34;matt&amp;#34;, age: 65) 如果在结构体声明的时候，声明了自定义的初始化器或者属性声明为private(使用let声明并且已经初始化的属性除外)，则编译器不会自动生成memberwise initializer。
-结构体中声明的存储属性必须全部初始化，不管是声明的时候初始化还是在所有的初始化器中初始化。如果一个结构体有多个初始化器，则可以在初始化器中通过self.init()调用其它初始化器。
-Struct Properties 结构体可以有实例属性或者静态属性，二者都可以声明为存储或者计算属性。如果代码中想重新设置一个结构体实例属性的值，则该实例变量必须使用var声明，否则会出现编译错误：
-var d = Test(name: &amp;#34;ddd&amp;#34;,age: 34) d.name = &amp;#34;new test&amp;#34; Struct Methods 结构体可以有实例方法和静态方法，包括subscript(下标)，如果一个实例方法想要设置结构体中某个属性的值，那么这个方法一定要声明为mutating，并且调用这个方法的实例也必须使用var声明，否则会出现编译错误：
-struct Digit {   private var number: Int   init(_ n: Int) {  self.number = n  }   mutating func changeNumberTo(_ n: Int) {  self.number = n  }  }  var d = Digit(123) d.changeNumberTo(42) subscript下标或者计算属性的set方法默认认为是mutating，不必显式地声明为mutating。但是如果在它们的set方法中要设置其他属性的值，必须显式地声明为mutating。声明为mutating的方法中可以使用该类型的另一个实例设置self的方式来改变自身。
+let t2 = Test(name: &amp;#34;matt&amp;#34;, age: 65) 如果在结构体声明的时候，声明了自定义的初始化器或者属性声明为private(使用let声明并且已经初始化的属性除外)，则编译器不会自动生成memberwise initializer。下面代码中，因为声明了private实例属性，所以没有自动生成成员初始化器：
+struct MoTest {  private var age = 18  var name: String } debugPrint(MoTest(name: &amp;#34;test&amp;#34;).name)  // &amp;#39;MoTest&amp;#39; initializer is inaccessible due to &amp;#39;private&amp;#39; protection level 下面虽然有private的属性，但因为是let声明的，所以还是会自动生成成员初始化器：
+struct MoTest {  private let age = 18  var name: String } debugPrint(MoTest(name: &amp;#34;test&amp;#34;).name) 结构体中声明的存储属性必须全部初始化，不管是声明的时候初始化还是在所有的初始化器中初始化。如果一个结构体有多个初始化器，则可以在初始化器中通过self.init()调用其它初始化器。
+Struct Properties 结构体可以有实例属性或者静态属性，二者均可以声明为存储或者计算属性。如果代码中想重新设置一个结构体实例属性的值，则该实例变量必须使用var声明，否则会出现编译错误：
+var d = Test(name: &amp;#34;ddd&amp;#34;,age: 34) d.name = &amp;#34;new test&amp;#34;  struct Digit1 {  var number: Int  init(_ n: Int) {  self.number = n  } } var digit1 = Digit1(123) digit1.number = 345 debugPrint(digit1.number) Struct Methods 结构体可以有实例方法和静态方法，包括subscript(下标)，如果一个实例方法想要设置结构体中某个属性的值，那么这个方法一定要声明为mutating，并且调用这个方法的实例也必须使用var声明，否则会出现编译错误：
+struct Digit {   private var number: Int   init(_ n: Int) {  self.number = n  }   mutating func changeNumberTo(_ n: Int) {  self.number = n  }  }  var d = Digit(123) d.changeNumberTo(42) 结构体subscript或者计算属性的setter方法默认认为是mutating，不必显式地声明为mutating。但是如果在它们的get方法中要设置其它属性的值，必须显式地声明为mutating。声明为mutating的方法中可以使用该类型的另一个实例设置self的方式来改变自身。
 Constant Namespaces 经常使用degenerate struct作为常量的便捷命名空间，之所以称为degenerate，是因为结构体中全部为静态成员，并且不打算使用这种对象类型来制造任何其它实例。
 UserDefaults是一种字典，每个值可以通过一个键来访问。这些键通常是字符串，一个常见的错误是使用键时拼错了键的名字，虽然在编译时不会报错，但代码将不能正常工作。
-更好的方法是将这些键体现为常量字符串，并使用字符串的名称，如果错误地输入了一个名称，编译器会报错。带有静态成员的结构是定义常量字符串并将其名称集中到一个命名空间的好方法。
-struct Default {  static let rows = &amp;#34;rows&amp;#34;  static let columns = &amp;#34;columns&amp;#34;  static let hazyStripy = &amp;#34;hazyStripy&amp;#34; } 现在就可以使用，Default中的静态成员作为UserDefaults的键来引用，例如使用Default.rows可以就代表rows字符串。
+更好的方法是将这些键用带名字的常量字符串来表示。此时，如果错误地输入了一个名称，编译器会报错。带有静态成员的结构是定义常量字符串并将其名称集中到一个命名空间的好方法：
+struct Default {  static let rows = &amp;#34;rows&amp;#34;  static let columns = &amp;#34;columns&amp;#34;  static let hazyStripy = &amp;#34;hazyStripy&amp;#34; } 现在就可以使用Default中的静态成员作为UserDefaults的键来引用，例如使用Default.rows可以就代表rows字符串。
 Classes 虽然类和结构体有些相似，但类和结构体还是有一些关键区别：
   类是引用类型，类的实例有两个显著的特征，而这些特征对于结构体或枚举的实例来说是截然不同的。
   类的实例是原地是可变的。即使一个类的实例的引用是用let声明的，也可以通过这个引用来改变一个实例属性的值。类的实例方法从来不需要被标记为可变的（也不能被标记）。
