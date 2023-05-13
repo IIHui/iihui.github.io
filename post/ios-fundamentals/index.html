@@ -241,7 +241,7 @@ code.has-jax {
     <i class="fa fa-file-word-o"></i>
 </span>
 <span class="post-meta-item-text">字数: </span>
-<span class="leancloud-visitors-count">77597</span>
+<span class="leancloud-visitors-count">77562</span>
 &nbsp; | &nbsp;
 <span class="post-meta-item-icon">
     <i class="fa fa-coffee"></i>
@@ -3634,7 +3634,7 @@ code.has-jax {
 </span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">case</span> podcasts
 </span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">case</span> books
 </span></span><span style="display:flex;"><span>}
-</span></span></code></pre></div><p>不管哪种类型，都可以在<code>case</code>声明时使用赋值：</p>
+</span></span></code></pre></div><p>如果在声明带类型的枚举时，不管声明枚举时使用的是哪种类型，如果不想使用默认值，实际上可以为每个<code>case</code>显式赋值：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span><span style="color:#66d9ef">enum</span> <span style="color:#a6e22e">Normal</span>: Double {
 </span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">case</span> fahrenheit = <span style="color:#ae81ff">98.6</span>
 </span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">case</span> centigrade = <span style="color:#ae81ff">37</span>
@@ -3650,7 +3650,7 @@ code.has-jax {
 </span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">case</span> podcasts = <span style="color:#e6db74">&#34;Podcasts&#34;</span>
 </span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">case</span> books = <span style="color:#e6db74">&#34;Audiobooks&#34;</span>
 </span></span><span style="display:flex;"><span>}
-</span></span></code></pre></div><p>如果在声明带类型的枚举时，不想使用默认值，实际上可以为每个<code>case</code>赋值。<code>case</code>所携带的值称为<code>raw value</code>。<font color=red>一个有类型声明的枚举隐含地遵循了<code>RawRepresentable</code>协议，这意味着它有一个<code>init(rawValue:)</code>初始化器和一个<code>rawValue</code>属性</font>。</p>
+</span></span></code></pre></div><p><code>case</code>所携带的值称为<code>raw value</code>。<font color=red>一个有类型声明的枚举隐含地遵循了<code>RawRepresentable</code>协议，这意味着它有一个<code>init(rawValue:)</code>初始化器和一个<code>rawValue</code>属性</font>。</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span><span style="color:#66d9ef">enum</span> <span style="color:#a6e22e">Normal</span>: Double {
 </span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">case</span> fahrenheit = <span style="color:#ae81ff">98.6</span>
 </span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">case</span> centigrade = <span style="color:#ae81ff">37</span>
@@ -3668,23 +3668,64 @@ code.has-jax {
 </span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">case</span> podcasts = <span style="color:#e6db74">&#34;Podcasts&#34;</span>
 </span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">case</span> books = <span style="color:#e6db74">&#34;Audiobooks&#34;</span>
 </span></span><span style="display:flex;"><span>}
-</span></span></code></pre></div><p>带类型的枚举声明时，每个<code>case</code>的<code>raw value</code><font color=Blue>必须保证是唯一的，否则会出现编译错误</font>。因此，可以使用<code>raw value</code>实例化一个枚举，但使用<code>init(rawValue:)</code>也可能失败，因为传入的<code>raw value</code>可能与<code>case</code>不匹配，所以它实际上是可失败的<code>init?(rawValue:)</code>。</p>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">let</span> type = Filter.albums 
+</span></span><span style="display:flex;"><span>print(type.rawValue) <span style="color:#75715e">// Albums</span>
+</span></span></code></pre></div><p>带类型的枚举声明时，每个<code>case</code>的<code>raw value</code><font color=Blue>必须保证是唯一的，否则会出现编译错误</font>。因此，可以使用<code>raw value</code>实例化一个枚举：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span><span style="color:#66d9ef">let</span> type = Filter(rawValue:<span style="color:#e6db74">&#34;Albums&#34;</span>)
+</span></span></code></pre></div><p>但使用<code>init(rawValue:)</code>可能失败，因为用户传入的<code>raw value</code>可能与<code>case</code>不匹配，所以它实际上是可失败的初始化器<code>init?(rawValue:)</code>。</p>
 <h2 id="associated-values">Associated Values</h2>
-<p>上面说的<code>raw value</code>对于每个<code>case</code>来说<font color=LightSeaGreen>都是固定的，在枚举类型声明的时候就已经确定了</font>。有一种方法可以构造一个<code>case</code>，使得<font color=red>其常量值可以在实例创建时才被设置</font>，此时设置的值被称为<code>associated value</code>。</p>
+<p>上面说的<code>raw value</code>对于每个<code>case</code>来说<font color=LightSeaGreen>都是固定的，在枚举类型声明的时候就已经确定了</font>。有一种方法可以构造一个<code>case</code>，使得<font color=red>其常量值可以在实例创建时才被设置</font>，此时设置的附加值被称为<code>associated value</code>。</p>
 <p>声明带<code>associated value</code>的枚举类型时，<font color=red>不能为整个枚举类型声明任何原始值类型</font>。而是在有需要的<code>case</code>上附加一个看起来像元组的表达式，即括号里包含一个可能的标记类型列表。与<code>rawValue</code>不同，<code>associated value</code>无类型上的限制：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span><span style="color:#66d9ef">enum</span> <span style="color:#a6e22e">MyError</span> {
 </span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">case</span> number(Int)
 </span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">case</span> message(String)
 </span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">case</span> fatal
 </span></span><span style="display:flex;"><span>}
-</span></span></code></pre></div><p>上面代码的含义是：在实例化的时候，一个<code>.number case</code>的<code>MyError</code>实例必须被设置一个<code>Int</code>值，一个<code>.message case</code>的<code>MyError</code>实例必须被设置一个<code>String</code>值，而一个<code>.fatal case</code>的<code>MyError</code>实例不用设置任何值。</p>
+</span></span></code></pre></div><p>上面代声明的含义为：在实例化的时候，一个<code>.number case</code>的<code>MyError</code>实例必须被设置一个<code>Int</code>值，一个<code>.message case</code>的<code>MyError</code>实例必须设置一个<code>String</code>值，而一个<code>.fatal case</code>的<code>MyError</code>实例不用设置任何值。</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span><span style="color:#66d9ef">let</span> err1 : MyError = .number(<span style="color:#ae81ff">4</span>)
 </span></span><span style="display:flex;"><span><span style="color:#66d9ef">let</span> num = <span style="color:#ae81ff">4</span> 
 </span></span><span style="display:flex;"><span><span style="color:#66d9ef">let</span> err2 : MyError = .number(num)
-</span></span></code></pre></div><p>现在可以揭露<code>Optional</code>是如何工作的。一个<code>Optional</code>只是一个有两种选择的枚举：<code>.none</code>和<code>.some</code>。如果它是<code>.none</code>，它没有相关的值，相当于<code>nil</code>。如果它是<code>.some</code>，它就会携带包装好的值作为其关联值。</p>
+</span></span></code></pre></div><p>如果一个<code>case</code>的<code>associated value</code>类型有标签，<font color=red>标签必须在初始化的时候使用</font>。下面代码中，枚举中的<code>case fetal</code>有标签，需要在初始化时使用：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span><span style="color:#66d9ef">enum</span> <span style="color:#a6e22e">MyError2</span> {
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">case</span> number(Int)
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">case</span> message(String)
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">case</span> fatal(n: Int, s: String)
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">let</span> err: MyError2 = .fatal(n: <span style="color:#f92672">-</span><span style="color:#ae81ff">12</span>, s: <span style="color:#e6db74">&#34;Oh the horror&#34;</span>)
+</span></span></code></pre></div><p>默认情况<font color=red><code>==</code>操作符不能直接用于比较带有<code>associated value</code>的枚举</font>，否则会出现编译错误。下面代码中，因为直接比较两个枚举值，会出现编译错误：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span><span style="color:#66d9ef">enum</span> <span style="color:#a6e22e">MyError2</span> {
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">case</span> number(Int)
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">case</span> message(String)
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">case</span> fatal(n: Int, s: String)
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">let</span> err: MyError2 = .fatal(n: <span style="color:#f92672">-</span><span style="color:#ae81ff">12</span>, s: <span style="color:#e6db74">&#34;Oh the horror&#34;</span>)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">// operator &#39;==&#39; cannot be applied to operands of type &#39;MyError2&#39; and &#39;(Int, String) -&gt; MyError2&#39;</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">if</span> err == MyError2.fatal { <span style="color:#75715e">// compile error</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">//</span>
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p>如果声明带<code>associated value</code>枚举时<font color=red>显式地遵循<code>Equatable</code>协议</font>，<code>==</code>操作符就能正常工作了。但<font color=red>前提是所有<code>associated value</code>中的类型本身都是遵循<code>Equatable</code>协议</font>，否则也会出现编译错误：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span><span style="color:#66d9ef">enum</span> <span style="color:#a6e22e">MyError</span>: Equatable {
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">case</span> number(Int)
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">case</span> message(String)
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">case</span> fatal
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">let</span> error: MyError = .fatal
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">if</span> error == .fatal {
+</span></span><span style="display:flex;"><span>    debugPrint(<span style="color:#66d9ef">true</span>)
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><h3 id="optional-1">Optional</h3>
+<p>现在可以揭露<code>Optional</code>是如何工作的。一个<code>Optional</code>只是一个有两个<code>case</code>的枚举：<code>.none</code>和<code>.some</code>。如果它是<code>.none</code>，它没有关联值，相当于<code>nil</code>。如果它是<code>.some</code>，它就会携带包装好的值作为其关联值。</p>
 <h2 id="inference-of-type-name-with-staticclass-members">Inference of Type Name with Static/Class Members</h2>
-<p>如同在枚举实例被期望的地方使用点和枚举<code>case</code>一样，<font color=red>当引用一个类型的静态/类成员的值是该类型的一个实例时</font>，可以做同样的事情。例如，<code>UIColor</code>有许多由<code>UIColor</code>实例生成的类属性，所以可以在预期有<code>UIColor</code>的地方省略<code>UIColor</code>：</p>
+<p>如同在枚举实例被期望的地方可以使用点和枚举<code>case</code>一样，<font color=red>当引用一个类型的静态/类成员的值是该类型的一个实例时</font>，可以做同样的事情。</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span>p.trackTintColor = .red <span style="color:#75715e">// instead of UIColor.red</span>
+</span></span></code></pre></div><p>例如，<code>UIColor</code>有许多由<code>UIColor</code>实例生成的类属性，所以可以在预期有<code>UIColor</code>的地方省略<code>UIColor</code>前缀。从<code>Swift 5.4</code>开始，可以附加一个属性或方法调用，同时产生预期的类型</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span>p.trackTintColor = .red.withAlphaComponent(<span style="color:#ae81ff">0.5</span>)
 </span></span></code></pre></div><p>类似地，假设有一个带有静态常量的结构体<code>Thing</code>，其值是<code>Thing</code>的实例。那么在声明<code>Thing</code>变量或者常量时可以使用点操作符来引用该静态常量：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span><span style="color:#66d9ef">struct</span> <span style="color:#a6e22e">Thing</span>: RawRepresentable {
 </span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">let</span> rawValue: Int
@@ -3711,40 +3752,6 @@ code.has-jax {
 </span></span><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span>dogExpecter(.<span style="color:#66d9ef">init</span>(name: <span style="color:#e6db74">&#34;Fido&#34;</span>))
 </span></span><span style="display:flex;"><span>dogExpecter(.same(text: <span style="color:#e6db74">&#34;Foo&#34;</span>))
-</span></span></code></pre></div><p>实际上，一个<code>Optional</code>只是有两个<code>case</code>的枚举：<code>.none</code>和<code>.some</code>。如果它是<code>.none</code>，表示没有相关的值，相当于<code>nil</code>。如果它是<code>.some</code>，它就会携带包装好的值作为其关联值。</p>
-<p>如果一个<code>case</code>的<code>associated value</code>类型有标签，<font color=red>标签必须在初始化的时候使用</font>。在下面的代码中，枚举中的<code>case fetal</code>有标签，需要在初始化时使用：</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span><span style="color:#66d9ef">enum</span> <span style="color:#a6e22e">MyError2</span> {
-</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">case</span> number(Int)
-</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">case</span> message(String)
-</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">case</span> fatal(n: Int, s: String)
-</span></span><span style="display:flex;"><span>}
-</span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span><span style="color:#66d9ef">let</span> err: MyError2 = .fatal(n: <span style="color:#f92672">-</span><span style="color:#ae81ff">12</span>, s: <span style="color:#e6db74">&#34;Oh the horror&#34;</span>)
-</span></span></code></pre></div><p>默认情况<font color=red><code>==</code>操作符不能直接用于比较带有<code>associated value</code>的枚举</font>，否则会出现编译错误。下面代码中，因为直接比较两个枚举值，会出现编译错误：</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span><span style="color:#66d9ef">enum</span> <span style="color:#a6e22e">MyError2</span> {
-</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">case</span> number(Int)
-</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">case</span> message(String)
-</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">case</span> fatal(n: Int, s: String)
-</span></span><span style="display:flex;"><span>}
-</span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span><span style="color:#66d9ef">let</span> err: MyError2 = .fatal(n: <span style="color:#f92672">-</span><span style="color:#ae81ff">12</span>, s: <span style="color:#e6db74">&#34;Oh the horror&#34;</span>)
-</span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span><span style="color:#75715e">// operator &#39;==&#39; cannot be applied to operands of type &#39;MyError2&#39; and &#39;(Int, String) -&gt; MyError2&#39;</span>
-</span></span><span style="display:flex;"><span><span style="color:#66d9ef">if</span> err == MyError2.fatal { <span style="color:#75715e">// compile error</span>
-</span></span><span style="display:flex;"><span>    <span style="color:#75715e">//</span>
-</span></span><span style="display:flex;"><span>}
-</span></span></code></pre></div><p>如果声明带<code>associated value</code>枚举时<font color=red>显式地遵循<code>Equatable</code>协议</font>，<code>==</code>操作符就能正常工作了。但前提是所有<code>associated value</code>中的类型本身都是遵循<code>Equatable</code>协议，否则也会出现编译错误：</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span><span style="color:#66d9ef">enum</span> <span style="color:#a6e22e">MyError</span>: Equatable {
-</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">case</span> number(Int)
-</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">case</span> message(String)
-</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">case</span> fatal
-</span></span><span style="display:flex;"><span>}
-</span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span><span style="color:#66d9ef">let</span> error: MyError = .fatal
-</span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span><span style="color:#66d9ef">if</span> error == .fatal {
-</span></span><span style="display:flex;"><span>    debugPrint(<span style="color:#66d9ef">true</span>)
-</span></span><span style="display:flex;"><span>}
 </span></span></code></pre></div><h2 id="enum-case-iteration">Enum Case Iteration</h2>
 <p>如果声明的枚举类型遵循了<code>CaseIterable</code>协议，那么它就会有一个<code>allCases</code><font color=red>静态属性</font>，这个属性包含了该枚举的所有<code>case</code>值：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span><span style="color:#66d9ef">enum</span> <span style="color:#a6e22e">Filter</span>: String, CaseIterable {
@@ -5277,7 +5284,11 @@ code.has-jax {
     <li><a href="#enums">Enums</a>
       <ul>
         <li><a href="#raw-values">Raw Values</a></li>
-        <li><a href="#associated-values">Associated Values</a></li>
+        <li><a href="#associated-values">Associated Values</a>
+          <ul>
+            <li><a href="#optional-1">Optional</a></li>
+          </ul>
+        </li>
         <li><a href="#inference-of-type-name-with-staticclass-members">Inference of Type Name with Static/Class Members</a></li>
         <li><a href="#enum-case-iteration">Enum Case Iteration</a></li>
         <li><a href="#enum-initializers">Enum Initializers</a></li>
