@@ -1217,17 +1217,18 @@ struct MoTest {  private var age = 18  var name: String } debugPrint(MoTest(name
 struct MoTest {  private let age = 18  var name: String } debugPrint(MoTest(name: &amp;#34;test&amp;#34;).name) 结构体中声明的存储属性必须全部初始化，不管是声明的时候初始化还是在所有的初始化器中初始化。如果一个结构体有多个初始化器，则可以在初始化器中通过self.init()调用其它初始化器。
 Struct Properties 结构体可以有实例属性或者静态属性，二者均可以声明为存储或者计算属性。如果代码中想重新设置一个结构体实例属性的值，则该实例变量必须使用var声明，否则会出现编译错误：
 var d = Test(name: &amp;#34;ddd&amp;#34;,age: 34) d.name = &amp;#34;new test&amp;#34;  struct Digit1 {  var number: Int  init(_ n: Int) {  self.number = n  } } var digit1 = Digit1(123) digit1.number = 345 debugPrint(digit1.number) Struct Methods 结构体可以有实例方法和静态方法，包括subscript(下标)，如果一个实例方法想要设置结构体中某个属性的值，那么这个方法一定要声明为mutating，并且调用这个方法的实例也必须使用var声明，否则会出现编译错误：
-struct Digit {   private var number: Int   init(_ n: Int) {  self.number = n  }   mutating func changeNumberTo(_ n: Int) {  self.number = n  }  }  var d = Digit(123) d.changeNumberTo(42) 结构体subscript或者计算属性的setter方法默认认为是mutating，不必显式地声明为mutating。但是如果在它们的get方法中要设置其它属性的值，必须显式地声明为mutating。声明为mutating的方法中可以使用该类型的另一个实例设置self的方式来改变自身。
+struct Digit {   private var number: Int   init(_ n: Int) {  self.number = n  }   mutating func changeNumberTo(_ n: Int) {  self.number = n  }  }  var d = Digit(123) d.changeNumberTo(42) 获取一个懒加载实例属性的值可能会导致该属性的初始化器运行，设置该属性的值，也就是这是一个可变的属性。因此，如果一个实例方法获取了一个懒加载的实例属性的值，那么它必须被声明为mutating的:
+struct Person {  private lazy var name = &amp;#34;matt&amp;#34;  mutating func getName() -&amp;gt; String {  return self.name  } } 结构体subscript或者计算属性的setter方法默认认为是mutating，不必显式地声明为mutating。但是如果在它们的get方法中要设置其它属性的值，必须显式地声明为mutating。声明为mutating的方法中可以使用该类型的另一个实例设置self的方式来改变自身。
 Constant Namespaces 经常使用degenerate struct作为常量的便捷命名空间，之所以称为degenerate，是因为结构体中全部为静态成员，并且不打算使用这种对象类型来制造任何其它实例。
 UserDefaults是一种字典，每个值可以通过一个键来访问。这些键通常是字符串，一个常见的错误是使用键时拼错了键的名字，虽然在编译时不会报错，但代码将不能正常工作。
 更好的方法是将这些键用带名字的常量字符串来表示。此时，如果错误地输入了一个名称，编译器会报错。带有静态成员的结构是定义常量字符串并将其名称集中到一个命名空间的好方法：
 struct Default {  static let rows = &amp;#34;rows&amp;#34;  static let columns = &amp;#34;columns&amp;#34;  static let hazyStripy = &amp;#34;hazyStripy&amp;#34; } 现在就可以使用Default中的静态成员作为UserDefaults的键来引用，例如使用Default.rows可以就代表rows字符串。
 Classes 虽然类和结构体有些相似，但类和结构体还是有一些关键区别：
-  类是引用类型，类的实例有两个显著的特征，而这些特征对于结构体或枚举的实例来说是截然不同的。
-  类的实例是原地是可变的。即使一个类的实例的引用是用let声明的，也可以通过这个引用来改变一个实例属性的值。类的实例方法从来不需要被标记为可变的（也不能被标记）。
-  当一个给定的类的实例被分配给多个变量或作为参数传递给一个函数时，你会得到对一个相同对象的多个引用。
-    一个类可以有一个父类，它继承其父类的成员，类的继承层次可以形成一个分层的树结构。而结构体不能继承。
-  在Objective-C中，类是唯一的对象类型。一些内置的Swift结构类型可以神奇地与Objective-C的类类型衔接，但自定义结构类型却没有这种魔力。因此，在用Swift进行iOS编程时，声明类而不是结构的一个原因是作为一种与Objective-C和Cocoa的互换形式。
+  类是引用类型，类的实例有两个显著的特征。而这两个特性对于结构体或枚举的实例来说是截然不同的。
+  可变的：类的实例是原地是可变的。即使一个类实例的引用是用let声明的，也可以通过这个引用来改变一个实例属性的值。类的实例方法从来不需要被标记为可变的（也不能被标记）。
+  多引用：当一个给定的类的实例被分配给多个变量或作为参数传递给一个函数时，结果是多个引用指向一个相同的对象。
+    继承：一个类可以有一个父类，它继承父类的成员。类类型可以形成一个层次结构树。而结构体不能继承。
+  在Objective-C中，类是唯一的对象类型。一些内置的Swift结构体类型可以神奇地与Objective-C的类桥接，但自定义结构类型却没有这种魔力。因此，在用Swift进行iOS编程时，声明类而不是结构的一个原因是类能够和Objective-C或Cocoa的互换。
 Value Types and Reference Types 在Swift中，结构体和枚举类型都是值类型，类是引用类型。值类型不能就地可变，而类的实例能够就地可变。在下面的例子中，因为结构体是值类型，所以更改结构体实例的属性时，要将结构体实例用var声明，而不能用let声明：
 struct Digit {  var number: Int   init(_ n: Int) {  self.number = n  } }  var d = Digit(23) d.number = 45 实际上，当改变一个值类型的实例时，是在用一个不同的实例替换该实例。为了证明这一点，可以添加一个setter观察器。在下面的代码中，虽然改变的只是属性number的值，但是didSet依然调用了，这说明该实例被替换了：
 struct Digit {  var number: Int   init(_ n: Int) {  self.number = n  } }  var d: Digit = Digit(234) {  didSet {  debugPrint(&amp;#34;d was set&amp;#34;)  } }  d.number = 456 // &amp;#34;d was set&amp;#34; 下面代码会出现编译错误，能够解释如果值类型的实例引用是用let关键字声明的，那么就不能对该实例进行就地改变：

@@ -241,7 +241,7 @@ code.has-jax {
     <i class="fa fa-file-word-o"></i>
 </span>
 <span class="post-meta-item-text">字数: </span>
-<span class="leancloud-visitors-count">77972</span>
+<span class="leancloud-visitors-count">78089</span>
 &nbsp; | &nbsp;
 <span class="post-meta-item-icon">
     <i class="fa fa-coffee"></i>
@@ -4007,6 +4007,13 @@ code.has-jax {
 </span></span><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span><span style="color:#66d9ef">var</span> d = Digit(<span style="color:#ae81ff">123</span>)
 </span></span><span style="display:flex;"><span>d.changeNumberTo(<span style="color:#ae81ff">42</span>)
+</span></span></code></pre></div><p>获取一个懒加载实例属性的值可能会导致该属性的初始化器运行，设置该属性的值，也就是这是一个可变的属性。因此，如果一个实例方法获取了一个懒加载的实例属性的值，那么它必须被声明为<code>mutating</code>的:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span><span style="color:#66d9ef">struct</span> <span style="color:#a6e22e">Person</span> {
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">private</span> <span style="color:#66d9ef">lazy</span> <span style="color:#66d9ef">var</span> name = <span style="color:#e6db74">&#34;matt&#34;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">mutating</span> <span style="color:#66d9ef">func</span> <span style="color:#a6e22e">getName</span>() -&gt; String {
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">return</span> <span style="color:#66d9ef">self</span>.name
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>}
 </span></span></code></pre></div><p>结构体<font color=red><code>subscript</code>或者计算属性的<code>setter</code>方法默认认为是<code>mutating</code>，</font>不必显式地声明为<code>mutating</code>。但是<font color=LightSeaGreen>如果在它们的<code>get</code>方法中要设置其它属性的值，必须显式地声明为<code>mutating</code></font>。声明为<code>mutating</code>的方法中可以使用该类型的另一个实例设置<code>self</code>的方式来改变自身。</p>
 <h2 id="constant-namespaces">Constant Namespaces</h2>
 <p>经常使用<code>degenerate struct</code>作为常量的便捷命名空间，之所以称为<code>degenerate</code>，是因为结构体中<font color=red>全部为静态成员，并且不打算使用这种对象类型来制造任何其它实例</font>。</p>
@@ -4022,21 +4029,21 @@ code.has-jax {
 <p>虽然类和结构体有些相似，但类和结构体还是有一些关键区别：</p>
 <ol>
 <li>
-<p>类是引用类型，类的实例有两个显著的特征，而这些特征对于结构体或枚举的实例来说是截然不同的。</p>
+<p>类是引用类型，类的实例有两个显著的特征。而这两个特性对于结构体或枚举的实例来说是截然不同的。</p>
 <ul>
 <li>
-<p>类的实例是<font color=red>原地是可变的</font>。即使一个类的实例的引用是用<code>let</code>声明的，也可以通过这个引用来改变一个实例属性的值。类的实例方法<font color=LightSeaGreen>从来不需要被标记为可变的（也不能被标记）</font>。</p>
+<p>可变的：类的实例是<font color=red>原地是可变的</font>。即使一个类实例的引用是用<code>let</code>声明的，也可以通过这个引用来改变一个实例属性的值。类的实例方法<font color=LightSeaGreen>从来不需要被标记为可变的（也不能被标记）</font>。</p>
 </li>
 <li>
-<p>当一个给定的类的实例被分配给多个变量或作为参数传递给一个函数时，你会得到<font color=red>对一个相同对象的多个引用</font>。</p>
+<p>多引用：当一个给定的类的实例被分配给多个变量或作为参数传递给一个函数时，结果是多个引用指向<font color=red>一个相同的对象</font>。</p>
 </li>
 </ul>
 </li>
 <li>
-<p>一个类可以有一个父类，它继承其父类的成员，类的继承层次可以形成一个分层的树结构。而<font color=red>结构体不能继承</font>。</p>
+<p>继承：一个类可以有一个父类，它继承父类的成员。类类型可以形成一个层次结构树。而<font color=red>结构体不能继承</font>。</p>
 </li>
 </ol>
-<p>在<code>Objective-C</code>中，类是唯一的对象类型。一些内置的<code>Swift</code>结构类型可以神奇地与<code>Objective-C</code>的类类型衔接，但<font color=red>自定义结构类型却没有这种魔力</font>。因此，在用<code>Swift</code>进行<code>iOS</code>编程时，声明类而不是结构的一个原因是作为一种与<code>Objective-C</code>和<code>Cocoa</code>的互换形式。</p>
+<p>在<code>Objective-C</code>中，类是唯一的对象类型。一些内置的<code>Swift</code>结构体类型可以神奇地与<code>Objective-C</code>的类桥接，但<font color=red>自定义结构类型却没有这种魔力</font>。因此，在用<code>Swift</code>进行<code>iOS</code>编程时，声明类而不是结构的一个原因是类能够和<code>Objective-C</code>或<code>Cocoa</code>的互换。</p>
 <h2 id="value-types-and-reference-types">Value Types and Reference Types</h2>
 <p>在<code>Swift</code>中，<font color=red>结构体和枚举类型都是值类型，类是引用类型</font>。<strong><font color=LightSeaGreen>值类型不能就地可变，而类的实例能够就地可变</font></strong>。在下面的例子中，因为结构体是值类型，所以更改结构体实例的属性时，要将结构体实例用<code>var</code>声明，而不能用<code>let</code>声明：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span><span style="color:#66d9ef">struct</span> <span style="color:#a6e22e">Digit</span> {
