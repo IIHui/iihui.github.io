@@ -241,13 +241,13 @@ code.has-jax {
     <i class="fa fa-file-word-o"></i>
 </span>
 <span class="post-meta-item-text">字数: </span>
-<span class="leancloud-visitors-count">78996</span>
+<span class="leancloud-visitors-count">79279</span>
 &nbsp; | &nbsp;
 <span class="post-meta-item-icon">
     <i class="fa fa-coffee"></i>
 </span>
 <span class="post-meta-item-text">阅读: </span>
-<span class="leancloud-visitors-count">158 分钟</span>
+<span class="leancloud-visitors-count">159 分钟</span>
 </span>
       </div>
     </header>
@@ -4234,7 +4234,7 @@ code.has-jax {
 </span></span><span style="display:flex;"><span>fido.bark()
 </span></span><span style="display:flex;"><span>fido.walkAndBark()
 </span></span></code></pre></div><h3 id="overriding">Overriding</h3>
-<p>在<code>Swift</code>中允许对从父类继承的方法进行重定义（也被称为覆写，重写），需要在重定义的方法前添加<code>override</code>关键字。下面代码对<code>Dog</code>继承了<code>Quadruped</code>的<code>walk</code>方法进行了重写：</p>
+<p>在<code>Swift</code>中允许对从父类继承的方法进行重定义（也被称为覆写，重写）。如果重定义在父类定义的方法，必须显式在重定义的方法前添加<code>override</code>关键字。下面代码在子类<code>Dog</code>中对继承了<code>Quadruped</code>的<code>walk</code>方法进行了重写：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span><span style="color:#66d9ef">class</span> <span style="color:#a6e22e">Quadruped</span> {
 </span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">func</span> <span style="color:#a6e22e">walk</span>() {
 </span></span><span style="display:flex;"><span>        debugPrint(<span style="color:#e6db74">&#34;walk walk walk&#34;</span>)
@@ -4261,8 +4261,8 @@ code.has-jax {
 </span></span><span style="display:flex;"><span>        debugPrint(<span style="color:#e6db74">&#34;woof woof woof&#34;</span>)
 </span></span><span style="display:flex;"><span>    }
 </span></span><span style="display:flex;"><span>}
-</span></span></code></pre></div><p>一个与父类同名的方法不一定是<code>override</code>，在<code>Swift</code>中两个同名的函数是通过签名来区别的。只有当子类重新定义它从父类继承的同一个方法时才存在覆盖的情况：<font color=red>相同的名称，包括外部参数名称，以及相同的签名</font>。</p>
-<p>但是，<code>override</code>一个方法<font color=Blue>并不需要和被覆盖的父类方法有完全相同的签名</font>。在覆盖一个方法时，<font color=LightSeaGreen>参数的类型可以用父类来代替</font>。下面的代码中，<code>Kitten</code>是<code>Cat</code>的子类，因此代码是合法的：</p>
+</span></span></code></pre></div><p>一个与父类同名的子类方法不一定是<code>override</code>，在<code>Swift</code>中两个同名的函数是通过签名来区别的。只有当子类重新定义它从父类继承的同一个方法时才存在<code>override</code>的情况：<font color=red>相同的名称，包括外部参数名称，以及相同的签名</font>。</p>
+<p>但是，<code>override</code>一个方法<font color=Blue>并不需要和被覆盖的父类方法有完全相同的签名</font>。在覆盖一个方法时，<font color=red>参数的类型可以用父类或父类的<code>optional</code>来代替</font>。下面代码中，<code>Kitten</code>是<code>Cat</code>的子类，因此代码是合法的：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span><span style="color:#66d9ef">class</span> <span style="color:#a6e22e">Cat</span> {
 </span></span><span style="display:flex;"><span>    <span style="color:#75715e">//</span>
 </span></span><span style="display:flex;"><span>}
@@ -4313,6 +4313,9 @@ code.has-jax {
 </span></span><span style="display:flex;"><span>    }
 </span></span><span style="display:flex;"><span>}
 </span></span></code></pre></div><p>一个下标函数是一个方法。如果一个父类声明了一个下标，子类可以声明一个具有相同签名的下标，只要它用<code>override</code>关键字来指定它。为了调用父类的下标实现，子类可以在关键字<code>super</code>后面使用方括号（例如：<code>super[3]</code>）。</p>
+<h3 id="the-keyword-super">The keyword super</h3>
+<p>经常发生的情况是，如果想在一个子类中覆盖一些父类的东西，但又想访问父类中被覆盖的东西，这可以通过向关键字<code>super</code>发送消息来实现。</p>
+<p>在<code>NoisyDog</code>中的<code>bark</code>实现就是一个例子。<code>NoisyDog</code>在<code>bark</code>时真正做的事情与<code>Dog</code>在<code>bark</code>时做的事情相同，但次数更多。我们想在实现<code>NoisyDog</code>的吠叫时表达这种关系。为了做到这一点，我们让<code>NoisyDog</code>的吠叫实现发送吠叫信息，不是发送给自己（这将是循环的），而是发送给超类；这使得寻找吠叫实例方法的实现从超类而不是我们自己的类开始：</p>
 <h2 id="class-initializers">class initializers</h2>
 <p>由于类的继承性，类实例的初始化比结构或枚举实例的初始化要复杂得多。<font color=red>初始化器的主要任务是确保所有的属性都有一个初始值</font>。初始化器可能还有其他任务要执行，这些任务对这个实例的初始状态和完整性至关重要。</p>
 <p>然而，一个类可能有一个父类，它可能有自己的属性和初始化器。因此，<font color=LightSeaGreen>必须以某种方式确保当一个子类被初始化时，其父类的属性被初始化</font>，除了子类本身的任务外，其初始化器的任务也被按部就班地执行。</p>
@@ -5381,6 +5384,7 @@ code.has-jax {
             <li><a href="#inheritance">Inheritance</a></li>
             <li><a href="#additional-functionality">Additional functionality</a></li>
             <li><a href="#overriding">Overriding</a></li>
+            <li><a href="#the-keyword-super">The keyword super</a></li>
           </ul>
         </li>
         <li><a href="#class-initializers">class initializers</a></li>
