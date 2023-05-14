@@ -1257,8 +1257,8 @@ struct Dog { // compile error  	var puppy : Dog? } 奇怪的是，可以将puppy
 struct Dog {  var puppy: [Dog]? } 关联值类型的枚举case可以是当前枚举的实例，一个枚举case的关联值可以是该枚举的一个实例，只要该案例（或整个枚举）被标记为indirect：
 enum Node {  case none(Int)  indirect case left(Int, Node)  indirect case right(Int, Node)  indirect case both(Int, Node, Node) } subclass and superclass 在Swift中，一个类可能会有多个子类，但一个类至多有一个直接父类。就Swift语言本身而言，并没有要求一个类一定要有父类，或者说如果它有父类，也没有要求它最终应该是由特定基类派生。一个Swift程序可以有许多没有父类的类，也可以有许多独立的层次子类树，每一个都是从不同的基类派生而来。
 但在Cocoa中，不是这样的。在Cocoa中实际上只有一个base class即NSObject，它表明了一个类所必需的所有功能，而所有其它类在某种层次上都是这个基类的子类。
-Inheritance 之所以有父类—子类关系，首先是为了共享功能。下面的定义中，因为Dog和Cat都是Quadruped的子类，所以它们都能调用walk方法：
-class Quadruped {  func walk() {  print(&amp;#34;walk walk walk&amp;#34;)  } } class Dog: Quadruped { } class Cat: Quadruped { } 在类的声明前面加上final关键字可以防止其它类来继承。
+Inheritance 之所以有父类—子类关系，首先是为了共享功能。下面的定义中，因为Dog和Cat都是Quadruped的子类，所以它们都能调用父类的walk方法：
+class Quadruped {  func walk() {  print(&amp;#34;walk walk walk&amp;#34;)  } } class Dog: Quadruped { } class Cat: Quadruped { } 在类的声明时加上final关键字可以防止其它类来继承当前类。
 Additional functionality 子类化不仅可以继承父类的方法，也可以自定义方法。下面定义的Dog不仅继承了walk()方法，而且自定义了bark()方法:
 class Quadruped {  func walk() {  debugPrint(&amp;#34;walk walk walk&amp;#34;)  } }  class Dog: Quadruped {  func bark() {  debugPrint(&amp;#34;woof&amp;#34;)  } }  let fido = Dog() fido.walk() fido.bark() 无论方法是在类中自定义的，还是从父类中继承的，都有同样的效果。下面代码中Dog继承了Quadruped的walk方法，并自定义了bark方法，在walkAndBark中调用walk和bark方法的时候没有差别：
 class Quadruped {  func walk() {  debugPrint(&amp;#34;walk walk walk&amp;#34;)  } }  class Dog: Quadruped {  func bark() {  debugPrint(&amp;#34;woof&amp;#34;)  }   func walkAndBark() {  self.walk()  self.bark()  } }  let fido = Dog() fido.walk() fido.bark() fido.walkAndBark() Overriding 在Swift中允许对从父类继承的方法进行重定义（也被称为覆写，重写）。如果重定义在父类定义的方法，必须显式在重定义的方法前添加override关键字。下面代码在子类Dog中对继承了Quadruped的walk方法进行了重写：
@@ -1267,12 +1267,13 @@ class Quadruped {  func walk() {  debugPrint(&amp;#34;walk walk walk&amp;#34;)  
 class Cat {  // }  class Kitten: Cat {  // }  class Dog {  func barkAt(cat: Kitten) {  //  } }  class NoisyDog: Dog {  override func barkAt(cat: Cat) {  //  } } 在override时用一个Optional父类的参数也是合法的。即在NoisyDog中覆盖barkAt时，参数cat的类型可以是Cat或者Cat?：
 class NoisyDog: Dog {  override func barkAt(cat: Cat?) {  //  } } 此外，在override时，一个参数可以用对应的Optional来覆盖。在下面的代码中，Dog中定义的方法barkAt参数类型为Cat，而在NoisyDog中override时参数为Cat?也是合法的：
 class Dog {  func barkAt(cat: Cat) {  //  } }  class NoisyDog: Dog {  override func barkAt(cat: Cat?) {  //  } } 而一个Optional的参数可以用其父类的Optional来覆盖。下面的代码中，使用override时Kitten?类型可以使用Cat?：
-class Dog {  func barkAt(cat: Kitten?) {  //  } }  class NoisyDog: Dog {  override func barkAt(cat: Cat?) {  //  } } 一个下标函数是一个方法。如果一个父类声明了一个下标，子类可以声明一个具有相同签名的下标，只要它用override关键字来指定它。为了调用父类的下标实现，子类可以在关键字super后面使用方括号（例如：super[3]）。
-The keyword super 经常发生的情况是，如果想在一个子类中覆盖一些父类的东西，但又想访问父类中被覆盖的东西，这可以通过向关键字super发送消息来实现。
-在NoisyDog中的bark实现就是一个例子。NoisyDog在bark时真正做的事情与Dog在bark时做的事情相同，但次数更多。我们想在实现NoisyDog的吠叫时表达这种关系。为了做到这一点，我们让NoisyDog的吠叫实现发送吠叫信息，不是发送给自己（这将是循环的），而是发送给超类；这使得寻找吠叫实例方法的实现从超类而不是我们自己的类开始：
-class initializers 由于类的继承性，类实例的初始化比结构或枚举实例的初始化要复杂得多。初始化器的主要任务是确保所有的属性都有一个初始值。初始化器可能还有其他任务要执行，这些任务对这个实例的初始状态和完整性至关重要。
-然而，一个类可能有一个父类，它可能有自己的属性和初始化器。因此，必须以某种方式确保当一个子类被初始化时，其父类的属性被初始化，除了子类本身的任务外，其初始化器的任务也被按部就班地执行。
-类的初始化分为两类：Designated initializer和Convenience initializer。类的初始化器默认为Designated initializer。Designated initializer初始化器必须保证所有的存储属性都被初始化。它不能委托给同一个类中的另一个初始化器，一个指定的初始化器使用self.init(...)是非法的。
+class Dog {  func barkAt(cat: Kitten?) {  //  } }  class NoisyDog: Dog {  override func barkAt(cat: Cat?) {  //  } } The keyword super 经常发生的情况是，如果想在一个子类中覆盖一些父类的东西，但又想访问父类中被覆盖的东西，这可以通过向关键字super发送消息来实现。
+在NoisyDog中的bark方法实现就是一个例子。NoisyDog在bark中真正做的事情与Dog在bark时做的事情相同，但调用次数更多。若想在NoisyDog中的bark中实现这种效果，可以在NoisyDog的bark实现中向父类发送bark消息，不是发送给自己发送bark消息（这将形成死循环）。
+class Dog: Quadruped {  func bark() {  print(&amp;#34;woof&amp;#34;)  } } class NoisyDog: Dog {  override func bark() {  for _ in 1...3 {  super.bark()  }  } } 一个下标函数是一个方法。如果一个父类声明了一个下标，子类可以声明一个具有相同签名的下标，只要它用override关键字来指明。为了调用父类的下标方法，子类可以在关键字super后面使用方括号（例如：super[3]）。
+class initializers 由于类的继承性，类实例的初始化比结构体或枚举实例的初始化要复杂得多。初始化器的主要任务是确保所有的属性都有一个初始值。初始化器可能还有其他任务要执行，这些任务对这个实例的初始状态和完整性至关重要。
+一个类可能有一个父类，它可能有自己的属性和初始化器。因此，必须以某种方式确保当一个子类被初始化时，其父类的属性均被初始化，除了子类本身的任务外，其初始化器的任务也被按部就班地执行。
+Swift通过对类的初始化器必须做的事情制定了一些清晰明确的规则，连贯而可靠地解决了这个问题，而且很巧妙地解决了这个问题。
+Kinds of class initializer 类的初始化分为两类：Designated initializer和Convenience initializer。类的初始化器默认为Designated initializer。Designated initializer初始化器必须保证所有的存储属性都被初始化。它不能委托给同一个类中的另一个初始化器，一个指定的初始化器使用self.init(...)是非法的。
 一个有任何存储属性的类，如果没有作为其声明的一部分被初始化，必须至少有一个明确的指定初始化器。一个没有存储属性的类，或者所有存储属性都作为声明的一部分被初始化的类，如果没有显式指定的初始化器，就有一个隐式的指定初始化器init()。
 如果类的初始化器在声明的时候使用关键字convenience标记，那么它就是Convenience initializer。一个便利初始化器是一个委托初始化器，它必须包含self.init(...)，它必须调用同一个类中的指定初始化器。或者如果它调用同一个类中的另一个便利初始化器，便利初始化器链必须以调用同一个类中的指定初始化器结束。
 下面定义的类class没有存储属性，并且未自定义初始化器，此时此编译器自动生成了一个无参的init()，因此使用Dog()不会出现编译错误：
