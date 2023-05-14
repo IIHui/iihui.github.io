@@ -241,7 +241,7 @@ code.has-jax {
     <i class="fa fa-file-word-o"></i>
 </span>
 <span class="post-meta-item-text">字数: </span>
-<span class="leancloud-visitors-count">78757</span>
+<span class="leancloud-visitors-count">78996</span>
 &nbsp; | &nbsp;
 <span class="post-meta-item-icon">
     <i class="fa fa-coffee"></i>
@@ -4172,7 +4172,7 @@ code.has-jax {
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span><span style="color:#66d9ef">struct</span> <span style="color:#a6e22e">Dog</span> { 
 </span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">var</span> puppy: [Dog]?
 </span></span><span style="display:flex;"><span>}
-</span></span></code></pre></div><p>关联值类型的枚举case可以是当前枚举的实例，一个枚举<code>case</code>的关联值可以是该枚举的一个实例，只要该案例（或整个枚举）被标记为<code>indirect</code>：</p>
+</span></span></code></pre></div><p>关联值类型的枚举<code>case</code>可以是当前枚举的实例，一个枚举<code>case</code>的关联值可以是该枚举的一个实例，只要该案例（或整个枚举）被标记为<code>indirect</code>：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span><span style="color:#66d9ef">enum</span> <span style="color:#a6e22e">Node</span> {
 </span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">case</span> <span style="color:#66d9ef">none</span>(Int)
 </span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">indirect</span> <span style="color:#66d9ef">case</span> <span style="color:#66d9ef">left</span>(Int, Node)
@@ -4180,8 +4180,22 @@ code.has-jax {
 </span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">indirect</span> <span style="color:#66d9ef">case</span> both(Int, Node, Node)
 </span></span><span style="display:flex;"><span>}
 </span></span></code></pre></div><h2 id="subclass-and-superclass">subclass and superclass</h2>
-<p>在<code>Swift</code>中，一个类可能会有多个子类，但<font color=red>一个类至多有一个直接父类</font>。在<code>Cocoa</code>中，实际上只有一个<code>root class</code>&ndash;<code>NSObject</code>，它首先体现了一个类成为一个类所必需的所有功能，而所有其它类在某种程度上都是这个基类的子类。</p>
-<p>在类的声明前面加上<code>final</code>关键字可以防止其他类来继承。子类化不仅可以继承父类的方法，也可以自定义方法。下面定义的<code>Dog</code>不仅继承了<code>walk()</code>方法，而且自定义了<code>bark()</code>方法:</p>
+<p>在<code>Swift</code>中，一个类可能会有多个子类，但<font color=red>一个类至多有一个直接父类</font>。就<code>Swift</code>语言本身而言，并没有要求一个类一定要有父类，或者说如果它有父类，也没有要求它最终应该是由特定基类派生。一个<code>Swift</code>程序可以有许多没有父类的类，也可以有许多独立的层次子类树，每一个都是从不同的基类派生而来。</p>
+<p>但在<code>Cocoa</code>中，不是这样的。在<code>Cocoa</code>中实际上只有一个<code>base class</code>即<code>NSObject</code>，它表明了一个类所必需的所有功能，而所有其它类在某种层次上都是这个基类的子类。</p>
+<h3 id="inheritance">Inheritance</h3>
+<p>之所以有父类—子类关系，首先是为了共享功能。下面的定义中，因为<code>Dog</code>和<code>Cat</code>都是<code>Quadruped</code>的子类，所以它们都能调用<code>walk</code>方法：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span><span style="color:#66d9ef">class</span> <span style="color:#a6e22e">Quadruped</span> {
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">func</span> <span style="color:#a6e22e">walk</span>() {
+</span></span><span style="display:flex;"><span>        print(<span style="color:#e6db74">&#34;walk walk walk&#34;</span>)
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">class</span> <span style="color:#a6e22e">Dog</span>: Quadruped {
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">class</span> <span style="color:#a6e22e">Cat</span>: Quadruped {
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p>在类的声明前面加上<code>final</code>关键字可以防止其它类来继承。</p>
+<h3 id="additional-functionality">Additional functionality</h3>
+<p>子类化不仅可以继承父类的方法，也可以自定义方法。下面定义的<code>Dog</code>不仅继承了<code>walk()</code>方法，而且自定义了<code>bark()</code>方法:</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span><span style="color:#66d9ef">class</span> <span style="color:#a6e22e">Quadruped</span> {
 </span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">func</span> <span style="color:#a6e22e">walk</span>() {
 </span></span><span style="display:flex;"><span>        debugPrint(<span style="color:#e6db74">&#34;walk walk walk&#34;</span>)
@@ -4197,7 +4211,7 @@ code.has-jax {
 </span></span><span style="display:flex;"><span><span style="color:#66d9ef">let</span> fido  = Dog()
 </span></span><span style="display:flex;"><span>fido.walk()
 </span></span><span style="display:flex;"><span>fido.bark()
-</span></span></code></pre></div><p>无论方法是在类中自定义的，还是从父类中继承的，都有同样的效果。下面代码中<code>Dog</code>继承了<code>Quadruped</code>的<code>walk</code>方法，调用的时候没有差别：</p>
+</span></span></code></pre></div><p>无论方法是在类中自定义的，还是从父类中继承的，都有同样的效果。下面代码中<code>Dog</code>继承了<code>Quadruped</code>的<code>walk</code>方法，并自定义了<code>bark</code>方法，在<code>walkAndBark</code>中调用<code>walk</code>和<code>bark</code>方法的时候没有差别：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span><span style="color:#66d9ef">class</span> <span style="color:#a6e22e">Quadruped</span> {
 </span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">func</span> <span style="color:#a6e22e">walk</span>() {
 </span></span><span style="display:flex;"><span>        debugPrint(<span style="color:#e6db74">&#34;walk walk walk&#34;</span>)
@@ -4219,7 +4233,8 @@ code.has-jax {
 </span></span><span style="display:flex;"><span>fido.walk()
 </span></span><span style="display:flex;"><span>fido.bark()
 </span></span><span style="display:flex;"><span>fido.walkAndBark()
-</span></span></code></pre></div><p>在<code>Swift</code>中允许对从父类继承的方法进行重定义（也被称为覆写，重写），需要在重定义的方法前添加<code>override</code>关键字。下面代码对<code>Dog</code>继承了<code>Quadruped</code>的<code>walk</code>方法进行了重写：</p>
+</span></span></code></pre></div><h3 id="overriding">Overriding</h3>
+<p>在<code>Swift</code>中允许对从父类继承的方法进行重定义（也被称为覆写，重写），需要在重定义的方法前添加<code>override</code>关键字。下面代码对<code>Dog</code>继承了<code>Quadruped</code>的<code>walk</code>方法进行了重写：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span><span style="color:#66d9ef">class</span> <span style="color:#a6e22e">Quadruped</span> {
 </span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">func</span> <span style="color:#a6e22e">walk</span>() {
 </span></span><span style="display:flex;"><span>        debugPrint(<span style="color:#e6db74">&#34;walk walk walk&#34;</span>)
@@ -5361,7 +5376,13 @@ code.has-jax {
             <li><a href="#advantages-of-value-types-vs-reference-types">Advantages of value types vs. reference types</a></li>
           </ul>
         </li>
-        <li><a href="#subclass-and-superclass">subclass and superclass</a></li>
+        <li><a href="#subclass-and-superclass">subclass and superclass</a>
+          <ul>
+            <li><a href="#inheritance">Inheritance</a></li>
+            <li><a href="#additional-functionality">Additional functionality</a></li>
+            <li><a href="#overriding">Overriding</a></li>
+          </ul>
+        </li>
         <li><a href="#class-initializers">class initializers</a></li>
         <li><a href="#class-deinitializer">class deinitializer</a></li>
         <li><a href="#class-properties">class properties</a></li>
