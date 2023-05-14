@@ -241,7 +241,7 @@ code.has-jax {
     <i class="fa fa-file-word-o"></i>
 </span>
 <span class="post-meta-item-text">字数: </span>
-<span class="leancloud-visitors-count">78165</span>
+<span class="leancloud-visitors-count">78378</span>
 &nbsp; | &nbsp;
 <span class="post-meta-item-icon">
     <i class="fa fa-coffee"></i>
@@ -4131,27 +4131,38 @@ code.has-jax {
 </span></span><span style="display:flex;"><span>   	<span style="color:#75715e">//</span>
 </span></span><span style="display:flex;"><span>}
 </span></span></code></pre></div><p>现在<code>otherFunction</code>是逃逸的，这意味着存在威胁：可能在以后的某个时间点改变捕获的<code>self</code>。<code>Digit</code>是一个结构体，所以这将涉及到用一个不同的<code>Digit</code>实例来替换捕获的<code>self</code>。如果<code>Digit</code>是一个类，就不会出现这样的问题，因为捕获的<code>self</code>可以被<code>mutated in place</code>。</p>
-<h2 id="class-instance-references-are-pointers">Class instance references are pointers</h2>
-<p>在引用类型中，在对<font color=LightSeaGreen>实例的引用和实例本身之间有一个隐蔽的层次</font>。引用实际上持有一个指向实例的指针，这意味着当一个类的实例被分配给一个变量或作为一个函数的参数或作为一个函数的结果传递时，可能会出现对同一个对象的多个引用，而结构体和枚举不是这样的。</p>
-<p>在枚举或者结构体实例被赋值或者传递时，本质上是被赋值或者被传递的是该实例的副本。而类实例被赋值或传递时是实例本身，下面的代码能说明这种区别：</p>
+<h3 id="class-instance-references-are-pointers">Class instance references are pointers</h3>
+<p>在引用类型中，在对<font color=LightSeaGreen>实例的引用和实例本身之间有一个隐蔽的层次</font>。引用实际上持有一个指向实例的指针，这意味着当一个类的实例赋值给一个变量或作为一个函数的参数或作为一个函数的结果时，可能会出现对同一个对象的多个引用，而结构体和枚举不是这样的。</p>
+<p>在枚举或者结构体实例被赋值或被传递时，本质上被赋值或者被传递的是该实例的副本。而类实例被赋值或传递时是指向同一个实例的引用，下面代码能说明这种区别：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span><span style="color:#66d9ef">var</span> d1 = Digit(<span style="color:#ae81ff">123</span>) <span style="color:#75715e">// Digit is a struct</span>
-</span></span><span style="display:flex;"><span>debugPrint(d.number) <span style="color:#75715e">// 123</span>
-</span></span><span style="display:flex;"><span><span style="color:#66d9ef">var</span> d2 = d <span style="color:#75715e">// assignment!</span>
+</span></span><span style="display:flex;"><span>debugPrint(d1.number) <span style="color:#75715e">// 123</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">var</span> d2 = d1 <span style="color:#75715e">// assignment!</span>
 </span></span><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span>d2.number = <span style="color:#ae81ff">42</span>
 </span></span><span style="display:flex;"><span>debugPrint(d1.number) <span style="color:#75715e">// 123</span>
-</span></span></code></pre></div><p>在下面的代码中，改变了类实例<code>rov</code>的<code>name</code>属性，因为<code>Dog</code>是引用类型，这种改变也会影响到<code>fido</code>，因为它们指向同一个对象：</p>
+</span></span></code></pre></div><p>下面代码中，改变了类实例<code>rov</code>的<code>name</code>属性，因为<code>Dog</code>是引用类型，这种改变也会影响到<code>fido</code>，因为它们指向同一个对象：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span><span style="color:#66d9ef">var</span> fido = Dog() <span style="color:#75715e">// Dog is a class</span>
 </span></span><span style="display:flex;"><span>debugPrint(fido.name) <span style="color:#75715e">// Fido</span>
 </span></span><span style="display:flex;"><span><span style="color:#66d9ef">var</span> rov = fido <span style="color:#75715e">// assignment!</span>
 </span></span><span style="display:flex;"><span>rov.name = <span style="color:#e6db74">&#34;Rover&#34;</span>
 </span></span><span style="display:flex;"><span>debugPrint(fido.name) <span style="color:#75715e">// Rover</span>
-</span></span></code></pre></div><p>在基于对象的编程世界中，产生对同一实例的多个引用的能力是非常重要的，因为在这个世界中，对象会持续存在，并且可以有与之一起持续存在的属性。</p>
-<p>如果对象<code>A</code>和对象<code>B</code>都是长期存在的，如果它们都有一个属性为<code>Dog</code>类型，并且<code>Dog</code>是一个类。如果它们都指向同一个<code>Dog</code>实例，那么对象<code>A</code>或对象<code>B</code>都可以改变它们指向的<code>Dog</code>实例，而这种改变将会同时影响<code>A</code>和<code>B</code>。因此，对于类来说，你可能正抓着一个对象，却发现它已经被别人改变了，如果这种情况意外发生，会使你的程序进入无效状态。</p>
-<p>因此，应该尽可能地选择一个值类型（如结构体）而不是“引用”类型（类）。结构实例不在引用之间共享，因此不必担心实例被其他突然改变。结构体的存储和内存管理也要简单得多，并且值类型也更容易推理。<code>Swift</code>语言本身会帮助你，在许多<code>Cocoa Foundation</code>的引用类型面前强加值类型。<code>Objective-C</code>的<code>NSDate</code>和<code>NSData</code>是类，但<code>Swift</code>会引导使用结构类型<code>Date</code>和<code>Data</code>来代替。</p>
-<p>类实例的传递非常有效，因为<font color=red>所传递的只是一个指针</font>。无论一个类的实例有多大、多复杂，无论它有多少包含大量数据的属性，传递实例都是非常快速和高效的。</p>
-<p>一个类的<code>API</code>可以拒绝对该类进行原地改变。<code>Cocoa</code>的<code>NSString、NSArray、NSDictionary、NSDate、NSIndexSet、NSParagraphStyle</code>等等都是这样的，因为它们在设计上是不可变的。</p>
-<p>两个对象可以持有对同一个<code>NSArray</code>的引用而不用担心它在他们背后被改变，这不是因为它是一个值类型，而是因为它是不可变的。实际上，这种架构结合了值类型的易用性和引用类型的指针效率。</p>
+</span></span></code></pre></div><p>同样地，当在函数中传递类实例时，传递是类实例的引用。当在函数<code>doChanger</code>中，修改<code>d</code>的属性<code>name</code>后，会影响其指向的实例:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">dogChanger</span>(<span style="color:#66d9ef">_</span> d: Dog) { <span style="color:#75715e">// Dog is a class</span>
+</span></span><span style="display:flex;"><span>    d.name = <span style="color:#e6db74">&#34;Rover&#34;</span>
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">let</span> fido = Dog(name: <span style="color:#e6db74">&#34;name&#34;</span>, license: <span style="color:#ae81ff">123</span>)
+</span></span><span style="display:flex;"><span>debugPrint(fido.name) <span style="color:#75715e">// &#34;Fido&#34;</span>
+</span></span><span style="display:flex;"><span>dogChanger(fido)
+</span></span><span style="display:flex;"><span>debugPrint(fido.name) <span style="color:#75715e">// &#34;Rover&#34;</span>
+</span></span></code></pre></div><h3 id="advantages-of-value-types-vs-reference-types">Advantages of value types vs. reference types</h3>
+<p>在基于对象的编程世界中，对同一实例生成多个引用的能力是非常重要的。因为，对象会持续存在，并且可以有与之一起持续存在的属性。</p>
+<p>如果对象<code>A</code>和对象<code>B</code>都是长期存在的，如果它们都有一个属性为<code>Dog</code>类型，并且<code>Dog</code>是一个类。如果它们都指向同一个<code>Dog</code>实例，那么对象<code>A</code>或对象<code>B</code>都可以改变它们指向的<code>Dog</code>实例，而这种改变将会同时影响<code>A</code>和<code>B</code>。因此，对于类来说，可能正指向一个对象，却发现它已经被别人改变了。如果这种情况以外地发生，会使我们的程序进入无效状态。</p>
+<p>类实例在幕后也更加复杂。<code>Swift</code>必须管理它们的内存，正是因为对同一个对象可能有多个引用，这种管理可能涉及相当多的开销。</p>
+<p>因此，应该尽可能地选择一个值类型（如结构体）而不是引用类型（类）。结构体实例不在引用之间共享，因此不必担心实例在其它地方改变。结构体的存储和内存管理也要简单得多，并且值类型也更容易推断。</p>
+<p><code>Swift</code>语言本身会帮助我们使用结构体类型，在许多<code>Cocoa Foundation</code>的引用类型面前强加值类型。例如，<code>Objective-C</code>的<code>NSDate</code>和<code>NSData</code>是类类型，但<code>Swift</code>会引导使用结构类型<code>Date</code>和<code>Data</code>来代替。</p>
+<p>类实例的传递非常有效，因为<font color=red>所传递的只是一个指针</font>。无论一个类的实例有多大、多复杂，无论它有多少包含多大量数据的属性，传递实例都是非常快速和高效的。</p>
+<p>尽管一个类可能是一个引用类型，但一个特定的类可以以特殊方式实现，以表现出它的值语义。一个类的<code>API</code>可以拒绝对该类进行原地改变。<code>Cocoa</code>的<code>NSString、NSArray、NSDictionary、NSDate、NSIndexSet、NSParagraphStyle</code>等等都是这样的，因为它们在设计上是不可变的。</p>
+<p>两个对象可以持有对同一个<code>NSArray</code>的引用而不用担心它在他们在其它地方被改变，这不是因为它是一个值类型，而是因为它在设计上是不可变的。实际上，这种架构结合了值类型的易用性和引用类型的指针效率。</p>
 <h2 id="subclass-and-superclass">subclass and superclass</h2>
 <p>在<code>Swift</code>中，一个类可能会有多个子类，但<font color=red>一个类至多有一个直接父类</font>。在<code>Cocoa</code>中，实际上只有一个<code>root class</code>&ndash;<code>NSObject</code>，它首先体现了一个类成为一个类所必需的所有功能，而所有其它类在某种程度上都是这个基类的子类。</p>
 <p>在类的声明前面加上<code>final</code>关键字可以防止其他类来继承。子类化不仅可以继承父类的方法，也可以自定义方法。下面定义的<code>Dog</code>不仅继承了<code>walk()</code>方法，而且自定义了<code>bark()</code>方法:</p>
@@ -5330,9 +5341,10 @@ code.has-jax {
         <li><a href="#value-types-and-reference-types">Value Types and Reference Types</a>
           <ul>
             <li><a href="#mutating-captured-self">Mutating Captured Self</a></li>
+            <li><a href="#class-instance-references-are-pointers">Class instance references are pointers</a></li>
+            <li><a href="#advantages-of-value-types-vs-reference-types">Advantages of value types vs. reference types</a></li>
           </ul>
         </li>
-        <li><a href="#class-instance-references-are-pointers">Class instance references are pointers</a></li>
         <li><a href="#subclass-and-superclass">subclass and superclass</a></li>
         <li><a href="#class-initializers">class initializers</a></li>
         <li><a href="#class-deinitializer">class deinitializer</a></li>

@@ -1239,15 +1239,18 @@ class Dog {  var name: String = &amp;#34;Fido&amp;#34; }  var rover: Dog = Dog()
 func digitChanger(_ d: Digit) { // Digit is a struct  d.number = 42 // compile error } 因为Digit是结构体，上面的代码会报错Cannot assign to property: &#39;d&#39; is a &#39;let&#39; constant，因为函数参数默认是用let隐式声明的。但Dog是引用类型，可以就地改变，所以下面的代码不会报错：
 func dogChanger(_ d: Dog) { // Dog is a class  d.name = &amp;#34;Rover&amp;#34; } Mutating Captured Self struct Digit {  var number: Int   init(_ n: Int) {  self.number = n  }   mutating func changeNumberTo(_ n: Int) {  self.number = n  }   func otherFunction(_ f: () -&amp;gt; ()) {  //  }   mutating func callAnotherFunction() {   otherFunction {  self.changeNumberTo(345)  }  } } 上面的代码是否合法取决于otherFunction是否将它的函数参数声明为@escaping（逃逸闭包）。如果它声明了escaping逃逸的，编译器会报Escaping closure captures mutating &#39;self&#39; parameter：
 func otherFunction(_ f: @escaping ()-&amp;gt;()) {  // } 现在otherFunction是逃逸的，这意味着存在威胁：可能在以后的某个时间点改变捕获的self。Digit是一个结构体，所以这将涉及到用一个不同的Digit实例来替换捕获的self。如果Digit是一个类，就不会出现这样的问题，因为捕获的self可以被mutated in place。
-Class instance references are pointers 在引用类型中，在对实例的引用和实例本身之间有一个隐蔽的层次。引用实际上持有一个指向实例的指针，这意味着当一个类的实例被分配给一个变量或作为一个函数的参数或作为一个函数的结果传递时，可能会出现对同一个对象的多个引用，而结构体和枚举不是这样的。
-在枚举或者结构体实例被赋值或者传递时，本质上是被赋值或者被传递的是该实例的副本。而类实例被赋值或传递时是实例本身，下面的代码能说明这种区别：
-var d1 = Digit(123) // Digit is a struct debugPrint(d.number) // 123 var d2 = d // assignment!  d2.number = 42 debugPrint(d1.number) // 123 在下面的代码中，改变了类实例rov的name属性，因为Dog是引用类型，这种改变也会影响到fido，因为它们指向同一个对象：
-var fido = Dog() // Dog is a class debugPrint(fido.name) // Fido var rov = fido // assignment! rov.name = &amp;#34;Rover&amp;#34; debugPrint(fido.name) // Rover 在基于对象的编程世界中，产生对同一实例的多个引用的能力是非常重要的，因为在这个世界中，对象会持续存在，并且可以有与之一起持续存在的属性。
-如果对象A和对象B都是长期存在的，如果它们都有一个属性为Dog类型，并且Dog是一个类。如果它们都指向同一个Dog实例，那么对象A或对象B都可以改变它们指向的Dog实例，而这种改变将会同时影响A和B。因此，对于类来说，你可能正抓着一个对象，却发现它已经被别人改变了，如果这种情况意外发生，会使你的程序进入无效状态。
-因此，应该尽可能地选择一个值类型（如结构体）而不是“引用”类型（类）。结构实例不在引用之间共享，因此不必担心实例被其他突然改变。结构体的存储和内存管理也要简单得多，并且值类型也更容易推理。Swift语言本身会帮助你，在许多Cocoa Foundation的引用类型面前强加值类型。Objective-C的NSDate和NSData是类，但Swift会引导使用结构类型Date和Data来代替。
-类实例的传递非常有效，因为所传递的只是一个指针。无论一个类的实例有多大、多复杂，无论它有多少包含大量数据的属性，传递实例都是非常快速和高效的。
-一个类的API可以拒绝对该类进行原地改变。Cocoa的NSString、NSArray、NSDictionary、NSDate、NSIndexSet、NSParagraphStyle等等都是这样的，因为它们在设计上是不可变的。
-两个对象可以持有对同一个NSArray的引用而不用担心它在他们背后被改变，这不是因为它是一个值类型，而是因为它是不可变的。实际上，这种架构结合了值类型的易用性和引用类型的指针效率。
+Class instance references are pointers 在引用类型中，在对实例的引用和实例本身之间有一个隐蔽的层次。引用实际上持有一个指向实例的指针，这意味着当一个类的实例赋值给一个变量或作为一个函数的参数或作为一个函数的结果时，可能会出现对同一个对象的多个引用，而结构体和枚举不是这样的。
+在枚举或者结构体实例被赋值或被传递时，本质上被赋值或者被传递的是该实例的副本。而类实例被赋值或传递时是指向同一个实例的引用，下面代码能说明这种区别：
+var d1 = Digit(123) // Digit is a struct debugPrint(d1.number) // 123 var d2 = d1 // assignment!  d2.number = 42 debugPrint(d1.number) // 123 下面代码中，改变了类实例rov的name属性，因为Dog是引用类型，这种改变也会影响到fido，因为它们指向同一个对象：
+var fido = Dog() // Dog is a class debugPrint(fido.name) // Fido var rov = fido // assignment! rov.name = &amp;#34;Rover&amp;#34; debugPrint(fido.name) // Rover 同样地，当在函数中传递类实例时，传递是类实例的引用。当在函数doChanger中，修改d的属性name后，会影响其指向的实例:
+func dogChanger(_ d: Dog) { // Dog is a class  d.name = &amp;#34;Rover&amp;#34; } let fido = Dog(name: &amp;#34;name&amp;#34;, license: 123) debugPrint(fido.name) // &amp;#34;Fido&amp;#34; dogChanger(fido) debugPrint(fido.name) // &amp;#34;Rover&amp;#34; Advantages of value types vs. reference types 在基于对象的编程世界中，对同一实例生成多个引用的能力是非常重要的。因为，对象会持续存在，并且可以有与之一起持续存在的属性。
+如果对象A和对象B都是长期存在的，如果它们都有一个属性为Dog类型，并且Dog是一个类。如果它们都指向同一个Dog实例，那么对象A或对象B都可以改变它们指向的Dog实例，而这种改变将会同时影响A和B。因此，对于类来说，可能正指向一个对象，却发现它已经被别人改变了。如果这种情况以外地发生，会使我们的程序进入无效状态。
+类实例在幕后也更加复杂。Swift必须管理它们的内存，正是因为对同一个对象可能有多个引用，这种管理可能涉及相当多的开销。
+因此，应该尽可能地选择一个值类型（如结构体）而不是引用类型（类）。结构体实例不在引用之间共享，因此不必担心实例在其它地方改变。结构体的存储和内存管理也要简单得多，并且值类型也更容易推断。
+Swift语言本身会帮助我们使用结构体类型，在许多Cocoa Foundation的引用类型面前强加值类型。例如，Objective-C的NSDate和NSData是类类型，但Swift会引导使用结构类型Date和Data来代替。
+类实例的传递非常有效，因为所传递的只是一个指针。无论一个类的实例有多大、多复杂，无论它有多少包含多大量数据的属性，传递实例都是非常快速和高效的。
+尽管一个类可能是一个引用类型，但一个特定的类可以以特殊方式实现，以表现出它的值语义。一个类的API可以拒绝对该类进行原地改变。Cocoa的NSString、NSArray、NSDictionary、NSDate、NSIndexSet、NSParagraphStyle等等都是这样的，因为它们在设计上是不可变的。
+两个对象可以持有对同一个NSArray的引用而不用担心它在他们在其它地方被改变，这不是因为它是一个值类型，而是因为它在设计上是不可变的。实际上，这种架构结合了值类型的易用性和引用类型的指针效率。
 subclass and superclass 在Swift中，一个类可能会有多个子类，但一个类至多有一个直接父类。在Cocoa中，实际上只有一个root class&amp;ndash;NSObject，它首先体现了一个类成为一个类所必需的所有功能，而所有其它类在某种程度上都是这个基类的子类。
 在类的声明前面加上final关键字可以防止其他类来继承。子类化不仅可以继承父类的方法，也可以自定义方法。下面定义的Dog不仅继承了walk()方法，而且自定义了bark()方法:
 class Quadruped {  func walk() {  debugPrint(&amp;#34;walk walk walk&amp;#34;)  } }  class Dog: Quadruped {  func bark() {  debugPrint(&amp;#34;woof&amp;#34;)  } }  let fido = Dog() fido.walk() fido.bark() 无论方法是在类中自定义的，还是从父类中继承的，都有同样的效果。下面代码中Dog继承了Quadruped的walk方法，调用的时候没有差别：
