@@ -1250,8 +1250,12 @@ func dogChanger(_ d: Dog) { // Dog is a class  d.name = &amp;#34;Rover&amp;#34; 
 Swift语言本身会帮助我们使用结构体类型，在许多Cocoa Foundation的引用类型面前强加值类型。例如，Objective-C的NSDate和NSData是类类型，但Swift会引导使用结构类型Date和Data来代替。
 类实例的传递非常有效，因为所传递的只是一个指针。无论一个类的实例有多大、多复杂，无论它有多少包含多大量数据的属性，传递实例都是非常快速和高效的。
 尽管一个类可能是一个引用类型，但一个特定的类可以以特殊方式实现，以表现出它的值语义。一个类的API可以拒绝对该类进行原地改变。Cocoa的NSString、NSArray、NSDictionary、NSDate、NSIndexSet、NSParagraphStyle等等都是这样的，因为它们在设计上是不可变的。
-两个对象可以持有对同一个NSArray的引用而不用担心它在他们在其它地方被改变，这不是因为它是一个值类型，而是因为它在设计上是不可变的。实际上，这种架构结合了值类型的易用性和引用类型的指针效率。
-subclass and superclass 在Swift中，一个类可能会有多个子类，但一个类至多有一个直接父类。在Cocoa中，实际上只有一个root class&amp;ndash;NSObject，它首先体现了一个类成为一个类所必需的所有功能，而所有其它类在某种程度上都是这个基类的子类。
+两个对象可以持有对同一个NSArray的引用而不用担心它在其它地方被改变，这不是因为它是一个值类型，而是因为它在设计上是不可变的。实际上，这种架构结合了值类型的易用性和引用类型的指针高效性。
+实际上，只有一个类的实例能成功的代表independent reality。UIView是一个类，这样一个单独的UIView实例就能在运行的应用程序的界面中一直代表同一个真实的、持久的视图。
+喜欢类而不是结构体或枚举的另一个原因是当需要递归引用时。一个值类型不能在结构上递归：即一个值类型的存储实例属性不能是同一类型的实例。下面这段代码是无法编译的：
+struct Dog { // compile error  	var puppy : Dog? } 奇怪的是，可以将puppy定义为Dog数组来解除这个限制。更复杂的循环链，例如Dog有一个Puppy类型的实例属性，Puppy类型有一个Dog类型属性也是非法的，但如果Dog是类类型，这就是合法的。
+struct Dog {  var puppy: [Dog]? } 关联值类型的枚举case可以是当前枚举的实例，一个枚举case的关联值可以是该枚举的一个实例，只要该案例（或整个枚举）被标记为indirect：
+enum Node {  case none(Int)  indirect case left(Int, Node)  indirect case right(Int, Node)  indirect case both(Int, Node, Node) } subclass and superclass 在Swift中，一个类可能会有多个子类，但一个类至多有一个直接父类。在Cocoa中，实际上只有一个root class&amp;ndash;NSObject，它首先体现了一个类成为一个类所必需的所有功能，而所有其它类在某种程度上都是这个基类的子类。
 在类的声明前面加上final关键字可以防止其他类来继承。子类化不仅可以继承父类的方法，也可以自定义方法。下面定义的Dog不仅继承了walk()方法，而且自定义了bark()方法:
 class Quadruped {  func walk() {  debugPrint(&amp;#34;walk walk walk&amp;#34;)  } }  class Dog: Quadruped {  func bark() {  debugPrint(&amp;#34;woof&amp;#34;)  } }  let fido = Dog() fido.walk() fido.bark() 无论方法是在类中自定义的，还是从父类中继承的，都有同样的效果。下面代码中Dog继承了Quadruped的walk方法，调用的时候没有差别：
 class Quadruped {  func walk() {  debugPrint(&amp;#34;walk walk walk&amp;#34;)  } }  class Dog: Quadruped {  func bark() {  debugPrint(&amp;#34;woof&amp;#34;)  }   func walkAndBark() {  self.walk()  self.bark()  } }  let fido = Dog() fido.walk() fido.bark() fido.walkAndBark() 在Swift中允许对从父类继承的方法进行重定义（也被称为覆写，重写），需要在重定义的方法前添加override关键字。下面代码对Dog继承了Quadruped的walk方法进行了重写：

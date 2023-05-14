@@ -241,13 +241,13 @@ code.has-jax {
     <i class="fa fa-file-word-o"></i>
 </span>
 <span class="post-meta-item-text">字数: </span>
-<span class="leancloud-visitors-count">78378</span>
+<span class="leancloud-visitors-count">78757</span>
 &nbsp; | &nbsp;
 <span class="post-meta-item-icon">
     <i class="fa fa-coffee"></i>
 </span>
 <span class="post-meta-item-text">阅读: </span>
-<span class="leancloud-visitors-count">157 分钟</span>
+<span class="leancloud-visitors-count">158 分钟</span>
 </span>
       </div>
     </header>
@@ -4162,8 +4162,24 @@ code.has-jax {
 <p><code>Swift</code>语言本身会帮助我们使用结构体类型，在许多<code>Cocoa Foundation</code>的引用类型面前强加值类型。例如，<code>Objective-C</code>的<code>NSDate</code>和<code>NSData</code>是类类型，但<code>Swift</code>会引导使用结构类型<code>Date</code>和<code>Data</code>来代替。</p>
 <p>类实例的传递非常有效，因为<font color=red>所传递的只是一个指针</font>。无论一个类的实例有多大、多复杂，无论它有多少包含多大量数据的属性，传递实例都是非常快速和高效的。</p>
 <p>尽管一个类可能是一个引用类型，但一个特定的类可以以特殊方式实现，以表现出它的值语义。一个类的<code>API</code>可以拒绝对该类进行原地改变。<code>Cocoa</code>的<code>NSString、NSArray、NSDictionary、NSDate、NSIndexSet、NSParagraphStyle</code>等等都是这样的，因为它们在设计上是不可变的。</p>
-<p>两个对象可以持有对同一个<code>NSArray</code>的引用而不用担心它在他们在其它地方被改变，这不是因为它是一个值类型，而是因为它在设计上是不可变的。实际上，这种架构结合了值类型的易用性和引用类型的指针效率。</p>
-<h2 id="subclass-and-superclass">subclass and superclass</h2>
+<p>两个对象可以持有对同一个<code>NSArray</code>的引用而不用担心它在其它地方被改变，这不是因为它是一个值类型，而是因为它在设计上是不可变的。实际上，这种架构结合了值类型的易用性和引用类型的指针高效性。</p>
+<p>实际上，只有一个类的实例能成功的代表<code>independent reality</code>。<code>UIView</code>是一个类，这样一个单独的<code>UIView</code>实例就能在运行的应用程序的界面中一直代表同一个真实的、持久的视图。</p>
+<p>喜欢类而不是结构体或枚举的另一个原因是当需要递归引用时。一个值类型不能在结构上递归：即一个值类型的存储实例属性不能是同一类型的实例。下面这段代码是无法编译的：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span><span style="color:#66d9ef">struct</span> <span style="color:#a6e22e">Dog</span> { <span style="color:#75715e">// compile error </span>
+</span></span><span style="display:flex;"><span>		<span style="color:#66d9ef">var</span> puppy : Dog?
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p>奇怪的是，可以将<code>puppy</code>定义为<code>Dog</code>数组来解除这个限制。更复杂的循环链，例如<code>Dog</code>有一个<code>Puppy</code>类型的实例属性，<code>Puppy</code>类型有一个<code>Dog</code>类型属性也是非法的，但如果<code>Dog</code>是类类型，这就是合法的。</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span><span style="color:#66d9ef">struct</span> <span style="color:#a6e22e">Dog</span> { 
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">var</span> puppy: [Dog]?
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p>关联值类型的枚举case可以是当前枚举的实例，一个枚举<code>case</code>的关联值可以是该枚举的一个实例，只要该案例（或整个枚举）被标记为<code>indirect</code>：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span><span style="color:#66d9ef">enum</span> <span style="color:#a6e22e">Node</span> {
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">case</span> <span style="color:#66d9ef">none</span>(Int)
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">indirect</span> <span style="color:#66d9ef">case</span> <span style="color:#66d9ef">left</span>(Int, Node)
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">indirect</span> <span style="color:#66d9ef">case</span> <span style="color:#66d9ef">right</span>(Int, Node)
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">indirect</span> <span style="color:#66d9ef">case</span> both(Int, Node, Node)
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><h2 id="subclass-and-superclass">subclass and superclass</h2>
 <p>在<code>Swift</code>中，一个类可能会有多个子类，但<font color=red>一个类至多有一个直接父类</font>。在<code>Cocoa</code>中，实际上只有一个<code>root class</code>&ndash;<code>NSObject</code>，它首先体现了一个类成为一个类所必需的所有功能，而所有其它类在某种程度上都是这个基类的子类。</p>
 <p>在类的声明前面加上<code>final</code>关键字可以防止其他类来继承。子类化不仅可以继承父类的方法，也可以自定义方法。下面定义的<code>Dog</code>不仅继承了<code>walk()</code>方法，而且自定义了<code>bark()</code>方法:</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span><span style="color:#66d9ef">class</span> <span style="color:#a6e22e">Quadruped</span> {
