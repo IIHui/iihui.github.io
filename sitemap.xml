@@ -1181,7 +1181,7 @@ enum Normal: Double {  case fahrenheit = 98.6  case centigrade = 37 }  enum PepB
 let type = Filter(rawValue:&amp;#34;Albums&amp;#34;) 但使用init(rawValue:)可能失败，因为用户传入的raw value可能与case不匹配，所以它实际上是可失败的初始化器init?(rawValue:)。
 Associated Values 上面说的raw value对于每个case来说都是固定的，在枚举类型声明的时候就已经确定了。有一种方法可以构造一个case，使得其常量值可以在实例创建时才被设置，此时设置的附加值被称为associated value。
 声明带associated value的枚举类型时，不能为整个枚举类型声明任何原始值类型。而是在有需要的case上附加一个看起来像元组的表达式，即括号里包含一个可能的标记类型列表。与rawValue不同，associated value无类型上的限制：
-enum MyError {  case number(Int)  case message(String)  case fatal } 上面代声明的含义为：在实例化的时候，一个.number case的MyError实例必须被设置一个Int值，一个.message case的MyError实例必须设置一个String值，而一个.fatal case的MyError实例不用设置任何值。
+enum MyError {  case number(Int)  case message(String)  case fatal } 上面声明的含义为：在MyError实例化时，一个.number case的MyError实例必须被设置一个Int值，一个.message case的MyError实例必须设置一个String值，而一个.fatal case的MyError实例不用设置任何值。
 let err1 : MyError = .number(4) let num = 4 let err2 : MyError = .number(num) 如果一个case的associated value类型有标签，标签必须在初始化的时候使用。下面代码中，枚举中的case fetal有标签，需要在初始化时使用：
 enum MyError2 {  case number(Int)  case message(String)  case fatal(n: Int, s: String) }  let err: MyError2 = .fatal(n: -12, s: &amp;#34;Oh the horror&amp;#34;) 默认情况==操作符不能直接用于比较带有associated value的枚举，否则会出现编译错误。下面代码中，因为直接比较两个枚举值，会出现编译错误：
 enum MyError2 {  case number(Int)  case message(String)  case fatal(n: Int, s: String) }  let err: MyError2 = .fatal(n: -12, s: &amp;#34;Oh the horror&amp;#34;)  // operator &amp;#39;==&amp;#39; cannot be applied to operands of type &amp;#39;MyError2&amp;#39; and &amp;#39;(Int, String) -&amp;gt; MyError2&amp;#39; if err == MyError2.fatal { // compile error  // } 如果声明带associated value枚举时显式地遵循Equatable协议，==操作符就能正常工作了。但前提是所有associated value中的类型本身都是遵循Equatable协议，否则也会出现编译错误：
