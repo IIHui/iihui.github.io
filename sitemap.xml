@@ -1255,7 +1255,7 @@ Swift语言本身会帮助我们使用结构体类型，在许多Cocoa Foundatio
 喜欢类而不是结构体或枚举的另一个原因是当需要递归引用时。一个值类型不能在结构上递归：即一个值类型的存储实例属性不能是同一类型的实例。下面这段代码是无法编译的：
 struct Dog { // compile error  	var puppy : Dog? } 奇怪的是，可以将puppy定义为Dog数组来解除这个限制。更复杂的循环链，例如Dog有一个Puppy类型的实例属性，Puppy类型有一个Dog类型属性也是非法的，但如果Dog是类类型，这就是合法的。
 struct Dog {  var puppy: [Dog]? } 关联值类型的枚举case可以是当前枚举的实例，一个枚举case的关联值可以是该枚举的一个实例，只要该案例（或整个枚举）被标记为indirect：
-enum Node {  case none(Int)  indirect case left(Int, Node)  indirect case right(Int, Node)  indirect case both(Int, Node, Node) } subclass and superclass 在Swift中，一个类可能会有多个子类，但一个类至多有一个直接父类。就Swift语言本身而言，并没有要求一个类一定要有父类，或者说如果它有父类，也没有要求它最终应该是由特定基类派生。一个Swift程序可以有许多没有父类的类，也可以有许多独立的层次子类树，每一个都是从不同的基类派生而来。
+enum Node {  case none(Int)  indirect case left(Int, Node)  indirect case right(Int, Node)  indirect case both(Int, Node, Node) } subclass and superclass 在Swift中，一个类可能有多个子类，但一个类至多只能有一个直接父类。就Swift本身而言，并没有要求一个类一定要有父类，或者说一个类如果有父类，也没有要求它最终应该是由特定父类派生。一个Swift程序可以有许多没有父类的类，也可以有许多独立的层次子类树，每一个都是从不同的基类派生而来。
 但在Cocoa中，不是这样的。在Cocoa中实际上只有一个base class即NSObject，它表明了一个类所必需的所有功能，而所有其它类在某种层次上都是这个基类的子类。
 Inheritance 之所以有父类—子类关系，首先是为了共享功能。下面的定义中，因为Dog和Cat都是Quadruped的子类，所以它们都能调用父类的walk方法：
 class Quadruped {  func walk() {  print(&amp;#34;walk walk walk&amp;#34;)  } } class Dog: Quadruped { } class Cat: Quadruped { } 在类的声明时加上final关键字可以防止其它类来继承当前类。
