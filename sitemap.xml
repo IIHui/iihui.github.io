@@ -686,14 +686,14 @@ Return Value 在函数体中的关键字return其实做了两件事，首先是�
 花括号内的函数体将函数参数作为局部变量使用，关键字return后面的返回值类型必须与函数声明时的返回类型一致，否则会出现编译错误。
 如果想要忽略函数的返回值，可以将函数调用的返回值分配给_（没有名称的变量）来消除编译器警告。例如，上面的sum调用可以如下使用：
 _ = sum(4,5) 如果被调用的函数是自定义的，可以在函数声明的时候使用@discardableResult标记，表明这个返回值可以不处理，以消除编译警告：
-@discardableResult func sum(_ x: Int, _ y: Int) -&amp;gt; Int {  let result = x &#43; y  return result } 空返回值和参数 函数定义时没有规定一定需要返回值，如果一个函数定义时没有返回值，下面3种写法都是可行的，但是推荐使用第三种写法，即去掉Void或者()：
-func say1(_ s: String) -&amp;gt; Void {  debugPrint(s) }  func say2(_ s: String) -&amp;gt; () {  debugPrint(s) }  func say3(_ s: String) {  debugPrint(s) } 若一个函数没有返回值，那么它的函数体中就不需要包含return语句。如果包含了return语句，那么它只能由return这个词单独组成，其目的纯粹是在当前位置上结束函数的执行。
+@discardableResult func sum(_ x: Int, _ y: Int) -&amp;gt; Int {  let result = x &#43; y  return result } Void Return Type and Parameters 函数定义时没有规定一定需要返回值，如果一个函数定义时没有返回值，下面3种写法都是可行的，但是推荐使用第三种写法，即去掉Void或者()：
+func say1(_ s: String) -&amp;gt; Void {  debugPrint(s) }  func say2(_ s: String) -&amp;gt; () {  debugPrint(s) }  func say3(_ s: String) {  debugPrint(s) } 若一个函数没有返回值，那么它的函数体中就不需要包含return语句。如果包含了return语句，那么它只能由return这个词单独组成，其目的纯粹是在当前位置上结束当前函数的执行。
 函数定义时也没有规定一定需要参数。如果函数没有参数则参数列表为空，但此时也不能省略参数列表括号并且在函数调用时也不能省略括号（实际上有一种特殊情况可以省略函数调用时的圆括号）。
 func greet() -&amp;gt; String {  return &amp;#34;howdy&amp;#34; } 因此，函数声明的时候可以同时没有参数和返回值：
-func greet1() -&amp;gt; Void {  print(&amp;#34;howdy&amp;#34;) }  func greet2() -&amp;gt; () {  print(&amp;#34;howdy&amp;#34;) }  func greet3() {  print(&amp;#34;howdy&amp;#34;) } 函数签名 如果函数声明的时候忽略外部和内部参数名，可以通过输入和输出类型来完全描述一个函数的特征。为此，把参数类型写在参数列表括号里，后面是箭头运算符和输出类型：
+func greet1() -&amp;gt; Void {  print(&amp;#34;howdy&amp;#34;) }  func greet2() -&amp;gt; () {  print(&amp;#34;howdy&amp;#34;) }  func greet3() {  print(&amp;#34;howdy&amp;#34;) } Function Signature 如果函数声明的时候忽略外部和内部参数名，可以通过输入和输出类型来完全描述一个函数的特征。为此，把参数类型写在参数列表括号里，后面是箭头运算符和输出类型：
 (Int, Int) -&amp;gt; Int 上面是一个合法的表达式，表示接收两个Int类型参数并返回一个Int类型函数的签名。这个签名描述了所有具有这种顺序和数量的参数、类型、并返回这种类型的结果的函数。一个函数的签名实际上就是它的类型&amp;mdash;函数的类型。
 一个函数的签名必须包括参数列表（不带内外参数名，只有参数类型）和返回类型，其中的参数列表和返回值都可以为空。一个不带参数和没有返回值的函数签名可以写成()-&amp;gt; Void或()-&amp;gt;()：
-func newTest(completion: @escaping () -&amp;gt; ()) {  completion() }  func newTest2(completion: @escaping () -&amp;gt; Void) {  completion() } 外部参数名 一个函数可以外化其参数名称，在调用函数的时候使用这个参数名称，这个名称被称为外部参数名或外部参数标签。外部参数名称也是函数名称的一部分，并且必须作为参数的标签出现在对该函数的调用中。外部参数标签有如下作用：
+func newTest(completion: @escaping () -&amp;gt; ()) {  completion() }  func newTest2(completion: @escaping () -&amp;gt; Void) {  completion() } External Parameter Names 一个函数可以外化其参数名称，在调用函数的时候使用这个参数名称，这个名称被称为外部参数名或外部参数标签。外部参数名称也是函数名称的一部分，并且必须作为参数的标签出现在对该函数的调用中。外部参数标签有如下作用：
   它阐明了每个参数的目的，一个参数标签（外部参数）可以提供一个线索，说明该参数如何影响该函数。
   它将一个函数与另一个函数区分开来：两个在圆括号前具有相同名称和相同签名的函数，但具有不同的外部参数名称，是两个不同的函数「这个有待考证😂」。
   外部参数标签有助于Swift与Objective-C和Cocoa对接，在这两个地方，方法的参数几乎都有外部名称。
