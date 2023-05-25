@@ -241,7 +241,7 @@ code.has-jax {
     <i class="fa fa-file-word-o"></i>
 </span>
 <span class="post-meta-item-text">字数: </span>
-<span class="leancloud-visitors-count">79391</span>
+<span class="leancloud-visitors-count">79379</span>
 &nbsp; | &nbsp;
 <span class="post-meta-item-icon">
     <i class="fa fa-coffee"></i>
@@ -953,7 +953,7 @@ code.has-jax {
 </span></span><span style="display:flex;"><span>b.name = <span style="color:#e6db74">&#34;bbb&#34;</span>
 </span></span><span style="display:flex;"><span><span style="color:#75715e">// Command.B(name: &#34;B&#34;)</span>
 </span></span></code></pre></div><p>上面代码改变类的实例<code>a</code>的<code>name</code>属性时<code>didSet</code>没有调用，而改变结构体的实例<code>b</code>的属性<code>name</code>时，<code>didSet</code>调用了，说明<font color=LightSeaGreen>生成了一个结构体实例副本</font>。</p>
-<h2 id="使用可修改参数调用oc">使用可修改参数调用OC</h2>
+<h2 id="calling-objective-c-with-modifiable-parameters">Calling Objective-C with Modifiable Parameters</h2>
 <p>当使用<code>Cocoa</code>时，可能会遇到该模式的变化。<code>Cocoa API</code>是用<code>C</code>和<code>Objective-C</code>编写的，因此可能会看到一些神秘的类型，例如<code>UnsafeMutablePointer</code>，而不是<code>Swift</code>中的<code>inout</code>。然而，作为调用者的角度来看，这是同一件事：你将准备一个<code>var</code>变量并传递其地址。</p>
 <p>例如，<code>UIColor</code>的<code>RGBA</code>成分的问题，它由四个成分：红色、绿色、蓝色和<code>alpha</code>值。给定<code>UIColor</code>的函数返回该颜色的成分，需要一次返回四个值——这是<code>Objective-C</code>无法做到的。<code>UIColor</code>方法<code>getRed(_:green:blue:alpha:)</code>返回一个布尔值，以说明是否提取成功：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">getRed</span>(<span style="color:#66d9ef">_</span> red: UnsafeMutablePointer&lt;CGFloat&gt;, green: UnsafeMutablePointer&lt;CGFloat&gt;, blue: UnsafeMutablePointer&lt;CGFloat&gt;, alpha: UnsafeMutablePointer&lt;CGFloat&gt;) -&gt; Bool
@@ -963,13 +963,13 @@ code.has-jax {
 </span></span><span style="display:flex;"><span><span style="color:#66d9ef">var</span> b : CGFloat = <span style="color:#ae81ff">0</span> 
 </span></span><span style="display:flex;"><span><span style="color:#66d9ef">var</span> a : CGFloat = <span style="color:#ae81ff">0</span> 
 </span></span><span style="display:flex;"><span>c.getRed(&amp;r, green: &amp;g, blue: &amp;b, alpha: &amp;a) <span style="color:#75715e">// now r, g, b, a are 0.5, 0.0, 0.5, 1.0</span>
-</span></span></code></pre></div><h2 id="被可修改参数的oc调用">被可修改参数的OC调用</h2>
+</span></span></code></pre></div><h2 id="called-by-objective-c-with-modifiable-parameters">Called by Objective-C with Modifiable Parameters</h2>
 <p>有时<code>Cocoa</code>想要使用<code>UnsafeMutablePointer</code>参数调用<code>Swift</code>函数，用到的技术是赋值<code>UnsafeMutablePointer</code>的指针属性。</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">popoverPresentationController</span>(<span style="color:#66d9ef">_</span> popoverPresentationController: UIPopoverPresentationController, willRepositionPopoverTo rect: UnsafeMutablePointer&lt;CGRect&gt;, <span style="color:#66d9ef">in</span> view: AutoreleasingUnsafeMutablePointer&lt;UIView&gt;) {
 </span></span><span style="display:flex;"><span>    view.pointee = <span style="color:#66d9ef">self</span>.button2
 </span></span><span style="display:flex;"><span>    rect.pointee = <span style="color:#66d9ef">self</span>.button2.bounds
 </span></span><span style="display:flex;"><span>}
-</span></span></code></pre></div><h2 id="内部函数">内部函数</h2>
+</span></span></code></pre></div><h2 id="function-in-function">Function in Function</h2>
 <p>函数可以在任何地方声明，在<font color=Blue>函数体中声明函数也是合法的</font>。声明在函数内的函数称为本地函数（内部函数），它<font color=LightSeaGreen>可以被在同一范围内本地函数声明后的同级代码所调用，但在其它地方完全不可见</font>。</p>
 <p>对于那些唯一目的是协助另一个函数的函数来说，内部函数是一种优雅的架构。如果只有函数<code>A</code>需要调用函数<code>B</code>，那么函数<code>B</code>还不如打包在函数<code>A</code>里面。</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">checkPair</span>(<span style="color:#66d9ef">_</span> p1: Piece, and p2: Piece) -&gt; Path? {
@@ -5254,9 +5254,9 @@ code.has-jax {
         <li><a href="#variadic-parameters">Variadic Parameters</a></li>
         <li><a href="#ignored-parameters">Ignored Parameters</a></li>
         <li><a href="#modifiable-parameters">Modifiable Parameters</a></li>
-        <li><a href="#使用可修改参数调用oc">使用可修改参数调用OC</a></li>
-        <li><a href="#被可修改参数的oc调用">被可修改参数的OC调用</a></li>
-        <li><a href="#内部函数">内部函数</a></li>
+        <li><a href="#calling-objective-c-with-modifiable-parameters">Calling Objective-C with Modifiable Parameters</a></li>
+        <li><a href="#called-by-objective-c-with-modifiable-parameters">Called by Objective-C with Modifiable Parameters</a></li>
+        <li><a href="#function-in-function">Function in Function</a></li>
         <li><a href="#递归">递归</a></li>
         <li><a href="#函数作为值">函数作为值</a></li>
         <li><a href="#匿名函数">匿名函数</a>
