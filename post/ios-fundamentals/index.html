@@ -241,7 +241,7 @@ code.has-jax {
     <i class="fa fa-file-word-o"></i>
 </span>
 <span class="post-meta-item-text">字数: </span>
-<span class="leancloud-visitors-count">79399</span>
+<span class="leancloud-visitors-count">79437</span>
 &nbsp; | &nbsp;
 <span class="post-meta-item-icon">
     <i class="fa fa-coffee"></i>
@@ -985,9 +985,15 @@ code.has-jax {
 </span></span><span style="display:flex;"><span>    }
 </span></span><span style="display:flex;"><span>     <span style="color:#75715e">// ...</span>
 </span></span><span style="display:flex;"><span>}
-</span></span></code></pre></div><p>内部函数<font color=red>实际上是一个局部变量，其类型是函数类型</font>。因此，一个**<font color=LightSeaGreen>局部函数不能与同一作用域中的局部变量同名，并且两个局部函数也不能在同一作用域中同名</font>**。</p>
-<h2 id="recursion">Recursion</h2>
-<p>在函数中调用自己的函数被称为递归函数。递归可能会产生无限循环，所以需要在递归函数中写出正确的终止逻辑，防止无限递归下去，导致内存占用过高，手机发烫：</p>
+</span></span></code></pre></div><p>内部函数<font color=red>实际上是一个局部变量，其类型是函数类型</font>。因此，一个**<font color=LightSeaGreen>局部函数不能与同一作用域中的局部变量同名，并且两个局部函数也不能在同一作用域中同名</font>**。此限制已经被移除，两个同名的内部函数，但签名不同时可以共存：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">test1</span>() {
+</span></span><span style="display:flex;"><span>    debugPrint(<span style="color:#e6db74">&#34;test1&#34;</span>)
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">test1</span>(x: Int) {
+</span></span><span style="display:flex;"><span>    debugPrint(x)
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><h2 id="recursion">Recursion</h2>
+<p>在函数中调用自己的函数被称为递归函数。递归可能会产生无限循环，所以需要在递归函数中<font color=red>写出正确的终止逻辑，防止无限递归下去</font>，导致内存占用过高，手机发烫：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">countDownFrom</span>(<span style="color:#66d9ef">_</span> ix: Int) {
 </span></span><span style="display:flex;"><span>    debugPrint(ix)
 </span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">if</span> ix <span style="color:#f92672">&gt;</span> <span style="color:#ae81ff">0</span> { <span style="color:#75715e">// stopper</span>
@@ -996,8 +1002,8 @@ code.has-jax {
 </span></span><span style="display:flex;"><span>}
 </span></span><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span>countDownFrom(<span style="color:#ae81ff">5</span>) <span style="color:#75715e">// 5, 4, 3, 2, 1, 0</span>
-</span></span></code></pre></div><h2 id="函数作为值">函数作为值</h2>
-<p>在<code>Swift</code>中函数是一等公民，<font color=Blue>这意味着任何使用值的地方都可以使用函数</font>。一个函数可以被赋值给一个变量，也可以作为一个函数调用的参数被传递，也可以作为函数返回值。</p>
+</span></span></code></pre></div><h2 id="function-as-value">Function as Value</h2>
+<p>在<code>Swift</code>中函数是一等公民，<font color=Blue>这意味着任何使用值的地方都可以使用函数</font>。一个函数可以被赋值给一个变量，能够作为一个函数调用的参数被传递，也可以作为函数的返回值。</p>
 <p><code>Swift</code>是强类型的语言，当**<font color=LightSeaGreen>函数作为值传递的，必须类型相匹配，函数的签名就是它的类型</font>**。为了使函数类型更简洁，可以使用<code>typealias</code>给一个函数类型起个别名，这个名字可以是描述性的：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span><span style="color:#66d9ef">typealias</span> VoidVoidFunction = () -&gt; Void
 </span></span><span style="display:flex;"><span>
@@ -1012,7 +1018,7 @@ code.has-jax {
 </span></span><span style="display:flex;"><span>doTest() {
 </span></span><span style="display:flex;"><span>    debugPrint(<span style="color:#e6db74">&#34;doTest 2&#34;</span>)
 </span></span><span style="display:flex;"><span>}
-</span></span></code></pre></div><p>使用一个函数作为值的主要目的是**<font color=red>可以在不确定函数具体是什么的情况下调用该函数</font>**。下面示例代码是一个极简单的例子，只是为了展示函数作为值使用的结构和语法：</p>
+</span></span></code></pre></div><p>使用一个函数作为值的主要目的是**<font color=red>可以在尚不确定函数具体是什么的情况下调用该函数</font>**。下面示例代码是一个极简单的例子，只是为了展示函数作为值使用的结构和语法：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">doThis</span>(<span style="color:#66d9ef">_</span> f: () -&gt; Void) {
 </span></span><span style="display:flex;"><span>    f()
 </span></span><span style="display:flex;"><span>}
@@ -1037,7 +1043,7 @@ code.has-jax {
 </span></span><span style="display:flex;"><span><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">dothis</span>(<span style="color:#66d9ef">_</span> f: VoidVoidFunction) {
 </span></span><span style="display:flex;"><span>    f()
 </span></span><span style="display:flex;"><span>}
-</span></span></code></pre></div><h2 id="匿名函数">匿名函数</h2>
+</span></span></code></pre></div><h2 id="anonymous-functions">Anonymous Functions</h2>
 <p>在下面的代码中，声明函数<code>whatToAnimate</code>和<code>whatToDoLater</code>只是为了在<code>UIView.animate</code>中传递函数参数。其实并不一定需要<code>whatToAnimate</code>和<code>whatToDoLater</code>这两个函数名字，因为它们只是在代码最后一行使用了，之后便没有再使用：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">whatToAnimate</span>() { 
 </span></span><span style="display:flex;"><span>    debugPrint(<span style="color:#e6db74">&#34;animations&#34;</span>)
@@ -5258,8 +5264,8 @@ code.has-jax {
         <li><a href="#called-by-objective-c-with-modifiable-parameters">Called by Objective-C with Modifiable Parameters</a></li>
         <li><a href="#function-in-function">Function in Function</a></li>
         <li><a href="#recursion">Recursion</a></li>
-        <li><a href="#函数作为值">函数作为值</a></li>
-        <li><a href="#匿名函数">匿名函数</a>
+        <li><a href="#function-as-value">Function as Value</a></li>
+        <li><a href="#anonymous-functions">Anonymous Functions</a>
           <ul>
             <li><a href="#匿名函数缩写">匿名函数缩写</a>
               <ul>
