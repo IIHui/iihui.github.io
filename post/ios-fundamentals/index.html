@@ -241,7 +241,7 @@ code.has-jax {
     <i class="fa fa-file-word-o"></i>
 </span>
 <span class="post-meta-item-text">字数: </span>
-<span class="leancloud-visitors-count">79776</span>
+<span class="leancloud-visitors-count">79818</span>
 &nbsp; | &nbsp;
 <span class="post-meta-item-icon">
     <i class="fa fa-coffee"></i>
@@ -4138,7 +4138,7 @@ code.has-jax {
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">digitChanger</span>(<span style="color:#66d9ef">_</span> d: Digit) { <span style="color:#75715e">// Digit is a struct</span>
 </span></span><span style="display:flex;"><span>    d.number = <span style="color:#ae81ff">42</span> <span style="color:#75715e">// compile error</span>
 </span></span><span style="display:flex;"><span>}
-</span></span></code></pre></div><p>上面代码中，因为函数参数默认是用<code>let</code>隐式声明的，又因为<code>Digit</code>是结构体，所以会出现编译错误：<code>Cannot assign to property: 'd' is a 'let' constant</code>。下面函数中，因为<code>Dog</code>是引用类型，所以<code>dog</code>能就地改变，下面的代码不会报错：</p>
+</span></span></code></pre></div><p>因为函数参数默认是用<code>let</code>隐式声明的，又因为<code>Digit</code>是结构体，所以会出现编译错误：<code>Cannot assign to property: 'd' is a 'let' constant</code>。下面函数中，因为<code>Dog</code>是引用类型，所以<code>dog</code>能就地改变，下面代码不会出现编译报错：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">dogChanger</span>(<span style="color:#66d9ef">_</span> d: Dog) { <span style="color:#75715e">// Dog is a class</span>
 </span></span><span style="display:flex;"><span>    d.name = <span style="color:#e6db74">&#34;Rover&#34;</span>
 </span></span><span style="display:flex;"><span>}
@@ -4165,11 +4165,11 @@ code.has-jax {
 </span></span><span style="display:flex;"><span>        }
 </span></span><span style="display:flex;"><span>    }
 </span></span><span style="display:flex;"><span>}
-</span></span></code></pre></div><p>上面的代码是否合法取决于<code>otherFunction</code>是否将它的函数参数声明为<code>@escaping</code>（逃逸闭包）。如果它声明了<code>escaping</code>逃逸的，编译器会报<code>Escaping closure captures mutating 'self' parameter</code>：</p>
+</span></span></code></pre></div><p>上面的代码是否合法取决于<code>otherFunction</code>是否将它的函数参数声明为<code>@escaping</code>（逃逸闭包）。如果声明了参数<code>f</code>为<code>escaping</code>逃逸的，则编译器会报<code>Escaping closure captures mutating 'self' parameter</code>：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">otherFunction</span>(<span style="color:#66d9ef">_</span> f: @escaping ()-&gt;()) { 
 </span></span><span style="display:flex;"><span>   	<span style="color:#75715e">//</span>
 </span></span><span style="display:flex;"><span>}
-</span></span></code></pre></div><p>现在<code>otherFunction</code>是逃逸的，这意味着存在威胁：可能在以后的某个时间点改变捕获的<code>self</code>。<code>Digit</code>是一个结构体，所以这将涉及到用一个不同的<code>Digit</code>实例来替换捕获的<code>self</code>。如果<code>Digit</code>是一个类，就不会出现这样的问题，因为捕获的<code>self</code>可以被<code>mutated in place</code>。</p>
+</span></span></code></pre></div><p>现在<code>otherFunction</code>是逃逸的，这意味着存在潜在的威胁：可能会在以后的某个时间点改变捕获的<code>self</code>。<code>Digit</code>是一个结构体，所以这将涉及到用一个不同的<code>Digit</code>实例来替换捕获的<code>self</code>，这是不被允许的（即使<code>otherFunction</code>是用<code>mutating</code>标记）。如果<code>Digit</code>是一个类，就不会出现这样的问题，因为捕获的<code>self</code>可以被<code>mutated in place</code>。</p>
 <h3 id="class-instance-references-are-pointers">Class instance references are pointers</h3>
 <p>在引用类型中，在对<font color=LightSeaGreen>实例的引用和实例本身之间有一个隐蔽的层次</font>。引用实际上持有一个指向实例的指针，这意味着当一个类的实例赋值给一个变量或作为一个函数的参数或作为一个函数的结果时，可能会出现对同一个对象的多个引用，而结构体和枚举不是这样的。</p>
 <p>在枚举或者结构体实例被赋值或被传递时，本质上被赋值或者被传递的是该实例的副本。而类实例被赋值或传递时是指向同一个实例的引用，下面代码能说明这种区别：</p>
