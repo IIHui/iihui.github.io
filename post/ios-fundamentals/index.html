@@ -4172,7 +4172,7 @@ code.has-jax {
 </span></span></code></pre></div><p>现在<code>otherFunction</code>是逃逸的，这意味着存在潜在的威胁：可能会在以后的某个时间点改变捕获的<code>self</code>。<code>Digit</code>是一个结构体，所以这将涉及到用一个不同的<code>Digit</code>实例来替换捕获的<code>self</code>，这是不被允许的（即使<code>otherFunction</code>是用<code>mutating</code>标记）。如果<code>Digit</code>是一个类，就不会出现这样的问题，因为捕获的<code>self</code>可以被<code>mutated in place</code>。</p>
 <h3 id="class-instance-references-are-pointers">Class instance references are pointers</h3>
 <p>在引用类型中，在对<font color=LightSeaGreen>实例的引用和实例本身之间有一个隐蔽的层次</font>。引用实际上持有一个指向实例的指针，这意味着当一个类的实例赋值给一个变量或作为一个函数的参数或作为一个函数的结果时，可能会出现对同一个对象的多个引用，而结构体和枚举不是这样的。</p>
-<p>在枚举或者结构体实例被赋值或被传递时，本质上被赋值或者被传递的是该实例的副本。而类实例被赋值或传递时是指向同一个实例的引用，下面代码能说明这种区别：</p>
+<p>在<font color=red>枚举或者结构体实例被赋值或被传递时，本质上被赋值或者被传递的是该实例的副本</font>。而类实例被赋值或传递时是指向同一个实例的引用，下面代码能说明这种区别：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span><span style="color:#66d9ef">var</span> d1 = Digit(<span style="color:#ae81ff">123</span>) <span style="color:#75715e">// Digit is a struct</span>
 </span></span><span style="display:flex;"><span>debugPrint(d1.number) <span style="color:#75715e">// 123</span>
 </span></span><span style="display:flex;"><span><span style="color:#66d9ef">var</span> d2 = d1 <span style="color:#75715e">// assignment!</span>
