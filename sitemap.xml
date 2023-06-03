@@ -1232,10 +1232,10 @@ Classes 虽然类和结构体相似，但和结构体还有一些关键区别：
   类是引用类型。这一意味着类的实例有两个相比于结构体或枚举实例来说是截然不同的显著特征。
   可变的：类的实例是原地是可变的。即使一个类实例变量是用let声明的，也可以通过这个引用来改变一个实例属性的值。因此，类的实例方法从来不需要被标记为可变的（也不能使用mutating标记）。
   多引用：当一个类的实例被赋值给多个变量或作为参数传递给一个函数时，可能出现多个引用指向一个相同的对象。
-    继承：一个类可以有一个父类，它继承父类的成员。类类型可以形成一个层次结构树。而结构体不能继承。
-  在Objective-C中，类是唯一的对象类型。一些内置的Swift结构体类型可以神奇地与Objective-C的类桥接，但自定义结构类型却没有这种魔力。因此，在用Swift进行iOS编程时，声明类而不是结构的一个原因是类能够和Objective-C或Cocoa的互换。
-Value Types and Reference Types 在Swift中，结构体和枚举类型都是值类型，类是引用类型。值类型不能就地可变，而类的实例能够就地可变。在下面的例子中，因为结构体是值类型，所以更改结构体实例的属性时，要将结构体实例用var声明，而不能用let声明：
-struct Digit {  var number: Int   init(_ n: Int) {  self.number = n  } }  var d = Digit(23) d.number = 45 实际上，当改变一个值类型的实例时，是在用一个不同的实例替换该实例。为了证明这一点，可以添加一个setter观察器。在下面代码中，虽然改变的只是属性number的值，但是didSet依然调用了，这说明该实例被替换了：
+    继承：一个类可以有一个父类并继承父类的成员。类类型可以形成一个层次结构树，而结构体不能继承。
+  在Objective-C中，类是唯一的对象类型。一些内置的Swift结构体类型可以神奇地与Objective-C的类桥接，但自定义结构类型却没有这种魔力。因此，在用Swift进行iOS编程时，声明类而不是结构的一个原因是类能够和Objective-C或Cocoa转换。
+Value Types and Reference Types 在Swift中，结构体和枚举类型都是值类型，类是引用类型。值类型不能就地可变，而类的实例是能够就地可变。在下面的例子中，因为结构体是值类型，所以更改结构体实例的属性时，要将结构体实例用var声明，而不能用let声明：
+struct Digit {  var number: Int   init(_ n: Int) {  self.number = n  debugPrint(&amp;#34;number:\(number)&amp;#34;)  } }  var d = Digit(23) d.number = 45  // 打印结果 &amp;#34;number:23&amp;#34; 实际上，当改变一个值类型的实例时，是在用一个不同的实例替换该实例。为了证明这一点，可以为digit实例添加一个setter观察器。下面代码中，虽然改变的只是属性number的值，但是didSet依然调用了，这说明该实例已经被替换了：
 struct Digit {  var number: Int   init(_ n: Int) {  self.number = n  } }  var d: Digit = Digit(234) {  didSet {  debugPrint(&amp;#34;d was set&amp;#34;)  } }  d.number = 456 // &amp;#34;d was set&amp;#34; 下面代码中，实际上需要用另一个Digit实例改变d指向的Digit实例，但因为d是使用let声明的，下面代码会出现编译错误，也能够解释如果值类型的实例引用是用let关键字声明的，那么就不能对该实例进行就地改变：
 let d = Digit(123) // Digit is a struct d.number = 42 // compile error 但类不是值类型，它们是引用类型。如果想通过引用改变一个属性的值，在声明该引用变量时无需使用var，即使是使用let声明的，也可以通过该引用更改其var属性的值：
 class Dog {  var name: String = &amp;#34;Fido&amp;#34; }  let rover = Dog() rover.name = &amp;#34;Rover&amp;#34; // fine 在上面代码的最后一行，rover所指向的类实例被就地改变了。没有涉及到对rover的隐式赋值，所以let声明的变量无力阻止这种修改。实际上，当属性被设置时，Dog变量上的setter observer 没有被调用：
