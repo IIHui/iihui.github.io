@@ -1277,8 +1277,8 @@ class Dog {  func barkAt(cat: Cat) {  //  } }  class NoisyDog: Dog {  override f
 class Dog {  func barkAt(cat: Kitten?) {  //  } }  class NoisyDog: Dog {  override func barkAt(cat: Cat?) {  //  } } 还有一些类似的规则，但不一一列出了。因为我们可能不需要利用它们，而且在任何情况下，编译器都会告诉我们覆盖是否非法。
 除了方法之外，子类还继承了父类的属性。当然，子类也可以声明它定义的属性。覆盖一个继承的属性是可能的（有一些限制，将在后面讲到）。
 The keyword super 经常发生的情况是，如果想在一个子类中覆盖一些父类的东西，但又想访问父类中被覆盖的东西，这可以通过向关键字super发送消息来实现。
-在NoisyDog中的bark方法实现就是一个例子。NoisyDog在bark中真正做的事情与Dog在bark时做的事情相同，但调用次数更多。若想在NoisyDog中的bark中实现这种效果，可以在NoisyDog的bark实现中向父类发送bark消息，不是发送给自己发送bark消息（这将形成死循环）。
-class Dog: Quadruped {  func bark() {  print(&amp;#34;woof&amp;#34;)  } } class NoisyDog: Dog {  override func bark() {  for _ in 1...3 {  super.bark()  }  } } 一个下标函数是一个方法。如果一个父类声明了一个下标，子类可以声明一个具有相同签名的下标，只要它用override关键字来指明。为了调用父类的下标方法，子类可以在关键字super后面使用方括号（例如：super[3]）。
+在NoisyDog中的bark方法实现就是一个例子。NoisyDog在bark中真正做的事情与Dog在bark时做的事情相同，但调用次数更多。若想在NoisyDog中覆盖bark方法中实现这种效果，可以在实现时向父类发送bark消息，而不是向自己发送bark消息（这将形成死循环）。
+class Dog: Quadruped {  func bark() {  print(&amp;#34;woof&amp;#34;)  } }  class NoisyDog: Dog {  override func bark() {  for _ in 1...3 {  super.bark()  }  } }  let fido = Dog() fido.bark() // woof  let rover = NoisyDog() rover.bark() // woof woof woof 下标函数也是一个方法。如果父类声明了一个下标函数，子类可以声明一个具有相同签名的下标，只要它用override关键字来标明即可。为了调用父类的下标方法，子类可以在关键字super后面使用方括号（例如：super[3]）。
 class initializers 由于类的继承性，类实例的初始化比结构体和枚举实例的初始化要复杂得多。初始化器的主要任务是确保所有的属性都有一个初始值。初始化器可能还有其他任务要执行，这些任务对这个实例的初始状态和完整性至关重要。
 一个类可能有一个父类，它可能有自己的属性和初始化器。因此，必须以某种方式确保当一个子类被初始化时，其父类的属性均被初始化，除了子类本身的任务外，其初始化器的任务也被按部就班地执行。
 Swift通过对类的初始化器必须做的事情制定了一些清晰明确的规则，连贯而可靠地解决了这个问题，而且很巧妙地解决了这个问题。
