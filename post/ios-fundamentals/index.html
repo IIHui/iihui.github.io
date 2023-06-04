@@ -241,7 +241,7 @@ code.has-jax {
     <i class="fa fa-file-word-o"></i>
 </span>
 <span class="post-meta-item-text">字数: </span>
-<span class="leancloud-visitors-count">79977</span>
+<span class="leancloud-visitors-count">80003</span>
 &nbsp; | &nbsp;
 <span class="post-meta-item-icon">
     <i class="fa fa-coffee"></i>
@@ -4201,14 +4201,14 @@ code.has-jax {
 <p>因此，应当尽可能地选择一个值类型（如结构体）而不是引用类型（类）。结构体实例不在引用之间共享，因此不必担心实例在其它地方被改变。结构体的存储和内存管理也要简单得多，并且值类型也更容易被推断。</p>
 <p><code>Swift</code>语言本身会帮助使用结构体类型，在许多<code>Cocoa Foundation</code>的引用类型面前强加值类型。例如，<code>Objective-C</code>中的<code>NSDate</code>和<code>NSData</code>是类类型，但<code>Swift</code>会引导使用结构类型<code>Date</code>和<code>Data</code>来代替。</p>
 <p>但不要搞错了，就想当然地认为类是不好的。首先，类实例的传递非常有效，因为<font color=red>所传递的只是一个指针</font>。无论一个类的实例有多大、多复杂，无论它的属性包含多大量的数据，传递实例都是非常快速和高效的。</p>
-<p>尽管一个类可能是一个引用类型，但一个特定的类可以<font color=red>以特殊方式实现，以表现出它的值语义</font>。一个类的<code>API</code>可以拒绝对该类进行原地改变。<code>Cocoa</code>的<code>NSString、NSArray、NSDictionary、NSDate、NSIndexSet、NSParagraphStyle</code>等等都是这样的，因为它们在设计上是不可变的。</p>
-<p>两个对象可以持有对同一个<code>NSArray</code>的引用而不用担心它在其它地方被改变，这不是因为它是一个值类型，而是因为它在设计上是不可变的。实际上，这种架构结合了值类型的易用性和引用类型的指针高效性。</p>
-<p>实际上，只有一个类的实例能成功的代表<code>independent reality</code>。<code>UIView</code>是一个类，这样一个单独的<code>UIView</code>实例就能在运行的应用程序的界面中一直代表同一个真实的、持久的视图。</p>
-<p>喜欢类而不是结构体或枚举的另一个原因是当需要递归引用时。一个值类型不能在结构上递归：即一个值类型的存储实例属性不能是同一类型的实例。下面这段代码是无法编译的：</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span><span style="color:#66d9ef">struct</span> <span style="color:#a6e22e">Dog</span> { <span style="color:#75715e">// compile error </span>
-</span></span><span style="display:flex;"><span>		<span style="color:#66d9ef">var</span> puppy : Dog?
+<p>尽管一个类可能是一个引用类型，但一个特定的类可以<font color=red>以特殊方式实现，以表现出它的值语义</font>。一个类的<code>API</code>可以拒绝对该类进行原地改变。<code>Cocoa</code>的<code>NSString、NSArray、NSDictionary、NSDate、NSIndexSet、NSParagraphStyle</code>等等都是这样的。</p>
+<p>两个对象可以持有对同一个<code>NSArray</code>的引用而不用担心它在其它地方被改变，<font color=red>这不是因为它是一个值类型，而是因为它在设计上是不可变的</font>。实际上，这种架构结合了值类型的易用性和引用类型的指针高效性。</p>
+<p>此外，只有一个类的实例能成功的代表<code>independent reality</code>。例如，<code>UIView</code>是一个类，因一个单独的<code>UIView</code>实例就能在运行的应用程序的界面中一直代表同一个真实的、持久的视图。</p>
+<p>另外，喜欢类而不是结构体或枚举的另一个原因是当需要递归引用时，一个值类型不能在结构上递归：即一个值类型的存储实例属性不能是同一类型的实例。下面这段代码是无法编译的：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span><span style="color:#66d9ef">struct</span> <span style="color:#a6e22e">Dog</span> {  
+</span></span><span style="display:flex;"><span>		<span style="color:#66d9ef">var</span> puppy : Dog?  <span style="color:#75715e">// compile error: Value type &#39;Dog&#39; cannot have a stored property that recursively contains it</span>
 </span></span><span style="display:flex;"><span>}
-</span></span></code></pre></div><p>奇怪的是，可以将<code>puppy</code>定义为<code>Dog</code>数组来解除这个限制。更复杂的循环链，例如<code>Dog</code>有一个<code>Puppy</code>类型的实例属性，<code>Puppy</code>类型有一个<code>Dog</code>类型属性也是非法的，但如果<code>Dog</code>是类类型，这就是合法的。</p>
+</span></span></code></pre></div><p>奇怪的是，<font color=red>可以将<code>puppy</code>定义为<code>Dog</code>数组来解除这个限制</font>。对于值类型来说，更复杂的循环链，比如循环引用是非法的。例如，<code>Dog</code>机构体有一个<code>Puppy</code>结构体类型的实例属性，<code>Puppy</code>有一个<code>Dog</code>类型属性也是非法的，但如果<code>Dog</code>是类类型，这就是合法的。</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span><span style="color:#66d9ef">struct</span> <span style="color:#a6e22e">Dog</span> { 
 </span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">var</span> puppy: [Dog]?
 </span></span><span style="display:flex;"><span>}

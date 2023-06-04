@@ -1256,11 +1256,11 @@ Advantages of value types vs. reference types 在基于对象的编程世界中�
 因此，应当尽可能地选择一个值类型（如结构体）而不是引用类型（类）。结构体实例不在引用之间共享，因此不必担心实例在其它地方被改变。结构体的存储和内存管理也要简单得多，并且值类型也更容易被推断。
 Swift语言本身会帮助使用结构体类型，在许多Cocoa Foundation的引用类型面前强加值类型。例如，Objective-C中的NSDate和NSData是类类型，但Swift会引导使用结构类型Date和Data来代替。
 但不要搞错了，就想当然地认为类是不好的。首先，类实例的传递非常有效，因为所传递的只是一个指针。无论一个类的实例有多大、多复杂，无论它的属性包含多大量的数据，传递实例都是非常快速和高效的。
-尽管一个类可能是一个引用类型，但一个特定的类可以以特殊方式实现，以表现出它的值语义。一个类的API可以拒绝对该类进行原地改变。Cocoa的NSString、NSArray、NSDictionary、NSDate、NSIndexSet、NSParagraphStyle等等都是这样的，因为它们在设计上是不可变的。
+尽管一个类可能是一个引用类型，但一个特定的类可以以特殊方式实现，以表现出它的值语义。一个类的API可以拒绝对该类进行原地改变。Cocoa的NSString、NSArray、NSDictionary、NSDate、NSIndexSet、NSParagraphStyle等等都是这样的。
 两个对象可以持有对同一个NSArray的引用而不用担心它在其它地方被改变，这不是因为它是一个值类型，而是因为它在设计上是不可变的。实际上，这种架构结合了值类型的易用性和引用类型的指针高效性。
-实际上，只有一个类的实例能成功的代表independent reality。UIView是一个类，这样一个单独的UIView实例就能在运行的应用程序的界面中一直代表同一个真实的、持久的视图。
-喜欢类而不是结构体或枚举的另一个原因是当需要递归引用时。一个值类型不能在结构上递归：即一个值类型的存储实例属性不能是同一类型的实例。下面这段代码是无法编译的：
-struct Dog { // compile error  	var puppy : Dog? } 奇怪的是，可以将puppy定义为Dog数组来解除这个限制。更复杂的循环链，例如Dog有一个Puppy类型的实例属性，Puppy类型有一个Dog类型属性也是非法的，但如果Dog是类类型，这就是合法的。
+此外，只有一个类的实例能成功的代表independent reality。例如，UIView是一个类，因一个单独的UIView实例就能在运行的应用程序的界面中一直代表同一个真实的、持久的视图。
+另外，喜欢类而不是结构体或枚举的另一个原因是当需要递归引用时，一个值类型不能在结构上递归：即一个值类型的存储实例属性不能是同一类型的实例。下面这段代码是无法编译的：
+struct Dog { 	var puppy : Dog? // compile error: Value type &amp;#39;Dog&amp;#39; cannot have a stored property that recursively contains it } 奇怪的是，可以将puppy定义为Dog数组来解除这个限制。对于值类型来说，更复杂的循环链，比如循环引用是非法的。例如，Dog机构体有一个Puppy结构体类型的实例属性，Puppy有一个Dog类型属性也是非法的，但如果Dog是类类型，这就是合法的。
 struct Dog {  var puppy: [Dog]? } 关联值类型的枚举case可以是当前枚举的实例，一个枚举case的关联值可以是该枚举的一个实例，只要该案例（或整个枚举）被标记为indirect：
 enum Node {  case none(Int)  indirect case left(Int, Node)  indirect case right(Int, Node)  indirect case both(Int, Node, Node) } subclass and superclass 在Swift中，一个类可能有多个子类，但一个类至多只能有一个直接父类。就Swift本身而言，并没有要求一个类一定要有父类，或者说一个类如果有父类，也没有要求它最终应该是由特定父类派生。一个Swift程序可以有许多没有父类的类，也可以有许多独立的层次子类树，每一个都是从不同的基类派生而来。
 但在Cocoa中，不是这样的。在Cocoa中实际上只有一个base class即NSObject，它表明了一个类所必需的所有功能，而所有其它类在某种层次上都是这个基类的子类。
