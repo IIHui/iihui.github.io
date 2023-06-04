@@ -1270,11 +1270,13 @@ Additional functionality 子类化不仅可以继承父类的方法，也可以�
 class Quadruped {  func walk() {  debugPrint(&amp;#34;walk walk walk&amp;#34;)  } }  class Dog: Quadruped {  func bark() {  debugPrint(&amp;#34;woof&amp;#34;)  } }  let fido = Dog() fido.walk() fido.bark() 无论方法是在类中自定义的，还是从父类中继承的，都有同样的效果。下面代码中Dog继承了Quadruped的walk方法，并自定义了bark方法，在自定义的walkAndBark方法中调用walk和bark方法的时候没有差别：
 class Quadruped {  func walk() {  debugPrint(&amp;#34;walk walk walk&amp;#34;)  } }  class Dog: Quadruped {  func bark() {  debugPrint(&amp;#34;woof&amp;#34;)  }   func walkAndBark() {  self.walk()  self.bark()  } }  let fido = Dog() fido.walk() fido.bark() fido.walkAndBark() Overriding 在Swift中允许对从父类继承的方法进行重定义（也被称为覆写，重写）。如果重定义在父类定义的方法，必须显式在重定义的方法前添加override关键字作为标记。下面代码在子类Dog中对继承了Quadruped的walk方法进行了重写：
 class Quadruped {  func walk() {  debugPrint(&amp;#34;walk walk walk&amp;#34;)  } }  class Dog: Quadruped {  func bark() {  debugPrint(&amp;#34;woof&amp;#34;)  }   func walkAndBark() {  self.walk()  self.bark()  }   override func walk() {  debugPrint(&amp;#34;dog walk&amp;#34;)  } }  class NoisyDog: Dog {  override func bark() {  debugPrint(&amp;#34;woof woof woof&amp;#34;)  } } 一个与父类同名的子类方法不一定是override，在Swift中两个同名的函数是通过签名来区别的。只有当子类重新定义它从父类继承的同一个方法时才存在override的情况：相同的名称，包括外部参数名称，以及相同的签名。
-但是，override一个方法并不需要和被覆盖的父类方法有完全相同的签名。在覆盖一个方法时，参数的类型可以用父类或父类的optional来代替。下面代码中，Kitten是Cat的子类，因此代码是合法的：
-class Cat {  // }  class Kitten: Cat {  // }  class Dog {  func barkAt(cat: Kitten) {  //  } }  class NoisyDog: Dog {  override func barkAt(cat: Cat) {  //  } } 在override时用一个父类的Optional参数也是合法的。即在NoisyDog中覆盖barkAt时，参数cat的类型可以是Cat或者Cat?：
-class NoisyDog: Dog {  override func barkAt(cat: Cat?) {  //  } } 此外，在override时，一个参数可以用对应类型的Optional。在下面的代码中，Dog中定义的方法barkAt参数类型为Cat，而在NoisyDog中override该方法时，参数类型为Cat?也是合法的：
-class Dog {  func barkAt(cat: Cat) {  //  } }  class NoisyDog: Dog {  override func barkAt(cat: Cat?) {  //  } } 而一个Optional的参数可以用其父类的Optional来覆盖。下面的代码中，使用override时Kitten?类型可以使用Cat?：
-class Dog {  func barkAt(cat: Kitten?) {  //  } }  class NoisyDog: Dog {  override func barkAt(cat: Cat?) {  //  } } The keyword super 经常发生的情况是，如果想在一个子类中覆盖一些父类的东西，但又想访问父类中被覆盖的东西，这可以通过向关键字super发送消息来实现。
+但是，override一个方法并不需要和被覆盖的父类方法有完全相同的签名。在覆盖一个方法时，参数的类型可以用父类或父类的optional类型来代替。下面代码中，Kitten是Cat的子类，因此代码是合法的：
+class Cat {  // }  class Kitten: Cat {  // }  class Dog {  func barkAt(cat: Kitten) {  //  } }  class NoisyDog: Dog {  override func barkAt(cat: Cat) {  //  } } 在override时用一个父类的Optional参数也是合法的。即在NoisyDog中覆盖barkAt时，参数cat的类型可以是Cat或Cat?：
+class NoisyDog: Dog {  override func barkAt(cat: Cat?) {  //  } } 此外，在override时，参数可以用对应类型的Optional。下面代码中，Dog中定义的方法barkAt参数类型为Cat，而在NoisyDog中override该方法时，参数类型为Cat?也是合法的：
+class Dog {  func barkAt(cat: Cat) {  //  } }  class NoisyDog: Dog {  override func barkAt(cat: Cat?) {  //  } } 而一个Optional的参数可以用其父类的Optional来覆盖。下面的代码中，在override方法barkAt时Kitten?类型可以使用Cat?来代替：
+class Dog {  func barkAt(cat: Kitten?) {  //  } }  class NoisyDog: Dog {  override func barkAt(cat: Cat?) {  //  } } 还有一些类似的规则，但不一一列出了。因为我们可能不需要利用它们，而且在任何情况下，编译器都会告诉我们覆盖是否非法。
+除了方法之外，子类还继承了父类的属性。当然，子类也可以声明它定义的属性。覆盖一个继承的属性是可能的（有一些限制，将在后面讲到）。
+The keyword super 经常发生的情况是，如果想在一个子类中覆盖一些父类的东西，但又想访问父类中被覆盖的东西，这可以通过向关键字super发送消息来实现。
 在NoisyDog中的bark方法实现就是一个例子。NoisyDog在bark中真正做的事情与Dog在bark时做的事情相同，但调用次数更多。若想在NoisyDog中的bark中实现这种效果，可以在NoisyDog的bark实现中向父类发送bark消息，不是发送给自己发送bark消息（这将形成死循环）。
 class Dog: Quadruped {  func bark() {  print(&amp;#34;woof&amp;#34;)  } } class NoisyDog: Dog {  override func bark() {  for _ in 1...3 {  super.bark()  }  } } 一个下标函数是一个方法。如果一个父类声明了一个下标，子类可以声明一个具有相同签名的下标，只要它用override关键字来指明。为了调用父类的下标方法，子类可以在关键字super后面使用方括号（例如：super[3]）。
 class initializers 由于类的继承性，类实例的初始化比结构体和枚举实例的初始化要复杂得多。初始化器的主要任务是确保所有的属性都有一个初始值。初始化器可能还有其他任务要执行，这些任务对这个实例的初始状态和完整性至关重要。
