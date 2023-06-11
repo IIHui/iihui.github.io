@@ -241,7 +241,7 @@ code.has-jax {
     <i class="fa fa-file-word-o"></i>
 </span>
 <span class="post-meta-item-text">字数: </span>
-<span class="leancloud-visitors-count">80735</span>
+<span class="leancloud-visitors-count">80831</span>
 &nbsp; | &nbsp;
 <span class="post-meta-item-icon">
     <i class="fa fa-coffee"></i>
@@ -4858,9 +4858,10 @@ code.has-jax {
 </span></span><span style="display:flex;"><span>dog = NoisyDog() 
 </span></span><span style="display:flex;"><span>dog = Optional(NoisyDog())
 </span></span></code></pre></div><p>利用多态性，可以利用子类的优势以增加现有类的力量，也可以定制现有类。这对于<code>iOS</code>编程来说非常重要，因为多数类是定义在<code>Cocoa</code>中，这些类并不属于我们。例如，我们通常继承<code>UIViewController</code>，形成新的子类。</p>
-<p>多态性很酷，但从总体上看，<font color=red>它也是比较慢的，因为它需要动态调度，这意味着编译器不能进行某些优化</font>，而且运行时必须考虑给类实例的信息意味着什么。可以通过声明一个类或一个类成员为<code>final</code>或<code>private</code>来减少对动态调度的需求。或者使用一个结构，结构体不需要动态调度。</p>
+<p>多态性很酷，但从总体上看，<font color=red>它也是比较慢的，因为它需要动态调度，这意味着编译器不能进行某些优化</font>，而且<code>runtime</code>必须考虑给类实例的信息意味着什么。可以通过声明一个类或一个类成员<font color=Blue>为<code>final</code>或<code>private</code>来减少对动态调度的需求</font>。或者使用一个结构，结构体不需要动态调度。</p>
 <h2 id="casting">Casting</h2>
-<p><code>Swift</code>是一种严格类型的语言，允许向对象引用发送的消息取决于引用的类型。但是，多态性的内部身份原则说，一个对象可能有一个不同于其引用的声明类型的实际类型。在下面的代码中，在<code>tellToHush</code>中调用<code>beQuit</code>是非法的，会出现<code>Value of type 'Dog' has no member 'beQuiet'</code>报错信息：</p>
+<p><code>Swift</code>是一种严格类型的语言，允许向对象引用发送的消息有严格的限制，取决于引用声明时的类型。但是，多态的内部一致性原则说明，一个对象可能有一个不同于其引用声明的类型的实际类型。</p>
+<p>下面代码中，在方法<code>tellToHush</code>中调用<code>beQuit</code>是非法的，将会出现<code>Value of type 'Dog' has no member 'beQuiet'</code>错误信息：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span><span style="color:#66d9ef">class</span> <span style="color:#a6e22e">Dog</span> {
 </span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">func</span> <span style="color:#a6e22e">bark</span>() {
 </span></span><span style="display:flex;"><span>        debugPrint(<span style="color:#e6db74">&#34;woof&#34;</span>)
@@ -4880,12 +4881,16 @@ code.has-jax {
 </span></span><span style="display:flex;"><span><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">tellToHush</span>(<span style="color:#66d9ef">_</span> d: Dog) {
 </span></span><span style="display:flex;"><span>    d.beQuiet() <span style="color:#75715e">// compile error </span>
 </span></span><span style="display:flex;"><span>}
-</span></span></code></pre></div><p>上面的代码编译报错是因为<code>Dog</code>类型中没有<code>beQuiet</code>方法，该方法是子类<code>NoisyDog</code>特有的。而当将<code>NoisyDog</code>实例传给<code>tellToHush</code>时，实际上可以使用<code>beQuiet</code>方法：</p>
+</span></span></code></pre></div><h3 id="casting-down">Casting Down</h3>
+<p>编译报错是因为<code>Dog</code>类型中没有<code>beQuiet</code>方法，该方法是子类<code>NoisyDog</code>特有的。而当将<code>NoisyDog</code>实例传给<code>tellToHush</code>时，实际上是可以使用<code>beQuiet</code>方法的。</p>
+<p><code>Swift</code>中将一个父类转换为子类，这被称为<code>Casting Down</code>。下面代码转换时使用的是<code>as！</code>，这是在强迫编译器做它不愿意做的事情：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">tellToHush</span>(<span style="color:#66d9ef">_</span> d: Dog) {
-</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">let</span> d = d <span style="color:#66d9ef">as</span>! NoisyDog <span style="color:#75715e">// crash </span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">let</span> d = d <span style="color:#66d9ef">as</span>! NoisyDog <span style="color:#75715e">// may be crash </span>
 </span></span><span style="display:flex;"><span>    d.beQuiet()
 </span></span><span style="display:flex;"><span>}
-</span></span></code></pre></div><p>在上面的例子中，相当于告诉编译器，对象<code>d</code>可能是<code>NoiseDog</code>类型的，但是使用<code>as!</code>可能会发生崩溃，因为<code>d</code>不一定是<code>NoiseDog</code>类型。也可以先使用关键字<code>is</code>来判断是否为<code>NoiseDog</code>类型，然后使用<code>as!</code>; 或者使用<code>as?</code>进行转换，或者使用<code>if let </code>：</p>
+</span></span></code></pre></div><p>相当于告诉编译器，对象<code>d</code>可能是<code>NoiseDog</code>类型的，但是使用<code>as!</code>可能会发生崩溃，因为<code>d</code>不一定是<code>NoiseDog</code>类型。</p>
+<h3 id="type-testing-and-casting-down-safely">Type Testing and Casting Down Safely</h3>
+<p>也可以先使用关键字<code>is</code>来判断是否为<code>NoiseDog</code>类型，然后使用<code>as!</code>; 或者使用<code>as?</code>进行转换，或者使用<code>if let </code>：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">tellToHush</span>(<span style="color:#66d9ef">_</span> d: Dog) {
 </span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">if</span> d <span style="color:#66d9ef">is</span> NoisyDog {
 </span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">let</span> d = d <span style="color:#66d9ef">as</span>! NoisyDog 
@@ -4914,7 +4919,8 @@ code.has-jax {
 </span></span><span style="display:flex;"><span>        d.beQuiet()
 </span></span><span style="display:flex;"><span>    }
 </span></span><span style="display:flex;"><span>}
-</span></span></code></pre></div><p>对于<code>is, as!</code>和<code>as?</code>操作符来说，它们对于<code>Optional</code>类型的工作方式与<code>==</code>比较操作符相同：会自动解包<code>Optional</code>对象，然后进行比较：</p>
+</span></span></code></pre></div><h3 id="type-testing-and-casting-optionals">Type Testing and Casting Optionals</h3>
+<p>对于<code>is, as!</code>和<code>as?</code>操作符来说，它们对于<code>Optional</code>类型的工作方式与<code>==</code>比较操作符相同：会自动解包<code>Optional</code>对象，然后进行比较：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">test</span>() {
 </span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">let</span> dog: Dog? = NoisyDog()
 </span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">if</span> dog <span style="color:#66d9ef">is</span> NoisyDog {
@@ -4926,12 +4932,14 @@ code.has-jax {
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span><span style="color:#66d9ef">let</span> dog1: Dog? = NoisyDog()
 </span></span><span style="display:flex;"><span><span style="color:#66d9ef">let</span> dog2 = dog1 <span style="color:#66d9ef">as</span>! NoisyDog
 </span></span><span style="display:flex;"><span>dog2.beQuiet()
-</span></span></code></pre></div><p>但是上面的代码是不安全的，如果<code>dog1</code>为<code>nil</code>或者执行<code>Dog</code>类型的实例，则<code>dog1 as! NoisyDog</code>转换失败而发生崩溃，使用<code>as?</code>会更安全：</p>
+</span></span></code></pre></div><p>但上面代码是不安全的，如果<code>dog1</code>为<code>nil</code>或者是<code>Dog</code>类型的实例，则<code>dog1 as! NoisyDog</code>会因为转换失败而发生崩溃。而使用<code>as?</code>会更安全：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span><span style="color:#66d9ef">let</span> dog1: Dog? = NoisyDog()
 </span></span><span style="display:flex;"><span><span style="color:#66d9ef">let</span> dog2 = dog1 <span style="color:#66d9ef">as</span>? NoisyDog
 </span></span><span style="display:flex;"><span>dog2?.beQuiet()
-</span></span></code></pre></div><p>在上面的代码中，<code>as?</code>首先会检查<code>dog1</code>是为<code>nil</code>，如果为<code>nil</code>则<code>dog2</code>的结果为<code>nil</code>。如果<code>dog1</code>不为<code>nil</code>，但不是<code>NoisyDog</code>的实例，则转换失败，<code>dog2</code>为<code>nil</code>，否则转换成功，<code>dog2</code>为<code>NoisyDog?</code>。</p>
-<p>使用强制转换的另一种方式是当<code>Swift</code>和<code>Objective-C</code>两种类型等效时进行值交换。例如，可以将<code>Swift String </code>转换为<code>Cocoa NSString</code>，反之亦然。这不是因为一个是另一个的子类，而是因为它们是相互桥接的；在非常真实的意义上，它们是同一种类型。当从<code>String</code>转换为<code>NSString</code>时，不是向下转换，并且所做的事情并不危险，因此使用<code>as</code>运算符，没有感叹号或问号。</p>
+</span></span></code></pre></div><p>上面代码中，<code>as?</code>首先会检查<code>dog1</code>是为<code>nil</code>，如果为<code>nil</code>则<code>dog2</code>的结果为<code>nil</code>。如果<code>dog1</code>不为<code>nil</code>，但不是<code>NoisyDog</code>类型的实例，则转换失败，<code>dog2</code>为<code>nil</code>，否则转换成功，<code>dog2</code>的类型为<code>NoisyDog?</code>。</p>
+<h3 id="bridging-to-objective-c">Bridging to Objective-C</h3>
+<p>使用类型转换的另一种方式是当<code>Swift</code>和<code>Objective-C</code>两种类型进行值交换时。例如，可以将<code>Swift</code>的<code>String</code> 类型转换为<code>Cocoa</code>的<code>NSString</code>，反之亦然。</p>
+<p>这不是因为其中一个是另一个的子类，而是因为它们是相互桥接的。实际上，它们是同一种类型。当从<code>String</code>转换为<code>NSString</code>时，不是向下转换，并且所做的事情并不危险，因此使用<code>as</code>运算符，没有感叹号或问号。</p>
 <p>一般来说，要从<code>Swift</code>类型过渡到桥接的<code>Objective-C</code>类型，需要显式转换（字符串文字常量除外。在下面的代码中，<code>Swift</code>的<code>String</code>类型和<code>Objective-C</code>的<code>NSString</code>等价，<code>Int</code>和<code>NSNumber</code>等价：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span><span style="color:#66d9ef">let</span> s : NSString = <span style="color:#e6db74">&#34;howdy&#34;</span> <span style="color:#75715e">// string literal to NSString</span>
 </span></span><span style="display:flex;"><span><span style="color:#66d9ef">let</span> s2 = <span style="color:#e6db74">&#34;howdy&#34;</span>
@@ -5501,7 +5509,14 @@ code.has-jax {
           </ul>
         </li>
         <li><a href="#polymorphism">Polymorphism</a></li>
-        <li><a href="#casting">Casting</a></li>
+        <li><a href="#casting">Casting</a>
+          <ul>
+            <li><a href="#casting-down">Casting Down</a></li>
+            <li><a href="#type-testing-and-casting-down-safely">Type Testing and Casting Down Safely</a></li>
+            <li><a href="#type-testing-and-casting-optionals">Type Testing and Casting Optionals</a></li>
+            <li><a href="#bridging-to-objective-c">Bridging to Objective-C</a></li>
+          </ul>
+        </li>
         <li><a href="#type-references">Type References</a></li>
         <li><a href="#comparing-types">Comparing Types</a></li>
         <li><a href="#available属性">available属性</a></li>

@@ -1336,16 +1336,20 @@ class Dog {  func bark() {  debugPrint(&amp;#34;woof&amp;#34;)  } }  class Noisy
 下面代码中，在Dog中的speak方法中使用self调用了bark方法，因为NoiseDog继承自Dog，所以也继承了speak方法，又因为它覆写了bark，所以speak中调用的bark变成了NosieDog中的bark方法：
 class Dog {  func bark() {  debugPrint(&amp;#34;woof&amp;#34;)  }   func speak() {  // 关键字self具有多态性  self.bark()  } }  class NoisyDog: Dog {  override func bark() {  for _ in 1...3 {  super.bark()  }  } } let nd = NoisyDog() nd.speak() // woof woof woof 多态对于可选类型也是适用的。假设有一个Optional类型的引用，包裹着Dog。我们已经知道可以给它赋值为Dog的实例，也可以赋值为NoisyDog的实例：
 var dog : Dog? dog = Dog() dog = NoisyDog() dog = Optional(NoisyDog()) 利用多态性，可以利用子类的优势以增加现有类的力量，也可以定制现有类。这对于iOS编程来说非常重要，因为多数类是定义在Cocoa中，这些类并不属于我们。例如，我们通常继承UIViewController，形成新的子类。
-多态性很酷，但从总体上看，它也是比较慢的，因为它需要动态调度，这意味着编译器不能进行某些优化，而且运行时必须考虑给类实例的信息意味着什么。可以通过声明一个类或一个类成员为final或private来减少对动态调度的需求。或者使用一个结构，结构体不需要动态调度。
-Casting Swift是一种严格类型的语言，允许向对象引用发送的消息取决于引用的类型。但是，多态性的内部身份原则说，一个对象可能有一个不同于其引用的声明类型的实际类型。在下面的代码中，在tellToHush中调用beQuit是非法的，会出现Value of type &#39;Dog&#39; has no member &#39;beQuiet&#39;报错信息：
-class Dog {  func bark() {  debugPrint(&amp;#34;woof&amp;#34;)  } }  class NoisyDog: Dog {  override func bark() {  super.bark()  }   func beQuiet() {  self.bark()  } }  func tellToHush(_ d: Dog) {  d.beQuiet() // compile error  } 上面的代码编译报错是因为Dog类型中没有beQuiet方法，该方法是子类NoisyDog特有的。而当将NoisyDog实例传给tellToHush时，实际上可以使用beQuiet方法：
-func tellToHush(_ d: Dog) {  let d = d as! NoisyDog // crash   d.beQuiet() } 在上面的例子中，相当于告诉编译器，对象d可能是NoiseDog类型的，但是使用as!可能会发生崩溃，因为d不一定是NoiseDog类型。也可以先使用关键字is来判断是否为NoiseDog类型，然后使用as!; 或者使用as?进行转换，或者使用if let ：
-func tellToHush(_ d: Dog) {  if d is NoisyDog {  let d = d as! NoisyDog  d.beQuiet()  } }  func tellToHush(_ d: Dog) {  let d = d as? NoisyDog // an Optional wrapping a NoisyDog   if d != nil {  d!.beQuiet()  } }  func tellToHush(_ d: Dog) {  let d = d as? NoisyDog // an Optional wrapping a NoisyDog   d?.beQuiet() }  func tellToHush(_ d: Dog) {  (d as? NoisyDog)?.beQuiet() }  func tellToHush(_ d: Dog) {  if let d = d as? NoisyDog {  d.beQuiet()  } } 对于is, as!和as?操作符来说，它们对于Optional类型的工作方式与==比较操作符相同：会自动解包Optional对象，然后进行比较：
+多态性很酷，但从总体上看，它也是比较慢的，因为它需要动态调度，这意味着编译器不能进行某些优化，而且runtime必须考虑给类实例的信息意味着什么。可以通过声明一个类或一个类成员为final或private来减少对动态调度的需求。或者使用一个结构，结构体不需要动态调度。
+Casting Swift是一种严格类型的语言，允许向对象引用发送的消息有严格的限制，取决于引用声明时的类型。但是，多态的内部一致性原则说明，一个对象可能有一个不同于其引用声明的类型的实际类型。
+下面代码中，在方法tellToHush中调用beQuit是非法的，将会出现Value of type &#39;Dog&#39; has no member &#39;beQuiet&#39;错误信息：
+class Dog {  func bark() {  debugPrint(&amp;#34;woof&amp;#34;)  } }  class NoisyDog: Dog {  override func bark() {  super.bark()  }   func beQuiet() {  self.bark()  } }  func tellToHush(_ d: Dog) {  d.beQuiet() // compile error  } Casting Down 编译报错是因为Dog类型中没有beQuiet方法，该方法是子类NoisyDog特有的。而当将NoisyDog实例传给tellToHush时，实际上是可以使用beQuiet方法的。
+Swift中将一个父类转换为子类，这被称为Casting Down。下面代码转换时使用的是as！，这是在强迫编译器做它不愿意做的事情：
+func tellToHush(_ d: Dog) {  let d = d as! NoisyDog // may be crash   d.beQuiet() } 相当于告诉编译器，对象d可能是NoiseDog类型的，但是使用as!可能会发生崩溃，因为d不一定是NoiseDog类型。
+Type Testing and Casting Down Safely 也可以先使用关键字is来判断是否为NoiseDog类型，然后使用as!; 或者使用as?进行转换，或者使用if let ：
+func tellToHush(_ d: Dog) {  if d is NoisyDog {  let d = d as! NoisyDog  d.beQuiet()  } }  func tellToHush(_ d: Dog) {  let d = d as? NoisyDog // an Optional wrapping a NoisyDog   if d != nil {  d!.beQuiet()  } }  func tellToHush(_ d: Dog) {  let d = d as? NoisyDog // an Optional wrapping a NoisyDog   d?.beQuiet() }  func tellToHush(_ d: Dog) {  (d as? NoisyDog)?.beQuiet() }  func tellToHush(_ d: Dog) {  if let d = d as? NoisyDog {  d.beQuiet()  } } Type Testing and Casting Optionals 对于is, as!和as?操作符来说，它们对于Optional类型的工作方式与==比较操作符相同：会自动解包Optional对象，然后进行比较：
 func test() {  let dog: Dog? = NoisyDog()  if dog is NoisyDog {  debugPrint(&amp;#34;true&amp;#34;)  } } 在上面的例子中，is关键字首先检查dog是否为nil，如果dog不为nil，则检查dog包裹的类型是否为NoiseDog。
 可以对一个optional类型使用as!操作符。当as!操作符左边是一个optional类型时，Swift会先解包，然后再进行转换，下面这段代码是有效的：
-let dog1: Dog? = NoisyDog() let dog2 = dog1 as! NoisyDog dog2.beQuiet() 但是上面的代码是不安全的，如果dog1为nil或者执行Dog类型的实例，则dog1 as! NoisyDog转换失败而发生崩溃，使用as?会更安全：
-let dog1: Dog? = NoisyDog() let dog2 = dog1 as? NoisyDog dog2?.beQuiet() 在上面的代码中，as?首先会检查dog1是为nil，如果为nil则dog2的结果为nil。如果dog1不为nil，但不是NoisyDog的实例，则转换失败，dog2为nil，否则转换成功，dog2为NoisyDog?。
-使用强制转换的另一种方式是当Swift和Objective-C两种类型等效时进行值交换。例如，可以将Swift String 转换为Cocoa NSString，反之亦然。这不是因为一个是另一个的子类，而是因为它们是相互桥接的；在非常真实的意义上，它们是同一种类型。当从String转换为NSString时，不是向下转换，并且所做的事情并不危险，因此使用as运算符，没有感叹号或问号。
+let dog1: Dog? = NoisyDog() let dog2 = dog1 as! NoisyDog dog2.beQuiet() 但上面代码是不安全的，如果dog1为nil或者是Dog类型的实例，则dog1 as! NoisyDog会因为转换失败而发生崩溃。而使用as?会更安全：
+let dog1: Dog? = NoisyDog() let dog2 = dog1 as? NoisyDog dog2?.beQuiet() 上面代码中，as?首先会检查dog1是为nil，如果为nil则dog2的结果为nil。如果dog1不为nil，但不是NoisyDog类型的实例，则转换失败，dog2为nil，否则转换成功，dog2的类型为NoisyDog?。
+Bridging to Objective-C 使用类型转换的另一种方式是当Swift和Objective-C两种类型进行值交换时。例如，可以将Swift的String 类型转换为Cocoa的NSString，反之亦然。
+这不是因为其中一个是另一个的子类，而是因为它们是相互桥接的。实际上，它们是同一种类型。当从String转换为NSString时，不是向下转换，并且所做的事情并不危险，因此使用as运算符，没有感叹号或问号。
 一般来说，要从Swift类型过渡到桥接的Objective-C类型，需要显式转换（字符串文字常量除外。在下面的代码中，Swift的String类型和Objective-C的NSString等价，Int和NSNumber等价：
 let s : NSString = &amp;#34;howdy&amp;#34; // string literal to NSString let s2 = &amp;#34;howdy&amp;#34; let s3 : NSString = s2 as NSString // String to NSString let i : NSNumber = 1 as NSNumber // Int to NSNumber 上面的这种代码是相当人为的。在现实生活中，不会经常进行强制转换，因为Cocoa API会以Swift类型的形式呈现给出来。这是合法的，没有强制转换：
 let name = &amp;#34;MyNib&amp;#34; // Swift String  let vc = ViewController(nibName:name, bundle:nil) 类UIViewController来自于Cocoa，它的NibName属性是Objective-C的NSString类型，而不是Swift字符串。但不必通过强制转换来帮助Swift String name过桥，因为在Swift世界中，nibName:被输入为一个Swift String（实际上是一个可选字符串）：
