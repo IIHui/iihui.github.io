@@ -634,10 +634,10 @@ var one = 1  func changeOne() {  let two = 2   /// 内部函数  func sayTwo() {
 代码中的事物都有生命周期，实际上等同于它们的作用域。一个事物只要包含它的作用域存在，它就存在。上面代码中，只要文件存在（也就是程序运行时），变量one就存在，它是全局的。
 变量声明、函数声明和对象类型声明可以出现在任何的花括号中。一般来说，在更深层次声明的东西生命周期更短，对于下面这段代码：
 func silly() {  if true {  class Cat { 	// Cat实现...  }  var one = 1  one = one &#43; 1  } } 如果函数silly被调用，执行路径就会进入到if结构中。在这里，类Cat被声明，然后变量one被声明并生成，接着one = one &#43; 1被执行，最后作用域结束，此时类Cat和变量one都会自动消失。在它们短暂的生命中，类Cat和变量one对于代码的其它部分来说是完全不可见的。
-Object Members 在对象类型（类，结构体和枚举）的声明中，顶层声明的常量和变量被称为属性，顶层声明的函数叫做方法。在一个对象类型声明时，顶层声明的属性和方法统称对象成员。对象成员具有特殊的意义，因为它定义了可以向该对象发送的消息：
+Object Members 在对象类型（类，结构体和枚举）的声明中，顶层声明的常量和变量被称为属性，顶层声明的函数被称为方法。在一个对象类型声明时，顶层声明的属性和方法或其它对象统称对象成员。对象成员具有特殊意义，因为它定义了可以向该对象发送的消息：
 class Manny {  let name = &amp;#34;manny&amp;#34;   func sayName() {  debugPrint(name)  }   class Klass {  //  }   struct Struct {  //  }   enum Enum {  //  } } Namespaces 命名空间是指程序的一个命名区域。对于命名空间外的事物，如果想访问命名空间内的事物，就需要先使用该命名区域的名字，以破除该区域的障碍，否则就不能访问该命名区域内的事物。
 这是一件好事，因为这样允许相同名字的事物在不同的地方使用而不发生冲突。显然，命名空间和作用域是密切相关的概念。
-命名空间有助于解释在一个对象的顶层声明内嵌另一个对象声明的意义。下面的代码在Manny以内嵌的方式声明了Klass，它有效地 将Klass隐藏在Manny里面：
+命名空间有助于解释在一个对象的顶层声明内嵌另一个对象声明的重要意义。下面的代码在Manny以内嵌方式声明了Klass，这样有效地将Klass隐藏在Manny里面，因为Manny是一个命名空间：
 class Manny {  let name = &amp;#34;manny&amp;#34;   func sayName() {  // print name  debugPrint(name)  }   class Klass {  // 内部类实现  }   struct Struct {  // 内部结构体实现  }   enum Enum {  // 内部枚举实现  } } 在上面的代码中，类Manny是一个命名空间，类Klass声明在其中，在类Manny内部的代码可以直接看到类Klass，但在Manny之外的代码不能直接看到类Klass。
 如果想要看到在Manny内部声明的Klass，必须明确地使用命名空间的名字，以解除命名空间所代表的障碍。要做到这一点，需要先使用Manny的名字（它代表命名空间），然后是一个点，最后是Klass。简而言之，现在必须使用Manny.Klass来访问类Manny内部声明的Klass类：
 class Manny {  let name = &amp;#34;manny&amp;#34;   func sayName() {  debugPrint(name)  }   class Klass {  func test() {  // ...  }  }   struct Struct {  // 内部结构体实现  }   enum Enum {  // 内部枚举实现  } }  struct Moe {  let name = &amp;#34;moe&amp;#34;   func sayName() {  debugPrint(name)  }   class Klass {  func test() {  // 使用命名空间来访问Klass  Manny.Klass().test()  }  }   struct Struct {  // 内部结构体实现  }   enum Enum {  // 内部枚举实现  } } 命名空间本身不提供秘密和隐私，它只提供一种便利性。在上面的代码中，类Manny中定义了一个Klass类，同时在结构体Moe中也定义了一个Klass类。但它们并不冲突，因为它们是定义在不同的命名空间中的，如果有必要，可以使用Manny.Klass和Moe.Klass来进行区分。
