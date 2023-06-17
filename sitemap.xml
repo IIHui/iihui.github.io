@@ -1332,13 +1332,13 @@ class Dog {  class var whatDogsSay: String {  return &amp;#34;woof&amp;#34;  }  
 Swift遵循多态原则，正是多态将基于对象的语言变成了成熟的面向对象的语言。可以总结Swift的多态原则为以下两个：
 替换原则：如果在某个地方期望的是某种类型的对象，但实际的对象类型可能是该类型的一个子类。下面代码中，变量dog虽然声明为Dog类型，但是赋值给它是子类NoisyDog的实例：
 class Dog {  // }  class NoisyDog: Dog {  // }  let dog: Dog = NoisyDog() 内部一致原则：一个对象的实际类型是其内部性质的问题，与该对象如何被引用无关。也就是说，当一个消息被发送时，重要的不是该消息的接收者是如何通过这个或那个引用指向，重要的是消息接收者实际上是什么类型。
-class Dog {  // }  class NoisyDog: Dog {  // }  let dog: Dog = NoisyDog() 替换原则说明上面最后一行代码是合法的。内部一致性原则说明，即使dog变量声明为Dog类型，但它指向的是NoiseDog实例。
-下面代码告诉我们内部一致原则是如何体现的。虽然在tellToBark函数中期望的参数类型为Dog，但调用时实际传递的是NoisyDog类型实例，因此调用bark方法时，实际调用的是NoisyDog的bark方法：
+class Dog {  // }  class NoisyDog: Dog {  // }  let dog: Dog = NoisyDog() 替换原则说明上面最后一行代码是合法的。内部一致性原则说明，即使dog变量声明为Dog类型，但它指向的对象是NoiseDog实例。
+下面代码能告诉我们内部一致原则是如何体现的。虽然在tellToBark函数中期望的参数类型为Dog，但调用时实际传递的是NoisyDog类型实例，因此调用bark方法时，实际调用的是NoisyDog的bark方法：
 class Dog {  func bark() {  debugPrint(&amp;#34;woof&amp;#34;)  } }  class NoisyDog: Dog {  override func bark() {  for _ in 1...3 {  super.bark()  }  } }  func tellToBark(_ d: Dog) {  d.bark() }  var nd = NoisyDog() tellToBark(nd) // woof woof woof 关键字self表示当前这个实例。关键词self的含义是多态性的另一个重要体现。self的含义取决于实例的实际类型，即使self这个词出现在父类的代码中。
 下面代码中，在Dog中的speak方法中使用self调用了bark方法，因为NoiseDog继承自Dog，所以也继承了speak方法，又因为它覆写了bark，所以speak中调用的bark变成了NosieDog中的bark方法：
-class Dog {  func bark() {  debugPrint(&amp;#34;woof&amp;#34;)  }   func speak() {  // 关键字self具有多态性  self.bark()  } }  class NoisyDog: Dog {  override func bark() {  for _ in 1...3 {  super.bark()  }  } } let nd = NoisyDog() nd.speak() // woof woof woof 多态对于可选类型也是适用的。假设有一个Optional类型的引用，包裹着Dog。我们已经知道可以给它赋值为Dog的实例，也可以赋值为NoisyDog的实例：
+class Dog {  func bark() {  debugPrint(&amp;#34;woof&amp;#34;)  }   func speak() {  // 关键字self具有多态性  self.bark()  } }  class NoisyDog: Dog {  override func bark() {  for _ in 1...3 {  super.bark()  }  } } let nd = NoisyDog() nd.speak()  // 打印结果 woof woof woof 多态对于可选类型也是适用的。假设有一个Dog类型的Optional引用，我们已经知道可以给它赋值为Dog的实例，也可以赋值为NoisyDog的实例：
 var dog : Dog? dog = Dog() dog = NoisyDog() dog = Optional(NoisyDog()) 利用多态性，可以利用子类的优势以增加现有类的力量，也可以定制现有类。这对于iOS编程来说非常重要，因为多数类是定义在Cocoa中，这些类并不属于我们。例如，我们通常继承UIViewController，形成新的子类。
-多态性很酷，但从总体上看，它也是比较慢的，因为它需要动态调度，这意味着编译器不能进行某些优化，而且runtime必须考虑给类实例的信息意味着什么。可以通过声明一个类或一个类成员为final或private来减少对动态调度的需求。或者使用一个结构，结构体不需要动态调度。
+多态性很酷，但从总体上看，它也是比较慢的，因为它需要动态调度，这意味着编译器不能进行某些优化，而且runtime必须考虑给类实例的消息意味着什么。可以通过声明一个类或一个类成员为final或private来减少对动态调度的需求。或者使用一个结构体，因为结构体不需要动态调度。
 Casting Swift是一种严格类型的语言，允许向对象引用发送的消息有严格的限制，取决于引用声明时的类型。但是，多态的内部一致性原则说明，一个对象可能有一个不同于其引用声明的类型的实际类型。
 下面代码中，在方法tellToHush中调用beQuit是非法的，将会出现Value of type &#39;Dog&#39; has no member &#39;beQuiet&#39;错误信息：
 class Dog {  func bark() {  debugPrint(&amp;#34;woof&amp;#34;)  } }  class NoisyDog: Dog {  override func bark() {  super.bark()  }   func beQuiet() {  self.bark()  } }  func tellToHush(_ d: Dog) {  d.beQuiet() // compile error  } Casting Down 编译报错是因为Dog类型中没有beQuiet方法，该方法是子类NoisyDog特有的。而当将NoisyDog实例传给tellToHush时，实际上是可以使用beQuiet方法的。
