@@ -1351,11 +1351,11 @@ func tellToHush(_ d: Dog) {  if d is NoisyDog {  let d = d as! NoisyDog  d.beQui
 func tellToHush(_ d: Dog) {  let d = d as? NoisyDog // an Optional wrapping a NoisyDog   if d != nil {  d!.beQuiet()  } } 上面代码看起来比之前并没有更简洁，可以使用?来调用optional类型的方法:
 func tellToHush(_ d: Dog) {  let d = d as? NoisyDog // an Optional wrapping a NoisyDog   d?.beQuiet() } 或者将上面代码合并为一行：
 func tellToHush(_ d: Dog) {  (d as? NoisyDog)?.beQuiet() } 另一种方式是使用if let或if var接受转换后的结果，然后再调用对应的方法：
-func tellToHush(_ d: Dog) {  if let d = d as? NoisyDog {  d.beQuiet()  } } Type Testing and Casting Optionals 对于is, as!和as?操作符来说，它们对于Optional类型的工作方式与==比较操作符相同：会自动解包Optional对象，然后进行比较：
-func test() {  let dog: Dog? = NoisyDog()  if dog is NoisyDog {  debugPrint(&amp;#34;true&amp;#34;)  } } 在上面的例子中，is关键字首先检查dog是否为nil，如果dog不为nil，则检查dog包裹的类型是否为NoiseDog。
+func tellToHush(_ d: Dog) {  if let d = d as? NoisyDog {  d.beQuiet()  } } Type Testing and Casting Optionals 对于is, as!和as?操作符来说，它们对于Optional类型的工作方式与==比较操作符相同。都会先检查是否为nil，如果不为nil则自动解包Optional对象，然后进行比较：
+func test() {  let dog: Dog? = NoisyDog()  if dog is NoisyDog {  debugPrint(&amp;#34;true&amp;#34;)  } } 在上面的例子中，is关键字首先检查dog是否为nil。如果dog为nil，则直接返回false。如果dog不为nil，则检查dog包裹的类型是否为NoiseDog。
 可以对一个optional类型使用as!操作符。当as!操作符左边是一个optional类型时，Swift会先解包，然后再进行转换，下面这段代码是有效的：
 let dog1: Dog? = NoisyDog() let dog2 = dog1 as! NoisyDog dog2.beQuiet() 但上面代码是不安全的，如果dog1为nil或者是Dog类型的实例，则dog1 as! NoisyDog会因为转换失败而发生崩溃。而使用as?会更安全：
-let dog1: Dog? = NoisyDog() let dog2 = dog1 as? NoisyDog dog2?.beQuiet() 上面代码中，as?首先会检查dog1是为nil，如果为nil则dog2的结果为nil。如果dog1不为nil，但不是NoisyDog类型的实例，则转换失败，dog2为nil，否则转换成功，dog2的类型为NoisyDog?。
+let dog1: Dog? = NoisyDog() let dog2 = dog1 as? NoisyDog dog2?.beQuiet() 上面代码中，as?首先会检查dog1是为nil，如果为nil则dog2的结果为nil。如果dog1不为nil，但不是NoisyDog类型的实例，则转换失败，dog2为nil。否则，转换成功，dog2的类型为NoisyDog?。
 Bridging to Objective-C 类型转换的另一种方式是当Swift和Objective-C两种类型进行值交换时。例如，可以将Swift的String 类型转换为Cocoa的NSString，反之亦然。
 这不是因为其中一个是另一个的子类，而是因为它们是相互桥接的。实际上，它们是同一种类型。当从String转换为NSString时，不是向下转换，并且所做的事情并不危险，因此使用as运算符，没有感叹号或问号。
 一般来说，要从Swift类型过渡到桥接的Objective-C类型，需要进行显式转换（字符串文字常量除外。下面代码中，Swift的String类型和Objective-C的NSString等价，Int和NSNumber等价：
