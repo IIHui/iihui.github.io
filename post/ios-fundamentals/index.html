@@ -241,7 +241,7 @@ code.has-jax {
     <i class="fa fa-file-word-o"></i>
 </span>
 <span class="post-meta-item-text">字数: </span>
-<span class="leancloud-visitors-count">81206</span>
+<span class="leancloud-visitors-count">81191</span>
 &nbsp; | &nbsp;
 <span class="post-meta-item-icon">
     <i class="fa fa-coffee"></i>
@@ -4963,15 +4963,18 @@ code.has-jax {
 </span></span><span style="display:flex;"><span>ud.<span style="color:#66d9ef">set</span>(s, forKey: <span style="color:#e6db74">&#34;greeting&#34;</span>)
 </span></span><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span><span style="color:#75715e">// open func set(_ value: Any?, forKey defaultName: String)</span>
-</span></span></code></pre></div><p>反过来说，有可能从<code>Objective-C</code>收到一个值，而<code>Swift</code>并不了解这个值的真正底层类型。在这种情况下，你可能希望显式转换为底层类型：</p>
+</span></span></code></pre></div><p>反过来说，有可能收到一个<code>Objective-C</code>的值，而<code>Swift</code>对这个值的真正底层类型一无所知。在这种情况下，可能希望显式转换为底层类型：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span><span style="color:#66d9ef">let</span> ud = UserDefaults.standard 
 </span></span><span style="display:flex;"><span><span style="color:#66d9ef">let</span> test = ud.object(forKey:<span style="color:#e6db74">&#34;greeting&#34;</span>) <span style="color:#66d9ef">as</span>! String
-</span></span></code></pre></div><p>当调用<code>ud.object(forKey:)</code>时，<code>Swift</code>并不知道真正的底层类型信息，因为结果是一个<code>Any</code>（实际上是一个包裹<code>Any</code>的<code>Optional</code>）。但是我们知道这个特定的调用应该产生一个字符串&ndash;因为那是一开始就输入的东西。所以我们可以把这个值强行转换为一个字符串&ndash;而且它还能工作。然而，如果<code>ud.object(forKey: &quot;greeting&quot;)</code>不是一个字符串（或者它是<code>nil</code>），就会发生崩溃。如果你不确定你的立场，为了安全起见，使用<code>is</code>或<code>as?</code>。</p>
+</span></span></code></pre></div><p>当调用<code>ud.object(forKey:)</code>时，<code>Swift</code>并不知道真正的底层类型信息，因为结果是一个<code>Any</code>（实际上是一个包裹<code>Any</code>的<code>Optional</code>）。因为事先知道这个特定的调用应该产生一个字符串，所以可以把这个值强行转换为一个字符串。</p>
+<p>但是，如果<code>ud.object(forKey: &quot;greeting&quot;)</code>不是一个字符串（或者它是<code>nil</code>），就会发生崩溃。如果不确定，为了安全起见，应当使用<code>is</code>或<code>as?</code>。</p>
 <h2 id="type-references">Type References</h2>
-<p>有时我们获取到了一个实例，此时并知道这个实例的类型，可能只是出于调试目的将其类型记录到控制台，或者可能需要使用类型作为值。此时，可以使用全局函数<code>type(of:)</code>：</p>
+<h3 id="from-instance-to-type">From Instance to Type</h3>
+<p>有时我们获取到了一个实例，但并知道这个实例的类型。可能是出于调试目的将其类型打印到控制台，或者可能需要使用类型作为值。此时，可以使用全局函数<code>type(of:)</code>：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span><span style="color:#66d9ef">let</span> dogTest: Dog = NoisyDog()
 </span></span><span style="display:flex;"><span>debugPrint(type(of: dogTest)) <span style="color:#75715e">// xxx.NoisyDog</span>
-</span></span></code></pre></div><p>对于一个实例来说，能够引用它自己的类型尤为重要。通常，<font color=LightSeaGreen>这是为了向该类型发送消息</font>。例如，假设一个实例想要向它的类发送一个类消息。在前面的例子中，<code>Dog</code>实例方法通过向<code>Dog</code>类型发送消息来获取<code>Dog</code>类属性，实际上就是使用<code>Dog</code>这个词：</p>
+</span></span></code></pre></div><h3 id="from-self-to-type">From self to Type</h3>
+<p>对于一个实例来说，能够引用它自己的类型尤为重要。通常，<font color=LightSeaGreen>这是为了向该类型发送消息</font>。例如，假设一个实例想要向它的类发送一个类消息。在前面的例子中，<code>Dog</code>实例方法通过向<code>Dog</code>类型发送消息来获取<code>Dog</code>类属性，实际上就是使用<code>Dog</code>这个词：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span><span style="color:#66d9ef">class</span> <span style="color:#a6e22e">Dog</span> {
 </span></span><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">var</span> whatDogsSay: String {
@@ -4982,7 +4985,7 @@ code.has-jax {
 </span></span><span style="display:flex;"><span>        debugPrint(Dog.whatDogsSay)
 </span></span><span style="display:flex;"><span>    }
 </span></span><span style="display:flex;"><span>}
-</span></span></code></pre></div><p>表达式<code>Dog.whatDogsSay</code>看起来笨拙并且不灵活，它在一个类型当中，按理说应该知道它是什么。可以使用关键字<code>Self</code>（首字母大写大）来引用当前类型——<code>self</code>的类型:</p>
+</span></span></code></pre></div><p>表达式<code>Dog.whatDogsSay</code>看起来笨拙并且不灵活，为什么我们需要硬编码。它在一个类型当中，按理说应该知道自己是什么类型。可以使用关键字<code>Self</code>（首字母大写）来引用当前类型——<code>self</code>（首字母小写）的类型:</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span><span style="color:#66d9ef">class</span> <span style="color:#a6e22e">Dog</span> {
 </span></span><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">var</span> whatDogsSay: String {
@@ -4993,7 +4996,8 @@ code.has-jax {
 </span></span><span style="display:flex;"><span>        debugPrint(<span style="color:#66d9ef">Self</span>.whatDogsSay)
 </span></span><span style="display:flex;"><span>    }
 </span></span><span style="display:flex;"><span>}
-</span></span></code></pre></div><p>在代码中使用<code>Self</code>而不是具体的类型名字，不仅是因为更简单，而且它更强大，<font color=red>因为<code>Self</code>和<code>self</code>一样，也遵循多态性</font>。在下面的代码中，当<code>NoisyDog</code>类型的实例调用<code>bark</code>时，它的<code>Self</code>就是<code>NoisyDog</code>。因此，取到的<code>whatDogsSay</code>就是<code>&quot;woof woof woof&quot;</code>。</p>
+</span></span></code></pre></div><p>在代码中使用<code>Self</code>而不是具体的类型名字，不仅是因为更简单，而且它更强大，<font color=red>因为<code>Self</code>和<code>self</code>一样，也遵循多态性</font>。</p>
+<p>下面代码中，当<code>NoisyDog</code>类型的实例调用<code>bark</code>时，它的<code>Self</code>就是<code>NoisyDog</code>。因此，取到的<code>whatDogsSay</code>就是<code>&quot;woof woof woof&quot;</code>。</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span><span style="color:#66d9ef">class</span> <span style="color:#a6e22e">NoisyDog</span>: Dog {
 </span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">override</span> <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">var</span> whatDogsSay: String {
 </span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">return</span> <span style="color:#e6db74">&#34;woof woof woof&#34;</span>
@@ -5526,7 +5530,12 @@ code.has-jax {
             <li><a href="#bridging-to-objective-c">Bridging to Objective-C</a></li>
           </ul>
         </li>
-        <li><a href="#type-references">Type References</a></li>
+        <li><a href="#type-references">Type References</a>
+          <ul>
+            <li><a href="#from-instance-to-type">From Instance to Type</a></li>
+            <li><a href="#from-self-to-type">From self to Type</a></li>
+          </ul>
+        </li>
         <li><a href="#comparing-types">Comparing Types</a></li>
         <li><a href="#available属性">available属性</a></li>
         <li><a href="#xcframework">xcframework</a></li>
