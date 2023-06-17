@@ -1356,13 +1356,13 @@ func test() {  let dog: Dog? = NoisyDog()  if dog is NoisyDog {  debugPrint(&amp
 可以对一个optional类型使用as!操作符。当as!操作符左边是一个optional类型时，Swift会先解包，然后再进行转换，下面这段代码是有效的：
 let dog1: Dog? = NoisyDog() let dog2 = dog1 as! NoisyDog dog2.beQuiet() 但上面代码是不安全的，如果dog1为nil或者是Dog类型的实例，则dog1 as! NoisyDog会因为转换失败而发生崩溃。而使用as?会更安全：
 let dog1: Dog? = NoisyDog() let dog2 = dog1 as? NoisyDog dog2?.beQuiet() 上面代码中，as?首先会检查dog1是为nil，如果为nil则dog2的结果为nil。如果dog1不为nil，但不是NoisyDog类型的实例，则转换失败，dog2为nil。否则，转换成功，dog2的类型为NoisyDog?。
-Bridging to Objective-C 类型转换的另一种方式是当Swift和Objective-C两种类型进行值交换时。例如，可以将Swift的String 类型转换为Cocoa的NSString，反之亦然。
-这不是因为其中一个是另一个的子类，而是因为它们是相互桥接的。实际上，它们是同一种类型。当从String转换为NSString时，不是向下转换，并且所做的事情并不危险，因此使用as运算符，没有感叹号或问号。
-一般来说，要从Swift类型过渡到桥接的Objective-C类型，需要进行显式转换（字符串文字常量除外。下面代码中，Swift的String类型和Objective-C的NSString等价，Int和NSNumber等价：
-let s : NSString = &amp;#34;howdy&amp;#34; // string literal to NSString let s2 = &amp;#34;howdy&amp;#34; let s3 : NSString = s2 as NSString // String to NSString let i : NSNumber = 1 as NSNumber // Int to NSNumber 上面这种代码是相当人为的。在现实中，不会经常进行这种类型转换，因为Cocoa API会以Swift类型的形式呈现出来。下面代码这是合法的，没有类型转换：
-let name = &amp;#34;MyNib&amp;#34; // Swift String  let vc = ViewController(nibName:name, bundle:nil) 类UIViewController来自于Cocoa，它的NibName属性是Objective-C的NSString类型，而不是Swift字符串。但不必通过类型转换来帮助Swift 的String 类型name桥接，因为在Swift世界中，nibName:被认为是一个String类型（实际上是一个可选字符串）：
- public init(nibName nibNameOrNil: String?, bundle nibBundleOrNil: Bundle?) 下面代码中，不必通过类型转换来帮助Swift中的String类型进行桥接，因为set(_:forKey:)的第一个参数为Swift的Any类型（实际上是一个Optional包装的Any）：
-let ud = UserDefaults.standard let s = &amp;#34;howdy&amp;#34; ud.set(s, forKey: &amp;#34;greeting&amp;#34;) 反过来说，有可能从Objective-C收到一个值，而Swift并不了解这个值的真正底层类型。在这种情况下，你可能希望显式转换为底层类型：
+Bridging to Objective-C 类型转换的另一种方式是当Swift和Objective-C的两种类型相等时进行值互换。例如，可以将Swift的String 类型转换为Cocoa的NSString，反之亦然。
+这不是因为其中一个是另一个的子类，而是因为这些类型是相互桥接的。实际上，它们是同一种类型。当从String转换为NSString时，不是向下转换，并且所做的事情并不危险，因此使用as运算符，没有感叹号或问号。
+一般来说，要从Swift类型转换到桥接的Objective-C类型，需要进行显式转换（字符串文字常量除外）。下面代码中，Swift的String类型和Objective-C的NSString等价，Int和NSNumber等价：
+let s : NSString = &amp;#34;howdy&amp;#34; // string literal to NSString let s2 = &amp;#34;howdy&amp;#34; let s3 : NSString = s2 as NSString // String to NSString let i : NSNumber = 1 as NSNumber // Int to NSNumber 上面代码是相当人为的。在现实中，不会经常进行这种类型转换，因为Cocoa API会以Swift类型的形式呈现出来。下面代码是合法的，并没有显式进行类型转换：
+let name = &amp;#34;MyNib&amp;#34; // Swift String  let vc = ViewController(nibName:name, bundle:nil) 类UIViewController来自于Cocoa，它的NibName属性是Objective-C的NSString类型，并非不Swift字符串。但不必通过类型转换来帮助Swift 的String 类型name桥接，因为在Swift世界中，nibName:被认为是一个String类型（实际上是一个可选字符串）：
+ public init(nibName nibNameOrNil: String?, bundle nibBundleOrNil: Bundle?) 下面代码中，不必通过类型转换来对Swift中的String类型进行桥接，因为set(_:forKey:)的第一个参数为Swift的Any类型（实际上是一个Optional包装的Any）：
+let ud = UserDefaults.standard let s = &amp;#34;howdy&amp;#34; ud.set(s, forKey: &amp;#34;greeting&amp;#34;)  // open func set(_ value: Any?, forKey defaultName: String) 反过来说，有可能从Objective-C收到一个值，而Swift并不了解这个值的真正底层类型。在这种情况下，你可能希望显式转换为底层类型：
 let ud = UserDefaults.standard let test = ud.object(forKey:&amp;#34;greeting&amp;#34;) as! String 当调用ud.object(forKey:)时，Swift并不知道真正的底层类型信息，因为结果是一个Any（实际上是一个包裹Any的Optional）。但是我们知道这个特定的调用应该产生一个字符串&amp;ndash;因为那是一开始就输入的东西。所以我们可以把这个值强行转换为一个字符串&amp;ndash;而且它还能工作。然而，如果ud.object(forKey: &amp;quot;greeting&amp;quot;)不是一个字符串（或者它是nil），就会发生崩溃。如果你不确定你的立场，为了安全起见，使用is或as?。
 Type References 有时我们获取到了一个实例，此时并知道这个实例的类型，可能只是出于调试目的将其类型记录到控制台，或者可能需要使用类型作为值。此时，可以使用全局函数type(of:)：
 let dogTest: Dog = NoisyDog() debugPrint(type(of: dogTest)) // xxx.NoisyDog 对于一个实例来说，能够引用它自己的类型尤为重要。通常，这是为了向该类型发送消息。例如，假设一个实例想要向它的类发送一个类消息。在前面的例子中，Dog实例方法通过向Dog类型发送消息来获取Dog类属性，实际上就是使用Dog这个词：
