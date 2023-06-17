@@ -1340,12 +1340,18 @@ class Dog {  func bark() {  debugPrint(&amp;#34;woof&amp;#34;)  }   func speak()
 var dog : Dog? dog = Dog() dog = NoisyDog() dog = Optional(NoisyDog()) 利用多态性，可以利用子类的优势以增加现有类的力量，也可以定制现有类。这对于iOS编程来说非常重要，因为多数类是定义在Cocoa中，这些类并不属于我们。例如，我们通常继承UIViewController，形成新的子类。
 多态性很酷，但从总体上看，它也是比较慢的，因为它需要动态调度，这意味着编译器不能进行某些优化，而且runtime必须考虑给类实例的消息意味着什么。可以通过声明一个类或一个类成员为final或private来减少对动态调度的需求。或者使用一个结构体，因为结构体不需要动态调度。
 Casting Swift是一种严格类型的语言，允许向对象引用发送的消息有严格的限制，取决于引用声明时的类型。但是，多态的内部一致性原则说明，一个对象可能有一个不同于其引用声明的类型的实际类型。
-下面代码中，在方法tellToHush中调用beQuit是非法的，将会出现Value of type &#39;Dog&#39; has no member &#39;beQuiet&#39;错误信息：
+下面代码中，在方法tellToHush中调用beQuit是非法的。因为参数d被声明为Dog类型，将会出现Value of type &#39;Dog&#39; has no member &#39;beQuiet&#39;编译错误：
 class Dog {  func bark() {  debugPrint(&amp;#34;woof&amp;#34;)  } }  class NoisyDog: Dog {  override func bark() {  super.bark()  }   func beQuiet() {  self.bark()  } }  func tellToHush(_ d: Dog) {  d.beQuiet() // compile error  } Casting Down 编译报错是因为Dog类型中没有beQuiet方法，该方法是子类NoisyDog特有的。而当将NoisyDog实例传给tellToHush时，实际上是可以使用beQuiet方法的。
-Swift中将一个父类转换为子类，这被称为Casting Down。下面代码转换时使用的是as！，这是在强迫编译器做它不愿意做的事情：
+Swift中将一个父类转换为子类，这被称为Casting Down。下面代码转换时使用的是as！，这表明是在强迫编译器做它不愿意做的事情：
 func tellToHush(_ d: Dog) {  let d = d as! NoisyDog // may be crash   d.beQuiet() } 相当于告诉编译器，对象d可能是NoiseDog类型的，但是使用as!可能会发生崩溃，因为d不一定是NoiseDog类型。
-Type Testing and Casting Down Safely 也可以先使用关键字is来判断是否为NoiseDog类型，然后使用as!; 或者使用as?进行转换，或者使用if let ：
-func tellToHush(_ d: Dog) {  if d is NoisyDog {  let d = d as! NoisyDog  d.beQuiet()  } }  func tellToHush(_ d: Dog) {  let d = d as? NoisyDog // an Optional wrapping a NoisyDog   if d != nil {  d!.beQuiet()  } }  func tellToHush(_ d: Dog) {  let d = d as? NoisyDog // an Optional wrapping a NoisyDog   d?.beQuiet() }  func tellToHush(_ d: Dog) {  (d as? NoisyDog)?.beQuiet() }  func tellToHush(_ d: Dog) {  if let d = d as? NoisyDog {  d.beQuiet()  } } Type Testing and Casting Optionals 对于is, as!和as?操作符来说，它们对于Optional类型的工作方式与==比较操作符相同：会自动解包Optional对象，然后进行比较：
+Type Testing and Casting Down Safely 使用as!是强制编译器做类型转换，它也是一个警告，警告我们这种转换随时会发生崩溃，因为待转换的实例可能不是目标类型。
+Casting down是告诉编译器放松其严格类型检查并让我们发号施令的一种方式。也可以先使用关键字is来判断是否为NoiseDog类型，然后使用as!; 或者使用as?进行转换，或者使用if let 。
+func tellToHush(_ d: Dog) {  if d is NoisyDog {  let d = d as! NoisyDog  d.beQuiet()  } } 上面代码先使用关键字is来判断是否为NoisyDog类型，然后再进行类型转换，这样就保证了转换一定成功。
+另一种可选的方式，是使用as?操作符，这种casts down有失败的可能，一旦转换失败返回的结果为nil：
+func tellToHush(_ d: Dog) {  let d = d as? NoisyDog // an Optional wrapping a NoisyDog   if d != nil {  d!.beQuiet()  } } 上面代码看起来比之前并没有更简洁，可以使用?来调用optional类型的方法:
+func tellToHush(_ d: Dog) {  let d = d as? NoisyDog // an Optional wrapping a NoisyDog   d?.beQuiet() } 或者将上面代码合并为一行：
+func tellToHush(_ d: Dog) {  (d as? NoisyDog)?.beQuiet() } 另一种方式是使用if let或if var接受转换后的结果，然后再调用对应的方法：
+func tellToHush(_ d: Dog) {  if let d = d as? NoisyDog {  d.beQuiet()  } } Type Testing and Casting Optionals 对于is, as!和as?操作符来说，它们对于Optional类型的工作方式与==比较操作符相同：会自动解包Optional对象，然后进行比较：
 func test() {  let dog: Dog? = NoisyDog()  if dog is NoisyDog {  debugPrint(&amp;#34;true&amp;#34;)  } } 在上面的例子中，is关键字首先检查dog是否为nil，如果dog不为nil，则检查dog包裹的类型是否为NoiseDog。
 可以对一个optional类型使用as!操作符。当as!操作符左边是一个optional类型时，Swift会先解包，然后再进行转换，下面这段代码是有效的：
 let dog1: Dog? = NoisyDog() let dog2 = dog1 as! NoisyDog dog2.beQuiet() 但上面代码是不安全的，如果dog1为nil或者是Dog类型的实例，则dog1 as! NoisyDog会因为转换失败而发生崩溃。而使用as?会更安全：
