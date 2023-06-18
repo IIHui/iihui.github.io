@@ -241,7 +241,7 @@ code.has-jax {
     <i class="fa fa-file-word-o"></i>
 </span>
 <span class="post-meta-item-text">字数: </span>
-<span class="leancloud-visitors-count">81430</span>
+<span class="leancloud-visitors-count">81436</span>
 &nbsp; | &nbsp;
 <span class="post-meta-item-icon">
     <i class="fa fa-coffee"></i>
@@ -5113,34 +5113,35 @@ code.has-jax {
 <p>声明一个对象类型是可以接受的。如在声明一个变量或参数类型时&ndash;使用点标记符与类型的名称和关键字<code>Type</code>。</p>
 </li>
 <li>
-<p>使用一个对象类型作为一个值。比如当把一个类型赋值给一个变量或作为一个参数传递时，把对象交给<code>type(of:)</code>，或者用类型的名称和关键字<code>self</code>来点标记。(在后一种情况下，类型的名称可能是<code>Self</code>，在这种情况下，可以使用<code>Self.self</code>)。</p>
+<p>使用一个对象类型作为一个值。比如当把一个对象类型赋值给一个变量或作为一个参数传递时，把对象交给<code>type(of:)</code>；或者用类型的名称和关键字<code>self</code>来点标记。(在后一种情况下，类型的名称可能是<code>Self</code>，在这种情况下，可以使用<code>Self.self</code>)。</p>
 </li>
 </ul>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">dogTypeExpecter</span>(<span style="color:#66d9ef">_</span> whatType: NewDog.<span style="color:#66d9ef">Type</span>) {
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">dogTypeExpecter</span>(<span style="color:#66d9ef">_</span> whatType: Dog.<span style="color:#66d9ef">Type</span>) {
 </span></span><span style="display:flex;"><span>    debugPrint(whatType)
 </span></span><span style="display:flex;"><span>}
 </span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span>dogTypeExpecter(NewDog.<span style="color:#66d9ef">self</span>)
-</span></span><span style="display:flex;"><span><span style="color:#66d9ef">let</span> dog = NewDog(name: <span style="color:#e6db74">&#34;test&#34;</span>)
+</span></span><span style="display:flex;"><span>dogTypeExpecter(Dog.<span style="color:#66d9ef">self</span>)
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">let</span> dog = Dog(name: <span style="color:#e6db74">&#34;test&#34;</span>)
 </span></span><span style="display:flex;"><span>dogTypeExpecter(type(of: dog))
-</span></span><span style="display:flex;"><span>dogTypeExpecter(NewNoisyDog.<span style="color:#66d9ef">self</span>)
-</span></span></code></pre></div><p>为了更实际地说明问题，将把<code>Dog</code>工厂方法重写为一个全局工厂函数，它将接受一个<code>Dog</code>类型作为参数，并从该类型创建一个实例。可以使用一个类型的变量引用（元类型）来实例化该类型，但不能只是在一个变量引用上加上括号，必须使用<code>init</code>方法：</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">dogMakerAndNamer</span>(<span style="color:#66d9ef">_</span> whatType: NewDog.<span style="color:#66d9ef">Type</span>) -&gt; NewDog {
-</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">let</span> d = whatType(name: <span style="color:#e6db74">&#34;Fido&#34;</span>) <span style="color:#75715e">// compile error: Initializing from a metatype value must reference &#39;init&#39; explicitly</span>
+</span></span><span style="display:flex;"><span>dogTypeExpecter(NoisyDog.<span style="color:#66d9ef">self</span>)
+</span></span></code></pre></div><p>为了更实际地说明这一点，将把<code>Dog</code>类中的工厂方法重写为一个全局工厂函数，它将接受一个<code>Dog</code>类型作为参数，并从该类型创建一个实例。可以使用一个类型的变量引用（元类型）来实例化该类型，但不能只是在一个变量引用上加上括号，必须显式使用<code>init</code>方法：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">dogMakerAndNamer</span>(<span style="color:#66d9ef">_</span> whatType: Dog.<span style="color:#66d9ef">Type</span>) -&gt; Dog {
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">let</span> d = whatType(name: <span style="color:#e6db74">&#34;Fido&#34;</span>) 
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">// compile error: Initializing from a metatype value must reference &#39;init&#39; explicitly</span>
 </span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">return</span> d
 </span></span><span style="display:flex;"><span>}
 </span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">dogMakerAndNamer</span>(<span style="color:#66d9ef">_</span> whatType: NewDog.<span style="color:#66d9ef">Type</span>) -&gt; NewDog {
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">dogMakerAndNamer</span>(<span style="color:#66d9ef">_</span> whatType: Dog.<span style="color:#66d9ef">Type</span>) -&gt; Dog {
 </span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">let</span> d = whatType.<span style="color:#66d9ef">init</span>(name: <span style="color:#e6db74">&#34;Fido&#34;</span>)
 </span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">return</span> d
 </span></span><span style="display:flex;"><span>}
 </span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span><span style="color:#66d9ef">let</span> d11 = dogMakerAndNamer(NewDog.<span style="color:#66d9ef">self</span>) <span style="color:#75715e">// d11 is a Dog named Fido </span>
-</span></span><span style="display:flex;"><span><span style="color:#66d9ef">let</span> d12 = dogMakerAndNamer(NewNoisyDog.<span style="color:#66d9ef">self</span>) <span style="color:#75715e">// d12 is a NoisyDog named Fido</span>
-</span></span></code></pre></div><p>不幸的是，即使底层的真正类型是<code>NewNoisyDog</code>，全局工厂函数<code>dogMakerAndNamer</code>返回的也是一个<code>NewDog</code>对象。因为是全局函数，这里不能使用<code>Self</code>来解决这个问题，但是可以使用泛型。</p>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">let</span> d11 = dogMakerAndNamer(Dog.<span style="color:#66d9ef">self</span>) <span style="color:#75715e">// d11 is a Dog named Fido </span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">let</span> d12 = dogMakerAndNamer(NoisyDog.<span style="color:#66d9ef">self</span>) <span style="color:#75715e">// d12 is a NoisyDog named Fido</span>
+</span></span></code></pre></div><p>不幸的是，即使底层的真正类型是<code>NoisyDog</code>，全局工厂函数<code>dogMakerAndNamer</code>返回的也是一个<code>Dog</code>对象。因为是全局函数，这里不能使用<code>Self</code>来解决这个问题，但可以使用泛型。</p>
 <ul>
-<li><code>type(of:)</code>应用于一个对象：对象的多态（内部）类型，与引用的类型无关。</li>
-<li><code>Self</code>：在方法主体中，或者在方法声明中指定返回类型时，这个类型或这个实例的类型，多态性。</li>
+<li><code>type(of:)</code>应用于一个对象：对象的多态（内部）类型，与引用声明的类型无关。</li>
+<li><code>Self</code>：在一个方法主中，或者在方法声明中指定返回类型时，这个类型或这个实例的类型，具有多态性。</li>
 <li><code>.Type</code>：附加在类型声明中的一个类型上，以指定该类型本身（或一个子类型）被期望。</li>
 <li><code>.self</code>：发送给一个类型以生成一个元类型，适合于传递一个类型（<code>.Type</code>）被期望的地方。</li>
 </ul>
