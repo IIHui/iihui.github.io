@@ -241,7 +241,7 @@ code.has-jax {
     <i class="fa fa-file-word-o"></i>
 </span>
 <span class="post-meta-item-text">字数: </span>
-<span class="leancloud-visitors-count">82798</span>
+<span class="leancloud-visitors-count">83025</span>
 &nbsp; | &nbsp;
 <span class="post-meta-item-icon">
     <i class="fa fa-coffee"></i>
@@ -5191,7 +5191,8 @@ code.has-jax {
 </span></span><span style="display:flex;"><span><span style="color:#66d9ef">let</span> b = Bee() 
 </span></span><span style="display:flex;"><span>tellToFly(b) <span style="color:#75715e">// compile error：Argument type &#39;Bee&#39; does not conform to expected type &#39;Flier&#39;</span>
 </span></span></code></pre></div><h3 id="adopting-a-library-protocol">Adopting a Library Protocol</h3>
-<p><code>Swift</code>标准库中已经充满了协议，可以让自定义的一个对象类型采用一个协议，看看协议的力量为我们带来了什么。<code>CustomStringConvertible</code>协议要求实现<code>description</code>属性，如果一种类型遵循了<code>CustomStringConvertible</code>协议，就会发生一件奇妙的事情：当这种类型的实例被用于字符串插值或与打印（或控制台中的<code>po</code>命令，或在字符串初始化器<code>init(descripbing:)</code>中）时，它的描述属性值会自动用来表示它。</p>
+<p><code>Swift</code>标准库中已经充满了协议，可以先让自定义的一个对象类型遵循一个标准库中的协议，看看协议的力量为我们带来了什么。</p>
+<p>其中<code>CustomStringConvertible</code>协议要求实现<code>description</code>属性，如果一种类型遵循了<code>CustomStringConvertible</code>协议，就会发生一件奇妙的事情：当这种类型的实例被用于字符串插值或与打印（或控制台中的<code>po</code>命令，或在字符串初始化器<code>init(descripbing:)</code>中）时，它的描述属性值会自动用来表示它。</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span><span style="color:#66d9ef">enum</span> <span style="color:#a6e22e">Filter</span>: String, CustomStringConvertible {
 </span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">case</span> albums = <span style="color:#e6db74">&#34;Albums&#34;</span>
 </span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">case</span> playlists = <span style="color:#e6db74">&#34;Playlists&#34;</span>
@@ -5202,7 +5203,7 @@ code.has-jax {
 </span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">return</span> <span style="color:#66d9ef">self</span>.rawValue
 </span></span><span style="display:flex;"><span>    }
 </span></span><span style="display:flex;"><span>}
-</span></span></code></pre></div><p>上面代码中，已经明确了<code>Filter</code>遵循<code>CustomStringConvertible</code>协议，也实现了<code>description</code>属性。现在也可以把一个<code>Filter</code>插到一个字符串中，或者交给<code>print</code>，或者强迫它变成一个<code>String</code>，它的<code>description</code>将被自动使用：</p>
+</span></span></code></pre></div><p>上面代码中，已经明确了<code>Filter</code>遵循<code>CustomStringConvertible</code>协议，也实现了<code>description</code>属性。现在也可以把一个<code>Filter</code>插到一个字符串中，或者传递给<code>print</code>函数，或者强迫它变成一个<code>String</code>，这时它的<code>description</code>将被自动使用：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span><span style="color:#66d9ef">let</span> type1 = Filter.albums  
 </span></span><span style="display:flex;"><span>debugPrint(<span style="color:#e6db74">&#34;It is </span><span style="color:#e6db74">\(</span>type1<span style="color:#e6db74">)</span><span style="color:#e6db74">&#34;</span>) <span style="color:#75715e">// It is Albums  </span>
 </span></span><span style="display:flex;"><span>debugPrint(type1) <span style="color:#75715e">// Albums  </span>
@@ -5213,6 +5214,23 @@ code.has-jax {
 </span></span><span style="display:flex;"><span><span style="color:#e6db74">&#34;It is Albums&#34;</span>
 </span></span><span style="display:flex;"><span>Albums
 </span></span><span style="display:flex;"><span><span style="color:#e6db74">&#34;Albums&#34;</span>
+</span></span></code></pre></div><h3 id="protocol-type-testing-and-casting">Protocol Type Testing and Casting</h3>
+<p>当声明的类型是一个协议类型时，在对象的声明类型和它的真实类型之间进行调解的操作符是有效的。给定一个同时被<code>Bird</code>和<code>Bee</code>采用的协议<code>Flier</code>，可以使用<code>is</code>操作符来测试一个特定的<code>Flier</code>是否真的是<code>Bird</code>：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">isBird</span>(<span style="color:#66d9ef">_</span> f: Flier) -&gt; Bool {
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">return</span> f <span style="color:#66d9ef">is</span> Bird
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p>类似的，<code>as!</code>和<code>as?</code>也可以用于一个声明为协议类型的对象转换为其真实类型。能够这样做是很重要的，因为遵循协议的对象通常能够接收协议不能接收的消息：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span><span style="color:#66d9ef">struct</span> <span style="color:#a6e22e">Bird</span>: Flier {
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">func</span> <span style="color:#a6e22e">fly</span>() {
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">func</span> <span style="color:#a6e22e">getWorm</span>() {
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">tellGetWorm</span>(f: Flier) {
+</span></span><span style="display:flex;"><span>    (f <span style="color:#66d9ef">as</span>? Bird)?.getWorm()
+</span></span><span style="display:flex;"><span>}
 </span></span></code></pre></div><h2 id="available属性">available属性</h2>
 <p>有个类涉及到的属性只能在<code>iOS 13.0</code>以上系统使用，为了将该类定义为其它类的属性，必须加上<code>available</code>和<code>lazy</code>：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span>@available(iOS <span style="color:#ae81ff">13.0</span>, <span style="color:#f92672">*</span>)
@@ -5608,6 +5626,7 @@ code.has-jax {
         <li><a href="#protocols">Protocols</a>
           <ul>
             <li><a href="#adopting-a-library-protocol">Adopting a Library Protocol</a></li>
+            <li><a href="#protocol-type-testing-and-casting">Protocol Type Testing and Casting</a></li>
           </ul>
         </li>
         <li><a href="#available属性">available属性</a></li>
