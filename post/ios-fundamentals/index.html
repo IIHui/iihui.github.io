@@ -241,13 +241,13 @@ code.has-jax {
     <i class="fa fa-file-word-o"></i>
 </span>
 <span class="post-meta-item-text">字数: </span>
-<span class="leancloud-visitors-count">81836</span>
+<span class="leancloud-visitors-count">82798</span>
 &nbsp; | &nbsp;
 <span class="post-meta-item-icon">
     <i class="fa fa-coffee"></i>
 </span>
 <span class="post-meta-item-text">阅读: </span>
-<span class="leancloud-visitors-count">164 分钟</span>
+<span class="leancloud-visitors-count">166 分钟</span>
 </span>
       </div>
     </header>
@@ -5164,7 +5164,56 @@ code.has-jax {
 <p>协议是表达其他不相关类型之间的共同点的一种方式。例如，一个<code>Bee</code>对象和一个<code>Bird</code>对象可能有共同的特征，因为<code>Bee</code>和<code>Bird</code>都能飞。因此，定义一个<code>Flier</code>类型可能是有用的。问题是：在什么意义上，<code>Bee</code>和<code>Bird</code>都可以是飞行者？</p>
 <p>一种可能的方式是利用类继承，如果<code>Bee</code>和<code>Bird</code>都是类，<code>Filer</code>可以是它们的父类。但是，可能有其它原因<code>Flier</code>不能成为<code>Bee</code>和<code>Bird</code>的父类。例如，<code>Bee</code>是一种昆虫，而<code>Bird</code>则不是。但是它们都有飞行的能力。我们需要一个以某种方式跨越类的层次结构的类型，将较远的类联系在一起。</p>
 <p>此外，<code>Bee</code>和<code>Bird</code>在<code>Swift</code>中有可能不是类，可能是结构体。为了解决这个问题，可以使用<code>Protocols</code>。<code>Protocols</code>在<code>Swift</code>中很重要，在<code>Swift</code>中的头文件中定义了超过60个协议。此外，<code>Objective-C</code>也有协议，<code>Swift</code>中的协议和<code>Objective-C</code>的协议大致相似，并不能与之互换。</p>
-<h2 id="available属性">available属性</h2>
+<p>一个协议也是一个对象类型，但是协议没有对象实例，因为协议不能被实例化。协议声明只是一个属性和方法的轻量级列表。属性没有值，方法也没有代码。</p>
+<p>一个 &ldquo;真正的&quot;对象类型可以正式宣布它属于一个协议类型，这被称为遵循协议。一个遵循协议的对象类型承诺要实现协议中列出的属性和方法。而且，它必须遵守这一承诺，这就是所谓的遵循协议。</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span><span style="color:#66d9ef">protocol</span> <span style="color:#a6e22e">Flier</span> {
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">func</span> <span style="color:#a6e22e">fly</span>()
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p>任何类型，例如<code>enum,struct,class</code>甚至另一个<code>protocol</code>可以遵循一个协议。只需要在声明的时候在冒号后面添加协议的名字:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span><span style="color:#66d9ef">struct</span> <span style="color:#a6e22e">Bird</span>:Flier {
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">func</span> <span style="color:#a6e22e">fly</span>() {
+</span></span><span style="display:flex;"><span>        debugPrint(<span style="color:#e6db74">&#34;bird fly&#34;</span>)
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p>协议给了我们另一个方式表示类型和子类型的概念，并且也适用于多态。基于替换原则，下面方法中，一个<code>Flier</code>可以是任何对象类型的实例，只要它遵循了<code>Flier</code>协议:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">tellToFly</span>(<span style="color:#66d9ef">_</span> f: Flier) {
+</span></span><span style="display:flex;"><span>    f.fly()
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p>遵循<code>Flier</code>协议的对象类型可能是<code>Bird</code>，也可能是其他什么东西，但我们不关注。如果一个类型遵循了<code>Flier</code>协议，那么它就可以用在任何期望是<code>Flier</code>的地方。</p>
+<p>此外，遵循了<code>Flier</code>协议的类型必须有一个<code>fly</code>方法，这样就能放心的调用该方法。相反，如果一个对象有<code>fly</code>方法，并不代表它自动的遵循了<code>Flier</code>协议。下面代码会出现编译错误：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span><span style="color:#66d9ef">struct</span> <span style="color:#a6e22e">Bee</span> {
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">func</span> <span style="color:#a6e22e">fly</span>() {
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">let</span> b = Bee() 
+</span></span><span style="display:flex;"><span>tellToFly(b) <span style="color:#75715e">// compile error：Argument type &#39;Bee&#39; does not conform to expected type &#39;Flier&#39;</span>
+</span></span></code></pre></div><h3 id="adopting-a-library-protocol">Adopting a Library Protocol</h3>
+<p><code>Swift</code>标准库中已经充满了协议，可以让自定义的一个对象类型采用一个协议，看看协议的力量为我们带来了什么。<code>CustomStringConvertible</code>协议要求实现<code>description</code>属性，如果一种类型遵循了<code>CustomStringConvertible</code>协议，就会发生一件奇妙的事情：当这种类型的实例被用于字符串插值或与打印（或控制台中的<code>po</code>命令，或在字符串初始化器<code>init(descripbing:)</code>中）时，它的描述属性值会自动用来表示它。</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span><span style="color:#66d9ef">enum</span> <span style="color:#a6e22e">Filter</span>: String, CustomStringConvertible {
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">case</span> albums = <span style="color:#e6db74">&#34;Albums&#34;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">case</span> playlists = <span style="color:#e6db74">&#34;Playlists&#34;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">case</span> podcasts = <span style="color:#e6db74">&#34;Podcasts&#34;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">case</span> books = <span style="color:#e6db74">&#34;Audiobooks&#34;</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">var</span> description: String {
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">return</span> <span style="color:#66d9ef">self</span>.rawValue
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p>上面代码中，已经明确了<code>Filter</code>遵循<code>CustomStringConvertible</code>协议，也实现了<code>description</code>属性。现在也可以把一个<code>Filter</code>插到一个字符串中，或者交给<code>print</code>，或者强迫它变成一个<code>String</code>，它的<code>description</code>将被自动使用：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span><span style="color:#66d9ef">let</span> type1 = Filter.albums  
+</span></span><span style="display:flex;"><span>debugPrint(<span style="color:#e6db74">&#34;It is </span><span style="color:#e6db74">\(</span>type1<span style="color:#e6db74">)</span><span style="color:#e6db74">&#34;</span>) <span style="color:#75715e">// It is Albums  </span>
+</span></span><span style="display:flex;"><span>debugPrint(type1) <span style="color:#75715e">// Albums  </span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">let</span> sde = String(describing: type1) <span style="color:#75715e">// Albums  </span>
+</span></span><span style="display:flex;"><span>debugPrint(sde)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">// 打印的结果</span>
+</span></span><span style="display:flex;"><span><span style="color:#e6db74">&#34;It is Albums&#34;</span>
+</span></span><span style="display:flex;"><span>Albums
+</span></span><span style="display:flex;"><span><span style="color:#e6db74">&#34;Albums&#34;</span>
+</span></span></code></pre></div><h2 id="available属性">available属性</h2>
 <p>有个类涉及到的属性只能在<code>iOS 13.0</code>以上系统使用，为了将该类定义为其它类的属性，必须加上<code>available</code>和<code>lazy</code>：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span>@available(iOS <span style="color:#ae81ff">13.0</span>, <span style="color:#f92672">*</span>)
 </span></span><span style="display:flex;"><span><span style="color:#66d9ef">class</span> <span style="color:#a6e22e">HapticManager</span> {
@@ -5556,7 +5605,11 @@ code.has-jax {
           </ul>
         </li>
         <li><a href="#comparing-types">Comparing Types</a></li>
-        <li><a href="#protocols">Protocols</a></li>
+        <li><a href="#protocols">Protocols</a>
+          <ul>
+            <li><a href="#adopting-a-library-protocol">Adopting a Library Protocol</a></li>
+          </ul>
+        </li>
         <li><a href="#available属性">available属性</a></li>
         <li><a href="#xcframework">xcframework</a></li>
       </ul>
