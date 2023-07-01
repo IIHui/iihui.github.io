@@ -241,7 +241,7 @@ code.has-jax {
     <i class="fa fa-file-word-o"></i>
 </span>
 <span class="post-meta-item-text">字数: </span>
-<span class="leancloud-visitors-count">84098</span>
+<span class="leancloud-visitors-count">84095</span>
 &nbsp; | &nbsp;
 <span class="post-meta-item-icon">
     <i class="fa fa-coffee"></i>
@@ -4138,12 +4138,12 @@ code.has-jax {
 </span></span><span style="display:flex;"><span>    }
 </span></span><span style="display:flex;"><span>}
 </span></span><span style="display:flex;"><span>rover.name = <span style="color:#e6db74">&#34;Rover&#34;</span> <span style="color:#75715e">// nothing in console</span>
-</span></span></code></pre></div><p>上面的<code>didSet</code>观察器没有执行，说明没有生成新的实例。如果显式地重新给<code>rover</code>赋值，就会调用<code>setter</code>观察器。但是，类实例的<font color=red><code>didSet</code>不会在仅改变了被<code>rover</code>指向<code>Dog</code>实例的一个属性而被调用</font>。</p>
-<p>值类型和引用类型之间的区别也可以在函数调用的参数中看到。当接收一个值类型的实例作为参数进入到函数体时，并在函数体内试图给这个实例属性赋值，将会出现编译错误：</p>
+</span></span></code></pre></div><p>上面的<code>didSet</code>观察器没有执行，说明没有生成新的实例。如果显式地重新给<code>rover</code>赋值，就会调用<code>setter</code>观察器。但是，类实例的<font color=red><code>didSet</code>不会在仅改变了一个属性而被调用</font>。</p>
+<p>值类型和引用类型之间的差异也可以在函数调用的参数看到。当接收一个值类型的实例作为参数进入到函数体时，并在函数体内试图给这个实例属性赋值，将会出现编译错误：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">digitChanger</span>(<span style="color:#66d9ef">_</span> d: Digit) { <span style="color:#75715e">// Digit is a struct</span>
 </span></span><span style="display:flex;"><span>    d.number = <span style="color:#ae81ff">42</span> <span style="color:#75715e">// compile error</span>
 </span></span><span style="display:flex;"><span>}
-</span></span></code></pre></div><p>因为函数参数默认是用<code>let</code>隐式声明的，又因为<code>Digit</code>是结构体，所以会出现编译错误：<code>Cannot assign to property: 'd' is a 'let' constant</code>。下面函数中，因为<code>Dog</code>是引用类型，所以<code>dog</code>能就地改变，下面代码不会出现编译报错：</p>
+</span></span></code></pre></div><p>这是因为函数参数默认是使用<code>let</code>隐式声明的，又因为<code>Digit</code>是结构体，所以在函数体改变结构体的属性时会出现编译错误：<code>Cannot assign to property: 'd' is a 'let' constant</code>。下面函数中，因为<code>Dog</code>是引用类型，所以<code>dog</code>能就地改变，不会出现编译报错：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">dogChanger</span>(<span style="color:#66d9ef">_</span> d: Dog) { <span style="color:#75715e">// Dog is a class</span>
 </span></span><span style="display:flex;"><span>    d.name = <span style="color:#e6db74">&#34;Rover&#34;</span>
 </span></span><span style="display:flex;"><span>}
