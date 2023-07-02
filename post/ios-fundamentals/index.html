@@ -241,13 +241,13 @@ code.has-jax {
     <i class="fa fa-file-word-o"></i>
 </span>
 <span class="post-meta-item-text">字数: </span>
-<span class="leancloud-visitors-count">84378</span>
+<span class="leancloud-visitors-count">84881</span>
 &nbsp; | &nbsp;
 <span class="post-meta-item-icon">
     <i class="fa fa-coffee"></i>
 </span>
 <span class="post-meta-item-text">阅读: </span>
-<span class="leancloud-visitors-count">169 分钟</span>
+<span class="leancloud-visitors-count">170 分钟</span>
 </span>
       </div>
     </header>
@@ -5282,6 +5282,31 @@ code.has-jax {
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span><span style="color:#66d9ef">protocol</span> <span style="color:#a6e22e">MyProtocol</span>: AnyObject {
 </span></span><span style="display:flex;"><span>    <span style="color:#75715e">//</span>
 </span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p>可选的方式是在协议声明的大括号前添加<code>where</code>限定子句：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span><span style="color:#66d9ef">protocol</span> <span style="color:#a6e22e">MyViewProtocol</span> <span style="color:#66d9ef">where</span> <span style="color:#66d9ef">Self</span>: UIView {
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">func</span> <span style="color:#a6e22e">doSomethingReallyCool</span>()
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">protocol</span> <span style="color:#a6e22e">MyClassProtocol</span> <span style="color:#66d9ef">where</span> <span style="color:#66d9ef">Self</span>: AnyObject {
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">// ... </span>
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p>声明类协议的一个有价值的副产品是，产生的类型可以利用只适用于类的特殊内存管理特性:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span><span style="color:#66d9ef">protocol</span> <span style="color:#a6e22e">SecondViewControllerDelegate</span>: AnyObject {
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">func</span> <span style="color:#a6e22e">accept</span>(data: Any)
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">class</span> <span style="color:#a6e22e">SecondViewController</span>: UIViewController {
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">weak</span> <span style="color:#66d9ef">var</span> delegate: SecondViewControllerDelegate?
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">// ... </span>
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p>关键字<code>weak</code>标志着<code>delegate</code>属性具有特殊的内存管理，并且只适用于类实例。<code>delegate</code>属性的类型是协议，而协议可能被一个结构体或枚举类型所采用。所以，为了让编译器相信这个对象实际上是一个类实例，而不是一个结构或枚举实例，该协议被声明为一个类协议。</p>
+<p>一个<code>@objc</code>协议是一个类协议，因为类协议是<code>Objective-C</code>唯一能理解的协议。</p>
+<h3 id="optional-protocol-members">Optional Protocol Members</h3>
+<p>在<code>Objective-C</code>中，一个协议成员可以声明为可选的，意味着这个成员可以不被遵循者实现。<code>Swift</code>允许可选协议成员，但这一特性完全是为了与<code>Objective-C</code>兼容，而且事实上是由<code>Objective-C</code>实现的，它根本不是<code>Swift</code>的真正特性。因此，关于一个可选协议成员的一切都必须明确地暴露给<code>Objective-C</code>。协议声明必须用<code>@objc</code>属性标记，而可选成员的声明必须用<code>@objc optional</code>关键字标记：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span><span style="color:#66d9ef">@objc</span> <span style="color:#66d9ef">protocol</span> <span style="color:#a6e22e">Flier</span> {
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">@objc</span> <span style="color:#66d9ef">optional</span> <span style="color:#66d9ef">var</span> song: String { <span style="color:#66d9ef">get</span> }
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">@objc</span> <span style="color:#66d9ef">optional</span> <span style="color:#66d9ef">func</span> <span style="color:#a6e22e">sing</span>()
+</span></span><span style="display:flex;"><span>}
 </span></span></code></pre></div><h2 id="available属性">available属性</h2>
 <p>有个类涉及到的属性只能在<code>iOS 13.0</code>以上系统使用，为了将该类定义为其它类的属性，必须加上<code>available</code>和<code>lazy</code>：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span>@available(iOS <span style="color:#ae81ff">13.0</span>, <span style="color:#f92672">*</span>)
@@ -5681,6 +5706,7 @@ code.has-jax {
             <li><a href="#declaring-a-protocol">Declaring a Protocol</a></li>
             <li><a href="#protocol-composition">Protocol Composition</a></li>
             <li><a href="#class-protocols">Class Protocols</a></li>
+            <li><a href="#optional-protocol-members">Optional Protocol Members</a></li>
           </ul>
         </li>
         <li><a href="#available属性">available属性</a></li>
