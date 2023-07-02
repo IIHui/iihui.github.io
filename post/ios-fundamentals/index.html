@@ -241,13 +241,13 @@ code.has-jax {
     <i class="fa fa-file-word-o"></i>
 </span>
 <span class="post-meta-item-text">字数: </span>
-<span class="leancloud-visitors-count">86579</span>
+<span class="leancloud-visitors-count">86983</span>
 &nbsp; | &nbsp;
 <span class="post-meta-item-icon">
     <i class="fa fa-coffee"></i>
 </span>
 <span class="post-meta-item-text">阅读: </span>
-<span class="leancloud-visitors-count">173 分钟</span>
+<span class="leancloud-visitors-count">174 分钟</span>
 </span>
       </div>
     </header>
@@ -5417,7 +5417,15 @@ code.has-jax {
 </span></span><span style="display:flex;"><span>    }
 </span></span><span style="display:flex;"><span>}
 </span></span></code></pre></div><p>上面代码会出现编译错误：<code>'required' initializer 'init(coder:)' must be provided by subclass of 'UIViewController'</code>。这是因为<code>UIViewController</code>采用了协议<code>NSCoding</code>，并且这个协议要求一个初始化器<code>init(coder:)</code>，<code>UIViewController</code>必须实现。</p>
-<p>自定义的<code>UIViewController</code>子类必须继承<code>init(coder:)</code>，或者必须明确地实现<code>init(coder:)</code>并将其标记为<code>required</code>。然而，我们的子类已经<font color=red>实现了自己的指定初始化器，从而切断了初始化器的继承</font>。因此，它必须实现<code>init(coder:)</code>并将其标记为<code>required</code>。</p>
+<p>自定义的<code>UIViewController</code>子类要么必须继承<code>init(coder:)</code>，要么必须明确地实现<code>init(coder:)</code>并将其标记为<code>required</code>。然而，我们的子类已经<font color=red>实现了自己的指定初始化器，从而切断了初始化器的继承</font>。因此，它必须实现<code>init(coder:)</code>并将其标记为<code>required</code>。</p>
+<p>但如果不希望<code>UIViewController</code>子类的<code>init(coder:)</code>被调用，这就没有意义了。我们被强迫写一个初始化器，而却不能提供任何有意义的功能! 幸运的是，<code>Xcode</code>的<code>Fix-it</code>功能以为你写初始化器，像这样：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span><span style="color:#66d9ef">required</span> <span style="color:#66d9ef">init</span>?(coder: NSCoder) {
+</span></span><span style="display:flex;"><span>    fatalError(<span style="color:#e6db74">&#34;init(coder:) has not been implemented&#34;</span>)
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p>上面代码满足了编译器的要求，这个初始化器被中止了，所以它是合法的，尽管它没有履行初始化器的契约。如果它被调用，就会出现崩溃。这很好，因为根据假设，并不期望它被调用。</p>
+<p>另一方面，如果确实需要这个初始化器的功能，那么需要先删除<code>fatalError</code>一行。一个最小的有意义的实现是调用<code>super.init(coder:coder)</code>，当然，如果自定义的类有需要初始化的属性，则需要先初始化它们。</p>
+<p>不仅是<code>UIViewController</code>，很多内置的<code>Cocoa</code>类都采用<code>NSCoding</code>。如果你对这些类进行子类化并实现你自己的初始化器，就会遇到这个问题，这只是你必须要习惯的事情。</p>
+<h3 id="expressible-by-literal">Expressible by Literal</h3>
 <h2 id="available属性">available属性</h2>
 <p>有个类涉及到的属性只能在<code>iOS 13.0</code>以上系统使用，为了将该类定义为其它类的属性，必须加上<code>available</code>和<code>lazy</code>：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span>@available(iOS <span style="color:#ae81ff">13.0</span>, <span style="color:#f92672">*</span>)
@@ -5824,6 +5832,7 @@ code.has-jax {
               </ul>
             </li>
             <li><a href="#implicitly-required-initializers">Implicitly Required Initializers</a></li>
+            <li><a href="#expressible-by-literal">Expressible by Literal</a></li>
           </ul>
         </li>
         <li><a href="#available属性">available属性</a></li>

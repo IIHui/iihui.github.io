@@ -1430,8 +1430,12 @@ protocol Flier2 {  init() }  class Bird2: Flier {   init() { // compile error: I
 protocol Flier2 {  init() }  class Bird2: Flier2 {   required init() {  //  }  } 可选地，如果将Bird标记为final，则没有必要将初始化器init标记为required，因为final保证了Bird不会有任何子类。
 protocol Flier2 {  init() }  final class Bird2: Flier2 {  init() {  //  } } 这一点也产生了一个烦人的特性。假设将内置的Cocoa类UIViewController子类化，也是极有可能做的事。假设给子类一个初始化器：
 class MoViewController: UIViewController {  init() {  super.init(nibName: &amp;#34;ViewController&amp;#34;, bundle: nil) // compile error  } } 上面代码会出现编译错误：&#39;required&#39; initializer &#39;init(coder:)&#39; must be provided by subclass of &#39;UIViewController&#39;。这是因为UIViewController采用了协议NSCoding，并且这个协议要求一个初始化器init(coder:)，UIViewController必须实现。
-自定义的UIViewController子类必须继承init(coder:)，或者必须明确地实现init(coder:)并将其标记为required。然而，我们的子类已经实现了自己的指定初始化器，从而切断了初始化器的继承。因此，它必须实现init(coder:)并将其标记为required。
-available属性 有个类涉及到的属性只能在iOS 13.0以上系统使用，为了将该类定义为其它类的属性，必须加上available和lazy：
+自定义的UIViewController子类要么必须继承init(coder:)，要么必须明确地实现init(coder:)并将其标记为required。然而，我们的子类已经实现了自己的指定初始化器，从而切断了初始化器的继承。因此，它必须实现init(coder:)并将其标记为required。
+但如果不希望UIViewController子类的init(coder:)被调用，这就没有意义了。我们被强迫写一个初始化器，而却不能提供任何有意义的功能! 幸运的是，Xcode的Fix-it功能以为你写初始化器，像这样：
+required init?(coder: NSCoder) {  fatalError(&amp;#34;init(coder:) has not been implemented&amp;#34;) } 上面代码满足了编译器的要求，这个初始化器被中止了，所以它是合法的，尽管它没有履行初始化器的契约。如果它被调用，就会出现崩溃。这很好，因为根据假设，并不期望它被调用。
+另一方面，如果确实需要这个初始化器的功能，那么需要先删除fatalError一行。一个最小的有意义的实现是调用super.init(coder:coder)，当然，如果自定义的类有需要初始化的属性，则需要先初始化它们。
+不仅是UIViewController，很多内置的Cocoa类都采用NSCoding。如果你对这些类进行子类化并实现你自己的初始化器，就会遇到这个问题，这只是你必须要习惯的事情。
+Expressible by Literal available属性 有个类涉及到的属性只能在iOS 13.0以上系统使用，为了将该类定义为其它类的属性，必须加上available和lazy：
 @available(iOS 13.0, *) class HapticManager { } class VibrationService {  @available(iOS 13.0, *)  private(set) lazy var hapticManager = HapticManager() } xcframework xcodebuild clean archive -workspace CMBMPGMK.xcworkspace -scheme CMBMPGMK -configuration release -sdk iphoneos -destination &amp;#39;generic/platform=iOS&amp;#39; -archivePath &amp;#39;./build/iphonedevice.xcarchive&amp;#39; SKIP_INSTALL=NO BUILD_LIBRARIES_FOR_DISTRIBUTION=YES   xcodebuild clean archive -workspace CMBMPGMK.xcworkspace -scheme CMBMPGMK -configuration release -sdk iphonesimulator -destination &amp;#39;generic/platform=iOS Simulator&amp;#39; -archivePath &amp;#39;./build/iphonesimulator.xcarchive&amp;#39; SKIP_INSTALL=NO BUILD_LIBRARIES_FOR_DISTRIBUTION=YES   xcodebuild -create-xcframework -framework ./iphonesimulator.xcarchive/Products/Library/Frameworks/CMBMPGMK.framework -framework ./iphonedevice.xcarchive/Products/Library/Frameworks/CMBMPGMK.framework -output CMBMPGMK.xcframework  静态库 BUILD_LIBRARIES_FOR_DISTRIBUTION=YES 头文件放到public，以及要将头文件放出来 bitcode=no exclude simulator arm64  </content>
     </entry>
     
