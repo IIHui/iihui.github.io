@@ -241,13 +241,13 @@ code.has-jax {
     <i class="fa fa-file-word-o"></i>
 </span>
 <span class="post-meta-item-text">字数: </span>
-<span class="leancloud-visitors-count">84124</span>
+<span class="leancloud-visitors-count">84378</span>
 &nbsp; | &nbsp;
 <span class="post-meta-item-icon">
     <i class="fa fa-coffee"></i>
 </span>
 <span class="post-meta-item-text">阅读: </span>
-<span class="leancloud-visitors-count">168 分钟</span>
+<span class="leancloud-visitors-count">169 分钟</span>
 </span>
       </div>
     </header>
@@ -5194,7 +5194,7 @@ code.has-jax {
 </span></span><span style="display:flex;"><span><span style="color:#66d9ef">let</span> b = Bee() 
 </span></span><span style="display:flex;"><span>tellToFly(b) <span style="color:#75715e">// compile error：Argument type &#39;Bee&#39; does not conform to expected type &#39;Flier&#39;</span>
 </span></span></code></pre></div><h3 id="adopting-a-library-protocol">Adopting a Library Protocol</h3>
-<p><code>Swift</code>标准库中已经充满了协议，可以先让自定义的一个对象类型遵循一个标准库中的协议，看看协议的力量为我们带来了什么。</p>
+<p><code>Swift</code>标准库中已经充满了协议，可以先让自定义的一个对象类型遵循一个标准库中的协议，看看协议能为我们带来了什么。</p>
 <p>其中<code>CustomStringConvertible</code>协议要求实现<code>description</code>属性，如果一种类型遵循了<code>CustomStringConvertible</code>协议，就会发生一件奇妙的事情：当这种类型的实例被用于字符串插值或与打印（或控制台中的<code>po</code>命令，或在字符串初始化器<code>init(descripbing:)</code>中）时，它的描述属性值会自动用来表示它。</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span><span style="color:#66d9ef">enum</span> <span style="color:#a6e22e">Filter</span>: String, CustomStringConvertible {
 </span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">case</span> albums = <span style="color:#e6db74">&#34;Albums&#34;</span>
@@ -5266,7 +5266,23 @@ code.has-jax {
 </span></span><span style="display:flex;"><span>}
 </span></span></code></pre></div><p>为了给<code>ViewController</code>的属性<code>v</code>赋值，这个对象必须是<code>UIView</code>的子类并且遵循<code>MyViewProtocol</code>协议。通过这种方式，向编译器保证<code>UIView</code>消息和<code>MyViewProtocol</code>消息都可以被发送到<code>ViewController</code>的<code>v</code>。否则，就必须将<code>v</code>声明为<code>MyViewProtocol</code>类型，然后转换成<code>UIView</code>，以便向它发送<code>UIView</code>消息，即使我们知道<code>v</code>事实上总是一个<code>UIView</code>。</p>
 <h3 id="class-protocols">Class Protocols</h3>
-<h2 id="available属性">available属性</h2>
+<p>协议声明可以在冒号后包括一个类的名称，这样就把能够采用这个协议的类型限制在该类或其子类中：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span><span style="color:#66d9ef">protocol</span> <span style="color:#a6e22e">MyViewProtocol</span>: UIView {
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">func</span> <span style="color:#a6e22e">doSomethingReallyCool</span>()
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">class</span> <span style="color:#a6e22e">ViewController</span>: UIViewController {
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">var</span> v: MyViewProtocol? <span style="color:#75715e">// and therefore a UIView</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">func</span> <span style="color:#a6e22e">test</span>() {
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">self</span>.v?.doSomethingReallyCool() <span style="color:#75715e">// a MyViewProtocol requirement</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">self</span>.v?.backgroundColor = .red <span style="color:#75715e">// a UIView property</span>
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p>通过上面的声明，<code>MyViewProtocol</code>只能被<code>UIView</code>或<code>UIView</code>子类遵循。这意味着一个类型为<code>MyViewProtocol</code>的对象可以同时接受<code>MyViewProtocol</code>消息和<code>UIView</code>消息。</p>
+<p>要指定一个协议只能被某个类（非结构体或枚举体）采用，而不指定它必须是什么类，可以使用协议类型<code>AnyObject</code>，每个类的类型都会采用它：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span><span style="color:#66d9ef">protocol</span> <span style="color:#a6e22e">MyProtocol</span>: AnyObject {
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">//</span>
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><h2 id="available属性">available属性</h2>
 <p>有个类涉及到的属性只能在<code>iOS 13.0</code>以上系统使用，为了将该类定义为其它类的属性，必须加上<code>available</code>和<code>lazy</code>：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span>@available(iOS <span style="color:#ae81ff">13.0</span>, <span style="color:#f92672">*</span>)
 </span></span><span style="display:flex;"><span><span style="color:#66d9ef">class</span> <span style="color:#a6e22e">HapticManager</span> {
