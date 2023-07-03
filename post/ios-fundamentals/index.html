@@ -241,7 +241,7 @@ code.has-jax {
     <i class="fa fa-file-word-o"></i>
 </span>
 <span class="post-meta-item-text">字数: </span>
-<span class="leancloud-visitors-count">87300</span>
+<span class="leancloud-visitors-count">87387</span>
 &nbsp; | &nbsp;
 <span class="post-meta-item-icon">
     <i class="fa fa-coffee"></i>
@@ -5437,7 +5437,39 @@ code.has-jax {
 </span></span><span style="display:flex;"><span>ExpressibleByArrayLiteral
 </span></span><span style="display:flex;"><span>ExpressibleByDictionaryLiteral
 </span></span></code></pre></div><p>自定义的类型也可以采用<code>expressible-by-literal</code>协议，这意味着字面量也可以出现对象类型的实例被期望的地方。在下面，我们声明一个<code>Nest</code>类型，它包含一些<code>eggs</code>的数量：</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"></code></pre></div><h2 id="available属性">available属性</h2>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">protocol</span> <span style="color:#a6e22e">_ExpressibleByBuiltinIntegerLiteral</span> {
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">init</span>(_builtinIntegerLiteral value: Builtin.IntLiteral)
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">protocol</span> <span style="color:#a6e22e">ExpressibleByIntegerLiteral</span> {
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    associatedtype IntegerLiteralType : _ExpressibleByBuiltinIntegerLiteral
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">init</span>(integerLiteral value: <span style="color:#66d9ef">Self</span>.IntegerLiteralType)
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">struct</span> <span style="color:#a6e22e">Nest</span>: ExpressibleByIntegerLiteral {
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">var</span> eggCount: Int = <span style="color:#ae81ff">0</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">init</span>() {
+</span></span><span style="display:flex;"><span>        <span style="color:#75715e">//</span>
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">init</span>(integerLiteral val: Int) {
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">self</span>.eggCount = val
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">reportEggs</span>(<span style="color:#66d9ef">_</span> nest: Nest) {
+</span></span><span style="display:flex;"><span>    print(<span style="color:#e6db74">&#34;this nest contains </span><span style="color:#e6db74">\(</span>nest.eggCount<span style="color:#e6db74">)</span><span style="color:#e6db74"> eggs&#34;</span>)
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>reportEggs(<span style="color:#ae81ff">4</span>) <span style="color:#75715e">// this nest contains 4 eggs</span>
+</span></span></code></pre></div><h2 id="generics">Generics</h2>
+<p>泛型是一种类型的占位符，实际的类型将在以后被放入其中。</p>
+<h2 id="available属性">available属性</h2>
 <p>有个类涉及到的属性只能在<code>iOS 13.0</code>以上系统使用，为了将该类定义为其它类的属性，必须加上<code>available</code>和<code>lazy</code>：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span>@available(iOS <span style="color:#ae81ff">13.0</span>, <span style="color:#f92672">*</span>)
 </span></span><span style="display:flex;"><span><span style="color:#66d9ef">class</span> <span style="color:#a6e22e">HapticManager</span> {
@@ -5846,6 +5878,7 @@ code.has-jax {
             <li><a href="#expressible-by-literal">Expressible by Literal</a></li>
           </ul>
         </li>
+        <li><a href="#generics">Generics</a></li>
         <li><a href="#available属性">available属性</a></li>
         <li><a href="#xcframework">xcframework</a></li>
       </ul>
