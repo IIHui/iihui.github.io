@@ -241,13 +241,13 @@ code.has-jax {
     <i class="fa fa-file-word-o"></i>
 </span>
 <span class="post-meta-item-text">字数: </span>
-<span class="leancloud-visitors-count">89364</span>
+<span class="leancloud-visitors-count">89717</span>
 &nbsp; | &nbsp;
 <span class="post-meta-item-icon">
     <i class="fa fa-coffee"></i>
 </span>
 <span class="post-meta-item-text">阅读: </span>
-<span class="leancloud-visitors-count">179 分钟</span>
+<span class="leancloud-visitors-count">180 分钟</span>
 </span>
       </div>
     </header>
@@ -5532,7 +5532,7 @@ code.has-jax {
 </span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">return</span> d
 </span></span><span style="display:flex;"><span>}
 </span></span></code></pre></div><h4 id="generic-declarations">Generic Declarations</h4>
-<p>下面列出了在<code>Swift</code>中可以以某种形式声明泛型的地方，包括<code>Generic protocol with Self</code>，<code>Generic protocol with associated type</code>，<code>Generic functions</code>，和<code>Generic object types</code>。</p>
+<p>下面列出了在<code>Swift</code>中可以以某种形式声明泛型的地方，主要包括<code>Generic protocol with Self</code>，<code>Generic protocol with associated type</code>，<code>Generic functions</code>，和<code>Generic object types</code>。</p>
 <h5 id="generic-protocol-with-self">Generic protocol with Self</h5>
 <p>在协议体中，使用关键词<code>Self</code>可以将协议变成一个泛型的。<code>Self</code>在这里是一个占位符，意味着采用者的类型。下面是一个<code>Flier</code>协议，它声明了一个接受<code>Self</code>参数的方法：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span><span style="color:#66d9ef">protocol</span> <span style="color:#a6e22e">Flier</span> {
@@ -5562,9 +5562,33 @@ code.has-jax {
 </span></span><span style="display:flex;"><span>        <span style="color:#75715e">//</span>
 </span></span><span style="display:flex;"><span>    }
 </span></span><span style="display:flex;"><span>}
-</span></span></code></pre></div><p><code>T</code>不一定必须是<code>Flier</code>的这个采用者，或者任何其它采用者。它可以是<code>String</code>，<code>Int</code>，或者其它类型。相反，这个协议规定，无论是哪个采用者，<code>flockTogetherWith</code>和<code>mateWith</code>的参数类型必须一致。</p>
+</span></span></code></pre></div><p><code>T</code>不一定必须是<code>Flier</code>的上面这个采用者，或者任何其它采用者。它可以是<code>String</code>，<code>Int</code>，或者其它类型。相反，这个协议规定，无论是哪个采用者，<code>flockTogetherWith</code>和<code>mateWith</code>中的参数类型必须一致。</p>
 <h5 id="generic-functions">Generic functions</h5>
-<h2 id="available属性">available属性</h2>
+<p>一个函数声明时可以为其任何参数、返回类型以及在其主体内使用一个通用占位符类型。占位符的名称在函数名称后面的交括号中声明：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">takeAndReturnSameThing</span>&lt;T&gt;(<span style="color:#66d9ef">_</span> t: T) -&gt; T {
+</span></span><span style="display:flex;"><span>    print(T.<span style="color:#66d9ef">self</span>)
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">return</span> t
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p>函数调用者将在函数声明中出现占位符的某个地方使用一个特定的类型，以解析占位符：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span><span style="color:#66d9ef">let</span> thing = takeAndReturnSameThing(<span style="color:#e6db74">&#34;name&#34;</span>)
+</span></span><span style="display:flex;"><span>debugPrint(thing)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">// 打印的结果</span>
+</span></span><span style="display:flex;"><span>String
+</span></span><span style="display:flex;"><span><span style="color:#e6db74">&#34;name&#34;</span>
+</span></span></code></pre></div><p>在上面代码，在调用<code>takeAndReturnSameThing</code>使用的参数<code>&quot;howdy&quot;</code>时，会将类型将<code>T</code>解析为<code>String</code>。因此，对<code>takeAndReturnSameThing</code>的调用也必须返回一个<code>String</code>，并且捕获结果的变量<code>thing</code>的类型被编译器推断为<code>String</code>。</p>
+<h5 id="generic-object-types">Generic object types</h5>
+<p>一个对象类型声明可以在其大括号内的任何地方使用一个泛型占位符类型。占位符名称在对象类型名称之后的尖括号中声明：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span><span style="color:#66d9ef">struct</span> <span style="color:#a6e22e">HolderOfTwoSameThings</span>&lt;T&gt; {
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">var</span> firstThing: T
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">var</span> secondThing: T
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">init</span>(thingOne: T, thingTwo: T) {
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">self</span>.firstThing = thingOne
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">self</span>.secondThing = thingTwo
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><h2 id="available属性">available属性</h2>
 <p>有个类涉及到的属性只能在<code>iOS 13.0</code>以上系统使用，为了将该类定义为其它类的属性，必须加上<code>available</code>和<code>lazy</code>：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span>@available(iOS <span style="color:#ae81ff">13.0</span>, <span style="color:#f92672">*</span>)
 </span></span><span style="display:flex;"><span><span style="color:#66d9ef">class</span> <span style="color:#a6e22e">HapticManager</span> {
