@@ -241,13 +241,13 @@ code.has-jax {
     <i class="fa fa-file-word-o"></i>
 </span>
 <span class="post-meta-item-text">字数: </span>
-<span class="leancloud-visitors-count">88535</span>
+<span class="leancloud-visitors-count">88745</span>
 &nbsp; | &nbsp;
 <span class="post-meta-item-icon">
     <i class="fa fa-coffee"></i>
 </span>
 <span class="post-meta-item-text">阅读: </span>
-<span class="leancloud-visitors-count">177 分钟</span>
+<span class="leancloud-visitors-count">178 分钟</span>
 </span>
       </div>
     </header>
@@ -5504,12 +5504,33 @@ code.has-jax {
 <p>所有这些都构成了<code>Optional</code>工作的模板。在现实生活中，<code>Swift</code>有严格的类型，所以任何特定的<code>Optional</code>实例都必须有一个真实的类型来替代<code>Wrapped</code>占位符。替换的过程被称为解析或特化泛型。对于这个枚举的每一次实际使用，必须毫不含糊地明确相关的类型，这样编译器才会满意。</p>
 <p>那么，占位符是怎么被解析的？这里有一个方法，当一个<code>Optional</code>被创建时，它将被初始化为某个确定类型的实际值:</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span><span style="color:#66d9ef">let</span> s = Optional(<span style="color:#e6db74">&#34;howdy&#34;</span>)
+</span></span><span style="display:flex;"><span>debugPrint(s)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">// 打印的结果</span>
+</span></span><span style="display:flex;"><span>Optional(<span style="color:#e6db74">&#34;howdy&#34;</span>)
 </span></span></code></pre></div><p>上面代码定义变量<code>s</code>时调用了<code>init(_ some: Wrapped)</code>，所以 <code>&quot;howdy &quot;</code>在这里被作为一个<code>Wrapped</code>实例来，也就是将泛型解析为<code>String</code>。所以编译器现在知道，在这个特定的<code>Optional&lt;Wrapped&gt;</code>中，<code>Wrapped</code>必须是<code>String</code>。</p>
-<p>被初始化的类型（不管是什么类型）是<code>Wrapped</code>类型，也是与<code>.some case</code>相关的类型。在编译器眼里，这个特殊的<code>Optional</code>的声明看起来像下面这样（伪代码）：</p>
+<p>被初始化的类型（不管是什么类型）是<code>Wrapped</code>类型，也是与<code>.some case</code>相关的类型。在编译器眼里，这个特殊<code>Optional</code>声明看起来像下面这样（伪代码）：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span><span style="color:#66d9ef">enum</span> <span style="color:#a6e22e">Optional</span>&lt;String&gt; {
 </span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">case</span> <span style="color:#66d9ef">none</span> 
 </span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">case</span> some(String)
 </span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">init</span>(<span style="color:#66d9ef">_</span> some: String) <span style="color:#75715e">// ...</span>
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p>上面是一个<code>Optional</code>的伪代码声明，它的<code>Wrapped</code>占位符已经全部被替换成了<code>String</code>类型。我们可以通过使用<code>s</code>是一个<code>Optional&lt;String&gt;</code>来概括这一点。事实上，这是合法的语法，可以像下面这样创建同样的<code>Optional</code>：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span><span style="color:#66d9ef">let</span> s1: Optional&lt;String&gt; = <span style="color:#e6db74">&#34;howdy&#34;</span>
+</span></span><span style="display:flex;"><span>debugPrint(s1)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">// 打印的结果</span>
+</span></span><span style="display:flex;"><span>Optional(<span style="color:#e6db74">&#34;howdy&#34;</span>)
+</span></span></code></pre></div><p>不仅类型可以是泛型，函数也可以是泛型。通用函数可以解决之前提出的一个问题：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">dogMakerAndNamer</span>(<span style="color:#66d9ef">_</span> whattype: Dog.<span style="color:#66d9ef">Type</span>) -&gt; Dog {
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">let</span> d = whattype.<span style="color:#66d9ef">init</span>(name: <span style="color:#e6db74">&#34;Fido&#34;</span>)
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">return</span> d
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">dogMakerAndNamer</span>&lt;WhatType: Dog&gt;(<span style="color:#66d9ef">_</span>: WhatType.<span style="color:#66d9ef">Type</span>) -&gt; WhatType {
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">let</span> d = WhatType.<span style="color:#66d9ef">init</span>(name: <span style="color:#e6db74">&#34;Fido&#34;</span>)
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">return</span> d
+</span></span><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span>}
 </span></span></code></pre></div><h2 id="available属性">available属性</h2>
 <p>有个类涉及到的属性只能在<code>iOS 13.0</code>以上系统使用，为了将该类定义为其它类的属性，必须加上<code>available</code>和<code>lazy</code>：</p>
