@@ -241,13 +241,13 @@ code.has-jax {
     <i class="fa fa-file-word-o"></i>
 </span>
 <span class="post-meta-item-text">字数: </span>
-<span class="leancloud-visitors-count">91582</span>
+<span class="leancloud-visitors-count">91925</span>
 &nbsp; | &nbsp;
 <span class="post-meta-item-icon">
     <i class="fa fa-coffee"></i>
 </span>
 <span class="post-meta-item-text">阅读: </span>
-<span class="leancloud-visitors-count">183 分钟</span>
+<span class="leancloud-visitors-count">184 分钟</span>
 </span>
       </div>
     </header>
@@ -5696,12 +5696,46 @@ code.has-jax {
 </span></span><span style="display:flex;"><span>}
 </span></span><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span><span style="color:#66d9ef">let</span> d = Dog&lt;String&gt;()
-</span></span></code></pre></div><p>但是，不能显式地特化一个泛型函数。一个解决方案是让泛型函数接受一个类型参数来解析泛型。这就是先前的<code>dogMakerAndNamer</code>例子中所做的：</p>
+</span></span></code></pre></div><p>但是，不能显式地特化一个泛型函数，一个解决方案是让泛型函数接受一个类型参数来解析泛型。下面是先前在<code>dogMakerAndNamer</code>例子中所做的：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">dogMakerAndNamer</span>&lt;WhatType: Dog&gt;(<span style="color:#66d9ef">_</span>: WhatType.<span style="color:#66d9ef">Type</span>) -&gt; WhatType {
 </span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">let</span> d = WhatType.<span style="color:#66d9ef">init</span>(name: <span style="color:#e6db74">&#34;Fido&#34;</span>)
 </span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">return</span> d
 </span></span><span style="display:flex;"><span>}
-</span></span></code></pre></div><p>函数<code>dogMakerAndNamer</code>的参数从未在函数体内使用，这就是为什么它没有名字（只有一个下划线）。然而，它确实是为了解决泛型的。</p>
+</span></span></code></pre></div><p>函数<code>dogMakerAndNamer</code>的参数从未在函数体内使用，这就是为什么它没有名字，只有一个下划线。然而，它确实是为了解决泛型的。</p>
+<p>另一种方法是不使用泛型函数。相反，先声明一个泛型对象类型，在它里面包装一个使用泛型占位符的非泛型函数。泛型类型可以被显式地专门化，在函数中解析占位符：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span><span style="color:#66d9ef">protocol</span> <span style="color:#a6e22e">Flier</span> {
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">init</span>()
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">struct</span> <span style="color:#a6e22e">Bird</span>: Flier {
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">init</span>() {
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">struct</span> <span style="color:#a6e22e">FlierMaker</span>&lt;T: Flier&gt; {
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">static</span> <span style="color:#66d9ef">func</span> <span style="color:#a6e22e">makeFlier</span>() -&gt; T {
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">return</span> T()
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">let</span> f = FlierMaker&lt;Bird&gt;.makeFlier() <span style="color:#75715e">// returns a Bird</span>
+</span></span></code></pre></div><p>当一个类是泛型类，只要解析了泛型就可以对它进行子类化。可以通过一个匹配的泛型子类或者明确地解析父类的泛型占位符来做到这一点。下面是一个泛型<code>Dog</code>类：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span><span style="color:#66d9ef">class</span> <span style="color:#a6e22e">Dog</span>&lt;T&gt; {
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">func</span> <span style="color:#a6e22e">speak</span>(<span style="color:#66d9ef">_</span> what: T) {
+</span></span><span style="display:flex;"><span>      <span style="color:#75715e">// ...</span>
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p>可以将其子类化为一个泛型，其占位符与父类的占位符一致：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span><span style="color:#66d9ef">class</span> <span style="color:#a6e22e">NoisyDog</span>&lt;T&gt; : Dog&lt;T&gt; {}
+</span></span></code></pre></div><p>这是合法的，因为<code>NoisyDog</code>占位符<code>T</code>的被解析时的同时也解析<code>Dog</code>占位符<code>T</code>。另一个选择是明确特化<code>Dog</code>的非泛型子类：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span><span style="color:#66d9ef">class</span> <span style="color:#a6e22e">NoisyDog</span> : Dog&lt;String&gt; {}
+</span></span></code></pre></div><p>在这种情况下，子类中的方法覆盖可以使用专门的类型，而父类则使用泛型：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span><span style="color:#66d9ef">class</span> <span style="color:#a6e22e">NoisyDog</span>: Dog&lt;String&gt; {
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">override</span> <span style="color:#66d9ef">func</span> <span style="color:#a6e22e">speak</span>(<span style="color:#66d9ef">_</span> what: String) {
+</span></span><span style="display:flex;"><span>        <span style="color:#75715e">// ...</span>
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><h4 id="generic-types-and-covariance">Generic Types and Covariance</h4>
 <h2 id="available属性">available属性</h2>
 <p>有个类涉及到的属性只能在<code>iOS 13.0</code>以上系统使用，为了将该类定义为其它类的属性，必须加上<code>available</code>和<code>lazy</code>：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span>@available(iOS <span style="color:#ae81ff">13.0</span>, <span style="color:#f92672">*</span>)
@@ -6118,6 +6152,7 @@ code.has-jax {
                 <li><a href="#generic-declarations">Generic Declarations</a></li>
                 <li><a href="#type-constraints">Type Constraints</a></li>
                 <li><a href="#explicit-specialization">Explicit Specialization</a></li>
+                <li><a href="#generic-types-and-covariance">Generic Types and Covariance</a></li>
               </ul>
             </li>
           </ul>

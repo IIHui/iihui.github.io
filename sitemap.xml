@@ -1477,9 +1477,14 @@ func myMin&amp;lt;T&amp;gt;(_ things: T...) -&amp;gt; T {   var minimum = things
 func myMin&amp;lt;T: Comparable&amp;gt;(_ things: T...) -&amp;gt; T {   var minimum = things.first!   for item in things.dropFirst() {   if item &amp;lt; minimum { // compile error   minimum = item   }  }  return minimum } Explicit Specialization 在迄今为止的泛型例子中，占位符的类型主要通过推断来解决。但是还有另一种方法来执行解析：我们可以手动解析类型，这就是所谓的显式专用化explicit specialization。目前有两种形式的explicit specialization。
 Generic protocol with associated type 协议的采用者可以通过类型别名来手动解析关联类型，将关联类型等同于一些明确的类型：
 protocol Flier {  associatedtype T }  struct Bird: Flier {   typealias T = String } Generic object type 泛型对象类型的使用者可以使用用于声明泛型相同尖括号语法来手动解析占位符类型，尖括号中是实际的类型名称，如下所示：
-class Dog&amp;lt;T&amp;gt; {  var name: T? }  let d = Dog&amp;lt;String&amp;gt;() 但是，不能显式地特化一个泛型函数。一个解决方案是让泛型函数接受一个类型参数来解析泛型。这就是先前的dogMakerAndNamer例子中所做的：
-func dogMakerAndNamer&amp;lt;WhatType: Dog&amp;gt;(_: WhatType.Type) -&amp;gt; WhatType {  let d = WhatType.init(name: &amp;#34;Fido&amp;#34;)  return d } 函数dogMakerAndNamer的参数从未在函数体内使用，这就是为什么它没有名字（只有一个下划线）。然而，它确实是为了解决泛型的。
-available属性 有个类涉及到的属性只能在iOS 13.0以上系统使用，为了将该类定义为其它类的属性，必须加上available和lazy：
+class Dog&amp;lt;T&amp;gt; {  var name: T? }  let d = Dog&amp;lt;String&amp;gt;() 但是，不能显式地特化一个泛型函数，一个解决方案是让泛型函数接受一个类型参数来解析泛型。下面是先前在dogMakerAndNamer例子中所做的：
+func dogMakerAndNamer&amp;lt;WhatType: Dog&amp;gt;(_: WhatType.Type) -&amp;gt; WhatType {  let d = WhatType.init(name: &amp;#34;Fido&amp;#34;)  return d } 函数dogMakerAndNamer的参数从未在函数体内使用，这就是为什么它没有名字，只有一个下划线。然而，它确实是为了解决泛型的。
+另一种方法是不使用泛型函数。相反，先声明一个泛型对象类型，在它里面包装一个使用泛型占位符的非泛型函数。泛型类型可以被显式地专门化，在函数中解析占位符：
+protocol Flier {  init() }  struct Bird: Flier {  init() {  } }  struct FlierMaker&amp;lt;T: Flier&amp;gt; {  static func makeFlier() -&amp;gt; T {  return T()  } }  let f = FlierMaker&amp;lt;Bird&amp;gt;.makeFlier() // returns a Bird 当一个类是泛型类，只要解析了泛型就可以对它进行子类化。可以通过一个匹配的泛型子类或者明确地解析父类的泛型占位符来做到这一点。下面是一个泛型Dog类：
+class Dog&amp;lt;T&amp;gt; {  func speak(_ what: T) {  // ...  } } 可以将其子类化为一个泛型，其占位符与父类的占位符一致：
+class NoisyDog&amp;lt;T&amp;gt; : Dog&amp;lt;T&amp;gt; {} 这是合法的，因为NoisyDog占位符T的被解析时的同时也解析Dog占位符T。另一个选择是明确特化Dog的非泛型子类：
+class NoisyDog : Dog&amp;lt;String&amp;gt; {} 在这种情况下，子类中的方法覆盖可以使用专门的类型，而父类则使用泛型：
+class NoisyDog: Dog&amp;lt;String&amp;gt; {  override func speak(_ what: String) {  // ...  } } Generic Types and Covariance available属性 有个类涉及到的属性只能在iOS 13.0以上系统使用，为了将该类定义为其它类的属性，必须加上available和lazy：
 @available(iOS 13.0, *) class HapticManager { } class VibrationService {  @available(iOS 13.0, *)  private(set) lazy var hapticManager = HapticManager() } xcframework xcodebuild clean archive -workspace CMBMPGMK.xcworkspace -scheme CMBMPGMK -configuration release -sdk iphoneos -destination &amp;#39;generic/platform=iOS&amp;#39; -archivePath &amp;#39;./build/iphonedevice.xcarchive&amp;#39; SKIP_INSTALL=NO BUILD_LIBRARIES_FOR_DISTRIBUTION=YES   xcodebuild clean archive -workspace CMBMPGMK.xcworkspace -scheme CMBMPGMK -configuration release -sdk iphonesimulator -destination &amp;#39;generic/platform=iOS Simulator&amp;#39; -archivePath &amp;#39;./build/iphonesimulator.xcarchive&amp;#39; SKIP_INSTALL=NO BUILD_LIBRARIES_FOR_DISTRIBUTION=YES   xcodebuild -create-xcframework -framework ./iphonesimulator.xcarchive/Products/Library/Frameworks/CMBMPGMK.framework -framework ./iphonedevice.xcarchive/Products/Library/Frameworks/CMBMPGMK.framework -output CMBMPGMK.xcframework  静态库 BUILD_LIBRARIES_FOR_DISTRIBUTION=YES 头文件放到public，以及要将头文件放出来 bitcode=no exclude simulator arm64  </content>
     </entry>
     
