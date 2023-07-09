@@ -1450,16 +1450,16 @@ let s = Optional(&amp;#34;howdy&amp;#34;) debugPrint(s)  // 打印的结果 Opti
 enum Optional&amp;lt;String&amp;gt; {  case none  case some(String)  init(_ some: String) // ... } 上面是一个Optional的伪代码声明，它的Wrapped占位符类型已经全部被替换成了String类型。我们可以通过声明s是Optional&amp;lt;String&amp;gt;类型来概括这一点。事实上，这是合法的语法，可以使用下面的方式创建同样的Optional：
 let s1: Optional&amp;lt;String&amp;gt; = &amp;#34;howdy&amp;#34; debugPrint(s1)  // 打印的结果 Optional(&amp;#34;howdy&amp;#34;) 不仅类型可以是泛型，函数也可以是泛型。泛型函数可以解决之前提出的一个问题，在下面dogMakerAndNamer方法中，当传入一个Dog的子类NoisyDog作为参数时，将会得到一个实例，但这个实例的类型依然是Dog：
 func dogMakerAndNamer(_ whattype: Dog.Type) -&amp;gt; Dog {  let d = whattype.init(name: &amp;#34;Fido&amp;#34;)  return d } 实际上，我们希望返回值的类型和传入的类型是一样的，泛型函数可以做到这一点：
-func dogMakerAndNamer&amp;lt;WhatType: Dog&amp;gt;(_: WhatType.Type) -&amp;gt; WhatType {  let d = WhatType.init(name: &amp;#34;Fido&amp;#34;)  return d }  let dog = dogMakerAndNamer(NoisyDog.self) 在上面代码中，传入了NoisyDog.self作为参数。这就告诉了编译器WhatType是什么类型，是NoiseDog。
-Generic Declarations 下面列出了在Swift中可以以某种形式声明泛型的地方，主要包括Generic protocol with Self，Generic protocol with associated type，Generic functions，和Generic object types。
-Generic protocol with Self 在协议体中，使用关键词Self可以将协议变成一个泛型的。Self在这里是一个占位符，意味着采用者的类型。下面是一个Flier协议，它声明了一个接受Self参数的方法：
-protocol Flier {  func flockTogetherWith(_ f: Self) } 上面协议声明意味着，如果一个Bird对象类型采用了Flier协议，它的flockTogetherWith的实现必须将其参数声明为一个Bird：
-struct Bird: Flier {  func flockTogetherWith(_ f: Bird) {  //  } } Generic protocol with associated type 一个协议可以使用关联类型语句来声明一个关联类型。这就把协议变成了一个泛型，关联类型名称是一个占位符：
-protocol Flier {  associatedtype T  func flockTogetherWith(_ f: T)  func mateWith(_ f: T) } 协议的采用者将在泛型协议使用associatedtype的地方声明一个特定的类型，以解析占位符：
-struct Bird: Flier {   func flockTogetherWith(_ f: Bee) {  //  }   func mateWith(_ f: Bee) {  //  } } T不一定必须是Flier的上面这个采用者，或者任何其它采用者。它可以是String，Int，或者其它类型。相反，这个协议规定，无论是哪个采用者，flockTogetherWith和mateWith中的参数类型必须一致。
+func dogMakerAndNamer&amp;lt;WhatType: Dog&amp;gt;(_: WhatType.Type) -&amp;gt; WhatType {  let d = WhatType.init(name: &amp;#34;Fido&amp;#34;)  return d }  let dog = dogMakerAndNamer(NoisyDog.self) 在上面代码中，传入了NoisyDog.self作为参数。这就告诉了编译器WhatType是什么类型，是NoiseDog。实际上，编译器现在将NoisyDog替换为整个泛型的WhatType，像下面这样（伪代码）：
+func dogMakerAndNamer(_: NoisyDog.Type) -&amp;gt; NoisyDog {  let d = NoisyDog.init(name: &amp;#34;Fido&amp;#34;)  return d } Generic Declarations 下面列出了在Swift中可以以某种形式声明泛型的地方，主要包括Generic protocol with Self，Generic protocol with associated type，Generic functions和Generic object types。
+Generic protocol with Self 在协议体中，使用关键词Self可以将当前协议变成一个泛型的。Self在这里是一个占位符，表示该协议采用者的类型。下面是一个Flier协议，它声明了一个接受Self参数的方法：
+protocol Flier {  func flockTogetherWith(_ f: Self) } 上面协议声明意味着，如果一个Bird对象类型采用了Flier协议，它的flockTogetherWith实现必须将其参数类型声明为Bird：
+struct Bird: Flier {  func flockTogetherWith(_ f: Bird) {  //  } } Generic protocol with associated type 在一个协议声明中可以使用associatedtype语句来声明一个关联类型。这样就把协议变成了一个泛型协议，关联类型名称是一个类型占位符：
+protocol Flier {  associatedtype T  func flockTogetherWith(_ f: T)  func mateWith(_ f: T) } 协议的采用者将在泛型协议声明中使用associatedtype的地方使用一个特定的类型，以解析占位符类型。在下面Bird声明中，flockTogetherWith中的占位符被解析为Bird：
+struct Bee {  // }  struct Bird: Flier {  func flockTogetherWith(_ f: Bee) {  //  }  func mateWith(_ f: Bee) {  //  } } 在泛型协议Flier中，T不必是Flier的上面这个采用者Bird，或者任何其它该协议的采用者。T可以是String，Int或者其它类型。相反，这个协议规定，无论是哪个采用者，flockTogetherWith和mateWith中的参数类型必须一致。
 Generic functions 一个函数声明时可以为其任何参数、返回类型以及在其主体内使用一个通用占位符类型。占位符的名称在函数名称后面的交括号中声明：
-func takeAndReturnSameThing&amp;lt;T&amp;gt;(_ t: T) -&amp;gt; T {  print(T.self)  return t } 函数调用者将在函数声明中出现占位符的某个地方使用一个特定的类型，以解析占位符：
-let thing = takeAndReturnSameThing(&amp;#34;name&amp;#34;) debugPrint(thing)  // 打印的结果 String &amp;#34;name&amp;#34; 在上面代码，在调用takeAndReturnSameThing使用的参数&amp;quot;howdy&amp;quot;时，会将类型将T解析为String。因此，对takeAndReturnSameThing的调用也必须返回一个String，并且捕获结果的变量thing的类型被编译器推断为String。
+func takeAndReturnSameThing&amp;lt;T&amp;gt;(_ t: T) -&amp;gt; T {  print(T.self)  return t } 泛型函数调用者将在函数声明中出现占位符的某个地方使用一个特定的类型以解析占位符类型：
+let thing = takeAndReturnSameThing(&amp;#34;name&amp;#34;) debugPrint(thing)  // 打印的结果 String &amp;#34;name&amp;#34; 在上面代码中，调用takeAndReturnSameThing传入&amp;quot;howdy&amp;quot;作为参数时，会将T解析为String。因此，泛型函数takeAndReturnSameThing的调用也必须返回String。因此，变量thing的类型被编译器推断为String。
 Generic object types 一个对象类型声明可以在其大括号内的任何地方使用一个泛型占位符类型。占位符名称在对象类型名称之后的尖括号中声明：
 struct HolderOfTwoSameThings&amp;lt;T&amp;gt; {  var firstThing: T  var secondThing: T   init(thingOne: T, thingTwo: T) {  self.firstThing = thingOne  self.secondThing = thingTwo  } } 使用HolderOfTwoSameThings类型时会使用一个特定类型以解析泛型：
 let holder = HolderOfTwoSameThings(thingOne: &amp;#34;howdy&amp;#34;, thingTwo: &amp;#34;bye&amp;#34;) 上面代码，在初始化器调用时，形参 thingOne: 参数为 &amp;quot;howdy&amp;quot; ，将 T 解析为 String；因此 thingTwo: 也必须是一个 String，并且属性 firstThing 和 secondThing 也必须是 Strings。
