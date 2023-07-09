@@ -241,13 +241,13 @@ code.has-jax {
     <i class="fa fa-file-word-o"></i>
 </span>
 <span class="post-meta-item-text">字数: </span>
-<span class="leancloud-visitors-count">90408</span>
+<span class="leancloud-visitors-count">90980</span>
 &nbsp; | &nbsp;
 <span class="post-meta-item-icon">
     <i class="fa fa-coffee"></i>
 </span>
 <span class="post-meta-item-text">阅读: </span>
-<span class="leancloud-visitors-count">181 分钟</span>
+<span class="leancloud-visitors-count">182 分钟</span>
 </span>
       </div>
     </header>
@@ -5597,14 +5597,14 @@ code.has-jax {
 </span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">self</span>.secondThing = thingTwo
 </span></span><span style="display:flex;"><span>    }
 </span></span><span style="display:flex;"><span>}
-</span></span></code></pre></div><p>使用<code>HolderOfTwoSameThings</code>类型时会使用一个特定类型以解析泛型：</p>
+</span></span></code></pre></div><p>使用<code>HolderOfTwoSameThings</code>这个类型时，会在出现占位符的地方使用一个特定类型以解析占位符类型：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span><span style="color:#66d9ef">let</span> holder = HolderOfTwoSameThings(thingOne: <span style="color:#e6db74">&#34;howdy&#34;</span>, thingTwo: <span style="color:#e6db74">&#34;bye&#34;</span>)
-</span></span></code></pre></div><p>上面代码，在初始化器调用时，形参 <code>thingOne:</code> 参数为 <code>&quot;howdy&quot;</code> ，将 <code>T</code> 解析为 <code>String</code>；因此 <code>thingTwo:</code> 也必须是一个 <code>String</code>，并且属性 <code>firstThing</code> 和 <code>secondThing</code> 也必须是 <code>Strings</code>。</p>
-<p>尖括号里面可以声明多个泛型占位符，用逗号分隔：</p>
+</span></span></code></pre></div><p>在上面代码中，初始化器调用时使用<code>&quot;howdy&quot;</code>作为形参 <code>thingOne:</code>的值，此时会将 <code>T</code> 解析为 <code>String</code>。因此， <code>thingTwo:</code> 的实参也必须是一个 <code>String</code>，并且属性 <code>firstThing</code> 和 <code>secondThing</code> 类型也必须是 <code>Strings</code>。</p>
+<p>在泛型声明时尖括号里面可以声明多个泛型占位符，用逗号分隔：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">flockTwoTogether</span>&lt;T, U&gt;(<span style="color:#66d9ef">_</span> f1: T, <span style="color:#66d9ef">_</span> f2: U) {
 </span></span><span style="display:flex;"><span>    <span style="color:#75715e">//</span>
 </span></span><span style="display:flex;"><span>}
-</span></span></code></pre></div><p>现在<code>flockTwoTogether</code>的参数可以解析为两个不同的类型。在泛型的代码中，占位符是一个代表解析类型的类型引用，可以使用类型引用进行比较：</p>
+</span></span></code></pre></div><p>现在<code>flockTwoTogether</code>的两个参数可以解析为两个不同的类型（尽管它们并不要求两个类型一定不同）。在泛型代码中，泛型占位符代表的解析类型的类型引用，可以使用类型引用进行比较：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">takeAndReturnSameThing</span>&lt;T&gt;(<span style="color:#66d9ef">_</span> t: T) -&gt; T {
 </span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">if</span> T.<span style="color:#66d9ef">self</span> <span style="color:#66d9ef">is</span> String.<span style="color:#66d9ef">Type</span> { 
 </span></span><span style="display:flex;"><span>        <span style="color:#75715e">// ...</span>
@@ -5612,14 +5612,14 @@ code.has-jax {
 </span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">return</span> t
 </span></span><span style="display:flex;"><span>}
 </span></span></code></pre></div><h4 id="type-constraints">Type Constraints</h4>
-<p>泛型声明可以限制有资格用于解析特定占位符的类型，这被称为类型约束。类型约束的最简单形式是在声明占位符的时候在它的名字后面加一个冒号和一个类型名，<font color=red>冒号后面的类型名可以是一个类名或一个协议名</font>。</p>
-<p>如果是类名，表明这个类型必须是这个类或者这个类的子类。如果是协议名称，则该类型必须是该协议的采用者。而对于一个协议关联类型，类型约束可以作为关联类型声明的一部分出现：</p>
+<p>泛型声明时可以限制有资格用于解析特定占位符的类型，这被称为类型约束。类型约束最简单的形式是在声明占位符时在它的名字后面加一个冒号和一个类型名，<font color=red>冒号后面的类型名可以是一个类名或一个协议名</font>。</p>
+<p>如果冒号后面是类名，<font color=red>表明这个类型必须是这个类或者这个类的子类</font>。如果是协议名称，<font color=red>则表明该类型必须是该协议的采用者</font>。而对于一个协议关联类型，类型约束可以作为关联类型声明的一部分出现：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span><span style="color:#66d9ef">protocol</span> <span style="color:#a6e22e">Flier</span> {
 </span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">func</span> <span style="color:#a6e22e">fly</span>()
 </span></span><span style="display:flex;"><span>}
 </span></span><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span><span style="color:#66d9ef">protocol</span> <span style="color:#a6e22e">Flocker</span> {
-</span></span><span style="display:flex;"><span>    associatedtype T: Flier <span style="color:#75715e">// *</span>
+</span></span><span style="display:flex;"><span>    associatedtype T: Flier 
 </span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">func</span> <span style="color:#a6e22e">flockTogetherWith</span>(f: T)
 </span></span><span style="display:flex;"><span>}
 </span></span><span style="display:flex;"><span>
@@ -5633,6 +5633,33 @@ code.has-jax {
 </span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">func</span> <span style="color:#a6e22e">flockTogetherWith</span>(f: Bee) {
 </span></span><span style="display:flex;"><span>        <span style="color:#75715e">//</span>
 </span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p>在上面的示例代码中，协议<code>Flocker</code>的关联类型<code>T</code>被限定为协议<code>Flier</code>的采用者。<code>Bee</code>是协议<code>Filer</code>的一个采用者，因此<code>Bird</code>采用协议<code>Flocker</code>时，可以将<code>Bee</code>作为方法<code>flockTogetherWith</code>的参数类型。</p>
+<p>请注意，如果没有关联类型，我们就不可能通过像这样声明<code>Flocker</code>来达到同样的效果：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span><span style="color:#66d9ef">protocol</span> <span style="color:#a6e22e">Flocker</span> {
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">func</span> <span style="color:#a6e22e">flockTogetherWith</span>(f: Flier)
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p>但这不是一回事， 这需要<code>Flocker</code>采用者将<code>flockTogetherWith</code>的参数指定为<code>Flier</code>，我们将不得不像下面这样写<code>Bird</code>：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span><span style="color:#66d9ef">struct</span> <span style="color:#a6e22e">Bird</span>: Flocker {
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">func</span> <span style="color:#a6e22e">flockTogetherWith</span>(f: Flier) {
+</span></span><span style="display:flex;"><span>      <span style="color:#75715e">// ...</span>
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p>对于一个泛型函数或泛型对象类型，类型约束可以出现在尖括号中。例如，前面描述了一个全局函数<code>func dogMakerAndNamer&lt;WhatType:Dog&gt;</code>。因为，<code>Dog</code>是一个类，所以约束条件说<code>WhatType</code>必须是<code>Dog</code>或<code>Dog</code>的子类。</p>
+<p>占位符的类型约束通常用来向编译器保证某些信息可以被发送到占位符类型的实例上。假设我们想实现一个函数 <code>myMin</code>，返回列表中最小的成员。这里有一个有希望实现的泛型函数，但有一个问题它不能通过编译：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">myMin</span>&lt;T&gt;(<span style="color:#66d9ef">_</span> things: T...) -&gt; T {
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">var</span> minimum = things.first!
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">for</span> item <span style="color:#66d9ef">in</span> things.dropFirst() {
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">if</span> item <span style="color:#f92672">&lt;</span> minimum { <span style="color:#75715e">// compile error</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>            minimum = item
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>        }
+</span></span><span style="display:flex;"><span>    } 
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">return</span> minimum
 </span></span><span style="display:flex;"><span>}
 </span></span></code></pre></div><h2 id="available属性">available属性</h2>
 <p>有个类涉及到的属性只能在<code>iOS 13.0</code>以上系统使用，为了将该类定义为其它类的属性，必须加上<code>available</code>和<code>lazy</code>：</p>
