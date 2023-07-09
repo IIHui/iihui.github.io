@@ -1450,7 +1450,8 @@ let s = Optional(&amp;#34;howdy&amp;#34;) debugPrint(s)  // 打印的结果 Opti
 enum Optional&amp;lt;String&amp;gt; {  case none  case some(String)  init(_ some: String) // ... } 上面是一个Optional的伪代码声明，它的Wrapped占位符类型已经全部被替换成了String类型。我们可以通过声明s是Optional&amp;lt;String&amp;gt;类型来概括这一点。事实上，这是合法的语法，可以使用下面的方式创建同样的Optional：
 let s1: Optional&amp;lt;String&amp;gt; = &amp;#34;howdy&amp;#34; debugPrint(s1)  // 打印的结果 Optional(&amp;#34;howdy&amp;#34;) 不仅类型可以是泛型，函数也可以是泛型。泛型函数可以解决之前提出的一个问题，在下面dogMakerAndNamer方法中，当传入一个Dog的子类NoisyDog作为参数时，将会得到一个实例，但这个实例的类型依然是Dog：
 func dogMakerAndNamer(_ whattype: Dog.Type) -&amp;gt; Dog {  let d = whattype.init(name: &amp;#34;Fido&amp;#34;)  return d } 实际上，我们希望返回值的类型和传入的类型是一样的，泛型函数可以做到这一点：
-func dogMakerAndNamer&amp;lt;WhatType: Dog&amp;gt;(_: WhatType.Type) -&amp;gt; WhatType {  let d = WhatType.init(name: &amp;#34;Fido&amp;#34;)  return d } Generic Declarations 下面列出了在Swift中可以以某种形式声明泛型的地方，主要包括Generic protocol with Self，Generic protocol with associated type，Generic functions，和Generic object types。
+func dogMakerAndNamer&amp;lt;WhatType: Dog&amp;gt;(_: WhatType.Type) -&amp;gt; WhatType {  let d = WhatType.init(name: &amp;#34;Fido&amp;#34;)  return d }  let dog = dogMakerAndNamer(NoisyDog.self) 在上面代码中，传入了NoisyDog.self作为参数。这就告诉了编译器WhatType是什么类型，是NoiseDog。
+Generic Declarations 下面列出了在Swift中可以以某种形式声明泛型的地方，主要包括Generic protocol with Self，Generic protocol with associated type，Generic functions，和Generic object types。
 Generic protocol with Self 在协议体中，使用关键词Self可以将协议变成一个泛型的。Self在这里是一个占位符，意味着采用者的类型。下面是一个Flier协议，它声明了一个接受Self参数的方法：
 protocol Flier {  func flockTogetherWith(_ f: Self) } 上面协议声明意味着，如果一个Bird对象类型采用了Flier协议，它的flockTogetherWith的实现必须将其参数声明为一个Bird：
 struct Bird: Flier {  func flockTogetherWith(_ f: Bird) {  //  } } Generic protocol with associated type 一个协议可以使用关联类型语句来声明一个关联类型。这就把协议变成了一个泛型，关联类型名称是一个占位符：
