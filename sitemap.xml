@@ -1480,15 +1480,22 @@ func myMin&amp;lt;T&amp;gt;(_ things: T...) -&amp;gt; T {   var minimum = things
 解决方案是向编译器承诺，T的解析类型实际上可以使用小于运算符。事实证明，这样做的方法是将T限制在Swift内置的可比较协议中：
 func myMin&amp;lt;T: Comparable&amp;gt;(_ things: T...) -&amp;gt; T {   var minimum = things.first!   for item in things.dropFirst() {   if item &amp;lt; minimum { // compile error   minimum = item   }  }  return minimum } Explicit Specialization 迄今为止所有泛型例子中，占位符的类型都是通过编译器推断来完成解析的。还有另一种方法来执行解析—手动解析类型，这就是所谓的显式特化explicit specialization，目前有两种形式的explicit specialization。
 Generic protocol with associated type 协议的采用者可以通过类型别名来完成手动解析关联类型，即将关联类型等同于一个明确的类型：
-protocol Flier {  associatedtype T }  struct Bird: Flier {  typealias T = String } Generic object type 泛型对象类型的使用者可以用声明泛型相同尖括号语法来手动解析占位符类型，尖括号中是的实际的类型名称，如下所示：
-class Dog&amp;lt;T&amp;gt; {  var name: T? }  let d = Dog&amp;lt;String&amp;gt;() 但是，不能显式地特化一个泛型函数，一个解决方案是让泛型函数接受一个类型参数来解析泛型。下面是先前在dogMakerAndNamer例子中所做的：
-func dogMakerAndNamer&amp;lt;WhatType: Dog&amp;gt;(_: WhatType.Type) -&amp;gt; WhatType {  let d = WhatType.init(name: &amp;#34;Fido&amp;#34;)  return d } 函数dogMakerAndNamer的参数从未在函数体内使用，这就是为什么它没有名字，只有一个下划线。然而，它确实是为了解决泛型的。
-另一种方法是不使用泛型函数。相反，先声明一个泛型对象类型，在它里面包装一个使用泛型占位符的非泛型函数。泛型类型可以被显式地专门化，在函数中解析占位符：
-protocol Flier {  init() }  struct Bird: Flier {  init() {  } }  struct FlierMaker&amp;lt;T: Flier&amp;gt; {  static func makeFlier() -&amp;gt; T {  return T()  } }  let f = FlierMaker&amp;lt;Bird&amp;gt;.makeFlier() // returns a Bird 当一个类是泛型类，只要解析了泛型就可以对它进行子类化。可以通过一个匹配的泛型子类或者明确地解析父类的泛型占位符来做到这一点。下面是一个泛型Dog类：
+protocol Flier {  associatedtype T }  struct Bird: Flier {  typealias T = String } Generic object type 泛型对象类型的使用者可以用声明泛型相同尖括号语法来手动解析占位符类型，尖括号中是实际的类型名称，如下所示：
+class Dog&amp;lt;T&amp;gt; {  var name: T? }  let d = Dog&amp;lt;String&amp;gt;() 但是，不能显式地特化一个泛型函数，一个解决方案是让泛型函数接受一个类型参数以解析泛型。下面是先前在dogMakerAndNamer例子中所做的：
+func dogMakerAndNamer&amp;lt;WhatType: Dog&amp;gt;(_: WhatType.Type) -&amp;gt; WhatType {  let d = WhatType.init(name: &amp;#34;Fido&amp;#34;)  return d } 函数dogMakerAndNamer的参数从未在函数体内使用，这就是为什么它没有名字，只有一个下划线。然而，它确实是为了解析泛型的。
+另一种方法是不使用泛型函数。替换地，先声明一个泛型对象类型，在它里面包装一个使用泛型占位符的非泛型函数。泛型占位符可以被显式地特化，以在函数中解析占位符：
+protocol Flier {  init() }  struct Bird: Flier {  init() {  //  } }  struct FlierMaker&amp;lt;T: Flier&amp;gt; {  static func makeFlier() -&amp;gt; T {  return T()  } }  let f = FlierMaker&amp;lt;Bird&amp;gt;.makeFlier() // returns a Bird 当一个类是泛型类，只要解析了泛型就可以对它进行子类化。可以通过一个匹配的泛型子类或者明确地解析父类的泛型占位符来做到这一点。下面是一个泛型Dog类：
 class Dog&amp;lt;T&amp;gt; {  func speak(_ what: T) {  // ...  } } 可以将其子类化为一个泛型，其占位符与父类的占位符一致：
-class NoisyDog&amp;lt;T&amp;gt; : Dog&amp;lt;T&amp;gt; {} 这是合法的，因为NoisyDog占位符T的被解析时的同时也解析Dog占位符T。另一个选择是明确特化Dog的非泛型子类：
+class NoisyDog&amp;lt;T&amp;gt; : Dog&amp;lt;T&amp;gt; {} 这是合法的，因为NoisyDog占位符T的被解析时的同时也解析了父类的Dog占位符T。另一个选择是明确特化父类Dog以得到非泛型子类：
 class NoisyDog : Dog&amp;lt;String&amp;gt; {} 在这种情况下，子类中的方法覆盖可以使用专门的类型，而父类则使用泛型：
-class NoisyDog: Dog&amp;lt;String&amp;gt; {  override func speak(_ what: String) {  // ...  } } Generic Types and Covariance available属性 有个类涉及到的属性只能在iOS 13.0以上系统使用，为了将该类定义为其它类的属性，必须加上available和lazy：
+class NoisyDog: Dog&amp;lt;String&amp;gt; {  override func speak(_ what: String) {  // ...  } } Generic Types and Covariance 一个泛型对象类型不能用于声明的类型。下面的类类型Dog&amp;lt;T&amp;gt;，不能简单声明一个变量为Dog类型：
+class Dog&amp;lt;T&amp;gt; {  func speak(_ what: T) {  //  } }  var d: Dog? // compile error 只有一个被解析了的泛型对象类型可用于声明中的类型，能有多少种解析就有多少种类型，每种不同的解析都构成一种不同的类型：
+class Dog3&amp;lt;T&amp;gt; {  func speak(_ what: T) {  //  } }  var d1: Dog3&amp;lt;Int&amp;gt;? // that&amp;#39;s a type var d2: Dog3&amp;lt;String&amp;gt;? // that&amp;#39;s a different type  // ... and so on ... 但是，有一种显然的情况除外，即当根据上下文可以推断出类型时：
+class Node&amp;lt;T&amp;gt; {  let value: T  let parent: Node?   init(_ value: T, parent: Node?) {  self.value = value  self.parent = parent  } } 上面代码看起来parent属性是一个尚未解析的可选Node类型。实际上，在没有显式特化的情况下，编译器会认为它是 Node&amp;lt;T&amp;gt;，并将parent解析为当前类型。
+泛型的不同特化类型不仅是不同的类型，而且是不相关的类型。特别地，一个专门化为子类型的泛型对于专门化为父类型的同一泛型来说不是多态的：
+struct Wrapper&amp;lt;T&amp;gt; {  // }  class Cat {  // }  class CalicoCat: Cat {  // } let w : Wrapper&amp;lt;Cat&amp;gt; = Wrapper&amp;lt;CalicoCat&amp;gt;() // compile error 上面代码会出现编译错误，上面的代码中两个泛型类型Wrapper&amp;lt;Cat&amp;gt;和Wrapper&amp;lt;CalicoCat&amp;gt;不是父类和子类的关系。相反，如果这种赋值是可能的，我们会说这些类型是共变的covariant，这意味着占位符的特化之间的多态关系被应用到了泛型类型本身。
+某些 Swift 内置的泛型是共变的，Optional 就是一个明显的例子。但令人沮丧的是，共变性并不是一种通用的语言特性，无法指定自定义泛型类型应该是共变的。
+available属性 有个类涉及到的属性只能在iOS 13.0以上系统使用，为了将该类定义为其它类的属性，必须加上available和lazy：
 @available(iOS 13.0, *) class HapticManager { } class VibrationService {  @available(iOS 13.0, *)  private(set) lazy var hapticManager = HapticManager() } xcframework xcodebuild clean archive -workspace CMBMPGMK.xcworkspace -scheme CMBMPGMK -configuration release -sdk iphoneos -destination &amp;#39;generic/platform=iOS&amp;#39; -archivePath &amp;#39;./build/iphonedevice.xcarchive&amp;#39; SKIP_INSTALL=NO BUILD_LIBRARIES_FOR_DISTRIBUTION=YES   xcodebuild clean archive -workspace CMBMPGMK.xcworkspace -scheme CMBMPGMK -configuration release -sdk iphonesimulator -destination &amp;#39;generic/platform=iOS Simulator&amp;#39; -archivePath &amp;#39;./build/iphonesimulator.xcarchive&amp;#39; SKIP_INSTALL=NO BUILD_LIBRARIES_FOR_DISTRIBUTION=YES   xcodebuild -create-xcframework -framework ./iphonesimulator.xcarchive/Products/Library/Frameworks/CMBMPGMK.framework -framework ./iphonedevice.xcarchive/Products/Library/Frameworks/CMBMPGMK.framework -output CMBMPGMK.xcframework  静态库 BUILD_LIBRARIES_FOR_DISTRIBUTION=YES 头文件放到public，以及要将头文件放出来 bitcode=no exclude simulator arm64  </content>
     </entry>
     
