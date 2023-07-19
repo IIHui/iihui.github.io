@@ -1484,7 +1484,7 @@ protocol Flier {  associatedtype T }  struct Bird: Flier {  typealias T = String
 class Dog&amp;lt;T&amp;gt; {  var name: T? }  let d = Dog&amp;lt;String&amp;gt;() 但是，不能显式地特化一个泛型函数，一个解决方案是让泛型函数接受一个类型参数以解析泛型。下面是先前在dogMakerAndNamer例子中所做的：
 func dogMakerAndNamer&amp;lt;WhatType: Dog&amp;gt;(_: WhatType.Type) -&amp;gt; WhatType {  let d = WhatType.init(name: &amp;#34;Fido&amp;#34;)  return d } 函数dogMakerAndNamer的参数从未在函数体内使用，这就是为什么它没有名字，只有一个下划线。然而，它确实是为了解析泛型的。
 另一种方法是不使用泛型函数。替换地，先声明一个泛型对象类型，在它里面包装一个使用泛型占位符的非泛型函数。泛型占位符可以被显式地特化，以在函数中解析占位符：
-protocol Flier {  init() }  struct Bird: Flier {  init() {  //  } }  struct FlierMaker&amp;lt;T: Flier&amp;gt; {  static func makeFlier() -&amp;gt; T {  return T()  } }  let f = FlierMaker&amp;lt;Bird&amp;gt;.makeFlier() // returns a Bird 当一个类是泛型类，只要解析了泛型就可以对它进行子类化。可以通过一个匹配的泛型子类或者明确地解析父类的泛型占位符来做到这一点。下面是一个泛型Dog类：
+protocol Flier {  init() }  struct Bird: Flier {  init() {  //  } }  struct FlierMaker&amp;lt;T: Flier&amp;gt; {  static func makeFlier() -&amp;gt; T {  return T()  } }  let f = FlierMaker&amp;lt;Bird&amp;gt;.makeFlier() // returns a Bird 当一个类是泛型类，只要解析了泛型占位符就可以对它进行子类化。可以通过一个匹配的泛型子类或者明确地解析父类的泛型占位符来做到这一点。下面是一个泛型Dog类：
 class Dog&amp;lt;T&amp;gt; {  func speak(_ what: T) {  // ...  } } 可以将其子类化为一个泛型，其占位符与父类的占位符一致：
 class NoisyDog&amp;lt;T&amp;gt; : Dog&amp;lt;T&amp;gt; {} 这是合法的，因为NoisyDog占位符T的被解析时的同时也解析了父类的Dog占位符T。另一个选择是明确特化父类Dog以得到非泛型子类：
 class NoisyDog : Dog&amp;lt;String&amp;gt; {} 在这种情况下，子类中的方法覆盖可以使用专门的类型，而父类则使用泛型：
