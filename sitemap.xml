@@ -1250,7 +1250,7 @@ Classes 虽然类和结构体相似，但和结构体还有一些关键区别：
   多引用：当一个类的实例被赋值给多个变量或作为参数传递给一个函数时，可能出现多个引用指向一个相同的对象。
     继承：一个类可以有一个父类并继承父类的成员。类类型可以形成一个层次结构树，而结构体不能继承。
   在Objective-C中，类是唯一的对象类型。一些内置的Swift结构体类型可以神奇地与Objective-C的类桥接，但自定义结构类型却没有这种魔力。因此，在用Swift进行iOS编程时，声明类而不是结构的一个原因是类能够和Objective-C或Cocoa转换。
-Value Types and Reference Types 在Swift中，结构体和枚举类型都是值类型，类是引用类型。值类型不能就地可变，而类的实例是能够就地可变的。下面的例子中，因为结构体是值类型，所以更改结构体实例的属性时，要将结构体实例用var声明，而不能用let声明：
+Value Types and Reference Types 在Swift中，结构体和枚举类型都是值类型，类是引用类型。值类型不能就地可变，而类的实例是能够就地可变的。下面的实例代码中，因为结构体是值类型，所以更改结构体实例的属性时，要将结构体实例用var声明，而不能使用let声明：
 struct Digit {  var number: Int   init(_ n: Int) {  self.number = n  debugPrint(&amp;#34;number:\(number)&amp;#34;)  } }  var d = Digit(23) d.number = 45  // 打印结果 &amp;#34;number:23&amp;#34; 实际上，当显式改变一个值类型的实例时，是用一个不同的实例替换该实例。为了证明这一点，可以为digit实例添加一个setter观察器。下面代码中，虽然改变的只是属性number的值，但是didSet依然调用了，这说明该实例已经被替换了：
 struct Digit {  var number: Int   init(_ n: Int) {  self.number = n  } }  var d: Digit = Digit(234) {  didSet {  debugPrint(&amp;#34;d was set&amp;#34;)  } }  d.number = 456 // 执行结果 &amp;#34;d was set&amp;#34; 下面代码中，实际上需要用另一个Digit实例替换digit指向的Digit实例，但因为digit是用let声明的，所以会出现编译错误。这能够解释如果值类型的实例引用是用let关键字声明的，那么就不能对该实例进行就地改变：
 let digit = Digit(123) // Digit is a struct digit.number = 42 // compile error: Cannot assign to property: &amp;#39;dd&amp;#39; is a &amp;#39;let&amp;#39; constant 同时也解释了结构体或枚举的实例方法中如果需要设置某个属性值，必须将方法显式地用mutating标记。这个标记的意思：可能用另一个对象替换当前对象，所以对这个对象的引用必须是var，而不能是let声明。
