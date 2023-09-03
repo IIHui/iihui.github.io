@@ -2279,7 +2279,14 @@ Text (&amp;#34;Top&amp;#34;) .font(.system(size: 40)) .background(Color.yellow) 
 在任何视图中都可以使用offset和postion修改器。因为stack也是视图，所以也可以在stack上应用offset和position修改器，这样就会移动里面的每个视图的位置：
 VStack {  Text(&amp;#34;First&amp;#34;).font(.system(size: 40)).background(Color.yellow)  Text(&amp;#34;Second View&amp;#34;).font(.system(size: 40)).background(Color.yellow) }.offset(x: 25, y: 125) offset偏移修改器会将整个VStack从其正常位置移开，而位置修改器则根据原点（屏幕左上角）来放置VStack。下面Swift代码使用了完全相同的x和y值，但在VStack上使用了位置修改器：
 VStack {  Text(&amp;#34;First&amp;#34;).font(.system(size: 40)).background(Color.yellow)  Text(&amp;#34;Second View&amp;#34;).font(.system(size: 40)).background(Color.yellow) }.position(x: 25, y: 125) 如上图所示，由于位置修改器将VStack从原点移动，但因为x值不够大，VStack的内容会被屏幕截断。
-</content>
+Chapter 4 为了提高灵活性，可以将字符串存储在变量或常量中，然后在文本视图中使用该变量或常量名:
+let myString = &amp;#34;Displays a string variable&amp;#34; Text(myString) 通过使用字符串变量，可以在变量中存储不同的字符串，使文本视图显示新的文本。为了获得更大的灵活性，文本视图还可以使用字符串插值法显示非字符串数据，例如:
+let myString = 46 Text(&amp;#34;This is my age = \(myString)&amp;#34;) 字符串插值允许在字符串中显示任何非字符串数据。最重要的是，字符串插值不需要将数据转换成字符串，因此是在文本视图中显示数据的一种快速而简单的方法。
+文本视图可以显示任意长度的字符串。不过，显示字符串的长度会因应用程序运行时的屏幕尺寸（如较大的iPad屏幕或较小的iPhone屏幕）而异。要自定义字符串的显示方式，SwiftUI允许定义以下内容：
+ 行限制：定义文本视图可显示的最大行数，如2或4行。 截断：如果无法显示整个字符串，定义如何截断字符串。  HStack {  let myString = 23  Text(&amp;#34;This is my age \(myString). Since I am retired, I am now eligible for a pension and Social Security so I can spend the rest of my life relaxing and enjoying life without having to work for an income anymore.&amp;#34;) } Spacer().frame(height: 10) HStack {  let myString = 23  Text(&amp;#34;This is my age \(myString). Since I am retired, I am now eligible for a pension and Social Security so I can spend the rest of my life relaxing and enjoying life without having to work for an income anymore.&amp;#34;).lineLimit(2) } 除了在代码中添加lineLimit修改器，还可以在检查面板修改行限制。如下图所示，在Font下面，可以修改Line Limit的值：
+如果定义了行数限制（如两行），而使用的文本超出了行数限制（如显示三行或更多行），SwiftUI将切断或截断文本。SwiftUI提供三种方法来截断超过行数限制的文本，如下图所示：
+ .head：截断最后一行的开头 .middle：截断最后一行的中间 .tail：截断最后一行的末尾  默认情况，SwiftUI截断最后一行的末尾，可以在代码中使用truncationMode修改器来改变截取模式。如下代码所示，在行限制修改器后面添加truncationMode：
+let myString = 23 Text(&amp;#34;This is my age \(myString). Since I am retired, I am now eligible for a pension and Social Security so I can spend the rest of my life relaxing and enjoying life without having to work for an income anymore.&amp;#34;).lineLimit(2).truncationMode(.middle) </content>
     </entry>
     
      <entry>
