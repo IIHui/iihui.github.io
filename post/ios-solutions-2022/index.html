@@ -241,7 +241,7 @@ code.has-jax {
     <i class="fa fa-file-word-o"></i>
 </span>
 <span class="post-meta-item-text">字数: </span>
-<span class="leancloud-visitors-count">7900</span>
+<span class="leancloud-visitors-count">7924</span>
 &nbsp; | &nbsp;
 <span class="post-meta-item-icon">
     <i class="fa fa-coffee"></i>
@@ -257,19 +257,23 @@ code.has-jax {
 <img src="https://s2.loli.net/2022/10/22/AJfTuwQxRCSd4YP.png" alt="AJfTuwQxRCSd4YP" style="zoom:50%;" />
 <p>参考<a href="https://developer.apple.com/forums/thread/687275">这个解决方案</a>，首先打开工程，然后在菜单栏的<code>File--&gt;Packages--&gt;Reset PackageCaches</code>点击一下，等待<code>Xcode</code>重置缓存完成后，发现还是不能拉取依赖包：</p>
 <img src="https://s2.loli.net/2022/10/22/dzZuYit3Wqgwy2E.png" alt="dzZuYit3Wqgwy2E" style="zoom:50%;" />
-<p>查找资料发现<code>Xcode</code>中拉取<code>Swift Package</code>是不走系统代理的。也就是说即使打开全局代理模式，依然也不能解决<code>SPM</code>的拉取问题。但是，在开启全局代理模式下，在浏览器中直接访问<code>github</code>，速度却很快。找到一种临时<a href="https://juejin.cn/post/6946451335948697636">解决方案</a>：先关闭<code>Xcode</code>，然后在终端设置<a href="https://www.jianshu.com/p/205aff65954a">临时代理</a>，最后进入工程目录执行拉取依赖命令：</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span><span style="color:#75715e"># 设置临时代理</span>
-</span></span><span style="display:flex;"><span>export all_proxy<span style="color:#f92672">=</span>http://127.0.0.1:31181
-</span></span><span style="display:flex;"><span><span style="color:#75715e"># 拉取依赖</span>
+<p>查找资料发现<code>Xcode</code>中拉取<code>Swift Package</code>是不走系统代理的，也就是说即使打开全局代理模式，依然也不能解决<code>SPM</code>的拉取问题。</p>
+<p>但是，开启全局代理模式后，在浏览器中直接访问<code>github</code>速度很快，说明在全局模式下访问是没问题。根据这个<a href="https://juejin.cn/post/6946451335948697636">解决方案</a>，需要先完全关闭<code>Xcode</code>，然后在终端设置临时代理：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span># <span style="color:#960050;background-color:#1e0010">设置临时代理</span>
+</span></span><span style="display:flex;"><span>export all_proxy=http:<span style="color:#75715e">//127.0.0.1:31181</span>
+</span></span></code></pre></div><p>最后进入工程目录执行下面命令拉取依赖：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span><span style="color:#75715e"># 拉取依赖</span>
 </span></span><span style="display:flex;"><span>xcodebuild -resolvePackageDependencies -scmProvider system
-</span></span></code></pre></div><p>如果要取消代理，需要使用如下命令：</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>unset http_proxy // 取消http代理
-</span></span><span style="display:flex;"><span>unset https_proxy // 取消https代理
-</span></span><span style="display:flex;"><span>或者直接全部取消
+</span></span></code></pre></div><p>如果要取消临时代理，可以参考<a href="https://www.jianshu.com/p/205aff65954a">这篇文章</a>，使用下面命令：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span><span style="color:#75715e"># 取消http代理</span>
+</span></span><span style="display:flex;"><span>unset http_proxy
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 取消https代理</span>
+</span></span><span style="display:flex;"><span>unset https_proxy
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 取消全部代理</span>
 </span></span><span style="display:flex;"><span>unset ALL_PROXY
 </span></span></code></pre></div><h1 id="ios-16-scanning-barcode">iOS 16 Scanning barcode</h1>
-<p>原来的条形码识别功能正常，但用户反馈系统升级到<code>iOS 16</code>后发现扫描条形码很久都没反应。查<a href="https://developer.apple.com/forums/thread/714341">资料</a>后发现很多开发者都遇到相同问题。</p>
-<p>测试后发现在<code>iOS 16</code>上条形码和二维码不能同时识别，目前该问题似乎已经在<code>iOS 16.3</code>修复了。在修复之前，测试发现<font color=red>将条形码竖着放</font>就能正常识别。</p>
+<p>原来的条形码识别功能正常，但用户反馈系统升级到<code>iOS 16</code>后发现<font color=red>扫描条形码很久都没反应</font>。查<a href="https://developer.apple.com/forums/thread/714341">资料</a>后发现有其他开发者也遇到相同的问题。</p>
+<p>测试后发现在<code>iOS 16</code>上<font color=red>条形码和二维码不能同时识别</font>，目前该问题似乎已经在<code>iOS 16.3</code>修复了。在修复之前，发现<font color=red>将条形码竖着放</font>就能正常识别。</p>
 <h1 id="depreciation-of-uiremotekeyboardwindow">depreciation of UIremotekeyboardwindow</h1>
 <p>原生的笔记功能，我们是通过<code>WebView</code>来实现的。一些自定义功能是通过监听键盘的弹出事件，然后隐藏系统键盘<code>Window</code>并显示一些自定义<code>view</code>，这种实现方式借助了私有类<code>UIremotekeyboardwindow</code>。</p>
 <p>升级到<code>iOS 16</code>后发现自定义的<code>view</code>已不能覆盖键盘视图。查<a href="https://developer.apple.com/forums/thread/713723">资料</a>发现<code>UIremotekeyboardwindow</code>在<code>iOS 16</code>上已被移除，目前的解决方案是在系统键盘上方增加原有功能，而不是用自定义<code>view</code>覆盖系统键盘所在位置。</p>
