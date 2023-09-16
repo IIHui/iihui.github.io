@@ -241,7 +241,7 @@ code.has-jax {
     <i class="fa fa-file-word-o"></i>
 </span>
 <span class="post-meta-item-text">字数: </span>
-<span class="leancloud-visitors-count">7852</span>
+<span class="leancloud-visitors-count">7900</span>
 &nbsp; | &nbsp;
 <span class="post-meta-item-icon">
     <i class="fa fa-coffee"></i>
@@ -253,15 +253,20 @@ code.has-jax {
     </header>
     <div class="post-body" itemprop="articleBody">
     <h1 id="missing-package-product">Missing Package Product</h1>
-<p>今天在<code>github</code>上拉取了<code>uPic</code>工程源代码，但编译时出现了<code>Missing Package Product</code>错误，具体报错信息如下图所示：</p>
+<p>在<code>github</code>上拉取了<a href="https://github.com/gee1k/uPic">uPic</a>工程源代码，编译时出现了包缺失的错误(<code>Missing Package Product</code>)，具体报错信息如下图所示：</p>
 <img src="https://s2.loli.net/2022/10/22/AJfTuwQxRCSd4YP.png" alt="AJfTuwQxRCSd4YP" style="zoom:50%;" />
-<p>先参考<a href="https://developer.apple.com/forums/thread/687275">这个解决方案</a>，首先打开工程，然后如下图所示在菜单栏的<code>File--&gt;Packages--&gt;Reset PackageCaches</code>点击一下，等待<code>Xcode</code>重置缓存完成后，发现还是不能拉取依赖包：</p>
+<p>参考<a href="https://developer.apple.com/forums/thread/687275">这个解决方案</a>，首先打开工程，然后在菜单栏的<code>File--&gt;Packages--&gt;Reset PackageCaches</code>点击一下，等待<code>Xcode</code>重置缓存完成后，发现还是不能拉取依赖包：</p>
 <img src="https://s2.loli.net/2022/10/22/dzZuYit3Wqgwy2E.png" alt="dzZuYit3Wqgwy2E" style="zoom:50%;" />
-<p>经过查询，在<code>Xcode</code>中拉取<code>Swift Package</code>是不走系统代理的。也就是说即使打开全局的代理模式，依然也不能解决<code>SPM</code>的拉取问题。但是，在开启全局代理模式下，在浏览器中直接访问<code>github</code>，速度却很快。找到一种<a href="https://juejin.cn/post/6946451335948697636">解决方案</a>：先关闭<code>Xcode</code>，然后在终端设置<a href="https://www.jianshu.com/p/205aff65954a">临时代理</a>，最后进入工程目录执行拉取依赖命令：</p>
+<p>查找资料发现<code>Xcode</code>中拉取<code>Swift Package</code>是不走系统代理的。也就是说即使打开全局代理模式，依然也不能解决<code>SPM</code>的拉取问题。但是，在开启全局代理模式下，在浏览器中直接访问<code>github</code>，速度却很快。找到一种临时<a href="https://juejin.cn/post/6946451335948697636">解决方案</a>：先关闭<code>Xcode</code>，然后在终端设置<a href="https://www.jianshu.com/p/205aff65954a">临时代理</a>，最后进入工程目录执行拉取依赖命令：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span><span style="color:#75715e"># 设置临时代理</span>
 </span></span><span style="display:flex;"><span>export all_proxy<span style="color:#f92672">=</span>http://127.0.0.1:31181
 </span></span><span style="display:flex;"><span><span style="color:#75715e"># 拉取依赖</span>
 </span></span><span style="display:flex;"><span>xcodebuild -resolvePackageDependencies -scmProvider system
+</span></span></code></pre></div><p>如果要取消代理，需要使用如下命令：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>unset http_proxy // 取消http代理
+</span></span><span style="display:flex;"><span>unset https_proxy // 取消https代理
+</span></span><span style="display:flex;"><span>或者直接全部取消
+</span></span><span style="display:flex;"><span>unset ALL_PROXY
 </span></span></code></pre></div><h1 id="ios-16-scanning-barcode">iOS 16 Scanning barcode</h1>
 <p>原来的条形码识别功能正常，但用户反馈系统升级到<code>iOS 16</code>后发现扫描条形码很久都没反应。查<a href="https://developer.apple.com/forums/thread/714341">资料</a>后发现很多开发者都遇到相同问题。</p>
 <p>测试后发现在<code>iOS 16</code>上条形码和二维码不能同时识别，目前该问题似乎已经在<code>iOS 16.3</code>修复了。在修复之前，测试发现<font color=red>将条形码竖着放</font>就能正常识别。</p>

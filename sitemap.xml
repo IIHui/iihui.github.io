@@ -198,10 +198,11 @@ error build: &amp;#39;/Users/xxx/Library/Developer/Xcode/DerivedData/xxx-fjdqujf
         <tags>
           <tag>iOS</tag>
         </tags>
-        <content type="html"> Missing Package Product 今天在github上拉取了uPic工程源代码，但编译时出现了Missing Package Product错误，具体报错信息如下图所示：
-先参考这个解决方案，首先打开工程，然后如下图所示在菜单栏的File--&amp;gt;Packages--&amp;gt;Reset PackageCaches点击一下，等待Xcode重置缓存完成后，发现还是不能拉取依赖包：
-经过查询，在Xcode中拉取Swift Package是不走系统代理的。也就是说即使打开全局的代理模式，依然也不能解决SPM的拉取问题。但是，在开启全局代理模式下，在浏览器中直接访问github，速度却很快。找到一种解决方案：先关闭Xcode，然后在终端设置临时代理，最后进入工程目录执行拉取依赖命令：
-# 设置临时代理 export all_proxy=http://127.0.0.1:31181 # 拉取依赖 xcodebuild -resolvePackageDependencies -scmProvider system iOS 16 Scanning barcode 原来的条形码识别功能正常，但用户反馈系统升级到iOS 16后发现扫描条形码很久都没反应。查资料后发现很多开发者都遇到相同问题。
+        <content type="html"> Missing Package Product 在github上拉取了uPic工程源代码，编译时出现了包缺失的错误(Missing Package Product)，具体报错信息如下图所示：
+参考这个解决方案，首先打开工程，然后在菜单栏的File--&amp;gt;Packages--&amp;gt;Reset PackageCaches点击一下，等待Xcode重置缓存完成后，发现还是不能拉取依赖包：
+查找资料发现Xcode中拉取Swift Package是不走系统代理的。也就是说即使打开全局代理模式，依然也不能解决SPM的拉取问题。但是，在开启全局代理模式下，在浏览器中直接访问github，速度却很快。找到一种临时解决方案：先关闭Xcode，然后在终端设置临时代理，最后进入工程目录执行拉取依赖命令：
+# 设置临时代理 export all_proxy=http://127.0.0.1:31181 # 拉取依赖 xcodebuild -resolvePackageDependencies -scmProvider system 如果要取消代理，需要使用如下命令：
+unset http_proxy // 取消http代理 unset https_proxy // 取消https代理 或者直接全部取消 unset ALL_PROXY iOS 16 Scanning barcode 原来的条形码识别功能正常，但用户反馈系统升级到iOS 16后发现扫描条形码很久都没反应。查资料后发现很多开发者都遇到相同问题。
 测试后发现在iOS 16上条形码和二维码不能同时识别，目前该问题似乎已经在iOS 16.3修复了。在修复之前，测试发现将条形码竖着放就能正常识别。
 depreciation of UIremotekeyboardwindow 原生的笔记功能，我们是通过WebView来实现的。一些自定义功能是通过监听键盘的弹出事件，然后隐藏系统键盘Window并显示一些自定义view，这种实现方式借助了私有类UIremotekeyboardwindow。
 升级到iOS 16后发现自定义的view已不能覆盖键盘视图。查资料发现UIremotekeyboardwindow在iOS 16上已被移除，目前的解决方案是在系统键盘上方增加原有功能，而不是用自定义view覆盖系统键盘所在位置。
