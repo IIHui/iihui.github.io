@@ -241,13 +241,13 @@ code.has-jax {
     <i class="fa fa-file-word-o"></i>
 </span>
 <span class="post-meta-item-text">字数: </span>
-<span class="leancloud-visitors-count">15753</span>
+<span class="leancloud-visitors-count">16072</span>
 &nbsp; | &nbsp;
 <span class="post-meta-item-icon">
     <i class="fa fa-coffee"></i>
 </span>
 <span class="post-meta-item-text">阅读: </span>
-<span class="leancloud-visitors-count">32 分钟</span>
+<span class="leancloud-visitors-count">33 分钟</span>
 </span>
       </div>
     </header>
@@ -1123,16 +1123,57 @@ code.has-jax {
 </span></span><span style="display:flex;"><span>}.pickerStyle(.segmented)
 </span></span></code></pre></div><img src="https://s2.loli.net/2023/09/17/j79prmP3u5ClD4f.png" alt="j79prmP3u5ClD4f" style="zoom:50%;" />
 <p>在<code>Picker</code>视图中放置多个<code>Text</code>视图可以定义显示的选项，但分段控件无法知道用户选择了哪个选项。如果使用多个文本视图定义<code>Picker</code>视图中的选项，则需要在每个文本视图后添加一个<code>.tag</code> 属性。</p>
-<p>该<code>.tag</code>属性提供了代表分段控件上每个<code>item</code>的实际数据。<code>.tag</code>属性可以是任何数据类型（如字符串或 Int），但每个 .tag 属性都应包含相同的数据类型。</p>
+<p>该<code>.tag</code>属性提供了代表分段控件上每个<code>item</code>的实际数据。<code>.tag</code>属性可以是任何数据类型（如字符串或 <code>Int</code>），<font color=red>但每个<code>.tag</code>属性都应包含相同的数据类型</font>。</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span>@State <span style="color:#66d9ef">private</span> <span style="color:#66d9ef">var</span> selectedColor = Color.gray
 </span></span><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span>Picker(<span style="color:#e6db74">&#34;Favorite Color&#34;</span>, selection: <span style="color:#960050;background-color:#1e0010">$</span>selectedColor) {
-</span></span><span style="display:flex;"><span>    Text(<span style="color:#e6db74">&#34;Red&#34;</span>).tag(Color.red)
+</span></span><span style="display:flex;"><span>    Text(<span style="color:#e6db74">&#34;red&#34;</span>).tag(Color.red)
 </span></span><span style="display:flex;"><span>    Text(<span style="color:#e6db74">&#34;green&#34;</span>).tag(Color.green)
 </span></span><span style="display:flex;"><span>    Text(<span style="color:#e6db74">&#34;blue&#34;</span>).tag(Color.blue)
 </span></span><span style="display:flex;"><span>    Text(<span style="color:#e6db74">&#34;black&#34;</span>).tag(Color.black)
 </span></span><span style="display:flex;"><span>}.pickerStyle(.segmented)
-</span></span></code></pre></div>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>Rectangle() .fill(selectedColor)
+</span></span></code></pre></div><img src="https://s2.loli.net/2023/09/17/DHKJz2jc5RFauIl.png" alt="DHKJz2jc5RFauIl" style="zoom:50%;" />
+<p>如果上面的代码省略<code>.pickerStyle(.segmented)</code>，那么<code>Picker</code>视图会在菜单栏中显示<code>3</code>个选项，效果如下图所示：</p>
+<p><img src="https://s2.loli.net/2023/09/17/PObtrDFRlVNQniu.png" alt="PObtrDFRlVNQniu"></p>
+<p>输入多个文本视图来填充一个分段控件是可行的，但重复几乎总是意味着代码可以简化。对于<code>Picker</code>视图，可以使用数组和<code>ForEach</code>循环代替多个文本视图，如下所示：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span>@State <span style="color:#66d9ef">var</span> selectedItem = <span style="color:#e6db74">&#34;&#34;</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">let</span> animalArray = [<span style="color:#e6db74">&#34;Fish&#34;</span>, <span style="color:#e6db74">&#34;Tortoise&#34;</span>, <span style="color:#e6db74">&#34;Hare&#34;</span>, <span style="color:#e6db74">&#34;Bird&#34;</span>]
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>Picker(<span style="color:#e6db74">&#34;&#34;</span>, selection: <span style="color:#960050;background-color:#1e0010">$</span>selectedItem) {
+</span></span><span style="display:flex;"><span>    ForEach(animalArray, id: <span style="color:#960050;background-color:#1e0010">\</span>.<span style="color:#66d9ef">self</span>) {
+</span></span><span style="display:flex;"><span>        Text($0)
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>}.pickerStyle(.segmented)
+</span></span><span style="display:flex;"><span>Text(selectedItem)
+</span></span></code></pre></div><h2 id="running-code-from-a-segmented-control">Running Code from a Segmented Control</h2>
+<p>只需在分段控件上点击选项，分段控件只能更改状态变量。如果要根据用户在分段控件上选择的选项来运行代码，则需要添加一个<code>.onChange</code>修改器，如下所示:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span>@State <span style="color:#66d9ef">var</span> selectedMsg = <span style="color:#e6db74">&#34;&#34;</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>Picker(<span style="color:#e6db74">&#34;&#34;</span>, selection: <span style="color:#960050;background-color:#1e0010">$</span>selectedMsg) {
+</span></span><span style="display:flex;"><span>    ForEach(animalArray, id: <span style="color:#960050;background-color:#1e0010">\</span>.<span style="color:#66d9ef">self</span>) {
+</span></span><span style="display:flex;"><span>        Text($0)
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>}.pickerStyle(.segmented)
+</span></span><span style="display:flex;"><span>    .onChange(of: selectedMsg) { newValue <span style="color:#66d9ef">in</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">switch</span> newValue {
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">case</span> <span style="color:#e6db74">&#34;Fish&#34;</span>:
+</span></span><span style="display:flex;"><span>            selectedMsg = <span style="color:#e6db74">&#34;Clicked Fish &#34;</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">case</span> <span style="color:#e6db74">&#34;Tortoise&#34;</span>:
+</span></span><span style="display:flex;"><span>            selectedMsg = <span style="color:#e6db74">&#34;Clicked Tortoise&#34;</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">case</span> <span style="color:#e6db74">&#34;Hare&#34;</span>:
+</span></span><span style="display:flex;"><span>            selectedMsg = <span style="color:#e6db74">&#34;Clicked Hare&#34;</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">case</span> <span style="color:#e6db74">&#34;Bird&#34;</span>:
+</span></span><span style="display:flex;"><span>            selectedMsg = <span style="color:#e6db74">&#34;Clicked Bird&#34;</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">default</span>:
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">break</span>
+</span></span><span style="display:flex;"><span>        }
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>Text(selectedMsg)
+</span></span></code></pre></div><h1 id="chapter-7">Chapter 7</h1>
+<h2 id="retrieving-text-from-text-fields-and-text-editors">Retrieving Text from Text Fields and Text Editors</h2>
+
     </div>
     <footer class="post-footer">
         
@@ -1354,6 +1395,12 @@ code.has-jax {
         <li><a href="#running-code-in-a-button">Running Code in a Button</a></li>
         <li><a href="#storing-code-to-run-in-a-user-interface-view">Storing Code to Run in a User Interface View</a></li>
         <li><a href="#using-a-segmented-control">Using a Segmented Control</a></li>
+        <li><a href="#running-code-from-a-segmented-control">Running Code from a Segmented Control</a></li>
+      </ul>
+    </li>
+    <li><a href="#chapter-7">Chapter 7</a>
+      <ul>
+        <li><a href="#retrieving-text-from-text-fields-and-text-editors">Retrieving Text from Text Fields and Text Editors</a></li>
       </ul>
     </li>
   </ul>
