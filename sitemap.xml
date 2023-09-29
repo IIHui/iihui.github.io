@@ -2413,10 +2413,10 @@ Dismissing the Virtual Keyboard 当用户在TextField中输入内容时，虚拟
 Using a Picker 选择器显示由多个文本视图定义的选项列表。虽然选择器使用文本字符串显示可用选项，但用户选择的任何选项实际上都可以代表任何值，如字符串、十进制数、整数或枚举定义的值。而分段控件是选择器视图的一种特殊类。
 为了创建选择器，可使用多个文本视图来显示选项，并为每个选项附加一个.tag修改器。.tag修改器定义了用户选择的实际值，例如：
 @State var choice = &amp;#34;one&amp;#34; Picker(&amp;#34;&amp;#34;, selection: $choice) {  Text(&amp;#34;1&amp;#34;).tag(&amp;#34;one&amp;#34;)  Text(&amp;#34;2&amp;#34;).tag(&amp;#34;two&amp;#34;)  Text(&amp;#34;3&amp;#34;).tag(&amp;#34;three&amp;#34;)  Text(&amp;#34;4&amp;#34;).tag(&amp;#34;four&amp;#34;)  Text(&amp;#34;5&amp;#34;).tag(&amp;#34;five&amp;#34;) } Text(&amp;#34;Choice = \(choice)&amp;#34;) 在上面代码中，可选的项目都是数字，当用户选择一个数字，实际存储的是字符串。实际上，在文本视图中的.tag修改器可以包含任何数据类型，但同一个选择器里面的.tag修改器的数据类型必须一致，并且和定义的状态变量的类型保持一致。
-默认情况下，选择器视图以菜单形式出现，但.pickerStyle修改器给定了三种不同方式显示选择器视图，具体选项如下，每种的效果如下图所示：
+默认情况下，选择器视图以菜单形式出现，但.pickerStyle修改器给定了三种不同方式显示选择器视图，具体选项如下，具体效果如下图所示：
  .pickerStyle(.menu) .pickerStyle(.wheel) .pickerStyle(.segmented)  Displaying Options in a Picker 在选择器中显示选项的最直接方法是使用多个文本视图。如果选项数量较少，这种方法也行得通，但如果选项数量较多，尤其是使用.wheel样式显示选项时，使用ForEach循环从数组中检索选项通常会更方便。首先，创建一个数组，保存要在选择器视图中显示的所有选项，例如：
 let myArray = [&amp;#34;Fish&amp;#34;, &amp;#34;Tortoise&amp;#34;, &amp;#34;Hare&amp;#34;, &amp;#34;Bird&amp;#34;] 然后，创建一个状态变量：
-@State var selectedItem = &amp;#34;&amp;#34; 最后，创建带有ForEach循环的Picker视图，像下面这样检索数组中的每个项目：
+@State var selectedItem = &amp;#34;&amp;#34; 最后，创建使用ForEach循环的Picker视图：
 Picker(&amp;#34;&amp;#34;, selection: $selectedItem) {  ForEach(myArray, id: \.self) {  Text($0)  } }.pickerStyle(.wheel) Populating a Picker with an Enumeration 数组是填充选择器视图的一种方法。另一种方法是取枚举中列出的选项。枚举可以定义自己的数据类型，并提供有限的有效选项列表。要创建枚举，需要定义枚举名称，然后定义其数据类型（如字符串），例如：
 enum ColorItems: String, CaseIterable, Identifiable {  case rose  case grass  case sky  var id: Self { self } } @State private var selectedColor = ColorItems.rose @State var myColor = Color.red   Rectangle() .fill(myColor) Picker(&amp;#34;Favorite Color&amp;#34;, selection: $selectedColor1) {  ForEach(ColorItems.allCases, id: \.self) { catFood in Text(catFood.rawValue.capitalized)  } }.pickerStyle(.wheel) .onChange(of: selectedColor1) { newValue in  switch newValue {  case ColorItems.rose: myColor = Color.red  case ColorItems.grass: myColor = Color.green  case ColorItems.sky: myColor = Color.blue } } </content>
     </entry>
