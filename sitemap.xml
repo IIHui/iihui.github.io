@@ -2430,7 +2430,10 @@ let dateRange: ClosedRange&amp;lt;Date&amp;gt; = {  let calendar = Calendar.curr
 let formatter = DateFormatter() 然后，可以定义一种样式来显示日期和时间:
    Style Date Time     .short 2/15/22 7:15 PM   .medium Feb 15, 2022 7:15:29 PM   .long February 15, 2022 7:15:29 PM CST   .full Tuesday, February 15, 2022 7:15:29 PM Central Standard Time    需要注意的是：地区不同可能会改变日期的实际显示方式，如15 June 2021或June 15 2021。为了使用日期样式，必须定义DateFormatter的dateStyle属性：
 let formatter = DateFormatter() formatter.dateStyle = .medium formatter.timeStyle = .short 一旦定义了DateFormatter，并且设置了它的dateStyle和timeStyle属性。最后一步是使用这个formatter格式化日期：
-formatter.string(from: myDate) </content>
+formatter.string(from: myDate) 下面代码是使用formatter的示例：
+@State var myDate = Date.now let formatter = DateFormatter()  VStack { 	Text(&amp;#34;Chosen date = \(formatter.string( from: myDate))&amp;#34;) .padding() 	DatePicker(selection: $myDate, label: { Text(&amp;#34;Date&amp;#34;) }).onAppear() {  formatter.dateStyle = .full  formatter.timeStyle = .full 	} } Creating a MultiDate Picker 普通的日期选择器只能让用户选择一个日期。如果想让用户一次选择多个日期，可以使用多日期选择器（MultiDatePicker）。由于MultiDatePicker允许用户选择多个日期，因此这些日期会存储在一组 DateComponents中。这意味着需要像下面这样创建一个状态变量：
+@State var dates = Set&amp;lt;DateComponents&amp;gt;() 如果要创建MultiDatePicker，只需使用State变量来定义它，以存储所选的多个日期，如下所示：
+MultiDatePicker(&amp;#34;Select Dates&amp;#34;, selection: $dates) </content>
     </entry>
     
      <entry>
