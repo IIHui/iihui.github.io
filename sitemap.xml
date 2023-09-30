@@ -2420,7 +2420,11 @@ let myArray = [&amp;#34;Fish&amp;#34;, &amp;#34;Tortoise&amp;#34;, &amp;#34;Hare
 Picker(&amp;#34;&amp;#34;, selection: $selectedItem) {  ForEach(myArray, id: \.self) {  Text($0)  } }.pickerStyle(.wheel) Populating a Picker with an Enumeration 数组是填充选择器视图的一种方法。另一种方法是取枚举中的所有case作为可选值。枚举可以定义自己的数据类型，并提供有限的选项列表。要创建枚举，需要定义枚举名称，然后定义其数据类型（如字符串），例如：
 enum ColorItems: String, CaseIterable, Identifiable {  case rose  case grass  case sky  var id: Self { self } } @State private var selectedColor = ColorItems.rose @State var myColor = Color.red   Rectangle().fill(myColor) Picker(&amp;#34;Favorite Color&amp;#34;, selection: $selectedColor1) {  ForEach(ColorItems.allCases, id: \.self) { catFood in  Text(catFood.rawValue.capitalized)  } }.pickerStyle(.wheel) .onChange(of: selectedColor1) { newValue in  switch newValue {  case ColorItems.rose: myColor = Color.red  case ColorItems.grass: myColor = Color.green  case ColorItems.sky: myColor = Color.blue } } Using the Color Picker 普通选择器可选择文本视图代表的不同选项。但是，如果想让用户选择一种特定的颜色，该怎么办呢？可以在选择器中列出几种颜色，但如果用户想选择一种自定义颜色呢？这时可以使用颜色选取器。
 颜色选择器可以让用户选择标准颜色，或者自定义颜色。用户可通过颜色选择器从网格、光谱或红、绿、蓝滑块中选择标准颜色（红、蓝、绿、黄等）或自定义颜色。
-@State var myColor = Color.red ColorPicker(&amp;#34;Pick a color&amp;#34;, selection: $myColor) </content>
+@State var myColor = Color.red ColorPicker(&amp;#34;Pick a color&amp;#34;, selection: $myColor) 颜色选择器不仅可以让用户选择颜色，也可以选择不透明度。默认情况，不透明度是开启的，如果想要关闭不透明度，可以将supportsOpacity参数置为false:
+ColorPicker(&amp;#34;Pick a color&amp;#34;, selection: $myColor, supportsOpacity: false) Using the Date Picker 用户需要输入的一种常见数据类型是日期和时间。但是，用户可能把日期写成 &amp;ldquo;2023 年6月14 日&amp;rdquo;，而另一个人可能把同一日期写成 &amp;ldquo;6/14/23&amp;rdquo;。在输入时间时，还可能会输入&amp;quot;下午6:45&amp;quot;，也可能会输 &amp;ldquo;18:45&amp;rdquo;。
+为了方便用户输入日期和时间，SwiftUI提供了日期选择器。如下图所示，用户无需键入日期或时间，只需单击想要的日期或时间即可：
+DatePicker(selection: $myDate, label: { Text(&amp;#34;Date&amp;#34;) }) Choosing a Date Picker Style 默认情况下，日期选择器将日期和时间显示为用户可以选择的字段。如果不喜欢日期选择器默认的紧凑模式，可以使用.datePickerStyle()修改器自定义日期选择器的外观，如下图所示：
+ .compact: 显示日期和时间的默认方式。当用户选择日期时，就会出现类似.graphical样式的日历。当用户选择时间时，会以.wheel样式显示不同时间。 .graphical: 在日历中显示日期，但将时间作为一个field。当用户选择时间时，会以.wheel样式显示不同时间。 .wheel:以.wheel样式显示不同的日期和时间。  DatePicker(selection: $myDate, label: { Text(&amp;#34;Date&amp;#34;) }).datePickerStyle(.wheel) DatePicker(selection: $myDate, label: { Text(&amp;#34;Date&amp;#34;) }).datePickerStyle(.graphical) </content>
     </entry>
     
      <entry>
