@@ -241,7 +241,7 @@ code.has-jax {
     <i class="fa fa-file-word-o"></i>
 </span>
 <span class="post-meta-item-text">字数: </span>
-<span class="leancloud-visitors-count">20631</span>
+<span class="leancloud-visitors-count">20955</span>
 &nbsp; | &nbsp;
 <span class="post-meta-item-icon">
     <i class="fa fa-coffee"></i>
@@ -1360,7 +1360,35 @@ code.has-jax {
 </ul>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span>DatePicker(selection: <span style="color:#960050;background-color:#1e0010">$</span>myDate, label: { Text(<span style="color:#e6db74">&#34;Date&#34;</span>) }).datePickerStyle(.wheel)
 </span></span><span style="display:flex;"><span>DatePicker(selection: <span style="color:#960050;background-color:#1e0010">$</span>myDate, label: { Text(<span style="color:#e6db74">&#34;Date&#34;</span>) }).datePickerStyle(.graphical)
-</span></span></code></pre></div>
+</span></span></code></pre></div><h3 id="displaying-a-date-andor-time">Displaying a Date and/or Time</h3>
+<p>尽管日期选择器可以让用户同时选择日期和时间，但有时可能让用户只选择日期或者时间。为了限制日期选择器只显示日期或时间，可以设置<code>displayedComponents</code>参数：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span>DatePicker(selection: <span style="color:#960050;background-color:#1e0010">$</span>myDate, displayedComponents: [.date], label: { Text(<span style="color:#e6db74">&#34;Date&#34;</span>) })
+</span></span><span style="display:flex;"><span>DatePicker(selection: <span style="color:#960050;background-color:#1e0010">$</span>myDate, displayedComponents: [.hourAndMinute], label: { Text(<span style="color:#e6db74">&#34;Time&#34;</span>) })
+</span></span></code></pre></div><h3 id="restricting-a-date-range">Restricting a Date Range</h3>
+<p>当用户选择一个日期时，可能需要将其限制在有效的时间内。例如，如果要询问某人的出生日期，那么让日期选择器允许用户选择1737年2月3日这样一个老得离谱的出生日期是没有意义的。要限制日期选择器的日期范围，必须首先定义开始和结束日期范围，例如：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span><span style="color:#66d9ef">let</span> dateRange: ClosedRange&lt;Date&gt; = {
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">let</span> calendar = Calendar.current
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">let</span> startComponents = DateComponents(year: <span style="color:#ae81ff">2024</span>, month: <span style="color:#ae81ff">1</span>, day: <span style="color:#ae81ff">1</span>)
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">let</span> endComponents = DateComponents(year: <span style="color:#ae81ff">2024</span>, month: <span style="color:#ae81ff">12</span>, day: <span style="color:#ae81ff">31</span>, hour: <span style="color:#ae81ff">23</span>, minute: <span style="color:#ae81ff">59</span>,
+</span></span><span style="display:flex;"><span>second: <span style="color:#ae81ff">59</span>)
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">return</span> calendar.date(from: startComponents)<span style="color:#f92672">!</span> ... calendar.date(from: endComponents)<span style="color:#f92672">!</span>
+</span></span><span style="display:flex;"><span>}()
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">let</span> dateRange2: PartialRangeFrom&lt;Date&gt; = {
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">let</span> calendar = Calendar.current
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">let</span> startComponents = DateComponents(year: <span style="color:#ae81ff">2023</span>, month: <span style="color:#ae81ff">1</span>, day: <span style="color:#ae81ff">1</span>)
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">return</span> calendar.date(from: startComponents)<span style="color:#f92672">!</span>...
+</span></span><span style="display:flex;"><span>}()
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">let</span> dateRange3: PartialRangeThrough&lt;Date&gt; = {
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">let</span> calendar = Calendar.current
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">let</span> stopComponents = DateComponents(year: <span style="color:#ae81ff">2024</span>, month: <span style="color:#ae81ff">1</span>, day: <span style="color:#ae81ff">1</span>)
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">return</span> ...calendar.date(from: stopComponents)<span style="color:#f92672">!</span>
+</span></span><span style="display:flex;"><span>}()
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>DatePicker(selection: <span style="color:#960050;background-color:#1e0010">$</span>myDate, <span style="color:#66d9ef">in</span>: dateRange3, displayedComponents: [.date], label: { Text(<span style="color:#e6db74">&#34;Date&#34;</span>) }).datePickerStyle(.graphical).padding()
+</span></span></code></pre></div><h3 id="formatting-dates">Formatting Dates</h3>
+
     </div>
     <footer class="post-footer">
         
@@ -1615,6 +1643,9 @@ code.has-jax {
         <li><a href="#using-the-date-picker">Using the Date Picker</a>
           <ul>
             <li><a href="#choosing-a-date-picker-style">Choosing a Date Picker Style</a></li>
+            <li><a href="#displaying-a-date-andor-time">Displaying a Date and/or Time</a></li>
+            <li><a href="#restricting-a-date-range">Restricting a Date Range</a></li>
+            <li><a href="#formatting-dates">Formatting Dates</a></li>
           </ul>
         </li>
       </ul>
