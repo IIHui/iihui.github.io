@@ -2468,7 +2468,19 @@ Chapter 11 用户通过buttons、toggles、menu控制应用程序非常方便，
 Detecting Tap Gestures 点击手势只需检测用户点击屏幕的时间。默认情况下，轻点手势只识别一个指尖的单次轻点，但也可以定义两个或多个指尖的多次轻点。
 Rectangle().frame(width: 175, height: 125)  .foregroundColor(changeMe ? .red : .yellow)  .onTapGesture {  changeMe.toggle()  } Detecting Spatial Tap Gestures 空间点击手势与普通的点击手势类似，但它最有用的是检测一个或多个点击的位置。要检测轻点位置，需要一个可以存储CGPoint数据类型的状态变量，然后定义一个空间点击手势检测位置：
 @State var tapLocation: CGPoint = .zero var spatialTapGesture: some Gesture {  SpatialTapGesture().onEnded { event in  tapLocation = event.location  } } 上面代码中event.location检测点击手势的位置，并将位置信息存储在状态变量tapLocation中。一旦可以检测到点击位置，就可以根据用户点击的区域做出响应。默认情况下，空间点击手势只检测单次点击，但可以通过定义计数参数来定义需要多少次点击，例如两次：
-@State var tapLocation: CGPoint = .zero var spatialTapGesture: some Gesture {  SpatialTapGesture(count: 2).onEnded { event in  tapLocation = event.location  } } </content>
+@State var tapLocation: CGPoint = .zero var spatialTapGesture: some Gesture {  SpatialTapGesture(count: 2).onEnded { event in  tapLocation = event.location  } } Detecting Long Press Gestures 当用户用一个或多个指尖在屏幕上按压固定时间，指尖不会移动太远时，就会出现长按手势。要定义长按手势，可以修改以下属性：
+ minimumDuration:定义一个或多个指尖必须按住屏幕多长时间才能识别长按操作。 maximumDistance:定义在长按手势失败前指尖可移动的距离。  Text(message).padding() Rectangle().frame(width: 175, height: 125)  .foregroundColor(changeMe ? .red : .yellow)  .onLongPressGesture(minimumDuration: 2, maximumDistance: 2, pressing: { stillPressed in  message = &amp;#34;Long press in progress: \(stillPressed)&amp;#34;  }) {  changeMe.toggle()  } Detecting Magnification Gestures 放大手势（也称为捏合手势）是指用户将两个指尖放在屏幕上，然后将指尖分开或靠近屏幕。这种放大手势通常发生在用户想要放大图像或缩小图像以查看更多内容（如放大地图）时。
+因为放大手势会改变视图的大小，因此需要定义两个状态变量，分别表示当前大小和最终大小的CGFloat数据类型：
+@State private var tempValue: CGFloat = 0 @State private var finalValue: CGFloat = 1 要调整视图的大小，放大手势需要与要调整视图大小的.scaleEffect修改器配合使用:
+Image(systemName: &amp;#34;star.fill&amp;#34;)  .font(.system(size: 200))  .foregroundColor(.green)  .scaleEffect(finalValue &#43; tempValue) 然后，需要将.gesture修改器附加到要使用放大手势调整大小的视图上，就像这样：
+Image(systemName: &amp;#34;star.fill&amp;#34;)  .font(.system(size: 200))  .foregroundColor(.green)  .scaleEffect(finalValue &#43; tempValue)  .gesture(  MagnificationGesture()  .onChanged { amount in  // Code to run   }.onEnded { amount in  // Code to run  }  ) .onChanged修改器用于测量用户将两个指尖分开或靠近的距离。.onEnded修改器用于测量当用户将两个指尖抬离屏幕以结束放大手势时，两个指尖之间的距离。
+Image(systemName: &amp;#34;star.fill&amp;#34;)  .font(.system(size: 200))  .foregroundColor(.green)  .scaleEffect(finalValue &#43; tempValue)  .gesture(  MagnificationGesture()  .onChanged { amount in  tempValue = amount - 1  }.onEnded { amount in  finalValue &#43;= tempValue  tempValue = 0  }  ) Detecting Rotation Gestures 旋转手势与放大手势类似，因为它们都使用两个指尖。主要区别在于，旋转手势会检测两个指尖是顺时针还是逆时针的圆周运动。由于旋转手势会改变视图的角度，因此需要定义一个状态变量，以Double类型来测量旋转角度，像下面这样：
+@State private var degree = 0.0 为了旋转一个视图，旋转手势必须和.rotationEffect修改器一起：
+Image(systemName: &amp;#34;star.fill&amp;#34;)  .font(.system(size: 200))  .foregroundColor(.green)  .rotationEffect(Angle.degrees(degree))  .gesture(  RotationGesture().onChanged({ angle in  degree = angle.degrees  })  ) Detecting Drag Gestures 当用户在屏幕上按下并滑动指尖时，就会出现拖动手势。拖动手势通常会将屏幕上的项目移动到新的位置。由于拖动手势会改变视图的位置，因此需要定义一个状态变量，将此位置作为CGPoint来测量，就像这样：
+@State private var circlePosition = CGPoint(x: 50, y: 50) 要移动视图，拖动手势需要与要移动的视图上的.position修改器配合使用：
+@State private var circleLabel = &amp;#34;50, 50&amp;#34; @State private var circlePosition = CGPoint(x: 50, y: 50)  Text(circleLabel).padding() Circle().fill(Color.blue)  .frame(width: 100, height: 100)  .opacity(0.8)  .position(circlePosition)  .gesture(DragGesture().onChanged({ value in  circlePosition = value.location  circleLabel = &amp;#34;\(Int(value.location.x)), \(Int(value.location.y))&amp;#34;  })) Defining Priority and Simultaneous Gestures 可以为任何视图添加触摸手势。由于Stack也是视图的一种，因此也可以在VStacks、HStacks 和ZStacks中添加触摸手势。如果在堆栈内的视图中添加一个手势，然后在堆栈本身添加第二个相同的手势，哪个手势会被识别？
+当一个手势修改整个堆栈时，堆栈中的每个视图都能识别该手势。但是，如果堆栈中的某个视图有自己的手势修改器，则该手势修改器将被识别。
+</content>
     </entry>
     
      <entry>

@@ -241,13 +241,13 @@ code.has-jax {
     <i class="fa fa-file-word-o"></i>
 </span>
 <span class="post-meta-item-text">字数: </span>
-<span class="leancloud-visitors-count">24700</span>
+<span class="leancloud-visitors-count">25783</span>
 &nbsp; | &nbsp;
 <span class="post-meta-item-icon">
     <i class="fa fa-coffee"></i>
 </span>
 <span class="post-meta-item-text">阅读: </span>
-<span class="leancloud-visitors-count">50 分钟</span>
+<span class="leancloud-visitors-count">52 分钟</span>
 </span>
       </div>
     </header>
@@ -1682,7 +1682,92 @@ code.has-jax {
 </span></span><span style="display:flex;"><span>        tapLocation = event.location
 </span></span><span style="display:flex;"><span>    }
 </span></span><span style="display:flex;"><span>}
-</span></span></code></pre></div>
+</span></span></code></pre></div><h2 id="detecting-long-press-gestures">Detecting Long Press Gestures</h2>
+<p>当用户用一个或多个指尖在屏幕上按压固定时间，指尖不会移动太远时，就会出现长按手势。要定义长按手势，可以修改以下属性：</p>
+<ul>
+<li>minimumDuration:定义一个或多个指尖必须按住屏幕多长时间才能识别长按操作。</li>
+<li>maximumDistance:定义在长按手势失败前指尖可移动的距离。</li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span>Text(message).padding()
+</span></span><span style="display:flex;"><span>Rectangle().frame(width: <span style="color:#ae81ff">175</span>, height: <span style="color:#ae81ff">125</span>)
+</span></span><span style="display:flex;"><span>    .foregroundColor(changeMe ? .red : .yellow)
+</span></span><span style="display:flex;"><span>    .onLongPressGesture(minimumDuration: <span style="color:#ae81ff">2</span>, maximumDistance: <span style="color:#ae81ff">2</span>, pressing: {
+</span></span><span style="display:flex;"><span>stillPressed <span style="color:#66d9ef">in</span>
+</span></span><span style="display:flex;"><span>        message = <span style="color:#e6db74">&#34;Long press in progress: </span><span style="color:#e6db74">\(</span>stillPressed<span style="color:#e6db74">)</span><span style="color:#e6db74">&#34;</span>
+</span></span><span style="display:flex;"><span>    }) {
+</span></span><span style="display:flex;"><span>        changeMe.toggle()
+</span></span><span style="display:flex;"><span>    }
+</span></span></code></pre></div><h2 id="detecting-magnification-gestures">Detecting Magnification Gestures</h2>
+<p>放大手势（也称为捏合手势）是指用户将两个指尖放在屏幕上，然后将指尖分开或靠近屏幕。这种放大手势通常发生在用户想要放大图像或缩小图像以查看更多内容（如放大地图）时。</p>
+<p>因为放大手势会改变视图的大小，因此需要定义两个状态变量，分别表示当前大小和最终大小的<code>CGFloat</code>数据类型：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span>@State <span style="color:#66d9ef">private</span> <span style="color:#66d9ef">var</span> tempValue: CGFloat = <span style="color:#ae81ff">0</span> 
+</span></span><span style="display:flex;"><span>@State <span style="color:#66d9ef">private</span> <span style="color:#66d9ef">var</span> finalValue: CGFloat = <span style="color:#ae81ff">1</span>
+</span></span></code></pre></div><p>要调整视图的大小，放大手势需要与要调整视图大小的<code>.scaleEffect</code>修改器配合使用:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span>Image(systemName: <span style="color:#e6db74">&#34;star.fill&#34;</span>)
+</span></span><span style="display:flex;"><span>    .font(.system(size: <span style="color:#ae81ff">200</span>))
+</span></span><span style="display:flex;"><span>    .foregroundColor(.green)
+</span></span><span style="display:flex;"><span>    .scaleEffect(finalValue <span style="color:#f92672">+</span> tempValue)
+</span></span></code></pre></div><p>然后，需要将<code>.gesture</code>修改器附加到要使用放大手势调整大小的视图上，就像这样：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span>Image(systemName: <span style="color:#e6db74">&#34;star.fill&#34;</span>)
+</span></span><span style="display:flex;"><span>    .font(.system(size: <span style="color:#ae81ff">200</span>))
+</span></span><span style="display:flex;"><span>    .foregroundColor(.green)
+</span></span><span style="display:flex;"><span>    .scaleEffect(finalValue <span style="color:#f92672">+</span> tempValue)
+</span></span><span style="display:flex;"><span>    .gesture(
+</span></span><span style="display:flex;"><span>    MagnificationGesture()
+</span></span><span style="display:flex;"><span>        .onChanged { amount <span style="color:#66d9ef">in</span>
+</span></span><span style="display:flex;"><span>            <span style="color:#75715e">// Code to run</span>
+</span></span><span style="display:flex;"><span>            
+</span></span><span style="display:flex;"><span>        }.onEnded { amount <span style="color:#66d9ef">in</span>
+</span></span><span style="display:flex;"><span>            <span style="color:#75715e">// Code to run</span>
+</span></span><span style="display:flex;"><span>        }
+</span></span><span style="display:flex;"><span>    )
+</span></span></code></pre></div><p><code>.onChanged</code>修改器用于测量用户将两个指尖分开或靠近的距离。<code>.onEnded</code>修改器用于测量当用户将两个指尖抬离屏幕以结束放大手势时，两个指尖之间的距离。</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span>Image(systemName: <span style="color:#e6db74">&#34;star.fill&#34;</span>)
+</span></span><span style="display:flex;"><span>    .font(.system(size: <span style="color:#ae81ff">200</span>))
+</span></span><span style="display:flex;"><span>    .foregroundColor(.green)
+</span></span><span style="display:flex;"><span>    .scaleEffect(finalValue <span style="color:#f92672">+</span> tempValue)
+</span></span><span style="display:flex;"><span>    .gesture(
+</span></span><span style="display:flex;"><span>    MagnificationGesture()
+</span></span><span style="display:flex;"><span>        .onChanged { amount <span style="color:#66d9ef">in</span>
+</span></span><span style="display:flex;"><span>            tempValue = amount <span style="color:#f92672">-</span> <span style="color:#ae81ff">1</span>
+</span></span><span style="display:flex;"><span>        }.onEnded { amount <span style="color:#66d9ef">in</span>
+</span></span><span style="display:flex;"><span>            finalValue <span style="color:#f92672">+=</span> tempValue
+</span></span><span style="display:flex;"><span>            tempValue = <span style="color:#ae81ff">0</span>
+</span></span><span style="display:flex;"><span>        }
+</span></span><span style="display:flex;"><span>    )
+</span></span></code></pre></div><h2 id="detecting-rotation-gestures">Detecting Rotation Gestures</h2>
+<p>旋转手势与放大手势类似，因为它们都使用两个指尖。主要区别在于，旋转手势会检测两个指尖是顺时针还是逆时针的圆周运动。由于旋转手势会改变视图的角度，因此需要定义一个状态变量，以<code>Double</code>类型来测量旋转角度，像下面这样：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span>@State <span style="color:#66d9ef">private</span> <span style="color:#66d9ef">var</span> degree = <span style="color:#ae81ff">0.0</span>
+</span></span></code></pre></div><p>为了旋转一个视图，旋转手势必须和<code>.rotationEffect</code>修改器一起：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span>Image(systemName: <span style="color:#e6db74">&#34;star.fill&#34;</span>)
+</span></span><span style="display:flex;"><span>    .font(.system(size: <span style="color:#ae81ff">200</span>))
+</span></span><span style="display:flex;"><span>    .foregroundColor(.green)
+</span></span><span style="display:flex;"><span>    .rotationEffect(Angle.degrees(degree))
+</span></span><span style="display:flex;"><span>    .gesture(
+</span></span><span style="display:flex;"><span>        RotationGesture().onChanged({ angle <span style="color:#66d9ef">in</span>
+</span></span><span style="display:flex;"><span>            degree = angle.degrees
+</span></span><span style="display:flex;"><span>        })
+</span></span><span style="display:flex;"><span>    )
+</span></span></code></pre></div><h2 id="detecting-drag-gestures">Detecting Drag Gestures</h2>
+<p>当用户在屏幕上按下并滑动指尖时，就会出现拖动手势。拖动手势通常会将屏幕上的项目移动到新的位置。由于拖动手势会改变视图的位置，因此需要定义一个状态变量，将此位置作为<code>CGPoint</code>来测量，就像这样：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span>@State <span style="color:#66d9ef">private</span> <span style="color:#66d9ef">var</span> circlePosition = CGPoint(x: <span style="color:#ae81ff">50</span>, y: <span style="color:#ae81ff">50</span>)
+</span></span></code></pre></div><p>要移动视图，拖动手势需要与要移动的视图上的<code>.position</code>修改器配合使用：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span>@State <span style="color:#66d9ef">private</span> <span style="color:#66d9ef">var</span> circleLabel = <span style="color:#e6db74">&#34;50, 50&#34;</span>
+</span></span><span style="display:flex;"><span>@State <span style="color:#66d9ef">private</span> <span style="color:#66d9ef">var</span> circlePosition = CGPoint(x: <span style="color:#ae81ff">50</span>, y: <span style="color:#ae81ff">50</span>)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>Text(circleLabel).padding()
+</span></span><span style="display:flex;"><span>Circle().fill(Color.blue)
+</span></span><span style="display:flex;"><span>    .frame(width: <span style="color:#ae81ff">100</span>, height: <span style="color:#ae81ff">100</span>)
+</span></span><span style="display:flex;"><span>    .opacity(<span style="color:#ae81ff">0.8</span>)
+</span></span><span style="display:flex;"><span>    .position(circlePosition)
+</span></span><span style="display:flex;"><span>    .gesture(DragGesture().onChanged({ value <span style="color:#66d9ef">in</span>
+</span></span><span style="display:flex;"><span>        circlePosition = value.location
+</span></span><span style="display:flex;"><span>        circleLabel = <span style="color:#e6db74">&#34;</span><span style="color:#e6db74">\(</span>Int<span style="color:#e6db74">(</span>value.location.x<span style="color:#e6db74">))</span><span style="color:#e6db74">, </span><span style="color:#e6db74">\(</span>Int<span style="color:#e6db74">(</span>value.location.y<span style="color:#e6db74">))</span><span style="color:#e6db74">&#34;</span>
+</span></span><span style="display:flex;"><span>    }))
+</span></span></code></pre></div><h2 id="defining-priority-and-simultaneous-gestures">Defining Priority and Simultaneous Gestures</h2>
+<p>可以为任何视图添加触摸手势。由于<code>Stack</code>也是视图的一种，因此也可以在VStacks、HStacks 和ZStacks中添加触摸手势。如果在堆栈内的视图中添加一个手势，然后在堆栈本身添加第二个相同的手势，哪个手势会被识别？</p>
+<p>当一个手势修改整个堆栈时，堆栈中的每个视图都能识别该手势。但是，如果堆栈中的某个视图有自己的手势修改器，则该手势修改器将被识别。</p>
+
     </div>
     <footer class="post-footer">
         
@@ -1984,6 +2069,11 @@ code.has-jax {
       <ul>
         <li><a href="#detecting-tap-gestures">Detecting Tap Gestures</a></li>
         <li><a href="#detecting-spatial-tap-gestures">Detecting Spatial Tap Gestures</a></li>
+        <li><a href="#detecting-long-press-gestures">Detecting Long Press Gestures</a></li>
+        <li><a href="#detecting-magnification-gestures">Detecting Magnification Gestures</a></li>
+        <li><a href="#detecting-rotation-gestures">Detecting Rotation Gestures</a></li>
+        <li><a href="#detecting-drag-gestures">Detecting Drag Gestures</a></li>
+        <li><a href="#defining-priority-and-simultaneous-gestures">Defining Priority and Simultaneous Gestures</a></li>
       </ul>
     </li>
   </ul>
