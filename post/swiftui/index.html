@@ -241,13 +241,13 @@ code.has-jax {
     <i class="fa fa-file-word-o"></i>
 </span>
 <span class="post-meta-item-text">字数: </span>
-<span class="leancloud-visitors-count">25783</span>
+<span class="leancloud-visitors-count">26512</span>
 &nbsp; | &nbsp;
 <span class="post-meta-item-icon">
     <i class="fa fa-coffee"></i>
 </span>
 <span class="post-meta-item-text">阅读: </span>
-<span class="leancloud-visitors-count">52 分钟</span>
+<span class="leancloud-visitors-count">53 分钟</span>
 </span>
       </div>
     </header>
@@ -1766,8 +1766,63 @@ code.has-jax {
 </span></span><span style="display:flex;"><span>    }))
 </span></span></code></pre></div><h2 id="defining-priority-and-simultaneous-gestures">Defining Priority and Simultaneous Gestures</h2>
 <p>可以为任何视图添加触摸手势。由于<code>Stack</code>也是视图的一种，因此也可以在VStacks、HStacks 和ZStacks中添加触摸手势。如果在堆栈内的视图中添加一个手势，然后在堆栈本身添加第二个相同的手势，哪个手势会被识别？</p>
-<p>当一个手势修改整个堆栈时，堆栈中的每个视图都能识别该手势。但是，如果堆栈中的某个视图有自己的手势修改器，则该手势修改器将被识别。</p>
-
+<p>当一个手势修改整个<code>Stack</code>时，堆栈中的每个视图都能识别该手势。但是，如果堆栈中的某个视图有自己的手势修改器，则该手势修改器将被识别。</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span>VStack {
+</span></span><span style="display:flex;"><span>    Text(message).padding()
+</span></span><span style="display:flex;"><span>    Circle().frame(width: <span style="color:#ae81ff">125</span>, height: <span style="color:#ae81ff">125</span>)
+</span></span><span style="display:flex;"><span>        .foregroundColor(.blue).onTapGesture {
+</span></span><span style="display:flex;"><span>            message = <span style="color:#e6db74">&#34;Circle tapped&#34;</span>
+</span></span><span style="display:flex;"><span>        }
+</span></span><span style="display:flex;"><span>    Spacer()
+</span></span><span style="display:flex;"><span>}.background(Color.yellow).onTapGesture {
+</span></span><span style="display:flex;"><span>    message = <span style="color:#e6db74">&#34;VStack tapped&#34;</span>
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><h3 id="defining-a-high-priority-gesture">Defining a High-Priority Gesture</h3>
+<p>Stack内视图的手势总是比堆栈的手势更容易识别。如果想让堆栈的手势修改器代替堆栈内视图的手势修改器运行，则需要使用<code>.highPriorityGesture</code>修改器。</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span>VStack {
+</span></span><span style="display:flex;"><span>    Text(message).padding()
+</span></span><span style="display:flex;"><span>    Circle().frame(width: <span style="color:#ae81ff">125</span>, height: <span style="color:#ae81ff">125</span>)
+</span></span><span style="display:flex;"><span>        .foregroundColor(.blue).onTapGesture {
+</span></span><span style="display:flex;"><span>            message = <span style="color:#e6db74">&#34;Circle tapped&#34;</span>
+</span></span><span style="display:flex;"><span>        }
+</span></span><span style="display:flex;"><span>    Spacer()
+</span></span><span style="display:flex;"><span>}.background(Color.yellow).highPriorityGesture(
+</span></span><span style="display:flex;"><span>    TapGesture().onEnded { <span style="color:#66d9ef">_</span> <span style="color:#66d9ef">in</span>
+</span></span><span style="display:flex;"><span>        message = <span style="color:#e6db74">&#34;VStack tapped&#34;</span>
+</span></span><span style="display:flex;"><span>    })
+</span></span></code></pre></div><h3 id="defining-simultaneous-gestures">Defining Simultaneous Gestures</h3>
+<p>通常情况下，添加到单个视图的手势修改器将代替添加到堆栈的任何手势修改器运行。如果使用 <code>.highPriorityGesture</code>手势修改器，就可以让堆栈的手势代替单个视图的任何手势修改器运行。但是，如果希望同时运行视图上的手势和堆栈上的手势，该怎么办呢？</p>
+<p>实际上，可以使用<code>.simultaneousGesture</code>修改器确保堆栈的手势修改器与附加到单个视图的手势修改器同时运行。要定义同时运行的手势，请将通常会被忽略的手势包含在<code>.simultaneousGesture</code>修改器中：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span>VStack {
+</span></span><span style="display:flex;"><span>    Text(message).padding()
+</span></span><span style="display:flex;"><span>    Circle().frame(width: <span style="color:#ae81ff">125</span>, height: <span style="color:#ae81ff">125</span>)
+</span></span><span style="display:flex;"><span>        .foregroundColor(.blue).onTapGesture {
+</span></span><span style="display:flex;"><span>            message <span style="color:#f92672">+=</span> <span style="color:#e6db74">&#34; Circle tapped&#34;</span>
+</span></span><span style="display:flex;"><span>        }
+</span></span><span style="display:flex;"><span>    Spacer()
+</span></span><span style="display:flex;"><span>}.background(Color.yellow).simultaneousGesture(
+</span></span><span style="display:flex;"><span>    TapGesture().onEnded { <span style="color:#66d9ef">_</span> <span style="color:#66d9ef">in</span>
+</span></span><span style="display:flex;"><span>        message = <span style="color:#e6db74">&#34;VStack tapped&#34;</span>
+</span></span><span style="display:flex;"><span>    })
+</span></span></code></pre></div><h1 id="chapter-12">Chapter 12</h1>
+<p>几乎每个应用程序都需要显示和接受来自用户的数据。显示数据的最简单方法是通过文本视图，但有时需要显示数据并让用户做出反应。在这种情况下，您可以使用<code>Alert</code>或<code>Action Sheet</code>。向用户显示选项的另一种方式是<code>contextual menus</code>。</p>
+<h2 id="displaying-an-alertaction-sheet">Displaying an Alert/Action Sheet</h2>
+<p>每个用户界面都需要向用户显示数据。在某些情况下，这些数据可以只显示在标签中，但有时您\需要确保用户看到某些信息。在这种情况下，应该使用alert controller。</p>
+<p><code>Alert/Action Sheet</code>显示在应用程序的用户界面上，可通过更改以下属性进行自定义：</p>
+<ul>
+<li>Title: 出现在顶部的文本，通常为粗体，字体较大。</li>
+<li>Message: 标题下方的文字，字体较小。</li>
+<li>One or more buttons: 可解除<code>Alert/Action Sheet</code>的按钮。</li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span>@State <span style="color:#66d9ef">var</span> showAlert = <span style="color:#66d9ef">false</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>Button(<span style="color:#e6db74">&#34;Show Alert&#34;</span>) {
+</span></span><span style="display:flex;"><span>    showAlert.toggle()
+</span></span><span style="display:flex;"><span>}.alert(isPresented: <span style="color:#960050;background-color:#1e0010">$</span>showAlert) {
+</span></span><span style="display:flex;"><span>    Alert(title: Text(<span style="color:#e6db74">&#34;Warning!&#34;</span>), message: Text(<span style="color:#e6db74">&#34;Zombies on the loose&#34;</span>),
+</span></span><span style="display:flex;"><span>dismissButton: .<span style="color:#66d9ef">default</span>(Text(<span style="color:#e6db74">&#34;OK&#34;</span>)))
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div>
     </div>
     <footer class="post-footer">
         
@@ -2073,7 +2128,17 @@ code.has-jax {
         <li><a href="#detecting-magnification-gestures">Detecting Magnification Gestures</a></li>
         <li><a href="#detecting-rotation-gestures">Detecting Rotation Gestures</a></li>
         <li><a href="#detecting-drag-gestures">Detecting Drag Gestures</a></li>
-        <li><a href="#defining-priority-and-simultaneous-gestures">Defining Priority and Simultaneous Gestures</a></li>
+        <li><a href="#defining-priority-and-simultaneous-gestures">Defining Priority and Simultaneous Gestures</a>
+          <ul>
+            <li><a href="#defining-a-high-priority-gesture">Defining a High-Priority Gesture</a></li>
+            <li><a href="#defining-simultaneous-gestures">Defining Simultaneous Gestures</a></li>
+          </ul>
+        </li>
+      </ul>
+    </li>
+    <li><a href="#chapter-12">Chapter 12</a>
+      <ul>
+        <li><a href="#displaying-an-alertaction-sheet">Displaying an Alert/Action Sheet</a></li>
       </ul>
     </li>
   </ul>
