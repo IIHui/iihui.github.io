@@ -241,13 +241,13 @@ code.has-jax {
     <i class="fa fa-file-word-o"></i>
 </span>
 <span class="post-meta-item-text">字数: </span>
-<span class="leancloud-visitors-count">26512</span>
+<span class="leancloud-visitors-count">26857</span>
 &nbsp; | &nbsp;
 <span class="post-meta-item-icon">
     <i class="fa fa-coffee"></i>
 </span>
 <span class="post-meta-item-text">阅读: </span>
-<span class="leancloud-visitors-count">53 分钟</span>
+<span class="leancloud-visitors-count">54 分钟</span>
 </span>
       </div>
     </header>
@@ -1822,6 +1822,42 @@ code.has-jax {
 </span></span><span style="display:flex;"><span>    Alert(title: Text(<span style="color:#e6db74">&#34;Warning!&#34;</span>), message: Text(<span style="color:#e6db74">&#34;Zombies on the loose&#34;</span>),
 </span></span><span style="display:flex;"><span>dismissButton: .<span style="color:#66d9ef">default</span>(Text(<span style="color:#e6db74">&#34;OK&#34;</span>)))
 </span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p>一个<code>Alert</code>最多可显示两个按钮，分别称为<code>primaryButton:</code>和<code>secondaryButton:</code>。</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span>Button(<span style="color:#e6db74">&#34;Show Alert&#34;</span>) {
+</span></span><span style="display:flex;"><span>    showAlert.toggle()
+</span></span><span style="display:flex;"><span>}.alert(isPresented: <span style="color:#960050;background-color:#1e0010">$</span>showAlert) {
+</span></span><span style="display:flex;"><span>    Alert(title: Text(<span style="color:#e6db74">&#34;Warning!&#34;</span>), message: Text(<span style="color:#e6db74">&#34;Zombies on the loose&#34;</span>),
+</span></span><span style="display:flex;"><span>primaryButton: .<span style="color:#66d9ef">default</span>(Text(<span style="color:#e6db74">&#34;Default&#34;</span>)), secondaryButton:
+</span></span><span style="display:flex;"><span>.cancel(Text(<span style="color:#e6db74">&#34;Cancel&#34;</span>)))
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><img src="https://iihui.github.io/Users/hui/Library/Application Support/typora-user-images/image-20231001220509866.png" alt="image-20231001220509866" style="zoom:50%;" />
+<p>而一个<code>Action Sheet</code>最多可以显示三个按钮。对于要显示的每个按钮，可以从下面三种样式中选择一种：</p>
+<ul>
+<li>.default: 以蓝色显示文本。</li>
+<li>.destructive: 以红色显示文本。</li>
+<li>.cancel：以粗体显示文本。</li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span>Button(<span style="color:#e6db74">&#34;Show Alert&#34;</span>) {
+</span></span><span style="display:flex;"><span>    showAlert.toggle()
+</span></span><span style="display:flex;"><span>}.actionSheet(isPresented: <span style="color:#960050;background-color:#1e0010">$</span>showAlert) {
+</span></span><span style="display:flex;"><span>    ActionSheet(title: Text(<span style="color:#e6db74">&#34;Warning!&#34;</span>), message: Text(<span style="color:#e6db74">&#34;Zombies on the loose&#34;</span>),
+</span></span><span style="display:flex;"><span>buttons: [.<span style="color:#66d9ef">default</span>(Text(<span style="color:#e6db74">&#34;Default&#34;</span>)), .cancel(Text(<span style="color:#e6db74">&#34;Cancel&#34;</span>)),
+</span></span><span style="display:flex;"><span>.destructive(Text(<span style="color:#e6db74">&#34;Destructive&#34;</span>))])
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><img src="https://s2.loli.net/2023/10/01/HVeo4wEuGIg2cNk.png" alt="HVeo4wEuGIg2cNk" style="zoom:50%;" />
+<h2 id="making-alertactionsheet-buttons-responsive">Making Alert/ActionSheet Buttons Responsive</h2>
+<p>只需将按钮添加到<code>Alert</code>或<code>Action Sheet</code>中，当用户选择其中任何一个按钮时，这些按钮就会自动退出。最有可能的情况是，希望按钮执行某种类型的操作。为此，必须首先创建一个函数，其中包含用户选择特定按钮时要运行的代码。然后，必须在用户选择按钮时调用该函数。</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span>Button(<span style="color:#e6db74">&#34;Show Alert&#34;</span>) {
+</span></span><span style="display:flex;"><span>    showAlert.toggle()
+</span></span><span style="display:flex;"><span>}.alert(isPresented: <span style="color:#960050;background-color:#1e0010">$</span>showAlert) {
+</span></span><span style="display:flex;"><span>    Alert(title: Text(<span style="color:#e6db74">&#34;Warning!&#34;</span>), message: Text(<span style="color:#e6db74">&#34;Zombies on the loose&#34;</span>),
+</span></span><span style="display:flex;"><span>primaryButton: .<span style="color:#66d9ef">default</span>(Text(<span style="color:#e6db74">&#34;Default&#34;</span>), action: { message = <span style="color:#e6db74">&#34;Default
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">chosen&#34;</span> }), secondaryButton: .cancel(Text(<span style="color:#e6db74">&#34;Cancel&#34;</span>), action: cancelFunction))
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>                        
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">cancelFunction</span>() {
+</span></span><span style="display:flex;"><span>    message = <span style="color:#e6db74">&#34;Cancel chosen&#34;</span>
+</span></span><span style="display:flex;"><span>}                        
 </span></span></code></pre></div>
     </div>
     <footer class="post-footer">
@@ -2139,6 +2175,7 @@ code.has-jax {
     <li><a href="#chapter-12">Chapter 12</a>
       <ul>
         <li><a href="#displaying-an-alertaction-sheet">Displaying an Alert/Action Sheet</a></li>
+        <li><a href="#making-alertactionsheet-buttons-responsive">Making Alert/ActionSheet Buttons Responsive</a></li>
       </ul>
     </li>
   </ul>
