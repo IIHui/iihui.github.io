@@ -241,13 +241,13 @@ code.has-jax {
     <i class="fa fa-file-word-o"></i>
 </span>
 <span class="post-meta-item-text">字数: </span>
-<span class="leancloud-visitors-count">33083</span>
+<span class="leancloud-visitors-count">35915</span>
 &nbsp; | &nbsp;
 <span class="post-meta-item-icon">
     <i class="fa fa-coffee"></i>
 </span>
 <span class="post-meta-item-text">阅读: </span>
-<span class="leancloud-visitors-count">67 分钟</span>
+<span class="leancloud-visitors-count">72 分钟</span>
 </span>
       </div>
     </header>
@@ -2360,6 +2360,379 @@ code.has-jax {
 </span></span><span style="display:flex;"><span>    BarMark(x: .value(<span style="color:#e6db74">&#34;Name&#34;</span>, x.name), y: .value(<span style="color:#e6db74">&#34;Sales&#34;</span>, x.sales))
 </span></span><span style="display:flex;"><span>        .foregroundStyle(.orange)
 </span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p><code>.foregroundStyle</code>修改器定义了一种颜色。要显示不同颜色的标记（条形），需要定义第三个类别。这样，每个类别就会显示自己的颜色。</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span><span style="color:#66d9ef">struct</span> <span style="color:#a6e22e">SalesPeople</span>: Identifiable {
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">var</span> name: String
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">var</span> department: String
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">var</span> sales: Int
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">var</span> id = UUID()
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">var</span> mySalesArray: [SalesPeople] = [
+</span></span><span style="display:flex;"><span>    .<span style="color:#66d9ef">init</span>(name: <span style="color:#e6db74">&#34;Oscar&#34;</span>, department: <span style="color:#e6db74">&#34;North&#34;</span>, sales: <span style="color:#ae81ff">50</span>),
+</span></span><span style="display:flex;"><span>    .<span style="color:#66d9ef">init</span>(name: <span style="color:#e6db74">&#34;Mayer&#34;</span>, department: <span style="color:#e6db74">&#34;South&#34;</span>, sales: <span style="color:#ae81ff">43</span>),
+</span></span><span style="display:flex;"><span>    .<span style="color:#66d9ef">init</span>(name: <span style="color:#e6db74">&#34;George&#34;</span>, department: <span style="color:#e6db74">&#34;East&#34;</span>, sales: <span style="color:#ae81ff">62</span>),
+</span></span><span style="display:flex;"><span>    .<span style="color:#66d9ef">init</span>(name: <span style="color:#e6db74">&#34;Hormel&#34;</span>, department: <span style="color:#e6db74">&#34;West&#34;</span>, sales: <span style="color:#ae81ff">26</span>),
+</span></span><span style="display:flex;"><span>    .<span style="color:#66d9ef">init</span>(name: <span style="color:#e6db74">&#34;Mike&#34;</span>, department: <span style="color:#e6db74">&#34;North&#34;</span>, sales: <span style="color:#ae81ff">67</span>),
+</span></span><span style="display:flex;"><span>    .<span style="color:#66d9ef">init</span>(name: <span style="color:#e6db74">&#34;Spam&#34;</span>, department: <span style="color:#e6db74">&#34;South&#34;</span>, sales: <span style="color:#ae81ff">38</span>),
+</span></span><span style="display:flex;"><span>    .<span style="color:#66d9ef">init</span>(name: <span style="color:#e6db74">&#34;Jan&#34;</span>, department: <span style="color:#e6db74">&#34;East&#34;</span>, sales: <span style="color:#ae81ff">47</span>),
+</span></span><span style="display:flex;"><span>    .<span style="color:#66d9ef">init</span>(name: <span style="color:#e6db74">&#34;Lundy&#34;</span>, department: <span style="color:#e6db74">&#34;West&#34;</span>, sales: <span style="color:#ae81ff">53</span>)
+</span></span><span style="display:flex;"><span>]
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>Chart(mySalesArray) { x <span style="color:#66d9ef">in</span>
+</span></span><span style="display:flex;"><span>    BarMark(x: .value(<span style="color:#e6db74">&#34;Name&#34;</span>, x.name), y: .value(<span style="color:#e6db74">&#34;Sales&#34;</span>, x.sales))
+</span></span><span style="display:flex;"><span>        .foregroundStyle(by: .value(<span style="color:#e6db74">&#34;Department&#34;</span>, x.department))
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><img src="https://s2.loli.net/2023/10/02/XPxtjChS6HIGVdo.png" alt="XPxtjChS6HIGVdo" style="zoom:50%;" />
+<h3 id="displaying-an-average-value-with-the-rulemark">Displaying an Average Value with the RuleMark</h3>
+<p>当有大量条形图时，很难比较不同的数值。哪些高于平均值？哪些低于平均值？为了便于区分，图表提供了<code>RuleMark</code>，它可以在显示的任何数据的精确平均值上显示一条线。<code>RuleMark</code>命令如下所示：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span>Chart(mySalesArray) { x <span style="color:#66d9ef">in</span>
+</span></span><span style="display:flex;"><span>    BarMark(x: .value(<span style="color:#e6db74">&#34;Name&#34;</span>, x.name), y: .value(<span style="color:#e6db74">&#34;Sales&#34;</span>, x.sales))
+</span></span><span style="display:flex;"><span>        .foregroundStyle(by: .value(<span style="color:#e6db74">&#34;Department&#34;</span>, x.department))
+</span></span><span style="display:flex;"><span>    RuleMark(y: .value(<span style="color:#e6db74">&#34;Average Sales&#34;</span>, (mySalesArray.map { Int($0.sales)
+</span></span><span style="display:flex;"><span>}).reduce(<span style="color:#ae81ff">0</span>, <span style="color:#f92672">+</span>) <span style="color:#f92672">/</span> Set(mySalesArray.map { $0.sales
+</span></span><span style="display:flex;"><span>}).count)).foregroundStyle(.purple)
+</span></span><span style="display:flex;"><span>    RuleMark(y: .value(<span style="color:#e6db74">&#34;Sales must not go below this line&#34;</span>,
+</span></span><span style="display:flex;"><span><span style="color:#ae81ff">20</span>)).foregroundStyle(.red)
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><img src="https://s2.loli.net/2023/10/02/RrF6wNVIjfehpvZ.png" alt="RrF6wNVIjfehpvZ" style="zoom:50%;" />
+<h3 id="creating-a-stacked-bar-chart">Creating a Stacked Bar Chart</h3>
+<p>条形图可以跟踪趋势，堆叠条形图可以让你看到整体的各个部分，比如每个季度哪些产品的销售额最高，或者每个月哪个销售人员的销售额最高。创建堆叠条形图需要三组数据：</p>
+<ul>
+<li>The numeric data you want to define the marks (bars) (y value)</li>
+<li>The duplicate data that defines each stacked bar (x value)</li>
+<li>The category to separate each bar</li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span><span style="color:#66d9ef">var</span> mySalesArray: [SalesPeople] = [
+</span></span><span style="display:flex;"><span>    .<span style="color:#66d9ef">init</span>(name: <span style="color:#e6db74">&#34;Oscar&#34;</span>, department: <span style="color:#e6db74">&#34;North&#34;</span>, sales: <span style="color:#ae81ff">50</span>),
+</span></span><span style="display:flex;"><span>    .<span style="color:#66d9ef">init</span>(name: <span style="color:#e6db74">&#34;Oscar&#34;</span>, department: <span style="color:#e6db74">&#34;South&#34;</span>, sales: <span style="color:#ae81ff">43</span>),
+</span></span><span style="display:flex;"><span>    .<span style="color:#66d9ef">init</span>(name: <span style="color:#e6db74">&#34;Oscar&#34;</span>, department: <span style="color:#e6db74">&#34;East&#34;</span>, sales: <span style="color:#ae81ff">62</span>),
+</span></span><span style="display:flex;"><span>    .<span style="color:#66d9ef">init</span>(name: <span style="color:#e6db74">&#34;Oscar&#34;</span>, department: <span style="color:#e6db74">&#34;West&#34;</span>, sales: <span style="color:#ae81ff">26</span>),
+</span></span><span style="display:flex;"><span>    .<span style="color:#66d9ef">init</span>(name: <span style="color:#e6db74">&#34;Mayer&#34;</span>, department: <span style="color:#e6db74">&#34;North&#34;</span>, sales: <span style="color:#ae81ff">67</span>),
+</span></span><span style="display:flex;"><span>    .<span style="color:#66d9ef">init</span>(name: <span style="color:#e6db74">&#34;Mayer&#34;</span>, department: <span style="color:#e6db74">&#34;South&#34;</span>, sales: <span style="color:#ae81ff">38</span>),
+</span></span><span style="display:flex;"><span>    .<span style="color:#66d9ef">init</span>(name: <span style="color:#e6db74">&#34;Mayer&#34;</span>, department: <span style="color:#e6db74">&#34;East&#34;</span>, sales: <span style="color:#ae81ff">47</span>),
+</span></span><span style="display:flex;"><span>    .<span style="color:#66d9ef">init</span>(name: <span style="color:#e6db74">&#34;Mayer&#34;</span>, department: <span style="color:#e6db74">&#34;West&#34;</span>, sales: <span style="color:#ae81ff">53</span>)
+</span></span><span style="display:flex;"><span>]
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>Chart(mySalesArray) { x <span style="color:#66d9ef">in</span>
+</span></span><span style="display:flex;"><span>    BarMark(x: .value(<span style="color:#e6db74">&#34;Name&#34;</span>, x.name), y: .value(<span style="color:#e6db74">&#34;Sales&#34;</span>, x.sales))
+</span></span><span style="display:flex;"><span>        .foregroundStyle(by: .value(<span style="color:#e6db74">&#34;Department&#34;</span>, x.department))
+</span></span><span style="display:flex;"><span>}.padding()
+</span></span><span style="display:flex;"><span>Spacer()
+</span></span></code></pre></div><img src="https://s2.loli.net/2023/10/02/8EiKvgeXs21OpDC.png" alt="8EiKvgeXs21OpDC" style="zoom:50%;" />
+<h2 id="creating-a-line-chart">Creating a Line Chart</h2>
+<p>折线图的工作原理与条形图类似，都是通过高度来测量数值。主要区别在于，折线图更容易发现上升或下降趋势。在绘制多组数据时，折线图往往效果最佳。</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span><span style="color:#66d9ef">var</span> mySalesArray: [SalesPeople] = [
+</span></span><span style="display:flex;"><span>    .<span style="color:#66d9ef">init</span>(name: <span style="color:#e6db74">&#34;Oscar&#34;</span>, department: <span style="color:#e6db74">&#34;North&#34;</span>, sales: <span style="color:#ae81ff">50</span>),
+</span></span><span style="display:flex;"><span>    .<span style="color:#66d9ef">init</span>(name: <span style="color:#e6db74">&#34;Mayer&#34;</span>, department: <span style="color:#e6db74">&#34;South&#34;</span>, sales: <span style="color:#ae81ff">43</span>),
+</span></span><span style="display:flex;"><span>    .<span style="color:#66d9ef">init</span>(name: <span style="color:#e6db74">&#34;George&#34;</span>, department: <span style="color:#e6db74">&#34;East&#34;</span>, sales: <span style="color:#ae81ff">62</span>),
+</span></span><span style="display:flex;"><span>    .<span style="color:#66d9ef">init</span>(name: <span style="color:#e6db74">&#34;Hormel&#34;</span>, department: <span style="color:#e6db74">&#34;West&#34;</span>, sales: <span style="color:#ae81ff">26</span>),
+</span></span><span style="display:flex;"><span>    .<span style="color:#66d9ef">init</span>(name: <span style="color:#e6db74">&#34;Jan&#34;</span>, department: <span style="color:#e6db74">&#34;North&#34;</span>, sales: <span style="color:#ae81ff">47</span>),
+</span></span><span style="display:flex;"><span>    .<span style="color:#66d9ef">init</span>(name: <span style="color:#e6db74">&#34;Lundy&#34;</span>, department: <span style="color:#e6db74">&#34;South&#34;</span>, sales: <span style="color:#ae81ff">53</span>),
+</span></span><span style="display:flex;"><span>]
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>Chart(mySalesArray) { x <span style="color:#66d9ef">in</span>
+</span></span><span style="display:flex;"><span>    LineMark(x: .value(<span style="color:#e6db74">&#34;Name&#34;</span>, x.name), y: .value(<span style="color:#e6db74">&#34;Sales&#34;</span>, x.sales))
+</span></span><span style="display:flex;"><span>}.padding()
+</span></span><span style="display:flex;"><span>Spacer()
+</span></span></code></pre></div><h2 id="creating-area-charts">Creating Area Charts</h2>
+<p>面积图本质上是折线图，但填充后更易于阅读:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span><span style="color:#66d9ef">var</span> mySalesArray: [SalesPeople] = [
+</span></span><span style="display:flex;"><span>    .<span style="color:#66d9ef">init</span>(name: <span style="color:#e6db74">&#34;Oscar&#34;</span>, department: <span style="color:#e6db74">&#34;North&#34;</span>, sales: <span style="color:#ae81ff">50</span>),
+</span></span><span style="display:flex;"><span>    .<span style="color:#66d9ef">init</span>(name: <span style="color:#e6db74">&#34;Mayer&#34;</span>, department: <span style="color:#e6db74">&#34;South&#34;</span>, sales: <span style="color:#ae81ff">43</span>),
+</span></span><span style="display:flex;"><span>    .<span style="color:#66d9ef">init</span>(name: <span style="color:#e6db74">&#34;George&#34;</span>, department: <span style="color:#e6db74">&#34;East&#34;</span>, sales: <span style="color:#ae81ff">62</span>),
+</span></span><span style="display:flex;"><span>    .<span style="color:#66d9ef">init</span>(name: <span style="color:#e6db74">&#34;Hormel&#34;</span>, department: <span style="color:#e6db74">&#34;West&#34;</span>, sales: <span style="color:#ae81ff">26</span>),
+</span></span><span style="display:flex;"><span>    .<span style="color:#66d9ef">init</span>(name: <span style="color:#e6db74">&#34;Jan&#34;</span>, department: <span style="color:#e6db74">&#34;North&#34;</span>, sales: <span style="color:#ae81ff">47</span>),
+</span></span><span style="display:flex;"><span>    .<span style="color:#66d9ef">init</span>(name: <span style="color:#e6db74">&#34;Lundy&#34;</span>, department: <span style="color:#e6db74">&#34;South&#34;</span>, sales: <span style="color:#ae81ff">53</span>),
+</span></span><span style="display:flex;"><span>]
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>Chart(mySalesArray) { x <span style="color:#66d9ef">in</span>
+</span></span><span style="display:flex;"><span>    AreaMark(x: .value(<span style="color:#e6db74">&#34;Name&#34;</span>, x.name), y: .value(<span style="color:#e6db74">&#34;Sales&#34;</span>, x.sales))
+</span></span><span style="display:flex;"><span>}.padding()
+</span></span><span style="display:flex;"><span>Spacer()
+</span></span></code></pre></div><h2 id="creating-a-point-chart">Creating a Point Chart</h2>
+<p>点图与线图和面积图相似。主要区别在于，点图只是将数据显示为图表上的点。与线形图或面积图相比，<font color=Blue>点图更难识别趋势，但点图在识别数据组出现的位置时特别有用</font>。一旦知道数据正常应该出现在什么位置，点图就能轻松识别超出正常范围的数据。</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span><span style="color:#66d9ef">var</span> mySalesArray: [SalesPeople] = [
+</span></span><span style="display:flex;"><span>    .<span style="color:#66d9ef">init</span>(name: <span style="color:#e6db74">&#34;Oscar&#34;</span>, department: <span style="color:#e6db74">&#34;North&#34;</span>, sales: <span style="color:#ae81ff">50</span>),
+</span></span><span style="display:flex;"><span>    .<span style="color:#66d9ef">init</span>(name: <span style="color:#e6db74">&#34;Mayer&#34;</span>, department: <span style="color:#e6db74">&#34;South&#34;</span>, sales: <span style="color:#ae81ff">43</span>),
+</span></span><span style="display:flex;"><span>    .<span style="color:#66d9ef">init</span>(name: <span style="color:#e6db74">&#34;George&#34;</span>, department: <span style="color:#e6db74">&#34;East&#34;</span>, sales: <span style="color:#ae81ff">62</span>),
+</span></span><span style="display:flex;"><span>    .<span style="color:#66d9ef">init</span>(name: <span style="color:#e6db74">&#34;Hormel&#34;</span>, department: <span style="color:#e6db74">&#34;West&#34;</span>, sales: <span style="color:#ae81ff">26</span>),
+</span></span><span style="display:flex;"><span>    .<span style="color:#66d9ef">init</span>(name: <span style="color:#e6db74">&#34;Jan&#34;</span>, department: <span style="color:#e6db74">&#34;North&#34;</span>, sales: <span style="color:#ae81ff">47</span>),
+</span></span><span style="display:flex;"><span>    .<span style="color:#66d9ef">init</span>(name: <span style="color:#e6db74">&#34;Lundy&#34;</span>, department: <span style="color:#e6db74">&#34;South&#34;</span>, sales: <span style="color:#ae81ff">53</span>),
+</span></span><span style="display:flex;"><span>]
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>Chart(mySalesArray) { x <span style="color:#66d9ef">in</span>
+</span></span><span style="display:flex;"><span>    PointMark(x: .value(<span style="color:#e6db74">&#34;Name&#34;</span>, x.name), y: .value(<span style="color:#e6db74">&#34;Sales&#34;</span>, x.sales))
+</span></span><span style="display:flex;"><span>        .foregroundStyle(by: .value(<span style="color:#e6db74">&#34;Region&#34;</span>, x.department))
+</span></span><span style="display:flex;"><span>}.padding()
+</span></span><span style="display:flex;"><span>Spacer()
+</span></span></code></pre></div><img src="https://s2.loli.net/2023/10/02/A91bpyaUeqFQsCu.png" alt="A91bpyaUeqFQsCu" style="zoom:50%;" />
+<h3 id="creating-a-rectangle-chart">Creating a Rectangle Chart</h3>
+<p>矩形图本质上只显示条形图的顶部，但下面没有任何颜色。这样就可以很容易地看到它们所代表的数值，而不会受到额外图形的干扰。</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span><span style="color:#66d9ef">var</span> mySalesArray: [SalesPeople] = [
+</span></span><span style="display:flex;"><span>    .<span style="color:#66d9ef">init</span>(name: <span style="color:#e6db74">&#34;Oscar&#34;</span>, department: <span style="color:#e6db74">&#34;North&#34;</span>, sales: <span style="color:#ae81ff">50</span>),
+</span></span><span style="display:flex;"><span>    .<span style="color:#66d9ef">init</span>(name: <span style="color:#e6db74">&#34;Mayer&#34;</span>, department: <span style="color:#e6db74">&#34;South&#34;</span>, sales: <span style="color:#ae81ff">43</span>),
+</span></span><span style="display:flex;"><span>    .<span style="color:#66d9ef">init</span>(name: <span style="color:#e6db74">&#34;George&#34;</span>, department: <span style="color:#e6db74">&#34;East&#34;</span>, sales: <span style="color:#ae81ff">62</span>),
+</span></span><span style="display:flex;"><span>    .<span style="color:#66d9ef">init</span>(name: <span style="color:#e6db74">&#34;Hormel&#34;</span>, department: <span style="color:#e6db74">&#34;West&#34;</span>, sales: <span style="color:#ae81ff">26</span>),
+</span></span><span style="display:flex;"><span>    .<span style="color:#66d9ef">init</span>(name: <span style="color:#e6db74">&#34;Jan&#34;</span>, department: <span style="color:#e6db74">&#34;North&#34;</span>, sales: <span style="color:#ae81ff">47</span>),
+</span></span><span style="display:flex;"><span>    .<span style="color:#66d9ef">init</span>(name: <span style="color:#e6db74">&#34;Lundy&#34;</span>, department: <span style="color:#e6db74">&#34;South&#34;</span>, sales: <span style="color:#ae81ff">53</span>),
+</span></span><span style="display:flex;"><span>]
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>Chart(mySalesArray) { x <span style="color:#66d9ef">in</span>
+</span></span><span style="display:flex;"><span>    RectangleMark(x: .value(<span style="color:#e6db74">&#34;Name&#34;</span>, x.name), y: .value(<span style="color:#e6db74">&#34;Sales&#34;</span>, x.sales))
+</span></span><span style="display:flex;"><span>        .foregroundStyle(by: .value(<span style="color:#e6db74">&#34;Region&#34;</span>, x.department))
+</span></span><span style="display:flex;"><span>}.padding()
+</span></span><span style="display:flex;"><span>Spacer()
+</span></span></code></pre></div><img src="https://s2.loli.net/2023/10/02/1oANspYi6xTOfvb.png" alt="1oANspYi6xTOfvb" style="zoom:50%;" />
+<h1 id="chapter-17">Chapter 17</h1>
+<p>只有最简单的应用程序才只有一个页面，如计算器应用程序。但是，大多数应用程序通常需要两个或更多页面来显示信息。在<code>SwiftUI</code>中，可以通过创建单独的结构体来定义应用程序用户界面。然后，需要提供从一个页面跳转到另一个页面的方法。</p>
+<p>从一个页面跳转到另一个页面最简单方法之一是通过&quot;导航堆栈&quot;，即按顺序显示多页面。许多 iOS 应用程序（如 &ldquo;设置&rdquo;）都常用导航堆栈来让用户查看不同的选项。</p>
+<h2 id="using-a-navigation-stack">Using a Navigation Stack</h2>
+<p>导航堆栈最多可容纳十（10）个视图，就像其他类型的堆栈（VStack、HStack、ZStack）一样。导航堆栈包含多个视图，代码如下：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span>NavigationStack { 
+</span></span><span style="display:flex;"><span>  <span style="color:#75715e">// Put multiple views here </span>
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p>在一个NavigationStack中，需要一个或多个NavigationLink，其中每个NavigationLink都定义了一个要点击的视图和另一个要显示的视图。创建导航链接的一种方法是显示无额外格式化的文本，然后像下面这样定义视图：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span>NavigationLink (<span style="color:#e6db74">&#34;Link text&#34;</span>) { 
+</span></span><span style="display:flex;"><span>	<span style="color:#75715e">// View to appear </span>
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p>用户选择导航链接时显示的视图可以是单一视图（如文本视图），也可以是包含多个视图的堆叠视图。创建导航链接的第二种方法可以格式化链接的外观:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span>NavigationLink {
+</span></span><span style="display:flex;"><span>	<span style="color:#75715e">// View to appear </span>
+</span></span><span style="display:flex;"><span>} label: {
+</span></span><span style="display:flex;"><span>	<span style="color:#75715e">// View that defines the navigation link </span>
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p>下面代码中，每个导航链接都定义了创建导航链接的不同方法，以及用户选择特定导航链接时出现的视图。</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span>NavigationStack {
+</span></span><span style="display:flex;"><span>    NavigationLink {
+</span></span><span style="display:flex;"><span>        Text(<span style="color:#e6db74">&#34;The 1st view&#34;</span>)
+</span></span><span style="display:flex;"><span>    } label: {
+</span></span><span style="display:flex;"><span>        Text(<span style="color:#e6db74">&#34;First link&#34;</span>).font(.largeTitle)
+</span></span><span style="display:flex;"><span>    }.padding()
+</span></span><span style="display:flex;"><span>    NavigationLink {
+</span></span><span style="display:flex;"><span>        Text(<span style="color:#e6db74">&#34;The 2nd view&#34;</span>)
+</span></span><span style="display:flex;"><span>    } label: {
+</span></span><span style="display:flex;"><span>        Label {
+</span></span><span style="display:flex;"><span>            Text(<span style="color:#e6db74">&#34;Second link&#34;</span>)
+</span></span><span style="display:flex;"><span>        } icon: {
+</span></span><span style="display:flex;"><span>            Image(systemName: <span style="color:#e6db74">&#34;sun.and.horizon.circle&#34;</span>)
+</span></span><span style="display:flex;"><span>        }
+</span></span><span style="display:flex;"><span>    }.padding()
+</span></span><span style="display:flex;"><span>    NavigationLink {
+</span></span><span style="display:flex;"><span>        Image(systemName: <span style="color:#e6db74">&#34;ellipsis.message&#34;</span>).font(.system(size: <span style="color:#ae81ff">125</span>))
+</span></span><span style="display:flex;"><span>    } label: {
+</span></span><span style="display:flex;"><span>        VStack {
+</span></span><span style="display:flex;"><span>            Text(<span style="color:#e6db74">&#34;Third view&#34;</span>)
+</span></span><span style="display:flex;"><span>            Image(systemName: <span style="color:#e6db74">&#34;figure.archery&#34;</span>)
+</span></span><span style="display:flex;"><span>        }.font(.largeTitle)
+</span></span><span style="display:flex;"><span>    }.padding()
+</span></span><span style="display:flex;"><span>    NavigationLink(<span style="color:#e6db74">&#34;The 4th view&#34;</span>) {
+</span></span><span style="display:flex;"><span>        VStack {
+</span></span><span style="display:flex;"><span>            Image(systemName: <span style="color:#e6db74">&#34;airplane.departure&#34;</span>).font(.system(size: <span style="color:#ae81ff">120</span>))
+</span></span><span style="display:flex;"><span>            Text(<span style="color:#e6db74">&#34;Departure time is 12:15&#34;</span>).font(.largeTitle)
+</span></span><span style="display:flex;"><span>        }
+</span></span><span style="display:flex;"><span>    }.padding()
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><h2 id="adding-a-title-to-a-navigation-stack">Adding a Title to a Navigation Stack</h2>
+<p>导航栈只是在屏幕上显示一个或多个导航链接。不过，可能希望在这些导航链接上添加一个标题，以确保用户了解这些导航链接的目的。标题可以采用两种样式之一（.large 或 .inline）。</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span>@State <span style="color:#66d9ef">var</span> titleType = NavigationBarItem.TitleDisplayMode.large
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>NavigationStack {
+</span></span><span style="display:flex;"><span>    NavigationLink {
+</span></span><span style="display:flex;"><span>        Text(<span style="color:#e6db74">&#34;The 1st view&#34;</span>)
+</span></span><span style="display:flex;"><span>    } label: {
+</span></span><span style="display:flex;"><span>        Text(<span style="color:#e6db74">&#34;First link&#34;</span>).font(.largeTitle)
+</span></span><span style="display:flex;"><span>    }.padding()
+</span></span><span style="display:flex;"><span>    NavigationLink {
+</span></span><span style="display:flex;"><span>        Text(<span style="color:#e6db74">&#34;The 2nd view&#34;</span>)
+</span></span><span style="display:flex;"><span>    } label: {
+</span></span><span style="display:flex;"><span>        Label {
+</span></span><span style="display:flex;"><span>            Text(<span style="color:#e6db74">&#34;Second link&#34;</span>)
+</span></span><span style="display:flex;"><span>        } icon: {
+</span></span><span style="display:flex;"><span>            Image(systemName: <span style="color:#e6db74">&#34;sun.and.horizon.circle&#34;</span>)
+</span></span><span style="display:flex;"><span>        }
+</span></span><span style="display:flex;"><span>    }.padding()
+</span></span><span style="display:flex;"><span>    NavigationLink {
+</span></span><span style="display:flex;"><span>        Image(systemName: <span style="color:#e6db74">&#34;ellipsis.message&#34;</span>).font(.system(size: <span style="color:#ae81ff">125</span>))
+</span></span><span style="display:flex;"><span>    } label: {
+</span></span><span style="display:flex;"><span>        VStack {
+</span></span><span style="display:flex;"><span>            Text(<span style="color:#e6db74">&#34;Third view&#34;</span>)
+</span></span><span style="display:flex;"><span>            Image(systemName: <span style="color:#e6db74">&#34;figure.archery&#34;</span>)
+</span></span><span style="display:flex;"><span>        }.font(.largeTitle)
+</span></span><span style="display:flex;"><span>    }.padding()
+</span></span><span style="display:flex;"><span>    NavigationLink(<span style="color:#e6db74">&#34;The 4th view&#34;</span>) {
+</span></span><span style="display:flex;"><span>        VStack {
+</span></span><span style="display:flex;"><span>            Image(systemName: <span style="color:#e6db74">&#34;airplane.departure&#34;</span>).font(.system(size: <span style="color:#ae81ff">120</span>))
+</span></span><span style="display:flex;"><span>            Text(<span style="color:#e6db74">&#34;Departure time is 12:15&#34;</span>).font(.largeTitle)
+</span></span><span style="display:flex;"><span>        }
+</span></span><span style="display:flex;"><span>    }.padding().navigationTitle(<span style="color:#e6db74">&#34;Navigation Stack&#34;</span>).navigationBarTitleDisplayMode(titleType)
+</span></span></code></pre></div><p>将.navigationtitle 和.navigationBart修改器添加到导航堆栈时，像这样将修改器放在导航堆栈的最后一个大括号内：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span>NavigationStack { 
+</span></span><span style="display:flex;"><span> .navigationTitle(<span style="color:#e6db74">&#34;Navigation Stack Title&#34;</span>) 
+</span></span><span style="display:flex;"><span> .navigationBarTitleDisplayMode(.inline) 
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p><code>.navigationTitle</code>修改器定义了显示在屏幕顶部导航堆栈上方的文本。<code>.navigationBarTitleDisplayMode</code>修改器定义了标题在屏幕上的显示方式。有两个选项<code>.large</code>和<code>.inline</code>。<font color=red>如果没有定义<code>.navigationBarTitleDisplayMode</code>，默认值为<code>.large</code></font>。</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span>@State <span style="color:#66d9ef">var</span> titleType = NavigationBarItem.TitleDisplayMode.large
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>NavigationStack {
+</span></span><span style="display:flex;"><span>    NavigationLink {
+</span></span><span style="display:flex;"><span>        Text(<span style="color:#e6db74">&#34;The 1st view&#34;</span>)
+</span></span><span style="display:flex;"><span>    } label: {
+</span></span><span style="display:flex;"><span>        Text(<span style="color:#e6db74">&#34;First link&#34;</span>).font(.largeTitle)
+</span></span><span style="display:flex;"><span>    }.padding()
+</span></span><span style="display:flex;"><span>        .navigationTitle(<span style="color:#e6db74">&#34;Navigation Stack&#34;</span>)
+</span></span><span style="display:flex;"><span>        .navigationBarTitleDisplayMode(titleType)
+</span></span><span style="display:flex;"><span>    HStack(spacing: <span style="color:#ae81ff">50</span>) {
+</span></span><span style="display:flex;"><span>        Button(<span style="color:#e6db74">&#34;.large&#34;</span>) {
+</span></span><span style="display:flex;"><span>            titleType = NavigationBarItem.TitleDisplayMode.large
+</span></span><span style="display:flex;"><span>        }
+</span></span><span style="display:flex;"><span>        Button(<span style="color:#e6db74">&#34;.inline&#34;</span>) {
+</span></span><span style="display:flex;"><span>            titleType = NavigationBarItem.TitleDisplayMode.inline
+</span></span><span style="display:flex;"><span>        }
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><h2 id="adding-buttons-to-a-navigation-stack">Adding Buttons to a Navigation Stack</h2>
+<p>除了在导航堆栈上方显示标题外，还可以在屏幕顶部显示一个或多个按钮。这些按钮会显示在工具栏上，可以在导航堆栈内使用<code>.toolbar</code>修改器添加工具栏：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span>@State <span style="color:#66d9ef">var</span> titleType = NavigationBarItem.TitleDisplayMode.inline
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>NavigationStack {
+</span></span><span style="display:flex;"><span>    NavigationLink {
+</span></span><span style="display:flex;"><span>        Text(<span style="color:#e6db74">&#34;The 1st view&#34;</span>)
+</span></span><span style="display:flex;"><span>    } label: {
+</span></span><span style="display:flex;"><span>        Text(<span style="color:#e6db74">&#34;First link&#34;</span>).font(.largeTitle)
+</span></span><span style="display:flex;"><span>    }.padding()
+</span></span><span style="display:flex;"><span>        .navigationTitle(<span style="color:#e6db74">&#34;Navigation Title&#34;</span>)
+</span></span><span style="display:flex;"><span>        .navigationBarTitleDisplayMode(titleType)
+</span></span><span style="display:flex;"><span>        .toolbar {
+</span></span><span style="display:flex;"><span>            ToolbarItem(placement: .navigationBarLeading) {
+</span></span><span style="display:flex;"><span>                Button {
+</span></span><span style="display:flex;"><span>                    message = <span style="color:#e6db74">&#34;iCloud icon tapped&#34;</span>
+</span></span><span style="display:flex;"><span>                }
+</span></span><span style="display:flex;"><span>                label: {
+</span></span><span style="display:flex;"><span>                    Image(systemName: <span style="color:#e6db74">&#34;icloud&#34;</span>)
+</span></span><span style="display:flex;"><span>                }
+</span></span><span style="display:flex;"><span>            }
+</span></span><span style="display:flex;"><span>            ToolbarItem(placement: .navigationBarTrailing) {
+</span></span><span style="display:flex;"><span>                Button {
+</span></span><span style="display:flex;"><span>                    message = <span style="color:#e6db74">&#34;Done button tapped&#34;</span>
+</span></span><span style="display:flex;"><span>                } label: {
+</span></span><span style="display:flex;"><span>                    Text(<span style="color:#e6db74">&#34;Done&#34;</span>)
+</span></span><span style="display:flex;"><span>                }
+</span></span><span style="display:flex;"><span>            }
+</span></span><span style="display:flex;"><span>        }
+</span></span><span style="display:flex;"><span>    HStack(spacing: <span style="color:#ae81ff">50</span>) {
+</span></span><span style="display:flex;"><span>        Button(<span style="color:#e6db74">&#34;.large&#34;</span>) {
+</span></span><span style="display:flex;"><span>            titleType = NavigationBarItem.TitleDisplayMode.large
+</span></span><span style="display:flex;"><span>        }
+</span></span><span style="display:flex;"><span>        Button(<span style="color:#e6db74">&#34;.inline&#34;</span>) {
+</span></span><span style="display:flex;"><span>            titleType = NavigationBarItem.TitleDisplayMode.inline
+</span></span><span style="display:flex;"><span>        }
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>}.accentColor(.purple)
+</span></span></code></pre></div><img src="https://s2.loli.net/2023/10/02/FnS7pCVzTgG6HK2.png" alt="FnS7pCVzTgG6HK2" style="zoom:50%;" />
+<h2 id="displaying-views-from-a-navigation-stack">Displaying Views from a Navigation Stack</h2>
+<p>在某些情况下，在导航堆栈中只显示文本或图像视图等单一视图可能没有问题。但很多时候，你可能希望显示一个完全不同的用户界面。由于可以使用结构体定义用户界面，因此可以使用多个结构体创建多个页面，并显示在导航堆栈中。</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span><span style="color:#66d9ef">struct</span> <span style="color:#a6e22e">FileView</span>: View {
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">var</span> body: some View {
+</span></span><span style="display:flex;"><span>        HStack {
+</span></span><span style="display:flex;"><span>            Spacer()
+</span></span><span style="display:flex;"><span>            VStack {
+</span></span><span style="display:flex;"><span>                Spacer()
+</span></span><span style="display:flex;"><span>                Text(<span style="color:#e6db74">&#34;This is a separate structure&#34;</span>)
+</span></span><span style="display:flex;"><span>                Text(<span style="color:#e6db74">&#34;that&#39;s stored in the same file&#34;</span>)
+</span></span><span style="display:flex;"><span>                Spacer()
+</span></span><span style="display:flex;"><span>            }
+</span></span><span style="display:flex;"><span>            Spacer()
+</span></span><span style="display:flex;"><span>        }.background(Color.yellow)
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">struct</span> <span style="color:#a6e22e">SeparateFileView</span>: View {
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">var</span> body: some View {
+</span></span><span style="display:flex;"><span>        HStack {
+</span></span><span style="display:flex;"><span>            Spacer() 
+</span></span><span style="display:flex;"><span>            VStack {
+</span></span><span style="display:flex;"><span>                Spacer() 
+</span></span><span style="display:flex;"><span>                Text(<span style="color:#e6db74">&#34;This is another structure&#34;</span>) 
+</span></span><span style="display:flex;"><span>                Text(<span style="color:#e6db74">&#34;but stored in a separate file&#34;</span>) Spacer()
+</span></span><span style="display:flex;"><span>            } 
+</span></span><span style="display:flex;"><span>            Spacer()
+</span></span><span style="display:flex;"><span>        }.background(Color.orange)
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>NavigationStack {
+</span></span><span style="display:flex;"><span>    VStack {
+</span></span><span style="display:flex;"><span>        NavigationLink(destination: FileView()) {
+</span></span><span style="display:flex;"><span>            Text(<span style="color:#e6db74">&#34;Link to structure in same file&#34;</span>)
+</span></span><span style="display:flex;"><span>        }
+</span></span><span style="display:flex;"><span>        NavigationLink(destination: SeparateFileView()) {
+</span></span><span style="display:flex;"><span>            Text(<span style="color:#e6db74">&#34;Separate file link&#34;</span>)
+</span></span><span style="display:flex;"><span>        }.navigationTitle(<span style="color:#e6db74">&#34;Navigation Title&#34;</span>)
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><h3 id="passing-data-between-structures-in-a-navigation-stack">Passing Data Between Structures in a Navigation Stack</h3>
+<p>上一个创建了两个结构体，其中一个结构体存储在ContentView文件中，第二个结构体存储在另一个文件中。在这两种情况下，结构体都定义了用户界面。</p>
+<p>在很多情况下，可能希望一个结构体中的数据出现在另一个结构中。这意味着我们必须将数据从一个结构体传递到另一个结构体。</p>
+<p>这与函数间的数据传递类似。当一个结构体需要接收数据时，只需通过创建一个变量来声明一个属性，给该变量一个描述性的名称，并定义该变量可以容纳的数据类型，如String或Double：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span><span style="color:#66d9ef">struct</span> <span style="color:#a6e22e">FileView</span>: View {
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">var</span> choice: String
+</span></span><span style="display:flex;"><span>    
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">var</span> body: some View {
+</span></span><span style="display:flex;"><span>        HStack {
+</span></span><span style="display:flex;"><span>            Spacer()
+</span></span><span style="display:flex;"><span>            VStack {
+</span></span><span style="display:flex;"><span>                Spacer()
+</span></span><span style="display:flex;"><span>                Text(<span style="color:#e6db74">&#34;You chose = </span><span style="color:#e6db74">\(</span>choice<span style="color:#e6db74">)</span><span style="color:#e6db74">&#34;</span>)
+</span></span><span style="display:flex;"><span>                Spacer()
+</span></span><span style="display:flex;"><span>            }
+</span></span><span style="display:flex;"><span>            Spacer()
+</span></span><span style="display:flex;"><span>        }.background(Color.yellow)
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">struct</span> <span style="color:#a6e22e">SeparateFileView</span>: View {
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">var</span> passedData: String
+</span></span><span style="display:flex;"><span>    
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">var</span> body: some View {
+</span></span><span style="display:flex;"><span>        HStack {
+</span></span><span style="display:flex;"><span>            Spacer()
+</span></span><span style="display:flex;"><span>            VStack {
+</span></span><span style="display:flex;"><span>                Spacer()
+</span></span><span style="display:flex;"><span>                Text(<span style="color:#e6db74">&#34;You chose = </span><span style="color:#e6db74">\(</span>passedData<span style="color:#e6db74">)</span><span style="color:#e6db74">&#34;</span>)
+</span></span><span style="display:flex;"><span>                Spacer()
+</span></span><span style="display:flex;"><span>            }
+</span></span><span style="display:flex;"><span>            Spacer()
+</span></span><span style="display:flex;"><span>        }.background(Color.orange)
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>NavigationStack {
+</span></span><span style="display:flex;"><span>    VStack {
+</span></span><span style="display:flex;"><span>        Text(<span style="color:#e6db74">&#34;Choose Heads or Tails&#34;</span>)
+</span></span><span style="display:flex;"><span>        NavigationLink(destination: FileView(choice: <span style="color:#e6db74">&#34;Head&#34;</span>)) {
+</span></span><span style="display:flex;"><span>            Text(<span style="color:#e6db74">&#34;Heads&#34;</span>)
+</span></span><span style="display:flex;"><span>        }
+</span></span><span style="display:flex;"><span>        NavigationLink(destination: SeparateFileView(passedData: <span style="color:#e6db74">&#34;Tails&#34;</span>)) {
+</span></span><span style="display:flex;"><span>            Text(<span style="color:#e6db74">&#34;Tails&#34;</span>)
+</span></span><span style="display:flex;"><span>        }.navigationTitle(<span style="color:#e6db74">&#34;Flip a Coin&#34;</span>)
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><h3 id="changing-data-between-structures-in-a-navigation-stack">Changing Data Between Structures in a Navigation Stack</h3>
+<p>上一个项目创建了两个结构体，其中一个结构体存储在ContentView 文件中，第二个结构存储在另一个文件中。在这两种情况下，结构都定义了接收数据并显示数据的用户界面。如果将数据传递给一个结构体，然后允许该结构体修改数据呢？这就需要做出几处改动：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span>@State <span style="color:#66d9ef">var</span> message = <span style="color:#e6db74">&#34;&#34;</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>NavigationStack {
+</span></span><span style="display:flex;"><span>    VStack {
+</span></span><span style="display:flex;"><span>        TextField(<span style="color:#e6db74">&#34;Type here&#34;</span>, text: <span style="color:#960050;background-color:#1e0010">$</span>message)
+</span></span><span style="display:flex;"><span>        NavigationLink(destination: FileView(choice: message)) {
+</span></span><span style="display:flex;"><span>            Text(<span style="color:#e6db74">&#34;Heads&#34;</span>)
+</span></span><span style="display:flex;"><span>        }
+</span></span><span style="display:flex;"><span>        NavigationLink(destination: SeparateFileView(passedData: message)) {
+</span></span><span style="display:flex;"><span>            Text(<span style="color:#e6db74">&#34;Tails&#34;</span>)
+</span></span><span style="display:flex;"><span>        }.navigationTitle(<span style="color:#e6db74">&#34;Flip a Coin&#34;</span>)
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>}
 </span></span></code></pre></div>
     </div>
     <footer class="post-footer">
@@ -2721,6 +3094,28 @@ code.has-jax {
           <ul>
             <li><a href="#defining-charts-with-loops-and-arrays">Defining Charts with Loops and Arrays</a></li>
             <li><a href="#defining-colors-for-a-bar-chart">Defining Colors for a Bar Chart</a></li>
+            <li><a href="#displaying-an-average-value-with-the-rulemark">Displaying an Average Value with the RuleMark</a></li>
+            <li><a href="#creating-a-stacked-bar-chart">Creating a Stacked Bar Chart</a></li>
+          </ul>
+        </li>
+        <li><a href="#creating-a-line-chart">Creating a Line Chart</a></li>
+        <li><a href="#creating-area-charts">Creating Area Charts</a></li>
+        <li><a href="#creating-a-point-chart">Creating a Point Chart</a>
+          <ul>
+            <li><a href="#creating-a-rectangle-chart">Creating a Rectangle Chart</a></li>
+          </ul>
+        </li>
+      </ul>
+    </li>
+    <li><a href="#chapter-17">Chapter 17</a>
+      <ul>
+        <li><a href="#using-a-navigation-stack">Using a Navigation Stack</a></li>
+        <li><a href="#adding-a-title-to-a-navigation-stack">Adding a Title to a Navigation Stack</a></li>
+        <li><a href="#adding-buttons-to-a-navigation-stack">Adding Buttons to a Navigation Stack</a></li>
+        <li><a href="#displaying-views-from-a-navigation-stack">Displaying Views from a Navigation Stack</a>
+          <ul>
+            <li><a href="#passing-data-between-structures-in-a-navigation-stack">Passing Data Between Structures in a Navigation Stack</a></li>
+            <li><a href="#changing-data-between-structures-in-a-navigation-stack">Changing Data Between Structures in a Navigation Stack</a></li>
           </ul>
         </li>
       </ul>
