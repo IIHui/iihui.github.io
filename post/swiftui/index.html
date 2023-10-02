@@ -241,13 +241,13 @@ code.has-jax {
     <i class="fa fa-file-word-o"></i>
 </span>
 <span class="post-meta-item-text">字数: </span>
-<span class="leancloud-visitors-count">27868</span>
+<span class="leancloud-visitors-count">28275</span>
 &nbsp; | &nbsp;
 <span class="post-meta-item-icon">
     <i class="fa fa-coffee"></i>
 </span>
 <span class="post-meta-item-text">阅读: </span>
-<span class="leancloud-visitors-count">56 分钟</span>
+<span class="leancloud-visitors-count">57 分钟</span>
 </span>
       </div>
     </header>
@@ -1945,6 +1945,7 @@ code.has-jax {
 </span></span><span style="display:flex;"><span>}
 </span></span></code></pre></div><h2 id="creating-groups-in-a-list">Creating Groups in a List</h2>
 <p>如果列表中显示了许多元素，要在所有数据中滚动查找所需的项目可能会很困难。为了解决这个问题，列表允许你创建<code>Group</code>:</p>
+<img src="https://s2.loli.net/2023/10/02/HQ4LZ2d1mu95eVM.png" alt="HQ4LZ2d1mu95eVM" style="zoom:50%;" />
 <p>要定义<code>sections</code>，需要创建两个结构体。一个结构体定义section标题，第二个结构体定义要显示的数据。要定义<code>section</code>标题，需要定义：</p>
 <ul>
 <li>一个字符串常量，用于保存每个部分的名称。</li>
@@ -1956,7 +1957,38 @@ code.has-jax {
 </span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">let</span> animalList: [Animals]
 </span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">let</span> id = UUID()
 </span></span><span style="display:flex;"><span>}
-</span></span></code></pre></div>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">struct</span> <span style="color:#a6e22e">Animals</span>: Identifiable {
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">let</span> pet: String
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">let</span> id = UUID()
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p>然后为了显示列表中的元素，需要内嵌<code>ForEach</code>循环。外部<code>ForEach</code>循环定义了<code>section</code>名称，内部的ForEach 循环定义每个<code>section</code>中出现的元素：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span><span style="color:#66d9ef">var</span> myAnimals = [SectionHeading(name: <span style="color:#e6db74">&#34;Mammals&#34;</span>, animalList: [Animals(pet: <span style="color:#e6db74">&#34;Cat&#34;</span>), Animals(pet: <span style="color:#e6db74">&#34;Dog&#34;</span>), Animals(pet: <span style="color:#e6db74">&#34;Ferret&#34;</span>), Animals(pet: <span style="color:#e6db74">&#34;Hamster&#34;</span>)]),
+</span></span><span style="display:flex;"><span>                     SectionHeading(name: <span style="color:#e6db74">&#34;Reptiles&#34;</span>, animalList: [Animals(pet: <span style="color:#e6db74">&#34;Turtle&#34;</span>), Animals(pet: <span style="color:#e6db74">&#34;Lizard&#34;</span>)]),
+</span></span><span style="display:flex;"><span>                     SectionHeading(name: <span style="color:#e6db74">&#34;Birds&#34;</span>, animalList: [Animals(pet: <span style="color:#e6db74">&#34;Parrot&#34;</span>), Animals(pet: <span style="color:#e6db74">&#34;Canary&#34;</span>)]),
+</span></span><span style="display:flex;"><span>                     SectionHeading(name: <span style="color:#e6db74">&#34;Other&#34;</span>, animalList: [Animals(pet: <span style="color:#e6db74">&#34;Tarantula&#34;</span>), Animals(pet: <span style="color:#e6db74">&#34;Goldfish&#34;</span>)])]
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>ForEach(myAnimals) { heading <span style="color:#66d9ef">in</span>
+</span></span><span style="display:flex;"><span>    Section(header: Text(<span style="color:#e6db74">&#34;</span><span style="color:#e6db74">\(</span>heading.name<span style="color:#e6db74">)</span><span style="color:#e6db74"> Section&#34;</span>)) {
+</span></span><span style="display:flex;"><span>        ForEach(heading.animalList) { creature <span style="color:#66d9ef">in</span>
+</span></span><span style="display:flex;"><span>            Text(creature.pet)
+</span></span><span style="display:flex;"><span>        }
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><img src="https://s2.loli.net/2023/10/02/DgUn21F7q4hG9My.png" alt="DgUn21F7q4hG9My" style="zoom:50%;" />
+<h2 id="adding-line-separators-to-a-list">Adding Line Separators to a List</h2>
+<p>列表通常会在各个元素之间显示线条。<code>SwiftUI</code>允许选择隐藏或显示这些线条，或为这些线条着色。要隐藏或显示列表中的线条，可以使用<code>.listRowSeparator</code>修改器，并像下面这样使用<code>.visible</code>或<code>.hidden</code>：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span>.listRowSeparator(.hidden)
+</span></span></code></pre></div><p>要为列表中的分隔线着色，请使用<code>.listRowSeparatorTint</code>修改器，并像下面这样使用.<code>red</code> 或<code>.blue</code>等颜色：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span>.listRowSeparatorTint(.red)
+</span></span></code></pre></div><p>可以在List中使用这两个修改器来修改 ForEach循环，该循环定义了在List中显示的内容。要了解如何在List中显示分隔线并为其着色：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span>List {
+</span></span><span style="display:flex;"><span>    ForEach(<span style="color:#ae81ff">0</span> ... myArray.count <span style="color:#f92672">-</span> <span style="color:#ae81ff">1</span>, id: <span style="color:#960050;background-color:#1e0010">\</span>.<span style="color:#66d9ef">self</span>) { index <span style="color:#66d9ef">in</span>
+</span></span><span style="display:flex;"><span>        Text(myArray[index])
+</span></span><span style="display:flex;"><span>    }.listRowSeparator(.visible).listRowSeparatorTint(.red)
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><img src="https://s2.loli.net/2023/10/02/YplZMSnzDEyGmQA.png" alt="YplZMSnzDEyGmQA" style="zoom:50%;" />
+
     </div>
     <footer class="post-footer">
         
@@ -2283,6 +2315,7 @@ code.has-jax {
         <li><a href="#displaying-array-data-in-a-list">Displaying Array Data in a List</a></li>
         <li><a href="#displaying-arrays-of-structures-in-a-list">Displaying Arrays of Structures in a List</a></li>
         <li><a href="#creating-groups-in-a-list">Creating Groups in a List</a></li>
+        <li><a href="#adding-line-separators-to-a-list">Adding Line Separators to a List</a></li>
       </ul>
     </li>
   </ul>
