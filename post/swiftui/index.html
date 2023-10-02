@@ -241,13 +241,13 @@ code.has-jax {
     <i class="fa fa-file-word-o"></i>
 </span>
 <span class="post-meta-item-text">字数: </span>
-<span class="leancloud-visitors-count">31268</span>
+<span class="leancloud-visitors-count">33083</span>
 &nbsp; | &nbsp;
 <span class="post-meta-item-icon">
     <i class="fa fa-coffee"></i>
 </span>
 <span class="post-meta-item-text">阅读: </span>
-<span class="leancloud-visitors-count">63 分钟</span>
+<span class="leancloud-visitors-count">67 分钟</span>
 </span>
       </div>
     </header>
@@ -2215,9 +2215,150 @@ code.has-jax {
 </span></span></code></pre></div><img src="https://s2.loli.net/2023/10/02/CXTMqi5hWesZVAz.png" alt="CXTMqi5hWesZVAz" style="zoom:50%;" />
 <h2 id="using-a-scroll-view">Using a Scroll View</h2>
 <p>在VStack中排列多个视图时，这些视图会固定在用户界面上。如果显示的视图多于用户界面所能显示的视图，这些视图的一部分就会被切断或隐藏起来。为了解决这个问题，SwiftUI 提供了一种名为Scroll View的特殊容器。</p>
-<p>Scroll View如同stack可以放置多个视图。和stack不同的是滚动视图允许用户垂直或水平滚动，以查看滚动视图的全部内容。滚动视图可以在任何可能使用堆栈的地方工作，包括在Disclosure Group组中。</p>
+<p>Scroll View如同stack可以放置多个视图，但和stack不同的是滚动视图允许用户垂直或水平滚动，以查看Scroll View的全部内容。Scroll View可以在任何可能使用Stack的地方工作，包括在Disclosure Group组中。</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span>ScrollView { 
 </span></span><span style="display:flex;"><span>   <span style="color:#75715e">// Multiple views here </span>
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p>这样就可以通过右侧的滚动指示器垂直滚动。如下图所示，滚动指示器可以看到离列表项目的开始或结束有多近或多远。</p>
+<p>创建Scroll View的另一种方法是定义滚动方向（Axis.Set.horizontal或 Axis.Set.vertical）以及是否显示滚动指示器（showsIndicators:参数），如下所示：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span>ScrollView(Axis.Set.vertical, showsIndicators: <span style="color:#66d9ef">true</span>, content: {
+</span></span><span style="display:flex;"><span>    ForEach(<span style="color:#ae81ff">0.</span>.&lt;<span style="color:#ae81ff">50</span>) { Text(<span style="color:#e6db74">&#34;Item #</span><span style="color:#e6db74">\(</span>$0<span style="color:#e6db74">)</span><span style="color:#e6db74"> &#34;</span>) }
+</span></span><span style="display:flex;"><span>})
+</span></span></code></pre></div><img src="https://s2.loli.net/2023/10/02/WvcpdmNPZk461DJ.png" alt="WvcpdmNPZk461DJ" style="zoom:50%;" />
+<h3 id="jumping-to-a-specific-location">Jumping to a Specific Location</h3>
+<p>ScrollView可以显示大数量的数据。但是，显示的项目越多，就越难找到任何一个特定项目。SwiftUI提供了在 ScrollView中跳转到特定位置的功能，而不是强迫用户无休止地滚动。</p>
+<p>因此，如果一个ScrollView显示100个项目，可以跳转到一个特定的位置，例如ScrollView中的第54个项目或第12个项目。这样，用户就可以轻松地在ScrollView中的大量项目列表中快速跳转到特定的数字位置。</p>
+<p>当跳转到ScrollView中的特定位置时，可以选择显示或锚定该项目的位置<code>.top、.center</code>或<code>.bottom</code>。.top锚点在屏幕顶部显示所选项目，.center锚点在屏幕中央显示所选项目，而.bottom锚点在屏幕底部显示所选项目。</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span>@State <span style="color:#66d9ef">var</span> sliderValue = <span style="color:#ae81ff">0.0</span>
+</span></span><span style="display:flex;"><span>@State <span style="color:#66d9ef">var</span> anchorPosition = UnitPoint.center
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>ScrollViewReader { scrollView <span style="color:#66d9ef">in</span>
+</span></span><span style="display:flex;"><span>    HStack {
+</span></span><span style="display:flex;"><span>        Text(<span style="color:#e6db74">&#34;</span><span style="color:#e6db74">\(</span>Int<span style="color:#e6db74">(</span>sliderValue<span style="color:#e6db74">))</span><span style="color:#e6db74">&#34;</span>)
+</span></span><span style="display:flex;"><span>        Slider(value: <span style="color:#960050;background-color:#1e0010">$</span>sliderValue, <span style="color:#66d9ef">in</span>: <span style="color:#ae81ff">0</span> ... <span style="color:#ae81ff">99</span>)
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>    Button(<span style="color:#e6db74">&#34;Scroll to slider value&#34;</span>) {
+</span></span><span style="display:flex;"><span>        withAnimation {
+</span></span><span style="display:flex;"><span>            scrollView.scrollTo(Int(sliderValue), anchor: anchorPosition)
+</span></span><span style="display:flex;"><span>        }
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>    Picker(<span style="color:#e6db74">&#34;Location&#34;</span>, selection: <span style="color:#960050;background-color:#1e0010">$</span>anchorPosition, content: {
+</span></span><span style="display:flex;"><span>Text(<span style="color:#e6db74">&#34;Top&#34;</span>).tag(UnitPoint.top)
+</span></span><span style="display:flex;"><span>        Text(<span style="color:#e6db74">&#34;Center&#34;</span>).tag(UnitPoint.center)
+</span></span><span style="display:flex;"><span>        Text(<span style="color:#e6db74">&#34;Bottom&#34;</span>).tag(UnitPoint.bottom)
+</span></span><span style="display:flex;"><span>    }).pickerStyle(.segmented)
+</span></span><span style="display:flex;"><span>    ScrollView {
+</span></span><span style="display:flex;"><span>        ForEach(<span style="color:#ae81ff">0</span> ..<span style="color:#f92672">&lt;</span> <span style="color:#ae81ff">100</span>) { index <span style="color:#66d9ef">in</span>
+</span></span><span style="display:flex;"><span>            Text(<span style="color:#e6db74">&#34;Item # </span><span style="color:#e6db74">\(</span>index<span style="color:#e6db74">)</span><span style="color:#e6db74">&#34;</span>).id(index)
+</span></span><span style="display:flex;"><span>        }
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><img src="https://s2.loli.net/2023/10/02/LY3zPUKXoyFcBnR.png" alt="LY3zPUKXoyFcBnR" style="zoom:50%;" />
+<h3 id="defining-a-horizontal-scroll-view">Defining a Horizontal Scroll View</h3>
+<p>ScrollViews默认是垂直方向滚动的。实际上，也可以将滚动方向改为水平方向，这对于滚动屏幕上无法显示的信息（如大量文本）非常方便。</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span>ScrollViewReader { <span style="color:#66d9ef">_</span> <span style="color:#66d9ef">in</span>
+</span></span><span style="display:flex;"><span>    ScrollView(.horizontal, showsIndicators: <span style="color:#66d9ef">true</span>) {
+</span></span><span style="display:flex;"><span>        Text(<span style="color:#e6db74">&#34;This is a long amount of text that won&#39;t fit within the narrow width
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">of an iPhone. That way you can see how to scroll horizontally.&#34;</span>)
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><h2 id="using-an-outline-group">Using an Outline Group</h2>
+<p>Outline Group的作用类似于超级Disclosure Group。主要区别在于，Disclosure Group最多只能显示十个视图，而Outline Group则可以在一个单独类中显示无数的项目。此外，Outline Group会自动缩进类别，以便于查看项目之间的层次关系。</p>
+<p>Outline Group显示定义关系的对象数组，要使用Outline Group，需要执行以下操作：</p>
+<ul>
+<li>Create a class that holds the data you want to display.</li>
+<li>Create an array that holds multiple objects defined by the class.</li>
+<li>Create an Outline Group that displays the data stored in the objects.</li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span><span style="color:#66d9ef">class</span> <span style="color:#a6e22e">Species</span>: Identifiable {
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">let</span> id = UUID()
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">var</span> name: String
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">var</span> classification: [Species]?
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">init</span>(name: String, classification: [Species]? = <span style="color:#66d9ef">nil</span>) {
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">self</span>.name = name 
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">self</span>.classification = classification
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">var</span> Animals: [Species] = [Species(name: <span style="color:#e6db74">&#34;Mammal&#34;</span>, classification: [
+</span></span><span style="display:flex;"><span>    Species(name: <span style="color:#e6db74">&#34;Dog&#34;</span>, classification: [
+</span></span><span style="display:flex;"><span>        Species(name: <span style="color:#e6db74">&#34;Poodle&#34;</span>),
+</span></span><span style="display:flex;"><span>        Species(name: <span style="color:#e6db74">&#34;Collie&#34;</span>),
+</span></span><span style="display:flex;"><span>        Species(name: <span style="color:#e6db74">&#34;St. Bernard&#34;</span>),
+</span></span><span style="display:flex;"><span>    ]),
+</span></span><span style="display:flex;"><span>    Species(name: <span style="color:#e6db74">&#34;Cat&#34;</span>),
+</span></span><span style="display:flex;"><span>    Species(name: <span style="color:#e6db74">&#34;Elephant&#34;</span>),
+</span></span><span style="display:flex;"><span>    Species(name: <span style="color:#e6db74">&#34;Whale&#34;</span>),
+</span></span><span style="display:flex;"><span>    ]),
+</span></span><span style="display:flex;"><span>    Species(name: <span style="color:#e6db74">&#34;Bird&#34;</span>, classification: [
+</span></span><span style="display:flex;"><span>        Species(name: <span style="color:#e6db74">&#34;Canary&#34;</span>),
+</span></span><span style="display:flex;"><span>        Species(name: <span style="color:#e6db74">&#34;Parakeet&#34;</span>),
+</span></span><span style="display:flex;"><span>        Species(name: <span style="color:#e6db74">&#34;Eagle&#34;</span>),
+</span></span><span style="display:flex;"><span>    ]), 
+</span></span><span style="display:flex;"><span>]
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>List {
+</span></span><span style="display:flex;"><span>    OutlineGroup(Animals, id: <span style="color:#960050;background-color:#1e0010">\</span>.id, children: <span style="color:#960050;background-color:#1e0010">\</span>.classification) { creature <span style="color:#66d9ef">in</span>
+</span></span><span style="display:flex;"><span>        Text(creature.name)
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><img src="https://s2.loli.net/2023/10/02/HloPf9bvSVJOWcr.png" alt="HloPf9bvSVJOWcr" style="zoom:50%;" />
+<h1 id="chapter-16">Chapter 16</h1>
+<p>应用程序需要向用户显示信息。无论信息是文本还是数字，大量数据可能难以理解。这就是为什么许多应用程序会将信息转换成图表的原因。图表只需将数字数据转换成彩色图像，即可一目了然。</p>
+<p>创建任何图表的关键在于识别所拥有的数据，并确定关于这些数据想讲述什么故事。例如，销售额列表可以用来显示销售额的增长（或萎缩）情况、哪个时间段最赚钱（哪个时间段最不赚钱）、不同销售人员的对比情况，或者哪些产品可能比其它产品卖得更好。</p>
+<p>根据数据制作图表的方法没有对错之分。因为图表是用来交流的，所以唯一可能犯的错误就是创建的图表无法讲述想讲述的数据故事。SwiftUI可以创建以下类型的图表。</p>
+<ul>
+<li>Bar</li>
+<li>Point</li>
+<li>Line</li>
+<li>Area</li>
+<li>Rectangle</li>
+</ul>
+<p>图表使用数字数据来定义坐标轴上的标记。标记可以直观地测量数据，而坐标轴就像一把尺子，可以帮助用户确定每个标记所代表的数量。下图中，在条形图中，单个条就是一个标记，而在折线图中，单条折线就是一个标记。</p>
+<img src="https://s2.loli.net/2023/10/02/SrLPGqdcRu63hfb.png" alt="SrLPGqdcRu63hfb" style="zoom:50%;" />
+<p>为了创建图标，首先需要导入Charts：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span><span style="color:#66d9ef">import</span> <span style="color:#a6e22e">Charts</span>
+</span></span></code></pre></div><h2 id="creating-a-bar-chart">Creating a Bar Chart</h2>
+<p>为了创建条形图，需要使用<code>BarMark</code>定义x和y:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span>@State <span style="color:#66d9ef">var</span> sliderValue = <span style="color:#ae81ff">25.0</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>Chart {
+</span></span><span style="display:flex;"><span>    BarMark(x: .value(<span style="color:#e6db74">&#34;Name&#34;</span>, <span style="color:#e6db74">&#34;Oscar&#34;</span>), y: .value(<span style="color:#e6db74">&#34;Sales&#34;</span>, <span style="color:#ae81ff">50</span>))
+</span></span><span style="display:flex;"><span>    BarMark(x: .value(<span style="color:#e6db74">&#34;Name&#34;</span>, <span style="color:#e6db74">&#34;Mayer&#34;</span>), y: .value(<span style="color:#e6db74">&#34;Sales&#34;</span>, Int(sliderValue)))
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>HStack {
+</span></span><span style="display:flex;"><span>    Text(<span style="color:#e6db74">&#34;</span><span style="color:#e6db74">\(</span>Int<span style="color:#e6db74">(</span>sliderValue<span style="color:#e6db74">))</span><span style="color:#e6db74">&#34;</span>)
+</span></span><span style="display:flex;"><span>    Slider(value: <span style="color:#960050;background-color:#1e0010">$</span>sliderValue, <span style="color:#66d9ef">in</span>: <span style="color:#ae81ff">1</span> ... <span style="color:#ae81ff">100</span>)
+</span></span><span style="display:flex;"><span>}.padding()
+</span></span></code></pre></div><img src="https://s2.loli.net/2023/10/02/Drsty4G1uI6oW8R.png" alt="Drsty4G1uI6oW8R" style="zoom:50%;" />
+<h3 id="defining-charts-with-loops-and-arrays">Defining Charts with Loops and Arrays</h3>
+<p>对于小型图表，定义一个或多个标记（如BarMarks）很容易。但是，如果需要绘制含有大量数据的图表，定义每个标记可能会很麻烦。因为，我们可能不知道图表所需的标记的确切数量，而数据的大小又会发生变化。</p>
+<p>因此，最好不要单独定义标记，而是依靠数据结构和循环来定义图表中每个标记的数量和高度。首先，我们需要定义一个结构体来保存图表数据。</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span><span style="color:#66d9ef">struct</span> <span style="color:#a6e22e">SalesPeople</span>: Identifiable {
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">var</span> name: String
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">var</span> sales: Int
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">var</span> id: String {
+</span></span><span style="display:flex;"><span>        name
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">var</span> mySalesArray: [SalesPeople] = [
+</span></span><span style="display:flex;"><span>    .<span style="color:#66d9ef">init</span>(name: <span style="color:#e6db74">&#34;Oscar&#34;</span>, sales: <span style="color:#ae81ff">50</span>),
+</span></span><span style="display:flex;"><span>    .<span style="color:#66d9ef">init</span>(name: <span style="color:#e6db74">&#34;Mayer&#34;</span>, sales: <span style="color:#ae81ff">43</span>),
+</span></span><span style="display:flex;"><span>    .<span style="color:#66d9ef">init</span>(name: <span style="color:#e6db74">&#34;George&#34;</span>, sales: <span style="color:#ae81ff">62</span>),
+</span></span><span style="display:flex;"><span>    .<span style="color:#66d9ef">init</span>(name: <span style="color:#e6db74">&#34;Hormel&#34;</span>, sales: <span style="color:#ae81ff">26</span>)
+</span></span><span style="display:flex;"><span>]
+</span></span></code></pre></div><p>一旦有了结构体数组，其中的数组定义了一个类别（名称）和一个值（销售额），就可以在图表中使用它。这意味着要定义包含图表数据的数组，以及临时存储每个数组项的任意变量：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span>Chart(mySalesArray) { x <span style="color:#66d9ef">in</span>
+</span></span><span style="display:flex;"><span>    BarMark(x: .value(<span style="color:#e6db74">&#34;Name&#34;</span>, x.name), y: .value(<span style="color:#e6db74">&#34;Sales&#34;</span>, x.sales))
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><h3 id="defining-colors-for-a-bar-chart">Defining Colors for a Bar Chart</h3>
+<p>条形图的每个标记（条形）都默认显示为蓝色。不过，可以使用<code>.foregroundStyle</code>修改器选择不同的颜色，如下所示：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span>Chart(mySalesArray) { x <span style="color:#66d9ef">in</span>
+</span></span><span style="display:flex;"><span>    BarMark(x: .value(<span style="color:#e6db74">&#34;Name&#34;</span>, x.name), y: .value(<span style="color:#e6db74">&#34;Sales&#34;</span>, x.sales))
+</span></span><span style="display:flex;"><span>        .foregroundStyle(.orange)
 </span></span><span style="display:flex;"><span>}
 </span></span></code></pre></div>
     </div>
@@ -2565,7 +2706,23 @@ code.has-jax {
     <li><a href="#chapter-15">Chapter 15</a>
       <ul>
         <li><a href="#using-a-disclosure-group">Using a Disclosure Group</a></li>
-        <li><a href="#using-a-scroll-view">Using a Scroll View</a></li>
+        <li><a href="#using-a-scroll-view">Using a Scroll View</a>
+          <ul>
+            <li><a href="#jumping-to-a-specific-location">Jumping to a Specific Location</a></li>
+            <li><a href="#defining-a-horizontal-scroll-view">Defining a Horizontal Scroll View</a></li>
+          </ul>
+        </li>
+        <li><a href="#using-an-outline-group">Using an Outline Group</a></li>
+      </ul>
+    </li>
+    <li><a href="#chapter-16">Chapter 16</a>
+      <ul>
+        <li><a href="#creating-a-bar-chart">Creating a Bar Chart</a>
+          <ul>
+            <li><a href="#defining-charts-with-loops-and-arrays">Defining Charts with Loops and Arrays</a></li>
+            <li><a href="#defining-colors-for-a-bar-chart">Defining Colors for a Bar Chart</a></li>
+          </ul>
+        </li>
       </ul>
     </li>
   </ul>
