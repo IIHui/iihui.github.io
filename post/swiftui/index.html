@@ -241,13 +241,13 @@ code.has-jax {
     <i class="fa fa-file-word-o"></i>
 </span>
 <span class="post-meta-item-text">字数: </span>
-<span class="leancloud-visitors-count">35966</span>
+<span class="leancloud-visitors-count">37115</span>
 &nbsp; | &nbsp;
 <span class="post-meta-item-icon">
     <i class="fa fa-coffee"></i>
 </span>
 <span class="post-meta-item-text">阅读: </span>
-<span class="leancloud-visitors-count">72 分钟</span>
+<span class="leancloud-visitors-count">75 分钟</span>
 </span>
       </div>
     </header>
@@ -2731,12 +2731,154 @@ code.has-jax {
 </span></span><span style="display:flex;"><span>NavigationStack {
 </span></span><span style="display:flex;"><span>    VStack {
 </span></span><span style="display:flex;"><span>        TextField(<span style="color:#e6db74">&#34;Type here&#34;</span>, text: <span style="color:#960050;background-color:#1e0010">$</span>message)
-</span></span><span style="display:flex;"><span>        NavigationLink(destination: FileView(choice: message)) {
+</span></span><span style="display:flex;"><span>        NavigationLink(destination: FileView(choice: <span style="color:#960050;background-color:#1e0010">$</span>message)) {
+</span></span><span style="display:flex;"><span>            Text(<span style="color:#e6db74">&#34;Heads&#34;</span>)
+</span></span><span style="display:flex;"><span>        }
+</span></span><span style="display:flex;"><span>        NavigationLink(destination: SeparateFileView(passedData: <span style="color:#960050;background-color:#1e0010">$</span>message)) {
+</span></span><span style="display:flex;"><span>            Text(<span style="color:#e6db74">&#34;Tails&#34;</span>)
+</span></span><span style="display:flex;"><span>        }.navigationTitle(<span style="color:#e6db74">&#34;Flip a Coin&#34;</span>)
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">struct</span> <span style="color:#a6e22e">FileView</span>: View {
+</span></span><span style="display:flex;"><span>    @Binding <span style="color:#66d9ef">var</span> choice: String
+</span></span><span style="display:flex;"><span>    
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">var</span> body: some View {
+</span></span><span style="display:flex;"><span>        HStack {
+</span></span><span style="display:flex;"><span>            Spacer()
+</span></span><span style="display:flex;"><span>            VStack {
+</span></span><span style="display:flex;"><span>                Spacer()
+</span></span><span style="display:flex;"><span>                TextField(<span style="color:#e6db74">&#34;Type here:&#34;</span>, text: <span style="color:#960050;background-color:#1e0010">$</span>choice)
+</span></span><span style="display:flex;"><span>                Spacer()
+</span></span><span style="display:flex;"><span>            }
+</span></span><span style="display:flex;"><span>            Spacer()
+</span></span><span style="display:flex;"><span>        }.background(Color.yellow)
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">struct</span> <span style="color:#a6e22e">SeparateFileView</span>: View {
+</span></span><span style="display:flex;"><span>    @Binding <span style="color:#66d9ef">var</span> passedData: String
+</span></span><span style="display:flex;"><span>    
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">var</span> body: some View {
+</span></span><span style="display:flex;"><span>        HStack {
+</span></span><span style="display:flex;"><span>            Spacer()
+</span></span><span style="display:flex;"><span>            VStack {
+</span></span><span style="display:flex;"><span>                Spacer()
+</span></span><span style="display:flex;"><span>                TextField(<span style="color:#e6db74">&#34;Type here:&#34;</span>, text: <span style="color:#960050;background-color:#1e0010">$</span>passedData)
+</span></span><span style="display:flex;"><span>                Spacer()
+</span></span><span style="display:flex;"><span>            }
+</span></span><span style="display:flex;"><span>            Spacer()
+</span></span><span style="display:flex;"><span>        }.background(Color.orange)
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><h3 id="sharing-data-between-structures-in-a-navigation-stack">Sharing Data Between Structures in a Navigation Stack</h3>
+<p>使用@State和@Binding变量可以让多个视图共享和修改数据。但是，假设创建了一个导航栈，它按顺序将四个结构体链接在一起。如果要更改第一个结构体上的数据并将其传递给第四个结构体，则还必须通过第二个和第三个结构传递该数据。</p>
+<p>这样做虽然可行，但却很笨拙。若直接将数据传递给需要数据的结构体要好得多。为此，SwiftUI提供了另一种在结构间共享数据的方法。首先，创建一个ObservableObject类，其中包含一个或多个要共享的变量。每个变量都必须标记为@Published：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span><span style="color:#66d9ef">class</span> <span style="color:#a6e22e">ShareString</span>: ObservableObject {
+</span></span><span style="display:flex;"><span>    @Published <span style="color:#66d9ef">var</span> message = <span style="color:#e6db74">&#34;&#34;</span>
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p>包含NavigationStack的结构体（如ContentView）需要定义一个@StateObject变量，像下面这样定义 ObservableObject类中的一个对象：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span>@StateObject <span style="color:#66d9ef">var</span> showMe = ShareString()
+</span></span></code></pre></div><p>由于要在导航堆栈中的所有视图之间共享这个ObservableObject，因此需要在导航堆栈中添加 .environmentObject修改器，并像下面这样共享StateObject：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span>NavigationStack { 
+</span></span><span style="display:flex;"><span>   <span style="color:#75715e">//</span>
+</span></span><span style="display:flex;"><span>}.environmentObject(showMe)
+</span></span></code></pre></div><p>导航链接无需向每个视图传递数据，而只需要显示视图的名称:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span>NavigationLink(destination: FileView()) { 
+</span></span><span style="display:flex;"><span>    Text(<span style="color:#e6db74">&#34;Send a message&#34;</span>) 
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p>在每个需要访问ObservableObject的结构体中，都需要声明一个@EnvironmentObject变量，该变量使用 ObservableObject类：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span>@EnvironmentObject <span style="color:#66d9ef">var</span> choice: ShareString
+</span></span></code></pre></div><p>最后，在每个定义了@EnvironmentObject的结构体中，可以使用@EnvironmentObject名称加上@Published属性名来访问要共享的实际数据：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">$</span>choice.message
+</span></span></code></pre></div><div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span>@StateObject <span style="color:#66d9ef">var</span> showMe = ShareString()
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>NavigationStack {
+</span></span><span style="display:flex;"><span>    VStack {
+</span></span><span style="display:flex;"><span>        TextField(<span style="color:#e6db74">&#34;Type here&#34;</span>, text: <span style="color:#960050;background-color:#1e0010">$</span>showMe.message)
+</span></span><span style="display:flex;"><span>        NavigationLink(destination: FileView()) {
 </span></span><span style="display:flex;"><span>            Text(<span style="color:#e6db74">&#34;Send a message&#34;</span>)
 </span></span><span style="display:flex;"><span>        }
-</span></span><span style="display:flex;"><span>        NavigationLink(destination: SeparateFileView(passedData: message)) {
+</span></span><span style="display:flex;"><span>        NavigationLink(destination: SeparateFileView()) {
 </span></span><span style="display:flex;"><span>            Text(<span style="color:#e6db74">&#34;Separate file&#34;</span>)
-</span></span><span style="display:flex;"><span>        }.navigationTitle(<span style="color:#e6db74">&#34;Passing Data&#34;</span>)
+</span></span><span style="display:flex;"><span>        }.navigationTitle(<span style="color:#e6db74">&#34;Sharing Data&#34;</span>)
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>}.environmentObject(showMe)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">class</span> <span style="color:#a6e22e">ShareString</span>: ObservableObject {
+</span></span><span style="display:flex;"><span>    @Published <span style="color:#66d9ef">var</span> message = <span style="color:#e6db74">&#34;&#34;</span>
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">struct</span> <span style="color:#a6e22e">FileView</span>: View {
+</span></span><span style="display:flex;"><span>    @EnvironmentObject <span style="color:#66d9ef">var</span> choice: ShareString
+</span></span><span style="display:flex;"><span>    
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">var</span> body: some View {
+</span></span><span style="display:flex;"><span>        HStack {
+</span></span><span style="display:flex;"><span>            Spacer()
+</span></span><span style="display:flex;"><span>            VStack {
+</span></span><span style="display:flex;"><span>                Spacer()
+</span></span><span style="display:flex;"><span>                TextField(<span style="color:#e6db74">&#34;Type here:&#34;</span>, text: <span style="color:#960050;background-color:#1e0010">$</span>choice.message)
+</span></span><span style="display:flex;"><span>                Spacer()
+</span></span><span style="display:flex;"><span>            }
+</span></span><span style="display:flex;"><span>            Spacer()
+</span></span><span style="display:flex;"><span>        }.background(Color.yellow)
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">struct</span> <span style="color:#a6e22e">SeparateFileView</span>: View {
+</span></span><span style="display:flex;"><span>    @EnvironmentObject <span style="color:#66d9ef">var</span> passedData: ShareString
+</span></span><span style="display:flex;"><span>    
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">var</span> body: some View {
+</span></span><span style="display:flex;"><span>        HStack {
+</span></span><span style="display:flex;"><span>            Spacer()
+</span></span><span style="display:flex;"><span>            VStack {
+</span></span><span style="display:flex;"><span>                Spacer()
+</span></span><span style="display:flex;"><span>                TextField(<span style="color:#e6db74">&#34;Type here:&#34;</span>, text: <span style="color:#960050;background-color:#1e0010">$</span>passedData.message)
+</span></span><span style="display:flex;"><span>                Spacer()
+</span></span><span style="display:flex;"><span>            }
+</span></span><span style="display:flex;"><span>            Spacer()
+</span></span><span style="display:flex;"><span>        }.background(Color.orange)
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><h2 id="using-lists-in-a-navigation-stack">Using Lists in a Navigation Stack</h2>
+<p>与单独显示导航链接相比，一种常用的方法是创建一个列表，列表中的每个项目都像一个链接。通过选择列表中的某个项目，导航堆栈可以打开一个新视图。导航堆栈中的列表组合常用于iOS的设置应用。在以前的项目中创建导航链接时，定义了要显示在链接上的文本以及目标视图：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span>NavigationLink { 
+</span></span><span style="display:flex;"><span>	Text(<span style="color:#e6db74">&#34;Destination view&#34;</span>) 
+</span></span><span style="display:flex;"><span>} label: {
+</span></span><span style="display:flex;"><span>	Text(<span style="color:#e6db74">&#34;Text to appear on link&#34;</span>) 
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p>在处理列表时，将目标视图与导航链接分开会更方便。这样，导航链接只需定义其外观。然后，为了定义目标视图，可以使用navigationDestination修改器来定义用户选择导航链接时的显示内容</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span><span style="color:#66d9ef">struct</span> <span style="color:#a6e22e">Books</span>: Identifiable, Hashable {
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">var</span> id = UUID()
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">var</span> title: String
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">var</span> summary: String
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">let</span> books: [Books] = [
+</span></span><span style="display:flex;"><span>    Books(title: <span style="color:#e6db74">&#34;Fahrenheit 451&#34;</span>, summary: <span style="color:#e6db74">&#34;Dystopian novel about book burning&#34;</span>),
+</span></span><span style="display:flex;"><span>    Books(title: <span style="color:#e6db74">&#34;The Martian Chronicles&#34;</span>, summary: <span style="color:#e6db74">&#34;Tales about the colonization of Mars&#34;</span>),
+</span></span><span style="display:flex;"><span>    Books(title: <span style="color:#e6db74">&#34;Something Wicked This Way Comes&#34;</span>, summary: <span style="color:#e6db74">&#34;A sinister circus comes to town&#34;</span>),
+</span></span><span style="display:flex;"><span>    Books(title: <span style="color:#e6db74">&#34;The Illustrated Man&#34;</span>, summary: <span style="color:#e6db74">&#34;Short stories revolving around a tattooed man&#34;</span>)
+</span></span><span style="display:flex;"><span>]
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>NavigationStack {
+</span></span><span style="display:flex;"><span>    List(books) { book <span style="color:#66d9ef">in</span>
+</span></span><span style="display:flex;"><span>        NavigationLink(<span style="color:#e6db74">&#34;</span><span style="color:#e6db74">\(</span>book.title<span style="color:#e6db74">)</span><span style="color:#e6db74">&#34;</span>, value: book)
+</span></span><span style="display:flex;"><span>    }.navigationTitle(Text(<span style="color:#e6db74">&#34;Book List&#34;</span>))
+</span></span><span style="display:flex;"><span>        .navigationDestination(<span style="color:#66d9ef">for</span>: Books.<span style="color:#66d9ef">self</span>) { x <span style="color:#66d9ef">in</span>
+</span></span><span style="display:flex;"><span>            BookView(bookInfo: x)
+</span></span><span style="display:flex;"><span>        }
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">struct</span> <span style="color:#a6e22e">BookView</span>: View {
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">var</span> bookInfo: Books
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">var</span> body: some View {
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>        VStack(spacing: <span style="color:#ae81ff">24</span>) {
+</span></span><span style="display:flex;"><span>            Text(<span style="color:#e6db74">&#34;</span><span style="color:#e6db74">\(</span>bookInfo.title<span style="color:#e6db74">)</span><span style="color:#e6db74">&#34;</span>).font(.largeTitle)
+</span></span><span style="display:flex;"><span>            Text(<span style="color:#e6db74">&#34;</span><span style="color:#e6db74">\(</span>bookInfo.summary<span style="color:#e6db74">)</span><span style="color:#e6db74">&#34;</span>).font(.body)
+</span></span><span style="display:flex;"><span>        }
 </span></span><span style="display:flex;"><span>    }
 </span></span><span style="display:flex;"><span>}
 </span></span></code></pre></div>
@@ -3122,8 +3264,10 @@ code.has-jax {
           <ul>
             <li><a href="#passing-data-between-structures-in-a-navigation-stack">Passing Data Between Structures in a Navigation Stack</a></li>
             <li><a href="#changing-data-between-structures-in-a-navigation-stack">Changing Data Between Structures in a Navigation Stack</a></li>
+            <li><a href="#sharing-data-between-structures-in-a-navigation-stack">Sharing Data Between Structures in a Navigation Stack</a></li>
           </ul>
         </li>
+        <li><a href="#using-lists-in-a-navigation-stack">Using Lists in a Navigation Stack</a></li>
       </ul>
     </li>
   </ul>
