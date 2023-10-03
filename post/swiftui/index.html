@@ -241,13 +241,13 @@ code.has-jax {
     <i class="fa fa-file-word-o"></i>
 </span>
 <span class="post-meta-item-text">字数: </span>
-<span class="leancloud-visitors-count">37115</span>
+<span class="leancloud-visitors-count">37839</span>
 &nbsp; | &nbsp;
 <span class="post-meta-item-icon">
     <i class="fa fa-coffee"></i>
 </span>
 <span class="post-meta-item-text">阅读: </span>
-<span class="leancloud-visitors-count">75 分钟</span>
+<span class="leancloud-visitors-count">76 分钟</span>
 </span>
       </div>
     </header>
@@ -2848,7 +2848,7 @@ code.has-jax {
 </span></span><span style="display:flex;"><span>} label: {
 </span></span><span style="display:flex;"><span>	Text(<span style="color:#e6db74">&#34;Text to appear on link&#34;</span>) 
 </span></span><span style="display:flex;"><span>}
-</span></span></code></pre></div><p>在处理列表时，将目标视图与导航链接分开会更方便。这样，导航链接只需定义其外观。然后，为了定义目标视图，可以使用navigationDestination修改器来定义用户选择导航链接时的显示内容</p>
+</span></span></code></pre></div><p>在<font color=red>处理列表时将目标视图与导航链接分开会更方便</font>。因为这样，导航链接只需定义其外观。然后，为了定义目标视图，可以使用navigationDestination修改器来定义用户选择导航链接时的显示内容</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span><span style="color:#66d9ef">struct</span> <span style="color:#a6e22e">Books</span>: Identifiable, Hashable {
 </span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">var</span> id = UUID()
 </span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">var</span> title: String
@@ -2881,7 +2881,52 @@ code.has-jax {
 </span></span><span style="display:flex;"><span>        }
 </span></span><span style="display:flex;"><span>    }
 </span></span><span style="display:flex;"><span>}
-</span></span></code></pre></div>
+</span></span></code></pre></div><h1 id="chapter-18">Chapter 18</h1>
+<p>大多数应用程序都由多个页面组成。上一章介绍了如何创建使用导航堆栈的应用程序，让用户按顺序从一个页面跳转到另一个页面。这对于显示更多细节非常方便，例如iOS中的&quot;设置&quot;应用程序可以让用户选择各种选项，然后查看各个页面来选择不同的设置。</p>
+<p>但是，导航堆栈的一个问题是，如果把太多页面连接在一起，跳转就会变得很麻烦，因为必须从第一个页面跳转到第二个页面，再导航到第三个页面，才能到达第四个页面。然后，必须颠倒整个过程，才能从第四个屏幕回到第一个屏幕。</p>
+<p>为了提供从一个屏幕跳转到另一个屏幕的另一种方法，可以使用Tab视图，该视图在屏幕底部显示图标和/或文本。选择一个标签（图标和/或文本），就会跳转到一个新的屏幕。</p>
+<p>例如，时钟应用会在屏幕底部显示图标/文本，让我们跳转到不同的页面。无论查看哪个页面，tab栏都会出现在屏幕底部，因此标签视图可以让我们随时轻松跳转到想查看的页面。</p>
+<h2 id="using-a-tab-view">Using a Tab View</h2>
+<p>标签视图包含多个视图，代码如下：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span>TabView { 
+</span></span><span style="display:flex;"><span>   <span style="color:#75715e">// Put multiple views here </span>
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p>存储在标签视图中的视图可以是简单的视图（如文本或图像视图），也可以是更复杂的定义视图的结构体。创建tab视图的第一部分是列出要在tab视图中使用的所有视图：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span>TabView {
+</span></span><span style="display:flex;"><span>    Text(<span style="color:#e6db74">&#34;One&#34;</span>)
+</span></span><span style="display:flex;"><span>    Text(<span style="color:#e6db74">&#34;Two&#34;</span>)
+</span></span><span style="display:flex;"><span>    Text(<span style="color:#e6db74">&#34;Three&#34;</span>)
+</span></span><span style="display:flex;"><span>    Text(<span style="color:#e6db74">&#34;Four&#34;</span>)
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p>定义了要在tab视图中显示的视图后，下一步就是定义代表每个视图的图标和/或文本。为此，需要为每个使用图像和文本视图的视图添加<code>.tabItem</code>修改器：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span>TabView {
+</span></span><span style="display:flex;"><span>    Text(<span style="color:#e6db74">&#34;One&#34;</span>).tabItem {
+</span></span><span style="display:flex;"><span>        Image(systemName: <span style="color:#e6db74">&#34;heart.fill&#34;</span>)
+</span></span><span style="display:flex;"><span>        Text(<span style="color:#e6db74">&#34;Tab1&#34;</span>)
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p>为每个视图添加<code>.tabItem</code>修改器，并使用图像和文本视图定义其内容，就可以创建一个显示在屏幕底部的标签栏，如下图所示:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span>TabView {
+</span></span><span style="display:flex;"><span>    Text(<span style="color:#e6db74">&#34;One&#34;</span>).tabItem {
+</span></span><span style="display:flex;"><span>        Image(systemName: <span style="color:#e6db74">&#34;heart.fill&#34;</span>)
+</span></span><span style="display:flex;"><span>        Text(<span style="color:#e6db74">&#34;Tab1&#34;</span>)
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>    Text(<span style="color:#e6db74">&#34;Two&#34;</span>).tabItem {
+</span></span><span style="display:flex;"><span>        Image(systemName: <span style="color:#e6db74">&#34;hare.fill&#34;</span>)
+</span></span><span style="display:flex;"><span>        Text(<span style="color:#e6db74">&#34;Two&#34;</span>)
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>    Text(<span style="color:#e6db74">&#34;Three&#34;</span>).tabItem {
+</span></span><span style="display:flex;"><span>        Image(systemName: <span style="color:#e6db74">&#34;tortoise.fill&#34;</span>)
+</span></span><span style="display:flex;"><span>        Text(<span style="color:#e6db74">&#34;Three&#34;</span>)
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>    Text(<span style="color:#e6db74">&#34;Four&#34;</span>).tabItem {
+</span></span><span style="display:flex;"><span>        Image(systemName: <span style="color:#e6db74">&#34;folder.fill&#34;</span>)
+</span></span><span style="display:flex;"><span>        Text(<span style="color:#e6db74">&#34;Four&#34;</span>)
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><img src="https://s2.loli.net/2023/10/03/hg2XqdGSOJP4lBk.png" alt="hg2XqdGSOJP4lBk" style="zoom:67%;" />
+<p>Tab可以是图像和文本，也可以是图像或文本。为清晰起见，通常最好将tab同时定义为图像和文本。</p>
+
     </div>
     <footer class="post-footer">
         
@@ -3268,6 +3313,11 @@ code.has-jax {
           </ul>
         </li>
         <li><a href="#using-lists-in-a-navigation-stack">Using Lists in a Navigation Stack</a></li>
+      </ul>
+    </li>
+    <li><a href="#chapter-18">Chapter 18</a>
+      <ul>
+        <li><a href="#using-a-tab-view">Using a Tab View</a></li>
       </ul>
     </li>
   </ul>
