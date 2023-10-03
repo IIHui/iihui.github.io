@@ -241,13 +241,13 @@ code.has-jax {
     <i class="fa fa-file-word-o"></i>
 </span>
 <span class="post-meta-item-text">字数: </span>
-<span class="leancloud-visitors-count">38783</span>
+<span class="leancloud-visitors-count">39879</span>
 &nbsp; | &nbsp;
 <span class="post-meta-item-icon">
     <i class="fa fa-coffee"></i>
 </span>
 <span class="post-meta-item-text">阅读: </span>
-<span class="leancloud-visitors-count">78 分钟</span>
+<span class="leancloud-visitors-count">80 分钟</span>
 </span>
       </div>
     </header>
@@ -3109,6 +3109,179 @@ code.has-jax {
 </span></span><span style="display:flex;"><span>    }
 </span></span><span style="display:flex;"><span>}
 </span></span></code></pre></div><h3 id="passing-data-between-structures-in-a-tab-view">Passing Data Between Structures in a Tab View</h3>
+<p>在很多情况下，我们可能希望一个结构体中的数据出现在另一个结构体中。这意味着必须将数据从一个结构体传递到另一个结构体。</p>
+<p>这种情况与函数间的数据传递类似。当一个结构体需要接收数据时，只需通过创建一个变量来声明一个属性，类型可以是String或Double等：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span>@State <span style="color:#66d9ef">var</span> message = <span style="color:#e6db74">&#34;&#34;</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>TabView {
+</span></span><span style="display:flex;"><span>    TextField(<span style="color:#e6db74">&#34;Type here&#34;</span>, text: <span style="color:#960050;background-color:#1e0010">$</span>message).tabItem {
+</span></span><span style="display:flex;"><span>        Image(systemName: <span style="color:#e6db74">&#34;house.fill&#34;</span>)
+</span></span><span style="display:flex;"><span>        Text(<span style="color:#e6db74">&#34;Home&#34;</span>)
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>    FileView(choice: message).tabItem {
+</span></span><span style="display:flex;"><span>        Image(systemName: <span style="color:#e6db74">&#34;heart.fill&#34;</span>)
+</span></span><span style="display:flex;"><span>        Text(<span style="color:#e6db74">&#34;First&#34;</span>)
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>    SeparateFileView(passedData: message).tabItem {
+</span></span><span style="display:flex;"><span>        Image(systemName: <span style="color:#e6db74">&#34;hare.fill&#34;</span>)
+</span></span><span style="display:flex;"><span>        Text(<span style="color:#e6db74">&#34;Second&#34;</span>)
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">struct</span> <span style="color:#a6e22e">FileView</span>: View {
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">var</span> choice: String
+</span></span><span style="display:flex;"><span>    
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">var</span> body: some View {
+</span></span><span style="display:flex;"><span>        HStack {
+</span></span><span style="display:flex;"><span>            Spacer()
+</span></span><span style="display:flex;"><span>            VStack {
+</span></span><span style="display:flex;"><span>                Spacer()
+</span></span><span style="display:flex;"><span>                Text(<span style="color:#e6db74">&#34;You typed = </span><span style="color:#e6db74">\(</span>choice<span style="color:#e6db74">)</span><span style="color:#e6db74">&#34;</span>)
+</span></span><span style="display:flex;"><span>                Spacer()
+</span></span><span style="display:flex;"><span>            }
+</span></span><span style="display:flex;"><span>            Spacer()
+</span></span><span style="display:flex;"><span>        }.background(Color.green)
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">struct</span> <span style="color:#a6e22e">SeparateFileView</span>: View {
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">var</span> passedData: String
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">var</span> body: some View {
+</span></span><span style="display:flex;"><span>        HStack {
+</span></span><span style="display:flex;"><span>            Spacer()
+</span></span><span style="display:flex;"><span>            VStack {
+</span></span><span style="display:flex;"><span>                Spacer()
+</span></span><span style="display:flex;"><span>                Text(<span style="color:#e6db74">&#34;String from text field = </span><span style="color:#e6db74">\(</span>passedData<span style="color:#e6db74">)</span><span style="color:#e6db74">&#34;</span>)
+</span></span><span style="display:flex;"><span>                Spacer()
+</span></span><span style="display:flex;"><span>            }
+</span></span><span style="display:flex;"><span>            Spacer()
+</span></span><span style="display:flex;"><span>        }.background(Color.orange)
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><h3 id="changing-data-between-structures-in-a-tab-view">Changing Data Between Structures in a Tab View</h3>
+<p>上面创建了两个结构体，其中一个结构体存储在ContentView文件中，第二个结构体存储在另一个文件中。两个结构体都定义了接收数据并显示数据的用户界面。如果我们需要将数据传递给一个结构体，然后允许该结构体修改这些数据，这就需要做出几处改动：</p>
+<ul>
+<li>Create a State variable.</li>
+<li>Open another structure and pass that structure a binding to the State variable (using the <code>$symbol</code>) such as FileView(choice: <code>$message</code>)</li>
+<li>Define a @Binding variable in the structure that will receive data.</li>
+<li>Change that Binding variable in the structure that received data.</li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span>@State <span style="color:#66d9ef">var</span> message = <span style="color:#e6db74">&#34;&#34;</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>TabView {
+</span></span><span style="display:flex;"><span>    TextField(<span style="color:#e6db74">&#34;Type here&#34;</span>, text: <span style="color:#960050;background-color:#1e0010">$</span>message).tabItem {
+</span></span><span style="display:flex;"><span>        Image(systemName: <span style="color:#e6db74">&#34;house.fill&#34;</span>)
+</span></span><span style="display:flex;"><span>        Text(<span style="color:#e6db74">&#34;Home&#34;</span>)
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>    FileView(choice: <span style="color:#960050;background-color:#1e0010">$</span>message).tabItem {
+</span></span><span style="display:flex;"><span>        Image(systemName: <span style="color:#e6db74">&#34;heart.fill&#34;</span>)
+</span></span><span style="display:flex;"><span>        Text(<span style="color:#e6db74">&#34;First&#34;</span>)
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>    SeparateFileView(passedData: <span style="color:#960050;background-color:#1e0010">$</span>message).tabItem {
+</span></span><span style="display:flex;"><span>        Image(systemName: <span style="color:#e6db74">&#34;hare.fill&#34;</span>)
+</span></span><span style="display:flex;"><span>        Text(<span style="color:#e6db74">&#34;Second&#34;</span>)
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">struct</span> <span style="color:#a6e22e">FileView</span>: View {
+</span></span><span style="display:flex;"><span>    @Binding <span style="color:#66d9ef">var</span> choice: String
+</span></span><span style="display:flex;"><span>    
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">var</span> body: some View {
+</span></span><span style="display:flex;"><span>        HStack {
+</span></span><span style="display:flex;"><span>            Spacer()
+</span></span><span style="display:flex;"><span>            VStack {
+</span></span><span style="display:flex;"><span>                Spacer()
+</span></span><span style="display:flex;"><span>                TextField(<span style="color:#e6db74">&#34;Type here:&#34;</span>, text: <span style="color:#960050;background-color:#1e0010">$</span>choice)
+</span></span><span style="display:flex;"><span>                Spacer()
+</span></span><span style="display:flex;"><span>            }
+</span></span><span style="display:flex;"><span>            Spacer()
+</span></span><span style="display:flex;"><span>        }.background(Color.green)
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">struct</span> <span style="color:#a6e22e">SeparateFileView</span>: View {
+</span></span><span style="display:flex;"><span>    @Binding <span style="color:#66d9ef">var</span> passedData: String
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">var</span> body: some View {
+</span></span><span style="display:flex;"><span>        HStack {
+</span></span><span style="display:flex;"><span>            Spacer()
+</span></span><span style="display:flex;"><span>            VStack {
+</span></span><span style="display:flex;"><span>                Spacer()
+</span></span><span style="display:flex;"><span>                TextField(<span style="color:#e6db74">&#34;Type here:&#34;</span>, text: <span style="color:#960050;background-color:#1e0010">$</span>passedData)
+</span></span><span style="display:flex;"><span>                Spacer()
+</span></span><span style="display:flex;"><span>            }
+</span></span><span style="display:flex;"><span>            Spacer()
+</span></span><span style="display:flex;"><span>        }.background(Color.orange)
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><h3 id="sharing-data-between-structures-in-a-tab-view">Sharing Data Between Structures in a Tab View</h3>
+<p>使用@State和@Binding变量可以让多个视图共享和修改数据。SwiftUI还提供了另一种在结构体之间共享数据的方法。首先，创建一个ObservableObject类，<font color=red>其中包含一个或多个要共享的变量</font>。每个要共享的变量都必须标记为 @Published：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span><span style="color:#66d9ef">class</span> <span style="color:#a6e22e">ShareString</span>: ObservableObject {
+</span></span><span style="display:flex;"><span>    @Published <span style="color:#66d9ef">var</span> message = <span style="color:#e6db74">&#34;&#34;</span>
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p>包含tab视图的结构体（如ContentView）需要定义一个@StateObject变量，该变量类型必须是ObservableObject类型：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span>@StateObject <span style="color:#66d9ef">var</span> showMe = ShareString()
+</span></span></code></pre></div><p>由于我们要在TabView中的所有视图之间共享此ObservableObject，因此需要在TabView中添加 .environmentObject修改器和要共享的StateObject：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span>TabView { 
+</span></span><span style="display:flex;"><span>   <span style="color:#75715e">//</span>
+</span></span><span style="display:flex;"><span>}.environmentObject(showMe)
+</span></span></code></pre></div><p>然后在每个需要访问ObservableObject的结构体中，需要使用@EnvironmentObject声明一个ObservableObject类型的变量：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span>@EnvironmentObject <span style="color:#66d9ef">var</span> choice: ShareString
+</span></span></code></pre></div><p>最后，在每个使用@EnvironmentObject声明了变量的结构体中，我们可以使用@EnvironmentObject声明的变量名加上器使用@Published声明的属性访问要共享的实际数据：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">$</span>choice.message
+</span></span></code></pre></div><p>按上面步骤组合后，得到如下代码：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span><span style="color:#66d9ef">class</span> <span style="color:#a6e22e">ShareString</span>: ObservableObject {
+</span></span><span style="display:flex;"><span>    @Published <span style="color:#66d9ef">var</span> message = <span style="color:#e6db74">&#34;&#34;</span>
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>@StateObject <span style="color:#66d9ef">var</span> showMe = ShareString()
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>TabView {
+</span></span><span style="display:flex;"><span>    TextField(<span style="color:#e6db74">&#34;Type here&#34;</span>, text: <span style="color:#960050;background-color:#1e0010">$</span>showMe.message).tabItem {
+</span></span><span style="display:flex;"><span>        Image(systemName: <span style="color:#e6db74">&#34;house.fill&#34;</span>)
+</span></span><span style="display:flex;"><span>        Text(<span style="color:#e6db74">&#34;Home&#34;</span>)
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>    FileView().tabItem {
+</span></span><span style="display:flex;"><span>        Image(systemName: <span style="color:#e6db74">&#34;heart.fill&#34;</span>)
+</span></span><span style="display:flex;"><span>        Text(<span style="color:#e6db74">&#34;First&#34;</span>)
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>    SeparateFileView().tabItem {
+</span></span><span style="display:flex;"><span>        Image(systemName: <span style="color:#e6db74">&#34;hare.fill&#34;</span>)
+</span></span><span style="display:flex;"><span>        Text(<span style="color:#e6db74">&#34;Second&#34;</span>)
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>}.environmentObject(showMe)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">struct</span> <span style="color:#a6e22e">FileView</span>: View {
+</span></span><span style="display:flex;"><span>    @EnvironmentObject <span style="color:#66d9ef">var</span> choice: ShareString
+</span></span><span style="display:flex;"><span>    
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">var</span> body: some View {
+</span></span><span style="display:flex;"><span>        HStack {
+</span></span><span style="display:flex;"><span>            Spacer()
+</span></span><span style="display:flex;"><span>            VStack {
+</span></span><span style="display:flex;"><span>                Spacer()
+</span></span><span style="display:flex;"><span>                TextField(<span style="color:#e6db74">&#34;Type here:&#34;</span>, text: <span style="color:#960050;background-color:#1e0010">$</span>choice.message)
+</span></span><span style="display:flex;"><span>                Spacer()
+</span></span><span style="display:flex;"><span>            }
+</span></span><span style="display:flex;"><span>            Spacer()
+</span></span><span style="display:flex;"><span>        }.background(Color.green)
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">struct</span> <span style="color:#a6e22e">SeparateFileView</span>: View {
+</span></span><span style="display:flex;"><span>    @EnvironmentObject <span style="color:#66d9ef">var</span> passedData: ShareString
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">var</span> body: some View {
+</span></span><span style="display:flex;"><span>        HStack {
+</span></span><span style="display:flex;"><span>            Spacer()
+</span></span><span style="display:flex;"><span>            VStack {
+</span></span><span style="display:flex;"><span>                Spacer()
+</span></span><span style="display:flex;"><span>                TextField(<span style="color:#e6db74">&#34;Type here:&#34;</span>, text: <span style="color:#960050;background-color:#1e0010">$</span>passedData.message)
+</span></span><span style="display:flex;"><span>                Spacer()
+</span></span><span style="display:flex;"><span>            }
+</span></span><span style="display:flex;"><span>            Spacer()
+</span></span><span style="display:flex;"><span>        }.background(Color.orange)
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><h1 id="chapter-19">Chapter 19</h1>
 
     </div>
     <footer class="post-footer">
@@ -3506,10 +3679,13 @@ code.has-jax {
         <li><a href="#displaying-structures-in-a-tab-view">Displaying Structures in a Tab View</a>
           <ul>
             <li><a href="#passing-data-between-structures-in-a-tab-view">Passing Data Between Structures in a Tab View</a></li>
+            <li><a href="#changing-data-between-structures-in-a-tab-view">Changing Data Between Structures in a Tab View</a></li>
+            <li><a href="#sharing-data-between-structures-in-a-tab-view">Sharing Data Between Structures in a Tab View</a></li>
           </ul>
         </li>
       </ul>
     </li>
+    <li><a href="#chapter-19">Chapter 19</a></li>
   </ul>
 </nav></div>
     </div>
