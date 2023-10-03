@@ -241,13 +241,13 @@ code.has-jax {
     <i class="fa fa-file-word-o"></i>
 </span>
 <span class="post-meta-item-text">字数: </span>
-<span class="leancloud-visitors-count">44684</span>
+<span class="leancloud-visitors-count">45802</span>
 &nbsp; | &nbsp;
 <span class="post-meta-item-icon">
     <i class="fa fa-coffee"></i>
 </span>
 <span class="post-meta-item-text">阅读: </span>
-<span class="leancloud-visitors-count">90 分钟</span>
+<span class="leancloud-visitors-count">92 分钟</span>
 </span>
       </div>
     </header>
@@ -3771,7 +3771,87 @@ code.has-jax {
 <p>iOS设备的用户界面必须适应不同的屏幕尺寸。不仅iPhone和iPad有不同尺寸的屏幕，而且市场上不同型号的iPhone和iPad也有不同的屏幕尺寸。为了解决这个问题，SwiftUI将用户界面项目置于中心位置，但如果需要将用户界面项目精确放置在特定位置，该怎么办呢？</p>
 <p>指定X和Y坐标是行不通的，因为在大屏幕上看起来不错的东西，在小得多的屏幕上看起来就不合适了，反之亦然。如果需要在屏幕上的特定位置放置用户界面项目，比较安全的方法是使用<code>GeometryReader</code>。</p>
 <p>GeometryReader就像一个容器，能自动适应不同的屏幕尺寸。添加GeometryReader后，<font color=red>就可以使用 GeometryReader的相对坐标来放置用户界面项，而不是不同尺寸屏幕的精确坐标</font>。这样，当应用程序在不同尺寸的屏幕上运行时，GeometryReader也会调整其相对坐标。</p>
-
+<h2 id="understanding-the-geometryreader">Understanding the GeometryReader</h2>
+<p>GeometryReader可以像堆栈一样容纳多个视图。主要区别在于，GeometryReader会尽可能多地扩展空间。此外，GeometryReader还可以检索其宽度和高度。</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span>GeometryReader { geometry <span style="color:#66d9ef">in</span> 
+</span></span><span style="display:flex;"><span>		<span style="color:#75715e">// Views defined here </span>
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p>GeometryReader可以使用一个任意命名的变量，上面代码中的变量名为geometry。要获取GeometryReader的宽度和高度，可以下面这样获取size.width和size.height属性：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span>geometry.size.width 
+</span></span><span style="display:flex;"><span>geometry.size.height
+</span></span></code></pre></div><p>下面代码是使用GeometryReader的示例：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span>GeometryReader { geometry <span style="color:#66d9ef">in</span>
+</span></span><span style="display:flex;"><span>    VStack {
+</span></span><span style="display:flex;"><span>        Text(<span style="color:#e6db74">&#34;Width = </span><span style="color:#e6db74">\(</span>geometry.size.width<span style="color:#e6db74">)</span><span style="color:#e6db74">&#34;</span>)
+</span></span><span style="display:flex;"><span>        Text(<span style="color:#e6db74">&#34;Height = </span><span style="color:#e6db74">\(</span>geometry.size.height<span style="color:#e6db74">)</span><span style="color:#e6db74">&#34;</span>)
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>}.background(Color.yellow)
+</span></span></code></pre></div><h2 id="understanding-the-differences-between-global-and-local-coordinates">Understanding the Differences Between Global and Local Coordinates</h2>
+<p>了解了GeometryReader是如何缩小或展开以适应不同iOS屏幕尺寸后，下一步就是了解GeometryReader的坐标是如何工作的。GeometryReader中的坐标称为本地坐标。</p>
+<p>全局坐标指的是整个iOS屏幕。虽然不同iOS设备屏幕的全局坐标总是不同，但GeometryReader中的局部坐标却始终保持一致。</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span><span style="color:#66d9ef">var</span> body: some View {
+</span></span><span style="display:flex;"><span>    GeometryReader { geometry <span style="color:#66d9ef">in</span>
+</span></span><span style="display:flex;"><span>        VStack {
+</span></span><span style="display:flex;"><span>            Text(<span style="color:#e6db74">&#34;Local X origin = </span><span style="color:#e6db74">\(</span>geometry.frame<span style="color:#e6db74">(</span><span style="color:#66d9ef">in</span>: .local<span style="color:#e6db74">)</span>.origin.x<span style="color:#e6db74">)</span><span style="color:#e6db74">&#34;</span>)
+</span></span><span style="display:flex;"><span>            Text(<span style="color:#e6db74">&#34;Local Y origin = </span><span style="color:#e6db74">\(</span>geometry.frame<span style="color:#e6db74">(</span><span style="color:#66d9ef">in</span>: .local<span style="color:#e6db74">)</span>.origin.y<span style="color:#e6db74">)</span><span style="color:#e6db74">&#34;</span>)
+</span></span><span style="display:flex;"><span>            Divider()
+</span></span><span style="display:flex;"><span>            Text(<span style="color:#e6db74">&#34;Global X origin = </span><span style="color:#e6db74">\(</span>geometry.frame<span style="color:#e6db74">(</span><span style="color:#66d9ef">in</span>: .global<span style="color:#e6db74">)</span>.origin.x<span style="color:#e6db74">)</span><span style="color:#e6db74">&#34;</span>)
+</span></span><span style="display:flex;"><span>            Text(<span style="color:#e6db74">&#34;Global Y origin = </span><span style="color:#e6db74">\(</span>geometry.frame<span style="color:#e6db74">(</span><span style="color:#66d9ef">in</span>: .global<span style="color:#e6db74">)</span>.origin.y<span style="color:#e6db74">)</span><span style="color:#e6db74">&#34;</span>)
+</span></span><span style="display:flex;"><span>        }
+</span></span><span style="display:flex;"><span>    }.background(Color.yellow)
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><img src="https://s2.loli.net/2023/10/03/B3rn82lmGeLduxy.png" alt="B3rn82lmGeLduxy" style="zoom:50%;" />
+<p>请注意，局部原点是（0,0），因为它从iOS屏幕的左上角开始。然而，全局原点却显示在（0,59）处。这是因为GeometryReader实际上出现在 iPhone 14 Pro 机型的凹口下方。</p>
+<p>如果在.background(Color.yellow)修改器后添加.ignoreAllSafeAreas()修改器，这样就忽略了凹槽周围的区域，因此全局y原点现在显示在屏幕的左上角，局部y原点一样。</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span><span style="color:#66d9ef">var</span> body: some View {
+</span></span><span style="display:flex;"><span>    GeometryReader { geometry <span style="color:#66d9ef">in</span>
+</span></span><span style="display:flex;"><span>        VStack {
+</span></span><span style="display:flex;"><span>            Text(<span style="color:#e6db74">&#34;Local X origin = </span><span style="color:#e6db74">\(</span>geometry.frame<span style="color:#e6db74">(</span><span style="color:#66d9ef">in</span>: .local<span style="color:#e6db74">)</span>.origin.x<span style="color:#e6db74">)</span><span style="color:#e6db74">&#34;</span>)
+</span></span><span style="display:flex;"><span>            Text(<span style="color:#e6db74">&#34;Local Y origin = </span><span style="color:#e6db74">\(</span>geometry.frame<span style="color:#e6db74">(</span><span style="color:#66d9ef">in</span>: .local<span style="color:#e6db74">)</span>.origin.y<span style="color:#e6db74">)</span><span style="color:#e6db74">&#34;</span>)
+</span></span><span style="display:flex;"><span>            Divider()
+</span></span><span style="display:flex;"><span>            Text(<span style="color:#e6db74">&#34;Global X origin = </span><span style="color:#e6db74">\(</span>geometry.frame<span style="color:#e6db74">(</span><span style="color:#66d9ef">in</span>: .global<span style="color:#e6db74">)</span>.origin.x<span style="color:#e6db74">)</span><span style="color:#e6db74">&#34;</span>)
+</span></span><span style="display:flex;"><span>            Text(<span style="color:#e6db74">&#34;Global Y origin = </span><span style="color:#e6db74">\(</span>geometry.frame<span style="color:#e6db74">(</span><span style="color:#66d9ef">in</span>: .global<span style="color:#e6db74">)</span>.origin.y<span style="color:#e6db74">)</span><span style="color:#e6db74">&#34;</span>)
+</span></span><span style="display:flex;"><span>        }
+</span></span><span style="display:flex;"><span>    }.background(Color.yellow).ignoresSafeArea()
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><img src="https://s2.loli.net/2023/10/03/pWPlQFSCnZTfOuB.png" alt="pWPlQFSCnZTfOuB" style="zoom:50%;" />
+<p>下面的代码使用VStack将GeometryReader向下推，然后使用HStack将 GeometryReader向右推送。请注意，GeometryReader的本地原点仍然是 (0,0)，但全局原点与从 iOS 屏幕左上角测量的原点不同</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span><span style="color:#66d9ef">var</span> body: some View {
+</span></span><span style="display:flex;"><span>    VStack {
+</span></span><span style="display:flex;"><span>        Text(<span style="color:#e6db74">&#34;This Text view pushes the GeometryReader down&#34;</span>)
+</span></span><span style="display:flex;"><span>        HStack {
+</span></span><span style="display:flex;"><span>            Text(<span style="color:#e6db74">&#34;Pushes to the right&#34;</span>)
+</span></span><span style="display:flex;"><span>            GeometryReader { geometry <span style="color:#66d9ef">in</span>
+</span></span><span style="display:flex;"><span>                VStack {
+</span></span><span style="display:flex;"><span>                    Text(<span style="color:#e6db74">&#34;Local X origin = </span><span style="color:#e6db74">\(</span>geometry.frame<span style="color:#e6db74">(</span><span style="color:#66d9ef">in</span>: .local<span style="color:#e6db74">)</span>.origin.x<span style="color:#e6db74">)</span><span style="color:#e6db74">&#34;</span>)
+</span></span><span style="display:flex;"><span>                    Text(<span style="color:#e6db74">&#34;Local Y origin = </span><span style="color:#e6db74">\(</span>geometry.frame<span style="color:#e6db74">(</span><span style="color:#66d9ef">in</span>: .local<span style="color:#e6db74">)</span>.origin.y<span style="color:#e6db74">)</span><span style="color:#e6db74">&#34;</span>)
+</span></span><span style="display:flex;"><span>                    Divider()
+</span></span><span style="display:flex;"><span>                    Text(<span style="color:#e6db74">&#34;Global X origin = </span><span style="color:#e6db74">\(</span>geometry.frame<span style="color:#e6db74">(</span><span style="color:#66d9ef">in</span>: .global<span style="color:#e6db74">)</span>.origin.x<span style="color:#e6db74">)</span><span style="color:#e6db74">&#34;</span>)
+</span></span><span style="display:flex;"><span>                    Text(<span style="color:#e6db74">&#34;Global Y origin = </span><span style="color:#e6db74">\(</span>geometry.frame<span style="color:#e6db74">(</span><span style="color:#66d9ef">in</span>: .global<span style="color:#e6db74">)</span>.origin.y<span style="color:#e6db74">)</span><span style="color:#e6db74">&#34;</span>)
+</span></span><span style="display:flex;"><span>                }
+</span></span><span style="display:flex;"><span>            }.background(Color.yellow).ignoresSafeArea()
+</span></span><span style="display:flex;"><span>        }
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><img src="https://iihui.github.io/Users/hui/Library/Application Support/typora-user-images/image-20231003161921486.png" alt="image-20231003161921486" style="zoom:50%;" />
+<h2 id="identifying-minimum-mid-and-maximum-values-of-a-geometryreader">Identifying Minimum, Mid, and Maximum Values of a GeometryReader</h2>
+<p>全局坐标取决于当前的 iOS 屏幕尺寸。较小iOS屏幕上的最大X坐标和Y坐标与较大iOS屏幕上的最大X坐标和Y坐标不同。因此，使用全局坐标在屏幕上定位视图可能会将视图完全移出屏幕或截断部分视图。</p>
+<p>另一方面，在GeometryReader使用局部坐标可以自动适应不同的屏幕尺寸。由于GeometryReader的宽度或高度会根据 iOS 屏幕尺寸的不同而变化，因此重要的是不要使用固定值，而应使用最小值和最大值。GeometryReader可让访问以下已定义的属性：</p>
+<img src="https://s2.loli.net/2023/10/03/LPeyz1Hj3k6u5qx.png" alt="LPeyz1Hj3k6u5qx" style="zoom:50%;" />
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span><span style="color:#66d9ef">var</span> body: some View {
+</span></span><span style="display:flex;"><span>    GeometryReader { geometry <span style="color:#66d9ef">in</span>
+</span></span><span style="display:flex;"><span>        VStack {
+</span></span><span style="display:flex;"><span>            Text(<span style="color:#e6db74">&#34;minX = </span><span style="color:#e6db74">\(</span>geometry.frame<span style="color:#e6db74">(</span><span style="color:#66d9ef">in</span>: .local<span style="color:#e6db74">)</span>.minX<span style="color:#e6db74">)</span><span style="color:#e6db74">&#34;</span>)
+</span></span><span style="display:flex;"><span>            Text(<span style="color:#e6db74">&#34;midX = </span><span style="color:#e6db74">\(</span>geometry.frame<span style="color:#e6db74">(</span><span style="color:#66d9ef">in</span>: .local<span style="color:#e6db74">)</span>.midX<span style="color:#e6db74">)</span><span style="color:#e6db74">&#34;</span>)
+</span></span><span style="display:flex;"><span>            Text(<span style="color:#e6db74">&#34;maxX = </span><span style="color:#e6db74">\(</span>geometry.frame<span style="color:#e6db74">(</span><span style="color:#66d9ef">in</span>: .local<span style="color:#e6db74">)</span>.maxX<span style="color:#e6db74">)</span><span style="color:#e6db74">&#34;</span>)
+</span></span><span style="display:flex;"><span>            Divider()
+</span></span><span style="display:flex;"><span>            Text(<span style="color:#e6db74">&#34;minY = </span><span style="color:#e6db74">\(</span>geometry.frame<span style="color:#e6db74">(</span><span style="color:#66d9ef">in</span>: .local<span style="color:#e6db74">)</span>.minY<span style="color:#e6db74">)</span><span style="color:#e6db74">&#34;</span>)
+</span></span><span style="display:flex;"><span>            Text(<span style="color:#e6db74">&#34;midY = </span><span style="color:#e6db74">\(</span>geometry.frame<span style="color:#e6db74">(</span><span style="color:#66d9ef">in</span>: .local<span style="color:#e6db74">)</span>.midY<span style="color:#e6db74">)</span><span style="color:#e6db74">&#34;</span>)
+</span></span><span style="display:flex;"><span>            Text(<span style="color:#e6db74">&#34;maxY = </span><span style="color:#e6db74">\(</span>geometry.frame<span style="color:#e6db74">(</span><span style="color:#66d9ef">in</span>: .local<span style="color:#e6db74">)</span>.maxY<span style="color:#e6db74">)</span><span style="color:#e6db74">&#34;</span>)
+</span></span><span style="display:flex;"><span>        }
+</span></span><span style="display:flex;"><span>    }.background(Color.yellow)
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div>
     </div>
     <footer class="post-footer">
         
@@ -4195,7 +4275,13 @@ code.has-jax {
         <li><a href="#using-withanimation">Using withAnimation</a></li>
       </ul>
     </li>
-    <li><a href="#chapter-21">Chapter 21</a></li>
+    <li><a href="#chapter-21">Chapter 21</a>
+      <ul>
+        <li><a href="#understanding-the-geometryreader">Understanding the GeometryReader</a></li>
+        <li><a href="#understanding-the-differences-between-global-and-local-coordinates">Understanding the Differences Between Global and Local Coordinates</a></li>
+        <li><a href="#identifying-minimum-mid-and-maximum-values-of-a-geometryreader">Identifying Minimum, Mid, and Maximum Values of a GeometryReader</a></li>
+      </ul>
+    </li>
   </ul>
 </nav></div>
     </div>
