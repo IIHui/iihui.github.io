@@ -241,7 +241,7 @@ code.has-jax {
     <i class="fa fa-file-word-o"></i>
 </span>
 <span class="post-meta-item-text">字数: </span>
-<span class="leancloud-visitors-count">46253</span>
+<span class="leancloud-visitors-count">46287</span>
 &nbsp; | &nbsp;
 <span class="post-meta-item-icon">
     <i class="fa fa-coffee"></i>
@@ -1250,7 +1250,7 @@ code.has-jax {
 <p><code>Text Editor</code>会显示一个大的输入框，用户<font color=red>可以在其中输入和编辑多行文本</font>，如多个段落。由于<code>Text Field</code>、<code>Secure Field</code>和<code>Text Editor</code>都需要存储数据，因此，它们都需要使用<font color=red>可保存字符串数据类型的状态变量</font>：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span>@State <span style="color:#66d9ef">private</span> <span style="color:#66d9ef">var</span> message = <span style="color:#e6db74">&#34;&#34;</span>
 </span></span></code></pre></div><h2 id="using-text-fields">Using Text Fields</h2>
-<p>实际上<code>Text Field</code>的主要用途是接受用户提供的简短文本，可以是一个单词或一个短句。为了提醒用户键入预期的文本内容，<code>Text Field</code>可以显示浅灰色的占位符文本：</p>
+<p>实际上<code>Text Field</code>的主要用途是接受用户输入的简短文本，可以是一个单词或一个短句。为了提醒用户输入预期的内容，<code>Text Field</code>可以显示浅灰色的占位符文本：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span><span style="color:#75715e">// 状态变量存储用户输入的字符串</span>
 </span></span><span style="display:flex;"><span>@State <span style="color:#66d9ef">var</span> msg = <span style="color:#e6db74">&#34;&#34;</span>
 </span></span><span style="display:flex;"><span>VStack {
@@ -1264,10 +1264,10 @@ code.has-jax {
 </span></span><span style="display:flex;"><span>@State <span style="color:#66d9ef">var</span> msg = <span style="color:#e6db74">&#34;&#34;</span>
 </span></span><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span>VStack {
-</span></span><span style="display:flex;"><span>    TextField(<span style="color:#e6db74">&#34;placeholder text&#34;</span>, text: <span style="color:#960050;background-color:#1e0010">$</span>msg, axis: .vertical)
+</span></span><span style="display:flex;"><span>    TextField(<span style="color:#e6db74">&#34;placeholder text&#34;</span>, text: <span style="color:#960050;background-color:#1e0010">$</span>msg, axis: .horizontal)
 </span></span><span style="display:flex;"><span>    Text(msg)
 </span></span><span style="display:flex;"><span>}
-</span></span></code></pre></div><p>当<code>TextField</code>水平展开时，用户可以继续键入，文本显示在一行上，直到滚动到看不见为止。当<code>TextField</code>垂直展开时，<code>TextField</code>的宽度保持不变，但<font color=red>高度会展开以显示多行文本</font>:</p>
+</span></span></code></pre></div><p>当<code>TextField</code>水平展开时，用户可以继续输入，文本会显示在一行上，直到滚动到看不见为止。当<code>TextField</code>垂直展开时，<code>TextField</code>的宽度保持不变，但<font color=red>高度会展开以显示多行文本</font>:</p>
 <img src="https://s2.loli.net/2023/09/17/X5TMslFKiEAYtDn.png" alt="X5TMslFKiEAYtDn" style="zoom:50%;" />
 <p>当<code>TextField</code>垂直展开时，其<font color=red>高度会随着用户继续输入文本而不断扩展</font>。如果要定义垂直展开的<code>TextField</code>可以具体显示多少行文本，可以使用<code>.lineLimit</code>修改器：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span>TextField(<span style="color:#e6db74">&#34;Vertical&#34;</span>, text: <span style="color:#960050;background-color:#1e0010">$</span>message, axis: .vertical).lineLimit(<span style="color:#ae81ff">3</span>)
@@ -1289,7 +1289,19 @@ code.has-jax {
 </span></span><span style="display:flex;"><span>        .textFieldStyle(.roundedBorder)
 </span></span><span style="display:flex;"><span>        .padding()
 </span></span></code></pre></div><img src="https://s2.loli.net/2023/09/17/JWtmY5ZPz2yAd6T.png" alt="JWtmY5ZPz2yAd6T" style="zoom:67%;" />
-<h2 id="creating-secure-text-fields">Creating Secure Text Fields</h2>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span><span style="color:#75715e">// Structure creating a custom textFieldStyle</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">struct</span> <span style="color:#a6e22e">WhiteBorder</span>: TextFieldStyle {
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">func</span> <span style="color:#a6e22e">_body</span>(configuration: TextField&lt;<span style="color:#66d9ef">Self</span>._Label&gt;) -&gt; some View {
+</span></span><span style="display:flex;"><span>        configuration.padding(<span style="color:#ae81ff">8</span>)
+</span></span><span style="display:flex;"><span>                .overlay(RoundedRectangle(cornerRadius: <span style="color:#ae81ff">8</span>).stroke(Color.red, lineWidth: <span style="color:#ae81ff">0.6</span>))
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>VStack {
+</span></span><span style="display:flex;"><span>    TextField(<span style="color:#e6db74">&#34;placeholder text&#34;</span>, text: <span style="color:#960050;background-color:#1e0010">$</span>msg, axis: .horizontal).padding(.horizontal, <span style="color:#ae81ff">100</span>).textFieldStyle(WhiteBorder())
+</span></span><span style="display:flex;"><span>    Text(msg)
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><h2 id="creating-secure-text-fields">Creating Secure Text Fields</h2>
 <p>在<code>TextField</code>输入文本时，文本就会显示在屏幕上。虽然这在大多数情况下都很方便，但在输入密码或信用卡号等敏感信息时就不合适了。为了屏蔽用户输入的文本，<code>SwiftUI</code>提供了一个<font color=red>名为<code>SecureField</code>的特殊的<code>TextField</code></font>。</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span>VStack {
 </span></span><span style="display:flex;"><span>    SecureField(<span style="color:#e6db74">&#34;Password&#34;</span>, text: <span style="color:#960050;background-color:#1e0010">$</span>msg)
