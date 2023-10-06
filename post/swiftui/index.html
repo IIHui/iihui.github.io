@@ -241,7 +241,7 @@ code.has-jax {
     <i class="fa fa-file-word-o"></i>
 </span>
 <span class="post-meta-item-text">字数: </span>
-<span class="leancloud-visitors-count">46428</span>
+<span class="leancloud-visitors-count">46416</span>
 &nbsp; | &nbsp;
 <span class="post-meta-item-icon">
     <i class="fa fa-coffee"></i>
@@ -273,29 +273,24 @@ code.has-jax {
 </span></span><span style="display:flex;"><span>        .background(Color.blue)
 </span></span><span style="display:flex;"><span>        .cornerRadius(<span style="color:#ae81ff">6</span>)
 </span></span><span style="display:flex;"><span>        .padding()
-</span></span></code></pre></div><p>除了用重复的代码占用空间，还会带来另一个问题。如果想改变一个或多个修改器，如改变字体大小或背景颜色。使用重复的修改器，需要修改每一个副本，增加了忘记修改一个或多个副本的概率。</p>
-<p>一个更好的解决方案是将常用的修改器组一起存储在一个定义为<code>ViewModifier</code>的独立<code>struct</code>中。然后可以将这个<code>ViewModifier</code>结构应用于多个<code>view</code>。现在如果需要改变这些修改器，可以在一个地方改变它们，而不是在多个地方。</p>
+</span></span></code></pre></div><p>重复的代码除了会占用空间，还会带来另一个问题。如果想改变一个或多个修改器，如改变字体大小或背景颜色。使用重复的修改器，需要修改每一个副本，这增加了忘记修改一个或多个副本的概率。</p>
+<p>更好的解决方案是定义一个独立<code>ViewModifier</code>的<code>struct</code>，将将常用的修改器组存储在其中。然后将这个<code>ViewModifier</code>结构体应用于多个<code>view</code>。此时，如果需要更改这些修改器，可以在一个地方改变它们，而不是在多个地方。</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span><span style="color:#66d9ef">struct</span> <span style="color:#a6e22e">MyStyle</span>: ViewModifier {
 </span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">func</span> <span style="color:#a6e22e">body</span>(content: Content) -&gt; some View {
 </span></span><span style="display:flex;"><span>        content
-</span></span><span style="display:flex;"><span>                .font(.title)
-</span></span><span style="display:flex;"><span>                .foregroundColor(.yellow)
-</span></span><span style="display:flex;"><span>                .background(Color.blue)
-</span></span><span style="display:flex;"><span>                .cornerRadius(<span style="color:#ae81ff">6</span>)
-</span></span><span style="display:flex;"><span>                .padding()
+</span></span><span style="display:flex;"><span>            .font(.title)
+</span></span><span style="display:flex;"><span>            .foregroundColor(.yellow)
+</span></span><span style="display:flex;"><span>            .background(Color.blue)
+</span></span><span style="display:flex;"><span>            .cornerRadius(<span style="color:#ae81ff">6</span>)
+</span></span><span style="display:flex;"><span>            .padding()
 </span></span><span style="display:flex;"><span>    }
 </span></span><span style="display:flex;"><span>}
 </span></span></code></pre></div><p>上面定义的这个<code>ViewModifier</code>结构包含了所有的修改器，然后可以通过使用<code>.modifier</code>跟着结构名称来应用于任何视图，像下面这样:</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span><span style="color:#66d9ef">struct</span> <span style="color:#a6e22e">ContentView</span>: View {
-</span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">var</span> body: some View {
-</span></span><span style="display:flex;"><span>        VStack {
-</span></span><span style="display:flex;"><span>            Text(<span style="color:#e6db74">&#34;This is the first line&#34;</span>)
-</span></span><span style="display:flex;"><span>                    .modifier(MyStyle()) 
-</span></span><span style="display:flex;"><span>            Text(<span style="color:#e6db74">&#34;Second line here&#34;</span>)
-</span></span><span style="display:flex;"><span>                    .modifier(MyStyle())
-</span></span><span style="display:flex;"><span>        }
-</span></span><span style="display:flex;"><span>    }
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span>VStack {
+</span></span><span style="display:flex;"><span>    Text(<span style="color:#e6db74">&#34;This is the first line&#34;</span>)
+</span></span><span style="display:flex;"><span>        .modifier(MyStyle())
+</span></span><span style="display:flex;"><span>    Text(<span style="color:#e6db74">&#34;Second line here&#34;</span>)
+</span></span><span style="display:flex;"><span>        .modifier(MyStyle())
 </span></span><span style="display:flex;"><span>}
 </span></span></code></pre></div><h1 id="charpter3">Charpter3</h1>
 <h3 id="closures">Closures</h3>
