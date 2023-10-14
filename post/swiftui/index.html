@@ -241,7 +241,7 @@ code.has-jax {
     <i class="fa fa-file-word-o"></i>
 </span>
 <span class="post-meta-item-text">字数: </span>
-<span class="leancloud-visitors-count">46582</span>
+<span class="leancloud-visitors-count">46591</span>
 &nbsp; | &nbsp;
 <span class="post-meta-item-icon">
     <i class="fa fa-coffee"></i>
@@ -3540,19 +3540,19 @@ code.has-jax {
 </span></span><span style="display:flex;"><span>    }
 </span></span><span style="display:flex;"><span>}
 </span></span></code></pre></div><h3 id="sharing-data-between-structures-in-a-tab-view">Sharing Data Between Structures in a Tab View</h3>
-<p>使用<code>@State</code>和<code>@Binding</code>变量可以让多个视图共享和修改数据。SwiftUI还提供了另一种在结构体之间共享数据的方法。首先，创建一个<code>ObservableObject</code>类，<font color=red>其中包含一个或多个要共享的变量</font>。每个要共享的变量都必须标记为<code>@Published</code>：</p>
+<p>使用<code>@State</code>和<code>@Binding</code>变量可以让多个视图共享和修改数据。SwiftUI还提供了另一种在结构体之间共享数据的方法。首先，创建一个<code>ObservableObject</code>类，<font color=red>其中包含一个或多个要共享的变量，每个要共享的变量都必须标记为<code>@Published</code></font>：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span><span style="color:#66d9ef">class</span> <span style="color:#a6e22e">ShareString</span>: ObservableObject {
 </span></span><span style="display:flex;"><span>    @Published <span style="color:#66d9ef">var</span> message = <span style="color:#e6db74">&#34;&#34;</span>
 </span></span><span style="display:flex;"><span>}
-</span></span></code></pre></div><p>包含tab视图的结构体（如ContentView）需要定义一个@StateObject变量，该变量类型必须是ObservableObject类型：</p>
+</span></span></code></pre></div><p>包含<code>tab</code>视图的结构体（如<code>ContentView</code>）需要定义一个<code>@StateObject</code>变量，该变量类型必须是<code>ObservableObject</code>类型，即上一步定义的类型：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span>@StateObject <span style="color:#66d9ef">var</span> showMe = ShareString()
-</span></span></code></pre></div><p>由于我们要在TabView中的所有视图之间共享此ObservableObject，因此需要在TabView中添加 .environmentObject修改器和要共享的StateObject：</p>
+</span></span></code></pre></div><p>由于我们要在<code>TabView</code>中的所有视图之间共享此<code>ObservableObject</code>，因此需要在<code>TabView</code>中添加 <code>.environmentObject</code>修改器和要共享的<code>StateObject</code>变量：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span>TabView { 
 </span></span><span style="display:flex;"><span>   <span style="color:#75715e">//</span>
 </span></span><span style="display:flex;"><span>}.environmentObject(showMe)
-</span></span></code></pre></div><p>然后在每个需要访问ObservableObject的结构体中，需要使用@EnvironmentObject声明一个ObservableObject类型的变量：</p>
+</span></span></code></pre></div><p>然后在每个需要访问<code>ObservableObject</code>的结构体中，需要使用<code>@EnvironmentObject</code>声明一个<code>ObservableObject</code>类型的变量：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span>@EnvironmentObject <span style="color:#66d9ef">var</span> choice: ShareString
-</span></span></code></pre></div><p>最后，在每个使用@EnvironmentObject声明了变量的结构体中，我们可以使用@EnvironmentObject声明的变量名加上器使用@Published声明的属性访问要共享的实际数据：</p>
+</span></span></code></pre></div><p>最后，在每个使用<code>@EnvironmentObject</code>声明了变量的结构体中，可以使用<code>@EnvironmentObject</code>声明的变量名加上使用<code>@Published</code>声明的属性访问要共享的实际数据：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">$</span>choice.message
 </span></span></code></pre></div><p>按上面步骤组合后，得到如下代码：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span><span style="color:#66d9ef">class</span> <span style="color:#a6e22e">ShareString</span>: ObservableObject {
