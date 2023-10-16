@@ -241,13 +241,13 @@ code.has-jax {
     <i class="fa fa-file-word-o"></i>
 </span>
 <span class="post-meta-item-text">字数: </span>
-<span class="leancloud-visitors-count">8001</span>
+<span class="leancloud-visitors-count">8218</span>
 &nbsp; | &nbsp;
 <span class="post-meta-item-icon">
     <i class="fa fa-coffee"></i>
 </span>
 <span class="post-meta-item-text">阅读: </span>
-<span class="leancloud-visitors-count">16 分钟</span>
+<span class="leancloud-visitors-count">17 分钟</span>
 </span>
       </div>
     </header>
@@ -1226,7 +1226,7 @@ code.has-jax {
 </span></span><span style="display:flex;"><span>xcrun simctl runtime add <span style="color:#e6db74">&#34;~/Downloads/watchOS 9 beta Simulator Runtime.dmg&#34;</span>
 </span></span></code></pre></div><p><a href="https://developer.apple.com/documentation/xcode/installing-additional-simulator-runtimes">https://developer.apple.com/documentation/xcode/installing-additional-simulator-runtimes</a></p>
 <h1 id="bundlebundleidentifier">Bundle.bundleIdentifier</h1>
-<p>因为某种原因需要固定返回一个特殊的<code>bundle Id</code>，可以使用如下方法：</p>
+<p>因为某种原因需要固定返回一个特殊的<code>bundle Id</code>测试，可以使用方法交换，返回该特殊的id，代码如下：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span><span style="color:#66d9ef">extension</span> <span style="color:#a6e22e">Bundle</span> {
 </span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">@objc</span> <span style="color:#66d9ef">var</span> customBundleIdentifier: String {
 </span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">return</span> <span style="color:#e6db74">&#34;com.test.bundle.id&#34;</span>
@@ -1241,6 +1241,18 @@ code.has-jax {
 <p>JSON解析</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span>Error Domain=NSCocoaErrorDomain Code=<span style="color:#ae81ff">3840</span> <span style="color:#e6db74">&#34;Unexpected end of file during string parse (expected low-surrogate code point but did not find one). around line 1, column 457.&#34;</span> UserInfo={NSDebugDescription=Unexpected end of file during string parse (expected low<span style="color:#f92672">-</span>surrogate code point but did not find one). around line <span style="color:#ae81ff">1</span>, column <span style="color:#ae81ff">457.</span>, NSJSONSerializationErrorIndex=<span style="color:#ae81ff">457</span>}
 </span></span></code></pre></div><p><a href="https://www.jianshu.com/p/ea99580ea30f">https://www.jianshu.com/p/ea99580ea30f</a></p>
+<h1 id="imageloadermachodomodinitfunctions">ImageLoaderMachO::doModInitFunctions</h1>
+<p>升级到<code>Xcode 15</code>后，原工程编译后在<code>iOS 11~14</code>均出现启动闪退，闪退时的具体堆栈信息如所示：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-fallback" data-lang="fallback"><span style="display:flex;"><span>0x000000010c375228 in ImageLoaderMachO::doModInitFunctions(ImageLoader::LinkContext const&amp;) ()
+</span></span><span style="display:flex;"><span>0x000000010c3755f0 in ImageLoaderMachO::doInitialization(ImageLoader::LinkContext const&amp;) ()
+</span></span><span style="display:flex;"><span>0x000000010c36fe8c in ImageLoader::recursiveInitialization(ImageLoader::LinkContext const&amp;, unsigned int, char const*, ImageLoader::InitializerTimingList&amp;, ImageLoader::UninitedUpwards&amp;) ()
+</span></span><span style="display:flex;"><span>0x000000010c36e0d8 in ImageLoader::processInitializers(ImageLoader::LinkContext const&amp;, unsigned int, ImageLoader::InitializerTimingList&amp;, ImageLoader::UninitedUpwards&amp;) ()
+</span></span><span style="display:flex;"><span>0x000000010c36e1a0 in ImageLoader::runInitializers(ImageLoader::LinkContext const&amp;, ImageLoader::InitializerTimingList&amp;) ()
+</span></span><span style="display:flex;"><span>0x000000010c35e80c in dyld::initializeMainExecutable() ()
+</span></span><span style="display:flex;"><span>0x000000010c363e3c in dyld::_main(macho_header const*, unsigned long, int, char const**, char const**, char const**, unsigned long*) ()
+</span></span><span style="display:flex;"><span>0x000000010c35d208 in dyldbootstrap::start(dyld3::MachOLoaded const*, int, char const**, dyld3::MachOLoaded const*, unsigned long*) ()
+</span></span><span style="display:flex;"><span>0x000000010c35d038 in _dyld_start ()
+</span></span></code></pre></div><p>参考<a href="https://github.com/facebook/react-native/issues/39069">该文章</a>，只需将<code>OTHER_LDFLAGS</code>的设置加上<code>-Wl,-ld_classic</code> 选项即可。实际上，只需要加上<code>-ld_classic</code>就可以解决启动闪退问题。</p>
 
     </div>
     <footer class="post-footer">
@@ -1439,6 +1451,7 @@ code.has-jax {
     <li><a href="#webview加载网页http链接被转到https的问题-1">webview加载网页http链接被转到https的问题</a></li>
     <li><a href="#xcode-15-beta-manual--install-simulator">Xcode 15 beta manual  install simulator</a></li>
     <li><a href="#bundlebundleidentifier">Bundle.bundleIdentifier</a></li>
+    <li><a href="#imageloadermachodomodinitfunctions">ImageLoaderMachO::doModInitFunctions</a></li>
   </ul>
 </nav></div>
     </div>
