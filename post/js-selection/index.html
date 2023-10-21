@@ -241,13 +241,13 @@ code.has-jax {
     <i class="fa fa-file-word-o"></i>
 </span>
 <span class="post-meta-item-text">字数: </span>
-<span class="leancloud-visitors-count">4010</span>
+<span class="leancloud-visitors-count">4533</span>
 &nbsp; | &nbsp;
 <span class="post-meta-item-icon">
     <i class="fa fa-coffee"></i>
 </span>
 <span class="post-meta-item-text">阅读: </span>
-<span class="leancloud-visitors-count">9 分钟</span>
+<span class="leancloud-visitors-count">10 分钟</span>
 </span>
       </div>
     </header>
@@ -401,9 +401,32 @@ code.has-jax {
 </span></span></span></code></pre></div><h2 id="text">Text</h2>
 <p>表示文本的JavaScript类型是字符串。字符串是由16bit值组成的不可变的有序序列，每个数值通常代表一个 Unicode字符。字符串的长度就是它所包含的16bit值的个数。JavaScript的字符串（及其数组）使用基于0的索引：第一个16bit值位于0位置，第二个位于1位置，以此类推。</p>
 <p>空字符串就是长度为 0 的字符串。 JavaScript没有表示字符串中单个元素的特殊类型。要表示单个16 bit值，只需使用长度为1的字符串即可。</p>
-<p>要在JavaScript程序中包含字符串，可以把字符串放到一对匹配的单引号，双引号或者反引号中。双引号字符和反引号可以出现在由单引号包含的字符串，反引号和单引号类似。</p>
-<p>JavaScript使用UTF-16编码Unicode 字符集 ，JavaScript字符串是无符号16 bit值序列。最常见的Unicode字符的码点适合16bit，可以用字符串的一个元素来表示。Unicode字符码点不适合用16bit表示的 Unicode 字符则使用 UTF-16 规则编码为两个 16 位值的序列（称为 &ldquo;代理对&rdquo;）。这意味着长度为 2（两个 16 位值）的 JavaScript 字符串可能只代表一个 Unicode 字符：</p>
-
+<p>JavaScript使用UTF-16编码Unicode 字符集 ，JavaScript字符串是无符号16 bit值序列。最常见的Unicode字符的码点适合16bit，可以用字符串的一个元素来表示。Unicode字符的码点不适合用16bit表示的 Unicode 字符则使用 UTF-16规则编码为两16bit值的序列（称为 &ldquo;surrogate pair&rdquo;）。这意味着长度为2（两个16bit值）的 JavaScript 字符串可能只代表一个 Unicode 字符：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span><span style="color:#66d9ef">let</span> euro = <span style="color:#e6db74">&#34;€&#34;</span>;
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">let</span> love = <span style="color:#e6db74">&#34;❤&#34;</span>;
+</span></span><span style="display:flex;"><span>console.log(euro.length, love.length)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">// 打印的值</span>
+</span></span><span style="display:flex;"><span><span style="color:#ae81ff">1</span> <span style="color:#ae81ff">1</span>
+</span></span></code></pre></div><p>JavaScript 定义的大多数字符串操作方法都是对16bit值而非字符进行操作。它们不会特殊处理surrogate pair，不会对字符串进行归一化处理，甚至不会确保字符串是格式良好的 UTF-16 字符串。</p>
+<p>但在ES6中，字符串是可迭代的，如果对字符串使用for/of循环或&hellip;操作符，迭代的是字符串而不是16bit值。</p>
+<h3 id="string-literals">String Literals</h3>
+<p>要在JavaScript程序中使用字符串字面量，可以把字符串放到一对匹配的单引号，双引号或者反引号中。双引号字符和反引号可以出现在由单引号包含的字符串，反引号和单引号类似。</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-js" data-lang="js"><span style="display:flex;"><span><span style="color:#e6db74">&#34;&#34;</span> <span style="color:#75715e">// The empty string: it has zero characters 
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#e6db74">&#39;testing&#39;</span>
+</span></span><span style="display:flex;"><span><span style="color:#e6db74">&#34;3.14&#34;</span>
+</span></span><span style="display:flex;"><span><span style="color:#e6db74">&#39;name=&#34;myform&#34;&#39;</span>
+</span></span><span style="display:flex;"><span><span style="color:#e6db74">&#34;Wouldn&#39;t you prefer O&#39;Reilly&#39;s book?&#34;</span>
+</span></span><span style="display:flex;"><span><span style="color:#e6db74">&#34;τ is the ratio of a circle&#39;s circumference to its radius&#34;</span>
+</span></span><span style="display:flex;"><span><span style="color:#e6db74">`&#34;She said &#39;hi&#39;&#34;, he said.`</span>
+</span></span></code></pre></div><p>使用反引号包含字符串是ES6的一大特色，它允许将JavaScript表达式嵌入（或插值到）字符串字面中。最初版本的JavaScript要求字符串字面量写在一行上，因此经常可以看到 JavaScript 代码通过使用+运算符连接单行字符串来创建长字符串。</p>
+<p>但是，从ES5开始，可以通过在每一行（最后一行除外）的结尾使用反斜线，将字符串字面量分成多行。<font color=red>反斜线和它后面的行结束符都不是字符串字面量的一部分</font>。如果需要在单引号或双引号字符串字面量中包含换行符，请使用字符序列 \n。ES6的回车键语法允许将字符串分成多行，在这种情况下，行结束符是字符串字面量的一部分：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-js" data-lang="js"><span style="display:flex;"><span><span style="color:#e6db74">&#39;two\nlines&#39;</span>
+</span></span><span style="display:flex;"><span><span style="color:#e6db74">&#34;one\
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">long\
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">line&#34;</span>
+</span></span><span style="display:flex;"><span><span style="color:#e6db74">`the newline character at the end of this line is included literally in this string`</span>
+</span></span></code></pre></div>
     </div>
     <footer class="post-footer">
         
@@ -576,7 +599,11 @@ code.has-jax {
             <li><a href="#arbitrary-precision-integers-with-bigint">Arbitrary Precision Integers with BigInt</a></li>
           </ul>
         </li>
-        <li><a href="#text">Text</a></li>
+        <li><a href="#text">Text</a>
+          <ul>
+            <li><a href="#string-literals">String Literals</a></li>
+          </ul>
+        </li>
       </ul>
     </li>
   </ul>
