@@ -241,13 +241,13 @@ code.has-jax {
     <i class="fa fa-file-word-o"></i>
 </span>
 <span class="post-meta-item-text">字数: </span>
-<span class="leancloud-visitors-count">2827</span>
+<span class="leancloud-visitors-count">4010</span>
 &nbsp; | &nbsp;
 <span class="post-meta-item-icon">
     <i class="fa fa-coffee"></i>
 </span>
 <span class="post-meta-item-text">阅读: </span>
-<span class="leancloud-visitors-count">6 分钟</span>
+<span class="leancloud-visitors-count">9 分钟</span>
 </span>
       </div>
     </header>
@@ -362,8 +362,8 @@ code.has-jax {
 </span></span><span style="display:flex;"><span><span style="color:#66d9ef">true</span>
 </span></span><span style="display:flex;"><span><span style="color:#66d9ef">false</span>
 </span></span></code></pre></div><h3 id="binary-floating-point-and-rounding-errors">Binary Floating-Point and Rounding Errors</h3>
-<p>实数有无限多个，但JavaScript的浮点格式只能表示其中的有限个，这意味着通过JavaScript操作实数时，数值表示的是近似值。</p>
-<p>JavaScript使用的IEEE-754浮点表示法是一种二进制表示法，这种表示法可以精确地表示1/2,1/8和1/1024等分数。二进制浮点表示法不能精确的表示0.1。虽然JavaScript的数值有足够大的精度，能够非常近似地表示0.1，但无法精确地表示，这可能导致一些问题：</p>
+<p>实数有无限多个，但<code>JavaScript</code>的浮点格式只能表示其中有限个数据。也就是说，在 <code>JavaScript</code> 中处理实数时，数字的表示往往是实际数字的近似值。</p>
+<p><code>JavaScript</code>使用的<code>IEEE-754</code>浮点表示法是一种二进制表示法。这种表示法可以精确地表示<code>1/2</code>,<code>1/8</code>和<code>1/1024</code>等分数，但不能精确的表示<code>0.1</code>。虽然<code>JavaScript</code>有足够高的精度，能够让数值非常近似地表示<code>0.1</code>，但无法精确地表示，这可能导致一些问题：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span><span style="color:#66d9ef">let</span> x = .<span style="color:#ae81ff">3</span> <span style="color:#f92672">-</span> .<span style="color:#ae81ff">2</span>;
 </span></span><span style="display:flex;"><span><span style="color:#66d9ef">let</span> y = .<span style="color:#ae81ff">2</span> <span style="color:#f92672">-</span> .<span style="color:#ae81ff">1</span>;
 </span></span><span style="display:flex;"><span>console.log(x === y)
@@ -372,7 +372,37 @@ code.has-jax {
 </span></span><span style="display:flex;"><span><span style="color:#75715e">// 打印的结果</span>
 </span></span><span style="display:flex;"><span><span style="color:#66d9ef">false</span>
 </span></span><span style="display:flex;"><span><span style="color:#66d9ef">false</span> <span style="color:#66d9ef">true</span>
-</span></span></code></pre></div><p>上面代码中，由于舍入错误.3和.2近似值的差于.2和.1近似的差并不相等，但这并不是JavaScript独有的问题，而是所有使用二进制浮点数的编程语言共有的问题。</p>
+</span></span></code></pre></div><p>上面代码中，由于舍入误差，<code>.3</code>和<code>.2</code>近似值之差与<code>.2</code>和<code>.1</code>近似值之差并不相等。但这并不是JavaScript独有的问题，而是所有使用二进制浮点数的编程语言共有的问题。</p>
+<p>此外，请注意上面代码中的x和y值非常接近，也极其接近正确值。计算出来的值几乎可以满足任何需要，但当我们试图比较值是否相等时才会出现问题。</p>
+<p>如果使用浮点近似值对你的程序有问题，<font color=red>可以考虑使用缩放整数</font>。例如，可以使用整数值而不是小数值来处理货币。</p>
+<h3 id="arbitrary-precision-integers-with-bigint">Arbitrary Precision Integers with BigInt</h3>
+<p>在ES2020中定义的JavaScript最新特性之一是一种名为BigInt的新的数值类型。顾名思义，BigInt是一种数值类型，其值为整数。</p>
+<p>将BigInt添加到JavaScript中主要是为了允许表示64位整数，这是与许多其他编程语言和API兼容所必需的。如果需要处理比较大的数字，BigInt值以有数千甚至数百万位。但请注意，<font color=red>BigInt并不适合用于加密，因为它实现时没有考虑防止时序攻击</font>。</p>
+<p>BigInt字面量是一串数字后面跟小写字母n。默认情况下，它的基数是10，但可以通过前置0b,0o和0x来表示二进制、八进制和十六进制BigInt。</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-js" data-lang="js"><span style="display:flex;"><span><span style="color:#a6e22e">console</span>.<span style="color:#a6e22e">log</span>(<span style="color:#ae81ff">1234</span><span style="color:#a6e22e">n</span>, <span style="color:#ae81ff">0b11111</span>, <span style="color:#ae81ff">0o7777</span><span style="color:#a6e22e">n</span>, <span style="color:#ae81ff">0x8000000</span>)
+</span></span></code></pre></div><p>可以使用BigInt()函数把普通的数值或字符串转换为BigInt值:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-js" data-lang="js"><span style="display:flex;"><span><span style="color:#a6e22e">console</span>.<span style="color:#a6e22e">log</span>(<span style="color:#a6e22e">BigInt</span>(Number.<span style="color:#a6e22e">MAX_SAFE_INTEGER</span>))
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">let</span> <span style="color:#a6e22e">string</span> <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;1&#34;</span> <span style="color:#f92672">+</span> <span style="color:#e6db74">&#34;0&#34;</span>.<span style="color:#a6e22e">repeat</span>(<span style="color:#ae81ff">100</span>);
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">console</span>.<span style="color:#a6e22e">log</span>(<span style="color:#a6e22e">BigInt</span>(<span style="color:#a6e22e">string</span>))
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">// 打印的值
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#ae81ff">9007199254740991</span><span style="color:#a6e22e">n</span>
+</span></span><span style="display:flex;"><span><span style="color:#ae81ff">6410000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000</span><span style="color:#a6e22e">n</span>
+</span></span></code></pre></div><p>BigInt的算术运算与JavaScript常规数值的算术运算类似，只不过除法会丢弃余数，并向下取整。</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-js" data-lang="js"><span style="display:flex;"><span><span style="color:#a6e22e">console</span>.<span style="color:#a6e22e">log</span>(<span style="color:#ae81ff">1000</span><span style="color:#a6e22e">n</span> <span style="color:#f92672">+</span> <span style="color:#ae81ff">2000</span><span style="color:#a6e22e">n</span>, <span style="color:#ae81ff">2000</span><span style="color:#a6e22e">n</span> <span style="color:#f92672">*</span> <span style="color:#ae81ff">3000</span><span style="color:#a6e22e">n</span>, <span style="color:#ae81ff">3000</span><span style="color:#a6e22e">n</span> <span style="color:#f92672">/</span> <span style="color:#ae81ff">997</span><span style="color:#a6e22e">n</span>, <span style="color:#ae81ff">3000</span><span style="color:#a6e22e">n</span> <span style="color:#f92672">%</span> <span style="color:#ae81ff">997</span><span style="color:#a6e22e">n</span>)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">// 打印的值
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#ae81ff">3000</span><span style="color:#a6e22e">n</span> <span style="color:#ae81ff">6000000</span><span style="color:#a6e22e">n</span> <span style="color:#ae81ff">3</span><span style="color:#a6e22e">n</span> <span style="color:#ae81ff">9</span><span style="color:#a6e22e">n</span>
+</span></span></code></pre></div><p>虽然+, -, *, /, %, 和**运算符号可以用于BigInt，但必须注意的是，不能将BigInt类型的操作数与普通数字操作数混合使用。但是，比较运算符可以处理混合数值类型。位操作数通常可以用于BigInt操作数，但Math对象的任何函数都不接收BigInt操作数。</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-js" data-lang="js"><span style="display:flex;"><span><span style="color:#66d9ef">let</span> <span style="color:#a6e22e">timestamp</span> <span style="color:#f92672">=</span> Date.<span style="color:#a6e22e">now</span>(); <span style="color:#75715e">// The current time as a timestamp (a number).
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">let</span> <span style="color:#a6e22e">now</span> <span style="color:#f92672">=</span> <span style="color:#66d9ef">new</span> Date(); <span style="color:#75715e">// The current time as a Date object.
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">let</span> <span style="color:#a6e22e">ms</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">now</span>.<span style="color:#a6e22e">getTime</span>(); <span style="color:#75715e">// Convert to a millisecond timestamp.
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">let</span> <span style="color:#a6e22e">iso</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">now</span>.<span style="color:#a6e22e">toISOString</span>(); <span style="color:#75715e">// Convert to a string in standard format.
+</span></span></span></code></pre></div><h2 id="text">Text</h2>
+<p>表示文本的JavaScript类型是字符串。字符串是由16bit值组成的不可变的有序序列，每个数值通常代表一个 Unicode字符。字符串的长度就是它所包含的16bit值的个数。JavaScript的字符串（及其数组）使用基于0的索引：第一个16bit值位于0位置，第二个位于1位置，以此类推。</p>
+<p>空字符串就是长度为 0 的字符串。 JavaScript没有表示字符串中单个元素的特殊类型。要表示单个16 bit值，只需使用长度为1的字符串即可。</p>
+<p>要在JavaScript程序中包含字符串，可以把字符串放到一对匹配的单引号，双引号或者反引号中。双引号字符和反引号可以出现在由单引号包含的字符串，反引号和单引号类似。</p>
+<p>JavaScript使用UTF-16编码Unicode 字符集 ，JavaScript字符串是无符号16 bit值序列。最常见的Unicode字符的码点适合16bit，可以用字符串的一个元素来表示。Unicode字符码点不适合用16bit表示的 Unicode 字符则使用 UTF-16 规则编码为两个 16 位值的序列（称为 &ldquo;代理对&rdquo;）。这意味着长度为 2（两个 16 位值）的 JavaScript 字符串可能只代表一个 Unicode 字符：</p>
 
     </div>
     <footer class="post-footer">
@@ -543,8 +573,10 @@ code.has-jax {
         <li>
           <ul>
             <li><a href="#binary-floating-point-and-rounding-errors">Binary Floating-Point and Rounding Errors</a></li>
+            <li><a href="#arbitrary-precision-integers-with-bigint">Arbitrary Precision Integers with BigInt</a></li>
           </ul>
         </li>
+        <li><a href="#text">Text</a></li>
       </ul>
     </li>
   </ul>
