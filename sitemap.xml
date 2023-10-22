@@ -4835,7 +4835,17 @@ let strname = &amp;#34;string name&amp;#34;; let symname = Symbol(&amp;#34;propn
 这意味着，可以调用Symbol()取得的Symbol值，可以安全地作为属性名以添加对象新的属性，无需担心覆盖原有的属性。类似地，可以使用那些未被共享的符号属性名，可以确信程序中的其他代码不会意外的重写这个属性。
 实践中，符号通常用作一种语言扩展机制。ES6新增了for/of循环和可迭代对象，为此需要定义一种标准的机制让类变成可迭代的。但选择任何字符串作为迭代器方法，都可能破坏已有的代码，因此Symbol应运而生。
 Symbol()函数可选地接受一个字符串参数，返回唯一的符号值。如果在调用的时候传递一个字符串参数，那么调用Symbol的toString()方法得到的结果中会包含该字符串。但传入两个相同的字符串，调用Symbol两次获取到的符号值是不同的。
-</content>
+let s = Symbol(&amp;#34;sym_x&amp;#34;); console.log(s.toString()) let s1 = Symbol(&amp;#34;sym_x&amp;#34;) console.log(s1 === s) toString()是Symbol实例中唯一有趣的方法。但，我们还应该了解另外两个与Symbol相关的函数。有时，在使用Symbol时，希望将其保留给自己的代码使用，这样就可以保证自定义的属性不会与其它代码使用的属性发生冲突。
+但有时，可能希望定义一个Symbol值，并与其它代码共享。例如，如果要定义某种扩展，并希望其他代码也能使用，就会出现这种情况。
+为了满足后一种使用情况，JavaScript定义了一个全局Symbol注册表。Symbol.for()函数接收一个字符串参数，并返回一个与所传字符串相关联的Symbol值。如果该字符串尚未关联任何符号，则会创建并返回一个新的符号；否则，将返回已存在的符号。
+也就是说，Symbol.for() 函数与Symbol() 函数完全不同： Symbol() 不会两次返回相同的值，但 Symbol.for() 在调用相同字符串时总是返回相同的值。传递给 Symbol.for() 的字符串会出现在返回符号的 toString() 输出中，也可以通过调用返回符号的Symbol.keyFor() 来获取。
+let s = Symbol.for(&amp;#34;shared&amp;#34;); let t = Symbol.for(&amp;#34;shared&amp;#34;); console.log(s === t, s.toString(), Symbol.keyFor(t)) The Global Object 全局对象的属性是全局性定义的标识符，可以在程序的任何地方使用。JavaScript解释器启动后（或每次浏览器加载新页面时），都会创建一个新的全局对象，并为这个全局对象添加一组初始的属性：
+ undefied、Infinity和NaN这样的全局常量。 isNaN()，parseInt()，和eval()这样的全局函数。 Date()，RegExp()，String()，Object()和Array()这样的构造函数。 Math和JSON这样的全局对象。  全局对象的初始属性不是保留字，但它们应该都被当成保留字。在Node中，全局对象有一个属性名为global，表示这个全局对象本身。
+在Web浏览器中，Window对象对浏览器窗口中所有JavaScript代码而言，充当了全局对象的角色。这个全局的Window对象有一个自引用的window属性，可以引用全局对象。
+Immutable Primitive Values and Mutable Object References JavaScript中的基本类型和对象类型（包括数组和函数）有一个本质区别，基本类型是不可变的，对象类型是可变的。
+let object = {x: 12} object.x = 13 object.y = 14 基本类型是按值比较的，而对象不是按值比较的。两个不同的对象即使拥有完全相同的属性和值，它们也不相等。
+let x = 12; let o = {x: 1}, p = {x: 1}; console.log(o === p) let a = [], b = []; console.log(a === b) 以区别于基本数据类型，对象类型有时被称为引用类型。对象值就是引用，对象是按引用比较的。两个对象相等当且仅当它们引用同一个底层对象：
+let a = []; let b = a; b[0] = 1; console.log(a === b) </content>
     </entry>
     
      <entry>
