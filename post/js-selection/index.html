@@ -241,13 +241,13 @@ code.has-jax {
     <i class="fa fa-file-word-o"></i>
 </span>
 <span class="post-meta-item-text">字数: </span>
-<span class="leancloud-visitors-count">9312</span>
+<span class="leancloud-visitors-count">10285</span>
 &nbsp; | &nbsp;
 <span class="post-meta-item-icon">
     <i class="fa fa-coffee"></i>
 </span>
 <span class="post-meta-item-text">阅读: </span>
-<span class="leancloud-visitors-count">19 分钟</span>
+<span class="leancloud-visitors-count">21 分钟</span>
 </span>
       </div>
     </header>
@@ -661,7 +661,56 @@ code.has-jax {
 </span></span></code></pre></div><p>下面总结 JavaScript中值如何从一种类型转换到另一种类型。表格中的粗体条目突出显示了可能会让你感到意外的转换。空格表示不需要转换，也不执行转换。</p>
 <img src="https://s2.loli.net/2023/10/29/8GjWVLOzS4pt2Hk.png" alt="8GjWVLOzS4pt2Hk" style="zoom:50%;" />
 <h3 id="conversions-and-equality">Conversions and Equality</h3>
-
+<p>有两种操作符测试两个值是否相等，一个是严格的操作符<code>===</code>，若两个值的类型不同，则它认为它们不相等。因为JavaScript在类型上比较灵活，所以定义了<code>==</code>操作符，这个操作符判定相等的标准相当灵活：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-js" data-lang="js"><span style="display:flex;"><span><span style="color:#66d9ef">null</span> <span style="color:#f92672">==</span> <span style="color:#66d9ef">undefined</span> <span style="color:#75715e">// =&gt; true: These two values are treated as equal.
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#e6db74">&#34;0&#34;</span> <span style="color:#f92672">==</span> <span style="color:#ae81ff">0</span> <span style="color:#75715e">// =&gt; true: String converts to a number before comparing. 
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#ae81ff">0</span> <span style="color:#f92672">==</span> <span style="color:#66d9ef">false</span> <span style="color:#75715e">// =&gt; true: Boolean converts to number before comparing. 
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#e6db74">&#34;0&#34;</span> <span style="color:#f92672">==</span> <span style="color:#66d9ef">false</span> <span style="color:#75715e">// =&gt; true: Both operands convert to 0 before comparing!
+</span></span></span></code></pre></div><p>需要注意的是，一个值可以转换为另一种类型，但这并不意味这两个值是相等的。例如，<code>undefined</code>在需要布尔值的地方会准换为<code>false</code>，但这不意味着<code>undefined == false</code>。操作符和语句期待不同的类型，因此会执行以这些目标类型的转换，但<code>==</code>操作符不会尝试将操作数转换为布尔类型：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-js" data-lang="js"><span style="display:flex;"><span><span style="color:#a6e22e">console</span>.<span style="color:#a6e22e">log</span>(<span style="color:#66d9ef">false</span> <span style="color:#f92672">==</span> <span style="color:#66d9ef">undefined</span>) <span style="color:#75715e">// false
+</span></span></span></code></pre></div><h3 id="explicit-conversions">Explicit Conversions</h3>
+<p>虽然会执行很多类型自动转换，但有时需要进行显式类型转换，以保证代码清晰。显式类型转最简单的方法是使用<code>Boolean(), Number(), and String()</code>函数。</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-js" data-lang="js"><span style="display:flex;"><span><span style="color:#a6e22e">console</span>.<span style="color:#a6e22e">log</span>(Number(<span style="color:#e6db74">&#34;3&#34;</span>), String(<span style="color:#66d9ef">false</span>), Boolean([])) <span style="color:#75715e">// 3 false true
+</span></span></span></code></pre></div><p>除了<code>null</code>和<code>undefined</code>，任何其他值都有<code>toString()</code>，并且调用toString方法的返回值和直接调用String()函数的结果一样。</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-js" data-lang="js"><span style="display:flex;"><span><span style="color:#a6e22e">console</span>.<span style="color:#a6e22e">log</span>(<span style="color:#66d9ef">null</span>.<span style="color:#a6e22e">toString</span>())
+</span></span><span style="display:flex;"><span><span style="color:#75715e">// Uncaught TypeError: Cannot read properties of null (reading &#39;toString&#39;)
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">console</span>.<span style="color:#a6e22e">log</span>(<span style="color:#66d9ef">undefined</span>.<span style="color:#a6e22e">toString</span>())
+</span></span><span style="display:flex;"><span><span style="color:#75715e">//Uncaught TypeError: Cannot read properties of undefined (reading &#39;toString&#39;)
+</span></span></span></code></pre></div><p>某些操作符会进行隐式类型转换。如二元操作符<code>+</code>的一个操作数是字符串，则会将另一个操作数转换为字符串。一元操作符会把自己的操作数转换为数值。一元操作符<code>!</code>会先把它的操作数转换为布尔类型，然后再取反。</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-js" data-lang="js"><span style="display:flex;"><span><span style="color:#a6e22e">x</span> <span style="color:#f92672">+</span> <span style="color:#e6db74">&#34;&#34;</span> <span style="color:#75715e">// =&gt; String(x)
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#f92672">+</span><span style="color:#a6e22e">x</span>   <span style="color:#75715e">// =&gt; Number(x)
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#a6e22e">x</span><span style="color:#f92672">-</span><span style="color:#ae81ff">0</span>  <span style="color:#75715e">// =&gt; Number(x)
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#f92672">!!</span><span style="color:#a6e22e">x</span>  <span style="color:#75715e">// =&gt; Boolean(x): Note double !
+</span></span></span></code></pre></div><p><code>Number</code>类定义的<code>toString()</code>方法接受一个可选参数，以指定基数或底数。如果没有特殊指定这个参数，则默认基数是10:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-js" data-lang="js"><span style="display:flex;"><span><span style="color:#66d9ef">let</span> <span style="color:#a6e22e">n</span> <span style="color:#f92672">=</span> <span style="color:#ae81ff">17</span>;
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">let</span> <span style="color:#a6e22e">binary</span> <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;0b&#34;</span> <span style="color:#f92672">+</span> <span style="color:#a6e22e">n</span>.<span style="color:#a6e22e">toString</span>(<span style="color:#ae81ff">2</span>); 
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">let</span> <span style="color:#a6e22e">octal</span> <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;0o&#34;</span> <span style="color:#f92672">+</span> <span style="color:#a6e22e">n</span>.<span style="color:#a6e22e">toString</span>(<span style="color:#ae81ff">8</span>); 
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">let</span> <span style="color:#a6e22e">hex</span> <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;0x&#34;</span> <span style="color:#f92672">+</span> <span style="color:#a6e22e">n</span>.<span style="color:#a6e22e">toString</span>(<span style="color:#ae81ff">16</span>);
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">console</span>.<span style="color:#a6e22e">log</span>(<span style="color:#a6e22e">n</span>, <span style="color:#a6e22e">binary</span>, <span style="color:#a6e22e">octal</span>, <span style="color:#a6e22e">hex</span>)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">// 打印的结果
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#ae81ff">17</span> <span style="color:#ae81ff">0b10001</span> <span style="color:#ae81ff">0o21</span> <span style="color:#ae81ff">0x11</span>
+</span></span></code></pre></div><p>如果把字符串传给<code>Number()</code>函数，它会尝试把字符串转换为整数或浮点字面量。但是，这个函数只能处理以10为基数，且末尾不能有无关字符。</p>
+<p>但全局的函数parseInt()和parseFloat()更灵活。若整数以0x或0X开头，parseInt()会将其解析为十六进制，并且parseInt()和parseFloat()都会跳过开头的空格，尽量多地解析数字字符，忽略后面的无关字符。如果第一个非空字符不是有效的数值字面量，将会返回NaN:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-js" data-lang="js"><span style="display:flex;"><span>parseInt(<span style="color:#e6db74">&#34;3 blind mice&#34;</span>)
+</span></span><span style="display:flex;"><span>parseFloat(<span style="color:#e6db74">&#34; 3.14 meters&#34;</span>) <span style="color:#75715e">// =&gt; 3.14
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>parseInt(<span style="color:#e6db74">&#34;-12.34&#34;</span>)
+</span></span><span style="display:flex;"><span>parseInt(<span style="color:#e6db74">&#34;0xFF&#34;</span>)
+</span></span><span style="display:flex;"><span>parseInt(<span style="color:#e6db74">&#34;0xff&#34;</span>)
+</span></span><span style="display:flex;"><span>parseInt(<span style="color:#e6db74">&#34;-0XFF&#34;</span>)
+</span></span><span style="display:flex;"><span>parseFloat(<span style="color:#e6db74">&#34;.1&#34;</span>)
+</span></span><span style="display:flex;"><span>parseInt(<span style="color:#e6db74">&#34;0.1&#34;</span>)
+</span></span><span style="display:flex;"><span>parseInt(<span style="color:#e6db74">&#34;.1&#34;</span>)
+</span></span><span style="display:flex;"><span>parseFloat(<span style="color:#e6db74">&#34;$72.47&#34;</span>)
+</span></span></code></pre></div><p>parseInt()接收可选的第二个参数，用于指定数值的基数，合法的值是2到36:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-js" data-lang="js"><span style="display:flex;"><span>parseInt(<span style="color:#e6db74">&#34;11&#34;</span>, <span style="color:#ae81ff">23</span>)
+</span></span><span style="display:flex;"><span>parseInt(<span style="color:#e6db74">&#34;ff&#34;</span>, <span style="color:#ae81ff">16</span>)
+</span></span><span style="display:flex;"><span>parseInt(<span style="color:#e6db74">&#34;zz&#34;</span>, <span style="color:#ae81ff">36</span>)
+</span></span><span style="display:flex;"><span>parseInt(<span style="color:#e6db74">&#34;077&#34;</span>, <span style="color:#ae81ff">8</span>)
+</span></span><span style="display:flex;"><span>parseInt(<span style="color:#e6db74">&#34;077&#34;</span>, <span style="color:#ae81ff">10</span>)
+</span></span></code></pre></div>
     </div>
     <footer class="post-footer">
         
@@ -849,6 +898,7 @@ code.has-jax {
         <li><a href="#type-conversions">Type Conversions</a>
           <ul>
             <li><a href="#conversions-and-equality">Conversions and Equality</a></li>
+            <li><a href="#explicit-conversions">Explicit Conversions</a></li>
           </ul>
         </li>
       </ul>

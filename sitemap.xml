@@ -4852,7 +4852,16 @@ let a = [&amp;#34;a&amp;#34;, &amp;#34;b&amp;#34;, &amp;#34;c&amp;#34;]; let b =
 function equalArrays(a, b) {  if (a === b) return true;  if (a.length != b.length) return false;  for (let i = 0; i &amp;lt; a.length; i&#43;&#43;) {  if (a[i] !== b[i]) return false;  }  return true; } Type Conversions JavaScript对所需值的类型非常灵活，这一点在上面介绍布尔值已经看到了。如果需要布尔值，而我们提供了一个其他类型的值，则这些值会自动转换为布尔值。
 对于其他类型也是一样的，如果想要一个字符，传入的任何值都会转换成字符串。如果想要数值，会尝试把传递的值转换为一个数值，如果无法转换，就会转换为NaN。
 console.log(10 &#43; &amp;#34; objects&amp;#34;) console.log(&amp;#34;7&amp;#34; * &amp;#34;4&amp;#34;) let n = 1 - &amp;#34;x&amp;#34;; console.log(n) console.log(n &#43; &amp;#34; objects&amp;#34;) 下面总结 JavaScript中值如何从一种类型转换到另一种类型。表格中的粗体条目突出显示了可能会让你感到意外的转换。空格表示不需要转换，也不执行转换。
-Conversions and Equality </content>
+Conversions and Equality 有两种操作符测试两个值是否相等，一个是严格的操作符===，若两个值的类型不同，则它认为它们不相等。因为JavaScript在类型上比较灵活，所以定义了==操作符，这个操作符判定相等的标准相当灵活：
+null == undefined // =&amp;gt; true: These two values are treated as equal. &amp;#34;0&amp;#34; == 0 // =&amp;gt; true: String converts to a number before comparing. 0 == false // =&amp;gt; true: Boolean converts to number before comparing. &amp;#34;0&amp;#34; == false // =&amp;gt; true: Both operands convert to 0 before comparing! 需要注意的是，一个值可以转换为另一种类型，但这并不意味这两个值是相等的。例如，undefined在需要布尔值的地方会准换为false，但这不意味着undefined == false。操作符和语句期待不同的类型，因此会执行以这些目标类型的转换，但==操作符不会尝试将操作数转换为布尔类型：
+console.log(false == undefined) // false Explicit Conversions 虽然会执行很多类型自动转换，但有时需要进行显式类型转换，以保证代码清晰。显式类型转最简单的方法是使用Boolean(), Number(), and String()函数。
+console.log(Number(&amp;#34;3&amp;#34;), String(false), Boolean([])) // 3 false true 除了null和undefined，任何其他值都有toString()，并且调用toString方法的返回值和直接调用String()函数的结果一样。
+console.log(null.toString()) // Uncaught TypeError: Cannot read properties of null (reading &amp;#39;toString&amp;#39;)  console.log(undefined.toString()) //Uncaught TypeError: Cannot read properties of undefined (reading &amp;#39;toString&amp;#39;) 某些操作符会进行隐式类型转换。如二元操作符&#43;的一个操作数是字符串，则会将另一个操作数转换为字符串。一元操作符会把自己的操作数转换为数值。一元操作符!会先把它的操作数转换为布尔类型，然后再取反。
+x &#43; &amp;#34;&amp;#34; // =&amp;gt; String(x) &#43;x // =&amp;gt; Number(x) x-0 // =&amp;gt; Number(x) !!x // =&amp;gt; Boolean(x): Note double ! Number类定义的toString()方法接受一个可选参数，以指定基数或底数。如果没有特殊指定这个参数，则默认基数是10:
+let n = 17; let binary = &amp;#34;0b&amp;#34; &#43; n.toString(2); let octal = &amp;#34;0o&amp;#34; &#43; n.toString(8); let hex = &amp;#34;0x&amp;#34; &#43; n.toString(16);  console.log(n, binary, octal, hex)  // 打印的结果 17 0b10001 0o21 0x11 如果把字符串传给Number()函数，它会尝试把字符串转换为整数或浮点字面量。但是，这个函数只能处理以10为基数，且末尾不能有无关字符。
+但全局的函数parseInt()和parseFloat()更灵活。若整数以0x或0X开头，parseInt()会将其解析为十六进制，并且parseInt()和parseFloat()都会跳过开头的空格，尽量多地解析数字字符，忽略后面的无关字符。如果第一个非空字符不是有效的数值字面量，将会返回NaN:
+parseInt(&amp;#34;3 blind mice&amp;#34;) parseFloat(&amp;#34; 3.14 meters&amp;#34;) // =&amp;gt; 3.14 parseInt(&amp;#34;-12.34&amp;#34;) parseInt(&amp;#34;0xFF&amp;#34;) parseInt(&amp;#34;0xff&amp;#34;) parseInt(&amp;#34;-0XFF&amp;#34;) parseFloat(&amp;#34;.1&amp;#34;) parseInt(&amp;#34;0.1&amp;#34;) parseInt(&amp;#34;.1&amp;#34;) parseFloat(&amp;#34;$72.47&amp;#34;) parseInt()接收可选的第二个参数，用于指定数值的基数，合法的值是2到36:
+parseInt(&amp;#34;11&amp;#34;, 23) parseInt(&amp;#34;ff&amp;#34;, 16) parseInt(&amp;#34;zz&amp;#34;, 36) parseInt(&amp;#34;077&amp;#34;, 8) parseInt(&amp;#34;077&amp;#34;, 10) </content>
     </entry>
     
      <entry>
