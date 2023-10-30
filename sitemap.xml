@@ -4781,9 +4781,9 @@ Chapter 3 JavaScript的类型被分为两大类，基础类型和对象类型。
 任何值，只要不是数字、字符串、布尔值、Symbol、null或undefined都是对象。对象是属性的集合，每个属性都有一个名称和一个值。普通的对象是无序的名字和值的集合，函数和类也是特殊的对象。
 Number JavaScript中的算术运算在溢出、下溢或除以零的情况下都不会产生错误。当数值运算的结果超过最大可表示的数（溢出）时，其结果是一个特殊的无穷大值，即Infinity。同样，当负值的绝对值大于最大可表示负数的绝对值时，结果就是负无穷大，即-Infinity。无穷大数值的行为与我们所期望的一样，与任何数值相加、相减、相乘或相除的结果都是无穷大数值（可能符号相反）。
 当数值运算的结果比可表示的最小数字更接近零时，就会出现下溢。在这种情况下，JavaScript返回0。如果负数出现下溢，JavaScript会返回一个称为negative zero特殊值。这个值与普通的0几乎没有区别，很少情况需要区别。
-在JavaScript中，除以0并不会产生一个错误，它只是简单的返回正无穷和负无穷。但也有一个例外，0除以0并不会返回一个明确定义的值，而是返回NaN。如果尝试用无穷大除以无穷大、取负数的平方根或使用不能转换为数字的非数字操作数的算术运算符，也会出现NaN。
+在JavaScript中，除以0并不会产生一个错误，它只是简单的返回正无穷和负无穷。但有一个例外，0除以0并不会返回一个明确定义的值，而是返回NaN。如果尝试用无穷大除以无穷大、取负数的平方根或使用不能转换为数字的非数字操作数的算术运算符，也会出现NaN。
 JavaScript预定义了全局常量Infinity和NaN，用于保存正无穷大和非数字值，这些值也可以作为Number对象的属性使用：
-console.log(Infinity, Number.POSITIVE_INFINITY, 1 / 0, Number.MAX_VALUE * 2) console.log(-Infinity, Number.NEGATIVE_INFINITY, -1 / 0, -Number.MAX_VALUE * 2) console.log(NaN, Number.NaN, 0 / 0, Infinity / Infinity) console.log(Number.MIN_VALUE / 2, -Number.MIN_VALUE / 2, -1 / Infinity, -0)  // 打印的值 Infinity Infinity Infinity Infinity -Infinity -Infinity -Infinity -Infinity NaN NaN NaN NaN 0 -0 -0 -0 NaN的值有一个不同寻常的特性：它不会与任何其它值（包括自己）进行比较。这意味着不能使用x === NAN来判断x的值是否为NaN。相反，必须写成x != x或Number.isNaN(x)。当且仅当x的值与全局常量NaN相同时，这些表达式才会为真。
+console.log(Infinity, Number.POSITIVE_INFINITY, 1 / 0, Number.MAX_VALUE * 2) console.log(-Infinity, Number.NEGATIVE_INFINITY, -1 / 0, -Number.MAX_VALUE * 2) console.log(NaN, Number.NaN, 0 / 0, Infinity / Infinity) console.log(Number.MIN_VALUE / 2, -Number.MIN_VALUE / 2, -1 / Infinity, -0)  // 打印的值 Infinity Infinity Infinity Infinity -Infinity -Infinity -Infinity -Infinity NaN NaN NaN NaN 0 -0 -0 -0 NaN有一个不同寻常的特性：它不会与任何其它值（包括自己）进行比较。这意味着不能使用x === NAN来判断x的值是否为NaN。相反，必须写成x != x或Number.isNaN(x)。当且仅当x的值与全局常量NaN相同时，这些表达式才会为真。
 全局函数isNaN()和Number.isNaN()是相似的。如果参数为NaN，或者参数为无法转换为数字的非数值，则返回 true。如果函数Number.isFinite()的参数是NaN、Infinity或-Infinity以外的数字，则返回true。如果全局函数isFinite()的参数是或可以转换为有限数值，该函数将返回true。
 负零值也有些不同寻常，它与正零比较是相等的（即使是使用JavaScript的严格相等测试），这意味着这两个值几乎没有区别，除非用作除数时：
 let zero = 0; let negz = -0; console.log(zero === negz) console.log(1 / zero === 1 / negz)  // 打印的结果 true false Binary Floating-Point and Rounding Errors 实数有无限多个，但JavaScript的浮点格式只能表示其中有限个数据。也就是说，在 JavaScript 中处理实数时，数字的表示往往是实际数字的近似值。
@@ -4800,7 +4800,7 @@ console.log(1000n &#43; 2000n, 2000n * 3000n, 3000n / 997n, 3000n % 997n)  // �
 但是，比较运算符可以处理混合类型。位操作数通常可以用于BigInt操作数，但Math对象的任何函数都不接收BigInt操作数。
 let timestamp = Date.now(); // The current time as a timestamp (a number). let now = new Date(); // The current time as a Date object. let ms = now.getTime(); // Convert to a millisecond timestamp. let iso = now.toISOString(); // Convert to a string in standard format. Text 表示文本的类型是字符串。字符串是由16bit值组成的不可变的有序序列，每个数值通常代表一个Unicode字符。字符串的长度就是它包含16bit值的个数。JavaScript的字符串（及其数组）使用基于0的索引，第一个16bit值的索引为0，第二个16bit值的索引为1，以此类推。
 空字符串就是长度为0的字符串。 JavaScript没有表示字符串中单个元素的特殊类型。若要表示单个16bit值，只需使用长度为1的字符串。
-JavaScript使用UTF-16编码Unicode字符集 ，字符串是无符号16bit值序列。最常见的Unicode字符，它的码点适合16bit，并且可以用字符串的一个元素来表示。若Unicode字符的码点不适合用16bit表示的，则使用UTF-16规则编码为两个16bit值的序列（称为surrogate pair）。这意味着长度为2（两个16bit值）的JavaScript字符串可能只代表一个Unicode字符：
+JavaScript使用UTF-16编码Unicode字符集 ，字符串是无符号16bit值序列。最常见的Unicode字符，它的码点适合16bit，并且可以用字符串的一个元素来表示。若Unicode字符的码点不适合用16bit来表示的，则使用UTF-16规则编码为两个16bit值的序列（称为surrogate pair）。这意味着长度为2（两个16bit值）的JavaScript字符串可能只代表一个Unicode字符：
 euro = &amp;#34;€&amp;#34;; love = &amp;#34;😍&amp;#34;; console.log(euro.length, love.length)  // 打印的值 1 2 JavaScript定义的大多数字符串方法都是对16bit值而非字符进行操作。它们不会特殊处理surrogate pair，不会对字符串进行归一化处理，甚至不会确保字符串是格式正确的UTF-16字符串。
 但是，在ES6中字符串是可迭代的，如果对字符串使用for/of循环或...操作符，迭代的是字符串而不是16bit值。
 String Literals 若要在JavaScript中使用字符串字面量，可以把字符串放到一对匹配的单引号，双引号或者反引号中。双引号和反引号字符可以出现在由单引号包含的字符串，反引号和单引号类似。
