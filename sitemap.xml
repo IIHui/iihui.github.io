@@ -4834,13 +4834,13 @@ undefined也表示值不存在，但它表示一种更深层次的不存在。�
 console.log(typeof undefined) // undefined null和undefine都可以表示某个值不存在，经常被混用。相等操作==认为它们相等，要区分它们必须使用全等操作符===。
 Symbols Symbols是ES6引入的，用作非字符串属性名。要了解Symbols，需要知道基本的Object类型是一个无序的属性集合，其中的每个属性都有一个名称和一个值。属性名通常是字符串，但在ES6及之后，Symbols也可以实现这个目的。
 let strname = &amp;#34;string name&amp;#34;; let symname = Symbol(&amp;#34;propname&amp;#34;); console.log(typeof strname); console.log(typeof symname); let o = {}; o[strname] = 1; o[symname] = 2; console.log(o) Symbol没有字面量语法，要获取一个Symbol值，需要调用Symbol()函数。这个函数永远不会返回相同的值，即使调用时传入相同的参数。
-这意味着，可以调用Symbol()取得的值，可以安全地作为属性名以添加对象新的属性，无需担心覆盖原有的属性。类似地，可以使用那些未被共享的符号属性名，可以确保程序中的其它代码不会意外的重写这个属性。
-实践中，符号通常用作一种语言扩展机制。ES6新增了for/of循环和可迭代对象，为此需要定义一种标准的机制让类变成可迭代的。但是，如果选择任何特定的字符串作为这个迭代器方法名，都可能破坏已有的代码，因此Symbol应运而生。
-Symbol()函数可选地接受一个字符串参数，返回唯一的符号值。如果在调用的时候传递一个字符串参数，那么调用Symbol的toString()方法得到的结果中会包含该字符串。但传入两个相同的字符串，调用Symbol两次获取到的符号值是不同的。
+这意味着，调用Symbol()取得的值，可以安全地作为属性名以添加对象新的属性，无需担心覆盖原有的属性。类似地，可以使用那些未被共享的符号属性名，可以确保程序中的其它代码不会意外的重写这个属性。
+实践中，Symbol通常用作一种语言扩展机制。ES6新增了for/of循环和可迭代对象，为此需要定义一种标准的机制让类变成可迭代的。但是，如果选择任何特定的字符串作为这个迭代器方法名，都可能破坏已有的代码，因此Symbol应运而生。
+Symbol()函数可选地接受一个字符串参数，返回唯一的符号值。如果在调用的时候传递一个字符串参数，那么调用Symbol的toString()方法得到的结果中会包含该字符串。但传入两个相同的字符串，调用Symbol两次获取到的Symbol值是不同的。
 let s = Symbol(&amp;#34;sym_x&amp;#34;); console.log(s.toString()) let s1 = Symbol(&amp;#34;sym_x&amp;#34;) console.log(s1 === s) // 打印的值 false toString()是Symbol实例中唯一有趣的方法。但是，还应该了解另外两个与Symbol相关的函数。有时，在使用Symbol时希望它们是私有的，这样就可以保证自定义的属性不会与其它代码使用的属性发生冲突。
 但有时，可能希望定义一个Symbol值，并与其它代码共享。如果要定义某种扩展，并希望其它代码也能使用，就会出现这种情况。
 为了满足后一种常见，JavaScript定义了一个全局Symbol注册表。Symbol.for()函数接收一个字符串参数，并返回一个与所传字符串相关联的Symbol值。如果该字符串尚未关联任何符号，则会创建并返回一个新的Symbol。否则，将返回已存在的Symbol。
-也就是说，Symbol.for() 函数与Symbol() 函数完全不同。 Symbol() 两次调用不会返回相同的值，但Symbol.for() 在调用相同字符串时总是返回相同的值。传递给 Symbol.for() 的字符串会出现在返回符号的 toString() 输出中，也可以调用Symbol.keyFor()来获取。
+也就是说，Symbol.for()函数与Symbol()函数完全不同。 Symbol()两次调用不会返回相同的值，但Symbol.for()在调用相同字符串时总是返回相同的值。传递给 Symbol.for()的字符串会出现在返回符号的 toString() 输出中，也可以调用Symbol.keyFor()来获取。
 let s = Symbol.for(&amp;#34;shared&amp;#34;); let t = Symbol.for(&amp;#34;shared&amp;#34;); console.log(s === t, s.toString(), Symbol.keyFor(t))  // 打印的值 true Symbol(shared) shared The Global Object 全局对象的属性是全局性定义的标识符，可以在程序的任何地方使用。JavaScript解释器启动后（或每次浏览器加载新页面时），都会创建一个新的全局对象，并为这个全局对象添加一组初始的属性：
  undefied、Infinity和NaN这样的全局常量。 isNaN()，parseInt()和eval()这样的全局函数。 Date()，RegExp()，String()，Object()和Array()这样的构造函数。 Math和JSON这样的全局对象。  全局对象的初始属性不是保留字，但它们应该都被当成保留字。在Node中，全局对象有一个属性名为global，表示这个全局对象本身。
 在浏览器中，Window对象对浏览器窗口中所有JavaScript代码而言，充当了全局对象的角色。这个全局的Window对象有一个自引用的window属性，可以引用全局对象。
