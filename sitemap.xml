@@ -4844,16 +4844,16 @@ let s = Symbol(&amp;#34;sym_x&amp;#34;); console.log(s.toString()) let s1 = Symb
 let s = Symbol.for(&amp;#34;shared&amp;#34;); let t = Symbol.for(&amp;#34;shared&amp;#34;); console.log(s === t, s.toString(), Symbol.keyFor(t))  // 打印的值 true Symbol(shared) shared The Global Object 全局对象的属性是全局性定义的标识符，可以在程序的任何地方使用。JavaScript解释器启动后或每次浏览器加载新页面时，都会创建一个新的全局对象，并为这个全局对象添加一组初始的属性：
  undefied、Infinity和NaN这样的全局常量。 isNaN()，parseInt()和eval()这样的全局函数。 Date()，RegExp()，String()，Object()和Array()这样的构造函数。 Math和JSON这样的全局对象。  全局对象的初始属性不是保留字，但它们应该都被当成保留字。在Node中，全局对象有一个属性名为global，表示这个全局对象本身。
 在浏览器中，Window对象对浏览器窗口中所有JavaScript代码而言，充当了全局对象的角色。这个全局的Window对象有一个自引用的window属性，可以引用全局对象。
-Immutable Primitive Values and Mutable Object References JavaScript中的基本类型(undefined,null,布尔值,数值和字符串)和对象类型（包括数组和函数）有一个本质区别，基本类型是不可变的，对象类型是可变的。
-let object = {x: 12} object.x = 13 object.y = 14 基本类型是按值比较的，而对象类型不是按值比较的。两个不同的对象即使拥有完全相同的属性和值，它们也不相等。两个不同的数组即使具有相同顺序的相同元素，也是不相等的：
+Immutable Primitive Values and Mutable Object References JavaScript中的基本类型(undefined,null,布尔值,数值和字符串）和对象类型（包括数组和函数）有一个本质区别，基本类型是不可变的，对象类型是可变的。
+let object = {x: 12} object.x = 13 object.y = 14 基本类型是按值比较的，而对象类型不是按值比较的。两个不同的对象即使拥有完全相同的属性和值，它们也不相等。两个不同的数组即使具有相同顺序的相同元素，也是不相等的。
 let x = 12; let o = {x: 1}, p = {x: 1}; console.log(o === p) let a = [], b = []; console.log(a === b) 区别于基本数据类型，对象类型也被称为引用类型。使用这种术语，对象值就是引用，对象是按引用比较的。两个对象相等当且仅当它们引用同一个底层对象：
-let a = []; let b = a; b[0] = 1; a[0] console.log(a === b) //a和b引用同一个对象 从上面这段代码中可以看出，将对象（或数组）赋值给变量只是赋值引用，并不会创建对象的新副本。如果要创建对象或数组的新副本，必须明确复制对象的属性或数组的元素：
+let a = []; let b = a; b[0] = 1; a[0] // a和b引用同一个对象 console.log(a === b) // true 从上面这段代码中可以看出，将对象（或数组）赋值给变量只是赋值引用，并不会创建对象的新副本。如果要创建对象或数组的新副本，必须明确复制对象的属性或数组的元素：
 let a = [&amp;#34;a&amp;#34;, &amp;#34;b&amp;#34;, &amp;#34;c&amp;#34;]; let b = []; for (let i = 0; i &amp;lt; a.length; i&#43;&#43;) {  b[i] = a[i]; } let c = Array.from(b); console.log(a, b, c)  console.log(a === b, a === c, b === c) // false false false 类似的，如果想比较两个不同的对象或数组，必须比较它们的属性或每个元素。下面函数用于比较两个不同的数组的内容是否相等：
 function equalArrays(a, b) {  if (a === b) return true;  if (a.length != b.length) return false;  for (let i = 0; i &amp;lt; a.length; i&#43;&#43;) {  if (a[i] !== b[i]) return false;  }  return true; } Type Conversions JavaScript对所需值的类型非常灵活，这一点在上面介绍布尔值已经看到了。如果需要布尔值，而我们提供了一个其它类型的值，则这些值会自动转换为布尔值。
-对于其他类型也是一样的，如果想要一个字符，传入的任何值都会转换成字符串。如果想要数值，会尝试把传递的值转换为一个数值，如果无法转换，就会转换为NaN。
-console.log(10 &#43; &amp;#34; objects&amp;#34;) console.log(&amp;#34;7&amp;#34; * &amp;#34;4&amp;#34;) let n = 1 - &amp;#34;x&amp;#34;; console.log(n) console.log(n &#43; &amp;#34; objects&amp;#34;)  // 打印的结果 10 objects 28 NaN 17 objects 下面总结 JavaScript中值如何从一种类型转换到另一种类型。下面表格中的粗体条目突出显示了可能会让我们感到意外的转换。空格表示不需要转换，也不执行转换。
+对于其它类型也是一样的，如果想要一个字符，传入的任何值都会转换成字符串。如果想要数值，会尝试把传递的值转换为一个数值，如果无法转换，就会转换为NaN。
+console.log(10 &#43; &amp;#34; objects&amp;#34;) console.log(&amp;#34;7&amp;#34; * &amp;#34;4&amp;#34;) let n = 1 - &amp;#34;x&amp;#34;; console.log(n) console.log(n &#43; &amp;#34; objects&amp;#34;)  // 打印的结果 10 objects 28 NaN NaN objects 下面表格总结了 JavaScript中值如何从一种类型转换到另一种类型。下面表格中的粗体条目突出显示了可能会让我们感到意外的转换。空格表示不需要转换，也不执行转换。
 Conversions and Equality 有两种操作符测试两个值是否相等，一个是严格的操作符===，若两个值的类型不同，则它认为它们不相等。因为JavaScript在类型上比较灵活，所以定义了==操作符，这个操作符判定相等的标准相当灵活：
-null == undefined // =&amp;gt; true: These two values are treated as equal. &amp;#34;0&amp;#34; == 0 // =&amp;gt; true: String converts to a number before comparing. 0 == false // =&amp;gt; true: Boolean converts to number before comparing. &amp;#34;0&amp;#34; == false // =&amp;gt; true: Both operands convert to 0 before comparing! 需要注意的是，一个值可以转换为另一种类型，但这并不意味这两个值是相等的。例如，undefined在需要布尔值的地方会准换为false，但这不意味着undefined == false。
+null == undefined // =&amp;gt; true: These two values are treated as equal. &amp;#34;0&amp;#34; == 0 // =&amp;gt; true: String converts to a number before comparing. 0 == false // =&amp;gt; true: Boolean converts to number before comparing. &amp;#34;0&amp;#34; == false // =&amp;gt; true: Both operands convert to 0 before comparing! 需要注意的是，一个值可以转换为另一种类型，但这并不意味这两个值是相等的。例如，undefined在需要布尔值的地方会转换为false，但这不意味着undefined == false。
 console.log(false == undefined) // false 操作符和语句期待不同的类型，因此会执行以这些目标类型的转换，但==操作符不会尝试将操作数转换为布尔类型。
 Explicit Conversions 虽然会执行很多类型自动转换，但有时需要进行显式类型转换，以保证代码清晰。显式类型转最简单的方法是使用Boolean(), Number(), and String()函数。
 console.log(Number(&amp;#34;3&amp;#34;), String(false), Boolean([])) // 3 false true 除了null和undefined，任何其他值都有toString()，并且调用toString方法的返回值和直接调用String()函数的结果一样。
