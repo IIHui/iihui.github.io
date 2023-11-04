@@ -4870,7 +4870,16 @@ const x = 1; if (x === 1) {  const x = 2;  console.log(x) } console.log(x) Varia
 var x; var data = [], count = data.length; for (var i = 0; i &amp;lt; count, i&#43;&#43;) {  console.log(data[i]) } 虽然var和let有相同的语法，但它们也有重要的区别：
  使用var声明的变量不具有块作用域。这种变量的作用域仅限于包含变量声明的函数体，无论它在函数中嵌套层次有多深。 如果在函数外部使用var声明变量，则会声明一个全局变量。但与let声明的全局变量有一个重要区别，var声明的全局变量被实现为全局对象的属性，全局对象可以使用globalThis引用。 使用var多次声明同名变量是合法的。因为var具有函数作用域，而非块作用域，所以经常会出现声明同名变量的情况。 使用var声明变量，该变量会被提升到函数的顶部，但变量的初始化仍然在代码所在位置。  在严格模式下，如果试图使用未声明的变量，运行代码时会出现引用错误。然而，在严格模式之外，如果为一个未使用let、const或var声明的名称赋值，最终会创建一个新的全局变量。无论引用的代码嵌套在函数和代码块中多深，它都将是一个全局变量，这几乎肯定不是我们想要的，而且容易出错，也是使用严格模式的最佳原因之一。
 Destructuring Assignment ES6实现了一种复合声明与赋值语法，叫做解构赋值。在解构赋值中，等号右边是一个数组或对象，等号左边以模拟或数组和对象的方式指定一个或多个变量名字。
-let [x, y] = [1, 2]; [x, y] = [x &#43; 1, y &#43; 1]; [x, y] = [y, x]; console.log(x, y)  // 打印的值 3 2 function toPolar(x, y) {  return [Math.sqrt(x * x &#43; y * y), Math.atan2(y, x)]; }  function toCartesian(r, theta) {  return [r * Math.cos(theta), r * Math.sin(theta)]; }  let [r,theta] = toPolar(1.0, 1.0); let [x,y] = toCartesian(r,theta); </content>
+let [x, y] = [1, 2]; [x, y] = [x &#43; 1, y &#43; 1]; [x, y] = [y, x]; console.log(x, y)  // 打印的值 3 2 解构赋值可以让返回数组的函数变得异常便捷：
+function toPolar(x, y) {  return [Math.sqrt(x * x &#43; y * y), Math.atan2(y, x)]; }  function toCartesian(r, theta) {  return [r * Math.cos(theta), r * Math.sin(theta)]; }  let [r,theta] = toPolar(1.0, 1.0); let [x,y] = toCartesian(r,theta); 在循环中也可以使用解构赋值：
+let o = {x: 1, y: 2}; // The object we&amp;#39;ll loop over for (const [name, value] of Object.entries(o)) {  console.log(name, value); } 解构赋值时，等号左边的变量数量不必与等号右边的数组元素个数匹配，左边多余的变量的初始值为undefined，右边多余的值会被忽略。左边变量列表可以包含额外的逗号，用于跳过右侧的某些值：
+let [x, y] = [1]; [x, y] = [1, 2, 3]; [, x, , y] = [1, 2, 3, 4]; console.log(x, y) // 2 4 在解构赋值时，如果想把所有未使用或剩余的值收集到一个变量中，可以在左侧最后一个变量名前加上3个点：
+let [x, ...y] = [1, 2, 3, 4]; console.log(x, y) 解构赋值可以用于嵌套数组，此时左边也应该看起来像一个内嵌的数组字面量：
+let [a, [b, c]] = [1, [2, 2.5], 3]; // a == 1; b == 2; c == 2.5 数组解构的一个重要特性是等号右侧并不要求是数组。实际上，右侧可以使用任何可迭代对象，任何可以在for/of循环中使用的对象都可被解构：
+let [first, ...rest] = &amp;#34;Hello&amp;#34;; console.log(first, rest) // first == &amp;#34;H&amp;#34;; rest == [&amp;#34;e&amp;#34;,&amp;#34;l&amp;#34;,&amp;#34;l&amp;#34;,&amp;#34;o&amp;#34;] 解构赋值在右侧是对象值的情况下也可以执行。此时，左侧看起来像是一个对象字面量，即一个包含在花括号内以逗号分隔的变量名列表：
+let transparent = {r: 0.0, g: 0.0, b: 0.0, a: 1.0}; let {r, g, b} = transparent; // r == 0.0; g == 0.0; b == 0.0 下面示例展示了把Math对象的全局函数复制给变量，这种方式可以简化代码：
+// Same as const sin=Math.sin, cos=Math.cos, tan=Math.tan const {sin, cos, tan} = Math; 如果等号左侧不是Math对象的属性名，则该变量的值为undefined。在上面解构中，我们选择了和要解构对象的属性一致的变量名，但这不是必须的：
+// Same as const cosine = Math.cos, tangent = Math.tan; const {cos: cosine, tan: tangent} = Math; console.log(cosine(12)) Chapter 4 </content>
     </entry>
     
      <entry>
