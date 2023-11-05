@@ -4924,7 +4924,15 @@ let o = new Object(); let a = new Array(); let d = new Date(); let r = new Map()
 Object.create() Object.create()用于创建一个新对象，使用其第一个参数作为新对象的原型。
 let o1 = Object.create({x: 1, y: 2}); console.log(o1.x &#43; o1.y) 传入null可以创建一个没有原型的对象，不过这样创建的新对象不会基础任何东西，连toString()这样的基本方法都没有。
 如果想创建一个普通的空对象(类似于{}或new Object()返回的对象)，传入Object.prototype
-let o3 = Object.create(Object.prototype); // o3 is like {} or new Object(). </content>
+let o3 = Object.create(Object.prototype); // o3 is like {} or new Object(). Objects As Associative Arrays 下面两个表达式返回同一个值：
+object.property object[&amp;#34;property&amp;#34;] 第二种方式使用方括号和字符串，看起来像是访问数组，只不过是以字符串而不是数值作为索引。这种数组被称为关联数组（或散列，映射、字典）。JavaScript对象是关联数组。
+Inheritance 假设从对象o中查询属性x，如果o没有这个名字的自有属性，则会从o的原型对象查询属性x。如果原型对象也没有这个叫x的自有属性，但它有自己的原型，则会继续查询这个原型的原型。
+let o = {}; o.x = 1; let p = Object.create(o); p.y = 2; let q = Object.create(p); q.z = 3; let f = q.toString(); console.log(q.x &#43; q.y) Property Access Errors 查询对象不存在的属性不会报错，如果在对象的自有属性或继承属性都没找到属性x，则属性表达式访问o.x的值为undefined。但是，查询不存在对象的属性是错误的，因为null和undefined的值没有属性，查询者两个值的属性是错误的。
+Deleting Properties delete操作符用于从对象中移除属性。它唯一的操作数应该是一个属性访问表达式。需要注意的是，delete并不操作属性的值，而是操作属性本身。
+delete book.author; delete book[&amp;#34;main title&amp;#34;]; delete操作符只删除自有属性，不删除继承属性，要删除继承属性，必须从定义属性的原型对象上删除，这样做会影响继承该原型的所有对象。
+如果delete操作成功或没有影响（如删除不存在的属性），则delete表达式求值为true。对非属性表达式使用delete，同样也会求值为true。
+delete不会删除configurable为false的属性。
+</content>
     </entry>
     
      <entry>

@@ -241,13 +241,13 @@ code.has-jax {
     <i class="fa fa-file-word-o"></i>
 </span>
 <span class="post-meta-item-text">字数: </span>
-<span class="leancloud-visitors-count">15461</span>
+<span class="leancloud-visitors-count">16050</span>
 &nbsp; | &nbsp;
 <span class="post-meta-item-icon">
     <i class="fa fa-coffee"></i>
 </span>
 <span class="post-meta-item-text">阅读: </span>
-<span class="leancloud-visitors-count">31 分钟</span>
+<span class="leancloud-visitors-count">33 分钟</span>
 </span>
       </div>
     </header>
@@ -954,7 +954,31 @@ code.has-jax {
 </span></span></code></pre></div><p>传入null可以创建一个没有原型的对象，不过这样创建的新对象不会基础任何东西，连toString()这样的基本方法都没有。</p>
 <p>如果想创建一个普通的空对象(类似于<code>{}</code>或<code>new Object()</code>返回的对象)，传入Object.prototype</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-js" data-lang="js"><span style="display:flex;"><span><span style="color:#66d9ef">let</span> <span style="color:#a6e22e">o3</span> <span style="color:#f92672">=</span> Object.<span style="color:#a6e22e">create</span>(Object.<span style="color:#a6e22e">prototype</span>); <span style="color:#75715e">// o3 is like {} or new Object().
-</span></span></span></code></pre></div>
+</span></span></span></code></pre></div><h3 id="objects-as-associative-arrays">Objects As Associative Arrays</h3>
+<p>下面两个表达式返回同一个值：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-js" data-lang="js"><span style="display:flex;"><span><span style="color:#a6e22e">object</span>.<span style="color:#a6e22e">property</span>
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">object</span>[<span style="color:#e6db74">&#34;property&#34;</span>]
+</span></span></code></pre></div><p>第二种方式使用方括号和字符串，看起来像是访问数组，只不过是以字符串而不是数值作为索引。这种数组被称为关联数组（或散列，映射、字典）。JavaScript对象是关联数组。</p>
+<h3 id="inheritance">Inheritance</h3>
+<p>假设从对象o中查询属性x，如果o没有这个名字的自有属性，则会从o的原型对象查询属性x。如果原型对象也没有这个叫x的自有属性，但它有自己的原型，则会继续查询这个原型的原型。</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-js" data-lang="js"><span style="display:flex;"><span><span style="color:#66d9ef">let</span> <span style="color:#a6e22e">o</span> <span style="color:#f92672">=</span> {};
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">o</span>.<span style="color:#a6e22e">x</span> <span style="color:#f92672">=</span> <span style="color:#ae81ff">1</span>;
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">let</span> <span style="color:#a6e22e">p</span> <span style="color:#f92672">=</span> Object.<span style="color:#a6e22e">create</span>(<span style="color:#a6e22e">o</span>);
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">p</span>.<span style="color:#a6e22e">y</span> <span style="color:#f92672">=</span> <span style="color:#ae81ff">2</span>;
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">let</span> <span style="color:#a6e22e">q</span> <span style="color:#f92672">=</span> Object.<span style="color:#a6e22e">create</span>(<span style="color:#a6e22e">p</span>);
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">q</span>.<span style="color:#a6e22e">z</span> <span style="color:#f92672">=</span> <span style="color:#ae81ff">3</span>;
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">let</span> <span style="color:#a6e22e">f</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">q</span>.<span style="color:#a6e22e">toString</span>();
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">console</span>.<span style="color:#a6e22e">log</span>(<span style="color:#a6e22e">q</span>.<span style="color:#a6e22e">x</span> <span style="color:#f92672">+</span> <span style="color:#a6e22e">q</span>.<span style="color:#a6e22e">y</span>)
+</span></span></code></pre></div><h3 id="property-access-errors">Property Access Errors</h3>
+<p>查询对象不存在的属性不会报错，如果在对象的自有属性或继承属性都没找到属性x，则属性表达式访问o.x的值为undefined。但是，查询不存在对象的属性是错误的，因为null和undefined的值没有属性，查询者两个值的属性是错误的。</p>
+<h3 id="deleting-properties">Deleting Properties</h3>
+<p>delete操作符用于从对象中移除属性。它唯一的操作数应该是一个属性访问表达式。需要注意的是，delete并不操作属性的值，而是操作属性本身。</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-js" data-lang="js"><span style="display:flex;"><span><span style="color:#66d9ef">delete</span> <span style="color:#a6e22e">book</span>.<span style="color:#a6e22e">author</span>;
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">delete</span> <span style="color:#a6e22e">book</span>[<span style="color:#e6db74">&#34;main title&#34;</span>];
+</span></span></code></pre></div><p>delete操作符只删除自有属性，不删除继承属性，要删除继承属性，必须从定义属性的原型对象上删除，这样做会影响继承该原型的所有对象。</p>
+<p>如果delete操作成功或没有影响（如删除不存在的属性），则delete表达式求值为true。对非属性表达式使用delete，同样也会求值为true。</p>
+<p>delete不会删除configurable为false的属性。</p>
+
     </div>
     <footer class="post-footer">
         
@@ -1171,6 +1195,10 @@ code.has-jax {
             <li><a href="#creating-objects-with-new">Creating Objects with new</a></li>
             <li><a href="#prototypes">Prototypes</a></li>
             <li><a href="#objectcreate">Object.create()</a></li>
+            <li><a href="#objects-as-associative-arrays">Objects As Associative Arrays</a></li>
+            <li><a href="#inheritance">Inheritance</a></li>
+            <li><a href="#property-access-errors">Property Access Errors</a></li>
+            <li><a href="#deleting-properties">Deleting Properties</a></li>
           </ul>
         </li>
       </ul>
