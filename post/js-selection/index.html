@@ -241,13 +241,13 @@ code.has-jax {
     <i class="fa fa-file-word-o"></i>
 </span>
 <span class="post-meta-item-text">字数: </span>
-<span class="leancloud-visitors-count">17383</span>
+<span class="leancloud-visitors-count">17810</span>
 &nbsp; | &nbsp;
 <span class="post-meta-item-icon">
     <i class="fa fa-coffee"></i>
 </span>
 <span class="post-meta-item-text">阅读: </span>
-<span class="leancloud-visitors-count">35 分钟</span>
+<span class="leancloud-visitors-count">36 分钟</span>
 </span>
       </div>
     </header>
@@ -952,12 +952,23 @@ code.has-jax {
 <p><code>Object.prototype</code>是少有的没有原型的对象，它不继承任何属性。其他的原型对象都是普通的有原型的对象。多数内置构造器都有一个原型，这个原型继承自<code>Object.prototype</code>。</p>
 <p>例如，<code>Date.prototype</code>继承了 <code>Object.prototype</code>的属性，因此通过<code>new Date()</code>创建的<code>Date</code>对象同时继承了<code>Date.prototype</code>和<code>Object.prototype</code>的属性。这种关联的一系列原型对象被称为原型链。</p>
 <h3 id="objectcreate">Object.create()</h3>
-<p><code>Object.create()</code>用于创建一个新对象，使用其第一个参数作为新对象的原型。</p>
+<p><code>Object.create()</code>函数用于创建一个新对象，使用第一个参数作为新对象的原型。</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-js" data-lang="js"><span style="display:flex;"><span><span style="color:#66d9ef">let</span> <span style="color:#a6e22e">o1</span> <span style="color:#f92672">=</span> Object.<span style="color:#a6e22e">create</span>({<span style="color:#a6e22e">x</span><span style="color:#f92672">:</span> <span style="color:#ae81ff">1</span>, <span style="color:#a6e22e">y</span><span style="color:#f92672">:</span> <span style="color:#ae81ff">2</span>});
 </span></span><span style="display:flex;"><span><span style="color:#a6e22e">console</span>.<span style="color:#a6e22e">log</span>(<span style="color:#a6e22e">o1</span>.<span style="color:#a6e22e">x</span> <span style="color:#f92672">+</span> <span style="color:#a6e22e">o1</span>.<span style="color:#a6e22e">y</span>)
 </span></span></code></pre></div><p>传入<code>null</code>可以创建一个没有原型的对象，但这样创建的新对象不会继承任何东西，连<code>toString()</code>这样的基本方法都没有。</p>
-<p>如果想创建一个普通的空对象(类似于<code>{}</code>或<code>new Object()</code>返回的对象)，传入<code>Object.prototype</code>:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-js" data-lang="js"><span style="display:flex;"><span><span style="color:#66d9ef">let</span> <span style="color:#a6e22e">o2</span> <span style="color:#f92672">=</span> Object.<span style="color:#a6e22e">create</span>(<span style="color:#66d9ef">null</span>); <span style="color:#75715e">// o2 inherits no props or methods.
+</span></span></span></code></pre></div><p>如果想创建一个普通的空对象(类似于<code>{}</code>或<code>new Object()</code>创建的对象)，传入<code>Object.prototype</code>即可:</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-js" data-lang="js"><span style="display:flex;"><span><span style="color:#66d9ef">let</span> <span style="color:#a6e22e">o3</span> <span style="color:#f92672">=</span> Object.<span style="color:#a6e22e">create</span>(Object.<span style="color:#a6e22e">prototype</span>); <span style="color:#75715e">// o3 is like {} or new Object().
+</span></span></span></code></pre></div><p>创建具有任意原型的新对象的功能非常强大。<code>Object.create()</code>还包含一个可选的第二个参数，用于描述新对象的属性。</p>
+<p><code>Object.create()</code>的一种用途是防止一个无法控制的库函数对对象进行意外（但非恶意）修改时。与其将对象直接传递给这个库函数，不如传递一个继承自该对象的新对象。如果函数读取该对象的属性，就会看到继承的值。但是，如果函数设置属性，这些写入将不会影响原始对象。</p>
+<h3 id="querying-and-setting-properties">Querying and Setting Properties</h3>
+<p>如果要获取属性值，可以使用<code>.</code>或<code>[]</code>操作符。操作符左边必须是一个值为对象的表达式，如果使用点操作符，右操作数必须是对象的属性名，而如果使用<code>[]</code>操作符，在方括号里的值必须是表达式，<font color=red>该表达式的值必须是字符串或能够转换为字符串或Symbol</font>。</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-js" data-lang="js"><span style="display:flex;"><span><span style="color:#66d9ef">let</span> <span style="color:#a6e22e">author</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">book</span>.<span style="color:#a6e22e">author</span>; <span style="color:#75715e">// Get the &#34;author&#34; property of the book.
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">let</span> <span style="color:#a6e22e">name</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">author</span>.<span style="color:#a6e22e">surname</span>; <span style="color:#75715e">// Get the &#34;surname&#34; property of the author.
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">let</span> <span style="color:#a6e22e">title</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">book</span>[<span style="color:#e6db74">&#34;main title&#34;</span>]; <span style="color:#75715e">// Get the &#34;main title&#34; property of the book.
+</span></span></span></code></pre></div><p>如果要创建或设置一个属性，可以使用点或方括号操作符，只需要把它们放到赋值表达式的左边：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-js" data-lang="js"><span style="display:flex;"><span><span style="color:#a6e22e">book</span>.<span style="color:#a6e22e">edition</span> <span style="color:#f92672">=</span> <span style="color:#ae81ff">7</span>; <span style="color:#75715e">// Create an &#34;edition&#34; property of book.
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#a6e22e">book</span>[<span style="color:#e6db74">&#34;main title&#34;</span>] <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;ECMAScript&#34;</span>; <span style="color:#75715e">// Change the &#34;main title&#34; property.
 </span></span></span></code></pre></div><h3 id="objects-as-associative-arrays">Objects As Associative Arrays</h3>
 <p>下面两个表达式返回同一个值：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-js" data-lang="js"><span style="display:flex;"><span><span style="color:#a6e22e">object</span>.<span style="color:#a6e22e">property</span>
@@ -1246,6 +1257,7 @@ code.has-jax {
             <li><a href="#creating-objects-with-new">Creating Objects with new</a></li>
             <li><a href="#prototypes">Prototypes</a></li>
             <li><a href="#objectcreate">Object.create()</a></li>
+            <li><a href="#querying-and-setting-properties">Querying and Setting Properties</a></li>
             <li><a href="#objects-as-associative-arrays">Objects As Associative Arrays</a></li>
             <li><a href="#inheritance">Inheritance</a></li>
             <li><a href="#property-access-errors">Property Access Errors</a></li>
