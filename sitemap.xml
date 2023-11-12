@@ -4989,7 +4989,13 @@ let square = {  area() {  return this.side * this.side;  }, side: 10 }; square.a
 如果一个属性既有getter方法又有setter方法，它就是一个读写属性。如果只有一个getter方法，它就是一个只读属性。如果只有一个setter方法，那它就是一个只写属性。如果试图读取只写属性，会得到undefined。
 访问器属性可以通过对象字面量的扩展语法定义，getter和setter是ES5引入的，不是ES6才引入的。
 let o = {  // An ordinary data property  dataProp: value,  // An accessor property defined as a pair of functions.  get accessorProp() {  return this.dataProp;  },  set accessorProp(value) {  this.dataProp = value;  } }; 访问属性是通过一个或两个方法来定义的，方法名是属性名。除了前缀get和set，这两个方法看起来就像是用ES6简写的语法定义的普通方法一样。
-let p = {  // x and y are regular read-write data properties.  x: 1.0, y: 1.0,  // r is a read-write accessor property with getter and setter.  // Don&amp;#39;t forget to put a comma after accessor methods.  get r() {  return Math.hypot(this.x, this.y);  }, set r(newvalue) {  let oldvalue = Math.hypot(this.x, this.y);  let ratio = newvalue / oldvalue;  this.x *= ratio;  this.y *= ratio;  },  // theta is a read-only accessor property with getter only.  get theta() {  return Math.atan2(this.y, this.x);  } }; console.log(p.r) console.log(p.theta) </content>
+let p = {  // x and y are regular read-write data properties.  x: 1.0, y: 1.0,  // r is a read-write accessor property with getter and setter.  // Don&amp;#39;t forget to put a comma after accessor methods.  get r() {  return Math.hypot(this.x, this.y);  },  set r(newvalue) {  let oldvalue = Math.hypot(this.x, this.y);  let ratio = newvalue / oldvalue;  this.x *= ratio;  this.y *= ratio;  },  // theta is a read-only accessor property with getter only.  get theta() {  return Math.atan2(this.y, this.x);  } }; console.log(p.r) // 1.4142135623730951 console.log(p.theta) // 0.7853981633974483 上面示例中使用了this关键字，表示当前对象。访问属性也是可以被继承的，可以把上面定义的对象p作为其他点的原型。
+// A new object that inherits getters and setters let q = Object.create(p); q.x = 3; // Create q&amp;#39;s own data properties q.y = 4; console.log(q.r) // 5.0 console.log(q.theta) // 0.9272952180016122 Chapter 7 数组是值的有序集合，其中的值叫做元素，每个元素有一个数值表示的位置，叫做索引。JavaScript的数组是无类型限制的，即数组中的元素可以是任意类型。
+JavaScript的数组是动态的，它们会按需增大或缩小，因此创建数组时无须声明一个固定大小，也无须在大小变化时重新为它们分配空间。
+数组可以是稀疏的，即元素不一定具有连续的索引，中间可能有间隙。每个数组都有length属性。对于非稀疏数组，这个属性保存数组中元素的个数，对于非稀疏数组，这个属性保存数组中的元素个数。
+数组是一种特殊的对象，因此数组索引更像是属性名，只不过碰巧是整数而已。实现通常对数组会进行特别优化，从而让访问数值索引的数组元素明显快于访问常规的对象属性。
+ES6增加了一批新的数组类，通常为定型数组。定型数组具有固定长度和固定的元素类型，数组具有极高的性能，支持对二进制数据的字节级访问。
+</content>
     </entry>
     
      <entry>
