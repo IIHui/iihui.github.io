@@ -4959,8 +4959,12 @@ let o = {x: undefined}; // Property is explicitly set to undefined o.x !== undef
 前面介绍的for/in循环可以遍历特性每个可枚举（自有或继承）属性。对象继承的内置方法是不可枚举的，自己代码添加的属性默认是可枚举的：
 let o = {x: 1, y: 2, z: 3}; console.log(o.propertyIsEnumerable(&amp;#34;toString&amp;#34;)) // false for (let p in o) {  console.log(p); } 为了防止通过for/in枚举继承的属性，可以通过在循环体内添加hasOwnProperty判断：
 let o = {x: 1, y: 2, z: 3}; console.log(o.propertyIsEnumerable(&amp;#34;toString&amp;#34;)) for (let p in o) {  if (o.hasOwnProperty(p)) {  console.log(p);  } } 有4个函数可以用来获取属性名数组：
- Object.keys()返回对象可枚举自有属性名的数组。不包含不可枚举属性、继承属性或符号属性。 Object.getOwnPropertyNames()返回自有属性名，包括不可枚举自由属性，只要名字是字符串。 Object.getOwnPropertySymbols()返回所有自有符号属性，不管是否可枚举的。 Object.getOwnPropertySymbols()返回所有自有属性名，包括枚举和不可枚举，字符串或符号属性。  Property Enumeration Order ES6正式定义了枚举对象的自有属性顺序。Object.keys(), Object.getOwnPropertyNames(), Object.getOwnPropertySym bols(), Reflect.ownKeys(),JSON.stringify()等相关方法都按照下面顺序列出属性：
- 首先列出名字为非负整数字符串属性，按照数值顺序从小到大。这条规则意味着数组和类似数组对象的属性会按照顺序被枚举。 在列出类数组索引的所有属性之后，  </content>
+ Object.keys()返回对象可枚举自有属性名的数组。它不包含不可枚举属性、继承属性或符号属性。 Object.getOwnPropertyNames()返回自有属性名，包括不可枚举自由属性，只要属性名是字符串。 Object.getOwnPropertySymbols()返回所有自有Symbol属性，不管是否可枚举的。 Reflect.ownKeys()返回所有自有属性名，包括枚举和不可枚举，字符串或符号属性。  Property Enumeration Order ES6正式定义了枚举对象的自有属性顺序。Object.keys(), Object.getOwnPropertyNames(), Object.getOwnPropertySymbols(), Reflect.ownKeys(),JSON.stringify()等相关方法都按照下面顺序列出属性：
+ 首先列出名字为非负整数字符串的属性，按照数值顺序从小到大。这条规则意味着数组和类数组对象的属性会按照顺序被枚举。 在列出类数组索引的所有属性后，再列出剩余的名为字符串的属性。这些属性按照他们添加到对象的先后顺序列出。对于在对象字面量中定义的属性，按照它们在字面量中出现的顺序列出。 最后，符号属性将按其添加到对象中的顺序列出来。  Extending Objects 在JavaScript程序中，把一个对象的属性复制到另一个对象是很常见的。使用下面的代码很容易做到：
+let target = {x: 1}, source = {y: 2, z: 3}; for (let key of Object.keys(source)) {  target[key] = source[key]; } console.log(target) 在ES6中，以Object.assign()形式进入了JavaScript的核心。这个函数期望两个以上的参数，它修改并返回第一个参数（目标对象），不会修改第二个以及后续的参数（源目标）。对于每个源目标，会复制可枚举的自有属性（包括符号属性）。
+Object.assign(o, defaults); // overwrites everything in o with defaults o = Object.assign({}, defaults, o); 使用扩展操作符...也可以表达这种对象复制和覆盖操作：
+o = {...defaults, ...o}; 为了避免复制额外的创建和复制，可以重写一版Object.assign()，只复制那些不存在的属性：
+function merge(target, ...sources) {  for (let source of sources) {  for (let key of Object.keys(source)) {  if (!(key in target)) { // This is different than Object.assign()  target[key] = source[key];  }  }  }  return target; }  Object.assign({x: 1}, {x: 2, y: 2}, {y: 3, z: 4}) // =&amp;gt; {x: 2, y: 3, z: 4} merge({x: 1}, {x: 2, y: 2}, {y: 3, z: 4}) // =&amp;gt; {x: 1, y: 2, z: 4} </content>
     </entry>
     
      <entry>
