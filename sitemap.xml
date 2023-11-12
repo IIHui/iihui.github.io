@@ -4982,7 +4982,9 @@ const extension = Symbol(&amp;#34;my extension symbol&amp;#34;); let o = {  [ext
 Spread Operator 在ES2018后，可以在对象字面量中使用扩展操作符...，把已有对象的属性复制到新对象中。
 let position = {x: 0, y: 0}; let dimensions = {width: 100, height: 75}; let rect = {...position, ...dimensions}; rect.x &#43; rect.y &#43; rect.width &#43; rect.height // =&amp;gt; 175 需要注意的是这个...语法经常被称为扩展操作符，但却不是真正意义上的JavaScript操作符。实际上，它是仅在对象字面量中有效的一种特殊语法（在其他的上下文中，三个点有其他用途）。如果扩展对象和被扩展对象有一个同名属性，那么这个属性的值由后面的对象决定：
 let o = { x: 1 }; let p = { x: 0, ...o };  p.x // =&amp;gt; 1: the value from object o overrides the initial value let q = { ...o, x: 2 }; q.x // =&amp;gt; 2: the value 2 overrides the previous value from o. 另外要注意，扩展操作符只扩展对象的自有属性，不扩展任何继承属性：
-let o = Object.create({x: 1}); // o inherits the property x let p = { ...o }; p.x // =&amp;gt; undefined </content>
+let o = Object.create({x: 1}); // o inherits the property x let p = { ...o }; p.x // =&amp;gt; undefined 需要注意的是，虽然扩展操作符只有3个圆点，但它可能给解释器带来巨大工作量。如果对象有n个属性，把这些属性扩展到另一个对象的复杂度可能是$O(n)$。这意味着，如果在循环或递归函数中使用扩展操作符向一个的大对象不断追加属性是，很可能复杂度为$O(n^2)$。
+Shorthand Methods 把函数定义成一个对象的属性时，这个函数被称为方法。在ES6以前，需要像定义对象的其他属性一样，通过函数定义表达式在对象字面量定义一个方法。
+let square = {  area: function () {  return this.side * this.side;  }, side: 10 }; console.log(square.area()) </content>
     </entry>
     
      <entry>
