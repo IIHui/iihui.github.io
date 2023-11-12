@@ -4984,7 +4984,12 @@ let position = {x: 0, y: 0}; let dimensions = {width: 100, height: 75}; let rect
 let o = { x: 1 }; let p = { x: 0, ...o };  p.x // =&amp;gt; 1: the value from object o overrides the initial value let q = { ...o, x: 2 }; q.x // =&amp;gt; 2: the value 2 overrides the previous value from o. 另外要注意，扩展操作符只扩展对象的自有属性，不扩展任何继承属性：
 let o = Object.create({x: 1}); // o inherits the property x let p = { ...o }; p.x // =&amp;gt; undefined 需要注意的是，虽然扩展操作符只有3个圆点，但它可能给解释器带来巨大工作量。如果对象有n个属性，把这些属性扩展到另一个对象的复杂度可能是$O(n)$。这意味着，如果在循环或递归函数中使用扩展操作符向一个的大对象不断追加属性是，很可能复杂度为$O(n^2)$。
 Shorthand Methods 把函数定义成一个对象的属性时，这个函数被称为方法。在ES6以前，需要像定义对象的其他属性一样，通过函数定义表达式在对象字面量定义一个方法。
-let square = {  area: function () {  return this.side * this.side;  }, side: 10 }; console.log(square.area()) </content>
+let square = {  area: function () {  return this.side * this.side;  }, side: 10 }; console.log(square.area()) 但在ES6中，对象字面量语法经过扩展，允许一种省略function关键字和冒号的的简写方法：
+let square = {  area() {  return this.side * this.side;  }, side: 10 }; square.area() // =&amp;gt; 100 Property Getters and Setters 目前讨论的所有属性都是数据属性，一个属性名和普通值。除了数据属性，还支持为对象定义访问器属性，这种属性不是一个值，而是一个或者两个访问器方法，一个获取方法和一个设置方法。
+如果一个属性既有getter方法又有setter方法，它就是一个读写属性。如果只有一个getter方法，它就是一个只读属性。如果只有一个setter方法，那它就是一个只写属性。如果试图读取只写属性，会得到undefined。
+访问器属性可以通过对象字面量的扩展语法定义，getter和setter是ES5引入的，不是ES6才引入的。
+let o = {  // An ordinary data property  dataProp: value,  // An accessor property defined as a pair of functions.  get accessorProp() {  return this.dataProp;  },  set accessorProp(value) {  this.dataProp = value;  } }; 访问属性是通过一个或两个方法来定义的，方法名是属性名。除了前缀get和set，这两个方法看起来就像是用ES6简写的语法定义的普通方法一样。
+let p = {  // x and y are regular read-write data properties.  x: 1.0, y: 1.0,  // r is a read-write accessor property with getter and setter.  // Don&amp;#39;t forget to put a comma after accessor methods.  get r() {  return Math.hypot(this.x, this.y);  }, set r(newvalue) {  let oldvalue = Math.hypot(this.x, this.y);  let ratio = newvalue / oldvalue;  this.x *= ratio;  this.y *= ratio;  },  // theta is a read-only accessor property with getter only.  get theta() {  return Math.atan2(this.y, this.x);  } }; console.log(p.r) console.log(p.theta) </content>
     </entry>
     
      <entry>
