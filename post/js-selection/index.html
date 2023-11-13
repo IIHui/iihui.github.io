@@ -338,7 +338,7 @@ code.has-jax {
 <p>需要注意的是，并不是将每一个换行符都视为分号，只有在不添加隐式分号就无法继续解析代码的情况下，才会将换行符视为分号。更确切地说（除了稍后要介绍的三种例外情况），如果下一个非空格字符不能被解释为当前语句的继续，才会将换行符视为分号。</p>
 <h1 id="chapter-3">Chapter 3</h1>
 <p><code>JavaScript</code>的类型被分为两大类，基础类型和对象类型。特殊值<code>null</code>和<code>undefined</code>也是基础类型值，但它们不是数值，字符串或布尔值。<font color=red>这两个值通常认为是各自特殊类型的唯一成员</font>。</p>
-<p>任何值，只要不是数字、字符串、布尔值、<code>Symbol</code>、<code>null</code>或<code>undefined</code>，就都是对象。对象是属性的集合，每个属性都有一个名称和一个值。普通的对象是<font color=Blue>无序的名字和值的集合</font>，函数和类也是特殊的对象。</p>
+<p>只要不是数字、字符串、布尔值、<code>Symbol</code>、<code>null</code>或<code>undefined</code>，其他值都是对象。对象是属性的集合，每个属性都有一个名称和一个值。普通的对象是<font color=Blue>无序的名字和值的集合</font>，函数和类也是特殊的对象。</p>
 <h2 id="number">Number</h2>
 <p><code>JavaScript</code>中的算术运算在<font color=red>溢出、下溢或除以零的情况下都不会产生错误</font>。当数值运算的结果超过最大可表示的数值（溢出）时，其结果是一个特殊的无穷大值，即<code>Infinity</code>。同样，当负值的绝对值大于最大可表示负数的绝对值时，结果就是负无穷大，即<code>-Infinity</code>。无穷大数值的行为与我们所期望的一样，与任何数值相加、相减、相乘或相除的结果都是无穷大数值（可能符号相反）。</p>
 <p>当数值运算的结果<font color=red>比可表示的最小数字更接近零时，就会出现下溢</font>。在这种情况下，<code>JavaScript</code>返回0。如果负数出现下溢，<code>JavaScript</code>会返回一个被称为<code>negative zero</code>特殊值。这个值与普通的0几乎没有区别，很少的情况需要区别。</p>
@@ -355,19 +355,19 @@ code.has-jax {
 </span></span><span style="display:flex;"><span><span style="color:#66d9ef">NaN</span> <span style="color:#66d9ef">NaN</span> <span style="color:#66d9ef">NaN</span> <span style="color:#66d9ef">NaN</span>
 </span></span><span style="display:flex;"><span><span style="color:#ae81ff">0</span> <span style="color:#f92672">-</span><span style="color:#ae81ff">0</span> <span style="color:#f92672">-</span><span style="color:#ae81ff">0</span> <span style="color:#f92672">-</span><span style="color:#ae81ff">0</span>
 </span></span></code></pre></div><p><code>NaN</code>有一个不同寻常的特性：<font color=red>它不会与任何其它值（包括自己）进行比较</font>。这意味着不能使用<code>x === NAN</code>来判断<code>x</code>的值是否为<code>NaN</code>。相反，必须写成<code>x != x</code>或<code>Number.isNaN(x)</code>。当且仅当<code>x</code>的值与全局常量<code>NaN</code>相同时，这些表达式才会为<code>true</code>。</p>
-<p>全局函数<code>isNaN()</code>和<code>Number.isNaN()</code>是相似的。如果参数为<code>NaN</code>，或者参数为无法转换为数字的非数值，则返回<code>true</code>。如果函数<code>Number.isFinite()</code>的参数是<code>NaN、Infinity</code>或<code>-Infinity</code>以外的数字，则返回<code>true</code>。如果全局函数<code>isFinite()</code>的参数是或可以转换为有限数值，该函数将返回<code>true</code>。</p>
+<p>全局函数<code>isNaN()</code>和<code>Number.isNaN()</code>是相似的。如果参数为<code>NaN</code>，或者参数为无法转换为数字的非数值，则返回<code>true</code>。如果函数<code>Number.isFinite()</code>的参数是<code>NaN、Infinity</code>或<code>-Infinity</code>以外的数字，则返回<code>true</code>。如果全局函数<code>isFinite()</code>的参数是或可以转换为有限数值，该函数返回<code>true</code>。</p>
 <p>负零值也有些不同寻常，<font color=red>它与正零比较是相等的</font>（即使是使用<code>JavaScript</code>的严格相等测试），这意味着这两个值几乎没有区别，除非用作除数时：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span><span style="color:#66d9ef">let</span> zero = <span style="color:#ae81ff">0</span>;
 </span></span><span style="display:flex;"><span><span style="color:#66d9ef">let</span> negz = <span style="color:#f92672">-</span><span style="color:#ae81ff">0</span>;
 </span></span><span style="display:flex;"><span>console.log(zero === negz)
 </span></span><span style="display:flex;"><span>console.log(<span style="color:#ae81ff">1</span> <span style="color:#f92672">/</span> zero === <span style="color:#ae81ff">1</span> <span style="color:#f92672">/</span> negz)
 </span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span><span style="color:#75715e">// 打印的结果</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">// 执行的结果</span>
 </span></span><span style="display:flex;"><span><span style="color:#66d9ef">true</span>
 </span></span><span style="display:flex;"><span><span style="color:#66d9ef">false</span>
 </span></span></code></pre></div><h3 id="binary-floating-point-and-rounding-errors">Binary Floating-Point and Rounding Errors</h3>
-<p>实数有无限多个，但<code>JavaScript</code>的浮点格式只能表示其中有限个数据。也就是说，在 <code>JavaScript</code>中处理实数时，数字的表示往往是实际数字的近似值。</p>
-<p><code>JavaScript</code>使用的<code>IEEE-754</code>浮点表示法是一种二进制表示法。这种表示法可以精确地表示<code>1/2</code>,<code>1/8</code>和<code>1/1024</code>等，但不能精确的表示<code>0.1</code>。虽然<code>JavaScript</code>有足够高的精度，能够让数值非常近似地表示<code>0.1</code>，但无法精确地表示，这可能导致一些问题：</p>
+<p>实数有无限多个，但<code>JavaScript</code>的浮点格式只能表示其中的有限个数。也就是说，在 <code>JavaScript</code>中处理实数时，<font color=LightSeaGreen>数字的表示往往是实际数字的近似值</font>。</p>
+<p><code>JavaScript</code>使用的<code>IEEE-754</code>浮点表示法是一种二进制表示法。这种表示法可以精确地表示<code>1/2</code>,<code>1/8</code>和<code>1/1024</code>等，但不能精确地表示<code>0.1</code>。虽然<code>JavaScript</code>有足够高的精度，能够让数值非常近似地表示<code>0.1</code>，但无法精确地表示，这可能导致一些问题：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span><span style="color:#66d9ef">let</span> x = .<span style="color:#ae81ff">3</span> <span style="color:#f92672">-</span> .<span style="color:#ae81ff">2</span>;
 </span></span><span style="display:flex;"><span><span style="color:#66d9ef">let</span> y = .<span style="color:#ae81ff">2</span> <span style="color:#f92672">-</span> .<span style="color:#ae81ff">1</span>;
 </span></span><span style="display:flex;"><span>console.log(x === y)
@@ -377,12 +377,12 @@ code.has-jax {
 </span></span><span style="display:flex;"><span><span style="color:#66d9ef">false</span>
 </span></span><span style="display:flex;"><span><span style="color:#66d9ef">false</span> <span style="color:#66d9ef">true</span>
 </span></span></code></pre></div><p>上面代码中，由于舍入误差<code>.3</code>和<code>.2</code>近似值之差与<code>.2</code>和<code>.1</code>近似值之差并不相等。但这并不是JavaScript特有的问题，而是所有使用二进制浮点数的编程语言共有的问题。</p>
-<p>此外，请注意上面代码中的<code>x</code>和<code>y</code>值非常接近，也极其接近正确值。计算出来的值几乎可以满足任何需要，但当我们试图比较值是否相等时才会出现问题。</p>
+<p>此外，请注意上面代码中的<code>x</code>和<code>y</code>值非常接近，也极其接近正确值。计算出来的值几乎可以满足任何需要，但当试图比较两个值是否相等时才会出现问题。</p>
 <p>如果使用浮点近似值对我们的程序有问题，<font color=red>可以考虑使用缩放整数</font>。例如，可以使用整数值而不是小数值来处理货币。</p>
 <h3 id="arbitrary-precision-integers-with-bigint">Arbitrary Precision Integers with BigInt</h3>
-<p>在ES2020中定义的JavaScript最新特性之一是一种名为BigInt的新数值类型。顾名思义，BigInt是一种数值类型，其值为整数。</p>
-<p>将<code>BigInt</code>添加到JavaScript中<font color=LightSeaGreen>主要是为了允许表示64位整数</font>，这是与许多其他编程语言和API兼容所必需的。如果需要处理比较大的数字，<code>BigInt</code>值以有数千甚至数百万位。但请注意，<font color=red>BigInt并不适合用于加密，因为它实现时没有考虑防止时序攻击</font>。</p>
-<p><code>BigInt</code>字面量是一串数字后面跟小写字母n。默认情况下，它的基数是10，但可以通过前置0b,0o和0x来表示二进制、八进制和十六进制。</p>
+<p>在ES2020中定义的JavaScript最新特性之一是一种名为<code>BigInt</code>的新数值类型。顾名思义，<code>BigInt</code>是一种数值类型，其值为整数。</p>
+<p>将<code>BigInt</code>添加到JavaScript中<font color=LightSeaGreen>主要是为了允许表示64位整数</font>，这是与许多其他编程语言和API兼容所必需的。如果需要处理比较大的数字，<code>BigInt</code>值以有数千甚至数百万位。但请注意，<font color=red>BigInt并不适合用于加密，因为它实现时没有考虑预防时序攻击</font>。</p>
+<p><code>BigInt</code>字面量是一串数字后面跟小写字母<code>n</code>。默认情况下，字面量的基数是10，但可以通过前置<code>0b,0o和0x</code>来表示二进制、八进制和十六进制。</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-js" data-lang="js"><span style="display:flex;"><span><span style="color:#a6e22e">console</span>.<span style="color:#a6e22e">log</span>(<span style="color:#ae81ff">1234</span><span style="color:#a6e22e">n</span>, <span style="color:#ae81ff">0b11111</span><span style="color:#a6e22e">n</span>, <span style="color:#ae81ff">0o7777</span><span style="color:#a6e22e">n</span>, <span style="color:#ae81ff">0x8000000</span><span style="color:#a6e22e">n</span>)
 </span></span></code></pre></div><p>可以使用<code>BigInt()</code>函数把普通的数值或字符串转换为<code>BigInt</code>值:</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-js" data-lang="js"><span style="display:flex;"><span><span style="color:#a6e22e">console</span>.<span style="color:#a6e22e">log</span>(<span style="color:#a6e22e">BigInt</span>(Number.<span style="color:#a6e22e">MAX_SAFE_INTEGER</span>))
@@ -397,24 +397,25 @@ code.has-jax {
 </span></span><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span><span style="color:#75715e">// 打印的值
 </span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#ae81ff">3000</span><span style="color:#a6e22e">n</span> <span style="color:#ae81ff">6000000</span><span style="color:#a6e22e">n</span> <span style="color:#ae81ff">3</span><span style="color:#a6e22e">n</span> <span style="color:#ae81ff">9</span><span style="color:#a6e22e">n</span>
-</span></span></code></pre></div><p>虽然<code>+, -, *, /, %,</code> 和<code>**</code>运算符号可以用于<code>BigInt</code>，但必须注意的是，不能将<code>BigInt</code>类型的操作数与普通数字操作数混合使用。</p>
+</span></span></code></pre></div><p>虽然<code>+, -, *, /, %,</code> 和<code>**</code>运算符号可以用于<code>BigInt</code>。但必须注意的是，<font color=LightSeaGreen>不能将<code>BigInt</code>类型的操作数与普通数字操作数混合使用</font>。</p>
 <p>但是，比较运算符可以处理混合类型。位操作数通常可以用于<code>BigInt</code>操作数，但<code>Math</code>对象的任何函数都不接收<code>BigInt</code>操作数。</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-js" data-lang="js"><span style="display:flex;"><span><span style="color:#66d9ef">let</span> <span style="color:#a6e22e">timestamp</span> <span style="color:#f92672">=</span> Date.<span style="color:#a6e22e">now</span>(); <span style="color:#75715e">// The current time as a timestamp (a number).
 </span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">let</span> <span style="color:#a6e22e">now</span> <span style="color:#f92672">=</span> <span style="color:#66d9ef">new</span> Date(); <span style="color:#75715e">// The current time as a Date object.
 </span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">let</span> <span style="color:#a6e22e">ms</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">now</span>.<span style="color:#a6e22e">getTime</span>(); <span style="color:#75715e">// Convert to a millisecond timestamp.
 </span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">let</span> <span style="color:#a6e22e">iso</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">now</span>.<span style="color:#a6e22e">toISOString</span>(); <span style="color:#75715e">// Convert to a string in standard format.
 </span></span></span></code></pre></div><h2 id="text">Text</h2>
-<p>表示文本的类型是字符串。字符串是由<code>16bit</code>值组成的不可变的有序序列，每个数值通常代表一个Unicode字符。字符串的长度就是它包含16bit值的个数。JavaScript的字符串（及其数组）使用基于0的索引，第一个16bit值的索引为0，第二个16bit值的索引为1，以此类推。</p>
-<p>空字符串就是长度为0的字符串。 JavaScript<font color=Blue>没有表示字符串中单个元素的特殊类型</font>。若要表示单个16bit值，只需使用长度为1的字符串。</p>
-<p>JavaScript使用UTF-16编码Unicode字符集 ，字符串是无符号16bit值序列。最常见的Unicode字符，它的码点适合16bit，并且可以用字符串的一个元素来表示。若Unicode字符的码点不适合用16bit来表示的，则使用UTF-16规则编码为两个16bit值的序列（称为surrogate pair）。这意味着长度为2（两个16bit值）的JavaScript字符串可能只代表一个Unicode字符：</p>
+<p>表示文本的数据类型是字符串。字符串是由<code>16bit</code>值组成的不可变的有序序列，每个数值通常代表一个Unicode字符。字符串的长度就是它包含<code>16bit</code>值的个数。JavaScript的字符串（及其数组）使用基于0的索引，第一个<code>16bit</code>值的索引为0，第二个<code>16bit</code>值的索引为1，以此类推。</p>
+<p>空字符串就是长度为0的字符串。 JavaScript<font color=Blue>没有表示字符串中单个元素的特殊类型</font>。若要表示单个<code>16bit</code>值，只需使用长度为1的字符串。</p>
+<p>JavaScript使用UTF-16编码Unicode字符集 ，字符串是无符号16bit值序列。最常见的Unicode字符，它的码点适合<code>16bit</code>，并且可以用字符串的一个元素来表示。若Unicode字符的码点不适合用16bit来表示的，则使用UTF-16规则编码为两个<code>16bit</code>值的序列（称为<code>surrogate pair</code>）。这意味着长度为2（两个16bit值）的JavaScript字符串可能只代表一个Unicode字符：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span>euro = <span style="color:#e6db74">&#34;€&#34;</span>;
 </span></span><span style="display:flex;"><span>love = <span style="color:#e6db74">&#34;😍&#34;</span>;
 </span></span><span style="display:flex;"><span>console.log(euro.length, love.length)
 </span></span><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span><span style="color:#75715e">// 打印的值</span>
 </span></span><span style="display:flex;"><span><span style="color:#ae81ff">1</span> <span style="color:#ae81ff">2</span>
-</span></span></code></pre></div><p>JavaScript定义的<font color=red>大多数字符串方法都是对16bit值而非字符进行操作</font>。它们不会特殊处理<code>surrogate pair</code>，不会对字符串进行归一化处理，甚至不会确保字符串是格式正确的UTF-16字符串。</p>
-<p>但是，在ES6中字符串是可迭代的，如果对字符串使用<code>for/of</code>循环或<code>...</code>操作符，迭代的是字符串而不是16bit值。</p>
+</span></span></code></pre></div><p>``
+JavaScript定义的<font color=red>大多数字符串方法都是对<code>16bit</code>值而非字符进行操作</font>。它们不会特殊处理<code>surrogate pair</code>，不会对字符串进行归一化处理，甚至不会确保字符串是格式正确的UTF-16字符串。</p>
+<p>但是，在ES6中字符串是可迭代的，如果对字符串使用<code>for/of</code>循环或<code>...</code>操作符，迭代的是字符串而不是<code>16bit</code>值。</p>
 <h3 id="string-literals">String Literals</h3>
 <p>若要在JavaScript中使用字符串字面量，可以把字符串放到<font color=red>一对匹配的单引号，双引号或者反引号中</font>。双引号和反引号字符可以出现在由单引号包含的字符串，反引号和单引号类似。</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-js" data-lang="js"><span style="display:flex;"><span><span style="color:#e6db74">&#34;&#34;</span> <span style="color:#75715e">// The empty string: it has zero characters 
@@ -500,14 +501,14 @@ code.has-jax {
 </span></span><span style="display:flex;"><span><span style="color:#75715e">// Miscellaneous string methods
 </span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#a6e22e">s</span>.<span style="color:#a6e22e">concat</span>(<span style="color:#e6db74">&#34;!&#34;</span>) <span style="color:#75715e">// =&gt; &#34;Hello, world!&#34;: just use + operator instead 
 </span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#e6db74">&#34;&lt;&gt;&#34;</span>.<span style="color:#a6e22e">repeat</span>(<span style="color:#ae81ff">5</span>) <span style="color:#75715e">// =&gt; &#34;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&lt;&gt;&#34;: concatenate n copies. ES6
-</span></span></span></code></pre></div><p>需要注意的是，<font color=red>字符串在JavaScript中是不可变的</font>。<code>replace()</code>和<code>toUpperCase()</code>等方法<font color=Blue>会返回新字符串</font>，它们不会修改原来的字符串。字符串能够被当作只读数组，可以使用方括号而不是<code>charAt()</code>访问字符串中的单个字符（<code>16bit</code>值）：</p>
+</span></span></span></code></pre></div><p>需要注意的是，<font color=red>字符串在<code>JavaScript</code>中是不可变的</font>。<code>replace()</code>和<code>toUpperCase()</code>等方法<font color=Blue>会返回新的字符串</font>，它们不会修改原来的字符串。字符串能够被当作只读数组，可以使用方括号而不是<code>charAt()</code>访问字符串中的单个字符（<code>16bit</code>值）：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-js" data-lang="js"><span style="display:flex;"><span><span style="color:#66d9ef">let</span> <span style="color:#a6e22e">s</span> <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;hello, world&#34;</span>;
 </span></span><span style="display:flex;"><span><span style="color:#a6e22e">console</span>.<span style="color:#a6e22e">log</span>(<span style="color:#a6e22e">s</span>[<span style="color:#ae81ff">0</span>], <span style="color:#a6e22e">s</span>[<span style="color:#a6e22e">s</span>.<span style="color:#a6e22e">length</span> <span style="color:#f92672">-</span> <span style="color:#ae81ff">1</span>])
 </span></span></code></pre></div><h3 id="template-literals">Template Literals</h3>
 <p>在 ES6及更高版本中，字符串字面量可以用反引号分隔：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-js" data-lang="js"><span style="display:flex;"><span><span style="color:#66d9ef">let</span> <span style="color:#a6e22e">s</span> <span style="color:#f92672">=</span> <span style="color:#e6db74">`hello world`</span>;
 </span></span><span style="display:flex;"><span><span style="color:#a6e22e">console</span>.<span style="color:#a6e22e">log</span>(<span style="color:#a6e22e">s</span>)
-</span></span></code></pre></div><p>这不止是另一种表示字面量的表示方式，更是因为<code>template literals</code>能够包含任意的表达式。反引号字符串字面的最终值是先计算包含的表达式的值，然后将这些表达式计算后的值转换为字符串，最后将这些计算出的字符串与反引号字符串内的字面量相结合而得出：</p>
+</span></span></code></pre></div><p>这不止是另一种表示字面量的方式，更是因为<code>template literals</code>能够包含任意表达式。反引号字符串字面的<font color=LightSeaGreen>最终值是先计算包含的表达式的值，然后将这些表达式计算后的值转换为字符串</font>，最后将这些计算出的字符串与反引号字符串内的字面量相结合而得出：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-js" data-lang="js"><span style="display:flex;"><span><span style="color:#66d9ef">let</span> <span style="color:#a6e22e">name</span> <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;Bill&#34;</span>;
 </span></span><span style="display:flex;"><span><span style="color:#75715e">// greeting == &#34;Hello Bill.&#34;
 </span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">let</span> <span style="color:#a6e22e">greeting</span> <span style="color:#f92672">=</span> <span style="color:#e6db74">`Hello </span><span style="color:#e6db74">${</span><span style="color:#a6e22e">name</span><span style="color:#e6db74">}</span><span style="color:#e6db74">.`</span>;
