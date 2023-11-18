@@ -5010,8 +5010,12 @@ let letters = [...&amp;#34;hello world&amp;#34;]; console.log([...new Set(letter
 let a = new Array(); 这种方式创建了一个空数组，其中没有任何元素，等同于字面量[]。第二种方式是传入一个数值参数，以指定数组的长度：
 let a = new Array(10); 这种方式创建了一个指定长度的数组。如果事先知道需要多少元素，Array()构造函数的这种形式可用于预分配数组。需要注意的是，数组中不会存储任何值，甚至没有为数组定义数组索引属性 &amp;ldquo;0&amp;rdquo;、&amp;ldquo;1 &amp;ldquo;等。
 第3种方式是为数组明确指定两个或多个数组元素或一个非数字元素。在这种方式下，构造器的参数成为了新数组的中的元素：
-let a1 = new Array(5, 4, 3, 2, 1, &amp;#34;testing, testing&amp;#34;); let a2 = new Array(&amp;#34;element&amp;#34;) console.log(a1, a2) Array.of() 当Array()构造器函数使用一个数字参数调用时，这个数字表示数组长度。但当多于一个参数调用时，它将这些传入的参数当成是数组元素。
-</content>
+let a1 = new Array(5, 4, 3, 2, 1, &amp;#34;testing, testing&amp;#34;); let a2 = new Array(&amp;#34;element&amp;#34;) console.log(a1, a2) Array.of() 当Array()构造器函数使用一个数字参数调用时，这个数字表示数组长度。但当多于一个参数调用时，它将这些传入的参数当成是数组元素。这意味着Array()构造器不能创建只包含单个数值的数组。
+在ES6，函数Array.of()能够解决这个问题，它是一个工厂方法，以它的参数值（不管有多少个）创建和返回一个新的数组：
+Array.of() // =&amp;gt; []; returns empty array with no arguments Array.of(10)// =&amp;gt; [10]; can create arrays with a single numeric argument Array.of(1, 2, 3) // =&amp;gt; [1, 2, 3] Array.from() 另一个数组工厂方法是ES6引入的，它期望一个可迭代的或类数组的对象作为它的第一个参数并返回一个新的数组，这个新的数组包含了传入的对象的元素。对于可迭代的参数，Array.from(iterable)的作用如同展开操作符[...iterable]。
+let copy = Array.from(original); Array.from()同样重要，因为它定义了一种为类数组对象创建真正数组副本的方法。类数组对象是具有数字长度属性的非数组对象，其存储的值的属性名称恰好是整数。在使用客户端JavaScript时，某些网络浏览器方法的返回值是类数组对象，如果先将它们转换为真数组，处理起来会更容易：
+let truearray = Array.from(arraylike); 工厂方法Array.from()接受第二个可选的参数，如果传递一个函数作为第二个参数，那么在构建新数组时，原对象中的每个元素都将传递给这个指定的函数，函数的返回值将存储在数组中，而不是原始值。(这与本章稍后将介绍的数组map()方法非常相似，但在数组创建过程中执行映射比创建数组后再映射到另一个新数组更有效）。
+Reading and Writing Array Elements </content>
     </entry>
     
      <entry>
