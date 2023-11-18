@@ -241,13 +241,13 @@ code.has-jax {
     <i class="fa fa-file-word-o"></i>
 </span>
 <span class="post-meta-item-text">字数: </span>
-<span class="leancloud-visitors-count">25078</span>
+<span class="leancloud-visitors-count">26319</span>
 &nbsp; | &nbsp;
 <span class="post-meta-item-icon">
     <i class="fa fa-coffee"></i>
 </span>
 <span class="post-meta-item-text">阅读: </span>
-<span class="leancloud-visitors-count">51 分钟</span>
+<span class="leancloud-visitors-count">53 分钟</span>
 </span>
       </div>
     </header>
@@ -1376,7 +1376,51 @@ JavaScript定义的<font color=red>大多数字符串方法都是对<code>16bit<
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-js" data-lang="js"><span style="display:flex;"><span><span style="color:#a6e22e">a</span>[<span style="color:#f92672">-</span><span style="color:#ae81ff">1.23</span>] <span style="color:#f92672">=</span> <span style="color:#66d9ef">true</span>; <span style="color:#75715e">// This creates a property named &#34;-1.23&#34;
 </span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#a6e22e">a</span>[<span style="color:#e6db74">&#34;1000&#34;</span>] <span style="color:#f92672">=</span> <span style="color:#ae81ff">0</span>; <span style="color:#75715e">// This the 1001st element of the array
 </span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#a6e22e">a</span>[<span style="color:#ae81ff">1.000</span>] <span style="color:#f92672">=</span> <span style="color:#ae81ff">1</span>;  <span style="color:#75715e">// Array index 1. Same as a[1] = 1;
-</span></span></span></code></pre></div><p>事实上，数组索引只是对象属性名称的一种特殊类型，这意味着 JavaScript 数组没有 &ldquo;越界 &ldquo;错误的概念。当你尝试查询任何对象的一个不存在的属性时，不会出现错误，只会出现未定义的结果。这一点对于数组和对象都是一样的：</p>
+</span></span></span></code></pre></div><p>事实上，数组索引只是对象属性名称的一种特殊类型，这意味着数组没有&quot;越界&quot;错误的概念。当尝试查询任何对象的一个不存在的属性时，不会出现错误，只会返回<code>undefined</code>。这一点对于数组和对象都是一样的：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-js" data-lang="js"><span style="display:flex;"><span><span style="color:#66d9ef">let</span> <span style="color:#a6e22e">a</span> <span style="color:#f92672">=</span> [<span style="color:#66d9ef">true</span>, <span style="color:#66d9ef">false</span>]; <span style="color:#75715e">// This array has elements at indexes 0 and 1
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#a6e22e">a</span>[<span style="color:#ae81ff">2</span>] <span style="color:#75715e">// =&gt; undefined; no element at this index.
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#a6e22e">a</span>[<span style="color:#f92672">-</span><span style="color:#ae81ff">1</span>] <span style="color:#75715e">// =&gt; undefined; no property with this name.
+</span></span></span></code></pre></div><h2 id="sparse-arrays">Sparse Arrays</h2>
+<p>稀疏数组是指元素没有从0开始的连续索引的数组。 通常，数组的<code>length</code>属性指定数组中元素的个数。如果数组是稀疏的，则<code>length</code>属性的值会大于元素个数。稀疏数组可以通过<code>Array()</code>构造函数创建，也可以通过赋值给一个大于当前数组长度的数组索引来创建。</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-js" data-lang="js"><span style="display:flex;"><span><span style="color:#66d9ef">let</span> <span style="color:#a6e22e">a</span> <span style="color:#f92672">=</span> <span style="color:#66d9ef">new</span> Array(<span style="color:#ae81ff">5</span>); <span style="color:#75715e">// No elements, but a.length is 5.
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#a6e22e">b</span> <span style="color:#f92672">=</span> []; <span style="color:#75715e">// Create an array with no elements and length = 0.
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#a6e22e">b</span>[<span style="color:#ae81ff">1000</span>] <span style="color:#f92672">=</span> <span style="color:#ae81ff">0</span>; <span style="color:#75715e">// Assignment adds one element but sets length to 1001.
+</span></span></span></code></pre></div><p>与密集数组相比，足够稀疏的数组通常以更慢、更节省内存的方式实现，在这样的数组中查找元素所需的时间与普通对象属性查找的时间差不多。</p>
+<p>需要注意的是，在数组字面量中省略一个值（使用连续重复的逗号，例如<code>[1,,3]</code>），得到的数组是稀疏的，省略的元素根本不存在的:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-js" data-lang="js"><span style="display:flex;"><span><span style="color:#66d9ef">let</span> <span style="color:#a6e22e">a1</span> <span style="color:#f92672">=</span> [,];
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">let</span> <span style="color:#a6e22e">a2</span> <span style="color:#f92672">=</span> [<span style="color:#66d9ef">undefined</span>];
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">console</span>.<span style="color:#a6e22e">log</span>(<span style="color:#ae81ff">0</span> <span style="color:#66d9ef">in</span> <span style="color:#a6e22e">a1</span>, <span style="color:#ae81ff">0</span> <span style="color:#66d9ef">in</span> <span style="color:#a6e22e">a2</span>) <span style="color:#75715e">// false true
+</span></span></span></code></pre></div><p>了解稀疏数组是理解JavaScript数组真正本质的重要部分。不过，在实际工作中，使用的大多数数组都不是稀疏数组。而且，如果确实需要使用稀疏数组，代码中很可能会像处理<code>undefined</code>元素的非稀疏数组一样处理它。</p>
+<h2 id="array-length">Array Length</h2>
+<p>每个数组都有一个<code>length</code>属性，正是这个属性使得数组和普通的对象不同。对于密集数组（即非稀疏数组），<code>length</code>属性指定数组中的元素个数，其值比数组中的最高索引多一个：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-js" data-lang="js"><span style="display:flex;"><span><span style="color:#a6e22e">console</span>.<span style="color:#a6e22e">log</span>([].<span style="color:#a6e22e">length</span>, [<span style="color:#e6db74">&#34;a&#34;</span>, <span style="color:#e6db74">&#34;b&#34;</span>, <span style="color:#e6db74">&#34;c&#34;</span>].<span style="color:#a6e22e">length</span>)
+</span></span></code></pre></div><p>当一个数组是稀疏数组，属性<code>length</code>的值大于数组中的元素个数。一个数组（无论是否稀疏）永远不会有索引大于或等于长度的元素。为了保持这种不变性，数组有两种特殊的行为。第一种行为如上所述：如果为索引i大于或等于数组当前长度的数组元素赋值，则<code>length</code>属性的值将被设置为<code>i+1</code>。</p>
+<p>数组为保持长度不变而实施的第二个特殊行为是，如果将length属性设置为一个小于其当前值的非负整数n，则任何索引大于或等于n的数组元素都会从数组中删除：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-js" data-lang="js"><span style="display:flex;"><span><span style="color:#a6e22e">a</span> <span style="color:#f92672">=</span> [<span style="color:#ae81ff">1</span>,<span style="color:#ae81ff">2</span>,<span style="color:#ae81ff">3</span>,<span style="color:#ae81ff">4</span>,<span style="color:#ae81ff">5</span>]; <span style="color:#75715e">// Start with a 5-element array.
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#a6e22e">a</span>.<span style="color:#a6e22e">length</span> <span style="color:#f92672">=</span> <span style="color:#ae81ff">3</span>; <span style="color:#75715e">// a is now [1,2,3].
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#a6e22e">console</span>.<span style="color:#a6e22e">log</span>(<span style="color:#a6e22e">a</span>) <span style="color:#75715e">// [1,2,3]
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#a6e22e">a</span>.<span style="color:#a6e22e">length</span> <span style="color:#f92672">=</span> <span style="color:#ae81ff">0</span>; <span style="color:#75715e">// Delete all elements. a is [].
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#a6e22e">console</span>.<span style="color:#a6e22e">log</span>(<span style="color:#a6e22e">a</span>) <span style="color:#75715e">// []
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#a6e22e">a</span>.<span style="color:#a6e22e">length</span> <span style="color:#f92672">=</span> <span style="color:#ae81ff">5</span>; <span style="color:#75715e">// Length is 5, but no elements, like new Array(5)
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#a6e22e">console</span>.<span style="color:#a6e22e">log</span>(<span style="color:#a6e22e">a</span>) <span style="color:#75715e">// []
+</span></span></span></code></pre></div><h2 id="adding-and-deleting-array-elements">Adding and Deleting Array Elements</h2>
+<p>添加元素最简单的方式是赋值给新的索引：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-js" data-lang="js"><span style="display:flex;"><span><span style="color:#66d9ef">let</span> <span style="color:#a6e22e">a</span> <span style="color:#f92672">=</span> []; <span style="color:#75715e">// Start with an empty array.
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#a6e22e">a</span>[<span style="color:#ae81ff">0</span>] <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;zero&#34;</span>;
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">a</span>[<span style="color:#ae81ff">1</span>] <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;one&#34;</span>;
+</span></span></code></pre></div><p>也可以使用<code>push</code>方法添加一个或多个值到数组尾部：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-js" data-lang="js"><span style="display:flex;"><span><span style="color:#66d9ef">let</span> <span style="color:#a6e22e">a</span> <span style="color:#f92672">=</span> [];
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">a</span>.<span style="color:#a6e22e">push</span>(<span style="color:#e6db74">&#34;zero&#34;</span>)
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">a</span>.<span style="color:#a6e22e">push</span>(<span style="color:#e6db74">&#34;one&#34;</span>, <span style="color:#e6db74">&#34;two&#34;</span>)
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">console</span>.<span style="color:#a6e22e">log</span>(<span style="color:#a6e22e">a</span>)
+</span></span></code></pre></div><p><code>push</code>一个值到数组a中，相当于赋值到<code>a[a.length]</code>。也可以使用<code>unshift()</code>方法将值插入到数组开头，移动已经存在的元素到更高的索引。</p>
+<p>方法<code>pop()</code>移除数组的最后一个元素，并返回它，并将数组元素长度减1。相似地，<code>shift()</code>方法移除第一个元素，并将数组长度减1，其它元素往前移动。</p>
+<p>可以使用操作符<code>delete</code>删除数组中的元素，既不会改变数组长度，也不会将索引较高的元素向下移动以填补删除属性留下的空隙。如果从数组中删除一个元素，数组就会变得稀疏。</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-js" data-lang="js"><span style="display:flex;"><span><span style="color:#66d9ef">let</span> <span style="color:#a6e22e">a</span> <span style="color:#f92672">=</span> [<span style="color:#ae81ff">1</span>,<span style="color:#ae81ff">2</span>,<span style="color:#ae81ff">3</span>];
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">delete</span> <span style="color:#a6e22e">a</span>[<span style="color:#ae81ff">2</span>]; <span style="color:#75715e">// a now has no element at index 2
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#ae81ff">2</span> <span style="color:#66d9ef">in</span> <span style="color:#a6e22e">a</span>  <span style="color:#75715e">// =&gt; false: no array index 2 is defined
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#a6e22e">a</span>.<span style="color:#a6e22e">length</span> <span style="color:#75715e">// =&gt; 3: delete does not affect array length
+</span></span></span></code></pre></div><p>如上所述，只需将length属性设置为所需的新长度，就可以从数组末尾删除元素。最后，<code>splice()</code>是插入、删除或替换数组元素的通用方法。它可以改变长度属性，并根据需要将数组元素移到更高或更低的索引中。</p>
 
     </div>
     <footer class="post-footer">
@@ -1648,6 +1692,9 @@ JavaScript定义的<font color=red>大多数字符串方法都是对<code>16bit<
           </ul>
         </li>
         <li><a href="#reading-and-writing-array-elements">Reading and Writing Array Elements</a></li>
+        <li><a href="#sparse-arrays">Sparse Arrays</a></li>
+        <li><a href="#array-length">Array Length</a></li>
+        <li><a href="#adding-and-deleting-array-elements">Adding and Deleting Array Elements</a></li>
       </ul>
     </li>
   </ul>
