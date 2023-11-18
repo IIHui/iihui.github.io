@@ -5018,7 +5018,10 @@ let truearray = Array.from(arraylike); 工厂方法Array.from()接受第二个�
 Reading and Writing Array Elements 访问数组中的某个元素使用操作符[]，数组的引用应出现在方括号左侧。括号内应是一个非负整数值的任意表达式。可以使用这种语法读取和写入数组元素的值。因此，以下语句都是合法的语句：
 let a = [&amp;#34;world&amp;#34;]; let value = a[0]; a[1] = 3.14; let i = 2; a[i] = 3; a[i &#43; 1] = &amp;#34;hello&amp;#34;; a[a[i]] = a[0]; 数组的特殊之处在于，当使用的属性名是小于$2^{32}-1$的非负整数时，数组会自动维护长度属性的值。例如，在上面的示例中，创建了一个只有一个元素的数组a。然后在索引1、2 和 3处赋值，数组的长度属性也会随之改变:
 a.length // =&amp;gt; 4 数组是特殊类型的对象。访问数组元素时使用的方括号与访问对象属性时使用的方括号作用相同。JavaScript会将指定的数字数组索引转换为字符串，然后使用该字符串作为属性名称。将索引从数字转换为字符串并没有什么特别之处，普通对象也可以这样做：
-let o2 = {};// Create a plain object o2[1] = &amp;#34;one&amp;#34;; // Index it with an integer o2[&amp;#34;1&amp;#34;] // =&amp;gt; &amp;#34;one&amp;#34;; numeric and string property names are the same console.log(o2[&amp;#34;1&amp;#34;]) // one </content>
+let o2 = {};// Create a plain object o2[1] = &amp;#34;one&amp;#34;; // Index it with an integer o2[&amp;#34;1&amp;#34;] // =&amp;gt; &amp;#34;one&amp;#34;; numeric and string property names are the same console.log(o2[&amp;#34;1&amp;#34;]) // one 明确区分数组索引和对象属性名是很有帮助的。所有索引都是属性名，但只有0到$2^{32}-2$之间的整数属性名才是索引。所有数组都是对象，可以在数组上创建任意名称的属性。但是，如果使用的属性是数组索引，那么数组就会根据需要更新其长度属性。
+需要注意的是，可以使用负数或非整数的数字为数组建立索引。这样做时，数字会被转换为字符串，字符串会被用作属性名称。由于转换成字符串后该名称不是非负整数，因此会被视为常规对象属性，而不是数组索引。同样，如果使用一个恰好是非负整数的字符串作为数组索引，它将被视为数组索引，而不是对象属性。使用与整数相同的浮点数也是如此：
+a[-1.23] = true; // This creates a property named &amp;#34;-1.23&amp;#34; a[&amp;#34;1000&amp;#34;] = 0; // This the 1001st element of the array a[1.000] = 1; // Array index 1. Same as a[1] = 1; 事实上，数组索引只是对象属性名称的一种特殊类型，这意味着 JavaScript 数组没有 &amp;ldquo;越界 &amp;ldquo;错误的概念。当你尝试查询任何对象的一个不存在的属性时，不会出现错误，只会出现未定义的结果。这一点对于数组和对象都是一样的：
+</content>
     </entry>
     
      <entry>
