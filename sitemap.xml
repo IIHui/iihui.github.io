@@ -5053,10 +5053,23 @@ let data = [1, 2, 3, 4, 5], sum = 0; // Compute the sum of the elements of the a
 let a = [1, 2, 3]; console.log(a.map(x =&amp;gt; x * x)) // [1, 4, 9] filter()方法返回一个数组，该数组包含调用它的数组的子数组。传给这个方法的函数应该是断言函数，即返回true和false的函数。这个函数于传给forEach和map的函数一样被调用。如果函数返回true或返回的值能转换true，则传给这个函数的元素就是filter()，最终返回的子数组的成员。
 let a = [5, 4, 3, 2, 1]; a.filter(x =&amp;gt; x &amp;lt; 3) // =&amp;gt; [2, 1]; values less than 3 a.filter((x, i) =&amp;gt; i % 2 === 0) // =&amp;gt; [5, 3, 1]; every other value 需要注意的是，filter会跳过稀疏数组中缺失的元素，它返回的数组始终是稠密的。因此，可以使用filter方法清理掉稀疏数组中的空隙。
 let dense = sparse.filter(() =&amp;gt; true); 如果既想清理空隙，又想删除值为undefined和null的元素，则可以像下面这样写：
-a = a.filter(x =&amp;gt; x !== undefined &amp;amp;&amp;amp; x !== null); find()和findIndex()方法与filter()类似，表现在它们都遍历数组，寻找断言函数返回真值的元素。但与filter()不同的是，这两个方法会在断言函数找到第一个元素时停止。find()返回匹配的元素，findIndex()返回匹配元素的索引。如果没有找到匹配的元素，则find()返回undefinded，而findIndex返回-1。
+a = a.filter(x =&amp;gt; x !== undefined &amp;amp;&amp;amp; x !== null); 方法find()和findIndex()与filter()类似，表现在它们都遍历数组，寻找断言函数返回真值的元素。但与filter()不同的是，这两个方法会在断言函数找到第一个元素时就停止。find()返回匹配的元素，findIndex()返回匹配元素的索引。如果没有找到匹配的元素，则find()返回undefinded，而findIndex返回-1。
 every()和some()方法是数组断言方法，即它们会对数组元素调用传入的断言函数，最后返回true或false。every方法与数学上的全程量词类似，它只在断言函数对数组的所有元素都返回true或true。
 let a = [1, 2, 3, 4, 5]; a.every(x =&amp;gt; x &amp;lt; 10) a.every(x =&amp;gt; x % 2 === 0) // =&amp;gt; false: not all values are even. 方法some()类似于数学上的存在量词，只要数组元素中有一个让断言函数返回true，它就返回true，但必须数组中的所有元素对断言函数都返回false才返回false。
-let a = [1, 2, 3, 4, 5]; a.some(x =&amp;gt; x % 2 === 0) // =&amp;gt; true; a has some even numbers. a.some(isNaN) // =&amp;gt; false; a has no non-numbers. </content>
+let a = [1, 2, 3, 4, 5]; a.some(x =&amp;gt; x % 2 === 0) // =&amp;gt; true; a has some even numbers. a.some(isNaN) // =&amp;gt; false; a has no non-numbers. reduce()和reduceRight()方法使用我们指定的函数归并数组元素，最终产生一个值。在函数编程中，归并是一个常见操作，有时候也被称为inject或fold。
+let a1 = a.reduce((x, y) =&amp;gt; x &#43; y, 0) let a2 = a.reduce((x, y) =&amp;gt; x * y, 1) let a3 = a.reduce((x, y) =&amp;gt; (x &amp;gt; y) ? x : y) console.log(a1, a2, a3) // 15 120 5 reduce()接收两个参数，第一个参数是执行归并操作的函数。这个归并函数的任务就是把两个值归并或组合为一个值并返回这个值。第二个参数是可选的，是传递给归并函数的初始值。
+在reduce()中使用的函数与forEach()和map()中使用的函数不同。我们熟悉的值、索引和数组本身在这里作为第二、第三和第四个参数。
+如果不指定初始值调用时，reduce()会使用数组的第一个元素作为初始值。这意味着首次调用归并函数将以数组的第一个和第二个元素作为其第一和第二个参数。
+如果不传初始值参数，在空数组上调用reduce()会导致TypeError。如果调用它时只有一个值，比如用只包含一个元素的数组调用且不传初始值，或者用空数组调用但传了初始值，则reudce()直接返回这个值，不会调用归并函数。
+reduceRight()和reduce()类似，只不过是从高索引向低索引（从右向左）处理数组。如果归并操作具有从右向左的结合性，那就要考虑使用reduceRight()。
+Flattening arrays with flat() and flatMap() 在ES2019中，flat()方法用于创建并返回一个新数组，这个新数组包含与它调用flat()的数组相同的元素，只不过其中任何本身也是数组元素被打平，填充到返回的数组中。
+[1, [2, 3]].flat(); [1, [2, [3]]].flat(); 在不传参数调用时，flat()会打平第一级嵌套。原始数组中本身也是数组的元素会被打平，但打平后的元素如果还是数组则不会再打平。如果想打平更多层级，需要给flat()传一个数值参数：
+let a = [1, [2, [3, [4]]] console.log(a.flat()) // =&amp;gt; [1, 2, [3, [4]]] console.log(a.flat(1)) // =&amp;gt; [1, 2, [3, [4]]] console.log(a.flat(2)) // =&amp;gt; [1, 2, 3, [4]] console.log(a.flat(3)) // =&amp;gt; [1, 2, 3, 4] console.log(a.flat(4)) // =&amp;gt; [1, 2, 3, 4] flatMap()方法与map()方法相似，只不过返回的数组会自动被打平，就像传给了flat()一样。换句话说，调用a.flatMap(f)等同于a.map(f).flat()，但效率较高。
+方法concat()创建并返回一个新数组，新数组包含调用concat()方法的数组的元素，以及传递给concat()的参数。如果这些参数中有数组，则拼接的是它们的元素而非数组本身。
+let a = [1, 2, 3]; console.log(a.concat(4, 5)) // [1,2,3,4,5] console.log(a.concat([4, 5], [6, 7])) // [1,2,3,4,5,6,7] console.log(a.concat(4, [5, [6, 7]])) // [1,2,3,4,5, [6,7]] Chapter 8 JavaScript中的函数是对象，可以把函数赋值给变量，然后再传递给其他函数。因为函数是对象，所以可以在函数上设置属性，甚至调用函数的方法。
+函数可以嵌套定义在其它函数里，内嵌的函数可以访问定义在函数作用域的任何变量。这意味着，函数是闭包，基于闭包可以实现重要且强大的编辑技巧。
+Defining Functions 函数声明是由function关键字后面跟着如下组件构成。
+ 命名函数的标识符 一对圆括号 一对花括号  </content>
     </entry>
     
      <entry>
