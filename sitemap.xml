@@ -4990,23 +4990,23 @@ let square = {  area() {  return this.side * this.side;  }, side: 10 }; square.a
 访问器属性可以通过对象字面量的扩展语法定义，getter和setter是ES5引入的，不是ES6才引入的。
 let o = {  // An ordinary data property  dataProp: value,  // An accessor property defined as a pair of functions.  get accessorProp() {  return this.dataProp;  },  set accessorProp(value) {  this.dataProp = value;  } }; 访问属性是通过一个或两个方法来定义的，方法名是属性名。除了前缀get和set，这两个方法看起来就像是用ES6简写的语法定义的普通方法一样。
 let p = {  // x and y are regular read-write data properties.  x: 1.0, y: 1.0,  // r is a read-write accessor property with getter and setter.  // Don&amp;#39;t forget to put a comma after accessor methods.  get r() {  return Math.hypot(this.x, this.y);  },  set r(newvalue) {  let oldvalue = Math.hypot(this.x, this.y);  let ratio = newvalue / oldvalue;  this.x *= ratio;  this.y *= ratio;  },  // theta is a read-only accessor property with getter only.  get theta() {  return Math.atan2(this.y, this.x);  } }; console.log(p.r) // 1.4142135623730951 console.log(p.theta) // 0.7853981633974483 上面示例中使用了this关键字，表示当前对象。访问属性也是可以被继承的，可以把上面定义的对象p作为其他对象的原型。
-// A new object that inherits getters and setters let q = Object.create(p); q.x = 3; // Create q&amp;#39;s own data properties q.y = 4; console.log(q.r) // 5.0 console.log(q.theta) // 0.9272952180016122 Chapter 7 数组是值的有序集合，其中的值叫做元素，每个元素有一个数值表示的位置，叫做索引。JavaScript的数组是无类型限制的，即数组中的元素可以是任意类型。
-JavaScript的数组是动态的，它们会按需增大或缩小，因此创建数组时无须声明一个固定大小，也无须在大小变化时重新为它们分配空间。
-数组可以是稀疏的，即元素不一定具有连续的索引，中间可能有间隙。每个数组都有length属性。对于非稀疏数组，这个属性保存数组中元素的个数，对于非稀疏数组，这个属性保存数组中的元素个数。
-数组是一种特殊的对象，因此数组索引更像是属性名，只不过碰巧是整数而已。实现通常对数组会进行特别优化，从而让访问数值索引的数组元素明显快于访问常规的对象属性。
-ES6增加了一批新的数组类，通常为定型数组。定型数组具有固定长度和固定的元素类型，数组具有极高的性能，支持对二进制数据的字节级访问。
+// A new object that inherits getters and setters let q = Object.create(p); q.x = 3; // Create q&amp;#39;s own data properties q.y = 4; console.log(q.r) // 5.0 console.log(q.theta) // 0.9272952180016122 Chapter 7 数组是值的有序集合，其中的值叫做元素，每个元素有一个数值表示的位置，叫做索引。JavaScript的数组是无类型限制的，即同一个数组中的元素可以是任意类型，即同一个数组中的元素可能有不同的类型。
+JavaScript的数组是动态的，它们会按需增长或减少，因此创建数组时无须声明一个固定大小，也无须在大小变化时重新为它们分配空间。
+数组可以是稀疏的，即数组中的元素不一定具有连续的索引，中间可能有间隙。每个数组都有length属性。对于非稀疏数组，这个属性保存数组中元素的个数，对于稀疏数组，这个属性值大于数组中元素个数。
+数组是一种特殊的对象，数组索引更像是属性名，只不过恰巧是整数而已。实现通常对数组会进行特别优化，从而让访问数值索引的数组元素明显快于访问常规的对象属性。
+ES6增加了一批新的数组类，被称为定型数组。定型数组具有固定长度和固定的元素类型，数组具有极高的性能，支持对二进制数据的字节级访问。
 Creating Arrays 创建数组有以下几种方式：
- 数组字面量。 可迭代对象使用扩展操作符。 Array()构造器。 工厂方法Array.of()和Array.from()  Array Literals 目前为止最简单的创建数组的方式是数组字面量。数组字面量只是在方括号中简单地以逗号分隔每个元素。
-let emptyArr = []; // An array with no elements let primes = [2, 3, 5, 7, 11]; // An array with 5 numeric elements let misc = [1.1, true, &amp;#34;a&amp;#34;,]; // 3 elements of various types &#43; trailing comma console.log(emptyArr, primes, misc,) 数组字面量中的值没有必须是常量，可以是任意的表达式：
+ 数组字面量。 可迭代对象使用展开操作符。 Array()构造器。 工厂方法Array.of()和Array.from()  Array Literals 目前为止最简单的创建数组的方式是数组字面量。数组字面量只是在方括号中简单地以逗号分隔每个元素。
+let emptyArr = []; // An array with no elements let primes = [2, 3, 5, 7, 11]; // An array with 5 numeric elements let misc = [1.1, true, &amp;#34;a&amp;#34;,]; // 3 elements of various types &#43; trailing comma console.log(emptyArr, primes, misc,) 数组字面量中的元素没有必须是常量，可以是任意的表达式：
 let base = 1024; let table = [base, base &#43; 1, base &#43; 2, base &#43; 3]; console.log(table) 数组字面量可以包含对象字面量或其它数组字面量：
-let b = [[1, {x: 1, y: 2}], [2, {x: 3, y: 4}]]; console.log(b) 如果一个数组字面量在一行中包含多个逗号，且中间没有值，那么这个数组就是稀疏的。省略了值的数组元素并不存在，在查询时会显示为未定义：
-let count = [1, , 3]; // Elements at indexes 0 and 2. No element at index 1 let undefs = [, ,]; // An array with no elements but a length of 2 console.log(count,undefs[0])  // 打印的值 Array(3) [1, 3] undefined 数组字面量语法允许可选的尾逗号，因此[,,]字面量的长度为2，而不是3。
+let b = [[1, {x: 1, y: 2}], [2, {x: 3, y: 4}]]; console.log(b) 如果一个数组字面量在一行中包含多个逗号，且中间没有值，那么这个数组就是稀疏的。省略了值的数组元素并不存在，在查询时会显示为undefined：
+let count = [1, , 3]; // Elements at indexes 0 and 2. No element at index 1 let undefs = [, ,]; // An array with no elements but a length of 2 console.log(count,undefs[0])  // 打印的值 Array(3) [1, 3] undefined 数组字面量允许可选的尾逗号，因此[,,]字面量的长度为2，而不是3。
 The Spread Operator 从ES6开始，可以使用展开操作符...将一个数组的元素包含在一个数组字面量中：
-let a = [1, 2, 3]; let b = [0, ...a, 4]; // b == [0, 1, 2, 3, 4] console.log(a, b) 操作符3个点展开数组a，它的元素成为正在创建的数组字面量中的元素。这就好比...a被数组a中的所有元素所取代，并作为外层数组字面量的一部分列出。请注意，虽然我们将这三个点称为展开运算符，但它并不是一个真正的运算符，因为它只能用于数组字面量和函数调用。
-展开操作符是一种方便的方式创建一个数组的副本：
-let original = [1, 2, 3]; let copy = [...original]; copy[0] = 0; // Modifying the copy does not change the original console.log(original[0], copy[0]) // 1 0 展开操作符对于所有可迭代的对象都是可用的。字符串是可迭代的，因此可以使用展开操作符将字符串单个字符数组：
-let digits = [...&amp;#34;0123456789ABCDEF&amp;#34;]; console.log(digits) // [&amp;#34;0&amp;#34;, &amp;#34;1&amp;#34;, &amp;#34;2&amp;#34;, &amp;#34;3&amp;#34;, &amp;#34;4&amp;#34;, &amp;#34;5&amp;#34;, &amp;#34;6&amp;#34;, &amp;#34;7&amp;#34;, &amp;#34;8&amp;#34;, &amp;#34;9&amp;#34;, &amp;#34;A&amp;#34;, &amp;#34;B&amp;#34;, &amp;#34;C&amp;#34;, &amp;#34;D&amp;#34;, &amp;#34;E&amp;#34;, &amp;#34;F&amp;#34;] 集合对象是可迭代的，因此一种简单的方式移除数组中的重复元素是将数组先转换为集合，然后使用展开操作符将集合转换回数组：
-let letters = [...&amp;#34;hello world&amp;#34;]; console.log([...new Set(letters)]) // [&amp;#34;h&amp;#34;, &amp;#34;e&amp;#34;, &amp;#34;l&amp;#34;, &amp;#34;o&amp;#34;, &amp;#34; &amp;#34;, &amp;#34;w&amp;#34;, &amp;#34;r&amp;#34;, &amp;#34;d&amp;#34;] The Array() Constructor 另一种创建数组的方式是使用Array()构造器，可以以3种不同的方式调用构造器。第一种方式是调用的时候不传参数：
+let aa = [1, 2, 3]; let ab = [0, ...aa, 4]; // b === [0, 1, 2, 3, 4] console.log(aa, ab, aa.length, ab.length)  // 打印的值 [1, 2, 3] [0, 1, 2, 3, 4] 3 5 上面的操作符3个点展开数组a，它的所有元素成为正在创建的数组字面量中的元素。也就是...a被数组a中的所有元素所取代，并作为外层数组字面量的一部分列出。
+请注意，虽然我们将这3个点称为展开运算符，但它并不是一个真正的运算符，因为它只能用于数组字面量和函数调用。展开操作符是一种便捷的方式创建数组的副本：
+let original = [1, 2, 3]; let copy = [...original]; copy[0] = 0; // Modifying the copy does not change the original console.log(original[0], copy[0]) // 1 0 实际上，展开操作符对于所有可迭代的对象都是可用的。字符串是可迭代的，因此可以使用展开操作符将字符串转换为单个字符数组：
+let digits = [...&amp;#34;0123456789ABCDEF&amp;#34;]; console.log(digits) // [&amp;#34;0&amp;#34;, &amp;#34;1&amp;#34;, &amp;#34;2&amp;#34;, &amp;#34;3&amp;#34;, &amp;#34;4&amp;#34;, &amp;#34;5&amp;#34;, &amp;#34;6&amp;#34;, &amp;#34;7&amp;#34;, &amp;#34;8&amp;#34;, &amp;#34;9&amp;#34;, &amp;#34;A&amp;#34;, &amp;#34;B&amp;#34;, &amp;#34;C&amp;#34;, &amp;#34;D&amp;#34;, &amp;#34;E&amp;#34;, &amp;#34;F&amp;#34;] 集合对象是可迭代的，因此移除数组中的重复元素的一种简单的方式是将数组先转换为集合，然后使用展开操作符将集合转换回数组：
+let letters = [...&amp;#34;hello world&amp;#34;]; console.log([...new Set(letters)]) // [&amp;#34;h&amp;#34;, &amp;#34;e&amp;#34;, &amp;#34;l&amp;#34;, &amp;#34;o&amp;#34;, &amp;#34; &amp;#34;, &amp;#34;w&amp;#34;, &amp;#34;r&amp;#34;, &amp;#34;d&amp;#34;] The Array() Constructor 另一种创建数组的方式是使用Array()构造器，能以3种不同的方式调用构造器。第一种方式是调用的时候不传参数：
 let a = new Array(); 这种方式创建了一个空数组，其中没有任何元素，等同于字面量[]。第二种方式是传入一个数值参数，以指定数组的长度：
 let a = new Array(10); 这种方式创建了一个指定长度的数组。如果事先知道需要多少元素，Array()构造函数的这种形式可用于预分配数组。需要注意的是，数组中不会存储任何值，甚至没有为数组定义数组索引属性 &amp;ldquo;0&amp;rdquo;、&amp;ldquo;1 &amp;ldquo;等。
 第3种方式是为数组明确指定两个或多个数组元素或一个非数字元素。在这种方式下，构造器的参数成为了新数组的中的元素：
