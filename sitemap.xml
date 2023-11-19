@@ -5042,7 +5042,18 @@ let uppercase = &amp;#34;&amp;#34;; letters.forEach(letter =&amp;gt; { // Note a
 也可以使用老式的for循环来遍历数组中的元素：
 let vowels = &amp;#34;&amp;#34;; for (let i = 0; i &amp;lt; letters.length; i&#43;&#43;) { // For each index in the array // Get the element at that index  let letter = letters[i];  if (/[aeiou]/.test(letter)) { // Use a regular expression test  vowels &#43;= letter;  } } console.log(vowels) // eoo 在嵌套循环或其他对性能要求较高的情况下，有时会看到这种基本数组迭代循环的写法，即数组长度只查询一次，而不是每次迭代都查询。以下两种for循环形式都是惯用的，但并不常见，而且在现代解释器中，它们对性能的影响也不明显：
 for (let i = 0, len = letters.length; i &amp;lt; len; i&#43;&#43;) {  // loop body remains the same }  // Iterate backwards from the end of the array to the start for (let i = letters.length - 1; i &amp;gt;= 0; i--) {  // loop body remains the same } 上面这些例子假定数组是密集的，所有元素都包含有效数据。如果情况并非如此，则应在使用数组元素前对其进行测试。如果想跳过未定义和不存在的元素：
-for (let i = 0; i &amp;lt; a.length; i&#43;&#43;) {  if (a[i] === undefined) continue; // Skip undefined &#43; nonexistent elements  // loop body here } </content>
+for (let i = 0; i &amp;lt; a.length; i&#43;&#43;) {  if (a[i] === undefined) continue; // Skip undefined &#43; nonexistent elements  // loop body here } Multidimensional Arrays JavaScript不支持真正的多维数组，但可以使用数组的数组来近似多维数组。要访问数组数组中的值，只需使用[]操作符两次即可。例如，假设变量matrix是一个数组，其中的每个元素matrix[x]是一个数组。
+// Create a multidimensional array let table = new Array(10); // 10 rows of the table for (let i = 0; i &amp;lt; table.length; i&#43;&#43;) {  // Each row has 10 columns  table[i] = new Array(10); } // Initialize the array for (let row = 0; row &amp;lt; table.length; row&#43;&#43;) {  for (let col = 0; col &amp;lt; table[row].length; col&#43;&#43;) {  table[row][col] = row * col;  } } console.log(table[5][7]) // 35 Array Methods 迭代器方法用于遍历数组元素，通常对于每个元素调用一次我们指定的函数。
+栈和队列方法用于在开头或末尾向数组中添加元素或从数组中删除元素。
+子数组方法用于提取、删除、插入、填充和复制更大数组的连续区域。
+搜索和排序方法用于在数组中查找元素和对数组元素进行排序。
+Array Iterator Methods 方法forEach()迭代数组中的每个元素，并对每个元素都调用一次指定的函数。传统的forEach()方法的第一个参数是函数。forEach在调用这个函数时会给它传3个参数：数组元素的值，数组元素的索引值和数组本身。如果只关注数组元素的值，可以把函数写成只接受一次参数，即忽略其他参数：
+let data = [1, 2, 3, 4, 5], sum = 0; // Compute the sum of the elements of the array data.forEach(value =&amp;gt; {  sum &#43;= value; }); // Now increment each array element data.forEach(function (v, i, a) {  a[i] = v &#43; 1; }); console.log(data) 需要注意的是，forEach()不提供方式提前终止循环的方式。换句话说，在这里没有与常规for循环中的break语句对等的机制。
+方法map()把调用它的数组的每个元素分别传给指定的函数，返回这个函数的返回值的构成的数组。需要注意的是map返回一个新数组，不改变调用它的数组。如果数组是稀疏的，则缺失的元素不会调用我们的函数，但返回的数组和原始数组一样稀疏，长度相同，缺失的元素也相同。
+let a = [1, 2, 3]; console.log(a.map(x =&amp;gt; x * x)) // [1, 4, 9] filter()方法返回一个数组，该数组包含调用它的数组的子数组。传给这个方法的函数应该是断言函数，即返回true和false的函数。这个函数于传给forEach和map的函数一样被调用。如果函数返回true或返回的值能转换true，则传给这个函数的元素就是filter()，最终返回的子数组的成员。
+let a = [5, 4, 3, 2, 1]; a.filter(x =&amp;gt; x &amp;lt; 3) // =&amp;gt; [2, 1]; values less than 3 a.filter((x, i) =&amp;gt; i % 2 === 0) // =&amp;gt; [5, 3, 1]; every other value 需要注意的是，filter会跳过稀疏数组中缺失的元素，它返回的数组始终是稠密的。因此，可以使用filter方法清理掉稀疏数组中的空隙。
+let dense = sparse.filter(() =&amp;gt; true); 如果既想清理空隙，又想删除值为undefined和null的元素，则可以像下面这样写：
+a = a.filter(x =&amp;gt; x !== undefined &amp;amp;&amp;amp; x !== null); </content>
     </entry>
     
      <entry>
