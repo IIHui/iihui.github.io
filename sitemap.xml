@@ -5026,13 +5026,13 @@ let a = new Array(5); // No elements, but a.length is 5. b = []; // Create an ar
 需要注意的是，在数组字面量中省略一个值（使用连续重复的逗号，例如[1,,3]），得到的数组是稀疏的，省略的元素根本不存在的:
 let a1 = [,]; let a2 = [undefined]; console.log(0 in a1, 0 in a2) // false true 了解稀疏数组是理解数组本质的重要部分。不过，在实际工作中，使用的大多数数组都不是稀疏数组。而且，如果确实需要使用稀疏数组，代码中很可能会像处理undefined元素的非稀疏数组一样处理它。
 Array Length 每个数组都有一个length属性，正是这个属性使得数组和普通的对象不同。对于密集数组（即非稀疏数组），length属性指定数组中的元素个数，其值比数组中的最高索引多一个：
-console.log([].length, [&amp;#34;a&amp;#34;, &amp;#34;b&amp;#34;, &amp;#34;c&amp;#34;].length) 当一个数组是稀疏数组，属性length的值大于数组中的元素个数。一个数组（无论是否稀疏）永远不会有索引大于或等于长度的元素。为了保持这种不变性，数组有两种特殊的行为。第一种行为如上所述：如果为索引i大于或等于数组当前长度的数组元素赋值，则length属性的值将被设置为i&#43;1。
+console.log([].length, [&amp;#34;a&amp;#34;, &amp;#34;b&amp;#34;, &amp;#34;c&amp;#34;].length) 当一个数组是稀疏数组，其属性length的值大于数组中的元素个数。一个数组（无论是否稀疏）永远不会有索引大于或等于长度的元素。为了保持这种不变性，数组有两种特殊的行为。第一种行为如上所述：如果为索引i大于或等于数组当前长度的数组元素赋值，则length属性的值将被设置为i&#43;1。
 数组为保持长度不变而实施的第二个特殊行为是，如果将length属性设置为一个小于其当前值的非负整数n，则任何索引大于或等于n的数组元素都会从数组中删除：
 a = [1,2,3,4,5]; // Start with a 5-element array. a.length = 3; // a is now [1,2,3]. console.log(a) // [1,2,3] a.length = 0; // Delete all elements. a is []. console.log(a) // [] a.length = 5; // Length is 5, but no elements, like new Array(5) console.log(a) // [] Adding and Deleting Array Elements 添加元素最简单的方式是赋值给新的索引：
-let a = []; // Start with an empty array. a[0] = &amp;#34;zero&amp;#34;; a[1] = &amp;#34;one&amp;#34;; 也可以使用push方法添加一个或多个值到数组尾部：
-let a = []; a.push(&amp;#34;zero&amp;#34;) a.push(&amp;#34;one&amp;#34;, &amp;#34;two&amp;#34;) console.log(a) push一个值到数组a中，相当于赋值到a[a.length]。也可以使用unshift()方法将值插入到数组开头，移动已经存在的元素到更高的索引。
-方法pop()移除数组的最后一个元素，并返回它，并将数组元素长度减1。相似地，shift()方法移除第一个元素，并将数组长度减1，其它元素往前移动。
-可以使用操作符delete删除数组中的元素，既不会改变数组长度，也不会将索引较高的元素向下移动以填补删除属性留下的空隙。如果从数组中删除一个元素，数组就会变成稀疏数组。
+let a = []; // Start with an empty array. a[0] = &amp;#34;zero&amp;#34;; a[1] = &amp;#34;one&amp;#34;; 也可以使用push方法添加一个或多个元素到数组尾部：
+let a = []; a.push(&amp;#34;zero&amp;#34;) a.push(&amp;#34;one&amp;#34;, &amp;#34;two&amp;#34;) console.log(a) // [&amp;#34;zero&amp;#34;, &amp;#34;one&amp;#34;, &amp;#34;two&amp;#34;] 当push一个元素到数组a中，相当于赋值到a[a.length]。也可以使用unshift()方法将值插入到数组开头，移动已经存在的元素到更高的索引。
+let a = []; a.push(&amp;#34;zero&amp;#34;) a.push(&amp;#34;one&amp;#34;, &amp;#34;two&amp;#34;) a.unshift(&amp;#34;-1&amp;#34;) console.log(a) // [&amp;#34;-1&amp;#34;, &amp;#34;zero&amp;#34;, &amp;#34;one&amp;#34;, &amp;#34;two&amp;#34;] 方法pop()移除数组的最后一个元素，并返回它，并将数组元素长度减1。相似地，shift()方法移除第一个元素，并将数组长度减1，其它元素往前移动。
+let a = []; a.push(&amp;#34;zero&amp;#34;) a.push(&amp;#34;one&amp;#34;, &amp;#34;two&amp;#34;) let b = a.pop() console.log(b) // [&amp;#34;zero&amp;#34;, &amp;#34;one&amp;#34;] two 可以使用操作符delete删除数组中的元素，但既不会改变数组长度，也不会将索引较高的元素向下移动以填补删除属性留下的空隙。如果从数组中删除一个元素，数组就会变成稀疏数组。
 let a = [1,2,3]; delete a[2]; // a now has no element at index 2 2 in a // =&amp;gt; false: no array index 2 is defined a.length // =&amp;gt; 3: delete does not affect array length 如上所述，只需将length属性设置为所需的新长度，就可以从数组末尾删除元素。最后，splice()是插入、删除或替换数组元素的通用方法。它可以改变长度属性，并根据需要将数组元素移到更高或更低的索引中。
 Iterating Arrays 从 ES6开始，循环遍历数组（或任何可迭代对象）中每个元素的最简单方法是使用for/of循环：
 let letters = [...&amp;#34;Hello world&amp;#34;]; let string = &amp;#34;&amp;#34;; for (let letter of letters) {  string &#43;= letter; } console.log(string) 对于内置数组使用for/of循环迭代会按升序返回数组元素。对于稀疏数组，迭代器没有特殊行为，对于不存在的数组元素，迭代器会简单地返回undefined。
