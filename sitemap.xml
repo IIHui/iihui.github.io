@@ -4780,16 +4780,16 @@ const plus1 = x =&amp;gt; x &#43; 1; const square1 = x =&amp;gt; x * x;  console
 需要注意的是，并不是将每一个换行符都视为分号，只有在不添加隐式分号就无法继续解析代码的情况下，才会将换行符视为分号。更确切地说（除了稍后要介绍的三种例外情况），如果下一个非空格字符不能被解释为当前语句的继续，才会将换行符视为分号。
 Chapter 3 JavaScript的类型被分为两大类，基础类型和对象类型。特殊值null和undefined也是基础类型值，但它们不是数值，字符串或布尔值。这两个值通常认为是各自特殊类型的唯一成员。
 只要不是数字、字符串、布尔值、Symbol、null或undefined，其他值都是对象。对象是属性的集合，每个属性都有一个名称和一个值。普通的对象是无序的名字和值的集合，函数和类也是特殊的对象。
-Number JavaScript中的算术运算在溢出、下溢或除以零的情况下都不会产生错误。当数值运算的结果超过最大可表示的数值（溢出）时，其结果是一个特殊的无穷大值，即Infinity。同样，当负值的绝对值大于最大可表示负数的绝对值时，结果就是负无穷大，即-Infinity。无穷大数值的行为与我们所期望的一样，与任何数值相加、相减、相乘或相除的结果都是无穷大数值（可能符号相反）。
+Number JavaScript中的算术运算在溢出、下溢或除以零的情况下都不会产生错误。当数值运算的结果超过最大可表示的数值（溢出）时，其结果是一个特殊的无穷大值，即Infinity。同样，当负数的绝对值大于最大可表示负数的绝对值时，结果就是负无穷大，即-Infinity。无穷大数值的行为与我们所期望的一样，与任何数值相加、相减、相乘或相除的结果都是无穷大数值（可能符号相反）。
 当数值运算的结果比可表示的最小数字更接近零时，就会出现下溢。在这种情况下，JavaScript返回0。如果负数出现下溢，JavaScript会返回一个被称为negative zero特殊值。这个值与普通的0几乎没有区别，很少的情况需要区别。
-在JavaScript中，除以0并不会产生一个错误，它只是简单的返回正无穷和负无穷。但有一个例外，0除以0并不会返回一个明确定义的值，而是返回NaN。如果尝试用无穷大除以无穷大、取负数的平方根或使用不能转换为数字的非数字操作数的算术运算符，也会出现NaN。
+在JavaScript中，除以0并不会产生一个错误，它只是简单地返回正无穷和负无穷。但有一个例外，0除以0并不会返回一个明确定义的值，而是返回NaN。如果尝试用无穷大除以无穷大、取负数的平方根或使用不能转换为数字的非数字操作数的算术运算符，也会出现NaN。
 JavaScript预定义了全局常量Infinity和NaN，用于保存正无穷大和非数字值，这些值也可以作为Number对象的属性使用：
 console.log(Infinity, Number.POSITIVE_INFINITY, 1 / 0, Number.MAX_VALUE * 2) console.log(-Infinity, Number.NEGATIVE_INFINITY, -1 / 0, -Number.MAX_VALUE * 2) console.log(NaN, Number.NaN, 0 / 0, Infinity / Infinity) console.log(Number.MIN_VALUE / 2, -Number.MIN_VALUE / 2, -1 / Infinity, -0)  // 打印的值 Infinity Infinity Infinity Infinity -Infinity -Infinity -Infinity -Infinity NaN NaN NaN NaN 0 -0 -0 -0 NaN有一个不同寻常的特性：它不会与任何其它值（包括自己）进行比较。这意味着不能使用x === NAN来判断x的值是否为NaN。相反，必须写成x != x或Number.isNaN(x)。当且仅当x的值与全局常量NaN相同时，这些表达式才会为true。
 全局函数isNaN()和Number.isNaN()是相似的。如果参数为NaN，或者参数为无法转换为数字的非数值，则返回true。如果函数Number.isFinite()的参数是NaN、Infinity或-Infinity以外的数字，则返回true。如果全局函数isFinite()的参数是或可以转换为有限数值，该函数返回true。
-负零值也有些不同寻常，它与正零比较是相等的（即使是使用JavaScript的严格相等测试），这意味着这两个值几乎没有区别，除非用作除数时：
-let zero = 0; let negz = -0; console.log(zero === negz) console.log(1 / zero === 1 / negz)  // 执行的结果 true false Binary Floating-Point and Rounding Errors 实数有无限多个，但JavaScript的浮点格式只能表示其中的有限个数。也就是说，在 JavaScript中处理实数时，数字的表示往往是实际数字的近似值。
-JavaScript使用的IEEE-754浮点表示法是一种二进制表示法。这种表示法可以精确地表示1/2,1/8和1/1024等，但不能精确地表示0.1。虽然JavaScript有足够高的精度，能够让数值非常近似地表示0.1，但无法精确地表示，这可能导致一些问题：
-let x = .3 - .2; let y = .2 - .1; console.log(x === y) console.log(x === .1, y === .1)  // 打印的结果 false false true 上面代码中，由于舍入误差.3和.2近似值之差与.2和.1近似值之差并不相等。但这并不是JavaScript特有的问题，而是所有使用二进制浮点数的编程语言共有的问题。
+负零值也有些不同寻常，它与正零比较是相等的（即使是使用JavaScript的严格相等进行测试），这意味着这两个值几乎没有区别，除非用作除数时：
+let zero = 0; let negz = -0; console.log(zero === negz) console.log(1 / zero, 1 / negz) console.log(1 / zero === 1 / negz)  // 执行的结果 true Infinity -Infinity false Binary Floating-Point and Rounding Errors 实数有无限多个，但JavaScript的浮点格式只能表示其中的有限个数。也就是说，在 JavaScript中处理实数时，数字的表示往往是实际数字的近似值。
+JavaScript使用的IEEE-754浮点表示法是一种二进制表示法。这种表示法可以精确地表示1/2,1/8和1/1024等，但不能精确地表示0.1。虽然JavaScript有足够高的精度，能够让数值非常近似地表示0.1，但也无法精确地表示，这可能导致一些问题：
+let x = .3 - .2; let y = .2 - .1; console.log(x, y) // 0.09999999999999998 0.1 console.log(x === y) // false console.log(x === .1, y === .1) // false true  // 打印的结果 0.09999999999999998 0.1 false false true 上面代码中，由于舍入误差.3和.2近似值之差与.2和.1近似值之差并不相等。但这并不是JavaScript特有的问题，而是所有使用二进制浮点数的编程语言共有的问题。
 此外，请注意上面代码中的x和y值非常接近，也极其接近正确值。计算出来的值几乎可以满足任何需要，但当试图比较两个值是否相等时才会出现问题。
 如果使用浮点近似值对我们的程序有问题，可以考虑使用缩放整数。例如，可以使用整数值而不是小数值来处理货币。
 Arbitrary Precision Integers with BigInt 在ES2020中定义的JavaScript最新特性之一是一种名为BigInt的新数值类型。顾名思义，BigInt是一种数值类型，其值为整数。
