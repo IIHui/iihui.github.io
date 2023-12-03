@@ -4881,9 +4881,9 @@ let [a, [b, c]] = [1, [2, 2.5], 3]; // a == 1; b == 2; c == 2.5 console.log(a, b
 let [first, ...rest] = &amp;#34;Hello&amp;#34;; console.log(first, rest) // first == &amp;#34;H&amp;#34;; rest == [&amp;#34;e&amp;#34;,&amp;#34;l&amp;#34;,&amp;#34;l&amp;#34;,&amp;#34;o&amp;#34;] 解构赋值在右侧是对象值的情况下也可以执行。此时，左侧看起来像是一个对象字面量，即一个包含在花括号内以逗号分隔的变量名列表：
 let transparent = {r: 0.0, g: 0.0, b: 0.0, a: 1.0}; let {r, g, b} = transparent; // r == 0.0; g == 0.0; b == 0.0 下面示例展示了把Math对象的全局函数复制给变量，这种方式可以简化代码：
 // Same as const sin=Math.sin, cos=Math.cos, tan=Math.tan const {sin, cos, tan} = Math; console.log(sin(30), cos(30), tan(30)) // -0.9880316240928618 0.15425144988758405 -6.405331196646276 需要注意的是，如果等号左侧不是Math对象的属性名，则该变量的值为undefined。在上面解构中，我们选择了和要解构对象的属性一致的变量名，但这不是必须的：
-// Same as const cosine = Math.cos, tangent = Math.tan; const {cos: cosine, tan: tangent} = Math; console.log(cosine(12)) // 0.8438539587324921 Chapter 4 表达式是一个可以被求值并产生一个值的短语，嵌入到程序中的常量是最简单的表达式，变量名也是简单的表达式，并求值为赋给该变量的值。
+// Same as const cosine = Math.cos, tangent = Math.tan; const {cos: cosine, tan: tangent} = Math; console.log(cosine(12)) // 0.8438539587324921 Chapter 4 表达式是一个可以被求值并产生一个值的短语，嵌入到程序中的常量是最简单的表达式之一，变量名也是一种简单的表达式，它的值为赋给该变量的值相同。
 复杂的表达式由简单的表达式组成，例如一个数组访问表达式由一个求值为数组的表达式、一个左方括号，一个求值为整数的表达式和一个右方括号构成。
-Primary Expressions 最简单的表示式被称为基础表达式，是指那些独立存在，不再包含更简单表达式的表达式。基础表达式包含常量，字面量，某些关键字和变量引用。
+Primary Expressions 最简单的表达式被称为基础表达式，是指那些独立存在，不再包含更简单表达式的表达式。基础表达式包含常量，字面量，某些关键字和变量引用。
   字面量是可以直接嵌入到程序中的常量值。
 1.23 // A number literal &amp;#34;hello&amp;#34; // A string literal /pattern/ // A regular expression literal   保留字也是基础表达式。
 true false null this   常量，变量或全局对象属性的引用。
@@ -4892,8 +4892,8 @@ i sum undefined 当程序中出现任何标识符时，都被假设为常量或�
 [] // An empty array: no expressions inside brackets means no elements [1&#43;2,3&#43;4] // A 2-element array. First element is 3, second is 7 let matrix = [[1,2,3], [4,5,6], [7,8,9]]; let sparseArray = [1,,,,5];  let p = { x: 2.3, y: -1.2 } // An object with 2 properties let q = {}; // An empty object with no properties q.x = 2.3; q.y = -1.2; // Now q has the same properties as p 在ES6中，对象字面量有更丰富的语法，可以嵌套。
 let rectangle = {  upperLeft: {x: 2, y: 2},  lowerRight: {x: 4, y: 5} }; Property Access Expressions 属性访问表达式求值对象属性或数组的元素，有两种属性访问语法。第一种是使用点操作符，另一种是使用方括号，示例如下：
 let o = {x: 1, y: {z: 3}}; let a = [o, 4, [5, 6]]; console.log(o.x, o.y.z, o[&amp;#34;x&amp;#34;], a[1], a[2][&amp;#34;1&amp;#34;]) 无论使用哪种属性访问表达式，位于.或[前的表达式都会被求值，如果求值结果为null或undefined，表达式就会抛出TypeError，因为null或undefined是不能有属性的两个值。
-Operator Overview 多数操作符都以&#43;和=这样的标点表示，有一些以delete和instanceof这样的关键字表示。关键字操作符也是常规操作符，只不过它们的语法没有那么简短而已。
-尽管typeof是最高优先级的操作符，但typeof操作符要基于属性访问，数组索引以及函数调用，这些操作的优先级全部高于操作符。
+Operator Overview 多数操作符都是类似&#43;和=这样的标点符号，也有一些delete和instanceof这样的关键字操作符。关键字操作符也是常规操作符，只不过它们的语法没有那么简短而已。
+尽管typeof是最高优先级的操作符，但typeof操作符基于属性访问，数组索引以及函数调用，这些操作的优先级全部高于操作符。
 &#43;操作符优先字符串拼接，只要操作数是字符串或可以转换为字符串的对象，另一个操作数也会被转换为字符串并执行拼接操作。只有任何操作数都不是字符串或string-like才会执行加法操作。
 eval()期待一个参数，如果传入的是非字符串参数，它会简单地返回这个值。如果传入字符串，它会尝试把这个字符串当作JavaScript字符串来解析，解析失败会抛出SyntaxError，如果解析成功，它会求值代码并返回该字符串中最后一个表达式或语句的值，如果最后一个表达式或语句没有值则返回undefined。
 先定义操作符??求值其先定义的操作数，如果左边的操作数不是null或undefined，就返回该值。否则，它会返回右操作数的值。
@@ -4905,13 +4905,12 @@ Chapter 5 表达式称为短语，语句就是句子或命令，使用分号结�
 {  x = Math.PI;  cx = Math.cos(x);  console.log(&amp;#34;cos(π) = &amp;#34; &#43; cx); } 解释器在执行空语句时什么也不会做。空语句偶尔会有用，比如创建一个空循环体：
 for(let i = 0; i &amp;lt; a.length; a[i&#43;&#43;] = 0) ; 在这个循环中，所有的工作都由表达式a[i&#43;&#43;] = 0完成，因此不需要循环体。然而，JavaScript语法要求使用语句作为循环体，因此使用了一个空语句，即一个空的分号。
 switch语句首先对跟在其后的表达式求值，然后按照顺序求值case表达式，直到遇到匹配的值。这里的匹配使用===全等操作符，而不是==相等操作符，因此表达式必须在没有类型转换的情况下匹配。
-对for循环而言，3个表达式中的任何一个都可以省略，只有两个分号是必需的。
-ES6定义了一个新循环语句for/of，这种新循环虽然使用了for关键字，但它与常规for是完全不同的两种循环。for/of循环专门用于可迭代对象，数组，字符串，集合和映射都是可迭代对象。
-let data = [1, 2, 3, 4, 5, 6, 7, 8, 9], sum = 0; for (let element of data) {  sum &#43;= element; } console.log(sum) 在上面代码中，循环体对应data数组中的每个元素都会运行一次。在每次执行循环体之前，都会把数组的下一个元素赋值给元素变量。数组元素是按照从头到尾的顺序迭代的。
-对象默认是不可迭代的，运行时尝试对常规对象使用for/of会抛出TypeError。字符串是按照Unicode码点，而不是UTF-16字符迭代的。虽然字符串I😀😁的长度为5，但使用for/of只会迭代3次：
+对for循环而言，3个表达式中的任何一个都可以省略，只有两个分号是必需的。ES6定义了一个新循环语句for/of，这种新循环虽然使用了for关键字，但它与常规for是完全不同的两种循环。for/of循环专门用于可迭代对象。数组，字符串，集合和映射都是可迭代对象。
+let data = [1, 2, 3, 4, 5, 6, 7, 8, 9], sum = 0; for (const element of data) {  sum &#43;= element; } console.log(sum) 在上面代码中，循环体对应data数组中的每个元素都会运行一次。在每次执行循环体之前，都会把数组的下一个元素赋值给元素变量。并且数组元素是按照从头到尾的顺序迭代的。
+实际上，对象默认是不可迭代的，运行时尝试对常规对象使用for/of会抛出TypeError。字符串是按照Unicode码点，而不是UTF-16字符迭代的。虽然字符串I😀😁的长度为5，但使用for/of只会迭代3次：
 let test = &amp;#34;I😀😁&amp;#34; for (let item of test) {  console.log(item) } ES6内置的Set和Map类都是可迭代的：
 let text = &amp;#34;Na na na na na na na na Batman!&amp;#34;; let wordSet = new Set(text.split(&amp;#34; &amp;#34;)); let unique = []; for (let word of wordSet) {  unique.push(word); } console.log(unique) // [&amp;#34;Na&amp;#34;, &amp;#34;na&amp;#34;, &amp;#34;Batman!&amp;#34;] Map对象的迭代器并不迭代键或值，而是迭代键值对。每次迭代，迭代器都会返回一个数组，第一个元素是键，第二个元素是值。
-let m = new Map([[1, &amp;#34;one&amp;#34;]]); for (let [key, value] of m) {  console.log(key, value) } for/in循环的in后面可以是任意对象，for/of循环是ES6新增的，而for/in是一开始就有的。
+let m = new Map([[1, &amp;#34;one&amp;#34;]]); for (let [key, value] of m) {  console.log(key, value) } // 1 one for/in循环的in后面可以是任意对象，for/of循环是ES6新增的，而for/in是一开始就有的。
 Chapter 6 对象是属性的无序集合，每个属性都有名字和值。属性名通常是字符串（也可以是Symbol）。因此，可以说对象是把字符串映射为值。这种把字符串映射为值有很多种叫法，如散列，字典或关联数组。但是，对象不仅仅是简单的字符串到值的映射。
 除了维护自定义属性，对象也可以从其他对象继承属性，这个其他对象称为其原型。对象的方法通常继承自属性，这种原型继承是JavaScript的关键特性。
 JavaScript的对象是动态的，属性通常可以添加或删除。属性有一个名字和值，属性名可以是任意字符串，包括空字符串或任意符号Symbol，但对象不能包含两个同名的属性。
