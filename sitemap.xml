@@ -5053,20 +5053,20 @@ let data = [1, 2, 3, 4, 5], sum = 0; // Compute the sum of the elements of the a
 let a = [1, 2, 3]; console.log(a.map(x =&amp;gt; x * x)) // [1, 4, 9] filter()方法返回一个数组，该数组包含调用它的数组的子数组。传给这个方法的函数应该是断言函数，即返回true和false的函数。这个函数于传给forEach和map的函数一样被调用。如果函数返回true或返回的值能转换true，则传给这个函数的元素就是filter()，最终返回的子数组的成员。
 let a = [5, 4, 3, 2, 1]; a.filter(x =&amp;gt; x &amp;lt; 3) // =&amp;gt; [2, 1]; values less than 3 a.filter((x, i) =&amp;gt; i % 2 === 0) // =&amp;gt; [5, 3, 1]; every other value 需要注意的是，方法filter会跳过稀疏数组中缺失的元素，它返回的数组始终是稠密的。因此，可以使用filter方法清理掉稀疏数组中的空隙。
 let dense = sparse.filter(() =&amp;gt; true); 如果既想清理空隙，又想删除值为undefined和null的元素，则可以像下面这样写：
-a = a.filter(x =&amp;gt; x !== undefined &amp;amp;&amp;amp; x !== null); 方法find()和findIndex()与filter()类似，表现在它们都遍历数组，寻找断言函数返回真值的元素。但与filter()不同的是，这两个方法会在断言函数找到第一个元素时就停止。find()返回匹配的元素，findIndex()返回匹配元素的索引。如果没有找到匹配的元素，则find()返回undefinded，而findIndex返回-1。
+a = a.filter(x =&amp;gt; x !== undefined &amp;amp;&amp;amp; x !== null); 方法find()和findIndex()与filter()类似，它们都遍历数组，寻找断言函数返回true的元素。但与filter()不同的是，这两个方法会在断言函数找到第一个元素时就停止。find()返回匹配的元素，findIndex()返回匹配元素的索引。如果没有找到匹配的元素，则find()返回undefinded，而findIndex返回-1。
 方法every()和some()是数组断言方法，即它们会对数组元素调用传入的断言函数，最后返回true或false。every方法与数学上的全称量词类似，它只在断言函数对数组的所有元素都返回true才返回true。
 let a = [1, 2, 3, 4, 5]; a.every(x =&amp;gt; x &amp;lt; 10) a.every(x =&amp;gt; x % 2 === 0) // =&amp;gt; false: not all values are even. 方法some()类似于数学上的存在量词，只要数组元素中有一个让断言函数返回true，它就返回true，但必须数组中的所有元素对断言函数都返回false才返回false。
-let a = [1, 2, 3, 4, 5]; a.some(x =&amp;gt; x % 2 === 0) // =&amp;gt; true; a has some even numbers. a.some(isNaN) // =&amp;gt; false; a has no non-numbers. 方法reduce()和reduceRight()使用我们指定的函数归并数组元素，最终产生一个值。在函数编程中，归并是一个常见操作，有时候也被称为inject或fold。
+let a = [1, 2, 3, 4, 5]; a.some(x =&amp;gt; x % 2 === 0) // =&amp;gt; true; a has some even numbers. a.some(isNaN) // =&amp;gt; false; a has no non-numbers. 方法reduce()和reduceRight()使用我们指定的函数归并数组元素，最终产生一个值。在函数式编程中，归并是一个常见操作，有时候也被称为inject或fold。
 let a1 = a.reduce((x, y) =&amp;gt; x &#43; y, 0) let a2 = a.reduce((x, y) =&amp;gt; x * y, 1) let a3 = a.reduce((x, y) =&amp;gt; (x &amp;gt; y) ? x : y) console.log(a1, a2, a3) // 15 120 5 方法reduce()接收两个参数，第一个参数是执行归并操作的函数。这个归并函数的任务就是把两个值归并或组合为一个值并返回这个值。第二个参数是可选的，是传递给归并函数的初始值。
 在reduce()中使用的函数与forEach()和map()中使用的函数不同。我们熟悉的值、索引和数组本身在这里作为第二、第三和第四个参数。
 如果不指定初始值调用时，reduce()会使用数组的第一个元素作为初始值。这意味着首次调用归并函数将以数组的第一个和第二个元素作为其第一和第二个参数。
 如果不传初始值参数，在空数组上调用reduce()会导致TypeError。如果调用它时只有一个值，比如用只包含一个元素的数组调用且不传初始值，或者用空数组调用但传了初始值，则reudce()直接返回这个值，不会调用归并函数。
-reduceRight()和reduce()类似，只不过是从高索引向低索引（从右向左）处理数组。如果归并操作具有从右向左的结合性，那就要考虑使用reduceRight()。
+方法reduceRight()和reduce()类似，只不过是从高索引向低索引（从右向左）处理数组。如果归并操作具有从右向左的结合性，那就要考虑使用reduceRight()。
 Flattening arrays with flat() and flatMap() 在ES2019中，flat()方法用于创建并返回一个新数组，这个新数组包含与它调用flat()的数组相同的元素，只不过其中任何本身也是数组元素被打平，填充到返回的数组中。
-[1, [2, 3]].flat(); [1, [2, [3]]].flat(); 在不传参数调用时，flat()会打平第一级嵌套。原始数组中本身也是数组的元素会被打平，但打平后的元素如果还是数组则不会再打平。如果想打平更多层级，需要给flat()传一个数值参数：
-let a = [1, [2, [3, [4]]] console.log(a.flat()) // =&amp;gt; [1, 2, [3, [4]]] console.log(a.flat(1)) // =&amp;gt; [1, 2, [3, [4]]] console.log(a.flat(2)) // =&amp;gt; [1, 2, 3, [4]] console.log(a.flat(3)) // =&amp;gt; [1, 2, 3, 4] console.log(a.flat(4)) // =&amp;gt; [1, 2, 3, 4] flatMap()方法与map()方法相似，只不过返回的数组会自动被打平，就像传给了flat()一样。换句话说，调用a.flatMap(f)等同于a.map(f).flat()，但效率较高。
+[1, [2, 3]].flat(); [1, [2, [3]]].flat(); 在不传参数调用时，flat()只会打平第一级嵌套。原始数组中本身也是数组的元素会被打平，但打平后的元素如果还是数组则不会再打平。如果想打平更多层级，需要给flat()传一个数值参数，表示需要打平的层级：
+let a = [1, [2, [3, [4]]] console.log(a.flat()) // =&amp;gt; [1, 2, [3, [4]]] console.log(a.flat(1)) // =&amp;gt; [1, 2, [3, [4]]] console.log(a.flat(2)) // =&amp;gt; [1, 2, 3, [4]] console.log(a.flat(3)) // =&amp;gt; [1, 2, 3, 4] console.log(a.flat(4)) // =&amp;gt; [1, 2, 3, 4] 方法flatMap()与map()相似，只不过返回的数组会自动被打平，就像传给了flat()一样。换句话说，调用a.flatMap(f)等同于a.map(f).flat()，但执行效率较高。
 方法concat()创建并返回一个新数组，新数组包含调用concat()方法的数组的元素，以及传递给concat()的参数。如果这些参数中有数组，则拼接的是它们的元素而非数组本身。
-let a = [1, 2, 3]; console.log(a.concat(4, 5)) // [1,2,3,4,5] console.log(a.concat([4, 5], [6, 7])) // [1,2,3,4,5,6,7] console.log(a.concat(4, [5, [6, 7]])) // [1,2,3,4,5, [6,7]] Chapter 8 JavaScript中的函数是对象，可以把函数赋值给变量，然后再传递给其它函数。因为函数是对象，所以可以在函数上设置属性，甚至调用函数的方法。
+let a = [1, 2, 3]; console.log(a.concat(4, 5)) // [1,2,3,4,5] console.log(a.concat([4, 5], [6, 7])) // [1,2,3,4,5,6,7] console.log(a.concat(4, [5, [6, 7]])) // [1,2,3,4,5, [6,7]] Chapter 8 JavaScript中的函数是对象，可以把函数赋值给变量，然后再传递给其它函数。因为函数是对象，所以可以在函数上设置属性，甚至调用函数的相关方法。
 函数可以嵌套定义在其它函数里，内嵌的函数可以访问定义在函数作用域的任何变量。这意味着，函数是闭包，基于闭包可以实现重要且强大的编辑技巧。
 Defining Functions 函数声明是由function关键字后面跟着如下组件构成。
  命名函数的标识符。这个作为函数名的标识符对于函数声明是必需的，它作为一个变量名使用，新定义的函数对象会赋值给这个变量。 一对圆括号，中间包含逗号分隔的零或多个标识符。这些标识符是函数的参数名，它们就像是函数体内的局部变量。 一对花括号，其中包含了零个或多个语句。这些语句构成函数体，会在函数被调用时执行。  函数声明语句会被提升到包含脚本、函数或代码块的顶部，因此调用以这种方式定义的函数时，调用代码可以出现在函数定义代码之前。
@@ -5075,12 +5075,11 @@ Function Expressions 函数表达式看起来像函数声明，但它们出现�
 const square = function (x) {  return x * x; }; const f = function fact(x) {  if (x &amp;lt;= 1) return 1; else return x * fact(x - 1); }; [3, 2, 1].sort(function (a, b) {  return a - b; }); let tensquared = (function (x) {  return x * x; }(10)); 需要注意的是，函数名定义为表达式的函数而言是可选的，前面看到的多数函数表达式都没有名字。函数声明实际上会声明一个变量，然后把函数对象赋值该它。而函数表达式不会声明变量，至于要把新定义的函数赋值给一个常量还是变量取决于我们，最佳实践是使用const把函数表达式复制给常量，以防意外又给它赋予新值而重写函数。
 Arrow Functions 在ES6中，可以使用一种特别简洁的语法来定义函数，叫做箭头函数。因为箭头函数是表达式而不是语句，所以不必使用function关键字，而且也不需要函数名。
 箭头函数的一般形式是圆括号中逗号分隔的参数列表，后面跟箭头=&amp;gt;，再跟包含在花括号中的函数体：
-const sum = (x, y) =&amp;gt; { return x &#43; y; }; 如果函数体只有一个return语句，那么可以省略return语句、语句末尾的分号以及花括号，将函数体写成一个表达式，它的值将被返回：
+const sum = (x, y) =&amp;gt; { return x &#43; y; }; 如果函数体只有一个return语句，那么可以省略return语句、语句末尾的分号以及花括号，将函数体写成一个表达式，这个表达式的值将被返回：
 const sum = (x, y) =&amp;gt; x &#43; y; 更进一步，如果箭头函数只有一个参数，也可以省略包含参数列表的圆括号：
-const polynomial = x =&amp;gt; x*x &#43; 2*x &#43; 3; 需要注意的是，对于没有参数的箭头函数则必须把空圆括号写出来：
-const constantFunc = () =&amp;gt; 42; 还要注意的是，在写箭头函数时，不能在函数参数和箭头之间放换行符。
-如果箭头函数的函数体是一个return语句，但要返回的表达式是对象字面量，那必须把这个对象字面量放在一对圆括号中，以避免解释器分不清花括号到底是函数体还是对象字面量的花括号。
-const f = x =&amp;gt; {  return {value: x}; }; const g = x =&amp;gt; ({value: x}); const h = x =&amp;gt; {  value: x }; const i = x =&amp;gt; {  v: x, w:x }; 相比以其他方式定义函数，箭头函数有一个及其重要的区别：它们从定义自己的环境继承this关键字的值，而不是像其他方式定义的函数那样第一自己的调用上下文。箭头函数于其他函数还有一个区别，就是它们prototype属性，这意味着箭头函数不能作为新类的构造函数。
+const polynomial = x =&amp;gt; x*x &#43; 2*x &#43; 3; 需要注意的是，对于没有参数的箭头函数则必须把空圆括号写出来。还要注意的是，在写箭头函数时，不能在函数参数和箭头之间放置换行符。
+const constantFunc = () =&amp;gt; 42; 如果箭头函数的函数体是一个return语句，但要返回的表达式是对象字面量，则必须把这个对象字面量放在一对圆括号中，以避免解释器分不清花括号到底表示函数体还是对象字面量。
+const f = x =&amp;gt; {  return {value: x}; }; const g = x =&amp;gt; ({value: x}); const h = x =&amp;gt; {  value: x }; const i = x =&amp;gt; {  v: x, w:x }; 相比以其他方式定义函数，箭头函数有一个及其重要的区别：它们从定义自己的环境继承this关键字的值，而不是像其他方式定义的函数那样第一自己的调用上下文。箭头函数与其他函数还有一个区别，就是它们prototype属性，这意味着箭头函数不能作为新类的构造函数。
 在ES2020中，可以在函数表达式后面、左圆括号前面插入?.，从而只在函数不是null和undefined时调用函数。也就是说f?.(x)相当于下面语句：
 (f !== null &amp;amp;&amp;amp; f !== undefined) ? f(x) : undefined </content>
     </entry>
