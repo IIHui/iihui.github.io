@@ -241,13 +241,13 @@ code.has-jax {
     <i class="fa fa-file-word-o"></i>
 </span>
 <span class="post-meta-item-text">字数: </span>
-<span class="leancloud-visitors-count">32002</span>
+<span class="leancloud-visitors-count">33017</span>
 &nbsp; | &nbsp;
 <span class="post-meta-item-icon">
     <i class="fa fa-coffee"></i>
 </span>
 <span class="post-meta-item-text">阅读: </span>
-<span class="leancloud-visitors-count">64 分钟</span>
+<span class="leancloud-visitors-count">66 分钟</span>
 </span>
       </div>
     </header>
@@ -1711,7 +1711,38 @@ code.has-jax {
 </span></span><span style="display:flex;"><span><span style="color:#66d9ef">let</span> <span style="color:#a6e22e">total</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">distance</span>(<span style="color:#ae81ff">0</span>, <span style="color:#ae81ff">0</span>, <span style="color:#ae81ff">2</span>, <span style="color:#ae81ff">1</span>) <span style="color:#f92672">+</span> <span style="color:#a6e22e">distance</span>(<span style="color:#ae81ff">2</span>, <span style="color:#ae81ff">1</span>, <span style="color:#ae81ff">3</span>, <span style="color:#ae81ff">5</span>);
 </span></span></code></pre></div><p>在调用过程中，每个参数表达式（括号之间的表达式）都会被求值，求值结果将成为函数的参数。这些值被赋值给函数定义中命名的参数。在函数体中，对参数的引用将求值为相应的参数值。</p>
 <p>对于常规函数调用，函数的返回值就是调用表达式的值。如果函数返回是因为解释器到了终点，那么返回值是<code>undefined</code>。如果函数返回是因为解释器执行了返回语句，那么返回值就是返回语句后面的表达式的值，如果返回语句没有值，那么返回值就是<code>undefined</code>。</p>
-
+<p>在非严格模式下调用函数时，调用上下文（<code>this</code>的值）是全局对象。而在严格模式下，调用上下文是<code>undefined</code>。需要注意的是，使用箭头语法定义的函数有不同的行为：它们总是继承定义时有效的<code>this</code>值。</p>
+<p>作为函数（而不是方法）调用的函数通常不使用<code>this</code>关键字。不过，该关键字可用于确定严格模式是否生效：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-js" data-lang="js"><span style="display:flex;"><span><span style="color:#66d9ef">const</span> <span style="color:#a6e22e">strict</span> <span style="color:#f92672">=</span> (<span style="color:#66d9ef">function</span>() { <span style="color:#66d9ef">return</span> <span style="color:#f92672">!</span><span style="color:#66d9ef">this</span>; }());
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">console</span>.<span style="color:#a6e22e">log</span>(<span style="color:#a6e22e">strict</span>) <span style="color:#75715e">// false
+</span></span></span></code></pre></div><p>递归函数是一种可以调用自身的函数，如<code>factorial()</code>函数。某些算法，例如涉及树形数据结构的算法，可以用递归函数来实现，而且特别优雅。不过，在编写递归函数时，必须考虑内存限制。当函数A调用函数 B，然后函数B又调用函数C时，解释器需要跟踪这三个函数的执行上下文。当函数C执行完毕时，解释器需要知道在哪里继续执行函数B，而当函数B执行完毕时，解释器需要知道在哪里继续执行函数A。</p>
+<p>当一个函数调用另一个函数时，一个新的执行上下文就会被推入堆栈。当该函数返回时，其执行上下文对象会从堆栈中弹出。如果一个函数递归调用自身100次，那么栈中就会推入100个对象，然后再从栈中取出这100个对象。这个调用栈需要占用内存。在现代硬件上，编写数百次自我调用的递归函数通常是没有问题的。但如果一个函数自我调用了上万次，就很可能会出现&quot;Maximum call-stack size exceeded&quot;这样的错误。</p>
+<h3 id="method-invocation">Method Invocation</h3>
+<p>方法只不过是存储在对象属性中的JavaScript函数。如果有一个函数f和一个对象o，就可以用下面一行定义一个名为m的方法：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-js" data-lang="js"><span style="display:flex;"><span><span style="color:#a6e22e">o</span>.<span style="color:#a6e22e">m</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">f</span>;
+</span></span></code></pre></div><p>在定义了对象<code>o</code>的方法<code>m()</code> 后，可以这样调用它：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-js" data-lang="js"><span style="display:flex;"><span><span style="color:#a6e22e">o</span>.<span style="color:#a6e22e">m</span>();
+</span></span></code></pre></div><p>如果方法m期望两个参数，则可以按下面这样调用方法：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-js" data-lang="js"><span style="display:flex;"><span><span style="color:#a6e22e">o</span>.<span style="color:#a6e22e">m</span>(<span style="color:#a6e22e">x</span>, <span style="color:#a6e22e">y</span>);
+</span></span></code></pre></div><p>函数表达式本身就是一个属性访问表达式，这意味着函数是作为方法而不是普通函数被调用的。方法调用的参数和返回值的处理与普通函数调用完全相同。</p>
+<p>方法调用与函数调用有一个重要区别：调用上下文。属性访问表达式由两部分组成：对象（上面为o）和属性名称（m）。在这样的方法调用表达式中，对象o成为调用上下文，函数体可以使用关键字this来引用该对象。下面是一个具体示例：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-js" data-lang="js"><span style="display:flex;"><span><span style="color:#66d9ef">let</span> <span style="color:#a6e22e">calculator</span> <span style="color:#f92672">=</span> { <span style="color:#75715e">// An object literal
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#a6e22e">operand1</span><span style="color:#f92672">:</span> <span style="color:#ae81ff">1</span>,
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">operand2</span><span style="color:#f92672">:</span> <span style="color:#ae81ff">1</span>,
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">add</span>() { <span style="color:#75715e">// We&#39;re using method shorthand syntax for this function
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>        <span style="color:#75715e">// Note the use of the this keyword to refer to the containing object.
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>        <span style="color:#66d9ef">this</span>.<span style="color:#a6e22e">result</span> <span style="color:#f92672">=</span> <span style="color:#66d9ef">this</span>.<span style="color:#a6e22e">operand1</span> <span style="color:#f92672">+</span> <span style="color:#66d9ef">this</span>.<span style="color:#a6e22e">operand2</span>;
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>};
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">calculator</span>.<span style="color:#a6e22e">add</span>(); <span style="color:#75715e">// A method invocation to compute 1+1.
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#a6e22e">console</span>.<span style="color:#a6e22e">log</span>(<span style="color:#a6e22e">calculator</span>.<span style="color:#a6e22e">result</span>) <span style="color:#75715e">// =&gt; 2
+</span></span></span></code></pre></div><p>大多数方法调用使用点号表示属性访问，但使用方括号的属性访问表达式也会导致方法调用。例如，以下两种情况都是方法调用：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-js" data-lang="js"><span style="display:flex;"><span><span style="color:#a6e22e">o</span>[<span style="color:#e6db74">&#34;m&#34;</span>](<span style="color:#a6e22e">x</span>, <span style="color:#a6e22e">y</span>); <span style="color:#75715e">// Another way to write o.m(x,y).
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#a6e22e">a</span>[<span style="color:#ae81ff">0</span>](<span style="color:#a6e22e">z</span>) <span style="color:#75715e">// Also a method invocation (assuming a[0] is a function).
+</span></span></span></code></pre></div><p>方法调用可能涉及更复杂的属性访问表达式：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-js" data-lang="js"><span style="display:flex;"><span><span style="color:#a6e22e">customer</span>.<span style="color:#a6e22e">surname</span>.<span style="color:#a6e22e">toUpperCase</span>(); <span style="color:#75715e">// Invoke method on customer.surname 
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#a6e22e">f</span>().<span style="color:#a6e22e">m</span>(); <span style="color:#75715e">// Invoke method m() on return value of f()
+</span></span></span></code></pre></div>
     </div>
     <footer class="post-footer">
         
@@ -2007,6 +2038,7 @@ code.has-jax {
         <li><a href="#invoking-functions">Invoking Functions</a>
           <ul>
             <li><a href="#function-invocation">Function Invocation</a></li>
+            <li><a href="#method-invocation">Method Invocation</a></li>
           </ul>
         </li>
       </ul>
