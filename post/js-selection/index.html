@@ -241,13 +241,13 @@ code.has-jax {
     <i class="fa fa-file-word-o"></i>
 </span>
 <span class="post-meta-item-text">字数: </span>
-<span class="leancloud-visitors-count">35436</span>
+<span class="leancloud-visitors-count">35901</span>
 &nbsp; | &nbsp;
 <span class="post-meta-item-icon">
     <i class="fa fa-coffee"></i>
 </span>
 <span class="post-meta-item-text">阅读: </span>
-<span class="leancloud-visitors-count">71 分钟</span>
+<span class="leancloud-visitors-count">72 分钟</span>
 </span>
       </div>
     </header>
@@ -1828,7 +1828,29 @@ code.has-jax {
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-js" data-lang="js"><span style="display:flex;"><span><span style="color:#a6e22e">a</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">a</span> <span style="color:#f92672">||</span> [];
 </span></span></code></pre></div><p>运算符<code>||</code>在第一个参数为真时返回该参数，否则返回第二个参数。在这种情况下，如果传递了任何对象作为第二个参数，函数将使用该对象。但如果省略了第二个参数（或传递了空值或其他falsy值），则将使用一个新创建的空数组。</p>
 <p>需要注意的是，在设计带有可选参数的函数时，<font color=LightSeaGreen>应确保将可选参数放在参数列表的末尾</font>，以便可以省略它们。调用时不能省略第一个参数而传递第二个参数：必须明确传递<code>undefined</code>作为第一个参数。</p>
-
+<p>在ES6及更高版本中，可以直接在函数的参数列表中为每个函数参数定义默认值。只需在参数名称后面加上等号和默认值，即可在没有参数时使用该参数：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-js" data-lang="js"><span style="display:flex;"><span><span style="color:#75715e">// Append the names of the enumerable properties of object o to the
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">// array a, and return a. If a is omitted, create and return a new array.
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">function</span> <span style="color:#a6e22e">getPropertyNames</span>(<span style="color:#a6e22e">o</span>, <span style="color:#a6e22e">a</span> <span style="color:#f92672">=</span> []) {
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">for</span> (<span style="color:#66d9ef">let</span> <span style="color:#a6e22e">property</span> <span style="color:#66d9ef">in</span> <span style="color:#a6e22e">o</span>) <span style="color:#a6e22e">a</span>.<span style="color:#a6e22e">push</span>(<span style="color:#a6e22e">property</span>);
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">return</span> <span style="color:#a6e22e">a</span>;
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p>参数缺省表达式<font color=red>在调用函数时求值，而不是在定义函数时求值</font>，因此每次调用只传入一个参数的<code>getPropertyNames()</code>函数时，都会创建并传递一个新的空数组。</p>
+<p>如果参数缺省值是常量（或字面表达式，如<code>[]</code>和<code>{}</code>），可能最容易对函数进行推理。但这并不是必需的，可以使用变量或函数调用来计算参数的默认值。一个有趣的例子是，对于有多个参数的函数，可以使用前一个参数的值来定义后面参数的默认值：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-js" data-lang="js"><span style="display:flex;"><span><span style="color:#66d9ef">const</span> <span style="color:#a6e22e">rectangle</span> <span style="color:#f92672">=</span> (<span style="color:#a6e22e">width</span>, <span style="color:#a6e22e">height</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">width</span> <span style="color:#f92672">*</span> <span style="color:#ae81ff">2</span>) =&gt; ({<span style="color:#a6e22e">width</span>, <span style="color:#a6e22e">height</span>});
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">rectangle</span>(<span style="color:#ae81ff">1</span>)
+</span></span></code></pre></div><h3 id="rest-parameters-and-variable-length-argument-lists">Rest Parameters and Variable-Length Argument Lists</h3>
+<p>使用参数缺省值，可以编写使用比参数更少的参数调用的函数。而可变参数恰恰相反：它们允许编写可以使用任意参数的函数。下面是一个函数示例，它期望使用一个或多个数字参数，并返回最大的参数：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-js" data-lang="js"><span style="display:flex;"><span><span style="color:#66d9ef">function</span> <span style="color:#a6e22e">max</span>(<span style="color:#a6e22e">first</span> <span style="color:#f92672">=</span> <span style="color:#f92672">-</span><span style="color:#66d9ef">Infinity</span>, ...<span style="color:#a6e22e">rest</span>) {
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">let</span> <span style="color:#a6e22e">maxValue</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">first</span>; <span style="color:#75715e">// Start by assuming the first arg is biggest
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#75715e">// Then loop through the rest of the arguments, looking for bigger for(let n of rest) {
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#66d9ef">if</span> (<span style="color:#a6e22e">n</span> <span style="color:#f92672">&gt;</span> <span style="color:#a6e22e">maxValue</span>) {
+</span></span><span style="display:flex;"><span>        <span style="color:#a6e22e">maxValue</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">n</span>;
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">// Return the biggest
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#66d9ef">return</span> <span style="color:#a6e22e">maxValue</span>;
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div>
     </div>
     <footer class="post-footer">
         
@@ -2133,6 +2155,7 @@ code.has-jax {
         <li><a href="#function-arguments-and-parameters">Function Arguments and Parameters</a>
           <ul>
             <li><a href="#optional-parameters-and-defaults">Optional Parameters and Defaults</a></li>
+            <li><a href="#rest-parameters-and-variable-length-argument-lists">Rest Parameters and Variable-Length Argument Lists</a></li>
           </ul>
         </li>
       </ul>
