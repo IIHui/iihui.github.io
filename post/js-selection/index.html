@@ -241,13 +241,13 @@ code.has-jax {
     <i class="fa fa-file-word-o"></i>
 </span>
 <span class="post-meta-item-text">字数: </span>
-<span class="leancloud-visitors-count">33620</span>
+<span class="leancloud-visitors-count">34198</span>
 &nbsp; | &nbsp;
 <span class="post-meta-item-icon">
     <i class="fa fa-coffee"></i>
 </span>
 <span class="post-meta-item-text">阅读: </span>
-<span class="leancloud-visitors-count">68 分钟</span>
+<span class="leancloud-visitors-count">69 分钟</span>
 </span>
       </div>
     </header>
@@ -1762,6 +1762,38 @@ code.has-jax {
 </span></span><span style="display:flex;"><span>};
 </span></span><span style="display:flex;"><span><span style="color:#a6e22e">o</span>.<span style="color:#a6e22e">m</span>();
 </span></span></code></pre></div><p>上面代码中，内嵌了函数<code>f()</code>，关键词this不等于对象o。这被普遍认为是JavaScript语言中的一个缺陷，因此必须加以注意。上面的代码演示了一种常见的变通方法。在方法m中，我们将 this值赋值给变量 self，而在嵌套函数f 中，我们可以使用self代替this来引用包含的对象。</p>
+<p>在ES6及以后，解决这一问题的另一种方法是将嵌套函数f转换为箭头函数，这样就能正确地继承this值：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-js" data-lang="js"><span style="display:flex;"><span><span style="color:#66d9ef">const</span> <span style="color:#a6e22e">f</span> <span style="color:#f92672">=</span> () =&gt; {
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">console</span>.<span style="color:#a6e22e">log</span>(<span style="color:#66d9ef">this</span> <span style="color:#f92672">===</span> <span style="color:#a6e22e">o</span>) <span style="color:#75715e">// true, since arrow functions inherit this
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>};
+</span></span></code></pre></div><p>定义为表达式而非语句的函数不会被悬挂，因此为了使上面代码正常运行，需要将f的函数定义移到一些，使其在被调用之前出现。</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-js" data-lang="js"><span style="display:flex;"><span><span style="color:#66d9ef">let</span> <span style="color:#a6e22e">o</span> <span style="color:#f92672">=</span> {
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">m</span><span style="color:#f92672">:</span> <span style="color:#66d9ef">function</span> () {
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">const</span> <span style="color:#a6e22e">f</span> <span style="color:#f92672">=</span> () =&gt; {
+</span></span><span style="display:flex;"><span>            <span style="color:#a6e22e">console</span>.<span style="color:#a6e22e">log</span>(<span style="color:#66d9ef">this</span> <span style="color:#f92672">===</span> <span style="color:#a6e22e">o</span>) <span style="color:#75715e">// true, since arrow functions inherit this
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>        };
+</span></span><span style="display:flex;"><span>        <span style="color:#a6e22e">console</span>.<span style="color:#a6e22e">log</span>(<span style="color:#66d9ef">this</span> <span style="color:#f92672">===</span> <span style="color:#a6e22e">o</span>) <span style="color:#75715e">// true
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>        <span style="color:#a6e22e">f</span>();
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>};
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">o</span>.<span style="color:#a6e22e">m</span>();
+</span></span></code></pre></div><p>另一种解决方法是调用嵌套函数的<code>bind()</code> 方法来定义一个新函数，该函数会在指定对象上隐式调用：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-js" data-lang="js"><span style="display:flex;"><span><span style="color:#66d9ef">let</span> <span style="color:#a6e22e">o</span> <span style="color:#f92672">=</span> {
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">m</span><span style="color:#f92672">:</span> <span style="color:#66d9ef">function</span> () {
+</span></span><span style="display:flex;"><span>        <span style="color:#a6e22e">console</span>.<span style="color:#a6e22e">log</span>(<span style="color:#66d9ef">this</span> <span style="color:#f92672">===</span> <span style="color:#a6e22e">o</span>) <span style="color:#75715e">// true
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>        <span style="color:#66d9ef">const</span> <span style="color:#a6e22e">f</span> <span style="color:#f92672">=</span> (<span style="color:#66d9ef">function</span> () {
+</span></span><span style="display:flex;"><span>            <span style="color:#a6e22e">console</span>.<span style="color:#a6e22e">log</span>(<span style="color:#66d9ef">this</span> <span style="color:#f92672">===</span> <span style="color:#a6e22e">o</span>) <span style="color:#75715e">// true, since arrow functions inherit this
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>        }).<span style="color:#a6e22e">bind</span>(<span style="color:#66d9ef">this</span>);
+</span></span><span style="display:flex;"><span>        <span style="color:#a6e22e">f</span>();
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>};
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">o</span>.<span style="color:#a6e22e">m</span>();
+</span></span></code></pre></div><h3 id="constructor-invocation">Constructor Invocation</h3>
+<p>如果函数或方法调用之前有关键字new，那么它就是构造函数调用。构造函数调用在处理参数、调用上下文和返回值方面与普通函数和方法调用不同。</p>
+<p>如果构造函数调用的时候包含了参数列表，那么这些参数表达式将以与函数和方法调用相同的方式进行求值并传递给函数。可以在构造函数调用中省略一对空括号，但这种做法并不常见。例如，下面两行就是等价的：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-js" data-lang="js"><span style="display:flex;"><span><span style="color:#a6e22e">o</span> <span style="color:#f92672">=</span> <span style="color:#66d9ef">new</span> Object(); 
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">o</span> <span style="color:#f92672">=</span> <span style="color:#66d9ef">new</span> Object;
+</span></span></code></pre></div><p>一个构造函数调用会创造一个继承自新的，空的对象，该对象继承自构造函数的原型属性所指定的对象。构造函数的目的是初始化对象，这个新创建的对象被用作调用上下文，因此构造函数可以使用this关键字来引用它。请注意，即使构造函数的调用看起来像方法调用，新对象也会被用作调用上下文。也就是说，在表达式<code>new o.m()</code>中，<code>o</code>并未被用作调用上下文。</p>
 
     </div>
     <footer class="post-footer">
@@ -2059,6 +2091,7 @@ code.has-jax {
           <ul>
             <li><a href="#function-invocation">Function Invocation</a></li>
             <li><a href="#method-invocation">Method Invocation</a></li>
+            <li><a href="#constructor-invocation">Constructor Invocation</a></li>
           </ul>
         </li>
       </ul>

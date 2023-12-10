@@ -5101,6 +5101,12 @@ rect.setSize(width, height); setRectSize(rect, width, height); 上面这两行�
 如果嵌套函数作为方法被调用，其this值就是被调用的对象。如果嵌套函数（不是箭头函数）作为函数调用，那么它的this值要么是全局对象（非严格模式），要么是undefined（严格模式）。
 一个常见的错误是，认为在方法中定义并作为函数调用的嵌套函数可以使用此值获取方法的调用上下文。下面的代码演示了这个问题：
 let o = {  m: function () {  let self = this;  console.log(this === o) // true  f();  function f() {  console.log(this === o) // false  console.log(self === o) // true  }  } }; o.m(); 上面代码中，内嵌了函数f()，关键词this不等于对象o。这被普遍认为是JavaScript语言中的一个缺陷，因此必须加以注意。上面的代码演示了一种常见的变通方法。在方法m中，我们将 this值赋值给变量 self，而在嵌套函数f 中，我们可以使用self代替this来引用包含的对象。
+在ES6及以后，解决这一问题的另一种方法是将嵌套函数f转换为箭头函数，这样就能正确地继承this值：
+const f = () =&amp;gt; {  console.log(this === o) // true, since arrow functions inherit this }; 定义为表达式而非语句的函数不会被悬挂，因此为了使上面代码正常运行，需要将f的函数定义移到一些，使其在被调用之前出现。
+let o = {  m: function () {  const f = () =&amp;gt; {  console.log(this === o) // true, since arrow functions inherit this  };  console.log(this === o) // true  f();  } }; o.m(); 另一种解决方法是调用嵌套函数的bind() 方法来定义一个新函数，该函数会在指定对象上隐式调用：
+let o = {  m: function () {  console.log(this === o) // true  const f = (function () {  console.log(this === o) // true, since arrow functions inherit this  }).bind(this);  f();  } }; o.m(); Constructor Invocation 如果函数或方法调用之前有关键字new，那么它就是构造函数调用。构造函数调用在处理参数、调用上下文和返回值方面与普通函数和方法调用不同。
+如果构造函数调用的时候包含了参数列表，那么这些参数表达式将以与函数和方法调用相同的方式进行求值并传递给函数。可以在构造函数调用中省略一对空括号，但这种做法并不常见。例如，下面两行就是等价的：
+o = new Object(); o = new Object; 一个构造函数调用会创造一个继承自新的，空的对象，该对象继承自构造函数的原型属性所指定的对象。构造函数的目的是初始化对象，这个新创建的对象被用作调用上下文，因此构造函数可以使用this关键字来引用它。请注意，即使构造函数的调用看起来像方法调用，新对象也会被用作调用上下文。也就是说，在表达式new o.m()中，o并未被用作调用上下文。
 </content>
     </entry>
     
