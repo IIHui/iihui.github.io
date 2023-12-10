@@ -241,13 +241,13 @@ code.has-jax {
     <i class="fa fa-file-word-o"></i>
 </span>
 <span class="post-meta-item-text">字数: </span>
-<span class="leancloud-visitors-count">31381</span>
+<span class="leancloud-visitors-count">32002</span>
 &nbsp; | &nbsp;
 <span class="post-meta-item-icon">
     <i class="fa fa-coffee"></i>
 </span>
 <span class="post-meta-item-text">阅读: </span>
-<span class="leancloud-visitors-count">63 分钟</span>
+<span class="leancloud-visitors-count">64 分钟</span>
 </span>
       </div>
     </header>
@@ -1686,7 +1686,31 @@ code.has-jax {
 <p>在ES2020中，可以在函数表达式后面、左圆括号前面插入<code>?.</code>，从而只在函数不是<code>null</code>和<code>undefined</code>时调用函数。也就是说<code>f?.(x)</code>相当于下面语句：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-js" data-lang="js"><span style="display:flex;"><span>(<span style="color:#a6e22e">f</span> <span style="color:#f92672">!==</span> <span style="color:#66d9ef">null</span> <span style="color:#f92672">&amp;&amp;</span> <span style="color:#a6e22e">f</span> <span style="color:#f92672">!==</span> <span style="color:#66d9ef">undefined</span>) <span style="color:#f92672">?</span> <span style="color:#a6e22e">f</span>(<span style="color:#a6e22e">x</span>) <span style="color:#f92672">:</span> <span style="color:#66d9ef">undefined</span>
 </span></span></code></pre></div><h3 id="nested-functions">Nested Functions</h3>
-<p>在JavaScript中，函数</p>
+<p>在JavaScript中，函数可以内嵌到其他函数中：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-js" data-lang="js"><span style="display:flex;"><span><span style="color:#66d9ef">function</span> <span style="color:#a6e22e">hypotenuse</span>(<span style="color:#a6e22e">a</span>, <span style="color:#a6e22e">b</span>) {
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">function</span> <span style="color:#a6e22e">square</span>(<span style="color:#a6e22e">x</span>) {
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">return</span> <span style="color:#a6e22e">x</span> <span style="color:#f92672">*</span> <span style="color:#a6e22e">x</span>;
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">return</span> Math.<span style="color:#a6e22e">sqrt</span>(<span style="color:#a6e22e">square</span>(<span style="color:#a6e22e">a</span>) <span style="color:#f92672">+</span> <span style="color:#a6e22e">square</span>(<span style="color:#a6e22e">b</span>));
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">console</span>.<span style="color:#a6e22e">log</span>(<span style="color:#a6e22e">hypotenuse</span>(<span style="color:#ae81ff">12</span>, <span style="color:#ae81ff">14</span>))
+</span></span></code></pre></div><p>嵌套函数的有趣之处在于其变量作用域规则：它们可以访问被嵌套函数（或多个函数）的参数和变量。例如，在上面的代码，内层函数<code>square()</code>可以读写外层函数<code>hypotenuse()</code>定义的参数a和b。嵌套函数的这些作用域规则非常重要。</p>
+<h2 id="invoking-functions">Invoking Functions</h2>
+<p>构成函数主体的代码不是在定义函数时执行的，而是在调用函数时执行的。函数有五种调用方式：</p>
+<ul>
+<li>作为函数</li>
+<li>作为方法</li>
+<li>作为构造器</li>
+<li>通过call()和apply()方法间接调用</li>
+<li>通过语言特性，隐含地实现了与普通函数调用不同的功能</li>
+</ul>
+<h3 id="function-invocation">Function Invocation</h3>
+<p>函数可以作为函数调用，也可以通过调用表达式作为方法调用。调用表达式由一个求值为函数对象的表达式、一个左圆括号、一个以逗号分隔的零个或多个参数表达式列表和一个右圆括号组成。如果函数表达式是属性访问表达式，即函数是对象的属性或数组的元素，那么它就是方法调用表达式。下面是常规的函数表达式：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-js" data-lang="js"><span style="display:flex;"><span><span style="color:#a6e22e">printprops</span>({<span style="color:#a6e22e">x</span><span style="color:#f92672">:</span> <span style="color:#ae81ff">1</span>});
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">let</span> <span style="color:#a6e22e">probability</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">factorial</span>(<span style="color:#ae81ff">5</span>) <span style="color:#f92672">/</span> <span style="color:#a6e22e">factorial</span>(<span style="color:#ae81ff">13</span>);
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">let</span> <span style="color:#a6e22e">total</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">distance</span>(<span style="color:#ae81ff">0</span>, <span style="color:#ae81ff">0</span>, <span style="color:#ae81ff">2</span>, <span style="color:#ae81ff">1</span>) <span style="color:#f92672">+</span> <span style="color:#a6e22e">distance</span>(<span style="color:#ae81ff">2</span>, <span style="color:#ae81ff">1</span>, <span style="color:#ae81ff">3</span>, <span style="color:#ae81ff">5</span>);
+</span></span></code></pre></div><p>在调用过程中，每个参数表达式（括号之间的表达式）都会被求值，求值结果将成为函数的参数。这些值被赋值给函数定义中命名的参数。在函数体中，对参数的引用将求值为相应的参数值。</p>
+<p>对于常规函数调用，函数的返回值就是调用表达式的值。如果函数返回是因为解释器到了终点，那么返回值是<code>undefined</code>。如果函数返回是因为解释器执行了返回语句，那么返回值就是返回语句后面的表达式的值，如果返回语句没有值，那么返回值就是<code>undefined</code>。</p>
 
     </div>
     <footer class="post-footer">
@@ -1978,6 +2002,11 @@ code.has-jax {
             <li><a href="#function-expressions">Function Expressions</a></li>
             <li><a href="#arrow-functions">Arrow Functions</a></li>
             <li><a href="#nested-functions">Nested Functions</a></li>
+          </ul>
+        </li>
+        <li><a href="#invoking-functions">Invoking Functions</a>
+          <ul>
+            <li><a href="#function-invocation">Function Invocation</a></li>
           </ul>
         </li>
       </ul>
