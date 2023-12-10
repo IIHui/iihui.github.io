@@ -5106,8 +5106,10 @@ const f = () =&amp;gt; {  console.log(this === o) // true, since arrow functions
 let o = {  m: function () {  const f = () =&amp;gt; {  console.log(this === o) // true, since arrow functions inherit this  };  console.log(this === o) // true  f();  } }; o.m(); 另一种解决方法是调用嵌套函数的bind() 方法来定义一个新函数，该函数会在指定对象上隐式调用：
 let o = {  m: function () {  console.log(this === o) // true  const f = (function () {  console.log(this === o) // true, since arrow functions inherit this  }).bind(this);  f();  } }; o.m(); Constructor Invocation 如果函数或方法调用之前有关键字new，那么它就是构造函数调用。构造函数调用在处理参数、调用上下文和返回值方面与普通函数和方法调用不同。
 如果构造函数调用的时候包含了参数列表，那么这些参数表达式将以与函数和方法调用相同的方式进行求值并传递给函数。可以在构造函数调用中省略一对空括号，但这种做法并不常见。例如，下面两行就是等价的：
-o = new Object(); o = new Object; 一个构造函数调用会创造一个继承自新的，空的对象，该对象继承自构造函数的原型属性所指定的对象。构造函数的目的是初始化对象，这个新创建的对象被用作调用上下文，因此构造函数可以使用this关键字来引用它。请注意，即使构造函数的调用看起来像方法调用，新对象也会被用作调用上下文。也就是说，在表达式new o.m()中，o并未被用作调用上下文。
-</content>
+o = new Object(); o = new Object; 一个构造函数调用会创造一个继承自新的，空的对象，该对象继承自构造函数的prototype属性所指定的对象。构造函数的目的是初始化对象，这个新创建的对象被用作调用上下文，因此构造函数可以使用this关键字来引用它。
+需要注意的是，即使构造函数的调用看起来像方法调用，新对象也会被用作调用上下文。也就是说，在表达式new o.m()中，o并未被用作调用上下文。
+构造函数通常不使用返回关键字。它们通常会初始化新对象，然后在构造函数主体结束时隐式返回。在这种情况下，新对象就是构造函数调用表达式的值。但是，如果构造函数显式地使用return语句返回对象，那么该对象就会成为调用表达式的值。如果构造函数在使用return时没有返回值，或者返回的是一个基础值，那么返回值将被忽略，新对象将作为调用表达式的值。
+Indirect Invocation </content>
     </entry>
     
      <entry>
