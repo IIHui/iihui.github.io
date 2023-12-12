@@ -5116,7 +5116,7 @@ Implicit Function Invocation JavaScript语言有多种功能看起来不像函�
 下面的小节将介绍在调用函数时，如果传递的参数少于声明的参数，或者传递的参数多于声明的参数，会发生什么情况。还会演示了如果需要确保函数不被调用不适当的参数，如何显式地测试函数参数的类型。
 Optional Parameters and Defaults 当调用函数的参数少于声明的参数时，附加参数将被设置为默认值，通常是undefined。在编写函数时，将某些参数设置为可选参数通常很有用。下面是一个例子：
 function getPropertyNames(o, a) {  if (a === undefined) a = []; // If undefined, use a new array  for (let property in o)  a.push(property);  return a; } // getPropertyNames() can be invoked with one or two arguments: let o = {x: 1}, p = {y: 2, z: 3}; let a = getPropertyNames(o); getPropertyNames(p, a); console.log(a) // [ &amp;#39;x&amp;#39;, &amp;#39;y&amp;#39;, &amp;#39;z&amp;#39; ] 在上面函数的第一行中，可以使用||操作符，而不是使用if语句：
-a = a || []; 运算符||在第一个参数为真时返回该参数，否则返回第二个参数。在这种情况下，如果传递了任何对象作为第二个参数，函数将使用该对象。但如果省略了第二个参数（或传递了空值或其他falsy值），则将使用一个新创建的空数组。
+a = a || []; 运算符||在第一个参数为true时返回该参数，否则返回第二个参数。在这种情况下，如果传递了任何对象作为第二个参数，函数将使用该对象。但如果省略了第二个参数（或传递了空值或其他falsy值），则将使用一个新创建的空数组。
 需要注意的是，在设计带有可选参数的函数时，应确保将可选参数放在参数列表的末尾，以便可以省略它们。调用时不能省略第一个参数而传递第二个参数：必须明确传递undefined作为第一个参数。
 在ES6及更高版本中，可以直接在函数的参数列表中为每个函数参数定义默认值。只需在参数名称后面加上等号和默认值，即可在没有参数时使用该参数：
 // Append the names of the enumerable properties of object o to the // array a, and return a. If a is omitted, create and return a new array. function getPropertyNames(o, a = []) {  for (let property in o) a.push(property);  return a; } 参数缺省表达式在调用函数时求值，而不是在定义函数时求值，因此每次调用只传入一个参数的getPropertyNames()函数时，都会创建并传递一个新的空数组。
