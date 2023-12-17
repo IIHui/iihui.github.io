@@ -5083,22 +5083,22 @@ const f = x =&amp;gt; {  return {value: x}; // Good: f() returns an object }; co
 在ES2020中，可以在函数表达式后面、左圆括号前面插入?.，从而只在函数不是null和undefined时调用函数。也就是说f?.(x)相当于下面语句：
 (f !== null &amp;amp;&amp;amp; f !== undefined) ? f(x) : undefined Nested Functions 在JavaScript中，函数可以内嵌到其他函数中：
 function hypotenuse(a, b) {  function square(x) {  return x * x;  }  return Math.sqrt(square(a) &#43; square(b)); } console.log(hypotenuse(12, 14)) 嵌套函数的有趣之处在于其变量作用域规则：它们可以访问被嵌套函数（或多个函数）的参数和变量。例如，在上面的代码，内层函数square()可以读写外层函数hypotenuse()定义的参数a和b。嵌套函数的这些作用域规则非常重要。
-Invoking Functions 构成函数主体的代码不是在定义函数时执行的，而是在调用函数时执行的。函数有五种调用方式：
+Invoking Functions 构成函数主体的代码不是在定义函数时执行的，而是在调用函数时执行的，函数有五种调用方式：
  作为函数 作为方法 作为构造器 通过call()和apply()方法间接调用 通过语言特性，隐含地实现了与普通函数调用不同的功能  Function Invocation 函数可以作为函数调用，也可以通过调用表达式作为方法调用。调用表达式由一个求值为函数对象的表达式、一个左圆括号、一个以逗号分隔的零个或多个参数表达式列表和一个右圆括号组成。如果函数表达式是属性访问表达式，即函数是对象的属性或数组的元素，那么它就是方法调用表达式。下面是常规的函数表达式：
 printprops({x: 1}); let probability = factorial(5) / factorial(13); let total = distance(0, 0, 2, 1) &#43; distance(2, 1, 3, 5); 在调用过程中，每个参数表达式（括号之间的表达式）都会被求值，求值结果将成为函数的参数。这些值被赋值给函数定义中命名的参数。在函数体中，对参数的引用将求值为相应的参数值。
 对于常规函数调用，函数的返回值就是调用表达式的值。如果函数返回是因为解释器到了终点，那么返回值是undefined。如果函数返回是因为解释器执行了返回语句，那么返回值就是返回语句后面的表达式的值，如果返回语句没有值，那么返回值就是undefined。
 在非严格模式下调用函数时，调用上下文（this的值）是全局对象。而在严格模式下，调用上下文是undefined。需要注意的是，使用箭头语法定义的函数有不同的行为：它们总是继承定义时有效的this值。
 作为函数（而不是方法）调用的函数通常不使用this关键字。不过，该关键字可用于确定严格模式是否生效：
-const strict = (function() { return !this; }()); console.log(strict) // false 递归函数是一种可以调用自身的函数，如factorial()函数。某些算法，例如涉及树形数据结构的算法，可以用递归函数来实现，而且特别优雅。不过，在编写递归函数时，必须考虑内存限制。当函数A调用函数 B，然后函数B又调用函数C时，解释器需要跟踪这三个函数的执行上下文。当函数C执行完毕时，解释器需要知道在哪里继续执行函数B，而当函数B执行完毕时，解释器需要知道在哪里继续执行函数A。
-当一个函数调用另一个函数时，一个新的执行上下文就会被推入堆栈。当该函数返回时，其执行上下文对象会从堆栈中弹出。如果一个函数递归调用自身100次，那么栈中就会推入100个对象，然后再从栈中取出这100个对象。这个调用栈需要占用内存。在现代硬件上，编写数百次自我调用的递归函数通常是没有问题的。但如果一个函数自我调用了上万次，就很可能会出现&amp;quot;Maximum call-stack size exceeded&amp;quot;这样的错误。
-Method Invocation 方法只不过是存储在对象属性中的JavaScript函数。如果有一个函数f和一个对象o，就可以用下面一行定义一个名为m的方法：
-o.m = f; 在定义了对象o的方法m() 后，可以这样调用它：
+const strict = (function() { return !this; }()); console.log(strict) // false 递归函数是一种可以调用自身的函数，如factorial()函数。某些算法，例如涉及树形数据结构的算法，可以用递归函数来实现，而且特别优雅。不过，在编写递归函数时，必须考虑内存限制。当函数A调用函数B，然后函数B又调用函数C时，解释器需要跟踪这三个函数的执行上下文。当函数C执行完毕时，解释器需要知道在哪里继续执行函数B，而当函数B执行完毕时，解释器需要知道在哪里继续执行函数A。
+当一个函数调用另一个函数时，一个新的执行上下文就会被推入堆栈。当该函数返回时，其执行上下文对象会从堆栈中弹出。如果一个函数递归调用自身100次，那么栈中就会推入100个对象，然后再从栈中取出这100个对象。这个调用栈需要占用内存。在现代硬件上，编写数百次自我调用的递归函数通常是没有问题的。但如果一个函数自我调用了上万次，就很可能会出现Maximum call-stack size exceeded这样的错误。
+Method Invocation 方法只不过是存储在对象中的函数。如果有一个函数f和一个对象o，就可以使用下面一行定义一个名为m的方法：
+o.m = f; 在定义了对象o的方法m 后，可以像下面这样调用它：
 o.m(); 如果方法m期望两个参数，则可以按下面这样调用方法：
-o.m(x, y); 函数表达式本身就是一个属性访问表达式，这意味着函数是作为方法而不是普通函数被调用的。方法调用的参数和返回值的处理与普通函数调用完全相同。
-方法调用与函数调用有一个重要区别：调用上下文。属性访问表达式由两部分组成：对象（上面为o）和属性名称（m）。在这样的方法调用表达式中，对象o成为调用上下文，函数体可以使用关键字this来引用该对象。下面是一个具体示例：
-let calculator = { // An object literal  operand1: 1,  operand2: 1,  add() { // We&amp;#39;re using method shorthand syntax for this function  // Note the use of the this keyword to refer to the containing object.  this.result = this.operand1 &#43; this.operand2;  } }; calculator.add(); // A method invocation to compute 1&#43;1. console.log(calculator.result) // =&amp;gt; 2 大多数方法调用使用点号表示属性访问，但使用方括号的属性访问表达式也会导致方法调用。例如，以下两种情况都是方法调用：
+o.m(x, y); 上面函数表达式本身就是一个属性访问表达式，这意味着函数是作为方法而不是普通函数被调用的。方法调用的参数和返回值的处理与普通函数调用完全相同。
+方法调用与函数调用有一个重要区别：调用上下文。属性访问表达式由两部分组成：对象和属性名称。在这样的方法调用表达式中，对象o成为调用上下文，函数体可以使用关键字this来引用该对象。下面是一个具体示例：
+// An object literal let calculator = {  operand1: 1,  operand2: 1,  add() { // We&amp;#39;re using method shorthand syntax for this function  // Note the use of the this keyword to refer to the containing object.  this.result = this.operand1 &#43; this.operand2;  } }; calculator.add(); // A method invocation to compute 1&#43;1. console.log(calculator.result) // =&amp;gt; 2 大多数方法调用是使用点号进行属性访问，但使用方括号的属性访问表达式也可以执行方法调用。例如，以下两种情况都是方法调用：
 o[&amp;#34;m&amp;#34;](x, y); // Another way to write o.m(x,y). a[0](z) // Also a method invocation (assuming a[0] is a function). 方法调用可能涉及更复杂的属性访问表达式：
-customer.surname.toUpperCase(); // Invoke method on customer.surname f().m(); // Invoke method m() on return value of f() 方法和this关键字是面向对象编程范式的核心。任何作为方法使用的函数实际上都传递了一个隐式参数&amp;ndash;调用它的对象。通常情况下，方法会对该对象执行某种操作，而方法调用语法是表达函数对对象进行操作这一事实的优雅方式。比较下面两行:
+customer.surname.toUpperCase(); // Invoke method on customer.surname f().m(); // Invoke method m() on return value of f() 方法和this关键字是面向对象编程范式的核心。任何作为方法使用的函数实际上都传递了一个隐式参数—调用它的对象。一般情况下，方法会对该对象执行某种操作，而方法调用语法是表达函数对对象进行操作这一事实的优雅方式。比较下面两行:
 rect.setSize(width, height); setRectSize(rect, width, height); 上面这两行代码中调用的假定函数可能对（假定）对象rect执行完全相同的操作，但第一行中的方法调用语法更清楚地表明，操作的主要焦点是对象rect。
 需要注意的是this是一个关键字，不是变量或属性名，不允许赋值给this。this关键字不像变量那样有作用域，除了箭头函数外，嵌套函数不会继承包含函数的this值。
 如果嵌套函数作为方法被调用，其this值就是被调用的对象。如果嵌套函数（不是箭头函数）作为函数调用，那么它的this值要么是全局对象（非严格模式），要么是undefined（严格模式）。
