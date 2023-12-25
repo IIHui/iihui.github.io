@@ -4990,7 +4990,7 @@ let square = {  area() {  return this.side * this.side;  }, side: 10 }; square.a
 访问器属性可以通过对象字面量的扩展语法定义，getter和setter是ES5引入的，不是ES6才引入的。
 let o = {  // An ordinary data property  dataProp: value,  // An accessor property defined as a pair of functions.  get accessorProp() {  return this.dataProp;  },  set accessorProp(value) {  this.dataProp = value;  } }; 访问属性是通过一个或两个方法来定义的，方法名是属性名。除了前缀get和set，这两个方法看起来就像是用ES6简写的语法定义的普通方法一样。
 let p = {  // x and y are regular read-write data properties.  x: 1.0, y: 1.0,  // r is a read-write accessor property with getter and setter.  // Don&amp;#39;t forget to put a comma after accessor methods.  get r() {  return Math.hypot(this.x, this.y);  },  set r(newvalue) {  let oldvalue = Math.hypot(this.x, this.y);  let ratio = newvalue / oldvalue;  this.x *= ratio;  this.y *= ratio;  },  // theta is a read-only accessor property with getter only.  get theta() {  return Math.atan2(this.y, this.x);  } }; console.log(p.r) // 1.4142135623730951 console.log(p.theta) // 0.7853981633974483 上面示例中使用了this关键字，表示当前对象。访问属性也是可以被继承的，可以把上面定义的对象p作为其他对象的原型。
-// A new object that inherits getters and setters let q = Object.create(p); q.x = 3; // Create q&amp;#39;s own data properties q.y = 4; console.log(q.r) // 5.0 console.log(q.theta) // 0.9272952180016122 Chapter 7 数组是值的有序集合，其中的值叫做元素，每个元素有一个数值表示的位置，叫做索引。JavaScript的数组元素是无类型限制的，即同一个数组中的元素可以是任意类型。也就是说，同一个数组中的元素可能有不同的类型。
+// A new object that inherits getters and setters let q = Object.create(p); q.x = 3; // Create q&amp;#39;s own data properties q.y = 4; console.log(q.r) // 5.0 console.log(q.theta) // 0.9272952180016122 Chapter 7 数组是值的有序集合，其中的值叫做元素，每个元素有一个数值表示的位置，叫做索引。JavaScript的数组元素是无类型限制的，即同一数组中的元素可以是任意类型。也就是说，同一个数组中的元素可能有不同的类型。
 JavaScript的数组是动态的，它们会按需增长或减少，因此创建数组时无须声明一个固定大小，也无须在大小变化时重新为它们分配空间。
 数组可以是稀疏的，即数组中的元素不一定具有连续的索引，中间可能有间隙。每个数组都有length属性。对于非稀疏数组，这个属性保存数组中元素的个数，对于稀疏数组，这个属性值大于数组中元素个数。
 数组是一种特殊的对象，数组索引更像是属性名，只不过恰巧是整数而已。在实现时通常会对数组进行特别优化，从而使得通过数值索引访问的数组元素明显快于访问常规的对象属性。
@@ -5011,8 +5011,8 @@ let a = new Array(); 这种方式创建了一个空数组，里面没有任何�
 let a = new Array(10); console.log(a.length) // 10 这种方式创建了一个指定长度的数组。如果事先知道需要多少元素，这种形式可用于预分配数组。但需要注意的是，数组中不会存储任何值，甚至没有为数组定义数组索引属性。
 let a = new Array(10); console.log(a.length) console.log(a[0])  // 执行结果 10 undefined 第三种方式是为数组明确指定两个或多个数组元素或一个非数字元素。在这种方式下，构造器的所有参数都成为了新数组的中的元素：
 let a1 = new Array(5, 4, 3, 2, 1, &amp;#34;testing, testing&amp;#34;); let a2 = new Array(&amp;#34;element&amp;#34;) console.log(a1, a2)  // 打印的结果 [5, 4, 3, 2, 1, &amp;#34;testing, testing&amp;#34;] [&amp;#34;element&amp;#34;] Array.of() 当Array()构造器使用一个数字参数调用时，这个数字表示数组长度。但当多于一个参数调用Array()构造器时，它将这些传入的参数当成数组元素。这意味着Array()构造器不能创建只包含单个数值元素的数组。
-在ES6，函数Array.of()能够解决这个问题，它是一个工厂方法，以它的所有参数值（不管有多少个）创建和返回一个新的数组：
-Array.of() // =&amp;gt; []; returns empty array with no arguments Array.of(10)// =&amp;gt; [10]; can create arrays with a single numeric argument Array.of(1, 2, 3) // =&amp;gt; [1, 2, 3] Array.from() 另一个数组工厂方法是ES6引入的，它期望一个可迭代的或类数组的对象作为它的第一个参数并返回一个新的数组，这个新生成的数组包含了传入对象的所有元素。对于可迭代的参数，Array.from(iterable)的作用如同3个点展开操作符[...iterable]。
+在ES6，函数Array.of()能够解决这个问题，它是一个工厂方法，以其所有参数值（不管有多少个）创建和返回一个新的数组：
+Array.of() // =&amp;gt; []; returns empty array with no arguments Array.of(10)// =&amp;gt; [10]; can create arrays with a single numeric argument Array.of(1, 2, 3) // =&amp;gt; [1, 2, 3] Array.from() 另一个数组工厂方法是ES6引入的，它期望一个可迭代的或类数组对象作为它的第一个参数并返回一个新的数组，这个新生成的数组包含了传入对象的所有元素。对于可迭代的参数，Array.from(iterable)的作用如同3个点展开操作符[...iterable]。
 let copy = Array.from(original); Array.from()同样重要，因为它定义了一种为类数组对象创建真正数组副本的方法。类数组对象是具长度属性的非数组对象，其存储值的属性名称恰好是整数。某些网络浏览器方法的返回值是类数组对象，如果先将它们转换为真数组，处理起来会更容易：
 let trueArr = Array.from(arraylike); 工厂方法Array.from()接受第二个可选的参数，如果传递函数作为第二个参数，那么在构建新数组时，原对象中的每个元素都将传递给这个指定的函数，函数的返回值将存储在新数组中。
 Reading and Writing Array Elements 访问数组中的某个元素使用操作符[]，数组的引用应出现在方括号的左侧。方括号内应是一个值为非负整数的任意表达式，可以使用这种语法读取和写入数组元素的值。
