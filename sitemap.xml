@@ -4959,8 +4959,8 @@ let o = {x: undefined}; // Property is explicitly set to undefined o.x !== undef
 let o = {x: 1, y: 2, z: 3}; console.log(o.propertyIsEnumerable(&amp;#34;toString&amp;#34;)) // false for (let p in o) {  console.log(p); } // 执行的结果 false x y z 1 2 3 为了防止通过for/in枚举继承的属性，可以通过在循环体内添加hasOwnProperty来过滤：
 let o = {x: 1, y: 2, z: 3}; console.log(o.propertyIsEnumerable(&amp;#34;toString&amp;#34;)) // false for (let p in o) {  if (o.hasOwnProperty(p)) {  console.log(p);  } } 有4个函数可以用来获取属性名数组：
  Object.keys()返回对象可枚举自有属性名的数组。它不包含不可枚举属性、继承属性或符号属性。 Object.getOwnPropertyNames()返回自有属性名，包括不可枚举自有属性，只要属性名是字符串即可。 Object.getOwnPropertySymbols()返回所有自有Symbol属性，不管是否可枚举的。 Reflect.ownKeys()返回所有自有属性名，包括枚举和不可枚举，字符串或符号属性。  Property Enumeration Order ES6正式定义了枚举对象的自有属性顺序。Object.keys(), Object.getOwnPropertyNames(), Object.getOwnPropertySymbols(), Reflect.ownKeys(),JSON.stringify()等相关方法都按照下面顺序列出属性：
- 首先列出名字为非负整数字符串的属性，按照数值顺序从小到大。这条规则意味着数组和类数组对象的属性会按照顺序被枚举。 在列出类数组索引的所有属性后，再列出剩余属性名为字符串的属性。这些属性按照他们被添加到对象的先后顺序列出。对于在对象字面量中定义的属性，按照它们在字面量中出现的顺序列出。 最后，符号属性将按其被添加到对象中的顺序列出来。  Extending Objects 在程序中，把一个对象的属性复制到另一个对象是很常见的，使用下面的代码很容易做到：
-let target = {x: 1}, source = {y: 2, z: 3}; for (let key of Object.keys(source)) {  target[key] = source[key]; } console.log(target) 因为这是一种常见的操作，因此不同的框架定义了不同的工具方法来执行这种操作，在在ES6中，这种能力d以Object.assign()的形式出现在了JavaScript的核心。
+ 首先列出名字为非负整数字符串的属性，按照数值顺序从小到大。这条规则意味着数组和类数组对象的属性会按照顺序被枚举。 在列出类数组索引的所有属性后，再列出剩余属性名为字符串的属性。这些属性按照他们被添加到对象的先后顺序列出。对于在对象字面量中定义的属性，按照它们在字面量中出现的顺序列出。 最后，符号属性将按其被添加到对象中的顺序列出来。  Extending Objects 在程序中，把一个对象的属性复制到另一个对象是很常见的，使用下面代码很容易做到：
+let target = {x: 1}, source = {y: 2, z: 3}; for (let key of Object.keys(source)) {  target[key] = source[key]; } console.log(target) 因为这是一种常见操作，因此不同的框架定义了不同的工具方法来执行这种操作，在ES6中，这种能力以Object.assign()的形式出现在了JavaScript核心。
 这个函数期望两个以上的参数，它修改并返回第一个参数（目标对象），不会修改第二个以及后续的参数（源目标）。对于每个源目标，会复制可枚举的自有属性（包括符号属性）。
 Object.assign(o, defaults); // overwrites everything in o with defaults o = Object.assign({}, defaults, o); 使用扩展操作符...也可以表达这种对象复制和覆盖操作：
 o = {...defaults, ...o}; 为了避免复制额外的创建和复制操作，可以重写一版Object.assign()，只复制那些不存在的属性：
