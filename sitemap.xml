@@ -4793,19 +4793,19 @@ JavaScript使用的IEEE-754浮点表示法是一种二进制表示法。这种�
 let x = .3 - .2; let y = .2 - .1; console.log(x, y) // 0.09999999999999998 0.1 console.log(x === y) // false console.log(x === .1, y === .1) // false true  // 打印的结果 0.09999999999999998 0.1 false false true 上面代码中，由于舍入误差.3和.2近似值之差与.2和.1近似值之差并不相等。但这并不是JavaScript特有的问题，而是所有使用二进制浮点数编程语言共有的问题。
 此外，请注意上面代码中的x和y值非常接近，也极其接近正确值。计算出来的值几乎可以满足任何需要，但当试图比较两个值是否相等时才会出现问题。
 如果使用浮点近似值对我们的程序有问题，可以考虑使用缩放整数。例如，可以使用整数值而不是小数值来处理货币。
-Arbitrary Precision Integers with BigInt 在ES2020中定义的最新特性之一是一种名为BigInt的新数值类型。顾名思义，BigInt是一种数值类型，其值为整数。将BigInt添加到JavaScript中主要是为了允许表示64位整数，这是与许多其他编程语言和API兼容所必需的。
+Arbitrary Precision Integers with BigInt 在ES2020中定义的最新特性之一是一种名为BigInt的新数值类型。顾名思义，BigInt是一种数值类型，其值为整数。添加BigInt类型主要是为了允许表示64位整数，这是与许多其他编程语言和API兼容所必需的。
 如果需要处理比较大的数字，BigInt值以有数千甚至数百万位。但请注意，BigInt并不适合用于加密，因为它实现时没有考虑预防时序攻击。
 BigInt字面量是一串数字后面跟小写字母n。默认情况下，字面量的基数是10，但可以通过前置0b,0o和0x来表示二进制、八进制和十六进制。
 console.log(1234n, 0b11111n, 0o7777n, 0x8000000n) // 1234n 31n 4095n 134217728n 可以使用BigInt()函数把普通的数值或字符串转换为BigInt值:
-console.log(BigInt(Number.MAX_SAFE_INTEGER)) let string = &amp;#34;1&amp;#34; &#43; &amp;#34;0&amp;#34;.repeat(100); console.log(BigInt(string))  // 打印的值 9007199254740991n 6410000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000n BigInt的算术运算与常规数值的算术运算类似，只不过除法会丢弃余数，并向下取整：
-console.log(1000n &#43; 2000n, 2000n * 3000n, 3000n / 997n, 3000n % 997n)  // 打印的值 3000n 6000000n 3n 9n 虽然&#43;, -, *, /, %, 和**运算符号可以用于BigInt。但必须注意的是，不能将BigInt类型的操作数与普通数字操作数混合使用。
+console.log(BigInt(Number.MAX_SAFE_INTEGER)) let string = &amp;#34;1&amp;#34; &#43; &amp;#34;0&amp;#34;.repeat(30); console.log(BigInt(string))  // 打印的值 9007199254740991n 1000000000000000000000000000000n BigInt的算术运算与常规数值的算术运算类似，只不过除法会丢弃余数，并向下取整：
+console.log(1000n &#43; 2000n, 2000n * 3000n, 3000n / 997n, 3000n % 997n)  // 打印的值 3000n 6000000n 3n 9n 虽然&#43;, -, *, /, %和**运算符号均可以用于BigInt。但必须注意的是，不能将BigInt类型的操作数与普通数字操作数混合使用。
 但是，比较运算符可以处理混合类型。位操作数通常可以用于BigInt操作数，但Math对象的任何函数都不接收BigInt操作数。
-let timestamp = Date.now(); // The current time as a timestamp (a number). let now = new Date(); // The current time as a Date object. let ms = now.getTime(); // Convert to a millisecond timestamp. let iso = now.toISOString(); // Convert to a string in standard format. Text 表示文本的数据类型是字符串。字符串是由16bit值组成的不可变的有序序列，每个数值通常代表一个Unicode字符。字符串的长度就是它包含16bit值的个数。字符串（及其数组）使用基于0的索引，第一个16bit值的索引为0，第二个16bit值的索引为1，以此类推。
+let timestamp = Date.now(); // The current time as a timestamp (a number). let now = new Date(); // The current time as a Date object. let ms = now.getTime(); // Convert to a millisecond timestamp. let iso = now.toISOString(); // Convert to a string in standard format. Text 表示文本的类型是字符串。字符串是由16bit值组成的不可变有序序列，每个数值通常代表一个Unicode字符。字符串的长度就是它包含16bit值的个数。字符串（及其数组）使用基于0的索引，第一个16bit值的索引为0，第二个16bit值的索引为1，以此类推。
 空字符串就是长度为0的字符串。 JavaScript没有表示字符串中单个元素的特殊类型。若要表示单个16bit值，只需使用长度为1的字符串。
 JavaScript使用UTF-16编码Unicode字符集 ，字符串是无符号16bit值序列。常见的Unicode字符，它的码点适合16bit，并且可以用字符串的一个元素来表示。若Unicode字符的码点不适合用16bit来表示的，则使用UTF-16规则编码为两个16bit值的序列（称为surrogate pair）。这意味着长度为2（两个16bit值）的JavaScript字符串可能只代表一个Unicode字符：
 euro = &amp;#34;€&amp;#34;; love = &amp;#34;😍&amp;#34;; console.log(euro.length, love.length)  // 打印的值 1 2 JavaScript定义的大多数字符串方法都是对16bit值而非字符进行操作。它们不会特殊处理surrogate pair，不会对字符串进行归一化处理，甚至不会确保字符串是格式正确的UTF-16字符串。
-但是，在ES6中字符串是可迭代的，如果对字符串使用for/of循环或...操作符，迭代的是字符而不是16bit值。
-const str = &amp;#34;😍4567189818&amp;#34; for (const item of str) {  console.log(item) } String Literals 若要使用字符串字面量，可以将字符串放到一对匹配的单引号，双引号或者反引号中。双引号和反引号字符可以出现在由单引号包含的字符串，反引号和单引号类似。
+在ES6中字符串是可迭代的。需要注意的是，如果对字符串使用for/of循环或...操作符，迭代的是字符而不是16bit值。
+const str = &amp;#34;😍4567&amp;#34; console.log(&amp;#34;str length:&amp;#34;, str.length) for (const item of str) {  console.log(item) }  // 执行结果 str length: 6 😍 4 5 6 7 String Literals 若要使用字符串字面量，可以将字符串放到一对匹配的单引号，双引号或者反引号中。双引号和反引号字符可以出现在由单引号包含的字符串，反引号和单引号类似。
 &amp;#34;&amp;#34; // The empty string: it has zero characters &amp;#39;testing&amp;#39; &amp;#34;3.14&amp;#34; &amp;#39;name=&amp;#34;myform&amp;#34;&amp;#39; &amp;#34;Wouldn&amp;#39;t you prefer O&amp;#39;Reilly&amp;#39;s book?&amp;#34; &amp;#34;τ is the ratio of a circle&amp;#39;s circumference to its radius&amp;#34; `&amp;#34;She said &amp;#39;hi&amp;#39;&amp;#34;, he said.` 使用反引号包含字符串是ES6的一大特色，它允许将表达式插值到字符串字面中。最早版本的JavaScript要求字符串字面量写在一行上，因此可能经常看到代码通过使用&#43;运算符连接单行字符串来创建长字符串。
 但是，从ES5开始，可以在每一行（最后一行除外）的结尾使用反斜线，将字符串字面量分成多行。反斜线和它后面的行结束符都不是字符串字面量的一部分。
 如果需要在单引号或双引号字符串字面量中包含换行符，需要使用字符\n。ES6的字符串反引号语法允许将字符串分成多行，在这种情况下，行结束符是字符串字面量的一部分：
