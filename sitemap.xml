@@ -4871,17 +4871,17 @@ let i; let sum;  // 一次定义多个变量 let i, sum;  let message = &amp;#34
 const H0 = 74; const C = 299792.458; const AU = 1.496E8; 在同一个作用域内使用多个let或const声明同一个名字是语法错误。在嵌套作用域内声明同名的变量是合法的，但不推荐这样做。
 const x = 1; if (x === 1) {  const x = 2;  console.log(x) // 2 } console.log(x) // 1 Variable Declarations with var 在ES6之前，声明变量的唯一方式是使用var关键词，并且不允许声明常量。使用var声明变量的语法和使用let关键词一样：
 var x; var data = [], count = data.length; for (var i = 0; i &amp;lt; count, i&#43;&#43;) {  console.log(data[i]) } 虽然var和let有相同的语法，但它们也有重要的区别：
- 使用var声明的变量不具有块作用域。这种变量的作用域仅限于包含变量声明的函数体，无论它在函数中嵌套层次有多深。 如果在函数外部使用var声明变量，则会声明一个全局变量。但与let声明的全局变量有一个重要区别，var声明的全局变量被实现为全局对象的属性，全局对象可以使用globalThis引用。 使用var多次声明同名变量是合法的。因为var具有函数作用域，而非块作用域，所以经常会出现声明同名变量的情况。 使用var声明变量，该变量会被提升到函数的顶部，但变量的初始化仍然在代码所在位置。  在严格模式下，如果试图使用未声明的变量，运行代码时会出现引用错误。然而，在非严格模式，如果为一个未使用let、const或var声明的名称赋值，最终会创建一个新的全局变量。无论引用的代码嵌套在函数和代码块中多深，它都将是一个全局变量，这几乎肯定不是我们想要的，而且容易出错，也是使用严格模式的最佳原因之一。
+ 使用var声明的变量不具有块作用域。这种变量的作用域仅限于包含变量声明的函数体，无论它在函数中嵌套层次有多深。 如果在函数外部使用var声明变量，则会声明一个全局变量。但与let声明的全局变量有一个重要区别，var声明的全局变量被实现为全局对象的属性，全局对象可以使用globalThis引用。 使用var多次声明同名变量是合法的。因为var具有函数作用域，而非块作用域，所以经常会出现声明同名变量的情况。 使用var声明变量，该变量会被提升到函数的顶部，但变量的初始化仍然在代码所在位置。  在严格模式下，如果试图使用未声明的变量，运行代码时会出现引用错误。然而，在非严格模式，如果为一个未使用let、const或var声明的名称赋值，最终会创建一个新的全局变量。无论引用的代码嵌套在函数和代码块中多深，它都将是一个全局变量，这几乎不是我们想要的，而且容易出错，也是使用严格模式的最佳原因之一。
 Destructuring Assignment ES6实现了一种复合声明与赋值语法，叫做解构赋值。在解构赋值中，等号右边是一个数组或对象，等号左边以模拟或数组和对象的方式指定一个或多个变量名字。
 let [x, y] = [1, 2]; [x, y] = [x &#43; 1, y &#43; 1]; // 同时赋值 [x, y] = [y, x]; // 交换两个变量的值 console.log(x, y)  // 打印的值 3 2 解构赋值可以让返回数组的函数变得非常便捷：
 function toPolar(x, y) {  return [Math.sqrt(x * x &#43; y * y), Math.atan2(y, x)]; }  function toCartesian(r, theta) {  return [r * Math.cos(theta), r * Math.sin(theta)]; }  let [r,theta] = toPolar(1.0, 1.0); let [x,y] = toCartesian(r,theta); 在循环中也可以使用解构赋值：
 let o = {x: 1, y: 2}; // The object we&amp;#39;ll loop over for (const [name, value] of Object.entries(o)) {  console.log(name, value); }  for ([name, value] of Object.entries(o)) {  console.log(name, value); } 解构赋值时，等号左边的变量数量不必与等号右边的数组元素个数匹配，左边多余的变量的初始值为undefined，右边多余的值会被忽略。左边变量列表可以包含额外的逗号，用于跳过右侧某些值：
 let [x, y] = [1]; [x, y] = [1, 2, 3]; [, x, , y] = [1, 2, 3, 4]; console.log(x, y) // 2 4 在解构赋值时，如果想把所有未使用或剩余的值收集到一个变量中，可以在左侧最后一个变量名前加上3个点：
-let [x, ...y] = [1, 2, 3, 4]; console.log(x, y) 解构赋值可以用于嵌套数组，此时左边也应该看起来像一个内嵌的数组字面量：
-let [a, [b, c]] = [1, [2, 2.5], 3]; // a == 1; b == 2; c == 2.5 console.log(a, b, c) // 执行结果 1 2 2.5 数组解构的一个重要特性是等号右侧并不要求是数组。实际上，右侧可以使用任何可迭代对象，任何可以在for/of循环中使用的对象都可被解构：
+let [x, ...y] = [1, 2, 3, 4]; console.log(x, y)  // 执行结果 1 [ 2, 3, 4 ] 解构赋值可以用于嵌套数组，此时左边也应该看起来像一个内嵌的数组字面量：
+let [a, [b, c]] = [1, [2, 2.5], 3]; // a == 1; b == 2; c == 2.5 console.log(a, b, c)  // 执行结果 1 2 2.5 数组解构的一个重要特性是等号右侧并不要求是数组。实际上，解构右侧可以使用任何可迭代对象，任何可以在for/of循环中使用的对象都可被解构：
 let [first, ...rest] = &amp;#34;Hello&amp;#34;; console.log(first, rest) // first == &amp;#34;H&amp;#34;; rest == [&amp;#34;e&amp;#34;,&amp;#34;l&amp;#34;,&amp;#34;l&amp;#34;,&amp;#34;o&amp;#34;] 解构赋值在右侧是对象值的情况下也可以执行。此时，左侧看起来像是一个对象字面量，即一个包含在花括号内以逗号分隔的变量名列表：
 let transparent = {r: 0.0, g: 0.0, b: 0.0, a: 1.0}; let {r, g, b} = transparent; // r == 0.0; g == 0.0; b == 0.0 下面示例展示了把Math对象的全局函数复制给变量，这种方式可以简化代码：
-// Same as const sin=Math.sin, cos=Math.cos, tan=Math.tan const {sin, cos, tan} = Math; console.log(sin(30), cos(30), tan(30)) // -0.9880316240928618 0.15425144988758405 -6.405331196646276 需要注意的是，如果等号左侧不是Math对象的属性名，则该变量的值为undefined。在上面解构中，我们选择了和要解构对象的属性一致的变量名，但这不是必须的：
+// Same as const sin=Math.sin, cos=Math.cos, tan=Math.tan const {sin, cos, tan} = Math; console.log(sin(30), cos(30), tan(30))  // 执行结果 // -0.9880316240928618 0.15425144988758405 -6.405331196646276 需要注意的是，如果等号左侧不是Math对象的属性名，则该变量的值为undefined。在上面解构中，我们选择了和要解构对象的属性一致的变量名，但这不是必须的：
 // Same as const cosine = Math.cos, tangent = Math.tan; const {cos: cosine, tan: tangent} = Math; console.log(cosine(12)) // 0.8438539587324921 Chapter 4 表达式是一个可以被求值并产生一个值的短语，嵌入到程序中的常量是最简单的表达式之一，变量名也是一种简单的表达式，它的值为赋给该变量的值相同。
 复杂的表达式由简单的表达式组成，例如一个数组访问表达式由一个求值为数组的表达式、一个左方括号，一个求值为整数的表达式和一个右方括号构成。
 Primary Expressions 最简单的表达式被称为基础表达式，是指那些独立存在，不再包含更简单表达式的表达式。基础表达式包含常量，字面量，某些关键字和变量引用。
@@ -4892,7 +4892,7 @@ i sum undefined 当程序中出现任何标识符时，都被假设为常量或�
   Object and Array Initializers 对象和数组初始化器也是表达式，值为新创建的对象或数组。这些初始化表达式也被称为对象字面量或数组字面量。与真正的字面量不同，它们不是基础表达式。
 [] // An empty array: no expressions inside brackets means no elements [1&#43;2,3&#43;4] // A 2-element array. First element is 3, second is 7 let matrix = [[1,2,3], [4,5,6], [7,8,9]]; let sparseArray = [1,,,,5];  let p = { x: 2.3, y: -1.2 } // An object with 2 properties let q = {}; // An empty object with no properties q.x = 2.3; q.y = -1.2; // Now q has the same properties as p 在ES6中，对象字面量有更丰富的语法，可以嵌套。
 let rectangle = {  upperLeft: {x: 2, y: 2},  lowerRight: {x: 4, y: 5} }; Property Access Expressions 属性访问表达式求值对象属性或数组的元素，有两种属性访问语法。第一种是使用点操作符，另一种是使用方括号，示例如下：
-let o = {x: 1, y: {z: 3}}; let a = [o, 4, [5, 6]]; console.log(o.x, o.y.z, o[&amp;#34;x&amp;#34;], a[1], a[2][&amp;#34;1&amp;#34;]) 无论使用哪种属性访问表达式，位于.或[前的表达式都会被求值，如果求值结果为null或undefined，表达式就会抛出TypeError，因为null或undefined是不能有属性的两个值。
+let o = {x: 1, y: {z: 3}}; let a = [o, 4, [5, 6]]; console.log(o.x, o.y.z, o[&amp;#34;x&amp;#34;], a[1], a[2][&amp;#34;1&amp;#34;])  // 执行结果 1 3 1 4 6 无论使用哪种属性访问表达式，位于.或[前的表达式都会被求值，如果求值结果为null或undefined，表达式就会抛出TypeError，因为null或undefined是不能有属性的两个值。
 Operator Overview 多数操作符都是类似&#43;和=这样的标点符号，也有一些delete和instanceof这样的关键字操作符。关键字操作符也是常规操作符，只不过它们的语法没有那么简短而已。
 尽管typeof是最高优先级的操作符，但typeof操作符基于属性访问，数组索引以及函数调用，这些操作的优先级全部高于操作符。
 &#43;操作符优先字符串拼接，只要操作数是字符串或可以转换为字符串的对象，另一个操作数也会被转换为字符串并执行拼接操作。只有任何操作数都不是字符串或string-like才会执行加法操作。
