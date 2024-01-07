@@ -4820,16 +4820,16 @@ let s = `hello world`; console.log(s) // hello world 这不仅是另一种表示
 let name = &amp;#34;Bill&amp;#34;; let greeting = `Hello ${name}.`; console.log(greeting) // Hello Bill. 在${}中的内容被解释成表达式，而在花括号外的内容是普通的字符串字面量。模板字面量可能包含很多表达式，它可以包含任何普通字符串中能够出现的转义字符，也可以跨越多行而无需转义字符。
 下面的模板字面量包含四个JavaScript 表达式、一个Unicode转义序列和至少四个换行符（表达式值中也可能包含换行符）：
 let errorMessage = `\ \u2718 Test failure at ${filename}:${linenumber}: ${exception.message}Stack trace: ${exception.stack}`;  console.log(errorMessage) 上面字符串第一行末尾的反斜线转义了第一个换行符，因此生成的字符串以Unicode 字符✘（\u2718）而不是换行符开始。
-模板字面量的一个强大但不常用的功能是，如果一个函数名（或tag）出现在字符串开始的反引号前面，那么模板字面量的文本和表达式的值都会传递给该函数。这个tagged template literal的值就是这个函数的返回值。
-ES6有一个内置的标签函数String.raw()，这个函数返回反引号中未经处理的文本，即不会处理任何反斜杠转义字符：
-console.log(String.raw`\n`.length); // 打印的结果 2 自定义模板标签函数是一个非常强大的特性，这些函数不需要返回字符串，并且可以被当成构造函数使用，就像为语言本身定义了一种新的字面量语法一样。
+模板字面量的一个强大但不常用的功能是，如果一个函数名（或tag）出现在字符串开始的反引号前面，那么模板字面量的文本和里面表达式的值都会传递给该函数。这个tagged template literal的值就是这个函数的返回值。
+ES6有一个内置的tag函数String.raw()，这个函数返回反引号中未经处理的文本，即不会处理任何反斜杠转义字符：
+console.log(`\n`.length); console.log(String.raw`\n`.length); // 打印的结果 1 2 自定义模板标签函数是一个非常强大的特性，这些函数不需要返回字符串，并且可以被当成构造函数使用，就像为语言本身定义了一种新的字面量语法一样。
 Pattern Matching JavaScript定义了一种称为正则表达式（或 RegExp）的数据类型，用于描述和匹配文本字符串中的模式。RegExp并不是基本数据类型之一，但它拥有像数字和字符串一样的字面语法，因此看起来像是基本数据类型。正则表达式字面的语法很复杂，而且它们定义的API也不简单。
 一对斜杠之间的文本构成了正则表达式字面量，其中第二个斜杠后面可以跟着一个或多个字母，用于修改模式的含义：
 /^HTML/; // Match the letters HTML at the start of a string /[1-9][0-9]*/; // Match a nonzero digit, followed by any of digits /\bjavascript\b/i; // Match &amp;#34;javascript&amp;#34; as a word, case-insensitive RegExp对象定义了一系列有用的方法，字符串也有方法接收RegExp参数：
 let text = &amp;#34;testing: 1, 2, 3&amp;#34;; // Sample text let pattern = /\d&#43;/g; // Matches all instances of one or more digits  pattern.test(text) // =&amp;gt; true: a match exists text.search(pattern) // =&amp;gt; 9: position of first match text.match(pattern) // =&amp;gt; [&amp;#34;1&amp;#34;, &amp;#34;2&amp;#34;, &amp;#34;3&amp;#34;] text.replace(pattern, &amp;#34;#&amp;#34;) // &amp;#34;testing: #,#,#&amp;#34; text.split(/\D&#43;/) // [&amp;#34;&amp;#34;, &amp;#34;1&amp;#34;, &amp;#34;2&amp;#34;, &amp;#34;3&amp;#34;] split on nondigits Boolean Values JavaScript的任何值都可以转换为布尔值，下面的值都会转为false。false和下面能转换为false的6个值，被称为falsy值：
 undefined null 0 -0 NaN &amp;#34;&amp;#34; // the empty string 其它的值，包括所有对象都能转换为true，true和这些能转换为true的值被称为truthy值。假设一个变量保存一个对象，要么其值是null，要么保存真正的对象，可以使用下面两种方式判断：
 if (o !== null) {  console.log(&amp;#34;o is not null&amp;#34;) } else {  console.log(&amp;#34;o is null&amp;#34;) }  if (o) {  console.log(&amp;#34;o is not null&amp;#34;) } else {  console.log(&amp;#34;o is null&amp;#34;) } 布尔值有一个toString()方法，可用于将自己转换为字符串&amp;quot;true&amp;quot;或&amp;quot;false&amp;quot;。除此之外，布尔值再没有其它有用的方法。
-console.log(true.toString(), false.toString()) // true false null and undefined null是一个语言关键词，用于表示某个值不存在。使用typeof操作符作用于null，将会返回字符串object。这表明null是一种特殊的对象值，它表示no object：
+console.log(true.toString(), false.toString()) // true false  // 执行结果 true false null and undefined null是一个语言关键词，用于表示某个值不存在。使用typeof操作符作用于null，将会返回字符串object。这表明null是一种特殊的对象值，它表示no object：
 console.log(typeof null)  // 打印的值 object 实际上，null通常被视为其自身类型的唯一成员，可以用来表示数字、字符串和对象的&amp;quot;no object&amp;quot;。大多数编程语言都有与JavaScript的null相对应的值，如NULL、nil 或None。
 undefined也表示值不存在，但它表示一种更深层次的不存在。具体来说，以下场景都是undefined:
  变量未初始化时值为undefined。 在查询对象不存在的属性或数组元素时也会得到undefined。 没有传实参的函数参数的值是undefined。  undefined是一个预定义的全局常量，而非像null那样是语言关键字。这个常量的初始化值就是undefined。对undefined应用typeof操作符会返回字符串undefined，表示这个值是该特殊类型的唯一成员。
