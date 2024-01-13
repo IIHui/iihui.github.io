@@ -4915,8 +4915,11 @@ let pairs = &amp;#34;&amp;#34;; for (let [k, v] of Object.entries(o)) {  pairs &
 let test = &amp;#34;I😀😁&amp;#34; for (let item of test) {  console.log(item) }  // 打印结果 I 😀 😀 ES6内置的Set和Map类都是可迭代的：
 let text = &amp;#34;Na na na na na na na na Batman!&amp;#34;; let wordSet = new Set(text.split(&amp;#34; &amp;#34;)); let unique = []; for (const word of wordSet) {  unique.push(word); } console.log(unique) // [&amp;#34;Na&amp;#34;, &amp;#34;na&amp;#34;, &amp;#34;Batman!&amp;#34;] Map对象的迭代器并不迭代key或value，而是迭代键值对。每次迭代，迭代器都会返回一个数组，第一个元素是key，第二个元素是value。
 let m = new Map([[1, &amp;#34;one&amp;#34;]]); for (let [key, value] of m) {  console.log(key, value) } // 1 one 在ES2018引入了一种新的迭代器，被称为异步迭代器，以及一种for/of循环的变体（称为for/await循环），可与异步迭代器一起工作。
-async function printStream(stream) {  for await (let chunk of stream) {  console.log(chunk);  } } for/in 一个for/in循环看起来非常像for/of循环，只是将关键字of改成了in。for/of循环要求在of后面有一个可迭代对象，而for/in循环则可以在in后面使用任何对象。for/of循环是 ES6的新特性，但for/in从一开始就是 JavaScript的一部分。for/in语句循环使用指定对象的属性名称：
-// Assign property names of o to variable p for (let p in o) {  // Print the value of each property  console.log(o[p]); } 需要注意的是，for/in循环的in后面可以是任意对象，for/of循环是ES6新增的，而for/in是一开始就有的。
+async function printStream(stream) {  for await (let chunk of stream) {  console.log(chunk);  } } for/in 一个for/in循环看起来非常像for/of循环，只是将关键字of改成了in。for/of循环要求在of后面有一个可迭代对象，而for/in循环则可以在in后面使用任何对象。for/of循环是ES6的新特性，但for/in从一开始就是 JavaScript的一部分。for/in循环使用指定对象的属性名：
+// Assign property names of o to variable p for (let p in o) {  // Print the value of each property  console.log(o[p]); } 要执行for/in语句，解释器首先会求值对象表达式，如果结果为null或undefined，解释器会跳过循环，继续执行下一条语句。否则，解释器会对对象的每个可枚举属性执行一次循环体。不过，在每次迭代之前，解释器都会对variable表达式进行求值，并将属性名称（字符串值）赋值给variable表达式。
+for (variable in object)  statement 需要注意的是，for/in循环中的variable可以是任意表达式，只要它求值后适合做赋值操作符的左值。每次循环都会对该表达式求值，这意味着每次评估的结果都可能不同。例如，可以使用以下代码将所有对象属性的名称复制到数组中：
+let o = {x: 1, y: 2, z: 3}; let a = [], i = 0; for (a[i&#43;&#43;] in o) /* empty */; for (const item of a) {  console.log(item) } 数组只是一个特殊的对象，数组索引就是对象的属性，可以使用for/in循环枚举的。下面使用for/in遍历的是数组的索引，如果想要遍历数组元素，可以使用for/of。
+for (let i in a) console.log(i);  // 执行结果 0，1，2 需要注意的是，for/in循环的in后面可以是任意对象，for/of循环是ES6新增的，而for/in是一开始就有的。
 Chapter 6 对象是属性的无序集合，每个属性都有名字和值。属性名通常是字符串（也可以是Symbol）。因此，可以说对象是把字符串映射为值。这种把字符串映射为值有很多种叫法，如散列，字典或关联数组。但是，对象不仅仅是简单的字符串到值的映射。
 除了维护自定义属性，对象也可以从其它对象继承属性，这个其它对象称为其原型。对象的方法通常继承自属性，这种原型继承是JavaScript的关键特性。
 对象是动态的，属性通常可以添加或删除。属性有一个名字和值，属性名可以是任意字符串，包括空字符串或任意符号Symbol，但对象不能包含两个同名的属性。
