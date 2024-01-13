@@ -4906,9 +4906,10 @@ Chapter 5 表达式称为短语，语句就是句子或命令，使用分号结�
 {  x = Math.PI;  cx = Math.cos(x);  console.log(&amp;#34;cos(π) = &amp;#34; &#43; cx); } 解释器在执行空语句时什么也不会做。空语句在某些情况会有用，比如创建一个空循环体：
 let a = [12, 34, 5, 89, 9, 23] for (const item of a) {  console.log(item) } for (let i = 0; i &amp;lt; a.length; a[i&#43;&#43;] = 0) ; for (const item of a) {  console.log(item) } 在for (let i = 0; i &amp;lt; a.length; a[i&#43;&#43;] = 0) ;这个循环中，所有工作都由表达式a[i&#43;&#43;] = 0完成，因此不需要循环体。但是，JavaScript语法要求使用语句作为循环体，因此使用了一个空语句，即一个分号。
 switch语句首先对紧跟其后的表达式求值，然后按照顺序求值case表达式，直到遇到匹配的值。这里的匹配使用===全等操作符，而不是==相等操作符，因此表达式必须在没有类型转换的情况下匹配。
-对for循环而言，3个表达式中的任何一个都可以省略，只有两个分号是必需的。ES6定义了一个新循环语句for/of，这种新循环虽然使用了for关键字，但它与常规for是完全不同的两种循环。for/of循环专门用于可迭代对象。数组，字符串，集合和映射都是可迭代对象。
-let data = [1, 2, 3, 4, 5, 6, 7, 8, 9], sum = 0; for (const element of data) {  sum &#43;= element; } console.log(sum) 在上面代码中，循环体对应data数组中的每个元素都会运行一次。在每次执行循环体之前，都会把数组的下一个元素赋值给element变量。并且数组是按照从头到尾的顺序迭代的。
-实际上，对象默认是不可迭代的，运行时尝试对普通对象使用for/of会抛出TypeError。字符串是按照Unicode码点，而不是UTF-16字符迭代的。虽然字符串I😀😁的长度为5，但使用for/of只会迭代3次：
+for/of 对for循环而言，3个表达式中的任何一个都可以省略，只有两个分号是必需的。ES6定义了一个新循环语句for/of，这种新循环虽然使用了for关键字，但它与常规for是完全不同的两种循环。for/of循环专门用于可迭代对象。数组，字符串，集合和映射都是可迭代对象。
+let data = [1, 2, 3, 4, 5, 6, 7, 8, 9], sum = 0; for (const element of data) {  sum &#43;= element; } console.log(sum) 在上面代码中，data数组中的每个元素都会运行一次循环体。在每次执行循环体之前，都会把数组的下一个元素赋值给element变量，并且是按照从头到尾的顺序迭代的。
+实际上，对象默认是不可迭代的，运行时尝试对普通对象使用for/of会抛出TypeError。如果想要迭代对象的属性，可以使用for/in循环，或者使用Object.keys()方法和for/of:
+let o = {x: 1, y: 2, z: 3}; let keys = &amp;#34;&amp;#34;; for (let k of Object.keys(o)) {  keys &#43;= k; } console.log(keys) 字符串是按照Unicode码点，而不是UTF-16字符迭代的。虽然字符串I😀😁的长度为5，但使用for/of只会迭代3次：
 let test = &amp;#34;I😀😁&amp;#34; for (let item of test) {  console.log(item) } ES6内置的Set和Map类都是可迭代的：
 let text = &amp;#34;Na na na na na na na na Batman!&amp;#34;; let wordSet = new Set(text.split(&amp;#34; &amp;#34;)); let unique = []; for (const word of wordSet) {  unique.push(word); } console.log(unique) // [&amp;#34;Na&amp;#34;, &amp;#34;na&amp;#34;, &amp;#34;Batman!&amp;#34;] Map对象的迭代器并不迭代键或值，而是迭代键值对。每次迭代，迭代器都会返回一个数组，第一个元素是键，第二个元素是值。
 let m = new Map([[1, &amp;#34;one&amp;#34;]]); for (let [key, value] of m) {  console.log(key, value) } // 1 one 需要注意的是，for/in循环的in后面可以是任意对象，for/of循环是ES6新增的，而for/in是一开始就有的。
