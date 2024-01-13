@@ -4919,8 +4919,8 @@ async function printStream(stream) {  for await (let chunk of stream) {  console
 // Assign property names of o to variable p for (let p in o) {  // Print the value of each property  console.log(o[p]); } 要执行for/in语句，解释器首先会求值对象表达式，如果结果为null或undefined，解释器会跳过循环，继续执行下一条语句。否则，解释器会对对象的每个可枚举属性执行一次循环体。不过，在每次迭代之前，解释器都会对variable表达式进行求值，并将属性名称（字符串值）赋值给variable表达式。
 for (variable in object)  statement 需要注意的是，for/in循环中的variable可以是任意表达式，只要它求值后适合做赋值操作符的左值。每次循环都会对该表达式求值，这意味着每次评估的结果都可能不同。例如，可以使用以下代码将所有对象属性的名称复制到数组中：
 let o = {x: 1, y: 2, z: 3}; let a = [], i = 0; for (a[i&#43;&#43;] in o) /* empty */; for (const item of a) {  console.log(item) } 数组只是一个特殊的对象，数组索引就是对象的属性，可以使用for/in循环枚举的。下面使用for/in遍历的是数组的索引，如果想要遍历数组元素，可以使用for/of。
-for (let i in a) console.log(i);  // 执行结果 0，1，2 for/in循环实际上并不枚举对象的所有属性。它不会枚举Symbol属性。在字符串的属性中，它只循环遍历可枚举的属性。JavaScript核心定义的各种内置方法都是不可枚举的。例如，所有对象都有一个toString()方法，但for/in循环不会枚举这个toString属性。除了内置方法外，内置对象的许多其它属性也是不可枚举的。默认情况下，代码定义的所有属性和方法都是可枚举的。
-可枚举的继承属性也会被for/in循环枚举。这意味着，如果在使用for/in循环的同时，还使用了继承对象的属性，那么循环可能不会按照我们期望的方式运行。因此，许多程序员喜欢使用带有Object.keys() 的for/of循环，而不是for/in循环。
+for (let i in a) console.log(i);  // 执行结果 0，1，2 for/in循环实际上并不枚举对象的所有属性，不会枚举Symbol属性。在字符串属性中，for/in只会循环遍历可枚举的属性。JavaScript核心定义的各种内置方法都是不可枚举的。例如，所有对象都有一个toString()方法，但for/in循环不会枚举这个toString属性。除了内置方法外，内置对象的许多其它属性也是不可枚举的。默认情况下，我们用代码定义的所有属性和方法都是可枚举的。
+可枚举的继承属性也会被for/in循环枚举。这意味着，如果在使用for/in循环时，还会遍历继承的属性，那么循环可能不会按照我们期望的方式运行。因此，许多程序员喜欢使用带有Object.keys()的for/of循环，而不是for/in循环。
 如果在for/in循环体中删除了一个尚未枚举的属性，该属性将不会再被枚举。如果循环体定义了对象的新属性，这些属性可能被枚举，也可能不被枚举。
 需要注意的是，for/in循环的in后面可以是任意对象，for/of循环是ES6新增的，而for/in是一开始就有的。
 Chapter 6 对象是属性的无序集合，每个属性都有名字和值。属性名通常是字符串（也可以是Symbol）。因此，可以说对象是把字符串映射为值。这种把字符串映射为值有很多种叫法，如散列，字典或关联数组。但是，对象不仅仅是简单的字符串到值的映射。
