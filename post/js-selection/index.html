@@ -241,7 +241,7 @@ code.has-jax {
     <i class="fa fa-file-word-o"></i>
 </span>
 <span class="post-meta-item-text">字数: </span>
-<span class="leancloud-visitors-count">38993</span>
+<span class="leancloud-visitors-count">39021</span>
 &nbsp; | &nbsp;
 <span class="post-meta-item-icon">
     <i class="fa fa-coffee"></i>
@@ -1178,23 +1178,23 @@ code.has-jax {
 </span></span><span style="display:flex;"><span><span style="color:#a6e22e">console</span>.<span style="color:#a6e22e">log</span>(<span style="color:#a6e22e">unitcircle</span>.<span style="color:#a6e22e">r</span>) <span style="color:#75715e">// 1
 </span></span></span></code></pre></div><p>属性赋值要么失败，要么在原对象中创建或设置一个已存在的属性。但有一个例外，如果o继承了属性x，但这个属性是通过setter方法来访问的，那么此时会调用setter方法，而不是创建一个新的属性x。需要注意的是，setter方法调用是在对象o上，而不是原型链上定义的属性。如果在setter方法中定义了任何属性，那么就是在o上定义，而不会对原型链有任何影响。</p>
 <h3 id="property-access-errors">Property Access Errors</h3>
-<p>查询对象不存在的属性不会报错，如果在对象的自有属性或继承属性都没找到属性<code>x</code>，则属性表达式访问<code>o.x</code>的值为<code>undefined</code>。但是，查询不存在对象的属性是会报错的，因为<code>null</code>和<code>undefined</code>的值没有属性，查询这两个值的属性是错误的。</p>
+<p>需要注意的是，<font color=red>查询对象不存在的属性不会报错</font>，如果在对象的自有属性或继承属性都没找到属性<code>x</code>，则属性表达式访问<code>o.x</code>的值为<code>undefined</code>。但是，查询不存在对象的属性是会报错的，因为<code>null</code>和<code>undefined</code>的值没有属性，查询这两个值的属性是错误的。</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-js" data-lang="js"><span style="display:flex;"><span><span style="color:#66d9ef">let</span> <span style="color:#a6e22e">len</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">book</span>.<span style="color:#a6e22e">subtitle</span>.<span style="color:#a6e22e">length</span>; <span style="color:#75715e">// Uncaught TypeError: Cannot read properties of undefined (reading &#39;length&#39;)
 </span></span></span></code></pre></div><p>ES2020通过<code>?.</code>支持条件式属性访问，用它可以把前面的赋值表达式改成如下形式：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-js" data-lang="js"><span style="display:flex;"><span><span style="color:#66d9ef">let</span> <span style="color:#a6e22e">surname</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">book</span><span style="color:#f92672">?</span>.<span style="color:#a6e22e">author</span><span style="color:#f92672">?</span>.<span style="color:#a6e22e">surname</span>;
-</span></span></code></pre></div><p>尝试在<code>null</code>或<code>undefined</code>上设置属性也会导致<code>TypeError</code>。尝试在对象<code>o</code>上设置属性<code>p</code>在以下情况下会失败：</p>
+</span></span></code></pre></div><p>如果尝试在<code>null</code>或<code>undefined</code>上设置属性也会导致<code>TypeError</code>错误。尝试在对象<code>o</code>上设置属性<code>p</code>，在以下情况下会失败：</p>
 <ul>
-<li>对象<code>o</code>有一个只读自有属性<code>p</code>，不可能设置只读属性。</li>
-<li>对象<code>o</code>有一个只读继承属性<code>p</code>，不可能用同名自有属性隐藏该只读属性。</li>
-<li>对象<code>o</code>没有自有属性<code>p</code>，<code>o</code>没有继承通过设置方法定义的属性<code>p</code>，但<code>o</code>的<code>extensible</code>特性是<code>fasle</code>。这是因为<code>p</code>在<code>o</code>上不存在，如果没有要调用的设置方法，那么<code>p</code>必须要添加到<code>o</code>上。但因为<code>o</code>不可扩展，则不能在它上面定义新属性。</li>
+<li>对象<code>o</code>有一个只读自有属性<code>p</code>，不能设置只读属性。</li>
+<li>对象<code>o</code>有一个只读继承属性<code>p</code>，不能用同名自有属性隐藏该只读属性。</li>
+<li>对象<code>o</code>没有自有属性<code>p</code>，<code>o</code>也没有通过<code>setter</code>方法继承属性<code>p</code>，并且<code>o</code>的<code>extensible</code>属性值是<code>fasle</code>。这是因为<code>p</code>在<code>o</code>上不存在，如果没有要调用的<code>setter</code>方法，那么<code>p</code>必须要添加到<code>o</code>上。但因为<code>o</code>是不可扩展的，所以不能在它上面定义新属性。</li>
 </ul>
 <h2 id="deleting-properties">Deleting Properties</h2>
 <p>操作符<code>delete</code>用于从对象中移除属性。它唯一的操作数应该是一个属性访问表达式。需要注意的是，<code>delete</code>并不操作属性的值，而是操作属性本身。</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-js" data-lang="js"><span style="display:flex;"><span><span style="color:#66d9ef">delete</span> <span style="color:#a6e22e">book</span>.<span style="color:#a6e22e">author</span>;
 </span></span><span style="display:flex;"><span><span style="color:#66d9ef">delete</span> <span style="color:#a6e22e">book</span>[<span style="color:#e6db74">&#34;main title&#34;</span>];
 </span></span></code></pre></div><p>操作符<code>delete</code><font color=red>只删除自有属性，不删除继承属性</font>。如果要删除继承来的属性，必须从定义属性的原型对象上删除，这样做会影响继承该原型的所有对象。</p>
-<p>如果<code>delete</code>操作成功或操作没有影响（如删除不存在的属性），则<code>delete</code>表达式求值为<code>true</code>。对<font color=red>非属性表达式使用<code>delete</code>，同样也会求值为<code>true</code></font>。</p>
-<p>操作符<code>delete</code>不会删除<code>configurable</code>为<code>false</code>的属性。与使用变量或函数声明的全局对象一样是不可配置的，内置对象的某些属性是不可<code>configurable</code>的。</p>
+<p>如果<code>delete</code>操作成功或操作没有影响（如删除不存在的属性），则<code>delete</code>表达式的结果为<code>true</code>。对<font color=red>非属性表达式使用<code>delete</code>，同样也会求值为<code>true</code></font>。</p>
+<p>操作符<code>delete</code>不会删除<code>configurable</code>属性值为<code>false</code>的属性。内置对象的某些属性是不可<code>configurable</code>的，与使用变量或函数声明创建的全局对象的属性一样也是不可配置的。</p>
 <p>在严格模式下，尝试删除不可配置的属性会导致<code>TypeError</code>。在非严格模式下，尝试删除不可配置的属性，直接返回<code>false</code>。</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-js" data-lang="js"><span style="display:flex;"><span><span style="color:#75715e">// In strict mode, all these deletions throw TypeError instead of returning false
 </span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">delete</span> Object.<span style="color:#a6e22e">prototype</span> <span style="color:#75715e">// =&gt; false: property is non-configurable
@@ -1210,7 +1210,7 @@ code.has-jax {
 </span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">delete</span> <span style="color:#a6e22e">x</span> <span style="color:#75715e">// SyntaxError in strict mode
 </span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">delete</span> <span style="color:#a6e22e">globalThis</span>.<span style="color:#a6e22e">x</span>;
 </span></span></code></pre></div><h2 id="testing-properties">Testing Properties</h2>
-<p>检查对象是否有一个给定属性的名字，可以使用<code>in</code>操作符，或<code>hasOwnProperty()</code>或<code>propertyIsEnumerable()</code>方法。操作符<code>in</code>要求左边是一个属性名字符串，右边是一个对象。<font color=LightSeaGreen>如果对象有包含相应名字的自有属性或继承属性</font>，都返回<code>true</code>:</p>
+<p>检查对象是否有一个给定属性的名字，可以使用<code>in</code>操作符，或<code>hasOwnProperty()</code>或<code>propertyIsEnumerable()</code>方法。操作符<code>in</code>要求左边是一个属性名字符串，右边是一个对象。<font color=LightSeaGreen>如果对象有包含相应名字的自有属性或继承属性，都返回<code>true</code></font>。</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-js" data-lang="js"><span style="display:flex;"><span><span style="color:#66d9ef">let</span> <span style="color:#a6e22e">o</span> <span style="color:#f92672">=</span> {};
 </span></span><span style="display:flex;"><span><span style="color:#a6e22e">o</span>.<span style="color:#a6e22e">x</span> <span style="color:#f92672">=</span> <span style="color:#ae81ff">1</span>;
 </span></span><span style="display:flex;"><span><span style="color:#66d9ef">let</span> <span style="color:#a6e22e">p</span> <span style="color:#f92672">=</span> Object.<span style="color:#a6e22e">create</span>(<span style="color:#a6e22e">o</span>);
@@ -1226,7 +1226,7 @@ code.has-jax {
 </span></span><span style="display:flex;"><span><span style="color:#a6e22e">o</span>.<span style="color:#a6e22e">hasOwnProperty</span>(<span style="color:#e6db74">&#34;x&#34;</span>) <span style="color:#75715e">// =&gt; true: o has an own property x
 </span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#a6e22e">o</span>.<span style="color:#a6e22e">hasOwnProperty</span>(<span style="color:#e6db74">&#34;y&#34;</span>) <span style="color:#75715e">// =&gt; false: o doesn&#39;t have a property y
 </span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#a6e22e">o</span>.<span style="color:#a6e22e">hasOwnProperty</span>(<span style="color:#e6db74">&#34;toString&#34;</span>) <span style="color:#75715e">// =&gt; false: toString is an inherited property
-</span></span></span></code></pre></div><p>而<code>propertyIsEnumerable()</code>方法重新定义了<code>hasOwnProperty()</code>测试。只有当指定的属性是自有属性且其<code>enumerable</code>特性为<code>true</code>时，才返回<code>true</code>。某些内置属性是不可枚举的，<font color=red>使用常规的代码创建的属性都是可枚举的</font>，除非使用相关技术将它们限制为不可枚举的。</p>
+</span></span></span></code></pre></div><p>而<code>propertyIsEnumerable()</code>方法重新定义了<code>hasOwnProperty()</code>测试。只有当指定的属性是自有属性且其<code>enumerable</code>属性为<code>true</code>时，才返回<code>true</code>。某些内置属性是不可枚举的，<font color=red>使用常规的代码创建的属性都是可枚举的</font>，除非使用相关技术将它们限制为不可枚举的。</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-js" data-lang="js"><span style="display:flex;"><span><span style="color:#66d9ef">let</span> <span style="color:#a6e22e">o</span> <span style="color:#f92672">=</span> {<span style="color:#a6e22e">x</span><span style="color:#f92672">:</span> <span style="color:#ae81ff">1</span>};
 </span></span><span style="display:flex;"><span><span style="color:#a6e22e">o</span>.<span style="color:#a6e22e">hasOwnProperty</span>(<span style="color:#e6db74">&#34;x&#34;</span>) <span style="color:#75715e">// =&gt; true: o has an own enumerable property x
 </span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#a6e22e">o</span>.<span style="color:#a6e22e">propertyIsEnumerable</span>(<span style="color:#e6db74">&#34;toString&#34;</span>) <span style="color:#75715e">// =&gt; false: not an own property
@@ -1259,9 +1259,6 @@ code.has-jax {
 </span></span><span style="display:flex;"><span><span style="color:#a6e22e">x</span>
 </span></span><span style="display:flex;"><span><span style="color:#a6e22e">y</span>
 </span></span><span style="display:flex;"><span><span style="color:#a6e22e">z</span>
-</span></span><span style="display:flex;"><span><span style="color:#ae81ff">1</span>
-</span></span><span style="display:flex;"><span><span style="color:#ae81ff">2</span>
-</span></span><span style="display:flex;"><span><span style="color:#ae81ff">3</span>
 </span></span></code></pre></div><p>为了防止通过<code>for/in</code>枚举继承的属性，可以通过在循环体内添加<code>hasOwnProperty</code>来过滤：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-js" data-lang="js"><span style="display:flex;"><span><span style="color:#66d9ef">let</span> <span style="color:#a6e22e">o</span> <span style="color:#f92672">=</span> {<span style="color:#a6e22e">x</span><span style="color:#f92672">:</span> <span style="color:#ae81ff">1</span>, <span style="color:#a6e22e">y</span><span style="color:#f92672">:</span> <span style="color:#ae81ff">2</span>, <span style="color:#a6e22e">z</span><span style="color:#f92672">:</span> <span style="color:#ae81ff">3</span>};  
 </span></span><span style="display:flex;"><span><span style="color:#a6e22e">console</span>.<span style="color:#a6e22e">log</span>(<span style="color:#a6e22e">o</span>.<span style="color:#a6e22e">propertyIsEnumerable</span>(<span style="color:#e6db74">&#34;toString&#34;</span>))  <span style="color:#75715e">// false
