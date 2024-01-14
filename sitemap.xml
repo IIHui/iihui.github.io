@@ -4940,12 +4940,12 @@ console.log(Object.prototype) 类似地，通过new Array()创建的对象以Arr
 例如，Date.prototype继承了 Object.prototype的属性，因此通过new Date()创建的Date对象同时继承了Date.prototype和Object.prototype的属性。这种一系列关联的原型对象被称为原型链。
 Object.create() 函数Object.create()用于创建一个新对象，使用第一个参数作为新对象的原型。
 let o1 = Object.create({x: 1, y: 2}); console.log(o1.x &#43; o1.y)  // 执行结果 3 传入null可以创建一个没有原型的对象，但这样创建的新对象不会继承任何东西，连toString()这样的基本方法都没有。
-let o2 = Object.create(null); // o2 inherits no props or methods. console.log(o2.toString()) // TypeError: o2.toString is not a function 如果想创建一个普通的空对象(类似于{}或new Object()创建的对象)，传入Object.prototype即可:
-let o3 = Object.create(Object.prototype); // o3 is like {} or new Object(). 创建具有任意原型的新对象的功能非常强大。Object.create()还包含一个可选的第二个参数，用于描述新对象的属性。
-方法Object.create()的一种用途是防止一个无法控制的库函数对对象进行意外（但非恶意）修改。与其将对象直接传递给这个库函数，不如传递一个继承自该对象的新对象。如果函数读取该对象的属性，就会看到继承的值。但是，如果函数设置属性，这些写入将不会影响原始的对象。
+let o2 = Object.create(null); // o2 inherits no props or methods. console.log(o2.toString()) // TypeError: o2.toString is not a function 如果想创建一个普通的空对象(类似于{}或new Object()创建的对象)，在调用函数Object.create()时传入Object.prototype即可:
+let o3 = Object.create(Object.prototype); // o3 is like {} or new Object(). 创建具有任意原型的新对象的功能非常强大。Object.create()还有一个可选的第二个参数，用于描述新对象的属性。
+方法Object.create()的一种用途是防止一个无法控制的库函数对对象进行意外（但非恶意）修改。与其将对象直接传递给这个库函数，不如传递一个继承自该对象的新对象。如果函数读取该对象的属性，就会看到继承的值。但是，如果函数设置属性，这些写入不会影响原始的对象。
 Querying and Setting Properties 如果要获取属性值，可以使用.或[]操作符。两个操作符左边都必须是一个值为对象的表达式，如果使用点操作符，右操作数必须是对象的属性名，而如果使用[]操作符，在方括号里的值必须是表达式，该表达式的值必须是字符串或能够转换为字符串或Symbol。
 let author = book.author; // Get the &amp;#34;author&amp;#34; property of the book. let name = author.surname; // Get the &amp;#34;surname&amp;#34; property of the author. let title = book[&amp;#34;main title&amp;#34;]; // Get the &amp;#34;main title&amp;#34; property of the book. 如果要创建或设置一个属性，同样可以使用点或方括号操作符，只需要把它们放到赋值表达式=的左边：
-book.edition = 7; // Create an &amp;#34;edition&amp;#34; property of book. book[&amp;#34;main title&amp;#34;] = &amp;#34;ECMAScript&amp;#34;; // Change the &amp;#34;main title&amp;#34; property. Objects As Associative Arrays 访问对象的属性，下面两个表达式返回同一个值：
+book.edition = 7; // Create an &amp;#34;edition&amp;#34; property of book. book[&amp;#34;main title&amp;#34;] = &amp;#34;ECMAScript&amp;#34;; // Change the &amp;#34;main title&amp;#34; property. Objects As Associative Arrays 访问对象的属性，下面两个表达式返回同一个值。在第一种方式中，使用点和标识符，语法
 object.property object[&amp;#34;property&amp;#34;] 第二种方式使用方括号和字符串，看起来像是访问数组，只不过是以字符串而不是数值作为索引。这种数组被称为关联数组（或散列，映射、字典），对象就是关联数组。
 在C&#43;&#43;、Java以及其它类似强类型的语言中，对象只有固定数量的属性，属性名必须预先定义好。因为JavaScript是一种松散类型语言，可以为任何对象创建任意数量的属性。
 使用方括号访问对象属性，属性名一般是通过字符串来表示的。因为字符串是是一种数据类型，所以可以在程序运行时创建和修改。
