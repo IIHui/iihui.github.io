@@ -4948,11 +4948,13 @@ let author = book.author; // Get the &amp;#34;author&amp;#34; property of the bo
 book.edition = 7; // Create an &amp;#34;edition&amp;#34; property of book. book[&amp;#34;main title&amp;#34;] = &amp;#34;ECMAScript&amp;#34;; // Change the &amp;#34;main title&amp;#34; property. Objects As Associative Arrays 访问对象的属性，下面两个表达式返回同一个值。在第一种方式中，使用点和标识符，语法
 object.property object[&amp;#34;property&amp;#34;] 第二种方式使用方括号和字符串，看起来像是访问数组，只不过是以字符串而不是数值作为索引。这种数组被称为关联数组（或散列，映射、字典），对象就是关联数组。
 在C&#43;&#43;、Java以及其它类似强类型的语言中，对象只有固定数量的属性，属性名必须预先定义好。因为JavaScript是一种松散类型语言，可以为任何对象创建任意数量的属性。
-使用方括号访问对象属性，属性名一般是通过字符串来表示的。因为字符串是是一种数据类型，所以可以在程序运行时创建和修改。
+使用方括号访问对象属性，属性名一般是通过字符串来表示的。因为字符串是一种数据类型，所以可以在程序运行时创建和修改。
 let customer = {address0: 10, address1: 11, address2: 333, address3: 999} let addr = &amp;#34;&amp;#34;; for (let i = 0; i &amp;lt; 4; i&#43;&#43;) {  addr &#43;= customer[`address${i}`] &#43; &amp;#34;\n&amp;#34;; } console.log(addr)  // 执行结果 10 11 333 999 Inheritance 假设从对象o中查询属性x，如果o没有这个名字的自有属性，则会从o的原型对象查询属性x。如果原型对象也没有这个叫x的自有属性，但它又有自己的原型，则会继续查询这个原型的原型。这个过程会一直持续，直到找到属性x，或者查到一个对象的原型为null为止。
-let o = {}; o.x = 1; let p = Object.create(o); p.y = 2; let q = Object.create(p); q.z = 3; let f = q.toString(); console.log(f) // [object Object] console.log(q.x &#43; q.y) // 3 假设为对象o的属性x赋值，如果对象o已经有了x这个自有属性，那么赋值就是简单修改这个已存在的属性值。否则，赋值语句会创建一个名为x的属性，如果o已经继承了属性x，那么这个新创建的属性x就会隐藏继承的同名属性x。
-属性赋值时检查原型链，只是确定赋值是否合法，如果o继承了一个只读属性x，那么赋值就是不允许的。如果赋值是允许的，则会新建属性或修改已存在的自有属性的值，不会修改原型链中的对象。
-let unitcircle = {r: 1}; let c = Object.create(unitcircle); c.x = 1; c.y = 2; c.r = 2; console.log(unitcircle.r) // 1 Property Access Errors 查询对象不存在的属性不会报错，如果在对象的自有属性或继承属性都没找到属性x，则属性表达式访问o.x的值为undefined。但是，查询不存在对象的属性是会报错的，因为null和undefined的值没有属性，查询这两个值的属性是错误的。
+let o = {}; o.x = 1; let p = Object.create(o); p.y = 2; let q = Object.create(p); q.z = 3; let f = q.toString(); console.log(f) // [object Object] console.log(q.x &#43; q.y) // 3 假设要为对象o的属性x赋值，如果对象o已经有了x这个自有属性，那么赋值就是简单修改这个已存在的属性值。否则，赋值语句会创建一个名为x的属性，如果o已经继承了属性x，那么这个新创建的属性x就会隐藏继承的同名属性x。
+属性赋值时检查原型链，只是确定赋值是否合法，如果o继承了一个只读属性x，那么赋值就是不允许的。如果赋值是允许的，则会新建属性或修改已存在的自有属性的值，不会修改原型链中的对象属性。
+在查询属性时会发生继承，而在设置属性时不会发生继承，这是JavaScript的一个关键特性，因为它允许我们有选择性地覆盖继承的属性：
+let unitcircle = {r: 1}; let c = Object.create(unitcircle); c.x = 1; c.y = 2; c.r = 2; console.log(unitcircle.r) // 1 属性赋值要么失败，要么在原对象中创建或设置一个已存在的属性。但有一个例外，如果o继承了属性x，但这个属性是通过setter方法来访问的，那么此时会调用setter方法，而不是创建一个新的属性x。需要注意的是，setter方法调用是在对象o上，而不是原型链上定义的属性。如果在setter方法中定义了任何属性，那么就是在o上定义，而不会对原型链有任何影响。
+Property Access Errors 查询对象不存在的属性不会报错，如果在对象的自有属性或继承属性都没找到属性x，则属性表达式访问o.x的值为undefined。但是，查询不存在对象的属性是会报错的，因为null和undefined的值没有属性，查询这两个值的属性是错误的。
 let len = book.subtitle.length; // Uncaught TypeError: Cannot read properties of undefined (reading &amp;#39;length&amp;#39;) ES2020通过?.支持条件式属性访问，用它可以把前面的赋值表达式改成如下形式：
 let surname = book?.author?.surname; 尝试在null或undefined上设置属性也会导致TypeError。尝试在对象o上设置属性p在以下情况下会失败：
  对象o有一个只读自有属性p，不可能设置只读属性。 对象o有一个只读继承属性p，不可能用同名自有属性隐藏该只读属性。 对象o没有自有属性p，o没有继承通过设置方法定义的属性p，但o的extensible特性是fasle。这是因为p在o上不存在，如果没有要调用的设置方法，那么p必须要添加到o上。但因为o不可扩展，则不能在它上面定义新属性。  Deleting Properties 操作符delete用于从对象中移除属性。它唯一的操作数应该是一个属性访问表达式。需要注意的是，delete并不操作属性的值，而是操作属性本身。
