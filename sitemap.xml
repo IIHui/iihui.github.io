@@ -4998,7 +4998,8 @@ Spread Operator 在ES2018后，可以在对象字面量中使用扩展操作符.
 let position = {x: 0, y: 0}; let dimensions = {width: 100, height: 75}; let rect = {...position, ...dimensions}; console.log(rect.x &#43; rect.y &#43; rect.width &#43; rect.height) // 175 需要注意的是这个...语法经常被称为展开操作符，但它却不是真正意义上的操作符。实际上，它是仅在对象字面量中有效的一种特殊语法（在其它上下文中，三个点有其它用途，但只有在对象字面的上下文中，三点才会将一个对象插值到另一个对象中）。
 需要注意的是，如果扩展对象和被扩展对象有一个同名属性，那么这个属性的值由后面的对象决定：
 let o = { x: 1 }; let p = { x: 0, ...o };  p.x // =&amp;gt; 1: the value from object o overrides the initial value  let q = { ...o, x: 2 }; q.x // =&amp;gt; 2: the value 2 overrides the previous value from o. 另外要注意，展开操作符只展开对象的自有属性，不扩展任何继承属性：
-let o = Object.create({x: 1}); // o inherits the property x let p = { ...o }; p.x // =&amp;gt; undefined 需要注意的是，虽然展开操作符只有3个圆点，但它可能给解释器带来巨大工作量。如果对象有n个属性，把这些属性扩展到另一个对象的复杂度可能是$O(n)$。这意味着，如果在循环或递归函数中使用扩展操作符向一个的大对象不断追加属性时，很可能使得复杂度变为$O(n^2)$。
+let o = Object.create({x: 1}); // o inherits the property x let p = { ...o }; p.x // =&amp;gt; undefined 需要注意的是，虽然展开操作符只有3个圆点，但它可能给解释器带来巨大工作量。如果对象有n个属性，把这些属性展开到另一个对象的时间复杂度可能是$O(n)$。
+这意味着，如果在循环或递归函数中使用展开操作符向一个的大对象不断追加属性时，很可能使得时间复杂度变为$O(n^2)$。
 Shorthand Methods 把函数定义成一个对象的属性时，这个函数被称为方法。在ES6以前，需要像定义对象的其他属性一样，通过函数定义表达式在对象字面量定义一个方法。
 let square = {  area: function () {  return this.side * this.side;  }, side: 10 }; console.log(square.area()) 但在ES6中，对象字面量语法经过扩展，允许一种省略function关键字和冒号的的简写方法：
 let square = {  area() {  return this.side * this.side;  }, side: 10 }; square.area() // =&amp;gt; 100 Property Getters and Setters 目前讨论的所有属性都是数据属性，一个属性名和普通值。除了数据属性，还支持为对象定义访问器属性，这种属性不是一个值，而是一个或者两个访问器方法，一个获取方法和一个设置方法。
