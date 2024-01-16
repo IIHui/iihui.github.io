@@ -4984,8 +4984,8 @@ Object Methods 所有对象（除了那些显式创建的没有原型的）都�
 例如，前面已经看到过的hasOwnProperty()和propertyIsEnumerable()方法，以及定义在Object构造函数上的静态方法，例如Object.create()和Object.keys()。
 The toString() Method 方法toString()不接受参数，它返回一个字符串，以某种方式表示调用该方法的对象的值。只要在需要将对象转换为字符串的地方，就会调用对象的这个方法。例如，当使用&#43;运算符将字符串与对象连接起来时，或者当将对象传递给一个需要字符串的方法时。
 let s = {x: 1, y: 1}.toString(); // s == &amp;#34;[object Object]&amp;#34; console.log(s) 由于这个默认的方法不会显示太有用的信息，很多类都会重新定义自己的toString()方法：
-let point = {  x: 1, y: 2, toString: function () {  return `(${this.x}, ${this.y})`;  } }; console.log(String(point)) // =&amp;gt; &amp;#34;(1, 2)&amp;#34;: toString() is used for string conversions The valueOf() Method 方法valueOf()和toString()类似，它是在一个对象需要转换为除了字符串的其它基础对象时调用。如果在需要基础类型的地方传入了一个对象，则valueOf()会自动调用。
-默认的valueOf()方法没有做什么，因此一些内置的类定义了自己的valueOf()方法。Date类的valueOf()方法将日期转换为数字，因此可以使用&amp;lt;和&amp;gt;进行比较。
+let point = {  x: 1, y: 2, toString: function () {  return `(${this.x}, ${this.y})`;  } }; console.log(String(point)) // =&amp;gt; &amp;#34;(1, 2)&amp;#34;: toString() is used for string conversions The valueOf() Method 方法valueOf()和toString()类似，它是在一个对象需要转换为除了字符串的其它基础类型值时使用。如果在需要基础类型的地方传入了一个对象，则valueOf()会被自动调用。
+默认的valueOf()方法没有做什么，因此一些内置类定义了自己的valueOf()方法。Date类的valueOf()方法将日期转换为数字，因此可以使用&amp;lt;和&amp;gt;进行比较。
 let point = {  x: 3, y: 4, valueOf: function () {  return Math.hypot(this.x, this.y);  } }; console.log(Number(point)) The toJSON() Method 实际上Object.prototype并没有定义toJSON()方法，但方法JSON.stringify()会从待序列化的对象中寻找toJSON()方法，如果待序列化的对象有这个toJSON()方法，就会调用它。
 let point = {  x: 1, y: 2, toString: function () {  return `(${this.x}, ${this.y})`;  }, toJSON: function () {  return this.toString();  } }; console.log(JSON.stringify([point])) // =&amp;gt; &amp;#39;[&amp;#34;(1, 2)&amp;#34;]&amp;#39; Extended Object Literal Syntax 最近的几个JavaScript版本扩展了字面量语法。假设变量x和y中保存着值，而想创建一个具有属性x和属性y，并且值也是x和y。如果使用基本的对象字面量语法，则需要把每个标识符重复两次：
 let x = 1, y = 2; let o = {  x: x, y: y }; console.log(o)  // 执行结果 { x: 1, y: 2 } 在ES6及之后，可以删掉其中的冒号和重复的标识符，得到非常简洁的代码：
