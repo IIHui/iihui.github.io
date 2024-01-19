@@ -4910,10 +4910,10 @@ for/of 对for循环而言，3个表达式中的任何一个都可以省略，只
 let data = [1, 2, 3, 4, 5, 6, 7, 8, 9], sum = 0; for (const element of data) {  sum &#43;= element; } console.log(sum)  // 执行结果 45 在上面代码中，data数组中的每个元素都会运行一次循环体。在每次执行循环体之前，都会把数组的下一个元素赋值给element变量，并且是按照从头到尾的顺序迭代的。
 实际上，对象默认是不可迭代的，运行时尝试对普通对象使用for/of会抛出TypeError。下面定义了一个对象，但因为默认不可迭代，因此会抛异常：
 let object1 = {&amp;#34;ab&amp;#34;: 12, &amp;#34;dc&amp;#34;: 45} for (const element of object1) {  console.log(element) }  // TypeError: object1 is not iterable 如果想要迭代对象的属性，可以使用for/in循环，或者使用Object.keys()方法和for/of:
-let o = {x: 1, y: 2, z: 3}; let keys = &amp;#34;&amp;#34;; for (let k of Object.keys(o)) {  keys &#43;= k; } console.log(keys)  // 执行结果 xyz 需要注意的是，对对象key的迭代并不像上述数组示例那样是实时的。在循环体中对对象o所做的更改不会对迭代产生任何影响。如果不关心对象的key，也可以像这样遍历其对应的value：
-let sum = 0; for (let v of Object.values(o)) {  sum &#43;= v; } console.log(sum)  // 执行的结果 6 如果对对象属性的key和value都感兴趣，可以使用for/of和Object.entries()以及解构赋值：
+let o = {x: 1, y: 2, z: 3}; let keys = &amp;#34;&amp;#34;; for (let k of Object.keys(o)) {  keys &#43;= k; } console.log(keys)  // 执行结果 xyz 需要注意的是，对对象key的迭代并不像上述数组示例那样是实时的。在循环体中对对象o所做的修复不会对迭代产生任何影响。如果不关心对象的key，而关心对象的value，可以像下面这样遍历对象的value：
+let sum = 0; for (let v of Object.values(o)) {  sum &#43;= v; } console.log(sum)  // 执行结果 6  {  let o = {x: 1, y: 2, z: 3};  let sum = 0;  for (let v of Object.values(o)) {  sum &#43;= v;  if(v == 3) {  o[&amp;#34;z&amp;#34;] = 4  }  }  console.log(sum) }  // 执行结果 6 如果对对象的key和value都感兴趣，可以使用for/of和Object.entries()以及解构赋值：
 let pairs = &amp;#34;&amp;#34;; for (let [k, v] of Object.entries(o)) {  pairs &#43;= k &#43; v; } console.log(pairs)  // 执行结果 x1y2z3 字符串是按照Unicode码点，也就是字符，而不是UTF-16字符迭代的。虽然字符串I😀😁的长度为5，但使用for/of只会迭代3次：
-let test = &amp;#34;I😀😁&amp;#34; for (let item of test) {  console.log(item) }  // 打印结果 I 😀 😀 ES6内置的Set和Map类都是可迭代的：
+let test = &amp;#34;I😀😁&amp;#34; console.log(test.length) // 5 for (let item of test) {  console.log(item) }  // 打印结果 I 😀 😀 ES6内置的Set和Map类都是可迭代的：
 let text = &amp;#34;Na na na na na na na na Batman!&amp;#34;; let wordSet = new Set(text.split(&amp;#34; &amp;#34;)); let unique = []; for (const word of wordSet) {  unique.push(word); } console.log(unique) // [&amp;#34;Na&amp;#34;, &amp;#34;na&amp;#34;, &amp;#34;Batman!&amp;#34;] Map对象的迭代器并不迭代key或value，而是迭代键值对。每次迭代，迭代器都会返回一个数组，第一个元素是key，第二个元素是value。
 let m = new Map([[1, &amp;#34;one&amp;#34;]]); for (let [key, value] of m) {  console.log(key, value) } // 1 one 在ES2018引入了一种新的迭代器，被称为异步迭代器，以及一种for/of循环的变体（称为for/await循环），可与异步迭代器一起工作。
 async function printStream(stream) {  for await (let chunk of stream) {  console.log(chunk);  } } for/in 一个for/in循环看起来非常像for/of循环，只是将关键字of改成了in。for/of循环要求在of后面是一个可迭代对象，而for/in循环则可以在in后面使用任何对象。for/of循环是ES6新增的特性，但for/in从一开始就是JavaScript的一部分，for/in循环迭代的是指定对象的属性名：
