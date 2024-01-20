@@ -4920,10 +4920,11 @@ async function printStream(stream) {  for await (let chunk of stream) {  console
 // Assign property names of o to variable p for (let p in o) {  // Print the value of each property  console.log(o[p]); } 要执行for/in语句，解释器首先会求值对象表达式，如果结果为null或undefined，解释器会跳过循环，继续执行下一条语句。否则，解释器会对对象的每个可枚举属性执行一次循环体。不过，在每次迭代之前，解释器都会对variable表达式进行求值，并将属性名称（字符串值）赋值给variable表达式。
 for (variable in object)  statement 需要注意的是，for/in循环中的variable可以是任意表达式，只要它求值后适合做赋值操作符的左值。每次循环都会对该表达式求值，这意味着每次求值的结果都可能不同。例如，可以使用以下代码将对象o的所有属性名复制到数组a中：
 let o = {x: 1, y: 2, z: 3}; let a = [], i = 0; for (a[i&#43;&#43;] in o) /* empty */; for (const item of a) {  console.log(item) } 数组只是一个特殊的对象，数组索引就是对象的属性，可以使用for/in循环。下面使用for/in遍历的是数组的索引，如果想要遍历数组元素，可以使用for/of循环。
-for (let i in a) console.log(i);  // 执行结果 0，1，2 for/in循环实际上并不枚举对象的所有属性，不会枚举Symbol属性。在字符串属性中，for/in只会循环遍历可枚举的属性。JavaScript核心定义的各种内置方法都是不可枚举的。例如，所有对象都有一个toString()方法，但for/in循环不会枚举这个toString属性。除了内置方法外，内置对象的许多其它属性也是不可枚举的。默认情况下，我们用代码定义的所有属性和方法都是可枚举的。
-可枚举的继承属性也会被for/in循环枚举。这意味着，如果在使用for/in循环时，还会遍历继承的属性，那么循环可能不会按照我们期望的方式运行。因此，许多程序员喜欢使用带有Object.keys()的for/of循环，而不是for/in循环。
-如果在for/in循环体中删除了一个尚未枚举的属性，该属性将不会再被枚举。如果循环体定义了对象的新属性，这些属性可能被枚举，也可能不被枚举。
-需要注意的是，for/in循环的in后面可以是任意对象，for/of循环是ES6新增的，而for/in是一开始就有的。
+for (let i in a) console.log(i);  // 执行结果 0，1，2 for/in循环实际上并不枚举对象的所有属性，它不会枚举Symbol属性。在字符串属性中，for/in只会循环遍历可枚举的属性。
+JavaScript核心定义的各种内置方法都是不可枚举的。例如，所有对象都有一个toString()方法，但for/in循环不会枚举这个toString属性。除了内置方法外，内置对象的许多其它属性也是不可枚举的。默认情况下，我们用代码定义的所有属性和方法都是可枚举的。
+可枚举的继承属性也会被for/in循环枚举。这意味着，在使用for/in循环时，还会遍历继承的属性，那么循环可能不会按照我们期望的方式运行。因此，许多程序员喜欢使用带有Object.keys()的for/of循环，而不是for/in循环。
+如果在for/in循环体中删除了一个尚未枚举的属性，该属性将不会再被枚举。如果在循环体定义了对象的新属性，这些属性可能被枚举，也可能不被枚举。
+需要强调的是，for/in循环的in后面可以是任意对象，for/of循环是ES6新增的，而for/in是一开始就有的。
 Chapter 6 对象是属性的无序集合，每个属性都有名字和值。属性名通常是字符串，也可以是Symbol。可以说对象是把字符串映射为值。这种把字符串映射为值有很多种叫法，如散列，字典或关联数组。但是，对象不仅仅是简单的字符串到值的映射。
 除了维护自定义属性，对象也可以从其它对象继承属性，这个其它对象称为其原型。对象的方法通常继承自属性，这种原型继承是JavaScript的关键特性。
 对象是动态的，属性通常可以添加或删除。属性有一个名字和值，属性名可以是任意字符串，包括空字符串或任意符号Symbol，但对象不能包含两个同名的属性。
@@ -4946,15 +4947,15 @@ let o3 = Object.create(Object.prototype); // o3 is like {} or new Object(). 创�
 方法Object.create()的一种用途是防止一个无法控制的库函数对对象进行意外（但非恶意）修改。与其将对象直接传递给这个库函数，不如传递一个继承自该对象的新对象。如果函数读取该对象的属性，就会看到继承的值。但是，如果函数设置属性，这些写入不会影响原始的对象。
 Querying and Setting Properties 如果要获取属性值，可以使用.或[]操作符。两个操作符左边都必须是一个值为对象的表达式，如果使用点操作符，右操作数必须是对象的属性名，而如果使用[]操作符，在方括号里的值必须是表达式，该表达式的值必须是字符串或能够转换为字符串或Symbol。
 let author = book.author; // Get the &amp;#34;author&amp;#34; property of the book. let name = author.surname; // Get the &amp;#34;surname&amp;#34; property of the author. let title = book[&amp;#34;main title&amp;#34;]; // Get the &amp;#34;main title&amp;#34; property of the book. 如果要创建或设置一个属性，同样可以使用点或方括号操作符，只需要把它们放到赋值表达式=的左边：
-book.edition = 7; // Create an &amp;#34;edition&amp;#34; property of book. book[&amp;#34;main title&amp;#34;] = &amp;#34;ECMAScript&amp;#34;; // Change the &amp;#34;main title&amp;#34; property. Objects As Associative Arrays 访问对象的属性，下面两个表达式返回同一个值。在第一种方式中，使用点和标识符，语法
+book.edition = 7; // Create an &amp;#34;edition&amp;#34; property of book. book[&amp;#34;main title&amp;#34;] = &amp;#34;ECMAScript&amp;#34;; // Change the &amp;#34;main title&amp;#34; property. Objects As Associative Arrays 访问对象的属性，下面两个表达式返回同一个值。在第一种方式中，使用点和标识符。在第二种方式中，使用方括号和字符串：
 object.property object[&amp;#34;property&amp;#34;] 第二种方式使用方括号和字符串，看起来像是访问数组，只不过是以字符串而不是数值作为索引。这种数组被称为关联数组（或散列，映射、字典），对象就是关联数组。
 在C&#43;&#43;、Java以及其它类似强类型的语言中，对象只有固定数量的属性，属性名必须预先定义好。因为JavaScript是一种松散类型语言，可以为任何对象创建任意数量的属性。
 使用方括号访问对象属性，属性名一般是通过字符串来表示的。因为字符串是一种数据类型，所以可以在程序运行时创建和修改。
 let customer = {address0: 10, address1: 11, address2: 333, address3: 999} let addr = &amp;#34;&amp;#34;; for (let i = 0; i &amp;lt; 4; i&#43;&#43;) {  addr &#43;= customer[`address${i}`] &#43; &amp;#34;\n&amp;#34;; } console.log(addr)  // 执行结果 10 11 333 999 Inheritance 假设从对象o中查询属性x，如果o没有这个名字的自有属性，则会从o的原型对象查询属性x。如果原型对象也没有这个叫x的自有属性，但它又有自己的原型，则会继续查询这个原型的原型。这个过程会一直持续，直到找到属性x，或者查到一个对象的原型为null为止。
-let o = {}; o.x = 1; let p = Object.create(o); p.y = 2; let q = Object.create(p); q.z = 3; let f = q.toString(); console.log(f) // [object Object] console.log(q.x &#43; q.y) // 3 假设要为对象o的属性x赋值，如果对象o已经有了x这个自有属性，那么赋值就是简单修改这个已存在的属性值。否则，赋值语句会创建一个名为x的属性，如果o已经继承了属性x，那么这个新创建的属性x就会隐藏继承的同名属性x。
-属性赋值时检查原型链，只是确定赋值是否合法，如果o继承了一个只读属性x，那么赋值就是不允许的。如果赋值是允许的，则会新建属性或修改已存在的自有属性的值，不会修改原型链中的对象属性。
+let o = {}; o.x = 1; let p = Object.create(o); p.y = 2; let q = Object.create(p); q.z = 3; let f = q.toString(); console.log(f) // [object Object] console.log(q.x &#43; q.y) // 3 假设要为对象o的属性x赋值，如果对象o已经有了x这个自有属性，那么赋值就是简单地修改这个已存在的属性值。否则，赋值语句会创建一个名为x的属性，如果o已经继承了属性x，那么这个新创建的属性x就会隐藏继承的同名属性x。
+属性赋值时检查原型链，只是为了确定当前赋值是否合法，如果o继承了一个只读属性x，那么赋值就是不允许的。如果赋值是允许的，则会新建属性或修改已存在的自有属性的值，不会修改原型链中的对象属性。
 在查询属性时会发生继承，而在设置属性时不会发生继承，这是JavaScript的一个关键特性，因为它允许我们有选择性地覆盖继承的属性：
-let unitcircle = {r: 1}; let c = Object.create(unitcircle); c.x = 1; c.y = 2; c.r = 2; console.log(unitcircle.r) // 1 属性赋值要么失败，要么在原对象中创建或设置一个已存在的属性。但有一个例外，如果o继承了属性x，但这个属性是通过setter方法来访问的，那么此时会调用setter方法，而不是创建一个新的属性x。需要注意的是，setter方法调用是在对象o上，而不是原型链上定义的属性。如果在setter方法中定义了任何属性，那么就是在o上定义，而不会对原型链有任何影响。
+let unitcircle = {r: 1}; let c = Object.create(unitcircle); c.x = 1; c.y = 2; c.r = 2; console.log(unitcircle.r) // 1 属性赋值要么失败，要么在原对象中创建或设置一个已存在的属性。但有一个例外，如果对象o继承了属性x，但这个属性是通过setter方法来访问的，那么此时会调用setter方法，而不是创建一个新的属性x。需要注意的是，setter方法调用是在对象o上，而不是原型对象上定义的属性。因此，如果在setter方法中定义了任何属性，那么就是在o上定义，而不会对原型链上对象有任何影响。
 Property Access Errors 需要注意的是，查询对象不存在的属性不会报错，如果在对象的自有属性或继承属性都没找到属性x，则属性表达式访问o.x的值为undefined。但是，查询不存在对象的属性是会报错的，因为null和undefined的值没有属性，查询这两个值的属性是错误的。
 let len = book.subtitle.length; // Uncaught TypeError: Cannot read properties of undefined (reading &amp;#39;length&amp;#39;) ES2020通过?.支持条件式属性访问，用它可以把前面的赋值表达式改成如下形式：
 let surname = book?.author?.surname; 如果尝试在null或undefined上设置属性也会导致TypeError错误。尝试在对象o上设置属性p，在以下情况下会失败：

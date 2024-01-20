@@ -241,7 +241,7 @@ code.has-jax {
     <i class="fa fa-file-word-o"></i>
 </span>
 <span class="post-meta-item-text">字数: </span>
-<span class="leancloud-visitors-count">39355</span>
+<span class="leancloud-visitors-count">39385</span>
 &nbsp; | &nbsp;
 <span class="post-meta-item-icon">
     <i class="fa fa-coffee"></i>
@@ -1086,10 +1086,10 @@ code.has-jax {
 </span></span><span style="display:flex;"><span>    <span style="color:#75715e">// Print the value of each property
 </span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#a6e22e">console</span>.<span style="color:#a6e22e">log</span>(<span style="color:#a6e22e">o</span>[<span style="color:#a6e22e">p</span>]);
 </span></span><span style="display:flex;"><span>}
-</span></span></code></pre></div><p>要执行<code>for/in</code>语句，解释器首先会求值对象表达式，如果结果为<code>null</code>或<code>undefined</code>，解释器会跳过循环，继续执行下一条语句。否则，解释器会对对象的每个可枚举属性执行一次循环体。不过，在每次迭代之前，解释器都会对<code>variable</code>表达式进行求值，并将属性名称（字符串值）赋值给<code>variable</code>表达式。</p>
+</span></span></code></pre></div><p>要执行<code>for/in</code>语句，解释器<font color=red>首先会求值对象表达式，如果结果为<code>null</code>或<code>undefined</code>，解释器会跳过循环</font>，继续执行下一条语句。否则，解释器会对对象的<strong>每个可枚举属性</strong>执行一次循环体。不过，在每次迭代之前，解释器都会对<code>variable</code>表达式进行求值，并将属性名称（字符串值）赋值给<code>variable</code>表达式。</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-js" data-lang="js"><span style="display:flex;"><span><span style="color:#66d9ef">for</span> (<span style="color:#a6e22e">variable</span> <span style="color:#66d9ef">in</span> <span style="color:#a6e22e">object</span>) 
 </span></span><span style="display:flex;"><span>     <span style="color:#a6e22e">statement</span>
-</span></span></code></pre></div><p>需要注意的是，<code>for/in</code>循环中的<code>variable</code>可以是任意表达式，只要它求值后适合做赋值操作符的左值。每次循环都会对该表达式求值，这意味着每次求值的结果都可能不同。例如，可以使用以下代码将对象o的所有属性名复制到数组a中：</p>
+</span></span></code></pre></div><p>需要注意的是，<code>for/in</code>循环中的<code>variable</code>可以是任意表达式，只要它求值后适合做赋值操作符的左值。每次循环都会对该表达式求值，这意味着每次求值的结果都可能不同。例如，可以使用以下代码将对象<code>o</code>的所有属性名复制到数组<code>a</code>中：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-js" data-lang="js"><span style="display:flex;"><span><span style="color:#66d9ef">let</span> <span style="color:#a6e22e">o</span> <span style="color:#f92672">=</span> {<span style="color:#a6e22e">x</span><span style="color:#f92672">:</span> <span style="color:#ae81ff">1</span>, <span style="color:#a6e22e">y</span><span style="color:#f92672">:</span> <span style="color:#ae81ff">2</span>, <span style="color:#a6e22e">z</span><span style="color:#f92672">:</span> <span style="color:#ae81ff">3</span>};
 </span></span><span style="display:flex;"><span><span style="color:#66d9ef">let</span> <span style="color:#a6e22e">a</span> <span style="color:#f92672">=</span> [], <span style="color:#a6e22e">i</span> <span style="color:#f92672">=</span> <span style="color:#ae81ff">0</span>;
 </span></span><span style="display:flex;"><span><span style="color:#66d9ef">for</span> (<span style="color:#a6e22e">a</span>[<span style="color:#a6e22e">i</span><span style="color:#f92672">++</span>] <span style="color:#66d9ef">in</span> <span style="color:#a6e22e">o</span>) <span style="color:#75715e">/* empty */</span>;
@@ -1101,10 +1101,11 @@ code.has-jax {
 </span></span><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span><span style="color:#75715e">// 执行结果
 </span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#ae81ff">0</span><span style="color:#960050;background-color:#1e0010">，</span><span style="color:#ae81ff">1</span><span style="color:#960050;background-color:#1e0010">，</span><span style="color:#ae81ff">2</span>
-</span></span></code></pre></div><p><code>for/in</code>循环实际上并不枚举对象的所有属性，不会枚举<code>Symbol</code>属性。在字符串属性中，<code>for/in</code>只会循环遍历可枚举的属性。<code>JavaScript</code>核心定义的各种内置方法都是不可枚举的。例如，所有对象都有一个<code>toString()</code>方法，但<code>for/in</code>循环不会枚举这个<code>toString</code>属性。除了内置方法外，内置对象的许多其它属性也是不可枚举的。默认情况下，我们用代码定义的所有属性和方法都是可枚举的。</p>
-<p>可枚举的继承属性也会被<code>for/in</code>循环枚举。这意味着，如果在使用for/in循环时，还会遍历继承的属性，那么循环可能不会按照我们期望的方式运行。因此，许多程序员喜欢使用带有<code>Object.keys()</code>的<code>for/of</code>循环，而不是<code>for/in</code>循环。</p>
-<p>如果在<code>for/in</code>循环体中删除了一个尚未枚举的属性，该属性将不会再被枚举。如果循环体定义了对象的新属性，这些属性可能被枚举，也可能不被枚举。</p>
-<p>需要注意的是，<code>for/in</code>循环的<code>in</code>后面可以是任意对象，<code>for/of</code>循环是<code>ES6</code>新增的，而<code>for/in</code>是一开始就有的。</p>
+</span></span></code></pre></div><p><code>for/in</code>循环实际上并不枚举对象的所有属性，它不会枚举<code>Symbol</code>属性。在字符串属性中，<code>for/in</code>只会循环遍历可枚举的属性。</p>
+<p><code>JavaScript</code>核心定义的各种内置方法都是不可枚举的。例如，所有对象都有一个<code>toString()</code>方法，但<code>for/in</code>循环不会枚举这个<code>toString</code>属性。除了内置方法外，内置对象的许多其它属性也是不可枚举的。默认情况下，<font color=LightSeaGreen>我们用代码定义的所有属性和方法都是可枚举的</font>。</p>
+<p>可枚举的继承属性也会被<code>for/in</code>循环枚举。这意味着，在使用<code>for/in</code>循环时，还会遍历继承的属性，那么循环可能不会按照我们期望的方式运行。因此，许多程序员喜欢使用带有<code>Object.keys()</code>的<code>for/of</code>循环，而不是<code>for/in</code>循环。</p>
+<p>如果在<code>for/in</code>循环体中删除了一个尚未枚举的属性，该属性将不会再被枚举。如果在循环体定义了对象的新属性，这些属性可能被枚举，也可能不被枚举。</p>
+<p>需要强调的是，<code>for/in</code>循环的<code>in</code>后面可以是任意对象，<code>for/of</code>循环是<code>ES6</code>新增的，而<code>for/in</code>是一开始就有的。</p>
 <h1 id="chapter-6">Chapter 6</h1>
 <p>对象是属性的无序集合，每个属性都有名字和值。属性名通常是字符串，也可以是<code>Symbol</code>。可以说对象是把字符串映射为值。这种把字符串映射为值有很多种叫法，如散列，字典或关联数组。但是，对象不仅仅是简单的字符串到值的映射。</p>
 <p>除了维护自定义属性，对象也可以从其它对象继承属性，<font color=LightSeaGreen>这个其它对象称为其原型</font>。对象的方法通常继承自属性，这种原型继承是<code>JavaScript</code>的关键特性。</p>
@@ -1164,7 +1165,7 @@ code.has-jax {
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-js" data-lang="js"><span style="display:flex;"><span><span style="color:#a6e22e">book</span>.<span style="color:#a6e22e">edition</span> <span style="color:#f92672">=</span> <span style="color:#ae81ff">7</span>; <span style="color:#75715e">// Create an &#34;edition&#34; property of book.
 </span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#a6e22e">book</span>[<span style="color:#e6db74">&#34;main title&#34;</span>] <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;ECMAScript&#34;</span>; <span style="color:#75715e">// Change the &#34;main title&#34; property.
 </span></span></span></code></pre></div><h3 id="objects-as-associative-arrays">Objects As Associative Arrays</h3>
-<p>访问对象的属性，下面两个表达式返回同一个值。在第一种方式中，使用点和标识符，语法</p>
+<p>访问对象的属性，下面两个表达式返回同一个值。在第一种方式中，使用点和标识符。在第二种方式中，使用方括号和字符串：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-js" data-lang="js"><span style="display:flex;"><span><span style="color:#a6e22e">object</span>.<span style="color:#a6e22e">property</span>
 </span></span><span style="display:flex;"><span><span style="color:#a6e22e">object</span>[<span style="color:#e6db74">&#34;property&#34;</span>]
 </span></span></code></pre></div><p>第二种方式使用方括号和字符串，看起来像是访问数组，只不过是以字符串而不是数值作为索引。这种数组被称为关联数组（或散列，映射、字典），对象就是关联数组。</p>
@@ -1193,16 +1194,16 @@ code.has-jax {
 </span></span><span style="display:flex;"><span><span style="color:#66d9ef">let</span> <span style="color:#a6e22e">f</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">q</span>.<span style="color:#a6e22e">toString</span>();
 </span></span><span style="display:flex;"><span><span style="color:#a6e22e">console</span>.<span style="color:#a6e22e">log</span>(<span style="color:#a6e22e">f</span>) <span style="color:#75715e">// [object Object]
 </span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#a6e22e">console</span>.<span style="color:#a6e22e">log</span>(<span style="color:#a6e22e">q</span>.<span style="color:#a6e22e">x</span> <span style="color:#f92672">+</span> <span style="color:#a6e22e">q</span>.<span style="color:#a6e22e">y</span>) <span style="color:#75715e">// 3
-</span></span></span></code></pre></div><p>假设要为对象<code>o</code>的属性<code>x</code>赋值，如果对象<code>o</code>已经有了<code>x</code>这个自有属性，那么赋值就是简单修改这个已存在的属性值。否则，赋值语句会创建一个名为<code>x</code>的属性，如果<code>o</code>已经继承了属性<code>x</code>，那么这个新创建的属性<code>x</code>就会隐藏继承的同名属性<code>x</code>。</p>
-<p>属性赋值时检查原型链，只是确定赋值是否合法，如果<code>o</code>继承了一个只读属性<code>x</code>，那么赋值就是不允许的。<font color=red>如果赋值是允许的，则会新建属性或修改已存在的自有属性的值，不会修改原型链中的对象属性</font>。</p>
-<p>在查询属性时会发生继承，而在设置属性时不会发生继承，这是JavaScript的一个关键特性，因为它允许我们有选择性地覆盖继承的属性：</p>
+</span></span></span></code></pre></div><p>假设要为对象<code>o</code>的属性<code>x</code>赋值，如果对象<code>o</code>已经有了<code>x</code>这个自有属性，那么赋值就是简单地修改这个已存在的属性值。否则，赋值语句会创建一个名为<code>x</code>的属性，如果<code>o</code>已经继承了属性<code>x</code>，那么这个<font color=LightSeaGreen>新创建的属性<code>x</code>就会隐藏继承的同名属性<code>x</code></font>。</p>
+<p>属性赋值时检查原型链，只是为了确定当前赋值是否合法，如果<code>o</code>继承了一个只读属性<code>x</code>，那么赋值就是不允许的。<font color=red>如果赋值是允许的，则会新建属性或修改已存在的自有属性的值，不会修改原型链中的对象属性</font>。</p>
+<p>在查询属性时会发生继承，而在设置属性时不会发生继承，这是<code>JavaScript</code>的一个关键特性，因为它允许我们有选择性地覆盖继承的属性：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-js" data-lang="js"><span style="display:flex;"><span><span style="color:#66d9ef">let</span> <span style="color:#a6e22e">unitcircle</span> <span style="color:#f92672">=</span> {<span style="color:#a6e22e">r</span><span style="color:#f92672">:</span> <span style="color:#ae81ff">1</span>};  
 </span></span><span style="display:flex;"><span><span style="color:#66d9ef">let</span> <span style="color:#a6e22e">c</span> <span style="color:#f92672">=</span> Object.<span style="color:#a6e22e">create</span>(<span style="color:#a6e22e">unitcircle</span>);  
 </span></span><span style="display:flex;"><span><span style="color:#a6e22e">c</span>.<span style="color:#a6e22e">x</span> <span style="color:#f92672">=</span> <span style="color:#ae81ff">1</span>;  
 </span></span><span style="display:flex;"><span><span style="color:#a6e22e">c</span>.<span style="color:#a6e22e">y</span> <span style="color:#f92672">=</span> <span style="color:#ae81ff">2</span>;  
 </span></span><span style="display:flex;"><span><span style="color:#a6e22e">c</span>.<span style="color:#a6e22e">r</span> <span style="color:#f92672">=</span> <span style="color:#ae81ff">2</span>;  
 </span></span><span style="display:flex;"><span><span style="color:#a6e22e">console</span>.<span style="color:#a6e22e">log</span>(<span style="color:#a6e22e">unitcircle</span>.<span style="color:#a6e22e">r</span>) <span style="color:#75715e">// 1
-</span></span></span></code></pre></div><p>属性赋值要么失败，要么在原对象中创建或设置一个已存在的属性。但有一个例外，如果o继承了属性x，但这个属性是通过setter方法来访问的，那么此时会调用setter方法，而不是创建一个新的属性x。需要注意的是，setter方法调用是在对象o上，而不是原型链上定义的属性。如果在setter方法中定义了任何属性，那么就是在o上定义，而不会对原型链有任何影响。</p>
+</span></span></span></code></pre></div><p>属性赋值要么失败，要么在原对象中创建或设置一个已存在的属性。但有一个例外，如果对象<code>o</code>继承了属性<code>x</code>，但这个属性是通过<code>setter</code>方法来访问的，那么此时会调用<code>setter</code>方法，而不是创建一个新的属性<code>x</code>。需要注意的是，<code>setter</code>方法调用是在对象<code>o</code>上，而不是原型对象上定义的属性。因此，如果在<code>setter</code>方法中定义了任何属性，那么就是在<code>o</code>上定义，而不会对原型链上对象有任何影响。</p>
 <h3 id="property-access-errors">Property Access Errors</h3>
 <p>需要注意的是，<font color=red>查询对象不存在的属性不会报错</font>，如果在对象的自有属性或继承属性都没找到属性<code>x</code>，则属性表达式访问<code>o.x</code>的值为<code>undefined</code>。但是，查询不存在对象的属性是会报错的，因为<code>null</code>和<code>undefined</code>的值没有属性，查询这两个值的属性是错误的。</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-js" data-lang="js"><span style="display:flex;"><span><span style="color:#66d9ef">let</span> <span style="color:#a6e22e">len</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">book</span>.<span style="color:#a6e22e">subtitle</span>.<span style="color:#a6e22e">length</span>; <span style="color:#75715e">// Uncaught TypeError: Cannot read properties of undefined (reading &#39;length&#39;)
