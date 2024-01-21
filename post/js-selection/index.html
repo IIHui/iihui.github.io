@@ -241,13 +241,13 @@ code.has-jax {
     <i class="fa fa-file-word-o"></i>
 </span>
 <span class="post-meta-item-text">字数: </span>
-<span class="leancloud-visitors-count">42755</span>
+<span class="leancloud-visitors-count">44189</span>
 &nbsp; | &nbsp;
 <span class="post-meta-item-icon">
     <i class="fa fa-coffee"></i>
 </span>
 <span class="post-meta-item-text">阅读: </span>
-<span class="leancloud-visitors-count">86 分钟</span>
+<span class="leancloud-visitors-count">89 分钟</span>
 </span>
       </div>
     </header>
@@ -2291,6 +2291,51 @@ code.has-jax {
 </span></span><span style="display:flex;"><span><span style="color:#66d9ef">let</span> <span style="color:#a6e22e">s</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">checkscope</span>()()
 </span></span><span style="display:flex;"><span><span style="color:#a6e22e">console</span>.<span style="color:#a6e22e">log</span>(<span style="color:#a6e22e">s</span>)
 </span></span></code></pre></div><p>在上面代码中，把<code>checkscope</code>中的一对圆括号移动到了外层。移动前是调用内嵌函数并返回结果。而现在<code>checkscope</code>返回的是嵌套函数。因为<code>lexical scoping</code>，函数执行时使用的是定义他们的作用域，内嵌函数<code>f()</code>是在变量<code>scope</code>被绑定到值为<code>local scope</code>的作用域中定义的。当<code>f</code>被执行时，这个绑定依然生效，不管它是哪里被执行的。因此上面<code>checkscope()()</code>执行后返回的是字符串<code>local scope</code>。简单地说，这正是闭包惊人且强大的本质：<font color=red>它们会捕获定义它们的外部函数的局部变量（和参数）绑定</font>。</p>
+<p>之前定义了一个函数<code>uniqueInteger()</code>，这个函数使用一个自身的属性来跟踪要返回的下一个值。但该方法有一个缺点，很容易被错误或恶意的代码重置计数器，或者把计数器设置为非整数值，导致<code>uniqueInteger()</code>不具有唯一性。</p>
+<p>闭包可以捕获一次函数调用的局部变量，可以将这些变量作为私有状态。因此，可以像下面这样改写函数<code>uniqueInteger()</code>，使用立即调用函数表达式定义一个命名空间，再通过闭包利用该命名空间来保证自己的状态私有：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-js" data-lang="js"><span style="display:flex;"><span><span style="color:#66d9ef">let</span> <span style="color:#a6e22e">uniqueInteger</span> <span style="color:#f92672">=</span> (<span style="color:#66d9ef">function</span> () { <span style="color:#75715e">// Define and invoke 
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#66d9ef">let</span> <span style="color:#a6e22e">counter</span> <span style="color:#f92672">=</span> <span style="color:#ae81ff">0</span>; <span style="color:#75715e">// Private state of function below 
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#66d9ef">return</span> <span style="color:#66d9ef">function</span> () {
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">return</span> <span style="color:#a6e22e">counter</span><span style="color:#f92672">++</span>;
+</span></span><span style="display:flex;"><span>    };
+</span></span><span style="display:flex;"><span>}());
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">console</span>.<span style="color:#a6e22e">log</span>(<span style="color:#a6e22e">uniqueInteger</span>())
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">console</span>.<span style="color:#a6e22e">log</span>(<span style="color:#a6e22e">uniqueInteger</span>())
+</span></span></code></pre></div><h2 id="function-properties-methods-and-constructor">Function Properties, Methods, and Constructor</h2>
+<p>在<code>JavaScript</code>程序中，函数也是值，使用<code>typeof</code>操作符后，会返回<code>function</code>。但函数实际上是一种特殊的对象，因此函数也有属性和方法，甚至还有一个<code>Function()</code>构造函数来创建新函数对象。</p>
+<h3 id="the-length-property">The length Property</h3>
+<p>函数的只读属性length，表示函数在参数列表中声明的形参个数。这个值通常表示调用函数时应该传入的参数个数，如果函数有可变参数，则可变参数不会计算在<code>length</code>属性中：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-js" data-lang="js"><span style="display:flex;"><span><span style="color:#a6e22e">console</span>.<span style="color:#a6e22e">log</span>(<span style="color:#a6e22e">uniqueInteger</span>.<span style="color:#a6e22e">length</span>, <span style="color:#a6e22e">checkscope</span>.<span style="color:#a6e22e">length</span>) <span style="color:#75715e">// 0 0
+</span></span></span></code></pre></div><h3 id="the-name-property">The name Property</h3>
+<p>函数的只读属性name，表示定义函数时使用的名字。如果是未命名函数，则表示在第一次创建这个函数时赋值给该函数的变量名或属性名。</p>
+<h3 id="the-prototype-property">The prototype Property</h3>
+<p>除了箭头函数，所有函数都有一个prototype属性。每个函数都有自己的的prototype。当函数被作为构造函数使用时，新创建的对象从这个原型对象中继承属性。</p>
+<h3 id="the-call-and-apply-methods">The call() and apply() Methods</h3>
+<p><code>call</code>和<code>apply</code>允许间接调用一个函数，就像这个函数是某个其他对象的方法一样。<code>call</code>和<code>apply</code>的第一个参数都是要在其上调用这个函数的对象，也就是函数的调用上下文，在函数体内它会变成<code>this</code>关键字的值。如果要把<code>f()</code>作为对象<code>o</code>的方法进行调用，可以使用<code>call</code>和<code>apply</code>：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-js" data-lang="js"><span style="display:flex;"><span><span style="color:#a6e22e">f</span>.<span style="color:#a6e22e">call</span>(<span style="color:#a6e22e">o</span>);
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">f</span>.<span style="color:#a6e22e">apply</span>(<span style="color:#a6e22e">o</span>);
+</span></span></code></pre></div><p>上面两行代码类似于下面的代码：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-js" data-lang="js"><span style="display:flex;"><span><span style="color:#a6e22e">o</span>.<span style="color:#a6e22e">m</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">f</span>;
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">o</span>.<span style="color:#a6e22e">m</span>();
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">delete</span> <span style="color:#a6e22e">o</span>.<span style="color:#a6e22e">m</span>;
+</span></span></code></pre></div><p>箭头函数从定义它的上下文中基础this值。这个this值不能通过call和apply方法重写。如果对箭头函数调用这两个方法，那第一个参数会被忽略。</p>
+<p>除了作为调用上下文传给call的第一参数，后续的所有参数都会传给被调用的函数（箭头函数也不会忽略这些参数）：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-js" data-lang="js"><span style="display:flex;"><span><span style="color:#a6e22e">f</span>.<span style="color:#a6e22e">call</span>(<span style="color:#a6e22e">o</span>, <span style="color:#ae81ff">1</span>, <span style="color:#ae81ff">2</span>);
+</span></span></code></pre></div><p>apply方法和call方法类似，只不过传入的参数应当以数组形式：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-js" data-lang="js"><span style="display:flex;"><span><span style="color:#a6e22e">f</span>.<span style="color:#a6e22e">apply</span>(<span style="color:#a6e22e">o</span>, [<span style="color:#ae81ff">1</span>,<span style="color:#ae81ff">2</span>]);
+</span></span></code></pre></div><h3 id="the-bind-method">The bind() Method</h3>
+<p>bind方法的首要目的是绑定一个函数到一个对象。如果在函数f上调用了bind()并且传递了对象o，这个方法将返回一个新的函数。如果作为函数来调用这个新函数，就会像f是o的方法一样调用原函数：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-js" data-lang="js"><span style="display:flex;"><span><span style="color:#66d9ef">let</span> <span style="color:#a6e22e">o</span> <span style="color:#f92672">=</span> {<span style="color:#a6e22e">x</span><span style="color:#f92672">:</span> <span style="color:#ae81ff">1</span>};
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">let</span> <span style="color:#a6e22e">g</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">f</span>.<span style="color:#a6e22e">bind</span>(<span style="color:#a6e22e">o</span>);
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">g</span>(<span style="color:#ae81ff">2</span>)
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">let</span> <span style="color:#a6e22e">p</span> <span style="color:#f92672">=</span> {<span style="color:#a6e22e">x</span><span style="color:#f92672">:</span> <span style="color:#ae81ff">10</span>, <span style="color:#a6e22e">g</span>};
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">p</span>.<span style="color:#a6e22e">g</span>(<span style="color:#ae81ff">2</span>)
+</span></span></code></pre></div><p>箭头函数从其定义的环境中继承其<code>this</code>值，且该值不能用<code>bind()</code>覆盖。因此如果前面代码中的函数<code>f()</code>被定义为箭头函数，则绑定将不起作用。</p>
+<h3 id="the-tostring-method-1">The toString() Method</h3>
+<p>与所有 JavaScript 对象一样，函数也有一个 toString() 方法。ECMAScript 规范要求该方法返回与函数声明语法一致的字符串。实际上，大多数（但不是全部）toString()方法的实现都会返回函数的完整源代码。内置函数通常会返回一个包含类似&quot;[native code]&ldquo;的字符串作为函数体。</p>
+<h1 id="chapter-9">Chapter 9</h1>
+<p>类意味着一组对象从同一个原型对象中继承属性。因此，原型对象是类的核心特征。函数<code>Object.create()</code>返回一个新的对象，它继承某个特定的原型对象。如果我们创建了一下原型对象，接着使用<code>Object.create()</code>创建一个继承这个原型对象，就是定义了类。通常一个类的实例需要进一步初始化，因此常见的做法是定义一个函数来创建和初始化新对象。</p>
 
     </div>
     <footer class="post-footer">
@@ -2615,8 +2660,19 @@ code.has-jax {
         </li>
         <li><a href="#functions-as-namespaces">Functions as Namespaces</a></li>
         <li><a href="#closures">Closures</a></li>
+        <li><a href="#function-properties-methods-and-constructor">Function Properties, Methods, and Constructor</a>
+          <ul>
+            <li><a href="#the-length-property">The length Property</a></li>
+            <li><a href="#the-name-property">The name Property</a></li>
+            <li><a href="#the-prototype-property">The prototype Property</a></li>
+            <li><a href="#the-call-and-apply-methods">The call() and apply() Methods</a></li>
+            <li><a href="#the-bind-method">The bind() Method</a></li>
+            <li><a href="#the-tostring-method-1">The toString() Method</a></li>
+          </ul>
+        </li>
       </ul>
     </li>
+    <li><a href="#chapter-9">Chapter 9</a></li>
   </ul>
 </nav></div>
     </div>
