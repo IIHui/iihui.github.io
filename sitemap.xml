@@ -5151,7 +5151,13 @@ function max(first = -Infinity, ...rest) {  let maxValue = first; // Start by as
 The Arguments Object 可变参数是ES6引入的，在此之前，varargs函数是使用Arguments对象编写的：在任何函数体中，标识符 arguments都是指该调用的Arguments对象，Arguments对象是一个类似数组的对象，它允许通过数字而不是名称来检索传递给函数的参数值。下面是前面的max()函数，改写后使用了Arguments对象而不是可变参数：
 function max(x) {  let maxValue = -Infinity;  // Loop through the arguments, looking for, and remembering, the biggest.  for (let i = 0; i &amp;lt; arguments.length; i&#43;&#43;) {  if (arguments[i] &amp;gt; maxValue) maxValue = arguments[i];  }  // Return the biggest  return maxValue; } console.log(max(1, 10, 100, 2, 3, 1000, 4, 5, 6)) The Spread Operator for Function Calls 展开操作符...用于将数组（或任何其它可迭代对象，如字符串）中的元素拆开或展开。我们已经看到了数组字面量中的展开操作符。在函数调用中也能以同样的方式使用...：
 let numbers = [5, 2, 10, -1, 9, 100, 1]; Math.min(...numbers)// =&amp;gt; -1 需要注意的是，...不是真正的操作符，它无法求值。相反，它是一种特殊的JavaScript语法，可用于数组字面量和函数调用。
-Destructuring Function Arguments into Parameters </content>
+Destructuring Function Arguments into Parameters 当使用一系列实参调用函数时，这些值会被赋给函数声明时的参数。函数调用的初始阶段很像变量赋值。因此，在函数中使用destructuring assignment技术也就不足为奇了。
+假设定义函数时，参数名在一对方括号中时，实际上是告诉函数期望每对方括号传递一个数组值。作为调用过程的一部分，数组参数将解包为单独命名的参数：
+function vectorAdd([x1, y1], [x2, y2]) { // Unpack 2 arguments into 4 parameters  return [x1 &#43; x2, y1 &#43; y2]; } console.log(vectorAdd([1, 2], [3, 4])) // [4,6] 类似的，如果定义函数时期望一个对象参数，则可以解构这个对象。下面示例代码中，把一个对象解构为两个参数。因为参数名和属性名相同，所以相当清晰。
+function vectorMultiply({x, y}, scalar) {  return {x: x * scalar, y: y * scalar}; } console.log(vectorMultiply({x: 1, y: 2}, 2)) // =&amp;gt; {x: 2, y: 4} 如果把形参解构的属性命名为和实参不同的名字，则会让代码更加冗长和难以理解：
+function vectorAdd({x: x1, y: y1}, {x: x2, y: y2}) {  return {x: x1 &#43; x2, y: y1 &#43; y2}; } vectorAdd({x: 1, y: 2}, {x: 3, y: 4}) // =&amp;gt; {x: 4, y: 6} 在解构赋值中，也可以为形参定义默认值：
+function vectorMultiply({x, y, z = 0}, scalar) {  return {x: x * scalar, y: y * scalar, z: z * scalar}; } vectorMultiply({x: 1, y: 2}, 2) // =&amp;gt; {x: 2, y: 4, z: 0} 在ES2018中，解构对象时，也可以使用可变参数。此时可变参数的值是一个对象，包含了所有未解构的属性：
+function vectorMultiply({x, y, z = 0, ...props}, scalar) {  return {x: x * scalar, y: y * scalar, z: z * scalar, ...props}; } vectorMultiply({x: 1, y: 2, w: -1}, 2) </content>
     </entry>
     
      <entry>
