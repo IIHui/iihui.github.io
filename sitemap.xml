@@ -5170,6 +5170,16 @@ function add(x, y) {  return x &#43; y; } function subtract(x, y) {  return x - 
 例如，假设想编写一个函数，每次调用时都返回一个唯一的整数。该函数绝不能两次返回相同的值。为了做到这一点，函数需要跟踪它已经返回的值，而且这些信息必须在函数调用时持续存在。可以将这些信息存储在全局变量中，但这是不必要的，因为只有函数本身会使用这些信息。最好将这些信息存储在函数对象的一个属性中。下面是一个每次调用都返回唯一整数的示例：
 // 函数声明会被提升，因此在声明之前可以给它赋值 uniqueInteger.counter = 0; function uniqueInteger() {  return uniqueInteger.counter&#43;&#43; } uniqueInteger() // 0 uniqueInteger() // 1 下面的factorial()函数使用了自身的属性来缓存之前的计算结果（函数将自身作为一个数组）：
 function factorial(n) {  if (Number.isInteger(n) &amp;amp;&amp;amp; n &amp;gt; 0) {  if (!(n in factorial)) {  // Compute and cache it  factorial[n] = n * factorial(n - 1);  }  return factorial[n];  } else {  return NaN  } } factorial[1] = 1; factorial(6) factorial[5] Functions as Namespaces 在函数中声明的变量，对于外部来说是不可见的。因此，有时可以把函数作为临时的命名空间使用，这样可以保证在其中定义的变量不会污染全局命名空间。
+假设有一段JavaScript代码，想在几个不同的的程序中使用它，并且假设这段代码跟多数代码一样定义了存储中间计算结果的变量。这段代码可能被很多其他程序用到，我们不知道那些程序创建的变量会不会跟这段代码中的变量冲突。解决方案是把这段代码放到一个函数中，然后调用这个函数，原本会定义的全局变量就变成了这个函数的局部变量了。
+function chunkNamespace() {  // Chunk of code goes here  // Any variables defined in the chunk are local to this function  // instead of cluttering up the global namespace. } chunkNamespace(); // But don&amp;#39;t forget to invoke the function! 上面代码之定义了一个全局变量，即函数chunkNamespace。如果连定义一个属性也嫌多，可以在一个表达式中定义并调用函数：
+(function () { // chunkNamespace() function rewritten as an unnamed expression.  // Chunk of code goes here }()); // End the function literal and invoke it now. 在单个表达式中定义并调用匿名函数的技术很常用，因此甚至有了别称immediately invoked function expression。关键字function左侧的圆括号是必需的，如果去掉，会把function关键字作为函数声明来解析。
+Closures 和其他许多现代编程语言一样，JavaScript使用lexical scoping。这意味着，函数执行时使用的变量作用域是定义函数时变量作用域，而不是调用函数的变量作用域。
+为了实现lexical scoping，函数对象的内部状态不仅要包括函数代码，还要包括函数定义所在作用域的引用。这种函数对象于作用域（即一组变量绑定）组合起来解析函数变量的机制，被称为闭包。
+严格来讲，所有的函数都是闭包，但因为多数情况下，函数定义和调用在同一个作用域，所以是否涉及闭包无关紧要。当闭包的定义和调用涉及不同的作用域时，闭包就变得有趣了。
+最常见的情况是嵌套函数对象从定义它的函数中返回。有许多强大的编程技术都涉及到这种嵌套函数闭包，它们的使用在JavaScript编程中已变得相对普遍。初次接触闭包时，可能会感到困惑，但重要的是，必须充分了解它们，才能轻松自如地使用它们。
+理解闭包的第一步是回顾嵌套函数的lexical scoping规则，请看下面的代码：
+let scope = &amp;#34;global scope&amp;#34;;  function checkscope() {  let scope = &amp;#34;local scope&amp;#34;;  function f() {  return scope;  }  return f(); }  checkscope() // local scope 在checkscope中首先定义了一个局部变量scope，然后定义了返回该变量的函数并调用了这个函数。很显然，调用checkscope时返回了字符串local scope。如果稍微做一些修改：
+let scope = &amp;#34;global scope&amp;#34;;  function checkscope() {  let scope = &amp;#34;local scope&amp;#34;;  function f() {  return scope;  }  return f; }  let s = checkscope()() console.log(s) 在上面代码中，把checkscope中的一对圆括号移动到了外层。移动前是调用内嵌函数并返回结果。而现在checkscope返回的是嵌套函数。因为lexical scoping，函数执行时使用的是定义他们的作用域，内嵌函数f()是在变量scope被绑定到值为local scope的作用域中定义的。当f被执行时，这个绑定依然生效，不管它是哪里被执行的。因此上面checkscope()()执行后返回的是字符串local scope。简单地说，这正是闭包惊人且强大的本质：它们会捕获定义它们的外部函数的局部变量（和参数）绑定。
 </content>
     </entry>
     
