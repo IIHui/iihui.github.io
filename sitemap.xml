@@ -5099,17 +5099,18 @@ const sum = (x, y) =&amp;gt; { return x &#43; y; }; 如果函数体只有一个r
 const sum = (x, y) =&amp;gt; x &#43; y; 更进一步，如果箭头函数只有一个参数，也可以省略包含参数列表的圆括号：
 const polynomial = x =&amp;gt; x*x &#43; 2*x &#43; 3; 需要注意的是，对于没有参数的箭头函数必须把空圆括号写出来。还要注意的是，在写箭头函数时，不能在函数参数和箭头之间放置换行符。
 const constantFunc = () =&amp;gt; 42; 如果箭头函数的函数体是一个return语句，但要返回的表达式是对象字面量，则必须把这个对象字面量放在一对圆括号中，以避免解释器分不清花括号到底表示函数体还是对象字面量。
-const f = x =&amp;gt; {  return {value: x}; // Good: f() returns an object }; const g = x =&amp;gt; ({value: x}); // Good: g() returns an object const h = x =&amp;gt; {  value: x // Bad: h() returns nothing }; const i = x =&amp;gt; {  v: x, w:x // Bad: Syntax Error }; 箭头函数与以其他方式定义的函数有一个关键区别：它们从定义自己的环境继承this关键字的值，而不是像以其他方式定义的函数那样定义自己的调用上下文。箭头函数与其他函数还有一个区别，就是它们没有prototype属性，这意味着箭头函数不能作为新类的构造函数。
+const f = x =&amp;gt; {  return {value: x}; // Good: f() returns an object }; const g = x =&amp;gt; ({value: x}); // Good: g() returns an object const h = x =&amp;gt; {  value: x // Bad: h() returns nothing }; const i = x =&amp;gt; {  v: x, w:x // Bad: Syntax Error }; 箭头函数与以其他方式定义的函数有一个关键区别：它们从定义它们的环境继承this关键字的值，而不是像以其他方式定义的函数那样定义自己的调用上下文。箭头函数与其他函数还有一个区别，就是它们没有prototype属性，这意味着箭头函数不能作为新类的构造函数。
 在ES2020中，可以在函数表达式后面、左圆括号前面插入?.，从而只在函数不是null和undefined时调用函数。也就是说f?.(x)相当于下面语句：
 (f !== null &amp;amp;&amp;amp; f !== undefined) ? f(x) : undefined Nested Functions 在JavaScript中，函数可以内嵌到其他函数中：
-function hypotenuse(a, b) {  function square(x) {  return x * x;  }  return Math.sqrt(square(a) &#43; square(b)); } console.log(hypotenuse(12, 14)) 嵌套函数的有趣之处在于其变量作用域规则：它们可以访问被嵌套函数（或多个函数）的参数和变量。例如，在上面的代码，内层函数square()可以读写外层函数hypotenuse()定义的参数a和b。嵌套函数的这些作用域规则非常重要。
+function hypotenuse(a, b) {  function square(x) {  return x * x;  }  return Math.sqrt(square(a) &#43; square(b)); } console.log(hypotenuse(12, 14)) 嵌套函数有趣之处在于其变量作用域规则：它们可以访问被嵌套函数（或多个函数）的参数和变量。例如，上面代码中内层函数square()可以读写外层函数hypotenuse()定义的参数a和b。嵌套函数的这些作用域规则非常重要。
 Invoking Functions 构成函数主体的代码不是在定义函数时执行的，而是在调用函数时执行的，函数有五种调用方式：
- 作为函数 作为方法 作为构造器 通过call()和apply()方法间接调用 通过语言特性，隐含地实现了与普通函数调用不同的功能  Function Invocation 函数可以作为函数调用，也可以通过调用表达式作为方法调用。调用表达式由一个求值为函数对象的表达式、一个左圆括号、一个以逗号分隔的零个或多个参数表达式列表和一个右圆括号组成。如果函数表达式是属性访问表达式，即函数是对象的属性或数组的元素，那么它就是方法调用表达式。下面是常规的函数表达式：
-printprops({x: 1}); let probability = factorial(5) / factorial(13); let total = distance(0, 0, 2, 1) &#43; distance(2, 1, 3, 5); 在调用过程中，每个参数表达式（括号之间的表达式）都会被求值，求值结果将成为函数的参数。这些值被赋值给函数定义中命名的参数。在函数体中，对参数的引用将求值为相应的参数值。
-对于常规函数调用，函数的返回值就是调用表达式的值。如果函数返回是因为解释器到了终点，那么返回值是undefined。如果函数返回是因为解释器执行了返回语句，那么返回值就是返回语句后面的表达式的值，如果返回语句没有值，那么返回值就是undefined。
-在非严格模式下调用函数时，调用上下文（this的值）是全局对象。而在严格模式下，调用上下文是undefined。需要注意的是，使用箭头语法定义的函数有不同的行为：它们总是继承定义时有效的this值。
+ 作为函数 作为方法 作为构造器 通过call()和apply()方法间接调用 通过语言特性，隐含地实现了与普通函数调用不同的功能  Function Invocation 函数可以作为普通函数调用，也可以使用调用表达式作为方法调用。调用表达式由一个求值为函数对象的表达式、一个左圆括号、一个以逗号分隔的零个或多个参数表达式列表和一个右圆括号组成。
+如果函数表达式是属性访问表达式，即函数是对象的属性或数组的元素，那么它就是方法调用表达式。下面是常规的函数调用表达式：
+printprops({x: 1}); let probability = factorial(5) / factorial(13); let total = distance(0, 0, 2, 1) &#43; distance(2, 1, 3, 5); 在调用过程中，每个参数表达式（括号之间的表达式）都会被求值，求值结果将成为函数的参数。这些值被赋值给在函数定义中命名的参数。
+对于常规函数调用，函数的返回值就是调用表达式的值。如果函数返回是因为解释器到了函数终点，那么返回值是undefined。如果函数返回是因为解释器执行了返回语句，那么返回值就是返回语句后面的表达式的值，如果返回语句没有值，那么返回值也是undefined。
+在非严格模式下调用函数时，调用上下文（this的值）是全局对象。而在严格模式下，调用上下文是undefined。需要注意的是，使用箭头语法定义的函数有不同的行为：它们总是继承定义它们时有效的this值。
 作为函数（而不是方法）调用的函数通常不使用this关键字。不过，该关键字可用于确定严格模式是否生效：
-const strict = (function() { return !this; }()); console.log(strict) // false 递归函数是一种可以调用自身的函数，如factorial()函数。某些算法，例如涉及树形数据结构的算法，可以用递归函数来实现，而且特别优雅。不过，在编写递归函数时，必须考虑内存限制。当函数A调用函数B，然后函数B又调用函数C时，解释器需要跟踪这三个函数的执行上下文。当函数C执行完毕时，解释器需要知道在哪里继续执行函数B，而当函数B执行完毕时，解释器需要知道在哪里继续执行函数A。
+const strict = (function () {  return !this; }()); console.log(strict) // false 递归函数是一种可以调用自身的函数，如factorial()函数。某些算法，例如涉及树形数据结构的算法，可以用递归函数来实现，而且特别优雅。不过，在编写递归函数时，必须考虑内存限制。当函数A调用函数B，然后函数B又调用函数C时，解释器需要跟踪这三个函数的执行上下文。当函数C执行完毕时，解释器需要知道在哪里继续执行函数B，而当函数B执行完毕时，解释器需要知道在哪里继续执行函数A。
 当一个函数调用另一个函数时，一个新的执行上下文就会被推入堆栈。当该函数返回时，其执行上下文对象会从堆栈中弹出。如果一个函数递归调用自身100次，那么栈中就会推入100个对象，然后再从栈中取出这100个对象。这个调用栈需要占用内存。在现代硬件上，编写数百次自我调用的递归函数通常是没有问题的。但如果一个函数自我调用了上万次，就很可能会出现Maximum call-stack size exceeded这样的错误。
 Method Invocation 方法只不过是存储在对象中的函数。如果有一个函数f和一个对象o，就可以使用下面一行定义一个名为m的方法：
 o.m = f; 在定义了对象o的方法m 后，可以像下面这样调用它：
