@@ -5157,7 +5157,12 @@ function vectorAdd([x1, y1], [x2, y2]) { // Unpack 2 arguments into 4 parameters
 function vectorMultiply({x, y}, scalar) {  return {x: x * scalar, y: y * scalar}; } console.log(vectorMultiply({x: 1, y: 2}, 2)) // =&amp;gt; {x: 2, y: 4} 如果把形参解构的属性命名为和实参不同的名字，则会让代码更加冗长和难以理解：
 function vectorAdd({x: x1, y: y1}, {x: x2, y: y2}) {  return {x: x1 &#43; x2, y: y1 &#43; y2}; } vectorAdd({x: 1, y: 2}, {x: 3, y: 4}) // =&amp;gt; {x: 4, y: 6} 在解构赋值中，也可以为形参定义默认值：
 function vectorMultiply({x, y, z = 0}, scalar) {  return {x: x * scalar, y: y * scalar, z: z * scalar}; } vectorMultiply({x: 1, y: 2}, 2) // =&amp;gt; {x: 2, y: 4, z: 0} 在ES2018中，解构对象时，也可以使用可变参数。此时可变参数的值是一个对象，包含了所有未解构的属性：
-function vectorMultiply({x, y, z = 0, ...props}, scalar) {  return {x: x * scalar, y: y * scalar, z: z * scalar, ...props}; } vectorMultiply({x: 1, y: 2, w: -1}, 2) </content>
+function vectorMultiply({x, y, z = 0, ...props}, scalar) {  return {x: x * scalar, y: y * scalar, z: z * scalar, ...props}; } vectorMultiply({x: 1, y: 2, w: -1}, 2) 需要注意的是，除了解构对象和数组，还可以解构对象数组，拥有数组属性的对象，以及有对象属性的对象，无论层级多深。
+function drawCircle({x, y, radius, color: [r, g, b]}) {  // Not yet implemented } Argument Types 方法参数没有声明类型，在调用时也没有检查参数。可以为函数参数选择描述性的名称，并在每个函数的注释中仔细记录这些名称，从而帮助代码实现自文档化。
+JavaSrcipt会按需进行类型转换。因此，如果编写了一个期望使用字符串参数的函数，然后使用其他类型的值调用该函数，那么当函数尝试将传递的实参值用作字符串时，它将被简单地转换为字符串。所有基础类型都可以转换为字符串，而且所有对象都有toString() 方法（即使不一定有用处），因此在这种情况下不会出现错误。
+但不是没有例外，再来看看前面展示的arraycopy()方法。它期望一个或两个数组参数，如果参数类型不对就失败。当函数传入错误值时，最好能立即以可预测的方式失败，而不是在开始执行后以可能不清楚的错误信息失败。下面是一个执行类型检查的函数示例：
+function sum(a) {  let total = 0;  for (let element of a) { // Throws TypeError if a is not iterable  if (typeof element !== &amp;#34;number&amp;#34;) {  throw new TypeError(&amp;#34;sum(): elements must be numbers&amp;#34;);  }  total &#43;= element;  }  return total; } Functions as Values 函数最重要的特性是它们能够被定义和调用。函数定义和调用是JavaScript和其他大多数语言的语法特性。但在JavaScript中，函数不仅是语法，而且是值。这意味函数可以赋值给变量，存储为对象的属性或者作为数组的元素，传递给函数等。
+function square(x) {  return x * x; } let s = square; console.log(s(4)) // 16 console.log(square(4)) // 16 </content>
     </entry>
     
      <entry>
