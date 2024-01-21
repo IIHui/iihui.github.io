@@ -5162,7 +5162,15 @@ function drawCircle({x, y, radius, color: [r, g, b]}) {  // Not yet implemented 
 JavaSrcipt会按需进行类型转换。因此，如果编写了一个期望使用字符串参数的函数，然后使用其他类型的值调用该函数，那么当函数尝试将传递的实参值用作字符串时，它将被简单地转换为字符串。所有基础类型都可以转换为字符串，而且所有对象都有toString() 方法（即使不一定有用处），因此在这种情况下不会出现错误。
 但不是没有例外，再来看看前面展示的arraycopy()方法。它期望一个或两个数组参数，如果参数类型不对就失败。当函数传入错误值时，最好能立即以可预测的方式失败，而不是在开始执行后以可能不清楚的错误信息失败。下面是一个执行类型检查的函数示例：
 function sum(a) {  let total = 0;  for (let element of a) { // Throws TypeError if a is not iterable  if (typeof element !== &amp;#34;number&amp;#34;) {  throw new TypeError(&amp;#34;sum(): elements must be numbers&amp;#34;);  }  total &#43;= element;  }  return total; } Functions as Values 函数最重要的特性是它们能够被定义和调用。函数定义和调用是JavaScript和其他大多数语言的语法特性。但在JavaScript中，函数不仅是语法，而且是值。这意味函数可以赋值给变量，存储为对象的属性或者作为数组的元素，传递给函数等。
-function square(x) {  return x * x; } let s = square; console.log(s(4)) // 16 console.log(square(4)) // 16 </content>
+function square(x) {  return x * x; } let s = square; console.log(s(4)) // 16 console.log(square(4)) // 16 除了变量，函数还可以赋值给对象属性，此时称函数为方法：
+let o = {  square: function (x) {  return x * x;  } }; // An object literal let y = o.square(16); console.log(y) 当把函数作为数组中的元素时，函数甚至不需要名字：
+let a = [x =&amp;gt; x * x, 20]; console.log(a[0](a[1])) // 400 在方法Array.sort()中，可选地接受一个函数作为参数，并根据函数的返回值决定如何排序。这个函数的任务非常简单，对于传递给它的两个参数，它要确定哪个在前哪个在后。这个函数参数使得Array.sort()变得非常灵活。
+下面代码演示了把函数当作值，可以做什么事情：
+function add(x, y) {  return x &#43; y; } function subtract(x, y) {  return x - y; } function multiply(x, y) {  return x * y; } function divide(x, y) {  return x / y; } // Here&amp;#39;s a function that takes one of the preceding functions // as an argument and invokes it on two operands function operate(operator, operand1, operand2) {  return operator(operand1, operand2); } let i = operate(add, operate(add, 2, 3), operate(multiply, 4, 5)); const operators = {  add: (x, y) =&amp;gt; x &#43; y,  subtract: (x, y) =&amp;gt; x - y,  multiply: (x, y) =&amp;gt; x * y,  divide: (x, y) =&amp;gt; x / y,  pow: Math.pow // This works for predefined functions too };  function operate2(operation, operand1, operand2) {  if (typeof operators[operation] === &amp;#34;function&amp;#34;) {  return operators[operation](operand1, operand2);  } else throw &amp;#34;unknown operator&amp;#34;; } operate2(&amp;#34;add&amp;#34;, &amp;#34;hello&amp;#34;, operate2(&amp;#34;add&amp;#34;, &amp;#34; &amp;#34;, &amp;#34;world&amp;#34;)) operate2(&amp;#34;pow&amp;#34;, 10, 2) Defining Your Own Function Properties 需要注意的是，函数不是基础值，而是一种特殊的对象，这意味着函数可以有属性。当函数需要一个静态变量，它的值在函数调用时都能访问到，则通常把这个变量定义为函数自身的一个属性。
+例如，假设想编写一个函数，每次调用时都返回一个唯一的整数。该函数绝不能两次返回相同的值。为了做到这一点，函数需要跟踪它已经返回的值，而且这些信息必须在函数调用时持续存在。可以将这些信息存储在全局变量中，但这是不必要的，因为只有函数本身会使用这些信息。最好将这些信息存储在函数对象的一个属性中。下面是一个每次调用都返回唯一整数的示例：
+// 函数声明会被提升，因此在声明之前可以给它赋值 uniqueInteger.counter = 0; function uniqueInteger() {  return uniqueInteger.counter&#43;&#43; } uniqueInteger() // 0 uniqueInteger() // 1 下面的factorial()函数使用了自身的属性来缓存之前的计算结果（函数将自身作为一个数组）：
+function factorial(n) {  if (Number.isInteger(n) &amp;amp;&amp;amp; n &amp;gt; 0) {  if (!(n in factorial)) {  // Compute and cache it  factorial[n] = n * factorial(n - 1);  }  return factorial[n];  } else {  return NaN  } } factorial[1] = 1; factorial(6) factorial[5] Functions as Namespaces 在函数中声明的变量，对于外部来说是不可见的。因此，有时可以把函数作为临时的命名空间使用，这样可以保证在其中定义的变量不会污染全局命名空间。
+</content>
     </entry>
     
      <entry>
