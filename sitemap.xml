@@ -5183,7 +5183,7 @@ let scope = &amp;#34;global scope&amp;#34;;  function checkscope() {  let scope 
 之前定义了一个函数uniqueInteger()，这个函数使用一个自身的属性来跟踪要返回的下一个值。但该方法有一个缺点，很容易被错误或恶意的代码重置计数器，或者把计数器设置为非整数值，导致uniqueInteger()不具有唯一性。
 闭包可以捕获一次函数调用的局部变量，可以将这些变量作为私有状态。因此，可以像下面这样改写函数uniqueInteger()，使用立即调用函数表达式定义一个命名空间，再通过闭包利用该命名空间来保证自己的状态私有：
 let uniqueInteger = (function () { // Define and invoke  let counter = 0; // Private state of function below  return function () {  return counter&#43;&#43;;  }; }());  console.log(uniqueInteger()) console.log(uniqueInteger()) Function Properties, Methods, and Constructor 在JavaScript程序中，函数也是值，使用typeof操作符后，会返回function。但函数实际上是一种特殊的对象，因此函数也有属性和方法，甚至还有一个Function()构造函数来创建新函数对象。
-The length Property 函数的只读属性length，表示函数在参数列表中声明的形参个数。这个值通常表示调用函数时应该传入的参数个数，如果函数有可变参数，则可变参数不会计算在length属性中：
+The length Property 函数的只读属性length，表示函数在参数列表中声明的形参个数。这个值通常表示调用函数时应该传入的参数个数，如果函数有可变参数，则可变参数不会被计算在length属性中：
 console.log(uniqueInteger.length, checkscope.length) // 0 0 The name Property 函数的只读属性name，表示定义函数时使用的名字。如果是未命名函数，则表示在第一次创建这个函数时赋值给该函数的变量名或属性名。
 The prototype Property 除了箭头函数，所有函数都有一个prototype属性。每个函数都有自己的的prototype。当函数被作为构造函数使用时，新创建的对象从这个原型对象中继承属性。
 The call() and apply() Methods call和apply允许间接调用一个函数，就像这个函数是某个其他对象的方法一样。call和apply的第一个参数都是要在其上调用这个函数的对象，也就是函数的调用上下文，在函数体内它会变成this关键字的值。如果要把f()作为对象o的方法进行调用，可以使用call和apply：
@@ -5193,9 +5193,15 @@ o.m = f; o.m(); delete o.m; 箭头函数从定义它的上下文中基础this值
 f.call(o, 1, 2); apply方法和call方法类似，只不过传入的参数应当以数组形式：
 f.apply(o, [1,2]); The bind() Method bind方法的首要目的是绑定一个函数到一个对象。如果在函数f上调用了bind()并且传递了对象o，这个方法将返回一个新的函数。如果作为函数来调用这个新函数，就会像f是o的方法一样调用原函数：
 let o = {x: 1}; let g = f.bind(o); g(2) let p = {x: 10, g}; p.g(2) 箭头函数从其定义的环境中继承其this值，且该值不能用bind()覆盖。因此如果前面代码中的函数f()被定义为箭头函数，则绑定将不起作用。
-The toString() Method 与所有 JavaScript 对象一样，函数也有一个 toString() 方法。ECMAScript 规范要求该方法返回与函数声明语法一致的字符串。实际上，大多数（但不是全部）toString()方法的实现都会返回函数的完整源代码。内置函数通常会返回一个包含类似&amp;quot;[native code]&amp;ldquo;的字符串作为函数体。
+The toString() Method 与所有 JavaScript 对象一样，函数也有一个toString() 方法。ECMAScript 规范要求该方法返回与函数声明语法一致的字符串。实际上，大多数（但不是全部）toString()方法的实现都会返回函数的完整源代码。内置函数通常会返回一个包含类似&amp;quot;[native code]&amp;ldquo;的字符串作为函数体。
 Chapter 9 类意味着一组对象从同一个原型对象中继承属性。因此，原型对象是类的核心特征。函数Object.create()返回一个新的对象，它继承某个特定的原型对象。如果我们创建了一下原型对象，接着使用Object.create()创建一个继承这个原型对象，就是定义了类。通常一个类的实例需要进一步初始化，因此常见的做法是定义一个函数来创建和初始化新对象。
-</content>
+Classes and Constructors 构造函数是一种专门用于初始化新对象的函数，需要使用new关键字调用。构造器调用的关键是使用是使用它的prototype属性被用作新对象的原型。
+之前说几乎所有对象都有原型，但只有少数对象有prototype属性。现在可以明确了：只有函数对象有prototype属性。这意味同一个构造函数创建的所有对象都继承同一个对象。
+function Range(from, to) {  // Store the start and end points (state) of this new range object.  // These are noninherited properties that are unique to this object.  this.from = from;  this.to = to; }  Range.prototype = {  includes: function (x) {  return this.from &amp;lt;= x &amp;amp;&amp;amp; x &amp;lt;= this.to;  },  [Symbol.iterator]: function* () {  for (let x = Math.ceil(this.from); x &amp;lt;= this.to; x&#43;&#43;) yield x;  },  toString: function () {  return &amp;#34;(&amp;#34; &#43; this.from &#43; &amp;#34;...&amp;#34; &#43; this.to &#43; &amp;#34;)&amp;#34;;  } }  let r = new Range(1, 3); r.includes(2) r.toString() console.log([...r]) 在函数体内，可以通过一个特殊表达式new.target判断函数是否作为构造函数被调用了，如果该表达式有值，说明函数是作为构造函数，通过new关键词调用的：
+function C() {  if (!new.target) return new C(); // initialization code goes here } Constructors, Class Identity, and instanceof 原型对象是类的基本特征：两个对象是同一个类的实例，当且仅当它们继承自同一个原型对象。初始化新对象状态的构造函数并不是基本的：两个构造函数的原型属性可能指向同一个原型对象。那么，这两个构造函数都可以用来创建同一个类的实例。
+Classes with the class Keyword ES6才引入class关键字才有了自己的语法：
+class Range {  constructor(from, to) {  // Store the start and end points (state) of this new range object.  // These are noninherited properties that are unique to this object.  this.from = from;  this.to = to;  }   // Return true if x is in the range, false otherwise // This method works for textual and Date ranges as well as numeric.  includes(x) {  return this.from &amp;lt;= x &amp;amp;&amp;amp; x &amp;lt;= this.to;  }   // A generator function that makes instances of the class iterable. // Note that it only works for numeric ranges.  * [Symbol.iterator]() {  for (let x = Math.ceil(this.from); x &amp;lt;= this.to; x&#43;&#43;) yield x;  }   // Return a string representation of the range  toString() {  return `(${this.from}...${this.to})`;  } }  let r = new Range(1, 3); r.includes(2) r.toString() console.log([...r]) 如果想定义一个继承另一个类的类，可以使用extends关键字和class关键字：
+class Span extends Range {   constructor(start, length) {  if (length &amp;gt;= 0) {  super(start, start &#43; length);  } else {  super(start &#43; length, start);  }  }  } </content>
     </entry>
     
      <entry>
