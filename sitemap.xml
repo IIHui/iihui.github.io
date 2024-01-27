@@ -5236,11 +5236,15 @@ const philosopher = &amp;#34;Hypatia&amp;#34;; 我们可以把每个基本类型
 let lifespan: number | &amp;#34;ongoing&amp;#34; | &amp;#34;uncertain&amp;#34;; lifespan = 89; // Ok lifespan = &amp;#34;ongoing&amp;#34;; // Ok lifespan = true; // 编译错误：Type &amp;#39;true&amp;#39; is not assignable to type &amp;#39;number | &amp;#34;ongoing&amp;#34; | &amp;#34;uncertain&amp;#34;&amp;#39;. Literal Assignability 我们已经看到，不同的基本类型（如number和string）是不能相互赋值的。同样，同一基本类型中的不同字面值类型（如0和1）也不能互相赋值。
 let specificallyAda: &amp;#34;Ada&amp;#34;; specificallyAda = &amp;#39;Ada&amp;#39; specificallyAda = &amp;#39;B&amp;#39; // 编译错误: Type &amp;#39;&amp;#34;B&amp;#34;&amp;#39; is not assignable to type &amp;#39;&amp;#34;Ada&amp;#34;&amp;#39;. 但是，字面值类型可以赋值给相应的基本类型。因为任何特定的字面字符串仍然是字符串，所以下面是代码示例是合法的。
 let specificallyAda: &amp;#34;Ada&amp;#34;; specificallyAda = &amp;#39;Ada&amp;#39; let someString = &amp;#34;&amp;#34;; // Type: string someString = specificallyAda Strict Null Checking 在处理潜在的undefined值时，字面值联合的威力尤为明显，TypeScript将这一类型系统领域称为严格的空值检查。TypeScript是现代编程语言浪潮的一部分，这些语言利用严格的空值检查来解决可怕的“billion-dollar mistake&amp;quot;。
-&amp;ldquo;billion-dollar mistake &amp;ldquo;是一个朗朗上口的行业术语，指许多类型系统允许在需要不同类型的地方使用空值。在没有严格空值检查的语言中，像下面这样将null赋值给字符串的代码是允许的：
+billion-dollar mistake &amp;ldquo;billion-dollar mistake&amp;quot;是一个朗朗上口的行业术语，指许多类型系统允许在需要不同类型的地方使用空值。在没有严格空值检查的语言中，像下面这样将null赋值给字符串的代码是允许的：
 const firstName: string = null; // Type &amp;#39;null&amp;#39; is not assignable to type &amp;#39;string&amp;#39;. TypeScript编译器包含大量选项，可以改变其运行方式。严格空检查（strictNullChecks）是最有用的选项之一，它可以切换是否启用严格空检查。粗略地说，禁用strictNullChecks会为代码中的每个类型添加| null | undefined，从而允许任何变量接收null或undefined。
 如果将strictNullChecks设置为false，下面代码会被认为是安全的。但这是错误的，当使用变量nameMaybe调用toLowerCase方法时，它可能是未定义的：
 let nameMaybe = Math.random() &amp;gt; 0.5 ? &amp;#34;Tony Hoare&amp;#34; : undefined; nameMaybe.toLowerCase() // Potential runtime error: Cannot read property &amp;#39;toLowerCase&amp;#39; of undefined. 如果开启了严格空值检查，则下面代码会出现编译错误：&#39;nameMaybe&#39; is possibly &#39;undefined&#39;.
-let nameMaybe = Math.random() &amp;gt; 0.5 ? &amp;#34;Tony Hoare&amp;#34; : undefined; nameMaybe.toLowerCase() 如果没有严格空值检查，很难确定就我们的代码是否不会因意外的null或undefined而出错。
+let nameMaybe = Math.random() &amp;gt; 0.5 ? &amp;#34;Tony Hoare&amp;#34; : undefined; nameMaybe.toLowerCase() 如果没有严格空值检查，很难确定就我们的代码是否不会因意外的null或undefined而出错。TypeScript的最佳实践通常是启用strictNullChecks。这样做有助于防止崩溃，并消除billion-dollar mistake错误。
+Truthiness Narrowing 在JavaScript中，除了false, 0, -0, 0n, &amp;quot;&amp;quot;, null, undefined,NaN为falsy值，其他的都是truthy值。如果变量的某些潜在值可能是truthy的，TypeScript还可以通过真值检查缩小变量类型的范围。
+下面代码中，因为geneticist的类型为string | undefined，因为undefined是falsy，TypeScript可以在if语句体中推断出它必须是字符串类型：
+let geneticist = Math.random() &amp;gt; 0.5 ? &amp;#34;Barbara McClintock&amp;#34; : undefined; if (geneticist) {  console.log(geneticist.toUpperCase()) // BARBARA MCCLINTOCK } 执行真实性检查的逻辑运算符也同样有效，即使用&amp;amp;&amp;amp;和 ?:
+geneticist &amp;amp;&amp;amp; geneticist.toUpperCase(); geneticist?.toUpperCase() 遗憾的是，真实性检查不能反过来使用。如果我们对一个string | undefined值的了解仅仅是它是falsy的，这并不能告诉我们它是空字符串还是undefined。
 </content>
     </entry>
     
