@@ -5219,8 +5219,14 @@ let thinker: string | null = null; if (Math.random() &amp;gt; 0.5) {  thinker = 
 在下面例子中，physicist是一个number|string联合类型变量。而toString()方法在两种类型中都是被允许的，但toUpperCase方法仅存在于string类型，toFixed方法仅存在于number类型。
 let physicist = Math.random() &amp;gt; 0.5 ? &amp;#34;Marie Curie&amp;#34; : 84; physicist.toString() physicist.toUpperCase(); // Property &amp;#39;toUpperCase&amp;#39; does not exist on type &amp;#39;string | number&amp;#39;.  Property &amp;#39;toUpperCase&amp;#39; does not exist on type &amp;#39;number&amp;#39; physicist.toFixed(); // Property &amp;#39;toFixed&amp;#39; does not exist on type &amp;#39;string | number&amp;#39;.  Property &amp;#39;toFixed&amp;#39; does not exist on type &amp;#39;string&amp;#39; 限制访问并不存在于所有联合类型中的属性是一种安全措施。如果一个对象不确定是否是包含某个属性的类型，TypeScript会认为尝试使用该属性是不安全的。
 要使用仅存在于联合类型中某个子类型的方法，我们的代码需要向TypeScript表明代码中该位置的值是这些更特定类型中的一种，这一过程称为窄化。
-Narrowing 窄化是指TypeScript从我们的代码中推断出一个值的类型比其定义、声明或之前推断的类型更具体。一旦 TypeScript知道一个值的类型比之前已知的类型更窄，它就会允许将该值视为更具体的类型。用于缩小类型范围的逻辑检查称为类型保护。
-</content>
+Narrowing 窄化是指TypeScript从我们的代码中推断出一个值的类型比其定义、声明或之前推断的类型更具体。一旦 TypeScript知道一个值的类型比之前已知的类型更窄，它就会允许将该值视为更具体的类型。
+用于缩小类型范围的逻辑检查称为类型保护。下面我们来介绍TypeScript可以用来从代码中推断类型缩小的两种常见类型保护。
+Assignment Narrowing 如果直接赋值给一个变量，TypeScript会将变量的类型缩小为该值的类型。下面代码中变量admiral初始声明为number | string联合类型。但是一旦赋值为字符串&amp;quot;Grace Hopper&amp;quot;，TypeScript就知道它是字符串类型了：
+admiral = &amp;#34;Grace Hopper&amp;#34;; admiral.toUpperCase(); // Ok: string admiral.toFixed(); // Property &amp;#39;toFixed&amp;#39; does not exist on type &amp;#39;string&amp;#39; 当变量被赋予一个显式的联合类型并且同时有一个初始值时，赋值缩小就会发挥作用。TypeScript会理解，虽然变量以后可能会接收任何联合类型的值，但它开始时只有其初始值的类型。
+let inventor: number | string = &amp;#34;Hedy Lamarr&amp;#34;; inventor.toUpperCase(); inventor.toFixed(); // Property &amp;#39;toFixed&amp;#39; does not exist on type &amp;#39;string&amp;#39; Conditional Checks 让TypeScript缩小变量值类型范围的常见方法是编写if语句，检查变量是否等于已知值。TypeScript非常聪明，它知道在if语句的主体中，变量必须与已知值的类型相同：
+if (scientist === &amp;#34;Rosalind Franklin&amp;#34;) {  console.log(scientist.toUpperCase()) // ROSALIND FRANKLIN } scientist.toUpperCase() // Property &amp;#39;toUpperCase&amp;#39; does not exist on type &amp;#39;string | number&amp;#39;. Property &amp;#39;toUpperCase&amp;#39; does not exist on type &amp;#39;number&amp;#39;. 除了直接进行值检查，可以使用typeof操作符缩窄变量的类型范围：
+let scientist = Math.random() &amp;gt; 0.5 ? &amp;#34;Rosalind Franklin&amp;#34; : 51; if (typeof scientist === &amp;#39;string&amp;#39;) {  console.log(scientist.toUpperCase()) } 来自!和else语句的逻辑否定也同样有效：
+let researcher = Math.random() &amp;gt; 0.5 ? &amp;#34;Rosalind Franklin&amp;#34; : 51; if (!(typeof researcher === &amp;#34;string&amp;#34;)) {  researcher.toFixed(); // Ok: number } else {  researcher.toUpperCase(); // Ok: string } </content>
     </entry>
     
      <entry>
