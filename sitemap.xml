@@ -5244,8 +5244,22 @@ let nameMaybe = Math.random() &amp;gt; 0.5 ? &amp;#34;Tony Hoare&amp;#34; : unde
 Truthiness Narrowing 在JavaScript中，除了false, 0, -0, 0n, &amp;quot;&amp;quot;, null, undefined,NaN为falsy值，其他的都是truthy值。如果变量的某些潜在值可能是truthy的，TypeScript还可以通过真值检查缩小变量类型的范围。
 下面代码中，因为geneticist的类型为string | undefined，因为undefined是falsy，TypeScript可以在if语句体中推断出它必须是字符串类型：
 let geneticist = Math.random() &amp;gt; 0.5 ? &amp;#34;Barbara McClintock&amp;#34; : undefined; if (geneticist) {  console.log(geneticist.toUpperCase()) // BARBARA MCCLINTOCK } 执行真实性检查的逻辑运算符也同样有效，即使用&amp;amp;&amp;amp;和 ?:
-geneticist &amp;amp;&amp;amp; geneticist.toUpperCase(); geneticist?.toUpperCase() 遗憾的是，真实性检查不能反过来使用。如果我们对一个string | undefined值的了解仅仅是它是falsy的，这并不能告诉我们它是空字符串还是undefined。
-</content>
+geneticist &amp;amp;&amp;amp; geneticist.toUpperCase(); geneticist?.toUpperCase() 遗憾的是，真实性检查不能反过来使用。如果我们知道一个类型为string | undefined变量的值是它是falsy的，这并不能告诉我们它是空字符串还是undefined。
+下面代码中，变量biologist的类型为false | string，虽然在if语句体中它可以缩小为字符串，但else语句体知道如果它是&amp;quot;&amp;quot;，它仍然可以是字符串：
+let biologist = Math.random() &amp;gt; 0.5 &amp;amp;&amp;amp; &amp;#34;Rachel Carson&amp;#34;; if (biologist) {  biologist; // Type: string } else {  biologist; // Type: false | string } Variables Without Initial Values 在JavaScript中变量没有初始值，则其默认值是undefined。这就在类型系统中出现了一个边缘情况：如果将一个变量声明为不包括undefined的类型，然后试图在赋值前使用它，该怎么办？
+TypeScript很聪明，它知道在赋值之前，变量是undefined。如果在赋值前尝试使用该变量，例如访问其某个属性，它会报告一条专门的错误信息：
+let mathematician: string; mathematician?.length; // Variable &amp;#39;mathematician&amp;#39; is used before being assigned. 请注意，如果变量的类型包括undefined，则此报告不适用。在变量类型中添加 | undefined是向 TypeScript 表明，在使用前无需定义变量，因为undefined是变量值的有效类型。
+let mathematician: string | undefined; mathematician?.length; Type Aliases 在代码中看到的大多数联合类型一般只有两到三个类型。不过，有时可能会发现一些较长的联合类型不方便重复输入。
+let rawDataFirst: boolean | number | string | null | undefined; let rawDataSecond: boolean | number | string | null | undefined; let rawDataThird: boolean | number | string | null | undefined; TypeScript包含类型别名，用于为重复使用的类型分配更简单的名称。类型别名以type关键字、新名称 = 和任意类型开头。按照惯例，类型别名以PascalCase命名：
+type MyName = ...; 上面的联合类型，可以简写成如下形式：
+type RawData = boolean | number | string | null | undefined; let rawDataFirst: RawData; let rawDataSecond: RawData; let rawDataThird: RawData; 类型别名是 TypeScript中的一项便捷功能，只要我们的类型开始变得复杂，就可以使用它。目前，这只包括长联合类型，以后还将包括数组、函数和对象类型。
+Type Aliases Are Not JavaScript 因为类型别名纯属类型系统，因此不能在运行时代码中引用它们。如果试图访问运行时不存在的内容，TypeScript会通过类型错误通知：
+type RawData = boolean | number | string | null | undefined; console.log(RawData) // &amp;#39;RawData&amp;#39; only refers to a type, but is being used as a value here. Combining Type Aliases 类型别名可以引用其他类型别名。让类型别名相互引用有时会很有用，例如当一个类型别名是一个联合类型时，它可能包括另一个类型别名中的联合类型。
+type Id = number | string; type IdMaybe = Id | undefined | null; 类型别名不必按使用顺序声明。可以让文件中较早声明的类型别名引用文件中较迟声明的别名。上面的代码片段可以重写，将IdMaybe放在Id之前声明：
+type IdMaybe = Id | undefined | null; type Id = number | string; Objects 对象字面值是键和值的集合，每个键和值都有自己的类型。
+Object Types 当使用{}创建对象字面量时，TypeScript会根据其属性将其视为新的对象类型。该对象类型将具有与对象值相同的属性名称和基本类型。访问值的属性可以使用value.member或等价的value[&amp;lsquo;member&amp;rsquo;]语法。
+下面代码中，TypeScript认为poet变量类型是具有两个属性born和name的对象。访问这两个成员是允许的，但试图访问任何其他成员名称都会因该名称不存在而导致类型错误：
+const poet = {born: 1935, name: &amp;#34;Mary Oliver&amp;#34;,}; poet[&amp;#39;born&amp;#39;]; // Type: number poet.name; // Type: string poet.end; // Property &amp;#39;end&amp;#39; does not exist on type &amp;#39;{ born: number; name: string; }&amp;#39; </content>
     </entry>
     
      <entry>
