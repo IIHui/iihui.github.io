@@ -5208,7 +5208,19 @@ function hello3(x?: string, y: number) {  console.log(x, y) }  // A required par
 function hello3(x = 3, y: number) {  console.log(x, y) } hello3(undefined, 890)  // 执行结果 3 890 Modules JavaScript编程语言直到最近才规范了文件之间如何共享代码。ECMAScript 2015增加了ECMAScript Modules或ESM，以规范文件间的import和export语法。
 在module文件中声明的任何内容都只能在该文件中使用，除非该文件中有明确的导出语句。例如，下面代码从同级的./values文件导入了一个值，并导出了一个doubled值:
 //values.ts export const value = 12  // test.ts import {value} from &amp;#34;./values&amp;#34; export const doubled = value * 2; 在一个模块中声明的变量和另一个模块中声明的变量如果同名，一般不会有冲突。只有当一个文件中导入了另一个文件的同名变量时，才会出现冲突。
-// a.ts export const shared = &amp;#34;Cher&amp;#34;;  // b.ts export const shared = &amp;#34;Cher&amp;#34;;  // c.ts import { shared } from &amp;#34;./a&amp;#34;; // Import declaration conflicts with local declaration of &amp;#39;shared&amp;#39;.  export const shared = &amp;#34;Cher&amp;#34;; // Individual declarations in merged declaration &amp;#39;shared&amp;#39; must be all exported or all local. </content>
+// a.ts export const shared = &amp;#34;Cher&amp;#34;;  // b.ts export const shared = &amp;#34;Cher&amp;#34;;  // c.ts import { shared } from &amp;#34;./a&amp;#34;; // Import declaration conflicts with local declaration of &amp;#39;shared&amp;#39;.  export const shared = &amp;#34;Cher&amp;#34;; // Individual declarations in merged declaration &amp;#39;shared&amp;#39; must be all exported or all local. 如果文件是脚本，TypeScript会将其视为全局作用域，这意味着所有脚本都可以访问其内容。这意味着在脚本文件中声明的变量不能与其他脚本文件中声明的变量同名。
+下面的a.ts和b.ts文件均会被认为是脚本，因为他们没有export和import语句。这意味着如果在这两个文件中有同名的变量，就会有冲突：
+// a.ts const shared = &amp;#34;Cher&amp;#34;;  // b.ts const shared = &amp;#34;Cher&amp;#34;; // Cannot redeclare block-scoped variable &amp;#39;shared&amp;#39;. 根据ECMAScript规范，如果需要一个文件成为一个没有导出或导入语句的模块，可以在文件的某个地方添加一个export {}; 来强制它成为一个模块：
+// a.ts const shared = &amp;#34;Cher&amp;#34;;  // b.ts const shared = &amp;#34;Cher&amp;#34;; export {}; Unions and Literals 联合：将值的允许类型扩展为两种或两种以上的可能类型。缩窄：减少值的允许类型，使其不属于一种或多种可能类型。结合起来看，联合和缩窄是一个强大的概念，它允许TypeScript对代码做出其他主流语言无法做出的明智推断。
+Union Types 下面变量mathematician可以是undefined类型，也可以是string类型。这种非此即彼的类型被称为联合类型。联合类型是一个奇妙的概念，它可以让我们在代码中处理这样的情况：我们暂时不知道某个值的确切类型，但知道它是两个或多个选项之一。
+let mathematician = Math.random() &amp;gt; 0.5 ? undefined : &amp;#34;Mark Goldberg&amp;#34;; TypeScript使用管道操作符|来连接可能的类型：
+let mathematician: string | undefined = Math.random() &amp;gt; 0.5 ? undefined : &amp;#34;Mark Goldberg&amp;#34;; 在某些变量有初始值的情况下，也为变量提供明确的联合类型很有用。在下面示例中，thinker一开始是null，但可能情况下可能是一个字符串。给它一个显式string | null类型，意味着TypeScript将允许给它分配字符串类型的值：
+let thinker: string | null = null; if (Math.random() &amp;gt; 0.5) {  thinker = &amp;#34;Susanne Langer&amp;#34;; } console.log(thinker, typeof thinker) 联合类型声明可以放置在任何声明一个类型的地方。当已知值是一个联合类型时，TypeScript只允许访问联合中所有可能类型上存在的成员属性。如果尝试访问不存在于所有可能类型中的类型，将会出现类型检查错误。
+在下面例子中，physicist是一个number|string联合类型变量。而toString()方法在两种类型中都是被允许的，但toUpperCase方法仅存在于string类型，toFixed方法仅存在于number类型。
+let physicist = Math.random() &amp;gt; 0.5 ? &amp;#34;Marie Curie&amp;#34; : 84; physicist.toString() physicist.toUpperCase(); // Property &amp;#39;toUpperCase&amp;#39; does not exist on type &amp;#39;string | number&amp;#39;.  Property &amp;#39;toUpperCase&amp;#39; does not exist on type &amp;#39;number&amp;#39; physicist.toFixed(); // Property &amp;#39;toFixed&amp;#39; does not exist on type &amp;#39;string | number&amp;#39;.  Property &amp;#39;toFixed&amp;#39; does not exist on type &amp;#39;string&amp;#39; 限制访问并不存在于所有联合类型中的属性是一种安全措施。如果一个对象不确定是否是包含某个属性的类型，TypeScript会认为尝试使用该属性是不安全的。
+要使用仅存在于联合类型中某个子类型的方法，我们的代码需要向TypeScript表明代码中该位置的值是这些更特定类型中的一种，这一过程称为窄化。
+Narrowing 窄化是指TypeScript从我们的代码中推断出一个值的类型比其定义、声明或之前推断的类型更具体。一旦 TypeScript知道一个值的类型比之前已知的类型更窄，它就会允许将该值视为更具体的类型。用于缩小类型范围的逻辑检查称为类型保护。
+</content>
     </entry>
     
      <entry>

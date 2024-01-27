@@ -241,13 +241,13 @@ code.has-jax {
     <i class="fa fa-file-word-o"></i>
 </span>
 <span class="post-meta-item-text">字数: </span>
-<span class="leancloud-visitors-count">45534</span>
+<span class="leancloud-visitors-count">46744</span>
 &nbsp; | &nbsp;
 <span class="post-meta-item-icon">
     <i class="fa fa-coffee"></i>
 </span>
 <span class="post-meta-item-text">阅读: </span>
-<span class="leancloud-visitors-count">91 分钟</span>
+<span class="leancloud-visitors-count">94 分钟</span>
 </span>
       </div>
     </header>
@@ -2463,7 +2463,47 @@ code.has-jax {
 </span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">import</span> { <span style="color:#a6e22e">shared</span> } <span style="color:#66d9ef">from</span> <span style="color:#e6db74">&#34;./a&#34;</span>; <span style="color:#75715e">// Import declaration conflicts with local declaration of &#39;shared&#39;.
 </span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>
 </span></span><span style="display:flex;"><span><span style="color:#66d9ef">export</span> <span style="color:#66d9ef">const</span> <span style="color:#a6e22e">shared</span> <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;Cher&#34;</span>; <span style="color:#75715e">// Individual declarations in merged declaration &#39;shared&#39; must be all exported or all local.
-</span></span></span></code></pre></div>
+</span></span></span></code></pre></div><p>如果文件是脚本，TypeScript会将其视为全局作用域，这<font color=red>意味着所有脚本都可以访问其内容</font>。这意味着在脚本文件中声明的变量不能与其他脚本文件中声明的变量同名。</p>
+<p>下面的a.ts和b.ts文件均会被认为是脚本，因为他们没有<code>export</code>和<code>import</code>语句。这意味着如果在这两个文件中有同名的变量，就会有冲突：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span><span style="color:#75715e">// a.ts
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">const</span> <span style="color:#a6e22e">shared</span> <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;Cher&#34;</span>;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">// b.ts
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">const</span> <span style="color:#a6e22e">shared</span> <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;Cher&#34;</span>; <span style="color:#75715e">// Cannot redeclare block-scoped variable &#39;shared&#39;.
+</span></span></span></code></pre></div><p>根据<code>ECMAScript</code>规范，如果需要一个文件成为一个没有导出或导入语句的模块，可以在文件的某个地方添加一个<code>export {};</code> 来强制它成为一个模块：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span><span style="color:#75715e">// a.ts
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">const</span> <span style="color:#a6e22e">shared</span> <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;Cher&#34;</span>;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">// b.ts
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">const</span> <span style="color:#a6e22e">shared</span> <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;Cher&#34;</span>;
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">export</span> {};
+</span></span></code></pre></div><h2 id="unions-and-literals">Unions and Literals</h2>
+<p>联合：将值的允许类型扩展为两种或两种以上的可能类型。缩窄：减少值的允许类型，使其不属于一种或多种可能类型。结合起来看，联合和缩窄是一个强大的概念，它允许TypeScript对代码做出其他主流语言无法做出的明智推断。</p>
+<h3 id="union-types">Union Types</h3>
+<p>下面变量<code>mathematician</code>可以是<code>undefined</code>类型，也可以是<code>string</code>类型。<font color=red>这种非此即彼的类型被称为联合类型</font>。联合类型是一个奇妙的概念，它可以让我们在代码中处理这样的情况：我们暂时不知道某个值的确切类型，但知道它是两个或多个选项之一。</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span><span style="color:#66d9ef">let</span> <span style="color:#a6e22e">mathematician</span> <span style="color:#f92672">=</span> Math.<span style="color:#a6e22e">random</span>() <span style="color:#f92672">&gt;</span> <span style="color:#ae81ff">0.5</span> <span style="color:#f92672">?</span> <span style="color:#66d9ef">undefined</span> <span style="color:#f92672">:</span> <span style="color:#e6db74">&#34;Mark Goldberg&#34;</span>;
+</span></span></code></pre></div><p><code>TypeScript</code>使用管道操作符<code>|</code>来连接可能的类型：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span><span style="color:#66d9ef">let</span> <span style="color:#a6e22e">mathematician</span>: <span style="color:#66d9ef">string</span> <span style="color:#f92672">|</span> <span style="color:#66d9ef">undefined</span> <span style="color:#f92672">=</span> Math.<span style="color:#a6e22e">random</span>() <span style="color:#f92672">&gt;</span> <span style="color:#ae81ff">0.5</span> <span style="color:#f92672">?</span> <span style="color:#66d9ef">undefined</span> <span style="color:#f92672">:</span> <span style="color:#e6db74">&#34;Mark Goldberg&#34;</span>;
+</span></span></code></pre></div><p>在某些变量有初始值的情况下，也为变量提供明确的联合类型很有用。在下面示例中，<code>thinker</code>一开始是null，但可能情况下可能是一个字符串。给它一个显式<code>string | null</code>类型，意味着TypeScript将允许给它分配字符串类型的值：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span><span style="color:#66d9ef">let</span> <span style="color:#a6e22e">thinker</span>: <span style="color:#66d9ef">string</span> <span style="color:#f92672">|</span> <span style="color:#66d9ef">null</span> <span style="color:#f92672">=</span> <span style="color:#66d9ef">null</span>;
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">if</span> (Math.<span style="color:#a6e22e">random</span>() <span style="color:#f92672">&gt;</span> <span style="color:#ae81ff">0.5</span>) {
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">thinker</span> <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;Susanne Langer&#34;</span>;
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">console</span>.<span style="color:#a6e22e">log</span>(<span style="color:#a6e22e">thinker</span>, <span style="color:#66d9ef">typeof</span> <span style="color:#a6e22e">thinker</span>) 
+</span></span></code></pre></div><p>联合类型声明可以放置在任何声明一个类型的地方。当已知值是一个联合类型时，TypeScript只允许访问联合中所有可能类型上存在的成员属性。如果尝试访问不存在于所有可能类型中的类型，将会出现类型检查错误。</p>
+<p>在下面例子中，<code>physicist</code>是一个<code>number|string</code>联合类型变量。而<code>toString()</code>方法在两种类型中都是被允许的，但<code>toUpperCase</code>方法仅存在于<code>string</code>类型，<code>toFixed</code>方法仅存在于<code>number</code>类型。</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span><span style="color:#66d9ef">let</span> <span style="color:#a6e22e">physicist</span> <span style="color:#f92672">=</span> Math.<span style="color:#a6e22e">random</span>() <span style="color:#f92672">&gt;</span> <span style="color:#ae81ff">0.5</span> <span style="color:#f92672">?</span> <span style="color:#e6db74">&#34;Marie Curie&#34;</span> <span style="color:#f92672">:</span> <span style="color:#ae81ff">84</span>;
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">physicist</span>.<span style="color:#a6e22e">toString</span>()
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">physicist</span>.<span style="color:#a6e22e">toUpperCase</span>(); <span style="color:#75715e">//  Property &#39;toUpperCase&#39; does not exist on type &#39;string | number&#39;.
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>  <span style="color:#a6e22e">Property</span> <span style="color:#e6db74">&#39;toUpperCase&#39;</span> <span style="color:#a6e22e">does</span> <span style="color:#a6e22e">not</span> <span style="color:#a6e22e">exist</span> <span style="color:#a6e22e">on</span> <span style="color:#66d9ef">type</span> <span style="color:#e6db74">&#39;number&#39;</span>
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">physicist</span>.<span style="color:#a6e22e">toFixed</span>();
+</span></span><span style="display:flex;"><span><span style="color:#75715e">// Property &#39;toFixed&#39; does not exist on type &#39;string | number&#39;.
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>  <span style="color:#a6e22e">Property</span> <span style="color:#e6db74">&#39;toFixed&#39;</span> <span style="color:#a6e22e">does</span> <span style="color:#a6e22e">not</span> <span style="color:#a6e22e">exist</span> <span style="color:#a6e22e">on</span> <span style="color:#66d9ef">type</span> <span style="color:#e6db74">&#39;string&#39;</span>
+</span></span></code></pre></div><p>限制访问并不存在于所有联合类型中的属性是一种安全措施。如果一个对象不确定是否是包含某个属性的类型，<code>TypeScript</code>会认为尝试使用该属性是不安全的。</p>
+<p>要使用仅存在于联合类型中某个子类型的方法，我们的代码需要向<code>TypeScript</code>表明代码中该位置的值是这些更特定类型中的一种，这一过程称为窄化。</p>
+<h3 id="narrowing">Narrowing</h3>
+<p>窄化是指<code>TypeScript</code>从我们的代码中推断出一个值的类型比其定义、声明或之前推断的类型更具体。一旦 <code>TypeScript</code>知道一个值的类型比之前已知的类型更窄，它就会允许将该值视为更具体的类型。用于缩小类型范围的逻辑检查称为类型保护。</p>
+
     </div>
     <footer class="post-footer">
         
@@ -2809,6 +2849,12 @@ code.has-jax {
     <li><a href="#typescript">TypeScript</a>
       <ul>
         <li><a href="#modules">Modules</a></li>
+        <li><a href="#unions-and-literals">Unions and Literals</a>
+          <ul>
+            <li><a href="#union-types">Union Types</a></li>
+            <li><a href="#narrowing">Narrowing</a></li>
+          </ul>
+        </li>
       </ul>
     </li>
   </ul>
