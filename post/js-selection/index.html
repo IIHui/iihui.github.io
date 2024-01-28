@@ -241,13 +241,13 @@ code.has-jax {
     <i class="fa fa-file-word-o"></i>
 </span>
 <span class="post-meta-item-text">字数: </span>
-<span class="leancloud-visitors-count">58950</span>
+<span class="leancloud-visitors-count">61872</span>
 &nbsp; | &nbsp;
 <span class="post-meta-item-icon">
     <i class="fa fa-coffee"></i>
 </span>
 <span class="post-meta-item-text">阅读: </span>
-<span class="leancloud-visitors-count">118 分钟</span>
+<span class="leancloud-visitors-count">124 分钟</span>
 </span>
       </div>
     </header>
@@ -3122,6 +3122,156 @@ code.has-jax {
 </span></span><span style="display:flex;"><span><span style="color:#75715e">// Type: (number | string)[]
 </span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#a6e22e">values</span>[<span style="color:#ae81ff">0</span>] <span style="color:#f92672">=</span> <span style="color:#ae81ff">0</span>;
 </span></span></code></pre></div><p>如同变量，如果允许数组是<code>any</code>类型，部分地违背了TypeScript类型检查的目的。当TypeScript知道你的值应该是什么类型时，它就会工作得最好。</p>
+<h4 id="multidimensional-arrays-1">Multidimensional Arrays</h4>
+<p>一个二维数组，有两个<code>[]</code>，</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span><span style="color:#66d9ef">let</span> <span style="color:#a6e22e">arrayOfArraysOfNumbers</span>: <span style="color:#66d9ef">number</span>[][];
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">let</span> <span style="color:#a6e22e">arrayOfArraysOfNumbers</span><span style="color:#f92672">:</span> (<span style="color:#66d9ef">number</span>[])[]; <span style="color:#75715e">// 两种方式都可以
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#a6e22e">arrayOfArraysOfNumbers</span> <span style="color:#f92672">=</span> [[<span style="color:#ae81ff">1</span>, <span style="color:#ae81ff">2</span>, <span style="color:#ae81ff">3</span>], [<span style="color:#ae81ff">2</span>, <span style="color:#ae81ff">4</span>, <span style="color:#ae81ff">6</span>], [<span style="color:#ae81ff">3</span>, <span style="color:#ae81ff">6</span>, <span style="color:#ae81ff">9</span>],];
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">console</span>.<span style="color:#a6e22e">log</span>(<span style="color:#a6e22e">arrayOfArraysOfNumbers</span>)
+</span></span></code></pre></div><p>三维数组有3个<code>[]</code>，四维数组有4个<code>[]</code>，5个数组有5个<code>[]</code>。</p>
+<h3 id="array-members">Array Members</h3>
+<p>TypeScript理解典型的基于索引访问数组元素，并返回该数组类型的元素。下面的数组defenders的类型的是<code>string []</code> ，因此变量的defender的类型是<code>string</code>:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span><span style="color:#66d9ef">const</span> <span style="color:#a6e22e">defenders</span> <span style="color:#f92672">=</span> [<span style="color:#e6db74">&#34;Clarenza&#34;</span>, <span style="color:#e6db74">&#34;Dina&#34;</span>];
+</span></span><span style="display:flex;"><span><span style="color:#75715e">// Type: string
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">const</span> <span style="color:#a6e22e">defender</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">defenders</span>[<span style="color:#ae81ff">0</span>];
+</span></span></code></pre></div><p>联合类型数组的成员本身就是同一联合类型。下面的<code>soldiersOrDates</code>的类型为<code>(string | Date)[]</code>，因此变量soldierOrDate的类型为<code>string | Date</code>：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span><span style="color:#66d9ef">const</span> <span style="color:#a6e22e">soldiersOrDates</span> <span style="color:#f92672">=</span> [<span style="color:#e6db74">&#34;Deborah Sampson&#34;</span>, <span style="color:#66d9ef">new</span> Date(<span style="color:#ae81ff">1782</span>, <span style="color:#ae81ff">6</span>, <span style="color:#ae81ff">3</span>)];
+</span></span><span style="display:flex;"><span><span style="color:#75715e">// Type: Date | string
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">const</span> <span style="color:#a6e22e">soldierOrDate</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">soldiersOrDates</span>[<span style="color:#ae81ff">0</span>];
+</span></span></code></pre></div><h4 id="caveat-unsound-members">Caveat: Unsound Members</h4>
+<p>众所周知，TypeScript的类型系统<font color=red>在技术上是不健全的，它的类型大多是正确的</font>，但有时它对值的类型的理解可能是不正确的。<font color=red>数组尤其是类型系统不健全的根源</font>。在默认情况下，TypeScript 假设所有数组成员的访问都会返回该数组的成员，尽管在 JavaScript 中，访问数组元素的索引大于数组的长度会产生undefined的结果。在默认的 TypeScript 编译器设置下，这段代码没有任何问题：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span><span style="color:#66d9ef">function</span> <span style="color:#a6e22e">withElements</span>(<span style="color:#a6e22e">elements</span>: <span style="color:#66d9ef">string</span>[]) {
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">// No type error
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#a6e22e">console</span>.<span style="color:#a6e22e">log</span>(<span style="color:#a6e22e">elements</span>[<span style="color:#ae81ff">9001</span>].<span style="color:#a6e22e">length</span>);
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">withElements</span>([<span style="color:#e6db74">&#34;It&#39;s&#34;</span>, <span style="color:#e6db74">&#34;over&#34;</span>]);
+</span></span></code></pre></div><p>TypeScript故意不确定检索到的数组成员是否存在。它认为代码片段中的<code>elements[9001]</code>是字符串类型，而不是<code>undefined</code>类型。</p>
+<h3 id="spreads-and-rests">Spreads and Rests</h3>
+<h4 id="spreads">Spreads</h4>
+<p>可以使用 &hellip;扩展操作符将数组连接在一起。根据TypeScript 的理解，结果数组将包含来输入数组的所有值。如果输入数组的类型相同，则输出数组的类型也相同。</p>
+<p>如果将两个不同类型的数组展开在一起创建一个新数组，新数组将被理解为由两个初始类型元素组成的联合类型数组。</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span><span style="color:#75715e">// Type: string[]
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">const</span> <span style="color:#a6e22e">soldiers</span> <span style="color:#f92672">=</span> [<span style="color:#e6db74">&#34;Harriet Tubman&#34;</span>, <span style="color:#e6db74">&#34;Joan of Arc&#34;</span>, <span style="color:#e6db74">&#34;Khutulun&#34;</span>];
+</span></span><span style="display:flex;"><span><span style="color:#75715e">// Type: number[]
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">const</span> <span style="color:#a6e22e">soldierAges</span> <span style="color:#f92672">=</span> [<span style="color:#ae81ff">90</span>, <span style="color:#ae81ff">19</span>, <span style="color:#ae81ff">45</span>];
+</span></span><span style="display:flex;"><span><span style="color:#75715e">// Type: (string | number)[]
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">const</span> <span style="color:#a6e22e">conjoined</span> <span style="color:#f92672">=</span> [...<span style="color:#a6e22e">soldiers</span>, ...<span style="color:#a6e22e">soldierAges</span>];
+</span></span></code></pre></div><h4 id="spreading-rest-parameters">Spreading Rest Parameters</h4>
+<p>TypeScript可识别并将对JavaScript 中&hellip;&hellip;的做法执行类型检查。作为其余参数的参数使用的数组必须具有与其余参数相同的数组类型。</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span><span style="color:#66d9ef">function</span> <span style="color:#a6e22e">logWarriors</span>(<span style="color:#a6e22e">greeting</span>: <span style="color:#66d9ef">string</span>, ...<span style="color:#a6e22e">names</span>: <span style="color:#66d9ef">string</span>[]) {
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">for</span> (<span style="color:#66d9ef">const</span> <span style="color:#a6e22e">name</span> <span style="color:#66d9ef">of</span> <span style="color:#a6e22e">names</span>) {
+</span></span><span style="display:flex;"><span>        <span style="color:#a6e22e">console</span>.<span style="color:#a6e22e">log</span>(<span style="color:#e6db74">`</span><span style="color:#e6db74">${</span><span style="color:#a6e22e">greeting</span><span style="color:#e6db74">}</span><span style="color:#e6db74">, </span><span style="color:#e6db74">${</span><span style="color:#a6e22e">name</span><span style="color:#e6db74">}</span><span style="color:#e6db74">!`</span>);
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">const</span> <span style="color:#a6e22e">warriors</span> <span style="color:#f92672">=</span> [<span style="color:#e6db74">&#34;Cathay Williams&#34;</span>, <span style="color:#e6db74">&#34;Lozen&#34;</span>, <span style="color:#e6db74">&#34;Nzinga&#34;</span>];
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">logWarriors</span>(<span style="color:#e6db74">&#34;Hello&#34;</span>, ...<span style="color:#a6e22e">warriors</span>);
+</span></span></code></pre></div><h3 id="tuples">Tuples</h3>
+<p>虽然 JavaScript 数组在理论上可以是任意大小，但有时使用固定大小的数组（也称为元组）也很有用。<font color=red>元组数组的每个索引都有一个特定的已知类型，这个类型可能比数组所有可能成员的联合类型更具体</font>。声明元组类型的语法与数组字面意义相似，只是用类型代替了元素值。</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span><span style="color:#66d9ef">let</span> <span style="color:#a6e22e">yearAndWarrior</span><span style="color:#f92672">:</span> [<span style="color:#66d9ef">number</span>, <span style="color:#66d9ef">string</span>];
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">yearAndWarrior</span> <span style="color:#f92672">=</span> [<span style="color:#ae81ff">530</span>, <span style="color:#e6db74">&#34;Tomyris&#34;</span>]; <span style="color:#75715e">// Ok
+</span></span></span></code></pre></div><p>在 JavaScript 中，元组通常与数组解构一起使用，以便一次分配多个值，例如根据一个条件将两个变量设置为初始值。</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span><span style="color:#66d9ef">let</span> [<span style="color:#a6e22e">year</span>, <span style="color:#a6e22e">warrior</span>] <span style="color:#f92672">=</span> Math.<span style="color:#a6e22e">random</span>() <span style="color:#f92672">&gt;</span> <span style="color:#ae81ff">0.5</span> <span style="color:#f92672">?</span> [<span style="color:#ae81ff">340</span>, <span style="color:#e6db74">&#34;Archidamia&#34;</span>] <span style="color:#f92672">:</span> [<span style="color:#ae81ff">1828</span>, <span style="color:#e6db74">&#34;Rani of Jhansi&#34;</span>];
+</span></span></code></pre></div><h4 id="tuple-assignability">Tuple Assignability</h4>
+<p>TypeScript将元组类型视为比变长数组类型更特殊的类型。<font color=red>这意味着变长数组类型不能赋值给元组类型</font>。下面的代码中，pairLoose的类型为(boolean | number)[]：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span><span style="color:#75715e">// Type: (boolean | number)[]
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">const</span> <span style="color:#a6e22e">pairLoose</span> <span style="color:#f92672">=</span> [<span style="color:#66d9ef">false</span>, <span style="color:#ae81ff">123</span>];
+</span></span><span style="display:flex;"><span><span style="color:#75715e">// 编译错误:Type &#39;(number | boolean)[]&#39; is not assignable to type &#39;[boolean, number]&#39;
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">const</span> <span style="color:#a6e22e">pairTupleLoose</span><span style="color:#f92672">:</span> [<span style="color:#66d9ef">boolean</span>, <span style="color:#66d9ef">number</span>] <span style="color:#f92672">=</span> <span style="color:#a6e22e">pairLoose</span>;
+</span></span></code></pre></div><p>上面代码中，如果pairLoose声明为[boolean, number]，那么赋值就是允许的：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span><span style="color:#66d9ef">const</span> <span style="color:#a6e22e">pairLoose</span><span style="color:#f92672">:</span> [<span style="color:#66d9ef">boolean</span>, <span style="color:#66d9ef">number</span>] <span style="color:#f92672">=</span> [<span style="color:#66d9ef">false</span>, <span style="color:#ae81ff">123</span>];
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">const</span> <span style="color:#a6e22e">pairTupleLoose</span><span style="color:#f92672">:</span> [<span style="color:#66d9ef">boolean</span>, <span style="color:#66d9ef">number</span>] <span style="color:#f92672">=</span> <span style="color:#a6e22e">pairLoose</span>;
+</span></span></code></pre></div><p><font color=red>不同长度的元组也不能相互赋值</font>，因为TypeScript知道元组类型中的元组有多少个成员。</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span><span style="color:#66d9ef">const</span> <span style="color:#a6e22e">tupleThree</span><span style="color:#f92672">:</span> [<span style="color:#66d9ef">boolean</span>, <span style="color:#66d9ef">number</span>, <span style="color:#66d9ef">string</span>] <span style="color:#f92672">=</span> [<span style="color:#66d9ef">false</span>, <span style="color:#ae81ff">1583</span>, <span style="color:#e6db74">&#34;Nzinga&#34;</span>];
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">const</span> <span style="color:#a6e22e">tupleTwoExact</span><span style="color:#f92672">:</span> [<span style="color:#66d9ef">boolean</span>, <span style="color:#66d9ef">number</span>] <span style="color:#f92672">=</span> [<span style="color:#a6e22e">tupleThree</span>[<span style="color:#ae81ff">0</span>], <span style="color:#a6e22e">tupleThree</span>[<span style="color:#ae81ff">1</span>]];
+</span></span><span style="display:flex;"><span><span style="color:#75715e">// 编译错误：Type &#39;[boolean, number, string]&#39; is not assignable to type &#39;[boolean, number]&#39;.
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">const</span> <span style="color:#a6e22e">tupleTwoExtra</span><span style="color:#f92672">:</span> [<span style="color:#66d9ef">boolean</span>, <span style="color:#66d9ef">number</span>] <span style="color:#f92672">=</span> <span style="color:#a6e22e">tupleThree</span>;
+</span></span></code></pre></div><p>由于元组被视为数组，在长度和元素类型上具有更具体的类型信息，因此对于存储传递给函数的参数特别有用。TypeScript能够为作为<code>rest</code>参数传递的元组提供精确的类型检查。</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span><span style="color:#66d9ef">function</span> <span style="color:#a6e22e">logPair</span>(<span style="color:#a6e22e">name</span>: <span style="color:#66d9ef">string</span>, <span style="color:#a6e22e">value</span>: <span style="color:#66d9ef">number</span>) {
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">console</span>.<span style="color:#a6e22e">log</span>(<span style="color:#e6db74">`</span><span style="color:#e6db74">${</span><span style="color:#a6e22e">name</span><span style="color:#e6db74">}</span><span style="color:#e6db74"> has </span><span style="color:#e6db74">${</span><span style="color:#a6e22e">value</span><span style="color:#e6db74">}</span><span style="color:#e6db74">`</span>);
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">const</span> <span style="color:#a6e22e">pairArray</span> <span style="color:#f92672">=</span> [<span style="color:#e6db74">&#34;Amage&#34;</span>, <span style="color:#ae81ff">1</span>];
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">// 编译错误：A spread argument must either have a tuple type or be passed to a rest parameter.
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#a6e22e">logPair</span>(...<span style="color:#a6e22e">pairArray</span>);
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">const</span> <span style="color:#a6e22e">pairTupleIncorrect</span><span style="color:#f92672">:</span> [<span style="color:#66d9ef">number</span>, <span style="color:#66d9ef">string</span>] <span style="color:#f92672">=</span> [<span style="color:#ae81ff">1</span>, <span style="color:#e6db74">&#34;Amage&#34;</span>];
+</span></span><span style="display:flex;"><span><span style="color:#75715e">// 编译错误:Argument of type &#39;number&#39; is not assignable to parameter of type &#39;string&#39;.
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#a6e22e">logPair</span>(...<span style="color:#a6e22e">pairTupleIncorrect</span>);
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">const</span> <span style="color:#a6e22e">pairTupleCorrect</span><span style="color:#f92672">:</span> [<span style="color:#66d9ef">string</span>, <span style="color:#66d9ef">number</span>] <span style="color:#f92672">=</span> [<span style="color:#e6db74">&#34;Amage&#34;</span>, <span style="color:#ae81ff">1</span>];
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">logPair</span>(...<span style="color:#a6e22e">pairTupleCorrect</span>); <span style="color:#75715e">// Ok
+</span></span></span></code></pre></div><p>如果真的想随意使用rest参数元组，可以将它们与数组混合使用，为多个函数调用存储参数列表。下面代码中<code>trios.forEach(trio =&gt; logTrio(...trio))</code> 是安全的，因为每个<code>...trio</code>恰好与<code>logTrio</code>的参数类型相匹配。然而，<code>trios.forEach(logTrio)</code> 不可赋值，因为它试图将整个<code>[string、number、boolean]</code>作为第一个参数传递，而第一个参数的类型是<code>String</code>：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span><span style="color:#66d9ef">function</span> <span style="color:#a6e22e">logTrio</span>(<span style="color:#a6e22e">name</span>: <span style="color:#66d9ef">string</span>, <span style="color:#a6e22e">value</span><span style="color:#f92672">:</span> [<span style="color:#66d9ef">number</span>, <span style="color:#66d9ef">boolean</span>]) {
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">console</span>.<span style="color:#a6e22e">log</span>(<span style="color:#e6db74">`</span><span style="color:#e6db74">${</span><span style="color:#a6e22e">name</span><span style="color:#e6db74">}</span><span style="color:#e6db74"> has </span><span style="color:#e6db74">${</span><span style="color:#a6e22e">value</span>[<span style="color:#ae81ff">0</span>]<span style="color:#e6db74">}</span><span style="color:#e6db74"> (</span><span style="color:#e6db74">${</span><span style="color:#a6e22e">value</span>[<span style="color:#ae81ff">1</span>]<span style="color:#e6db74">}</span><span style="color:#e6db74">`</span>);
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">const</span> <span style="color:#a6e22e">trios</span><span style="color:#f92672">:</span> [<span style="color:#66d9ef">string</span>, [<span style="color:#66d9ef">number</span>, <span style="color:#66d9ef">boolean</span>]][] <span style="color:#f92672">=</span> [
+</span></span><span style="display:flex;"><span>    [<span style="color:#e6db74">&#34;Amanitore&#34;</span>, [<span style="color:#ae81ff">1</span>, <span style="color:#66d9ef">true</span>]],
+</span></span><span style="display:flex;"><span>    [<span style="color:#e6db74">&#34;Æthelflæd&#34;</span>, [<span style="color:#ae81ff">2</span>, <span style="color:#66d9ef">false</span>]],
+</span></span><span style="display:flex;"><span>    [<span style="color:#e6db74">&#34;Ann E. Dunwoody&#34;</span>, [<span style="color:#ae81ff">3</span>, <span style="color:#66d9ef">false</span>]]];
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">trios</span>.<span style="color:#a6e22e">forEach</span>(<span style="color:#a6e22e">trio</span> <span style="color:#f92672">=&gt;</span> <span style="color:#a6e22e">logTrio</span>(...<span style="color:#a6e22e">trio</span>)); <span style="color:#75715e">// Ok
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">// Argument of type &#39;(name: string, value: [number, boolean]) =&gt; void&#39; is not assignable to parameter of type &#39;(value: [string, [number, boolean]], index: number, array: [string, [number, boolean]][]) =&gt; void&#39;.
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">// Types of parameters &#39;name&#39; and &#39;value&#39; are incompatible.
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#a6e22e">trios</span>.<span style="color:#a6e22e">forEach</span>(<span style="color:#a6e22e">logTrio</span>);
+</span></span></code></pre></div><h4 id="tuple-inferences">Tuple Inferences</h4>
+<p>TypeScript<font color=red>通常将创建的数组视为长度可变的数组，而不是元组</font>。如果它看到一个数组被用作变量的初始值或函数的返回值，那么它将假定它是一个灵活大小的数组，而不是一个固定大小的元组。</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span><span style="color:#66d9ef">function</span> <span style="color:#a6e22e">firstCharAndSize</span>(<span style="color:#a6e22e">input</span>: <span style="color:#66d9ef">string</span>) {
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">return</span> [<span style="color:#a6e22e">input</span>[<span style="color:#ae81ff">0</span>], <span style="color:#a6e22e">input</span>.<span style="color:#a6e22e">length</span>];
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span><span style="color:#75715e">// firstChar type: string | number
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">// size type: string | number
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">const</span> [<span style="color:#a6e22e">firstChar</span>, <span style="color:#a6e22e">size</span>] <span style="color:#f92672">=</span> <span style="color:#a6e22e">firstCharAndSize</span>(<span style="color:#e6db74">&#34;Gudit&#34;</span>);
+</span></span></code></pre></div><p>元组可能会被用于类型声明，例如函数的返回值类型。如果一个函数声明返回一个元组类型，并且在函数里面返回一个数组字面量，则这个数组字面量会被推推断为元组而不是可变数组。</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span><span style="color:#66d9ef">function</span> <span style="color:#a6e22e">firstCharAndSizeExplicit</span>(<span style="color:#a6e22e">input</span>: <span style="color:#66d9ef">string</span>)<span style="color:#f92672">:</span> [<span style="color:#66d9ef">string</span>, <span style="color:#66d9ef">number</span>] {
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">return</span> [<span style="color:#a6e22e">input</span>[<span style="color:#ae81ff">0</span>], <span style="color:#a6e22e">input</span>.<span style="color:#a6e22e">length</span>];
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span><span style="color:#75715e">// firstChar type: string
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">// size type: number
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">const</span> [<span style="color:#a6e22e">firstChar</span>, <span style="color:#a6e22e">size</span>] <span style="color:#f92672">=</span> <span style="color:#a6e22e">firstCharAndSizeExplicit</span>(<span style="color:#e6db74">&#34;Cathay Williams&#34;</span>);
+</span></span></code></pre></div><p>在显式类型标注中输入元组类型会很麻烦，原因与输入任何显式类型一样。这是额外的语法，当代码发生变化时需要编写和更新。</p>
+<p>作为一种替代方法，<code>TypeScript</code>提供了一个<code>as const</code>操作符，称为<code>Const</code>断言，可以放在值的后面。<code>Const</code>断言告诉TypeScript 在推断值的类型时，使用该值最直白的只读形式。如果将<code>Const assertion</code>放在数组字面之后，它将表示数组应被视为元组：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span><span style="color:#75715e">// Type: (string | number)[]
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">const</span> <span style="color:#a6e22e">unionArray</span> <span style="color:#f92672">=</span> [<span style="color:#ae81ff">1157</span>, <span style="color:#e6db74">&#34;Tomoe&#34;</span>];
+</span></span><span style="display:flex;"><span><span style="color:#75715e">// Type: readonly [1157, &#34;Tomoe&#34;]
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">const</span> <span style="color:#a6e22e">readonlyTuple</span> <span style="color:#f92672">=</span> [<span style="color:#ae81ff">1157</span>, <span style="color:#e6db74">&#34;Tomoe&#34;</span>] <span style="color:#66d9ef">as</span> <span style="color:#66d9ef">const</span>;
+</span></span></code></pre></div><p>请注意，const 断言不仅仅是将灵活大小的数组转换为固定大小的元组：它们还向TypeScript 表明，<font color=red>元组是只读的</font>，不能在希望允许修改值的地方使用。</p>
+<p>在下面代码中，<code>pairMutable</code>允许修改，因为它具有传统的显式元组类型。然而，<code>as const</code> 使值不能赋值给可变的<code>pairAlsoMutable</code>，常量<code>pairConst</code>的成员也不允许被修改：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span><span style="color:#66d9ef">const</span> <span style="color:#a6e22e">pairMutable</span><span style="color:#f92672">:</span> [<span style="color:#66d9ef">number</span>, <span style="color:#66d9ef">string</span>] <span style="color:#f92672">=</span> [<span style="color:#ae81ff">1157</span>, <span style="color:#e6db74">&#34;Tomoe&#34;</span>];
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">pairMutable</span>[<span style="color:#ae81ff">0</span>] <span style="color:#f92672">=</span> <span style="color:#ae81ff">1247</span>; <span style="color:#75715e">// Ok
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">// The type &#39;readonly [1157, &#34;Tomoe&#34;]&#39; is &#39;readonly&#39; and cannot be assigned to the mutable type &#39;[number, string]&#39;.
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">const</span> <span style="color:#a6e22e">pairAlsoMutable</span><span style="color:#f92672">:</span> [<span style="color:#66d9ef">number</span>, <span style="color:#66d9ef">string</span>] <span style="color:#f92672">=</span> [<span style="color:#ae81ff">1157</span>, <span style="color:#e6db74">&#34;Tomoe&#34;</span>] <span style="color:#66d9ef">as</span> <span style="color:#66d9ef">const</span>;
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">const</span> <span style="color:#a6e22e">pairConst</span> <span style="color:#f92672">=</span> [<span style="color:#ae81ff">1157</span>, <span style="color:#e6db74">&#34;Tomoe&#34;</span>] <span style="color:#66d9ef">as</span> <span style="color:#66d9ef">const</span>;
+</span></span><span style="display:flex;"><span><span style="color:#75715e">// Cannot assign to &#39;0&#39; because it is a read-only property
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#a6e22e">pairConst</span>[<span style="color:#ae81ff">0</span>] <span style="color:#f92672">=</span> <span style="color:#ae81ff">1247</span>;
+</span></span></code></pre></div><p>在实践中，只读元组对于函数返回很方便。从返回元组的函数中返回的值通常会立即进行解构，因此只读元组不会妨碍函数的使用。</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span><span style="color:#66d9ef">function</span> <span style="color:#a6e22e">firstCharAndSizeAsConst</span>(<span style="color:#a6e22e">input</span>: <span style="color:#66d9ef">string</span>) {
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">return</span> [<span style="color:#a6e22e">input</span>[<span style="color:#ae81ff">0</span>], <span style="color:#a6e22e">input</span>.<span style="color:#a6e22e">length</span>] <span style="color:#66d9ef">as</span> <span style="color:#66d9ef">const</span>;
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">const</span> [<span style="color:#a6e22e">firstChar</span>, <span style="color:#a6e22e">size</span>] <span style="color:#f92672">=</span> <span style="color:#a6e22e">firstCharAndSizeAsConst</span>(<span style="color:#e6db74">&#34;Ching Shih&#34;</span>);
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">console</span>.<span style="color:#a6e22e">log</span>(<span style="color:#a6e22e">firstChar</span>, <span style="color:#a6e22e">size</span>)
+</span></span></code></pre></div><h2 id="interfaces">Interfaces</h2>
+<p>接口是声明带有相关名称的对象的另一种方法。<font color=red>接口在许多方面与别名对象类型相似，但由于其错误信息更易读、编译器性能更快以及与类的互操作性更好，因此通常更受青睐</font>。</p>
+<h3 id="type-aliases-versus-interfaces">Type Aliases Versus Interfaces</h3>
+<p>下面简要介绍了别名对象类型描述对象的语法：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span><span style="color:#66d9ef">type</span> <span style="color:#a6e22e">Poet</span> <span style="color:#f92672">=</span> {
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">born</span>: <span style="color:#66d9ef">number</span>;
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">name</span>: <span style="color:#66d9ef">string</span>;
+</span></span><span style="display:flex;"><span>};
+</span></span></code></pre></div><p>下面是使用interface等效的语法：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span><span style="color:#66d9ef">interface</span> <span style="color:#a6e22e">Poet</span> {
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">born</span>: <span style="color:#66d9ef">number</span>;
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">name</span>: <span style="color:#66d9ef">string</span>;
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p>上面两种语法基本一致。</p>
+<p>喜欢使用分号的 TypeScript 开发人员通常会将分号放在类型别名之后，而不是接口之后。这种偏好反映了使用<code>;</code> 声明变量与不使用<code>;</code>声明类或函数之间的区别。</p>
+<p>type和interface有一些关键区别：</p>
+<ul>
+<li>接口可以 &ldquo;merge&quot;在一起以进行增强</li>
+<li>接口可以用来对类声明的结构进行类型检查，而类型别名则不能。</li>
+<li>对于TypeScript类型检查程序来说，接口的工作速度通常更快：它们声明了一个命名的类型，可以更容易地在内部缓存，而不是像类型别名那样动态复制粘贴一个新的对象字面。</li>
+<li>由于接口被认为是已命名的对象，而不是未命名对象字面的别名，因此它们的错误信息更有可能在硬边缘情况下可读。</li>
+</ul>
+<h3 id="types-of-properties">Types of Properties</h3>
 
     </div>
     <footer class="post-footer">
@@ -3568,8 +3718,32 @@ code.has-jax {
                 <li><a href="#array-and-function-types">Array and Function Types</a></li>
                 <li><a href="#union-type-arrays">Union-Type Arrays</a></li>
                 <li><a href="#evolving-any-arrays">Evolving Any Arrays</a></li>
+                <li><a href="#multidimensional-arrays-1">Multidimensional Arrays</a></li>
               </ul>
             </li>
+            <li><a href="#array-members">Array Members</a>
+              <ul>
+                <li><a href="#caveat-unsound-members">Caveat: Unsound Members</a></li>
+              </ul>
+            </li>
+            <li><a href="#spreads-and-rests">Spreads and Rests</a>
+              <ul>
+                <li><a href="#spreads">Spreads</a></li>
+                <li><a href="#spreading-rest-parameters">Spreading Rest Parameters</a></li>
+              </ul>
+            </li>
+            <li><a href="#tuples">Tuples</a>
+              <ul>
+                <li><a href="#tuple-assignability">Tuple Assignability</a></li>
+                <li><a href="#tuple-inferences">Tuple Inferences</a></li>
+              </ul>
+            </li>
+          </ul>
+        </li>
+        <li><a href="#interfaces">Interfaces</a>
+          <ul>
+            <li><a href="#type-aliases-versus-interfaces">Type Aliases Versus Interfaces</a></li>
+            <li><a href="#types-of-properties">Types of Properties</a></li>
           </ul>
         </li>
       </ul>
