@@ -241,13 +241,13 @@ code.has-jax {
     <i class="fa fa-file-word-o"></i>
 </span>
 <span class="post-meta-item-text">字数: </span>
-<span class="leancloud-visitors-count">54753</span>
+<span class="leancloud-visitors-count">57030</span>
 &nbsp; | &nbsp;
 <span class="post-meta-item-icon">
     <i class="fa fa-coffee"></i>
 </span>
 <span class="post-meta-item-text">阅读: </span>
-<span class="leancloud-visitors-count">110 分钟</span>
+<span class="leancloud-visitors-count">114 分钟</span>
 </span>
       </div>
     </header>
@@ -2901,7 +2901,143 @@ code.has-jax {
 <p>形参数（parameter）是指函数声明的预期参数。实参（arguments）是指函数调用中提供给形参的值。在前面的示例中，first和second是形参，而&quot;Dream &ldquo;等字符串是实参。</p>
 <h4 id="optional-parameters">Optional Parameters</h4>
 <p>TypeScript允许将形参数标注为可选参数，方法是在其类型注释中的<code>:</code>之前添加<code>?</code>（类似于可选对象类型属性）。函数调用不需要提供可选参数。因此，它们的类型总是以 <code>| undefined</code>作为联合类型。</p>
-
+<p>在下面函数中，<code>singer</code>参数被标记为可选参数。它的类型是 <code>string | undefined</code>，函数的调用者无需提供。如果提供了singer，它可能是一个字符串值或<code>undefined</code>值：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span><span style="color:#66d9ef">function</span> <span style="color:#a6e22e">announceSong</span>(<span style="color:#a6e22e">song</span>: <span style="color:#66d9ef">string</span>, <span style="color:#a6e22e">singer?</span>: <span style="color:#66d9ef">string</span>) {
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">console</span>.<span style="color:#a6e22e">log</span>(<span style="color:#e6db74">`Song: </span><span style="color:#e6db74">${</span><span style="color:#a6e22e">song</span><span style="color:#e6db74">}</span><span style="color:#e6db74">`</span>);
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">if</span> (<span style="color:#a6e22e">singer</span>) {
+</span></span><span style="display:flex;"><span>        <span style="color:#a6e22e">console</span>.<span style="color:#a6e22e">log</span>(<span style="color:#e6db74">`Singer: </span><span style="color:#e6db74">${</span><span style="color:#a6e22e">singer</span><span style="color:#e6db74">}</span><span style="color:#e6db74">`</span>);
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">announceSong</span>(<span style="color:#e6db74">&#34;Greensleeves&#34;</span>); <span style="color:#75715e">// Ok
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#a6e22e">announceSong</span>(<span style="color:#e6db74">&#34;Greensleeves&#34;</span>, <span style="color:#66d9ef">undefined</span>); <span style="color:#75715e">// Ok
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#a6e22e">announceSong</span>(<span style="color:#e6db74">&#34;Chandelier&#34;</span>, <span style="color:#e6db74">&#34;Sia&#34;</span>); <span style="color:#75715e">// Ok
+</span></span></span></code></pre></div><p>可选参数与包含<code>| undefined</code>的联合类型参数不同。没有用<code>?</code> 标记为可选的参数必须始终提供，即使其值是明确<code>undefined</code>的。</p>
+<p>函数的<font color=red>可选参数必须是最后一个参数</font>，若将可选参数放置在必需参数前，则会出现编译错误。</p>
+<h4 id="default-parameters">Default Parameters</h4>
+<p>TypeScript的类型推断对函数默认参数值的作用与对初始变量值的作用类似。如果参数有默认值且没有类型标注，TypeScript将根据默认值推断参数的类型。</p>
+<p>在下面的rateSong函数中，参数rating被推断为number类型，但在调用该函数的代码中，rating是一个可选的<code>number | undefined</code>：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span><span style="color:#66d9ef">function</span> <span style="color:#a6e22e">rateSong</span>(<span style="color:#a6e22e">song</span>: <span style="color:#66d9ef">string</span>, <span style="color:#a6e22e">rating</span> <span style="color:#f92672">=</span> <span style="color:#ae81ff">0</span>) {
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">console</span>.<span style="color:#a6e22e">log</span>(<span style="color:#e6db74">`</span><span style="color:#e6db74">${</span><span style="color:#a6e22e">song</span><span style="color:#e6db74">}</span><span style="color:#e6db74"> gets </span><span style="color:#e6db74">${</span><span style="color:#a6e22e">rating</span><span style="color:#e6db74">}</span><span style="color:#e6db74">/5 stars!`</span>);
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">rateSong</span>(<span style="color:#e6db74">&#34;Photograph&#34;</span>); <span style="color:#75715e">// Ok
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#a6e22e">rateSong</span>(<span style="color:#e6db74">&#34;Set Fire to the Rain&#34;</span>, <span style="color:#ae81ff">5</span>); <span style="color:#75715e">// Ok
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#a6e22e">rateSong</span>(<span style="color:#e6db74">&#34;Set Fire to the Rain&#34;</span>, <span style="color:#66d9ef">undefined</span>); <span style="color:#75715e">// Ok
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#a6e22e">rateSong</span>(<span style="color:#e6db74">&#34;At Last!&#34;</span>, <span style="color:#e6db74">&#34;100&#34;</span>); <span style="color:#75715e">// Argument of type &#39;string&#39; is not assignable to parameter of type &#39;number&#39;.
+</span></span></span></code></pre></div><h4 id="rest-parameters">Rest Parameters</h4>
+<p>下面的函数singAllTheSongs允许接受0个或多个字符串类型的实参：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span><span style="color:#66d9ef">function</span> <span style="color:#a6e22e">singAllTheSongs</span>(<span style="color:#a6e22e">singer</span>: <span style="color:#66d9ef">string</span>, ...<span style="color:#a6e22e">songs</span>: <span style="color:#66d9ef">string</span>[]) {
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">for</span> (<span style="color:#66d9ef">const</span> <span style="color:#a6e22e">song</span> <span style="color:#66d9ef">of</span> <span style="color:#a6e22e">songs</span>) {
+</span></span><span style="display:flex;"><span>        <span style="color:#a6e22e">console</span>.<span style="color:#a6e22e">log</span>(<span style="color:#e6db74">`</span><span style="color:#e6db74">${</span><span style="color:#a6e22e">song</span><span style="color:#e6db74">}</span><span style="color:#e6db74">, by </span><span style="color:#e6db74">${</span><span style="color:#a6e22e">singer</span><span style="color:#e6db74">}</span><span style="color:#e6db74">`</span>);
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">singAllTheSongs</span>(<span style="color:#e6db74">&#34;Alicia Keys&#34;</span>); <span style="color:#75715e">// Ok
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#a6e22e">singAllTheSongs</span>(<span style="color:#e6db74">&#34;Lady Gaga&#34;</span>, <span style="color:#e6db74">&#34;Bad Romance&#34;</span>, <span style="color:#e6db74">&#34;Just Dance&#34;</span>, <span style="color:#e6db74">&#34;Poker Face&#34;</span>); <span style="color:#75715e">// Ok
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">// 执行结果
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#a6e22e">Bad</span> <span style="color:#a6e22e">Romance</span>, <span style="color:#a6e22e">by</span> <span style="color:#a6e22e">Lady</span> <span style="color:#a6e22e">Gaga</span>
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">Just</span> <span style="color:#a6e22e">Dance</span>, <span style="color:#a6e22e">by</span> <span style="color:#a6e22e">Lady</span> <span style="color:#a6e22e">Gaga</span>
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">Poker</span> <span style="color:#a6e22e">Face</span>, <span style="color:#a6e22e">by</span> <span style="color:#a6e22e">Lady</span> <span style="color:#a6e22e">Gaga</span>
+</span></span></code></pre></div><h3 id="return-types">Return Types</h3>
+<p>TypeScript是敏感的：如果它知道函数返回的所有可能值，它就会知道函数返回什么类型。在下面代码中，TypeScript认为函数singSongs返回一个number：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span><span style="color:#66d9ef">function</span> <span style="color:#a6e22e">singSongs</span>(<span style="color:#a6e22e">songs</span>: <span style="color:#66d9ef">string</span>[]) {
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">for</span> (<span style="color:#66d9ef">const</span> <span style="color:#a6e22e">song</span> <span style="color:#66d9ef">of</span> <span style="color:#a6e22e">songs</span>) {
+</span></span><span style="display:flex;"><span>        <span style="color:#a6e22e">console</span>.<span style="color:#a6e22e">log</span>(<span style="color:#e6db74">`</span><span style="color:#e6db74">${</span><span style="color:#a6e22e">song</span><span style="color:#e6db74">}</span><span style="color:#e6db74">`</span>);
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">return</span> <span style="color:#a6e22e">songs</span>.<span style="color:#a6e22e">length</span>;
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p>如果函数包含多个不同值的返回语句，TypeScript将返回类型推断为所有可能返回类型的联合类型。下面函数的返回类型将被推断为<code>string | undefined</code>：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span><span style="color:#66d9ef">function</span> <span style="color:#a6e22e">getSongAt</span>(<span style="color:#a6e22e">songs</span>: <span style="color:#66d9ef">string</span>[], <span style="color:#a6e22e">index</span>: <span style="color:#66d9ef">number</span>) {
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">return</span> <span style="color:#a6e22e">index</span> <span style="color:#f92672">&lt;</span> <span style="color:#a6e22e">songs</span>.<span style="color:#a6e22e">length</span> <span style="color:#f92672">?</span> <span style="color:#a6e22e">songs</span>[<span style="color:#a6e22e">index</span>] <span style="color:#f92672">:</span> <span style="color:#66d9ef">undefined</span>;
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><h4 id="explicit-return-types">Explicit Return Types</h4>
+<p>与变量一样，通常不建议使用类型标注来显式声明函数的返回类型。不过，在某些情况下，类型标注对函数还是很有用的：</p>
+<ul>
+<li>可能希望强制具有多种可能返回值的函数始终返回相同类型的值。</li>
+<li>TypeScript 将拒绝尝试推理递归函数的返回类型。</li>
+<li>加快超大型项目中的TypeScript类型检查速度，即包含数百个或更多TypeScript文件的项目。</li>
+</ul>
+<p>函数声明的返回类型标注位于参数列表的后圆括号 <code>)</code> 之后。对于函数声明来说，这恰好位于<code>{</code>之前：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span><span style="color:#66d9ef">function</span> <span style="color:#a6e22e">singSongsRecursive</span>(<span style="color:#a6e22e">songs</span>: <span style="color:#66d9ef">string</span>[], <span style="color:#a6e22e">count</span> <span style="color:#f92672">=</span> <span style="color:#ae81ff">0</span>)<span style="color:#f92672">:</span> <span style="color:#66d9ef">number</span> {
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">return</span> <span style="color:#a6e22e">songs</span>.<span style="color:#a6e22e">length</span> <span style="color:#f92672">?</span> <span style="color:#a6e22e">singSongsRecursive</span>(<span style="color:#a6e22e">songs</span>.<span style="color:#a6e22e">slice</span>(<span style="color:#ae81ff">1</span>), <span style="color:#a6e22e">count</span> <span style="color:#f92672">+</span> <span style="color:#ae81ff">1</span>) <span style="color:#f92672">:</span> <span style="color:#a6e22e">count</span>;
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p>对于箭头函数（也称为<code>lambdas</code>表达式）来说，这正好位于 <code>=&gt;</code> 之前：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span><span style="color:#66d9ef">const</span> <span style="color:#a6e22e">singSongsRecursive</span> <span style="color:#f92672">=</span> (<span style="color:#a6e22e">songs</span>: <span style="color:#66d9ef">string</span>[], <span style="color:#a6e22e">count</span> <span style="color:#f92672">=</span> <span style="color:#ae81ff">0</span>)<span style="color:#f92672">:</span> <span style="color:#66d9ef">number</span> <span style="color:#f92672">=&gt;</span> <span style="color:#a6e22e">songs</span>.<span style="color:#a6e22e">length</span> <span style="color:#f92672">?</span> <span style="color:#a6e22e">singSongsRecursive</span>(<span style="color:#a6e22e">songs</span>.<span style="color:#a6e22e">slice</span>(<span style="color:#ae81ff">1</span>), <span style="color:#a6e22e">count</span> <span style="color:#f92672">+</span> <span style="color:#ae81ff">1</span>) <span style="color:#f92672">:</span> <span style="color:#a6e22e">count</span>;
+</span></span></code></pre></div><p>如果函数中的返回语句返回的值不能赋值给函数的返回类型，<code>TypeScript</code>将给出一个编译错误：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span><span style="color:#66d9ef">function</span> <span style="color:#a6e22e">getSongRecordingDate</span>(<span style="color:#a6e22e">song</span>: <span style="color:#66d9ef">string</span>)<span style="color:#f92672">:</span> Date <span style="color:#f92672">|</span> <span style="color:#66d9ef">undefined</span> {
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">switch</span> (<span style="color:#a6e22e">song</span>) {
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">case</span> <span style="color:#e6db74">&#34;Strange Fruit&#34;</span><span style="color:#f92672">:</span>
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">return</span> <span style="color:#66d9ef">new</span> Date(<span style="color:#e6db74">&#39;April 20, 1939&#39;</span>); <span style="color:#75715e">// Ok
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>        <span style="color:#66d9ef">case</span> <span style="color:#e6db74">&#34;Greensleeves&#34;</span><span style="color:#f92672">:</span>
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">return</span> <span style="color:#e6db74">&#34;unknown&#34;</span>; <span style="color:#75715e">// Error: Type &#39;string&#39; is not assignable to type &#39;Date&#39;.
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>        <span style="color:#66d9ef">default</span><span style="color:#f92672">:</span>
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">return</span> <span style="color:#66d9ef">undefined</span>; <span style="color:#75715e">// Ok
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    }
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><h3 id="function-types">Function Types</h3>
+<p>JavaScript允许我们将函数作为值传递。这意味着需要一种方法来声明用于存放函数的参数或变量的类型。函数类型语法与箭头函数类似，只是用类型代替了函数体。下面nothingInGivesString变量的类型描述了一个无参数、返回字符串值的函数：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span><span style="color:#66d9ef">let</span> <span style="color:#a6e22e">nothingInGivesString</span><span style="color:#f92672">:</span> () <span style="color:#f92672">=&gt;</span> <span style="color:#66d9ef">string</span>;
+</span></span></code></pre></div><p>下面的变量inputAndOutput声明了一个函数，这个函数有一个<code>string[]</code>类型的形参，一个可选参数count，并且返回一个number值：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span><span style="color:#66d9ef">let</span> <span style="color:#a6e22e">inputAndOutput</span><span style="color:#f92672">:</span> (<span style="color:#a6e22e">songs</span>: <span style="color:#66d9ef">string</span>[], <span style="color:#a6e22e">count?</span>: <span style="color:#66d9ef">number</span>) <span style="color:#f92672">=&gt;</span> <span style="color:#66d9ef">number</span>;
+</span></span></code></pre></div><p>函数类型常用于描述回调参数（作为函数调用的参数）。</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span><span style="color:#66d9ef">function</span> <span style="color:#a6e22e">runOnSongs</span>(<span style="color:#a6e22e">getSongAt</span><span style="color:#f92672">:</span> (<span style="color:#a6e22e">index</span>: <span style="color:#66d9ef">number</span>) <span style="color:#f92672">=&gt;</span> <span style="color:#66d9ef">string</span>) {
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">for</span> (<span style="color:#66d9ef">let</span> <span style="color:#a6e22e">i</span> <span style="color:#f92672">=</span> <span style="color:#ae81ff">0</span>; <span style="color:#a6e22e">i</span> <span style="color:#f92672">&lt;</span> <span style="color:#a6e22e">songs</span>.<span style="color:#a6e22e">length</span>; <span style="color:#a6e22e">i</span> <span style="color:#f92672">+=</span> <span style="color:#ae81ff">1</span>) {
+</span></span><span style="display:flex;"><span>        <span style="color:#a6e22e">console</span>.<span style="color:#a6e22e">log</span>(<span style="color:#a6e22e">getSongAt</span>(<span style="color:#a6e22e">i</span>));
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">function</span> <span style="color:#a6e22e">getSongAt</span>(<span style="color:#a6e22e">index</span>: <span style="color:#66d9ef">number</span>) {
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">return</span> <span style="color:#e6db74">`</span><span style="color:#e6db74">${</span><span style="color:#a6e22e">songs</span>[<span style="color:#a6e22e">index</span>]<span style="color:#e6db74">}</span><span style="color:#e6db74">`</span>;
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">runOnSongs</span>(<span style="color:#a6e22e">getSongAt</span>); <span style="color:#75715e">// Ok
+</span></span></span></code></pre></div><h4 id="function-type-parentheses">Function Type Parentheses</h4>
+<p>函数类型可以放置在使用其他类型的任何地方，包括联合类型。在联合类型中，可以使用圆括号来表示哪一部分是函数返回值或周围的联合类型：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span><span style="color:#75715e">// Type is a function that returns a union: string | undefined
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">let</span> <span style="color:#a6e22e">returnsStringOrUndefined</span><span style="color:#f92672">:</span> () <span style="color:#f92672">=&gt;</span> <span style="color:#66d9ef">string</span> <span style="color:#f92672">|</span> <span style="color:#66d9ef">undefined</span>;
+</span></span><span style="display:flex;"><span><span style="color:#75715e">// Type is either undefined or a function that returns a string 
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">let</span> <span style="color:#a6e22e">maybeReturnsString</span><span style="color:#f92672">:</span> (() <span style="color:#f92672">=&gt;</span> <span style="color:#66d9ef">string</span>) <span style="color:#f92672">|</span> <span style="color:#66d9ef">undefined</span>;
+</span></span></code></pre></div><h4 id="parameter-type-inferences">Parameter Type Inferences</h4>
+<p>如果我们必须为编写的每个函数（包括用作参数的内联函数）声明参数类型，那将会非常麻烦。幸运的是，TypeScript可以推断出函数中的参数类型，并将其提供给已声明类型的位置。</p>
+<p>下面示例代码中，<code>singer</code>变量是一个接收字符串类型参数的函数，因此后来赋值给singer的函数中的song参数也是一个字符串：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span><span style="color:#66d9ef">let</span> <span style="color:#a6e22e">singer</span><span style="color:#f92672">:</span> (<span style="color:#a6e22e">song</span>: <span style="color:#66d9ef">string</span>) <span style="color:#f92672">=&gt;</span> <span style="color:#66d9ef">string</span>;
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">singer</span> <span style="color:#f92672">=</span> <span style="color:#66d9ef">function</span> (<span style="color:#a6e22e">song</span>) { <span style="color:#75715e">// Type of song: string
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#66d9ef">return</span> <span style="color:#e6db74">`Singing: </span><span style="color:#e6db74">${</span><span style="color:#a6e22e">song</span>.<span style="color:#a6e22e">toUpperCase</span>()<span style="color:#e6db74">}</span><span style="color:#e6db74">!`</span>; <span style="color:#75715e">// Ok
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>}
+</span></span></code></pre></div><p>作为实参传递给具有函数类型的形参的函数，其参数类型也能被推断出来。下面示例中，参数song和index被推断为string和number:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span><span style="color:#66d9ef">const</span> <span style="color:#a6e22e">songs</span> <span style="color:#f92672">=</span> [<span style="color:#e6db74">&#34;Call Me&#34;</span>, <span style="color:#e6db74">&#34;Jolene&#34;</span>, <span style="color:#e6db74">&#34;The Chain&#34;</span>];
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">songs</span>.<span style="color:#a6e22e">forEach</span>((<span style="color:#a6e22e">song</span>, <span style="color:#a6e22e">index</span>) <span style="color:#f92672">=&gt;</span> {
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">console</span>.<span style="color:#a6e22e">log</span>(<span style="color:#e6db74">`</span><span style="color:#e6db74">${</span><span style="color:#a6e22e">song</span><span style="color:#e6db74">}</span><span style="color:#e6db74"> is at index </span><span style="color:#e6db74">${</span><span style="color:#a6e22e">index</span><span style="color:#e6db74">}</span><span style="color:#e6db74">`</span>);
+</span></span><span style="display:flex;"><span>});
+</span></span></code></pre></div><h4 id="function-type-aliases">Function Type Aliases</h4>
+<p>type也可以用于函数，下面代码中StringToNumber类型别名了一个接收字符串并返回数字的函数，这意味着它可以用来描述变量的类型：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span><span style="color:#66d9ef">type</span> <span style="color:#a6e22e">StringToNumber</span> <span style="color:#f92672">=</span> (<span style="color:#a6e22e">input</span>: <span style="color:#66d9ef">string</span>) <span style="color:#f92672">=&gt;</span> <span style="color:#66d9ef">number</span>;
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">let</span> <span style="color:#a6e22e">stringToNumber</span>: <span style="color:#66d9ef">StringToNumber</span>;
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">stringToNumber</span> <span style="color:#f92672">=</span> (<span style="color:#a6e22e">input</span>) <span style="color:#f92672">=&gt;</span> <span style="color:#a6e22e">input</span>.<span style="color:#a6e22e">length</span>;
+</span></span></code></pre></div><p>同样，函数的类型别名也可以用于函数参数的声明：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span><span style="color:#66d9ef">type</span> <span style="color:#a6e22e">NumberToString</span> <span style="color:#f92672">=</span> (<span style="color:#a6e22e">input</span>: <span style="color:#66d9ef">number</span>) <span style="color:#f92672">=&gt;</span> <span style="color:#66d9ef">string</span>;
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">function</span> <span style="color:#a6e22e">usesNumberToString</span>(<span style="color:#a6e22e">numberToString</span>: <span style="color:#66d9ef">NumberToString</span>) {
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">console</span>.<span style="color:#a6e22e">log</span>(<span style="color:#e6db74">`The string is: </span><span style="color:#e6db74">${</span><span style="color:#a6e22e">numberToString</span>(<span style="color:#ae81ff">1234</span>)<span style="color:#e6db74">}</span><span style="color:#e6db74">`</span>);
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><h3 id="more-return-types">More Return Types</h3>
+<p>有些函数并不返回任何值。它们要么没有返回语句，要么只有不返回值的返回语句。TypeScript允许使用void关键字来引用这种不返回任何值的函数的返回类型。返回类型为void的函数不能返回值。下面logSong函数被声明为返回void，因此不允许返回值：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span><span style="color:#66d9ef">function</span> <span style="color:#a6e22e">logSong</span>(<span style="color:#a6e22e">song</span>: <span style="color:#66d9ef">string</span> <span style="color:#f92672">|</span> <span style="color:#66d9ef">undefined</span>)<span style="color:#f92672">:</span> <span style="color:#66d9ef">void</span> {
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">if</span> (<span style="color:#f92672">!</span><span style="color:#a6e22e">song</span>) {
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">return</span>; <span style="color:#75715e">// Ok
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    }
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">console</span>.<span style="color:#a6e22e">log</span>(<span style="color:#e6db74">`</span><span style="color:#e6db74">${</span><span style="color:#a6e22e">song</span><span style="color:#e6db74">}</span><span style="color:#e6db74">`</span>);
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">return</span> <span style="color:#66d9ef">true</span>; <span style="color:#75715e">// Error: Type &#39;boolean&#39; is not assignable to type &#39;void&#39;.
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>}
+</span></span></code></pre></div><p>void可以作为函数类型声明中的返回类型。在函数类型声明中使用void 时，表示函数的任何返回值都将被忽略。下面代码中，songLogger变量代表了一个函数，它接受一个<code>song: string</code>参数，并且不返回值：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span><span style="color:#66d9ef">let</span> <span style="color:#a6e22e">songLogger</span><span style="color:#f92672">:</span> (<span style="color:#a6e22e">song</span>: <span style="color:#66d9ef">string</span>) <span style="color:#f92672">=&gt;</span> <span style="color:#66d9ef">void</span>;
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">songLogger</span> <span style="color:#f92672">=</span> (<span style="color:#a6e22e">song</span>) <span style="color:#f92672">=&gt;</span> {
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">console</span>.<span style="color:#a6e22e">log</span>(<span style="color:#e6db74">`</span><span style="color:#e6db74">${</span><span style="color:#a6e22e">songs</span><span style="color:#e6db74">}</span><span style="color:#e6db74">`</span>);
+</span></span><span style="display:flex;"><span>};
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">songLogger</span>(<span style="color:#e6db74">&#34;Heart of Glass&#34;</span>); <span style="color:#75715e">// Ok
+</span></span></span></code></pre></div><p>请注意，尽管JavaScript函数在没有返回实际值的情况下都会默认返回undefined，但void并不等同于 undefined。void 意味着函数的返回类型将被忽略，而undefined则是要返回的字面值。如果尝试将 void 类型的值赋值给类型包括undefined的值，则会导致类型错误：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span><span style="color:#66d9ef">function</span> <span style="color:#a6e22e">returnsVoid() {</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">return</span>;
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">let</span> <span style="color:#a6e22e">lazyValue</span>: <span style="color:#66d9ef">string</span> <span style="color:#f92672">|</span> <span style="color:#66d9ef">undefined</span>;
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">lazyValue</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">returnsVoid</span>(); <span style="color:#75715e">// Type &#39;void&#39; is not assignable to type &#39;string | undefined&#39;.
+</span></span></span></code></pre></div>
     </div>
     <footer class="post-footer">
         
@@ -3312,8 +3448,23 @@ code.has-jax {
               <ul>
                 <li><a href="#required-parameters">Required Parameters</a></li>
                 <li><a href="#optional-parameters">Optional Parameters</a></li>
+                <li><a href="#default-parameters">Default Parameters</a></li>
+                <li><a href="#rest-parameters">Rest Parameters</a></li>
               </ul>
             </li>
+            <li><a href="#return-types">Return Types</a>
+              <ul>
+                <li><a href="#explicit-return-types">Explicit Return Types</a></li>
+              </ul>
+            </li>
+            <li><a href="#function-types">Function Types</a>
+              <ul>
+                <li><a href="#function-type-parentheses">Function Type Parentheses</a></li>
+                <li><a href="#parameter-type-inferences">Parameter Type Inferences</a></li>
+                <li><a href="#function-type-aliases">Function Type Aliases</a></li>
+              </ul>
+            </li>
+            <li><a href="#more-return-types">More Return Types</a></li>
           </ul>
         </li>
       </ul>
