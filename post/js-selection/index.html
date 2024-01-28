@@ -241,13 +241,13 @@ code.has-jax {
     <i class="fa fa-file-word-o"></i>
 </span>
 <span class="post-meta-item-text">字数: </span>
-<span class="leancloud-visitors-count">57030</span>
+<span class="leancloud-visitors-count">58950</span>
 &nbsp; | &nbsp;
 <span class="post-meta-item-icon">
     <i class="fa fa-coffee"></i>
 </span>
 <span class="post-meta-item-text">阅读: </span>
-<span class="leancloud-visitors-count">114 分钟</span>
+<span class="leancloud-visitors-count">118 分钟</span>
 </span>
       </div>
     </header>
@@ -3037,7 +3037,92 @@ code.has-jax {
 </span></span><span style="display:flex;"><span>}
 </span></span><span style="display:flex;"><span><span style="color:#66d9ef">let</span> <span style="color:#a6e22e">lazyValue</span>: <span style="color:#66d9ef">string</span> <span style="color:#f92672">|</span> <span style="color:#66d9ef">undefined</span>;
 </span></span><span style="display:flex;"><span><span style="color:#a6e22e">lazyValue</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">returnsVoid</span>(); <span style="color:#75715e">// Type &#39;void&#39; is not assignable to type &#39;string | undefined&#39;.
-</span></span></span></code></pre></div>
+</span></span></span></code></pre></div><p><code>undefined</code>返回值和<code>void</code>返回值之间的区别对于忽略从函数中传递到声明类型为返回<code>void</code>的位置的任何返回值特别有用。例如，数组的内置<code>forEach</code>方法会接收返回<code>void</code>的回调。在下面的<code>saveRecords</code>函数中，<code>records.push(record)</code> 返回一个数字（数组<code>.push()</code>的返回值），但仍允许作为传递给<code>newRecords.forEach</code>的箭头函数的返回值：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span><span style="color:#66d9ef">function</span> <span style="color:#a6e22e">saveRecords</span>(<span style="color:#a6e22e">newRecords</span>: <span style="color:#66d9ef">string</span>[]) {
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">newRecords</span>.<span style="color:#a6e22e">forEach</span>(<span style="color:#a6e22e">record</span> <span style="color:#f92672">=&gt;</span> <span style="color:#a6e22e">records</span>.<span style="color:#a6e22e">push</span>(<span style="color:#a6e22e">record</span>));
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">saveRecords</span>([<span style="color:#e6db74">&#39;21&#39;</span>, <span style="color:#e6db74">&#39;Come On Over&#39;</span>, <span style="color:#e6db74">&#39;The Bodyguard&#39;</span>])
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">// forEach的定义
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#a6e22e">forEach</span>(<span style="color:#a6e22e">callbackfn</span><span style="color:#f92672">:</span> (<span style="color:#a6e22e">value</span>: <span style="color:#66d9ef">T</span>, <span style="color:#a6e22e">index</span>: <span style="color:#66d9ef">number</span>, <span style="color:#a6e22e">array</span>: <span style="color:#66d9ef">T</span>[]) <span style="color:#f92672">=&gt;</span> <span style="color:#66d9ef">void</span>, <span style="color:#a6e22e">thisArg?</span>: <span style="color:#66d9ef">any</span>)<span style="color:#f92672">:</span> <span style="color:#66d9ef">void</span>;
+</span></span></code></pre></div><p>void 类型不是JavaScript的。它是TypeScript的一个关键字，用于声明函数的返回类型。请记住，<font color=red>它表示函数的返回值不打算被使用，而不是表示返回值本身可以被返回</font>。</p>
+<h4 id="never-returns">Never Returns</h4>
+<p>有些函数不仅不返回值，而且根本不返回。永不返回的函数是那些总是抛出错误或运行无限循环的函数（希望是故意的！）。</p>
+<p>如果一个函数永远不会返回，那么添加一个显式的<code>: never</code>类型就表示调用该函数后的任何代码都不会运行。下面这个fail函数只会抛出一个错误，因此它可以帮助TypeScript的控制流分析，将参数类型缩小为字符串：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span><span style="color:#66d9ef">function</span> <span style="color:#a6e22e">fail</span>(<span style="color:#a6e22e">message</span>: <span style="color:#66d9ef">string</span>)<span style="color:#f92672">:</span> <span style="color:#66d9ef">never</span> {
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">throw</span> <span style="color:#66d9ef">new</span> Error(<span style="color:#e6db74">`Invariant failure: </span><span style="color:#e6db74">${</span><span style="color:#a6e22e">message</span><span style="color:#e6db74">}</span><span style="color:#e6db74">.`</span>);
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">function</span> <span style="color:#a6e22e">workWithUnsafeParam</span>(<span style="color:#a6e22e">param</span>: <span style="color:#66d9ef">unknown</span>) {
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">if</span> (<span style="color:#66d9ef">typeof</span> <span style="color:#a6e22e">param</span> <span style="color:#f92672">!==</span> <span style="color:#e6db74">&#34;string&#34;</span>) {
+</span></span><span style="display:flex;"><span>        <span style="color:#a6e22e">fail</span>(<span style="color:#e6db74">`param should be a string, not </span><span style="color:#e6db74">${</span><span style="color:#66d9ef">typeof</span> <span style="color:#a6e22e">param</span><span style="color:#e6db74">}</span><span style="color:#e6db74">`</span>);
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">param</span>.<span style="color:#a6e22e">toUpperCase</span>();
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p>需要注意的是，void 指的是不返回任何内容的函数，而 never 指的是永远不返回内容的函数。</p>
+<h3 id="function-overloads">Function Overloads</h3>
+<p>有些 JavaScript 函数可以使用完全不同的参数集来调用，而这些参数集不能只用可选参数和/或其余参数来表示。这些函数可以使用一种名为重载签名（overload signatures）的TypeScript语法来描述：<font color=red>在一个最终实现签名和函数体之前，多次声明不同版本的函数名称、参数和返回类型</font>。</p>
+<p>在决定是否对重载函数的调用发出语法错误时，TypeScript只会查看函数的重载签名。实现签名只用于函数的内部逻辑。</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span><span style="color:#66d9ef">function</span> <span style="color:#a6e22e">createDate</span>(<span style="color:#a6e22e">timestamp</span>: <span style="color:#66d9ef">number</span>)<span style="color:#f92672">:</span> Date;
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">function</span> <span style="color:#a6e22e">createDate</span>(<span style="color:#a6e22e">month</span>: <span style="color:#66d9ef">number</span>, <span style="color:#a6e22e">day</span>: <span style="color:#66d9ef">number</span>, <span style="color:#a6e22e">year</span>: <span style="color:#66d9ef">number</span>)<span style="color:#f92672">:</span> Date;
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">function</span> <span style="color:#a6e22e">createDate</span>(<span style="color:#a6e22e">monthOrTimestamp</span>: <span style="color:#66d9ef">number</span>, <span style="color:#a6e22e">day?</span>: <span style="color:#66d9ef">number</span>, <span style="color:#a6e22e">year?</span>: <span style="color:#66d9ef">number</span>) {
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">return</span> <span style="color:#a6e22e">day</span> <span style="color:#f92672">===</span> <span style="color:#66d9ef">undefined</span> <span style="color:#f92672">||</span> <span style="color:#a6e22e">year</span> <span style="color:#f92672">===</span> <span style="color:#66d9ef">undefined</span> <span style="color:#f92672">?</span> <span style="color:#66d9ef">new</span> Date(<span style="color:#a6e22e">monthOrTimestamp</span>) <span style="color:#f92672">:</span> <span style="color:#66d9ef">new</span> Date(<span style="color:#a6e22e">year</span>, <span style="color:#a6e22e">monthOrTimestamp</span>, <span style="color:#a6e22e">day</span>);
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">createDate</span>(<span style="color:#ae81ff">554356800</span>); <span style="color:#75715e">// Ok
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#a6e22e">createDate</span>(<span style="color:#ae81ff">7</span>, <span style="color:#ae81ff">27</span>, <span style="color:#ae81ff">1987</span>); <span style="color:#75715e">// Ok
+</span></span></span></code></pre></div><p>重载签名与其他类型系统语法一样，在编译TypeScript输出 JavaScript时会被删除。函数重载通常是复杂、难以描述的函数类型的最后手段。<font color=red>一般来说，最好保持函数简单，尽可能避免使用函数重载</font>。</p>
+<h4 id="call-signature-compatibility">Call-Signature Compatibility</h4>
+<p>重载函数的实现所使用的签名就是该函数的实现所使用的参数类型和返回类型。因此，函数重载签名中的返回类型和每个参数都必须可以可赋值给实现签名中同一索引处的参数。换句话说，<font color=red>实现签名必须与所有重载签名兼容</font>。下面的实现签名和所有的重载签名不兼容，会出现编译错误：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span><span style="color:#66d9ef">function</span> <span style="color:#a6e22e">format</span>(<span style="color:#a6e22e">data</span>: <span style="color:#66d9ef">string</span>)<span style="color:#f92672">:</span> <span style="color:#66d9ef">string</span>; <span style="color:#75715e">// Ok
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">function</span> <span style="color:#a6e22e">format</span>(<span style="color:#a6e22e">data</span>: <span style="color:#66d9ef">string</span>, <span style="color:#a6e22e">needle</span>: <span style="color:#66d9ef">string</span>, <span style="color:#a6e22e">haystack</span>: <span style="color:#66d9ef">string</span>)<span style="color:#f92672">:</span> <span style="color:#66d9ef">string</span>; <span style="color:#75715e">// Ok
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">// This overload signature is not compatible with its implementation signature.
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">function</span> <span style="color:#a6e22e">format</span>(<span style="color:#a6e22e">getData</span><span style="color:#f92672">:</span> () <span style="color:#f92672">=&gt;</span> <span style="color:#66d9ef">string</span>)<span style="color:#f92672">:</span> <span style="color:#66d9ef">string</span>;
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">function</span> <span style="color:#a6e22e">format</span>(<span style="color:#a6e22e">data</span>: <span style="color:#66d9ef">string</span>, <span style="color:#a6e22e">needle?</span>: <span style="color:#66d9ef">string</span>, <span style="color:#a6e22e">haystack?</span>: <span style="color:#66d9ef">string</span>) {
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">return</span> <span style="color:#a6e22e">needle</span> <span style="color:#f92672">&amp;&amp;</span> <span style="color:#a6e22e">haystack</span> <span style="color:#f92672">?</span> <span style="color:#a6e22e">data</span>.<span style="color:#a6e22e">replace</span>(<span style="color:#a6e22e">needle</span>, <span style="color:#a6e22e">haystack</span>) <span style="color:#f92672">:</span> <span style="color:#a6e22e">data</span>;
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><h2 id="arrays">Arrays</h2>
+<p>TypeScript通过记住数组中最初的数据类型，并只允许数组对该数据类型进行操作，从而遵守了每个数组只使用一种数据类型的最佳实践。</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span><span style="color:#66d9ef">const</span> <span style="color:#a6e22e">warriors</span> <span style="color:#f92672">=</span> [<span style="color:#e6db74">&#34;Artemisia&#34;</span>, <span style="color:#e6db74">&#34;Boudica&#34;</span>];
+</span></span><span style="display:flex;"><span><span style="color:#75715e">// Ok: &#34;Zenobia&#34; is a string
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#a6e22e">warriors</span>.<span style="color:#a6e22e">push</span>(<span style="color:#e6db74">&#34;Zenobia&#34;</span>);
+</span></span><span style="display:flex;"><span><span style="color:#75715e">// 编译错误：Argument of type &#39;boolean&#39; is not assignable to parameter of type &#39;string&#39;.
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#a6e22e">warriors</span>.<span style="color:#a6e22e">push</span>(<span style="color:#66d9ef">true</span>);
+</span></span></code></pre></div><p>可以认为 TypeScript根据数组的初始成员推断数组类型的方法与根据变量的初始值理解变量类型的方法类似。TypeScript通常会尝试从赋值来理解代码的预期类型，数组也不例外。</p>
+<h3 id="array-types">Array Types</h3>
+<p>如同其他的变量声明，存储数组的变量声明的时候可以不初始化，变量一开始可以是undefined的，之后会收到一个数组值。同样地，如果在变量未初始化之前就使用会出现编译错误：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span><span style="color:#66d9ef">let</span> <span style="color:#a6e22e">arrayOfNumbers</span>: <span style="color:#66d9ef">number</span>[];
+</span></span><span style="display:flex;"><span><span style="color:#75715e">// 编译报错： Variable &#39;arrayOfNumbers&#39; is used before being assigned.
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#a6e22e">console</span>.<span style="color:#a6e22e">log</span>(<span style="color:#66d9ef">typeof</span> <span style="color:#a6e22e">arrayOfNumbers</span>)
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">arrayOfNumbers</span> <span style="color:#f92672">=</span> [<span style="color:#ae81ff">4</span>, <span style="color:#ae81ff">8</span>, <span style="color:#ae81ff">15</span>, <span style="color:#ae81ff">16</span>, <span style="color:#ae81ff">23</span>, <span style="color:#ae81ff">42</span>];
+</span></span></code></pre></div><h4 id="array-and-function-types">Array and Function Types</h4>
+<p>数组类型是语法容器的一个例子，函数类型可能需要使用圆括号来区分函数类型中的内容。圆括号可用于指明类型中哪一部分是函数返回值或周围的数组类型。</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span><span style="color:#75715e">// Type is a function that returns an array of strings
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">let</span> <span style="color:#a6e22e">createStrings</span><span style="color:#f92672">:</span> () <span style="color:#f92672">=&gt;</span> <span style="color:#66d9ef">string</span>[];
+</span></span><span style="display:flex;"><span><span style="color:#75715e">// Type is an array of functions that each return a string 
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">let</span> <span style="color:#a6e22e">stringCreators</span><span style="color:#f92672">:</span> (() <span style="color:#f92672">=&gt;</span> <span style="color:#66d9ef">string</span>)[];
+</span></span></code></pre></div><h4 id="union-type-arrays">Union-Type Arrays</h4>
+<p>可以使用联合类型来说明数组中的元素可以是多个可选类型。在将数组类型与联合类型一起使用时，可能需要使用括号来指明中哪一部分是数组的内容，哪一部分是联合类型的内容。在数组联合类型中使用括号非常重要&ndash;以下两种类型并不相同：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span><span style="color:#75715e">// Type is either a number or an array of strings
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">let</span> <span style="color:#a6e22e">stringOrArrayOfNumbers</span>: <span style="color:#66d9ef">string</span> <span style="color:#f92672">|</span> <span style="color:#66d9ef">number</span>[];
+</span></span><span style="display:flex;"><span><span style="color:#75715e">// Type is an array of elements that are each either a number or a string
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">let</span> <span style="color:#a6e22e">arrayOfStringOrNumbers</span><span style="color:#f92672">:</span> (<span style="color:#66d9ef">string</span> <span style="color:#f92672">|</span> <span style="color:#66d9ef">number</span>)[];
+</span></span></code></pre></div><p>如果数组包含一种以上的元素类型，<code>TypeScript</code>就会从数组的声明中推断它是一个<code>union</code>类型的数组。<font color=red>换句话说，数组元素的类型是数组中所有可能元素类型的联合</font>。</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span><span style="color:#75715e">// Type is (string | undefined)[]
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">const</span> <span style="color:#a6e22e">namesMaybe</span> <span style="color:#f92672">=</span> [
+</span></span><span style="display:flex;"><span>    <span style="color:#e6db74">&#34;Aqualtune&#34;</span>,
+</span></span><span style="display:flex;"><span>    <span style="color:#e6db74">&#34;Blenda&#34;</span>,
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">undefined</span>,
+</span></span><span style="display:flex;"><span>];
+</span></span></code></pre></div><h4 id="evolving-any-arrays">Evolving Any Arrays</h4>
+<p>如果不在初始设置为空数组的变量上加上类型，<code>TypeScript</code>将把数组视为<code>any[]</code>，这意味着它可以接收任何内容。它们允许添加可能不正确的值，从而部分抵消了<code>TypeScript</code>类型检查器的好处。</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span><span style="color:#75715e">// Type: any[]
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">let</span> <span style="color:#a6e22e">values</span> <span style="color:#f92672">=</span> [];
+</span></span><span style="display:flex;"><span><span style="color:#75715e">// Type: string[]
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#a6e22e">values</span>.<span style="color:#a6e22e">push</span>(<span style="color:#e6db74">&#39;&#39;</span>);
+</span></span><span style="display:flex;"><span><span style="color:#75715e">// Type: (number | string)[]
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#a6e22e">values</span>[<span style="color:#ae81ff">0</span>] <span style="color:#f92672">=</span> <span style="color:#ae81ff">0</span>;
+</span></span></code></pre></div><p>如同变量，如果允许数组是<code>any</code>类型，部分地违背了TypeScript类型检查的目的。当TypeScript知道你的值应该是什么类型时，它就会工作得最好。</p>
+
     </div>
     <footer class="post-footer">
         
@@ -3464,7 +3549,27 @@ code.has-jax {
                 <li><a href="#function-type-aliases">Function Type Aliases</a></li>
               </ul>
             </li>
-            <li><a href="#more-return-types">More Return Types</a></li>
+            <li><a href="#more-return-types">More Return Types</a>
+              <ul>
+                <li><a href="#never-returns">Never Returns</a></li>
+              </ul>
+            </li>
+            <li><a href="#function-overloads">Function Overloads</a>
+              <ul>
+                <li><a href="#call-signature-compatibility">Call-Signature Compatibility</a></li>
+              </ul>
+            </li>
+          </ul>
+        </li>
+        <li><a href="#arrays">Arrays</a>
+          <ul>
+            <li><a href="#array-types">Array Types</a>
+              <ul>
+                <li><a href="#array-and-function-types">Array and Function Types</a></li>
+                <li><a href="#union-type-arrays">Union-Type Arrays</a></li>
+                <li><a href="#evolving-any-arrays">Evolving Any Arrays</a></li>
+              </ul>
+            </li>
           </ul>
         </li>
       </ul>
