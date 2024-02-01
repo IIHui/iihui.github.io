@@ -797,14 +797,14 @@ function firstCharAndSizeExplicit(input: string): [string, number] {  return [in
 // Type: (string | number)[] const unionArray = [1157, &amp;#34;Tomoe&amp;#34;]; // Type: readonly [1157, &amp;#34;Tomoe&amp;#34;] const readonlyTuple = [1157, &amp;#34;Tomoe&amp;#34;] as const; 请注意，const 断言不仅仅是将灵活大小的数组转换为固定大小的元组：它们还向TypeScript 表明，元组是只读的，不能在希望允许修改值的地方使用。
 在下面代码中，pairMutable允许修改，因为它具有传统的显式元组类型。然而，as const 使值不能赋值给可变的pairAlsoMutable，常量pairConst的成员也不允许被修改：
 const pairMutable: [number, string] = [1157, &amp;#34;Tomoe&amp;#34;]; pairMutable[0] = 1247; // Ok // The type &amp;#39;readonly [1157, &amp;#34;Tomoe&amp;#34;]&amp;#39; is &amp;#39;readonly&amp;#39; and cannot be assigned to the mutable type &amp;#39;[number, string]&amp;#39;. const pairAlsoMutable: [number, string] = [1157, &amp;#34;Tomoe&amp;#34;] as const; const pairConst = [1157, &amp;#34;Tomoe&amp;#34;] as const; // Cannot assign to &amp;#39;0&amp;#39; because it is a read-only property pairConst[0] = 1247; 在实践中，只读元组对于函数返回很方便。从返回元组的函数中返回的值通常会立即进行解构，因此只读元组不会妨碍函数的使用。
-function firstCharAndSizeAsConst(input: string) {  return [input[0], input.length] as const; } const [firstChar, size] = firstCharAndSizeAsConst(&amp;#34;Ching Shih&amp;#34;); console.log(firstChar, size) Interfaces 接口是声明带有相关名称的对象的另一种方法。接口在许多方面与别名对象类型相似，但由于其错误信息更易读、编译器性能更快以及与类的互操作性更好，因此通常更受青睐。
+function firstCharAndSizeAsConst(input: string) {  return [input[0], input.length] as const; } const [firstChar, size] = firstCharAndSizeAsConst(&amp;#34;Ching Shih&amp;#34;); console.log(firstChar, size) Interfaces 接口是声明带有相关名称的对象的另一种方法。接口在许多方面与别名对象类型相似，但由于其错误信息更易读、编译器性能更快以及与类的互操作性更好，通常更受青睐。
 Type Aliases Versus Interfaces 下面是别名对象类型描述对象的语法：
-type Poet = {  born: number;  name: string; }; 下面是使用interface等效的语法：
+type Poet = {  born: number;  name: string; }; 下面是使用interface定义的等效语法：
 interface Poet {  born: number;  name: string; } 上面两种语法基本一致。
-喜欢使用分号的TypeScript开发人员通常会将分号放在类型别名之后，而接口之后通常不加分号。这种偏好反映了使用; 声明变量与不使用;声明类或函数之间的区别。
+喜欢使用分号的TypeScript开发人员通常会将分号放在类型别名定义之后，而接口定义之后通常不加分号。这种偏好反映了使用; 声明变量，不使用;声明类或函数。
 type和interface有一些关键区别：
- 接口可以&amp;quot;merge&amp;quot;在一起以进行增强 接口可以用来对类声明的结构进行类型检查，而类型别名则不能。 对于TypeScript类型检查程序来说，接口的工作速度通常更快：它们声明了一个命名的类型，可以更容易地在内部缓存，而不是像类型别名那样动态复制粘贴一个新的对象字面。 由于接口被认为是已命名的对象，而不是未命名对象字面量的别名，因此它们的错误信息更有可能在硬边缘情况下可读。  Types of Properties Optional Properties 与对象类型一样，接口属性不一定都是对象的必备属性。可以在接口类型注解中的:前加上? 来表示接口属性是可选的。
-interface Book {  author?: string;  pages: number; }; const ok: Book = {  author: &amp;#34;Rita Dove&amp;#34;,  pages: 80, }; const missing: Book = {  pages: 80 }; Read-Only Properties 有时，可能希望禁止用户重新赋值接口对象的属性。TypeScript允许在属性名称前添加一个readOnly修饰符，表示该属性一旦设置，就不能再设置为其他值。这些只读属性可以正常读取，但不能重新赋值。
+ 接口可以merge在一起以进行增强。 接口可以用来对类声明的结构进行类型检查，而类型别名则不能。 对于TypeScript类型检查程序来说，接口的工作速度通常更快：它们声明了一个命名的类型，可以更容易地在内部缓存，而不是像类型别名那样动态复制粘贴一个新的对象字面。 由于接口被认为是已命名的对象，而不是未命名对象字面量的别名，因此它们的错误信息更有可能在硬边缘情况下可读。  Types of Properties Optional Properties 与对象类型一样，接口属性不一定都是对象的必需属性。可以在接口类型注解中的:前加上? 来表示接口属性是可选的。
+interface Book {  author?: string;  pages: number; }; const ok: Book = {  author: &amp;#34;Rita Dove&amp;#34;,  pages: 80, }; const missing: Book = {  pages: 80 }; Read-Only Properties 有时，可能希望禁止用户重新赋值实现接口的对象属性值。TypeScript允许在属性名称前添加一个readonly修饰符，表示该属性一旦设置，就不能再设置为其它值。这些只读属性可以正常读取，但不能重新赋值。
 function read(page: Page) {  // Ok: reading the text property doesn&amp;#39;t attempt to modify it  console.log(page.text);  // 编译错误：Cannot assign to &amp;#39;text&amp;#39; because it is a read-only property.  page.text &#43;= &amp;#34;!&amp;#34;; } 需要注意的是，readonly修饰器只存在于类型系统，并且只适用于该接口的使用。它不适用于对象，除非该对象被用于声明它属于该接口的位置。
 Functions and Methods TypeScript提供了两种将接口成员声明为函数的方法：
  方法语法：声明接口成员是一个打算作为对象成员调用的函数，如 member(): void。 属性语法：声明接口成员等同于独立函数，如 member: () =&amp;gt; void。  下面显示的method和property都是函数，可以不带参数调用，并返回一个字符串：
