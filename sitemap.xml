@@ -806,12 +806,11 @@ type和interface有一些关键区别：
  接口可以merge在一起以进行增强。 接口可以用来对类声明的结构进行类型检查，而类型别名则不能。 对于TypeScript类型检查程序来说，接口的工作速度通常更快：它们声明了一个命名的类型，可以更容易地在内部缓存，而不是像类型别名那样动态复制粘贴一个新的对象字面。 由于接口被认为是已命名的对象，而不是未命名对象字面量的别名，因此它们的错误信息更有可能在硬边缘情况下可读。  Types of Properties Optional Properties 与对象类型一样，接口属性不一定都是对象的必需属性。可以在接口类型注解中的:前加上? 来表示接口属性是可选的。
 interface Book {  author?: string;  pages: number; }; const ok: Book = {  author: &amp;#34;Rita Dove&amp;#34;,  pages: 80, }; const missing: Book = {  pages: 80 }; Read-Only Properties 有时，可能希望禁止用户重新赋值实现接口对象的属性值。TypeScript允许在属性名称前添加一个readonly修饰符，表示该属性一旦设置，就不能再修改为其它值。这些readonly属性可以正常读取，但不能重新赋值。
 interface Page {  readonly text: string; }  function read(page: Page) {  // Ok: reading the text property doesn&amp;#39;t attempt to modify it  console.log(page.text);  // 编译错误：Cannot assign to &amp;#39;text&amp;#39; because it is a read-only property.  page.text &#43;= &amp;#34;!&amp;#34;; } 需要注意的是，readonly修饰器只存在于类型系统，并且只适用于接口的使用。readonly不适用于对象，除非该对象被用于声明它属于该接口的位置。
-Functions and Methods 在JavaScript中
-TypeScript提供了两种将接口成员声明为函数的方法：
- 方法语法：声明接口成员是一个打算作为对象成员调用的函数，如 member(): void。 属性语法：声明接口成员等同于独立函数，如 member: () =&amp;gt; void。  下面显示的method和property都是函数，可以不带参数调用，并返回一个字符串：
+Functions and Methods 在JavaScript中对象成员为函数比较常见。因此，TypeScript允许将接interface的成员声明为函数类型。TypeScript提供了两种将接口成员声明为函数的方法：
+ 方法语法：声明接口成员是一个打算作为对象成员调用的函数，如 member(): void。 属性语法：声明接口成员等同于独立函数，如 member: () =&amp;gt; void。  下面的method和property都是函数，可以不带参数调用，并返回一个字符串：
 interface HasBothFunctionTypes {  property: () =&amp;gt; string;  method(): string; } const hasBoth: HasBothFunctionTypes = {  property: () =&amp;gt; &amp;#34;&amp;#34;,  method() {  return &amp;#34;&amp;#34;;  } }; hasBoth.property(); hasBoth.method() 这两种形式都支持可选的修饰器?，表明它们不是必需的：
 interface OptionalReadonlyFunctions {  optionalProperty?: () =&amp;gt; string;  optionalMethod?(): string; } 方法和属性声明在大多数情况下可以互换，它们之间的主要区别如下：
- 方法不能声明为readonly，属性可以 接口合并时，认为它们是不同的  如果知道底层函数可能会引用方法函数，请使用方法函数，最常见的是类的实例，否则使用属性
+ 方法不能声明为readonly，但属性可以。 接口合并时，认为它们是不同的。  如果知道底层函数可能会引用方法函数，请使用方法函数，最常见的是类的实例，否则使用属性
 Call Signatures 接口和对象类型均可以声明call signatures（是类型系统对值如何像函数一样被调用的描述）。只有可以按照调用签名声明的方式调用的值才可以赋值给接口，即具有可赋值参数和返回类型的函数。调用签名与函数类型相似，只是用冒号代替了 =&amp;gt; 箭头。
 interface CallSignature {  (input: string): number; } const typedFunctionAlias: FunctionAlias = (input) =&amp;gt; input.length; // Ok const typedCallSignature: CallSignature = (input) =&amp;gt; input.length; // Ok 调用签名可用于描述附加了一些用户定义属性的函数。TypeScript会识别添加到函数声明中的属性，并将其添加到函数声明的类型中。
 interface FunctionWithCount {  count: number;  (): void; } let hasCallCount: FunctionWithCount; function keepsTrackOfCalls() {  keepsTrackOfCalls.count &#43;= 1;  console.log(`I&amp;#39;ve been called ${keepsTrackOfCalls.count}times!`); } keepsTrackOfCalls.count = 0; hasCallCount = keepsTrackOfCalls; // Ok function doesNotHaveCount() {  console.log(&amp;#34;No idea!&amp;#34;); }  // 编译报错 Property &amp;#39;count&amp;#39; is missing in type &amp;#39;() =&amp;gt; void&amp;#39; but required in type &amp;#39;FunctionWithCount&amp;#39;. hasCallCount = doesNotHaveCount; Index Signatures 有些JavaScript项目创建的对象可以在任意字符串key下存储值。对于这些&amp;quot;容器&amp;quot;对象来说，为每一个可能的键声明一个带有字段的接口是不切实际的，甚至是不可能的。
