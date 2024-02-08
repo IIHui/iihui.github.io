@@ -801,7 +801,7 @@ type Poet = {  born: number;  name: string; }; 下面是使用interface定义的
 interface Poet {  born: number;  name: string; } 上面两种语法基本一致。
 喜欢使用分号的TypeScript开发人员通常会将分号放在类型别名定义之后，而接口定义之后通常不加分号。这种偏好反映了使用; 声明变量，不使用;声明类或函数。
 type和interface有一些关键区别：
- 接口可以merge在一起以进行增强。 接口可以用来对类声明的结构进行类型检查，而类型别名则不能。 对于TypeScript类型检查程序来说，接口的工作速度通常更快。因为它们声明了一个命名的类型，可以更容易地在内部缓存，而不是像类型别名那样动态复制粘贴一个新的对象字面。 由于接口被认为是已命名的对象，而不是未命名对象字面量的别名，因此它们的错误信息可能在极端情况下更具可读性。  Types of Properties Optional Properties 与对象类型一样，接口属性不一定都是对象的必需属性。可以在接口中的类型声明的:前加上? 来表示接口属性是可选的。
+ 接口可以merge在一起以进行增强。 接口可以用来对类声明的结构进行类型检查，而类型别名则不能。 对于TypeScript类型检查程序来说，接口的工作速度通常更快。因为它们声明了一个命名的类型，可以更容易地在内部缓存，而不是像类型别名那样动态复制粘贴一个新的对象字面。 由于接口被认为是已命名的对象，而不是未命名对象字面量的别名，因此它们的错误信息可能在极端情况下更具可读性。  Types of Properties Optional Properties 与对象类型一样，接口属性不一定都是对象的必需属性。可以在接口中的类型声明:前加上? 来表示接口属性是可选的。
 interface Book {  author?: string;  pages: number; }; const ok: Book = {  author: &amp;#34;Rita Dove&amp;#34;,  pages: 80, }; const missing: Book = {  pages: 80 }; Read-Only Properties 有时，可能希望禁止用户重新赋值实现接口对象的属性值。TypeScript允许在属性名称前添加一个readonly修饰符，表示该属性一旦设置，就不能再修改为其它值。这些readonly属性可以正常读取，但不能重新赋值。
 interface Page {  readonly text: string; }  function read(page: Page) {  // Ok: reading the text property doesn&amp;#39;t attempt to modify it  console.log(page.text);  // 编译错误：Cannot assign to &amp;#39;text&amp;#39; because it is a read-only property.  page.text &#43;= &amp;#34;!&amp;#34;; } 需要注意的是，readonly修饰器只存在于类型系统，并且只适用于接口的使用。readonly不适用于对象，除非该对象被用于声明它属于该接口的位置。
 Functions and Methods 在JavaScript中对象成员为函数比较常见。因此，TypeScript允许将接interface的成员声明为函数类型。TypeScript提供了两种将接口成员声明为函数的方法：
@@ -815,7 +815,7 @@ interface FunctionWithCount {  count: number;  (): void; } let hasCallCount: Fun
 TypeScript提供了一种称为索引签名的语法，用于表示允许接口对象接收任何键，并返回该键下的特定类型。它们最常用于字符串键，因为JavaScript对象属性查找会将键隐式转换为字符串。索引签名看起来就像普通的属性定义，只是在键后面加上了类型，并用数组括号将其包围起来，如 { [i: string]: ... }.
 interface WordCounts {  [i: string]: number; } const counts: WordCounts = {}; counts.apple = 0; // Ok counts.banana = 1; // Ok // Type &amp;#39;boolean&amp;#39; is not assignable to type &amp;#39;number&amp;#39;. counts.cherry = false; 索引签名便于为对象赋值，但并非完全类型安全。因为它们表示，无论访问的是什么属性，对象都应返回一个值。
 interface DatesByName {  [i: string]: Date; } const publishDates: DatesByName = {  Frankenstein: new Date(&amp;#34;1 January 1818&amp;#34;), };  // webStrom中没有提示 console.log(publishDates.Frankenstein) // Type: Date console.log(publishDates.Frankenstein.toString()); console.log(publishDates.Beloved) // console.log(publishDates.Beloved.toString()) console.log(publishDates.Beloved.toString()) 在可能的情况下，如果要存储键值对，并且无法提前知道键值，通常使用Map更为安全。Map的get方法总是返回带有| undefined的类型，表示键可能不存在。
-接口可以包含显式命名属性和包罗万象的字符串索引签名。但有一个限制：每个命名属性的类型必须可以赋值给其 catchall索引签名的类型。你可以认为将它们混合在一起就是告诉TypeScript，命名的属性会给出一个更具体的类型，而任何其他属性都会返回到索引签名的类型。
+接口可以包含显式命名属性和包罗万象的字符串索引签名。但有一个限制：每个命名属性的类型必须可以赋值给其 catchall索引签名的类型。可以认为将它们混合在一起就是告诉TypeScript，命名的属性会给出一个更具体的类型，而任何其他属性都会返回到索引签名的类型。
 interface HistoricalNovels {  Oroonoko: number;  [i: string]: number; } const novels: HistoricalNovels = {  Outlander: 1991,  Oroonoko: 1688, }; // 编译报错：Property &amp;#39;Oroonoko&amp;#39; is missing in type &amp;#39;{ Outlander: number; }&amp;#39; but required in type &amp;#39;HistoricalNovels&amp;#39; const missingOroonoko: HistoricalNovels = {  Outlander: 1991, }; Interface Extensions 有时，可能会有多个看起来相似的interface。一个interface可能包含另一个interface的所有成员，只是增加了一些额外的成员。
 TypeScript允许一个接口extend另一个接口，即声明它复制了另一个接口的所有成员。一个接口可以通过在其名称后添加extends关键字来标记为扩展另一个接口，然后再添加要扩展的接口名称。这样做向TypeScript 表明，所有遵循派生接口的对象也必须拥有基接口的所有成员。
 在下面例子中，接口Novella扩展了接口Writing，因此要求对象至少同时拥有Novella的pages和Writing的title成员：
@@ -829,7 +829,7 @@ interface Merged {  fromFirst: string; } interface Merged {  fromSecond: number;
 然而，接口合并对于增强来自外部包或内置全局接口（如 Window）的接口特别有用。例如，当使用默认的 TypeScript编译器选项时，在带有myEnvironmentVariable属性的文件中声明 Window 接口，就可以使用 window.myEnvironmentVariable：
 interface Window {  myEnvironmentVariable: string; } window.myEnvironmentVariable; Member Naming Conflicts 请注意，合并后的接口不得以不同类型多次声明相同名称的属性。如果一个接口中已经声明了一个属性，那么以后合并的接口必须使用相同的类型。
 但是，合并后的接口可以定义一个名称相同但签名不同的方法。这样做会为该方法创建一个函数重载。
-interface MergedMethods {  different(input: string): string; } interface MergedMethods {  different(input: number): string; // Ok } Classes 除了类型检查，TypeScript还强调了它的转换器（transpiler），类就是一个常见的例子。如今，TypeScript 的类只是支持所有 JavaScript 语言特性的众多特性中的一个。TypeScript 既不鼓励也不反对类的使用或任何其他流行的JavaScript模式。
+interface MergedMethods {  different(input: string): string; } interface MergedMethods {  different(input: number): string; // Ok } Classes 除了类型检查，TypeScript还强调了它的转换器（transpiler），类就是一个常见的例子。如今，TypeScript 的类只是支持所有JavaScript语言特性的众多特性中的一个。TypeScript既不鼓励也不反对类的使用或任何其他流行的JavaScript模式。
 Class Methods TypeScript对方法的理解通常与对独立函数的理解相同。除非给出类型或默认值，否则参数类型默认为any；调用方法需要可接受的参数数量；如果函数不是递归的，返回类型通常可以被推断出来。
 class Greeter {  greet(name: string) {  console.log(`${name}, do your stuff!`);  } } new Greeter().greet(&amp;#34;Miss Frizzle&amp;#34;) // Miss Frizzle, do your stuff! 在参数方面，类构造函数被视为典型的类方法。TypeScript将执行类型检查，以确保为方法调用提供了数量正确、类型正确的参数。
 class Greeted {  constructor(message: string) {  console.log(`As I always say: ${message}!`);  } } new Greeted(&amp;#34;take chances, make mistakes, get messy&amp;#34;); // As I always say: take chances, make mistakes, get messy! </content>
