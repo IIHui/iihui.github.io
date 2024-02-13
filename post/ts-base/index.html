@@ -285,15 +285,15 @@ code.has-jax {
 </span></span><span style="display:flex;"><span><span style="color:#75715e">// 执行结果
 </span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#ae81ff">3</span> <span style="color:#ae81ff">890</span>
 </span></span></code></pre></div><h2 id="modules">Modules</h2>
-<p><code>JavaScript</code>编程语言最近才规范了文件之间如何共享代码。<code>ECMAScript 2015</code>增加了<code>ECMAScript Modules</code>规范文件间的<code>import</code>和<code>export</code>语法。</p>
-<p>在<code>module</code>文件中声明的任何内容都只能在该文件中使用，<font color=LightSeaGreen>除非该文件中有明确的<code>export</code>语句</font>。下面代码从同级的<code>./values</code>文件导入了一个值，并导出了一个<code>doubled</code>常量值:</p>
+<p><code>JavaScript</code>编程语言最近才规范了文件之间如何共享代码。<code>ECMAScript 2015</code>增加了<code>ECMAScript Modules</code>以规范文件间的<code>import</code>和<code>export</code>语法。</p>
+<p>在<code>module</code>文件中声明的任何内容都只能在该文件中使用，<font color=LightSeaGreen>除非该文件中有明确的<code>export</code>语句</font>。下面代码从同级的<code>./values</code>文件中导入了一个值，并导出了一个<code>doubled</code>常量值:</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-js" data-lang="js"><span style="display:flex;"><span><span style="color:#75715e">//values.ts
 </span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">export</span> <span style="color:#66d9ef">const</span> <span style="color:#a6e22e">value</span> <span style="color:#f92672">=</span> <span style="color:#ae81ff">12</span>
 </span></span><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span><span style="color:#75715e">// test.ts
 </span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">import</span> {<span style="color:#a6e22e">value</span>} <span style="color:#a6e22e">from</span> <span style="color:#e6db74">&#34;./values&#34;</span>
 </span></span><span style="display:flex;"><span><span style="color:#66d9ef">export</span> <span style="color:#66d9ef">const</span> <span style="color:#a6e22e">doubled</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">value</span> <span style="color:#f92672">*</span> <span style="color:#ae81ff">2</span>;
-</span></span></code></pre></div><p>如果在某一个模块中声明的变量和另一个模块中声明的变量同名，一般不会有冲突。只有当在一个文件中导入了另一个文件的同名变量时，才会产生冲突。</p>
+</span></span></code></pre></div><p>如果在某一个模块中声明的变量和另一个模块中声明的变量同名，一般不会冲突。只有当在一个文件中导入了另一个文件的同名变量时，才会产生冲突。</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-typescript" data-lang="typescript"><span style="display:flex;"><span><span style="color:#75715e">// a.ts 
 </span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">export</span> <span style="color:#66d9ef">const</span> <span style="color:#a6e22e">shared</span> <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;Cher&#34;</span>;
 </span></span><span style="display:flex;"><span>
@@ -304,14 +304,14 @@ code.has-jax {
 </span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">import</span> { <span style="color:#a6e22e">shared</span> } <span style="color:#66d9ef">from</span> <span style="color:#e6db74">&#34;./a&#34;</span>; <span style="color:#75715e">// 编译错误：Import declaration conflicts with local declaration of &#39;shared&#39;.
 </span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>
 </span></span><span style="display:flex;"><span><span style="color:#66d9ef">export</span> <span style="color:#66d9ef">const</span> <span style="color:#a6e22e">shared</span> <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;Cher&#34;</span>; <span style="color:#75715e">//编译错误： Individual declarations in merged declaration &#39;shared&#39; must be all exported or all local.
-</span></span></span></code></pre></div><p>如果文件是脚本，<code>TypeScript</code>会<font color=red>将其视为全局作用域，这意味着其他所有脚本都可以访问其内容</font>。也就是说，在某个脚本文件中声明的变量不能与其他脚本文件中声明的变量同名。</p>
-<p>下面的<code>a.ts</code>和<code>b.ts</code>文件均会被认为是脚本，因为它们没有<code>export</code>和<code>import</code>语句。这意味着如果在这两个文件中有同名的变量，就会有冲突：</p>
+</span></span></span></code></pre></div><p>如果文件是脚本，<code>TypeScript</code>会<font color=red>将其视为全局作用域，这意味着其它所有脚本都可以访问其内容</font>。也就是说，在某个脚本文件中声明的变量不能与其它脚本文件中声明的变量同名。</p>
+<p>下面<code>a.ts</code>和<code>b.ts</code>文件均会被认为是脚本，因为它们没有<code>export</code>和<code>import</code>语句。这意味着如果在这两个文件中有同名的变量，就会有冲突：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span><span style="color:#75715e">// a.ts
 </span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">const</span> <span style="color:#a6e22e">shared</span> <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;Cher&#34;</span>;
 </span></span><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span><span style="color:#75715e">// b.ts
 </span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">const</span> <span style="color:#a6e22e">shared</span> <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;Cher&#34;</span>; <span style="color:#75715e">// 编译错误：Cannot redeclare block-scoped variable &#39;shared&#39;.
-</span></span></span></code></pre></div><p>根据<code>ECMAScript</code>规范，如果需要将一个没有<code>export</code>或<code>import</code>语句的文件变成模块，可以在文件的<font color=red>某个地方添加一个<code>export {};</code>语句</font>来强制它成为一个模块：</p>
+</span></span></span></code></pre></div><p>根据<code>ECMAScript</code>规范，如果需要将一个没有<code>export</code>或<code>import</code>语句的文件变成模块，可以在文件的<font color=red>某个地方添加一个<code>export {};</code>语句来强制它成为一个模块</font>。</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span><span style="color:#75715e">// a.ts
 </span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">const</span> <span style="color:#a6e22e">shared</span> <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;Cher&#34;</span>;
 </span></span><span style="display:flex;"><span>
