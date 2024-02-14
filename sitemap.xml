@@ -690,12 +690,12 @@ let geneticist = Math.random() &amp;gt; 0.5 ? &amp;#34;Barbara McClintock&amp;#3
 let biologist = Math.random() &amp;gt; 0.5 &amp;amp;&amp;amp; &amp;#34;Rachel Carson&amp;#34;; if (biologist) {  biologist; // Type: string } else {  biologist; // Type: false | string } Variables Without Initial Values 在JavaScript中变量没有初始值，则其默认值是undefined。这在类型系统中出现了一个极端情况：如果将一个变量声明为不包括undefined的类型，然后尝试在赋值前使用它，会出现什么情况。
 TypeScript很聪明，它知道在变量赋值之前，其值是undefined。如果在赋值前尝试使用该变量的值，会出现编译错误：
 let mathematician: string; mathematician?.length; // Variable &amp;#39;mathematician&amp;#39; is used before being assigned. 请注意，如果变量的类型包括undefined，则不会出现编译错误。在变量类型中添加 | undefined是向TypeScript说明，在使用前无需初始化，因为undefined是变量的有效类型。
-let mathematician: string | undefined; mathematician?.length; Type Aliases 在代码中看到的大多数联合类型的子类型一般只有两到三个。但是，有时可能会发现一些较长的联合类型不方便重复输入。
-let rawDataFirst: boolean | number | string | null | undefined; let rawDataSecond: boolean | number | string | null | undefined; let rawDataThird: boolean | number | string | null | undefined; TypeScript包含类型别名，可以为重复使用的类型分配更简单的名称。类型别名以type关键字、新名称 = 和任意类型开头。按照惯例，类型别名以PascalCase命名：
-type MyName = ...; 上面的联合类型，可以简写成如下形式：
-type RawData = boolean | number | string | null | undefined; let rawDataFirst: RawData; let rawDataSecond: RawData; let rawDataThird: RawData; 类型别名是TypeScript中的一项便捷功能，只要我们的类型开始变得复杂，就可以使用它。目前，这只包括长联合类型，以后还将包括数组、函数和对象类型。
-Type Aliases Are Not JavaScript 因为类型别名纯属类型系统的一部分，因此不能在运行时代码中引用它们。如果试图访问运行时不存在的类型内容，TypeScript会出现编译错误：
-type RawData = boolean | number | string | null | undefined; console.log(RawData) // &amp;#39;RawData&amp;#39; only refers to a type, but is being used as a value here.  let rawData: RawData = false console.log(rawData, typeof rawData) // false boolean Combining Type Aliases 类型别名定义时也可以引用其他的类型别名。让类型别名相互引用有时会很有用，例如当一个类型别名是一个联合类型时，它可能包括另一个类型别名中的联合类型中的所有可能子类型。
+let mathematician: string | undefined; mathematician?.length; Type Aliases 在代码中看到的大多数联合类型的子类型一般只有两到三个。但是，有时可能会遇到一些较长的联合类型不方便重复输入。
+let rawDataFirst: boolean | number | string | null | undefined; let rawDataSecond: boolean | number | string | null | undefined; let rawDataThird: boolean | number | string | null | undefined; TypeScript包含类型别名，可以为重复使用的类型分配更简单的名称。类型别名以type关键字，新名称=和任意类型。按照惯例，类型别名以大驼峰命名：
+type MyName = ...; 之前的联合类型，可以简写成如下形式：
+type RawData = boolean | number | string | null | undefined; let rawDataFirst: RawData; let rawDataSecond: RawData; let rawDataThird: RawData; 类型别名是TypeScript中的一项便捷功能，只要使用的类型开始变得复杂，就可以使用它。目前，只包括长联合类型，以后还将包括数组、函数和对象类型。
+Type Aliases Are Not JavaScript 类型别名与类型标注一样，不会编译到输出的JavaScript文件中。类型别名只是类型系统的一部分，因此不能在运行时的代码中引用它们。如果试图访问运行时不存在的内容，TypeScript会出现编译错误：
+type RawData = boolean | number | string | null | undefined; console.log(RawData) // &amp;#39;RawData&amp;#39; only refers to a type, but is being used as a value here.  let rawData: RawData = false console.log(rawData, typeof rawData) // false boolean Combining Type Aliases 类型别名定义时也可以引用其它的类型别名。类型别名之间相互引用有时会很有用，当一个类型别名是一个联合类型时，它可能包括另一个类型别名中的联合类型中的所有可能子类型。
 type Id = number | string; type IdMaybe = Id | undefined | null; 类型别名不必按使用顺序声明。可以让文件中较早声明的类型别名引用文件中较迟声明的别名。上面的代码片段可以重写，将IdMaybe放在Id之前声明：
 type IdMaybe = Id | undefined | null; type Id = number | string;  let id: IdMaybe console.log(id) Objects 对象字面值是键和值的集合，每个键和值都有自己的类型。
 Object Types 当使用{}创建对象字面量时，TypeScript会根据其属性将其视为新的对象类型。该对象类型将具有与对象值相同的属性名称和基本类型。访问对象值的属性可以使用value.member或等价的value[&#39;member&#39;]语法。
