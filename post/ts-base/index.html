@@ -241,7 +241,7 @@ code.has-jax {
     <i class="fa fa-file-word-o"></i>
 </span>
 <span class="post-meta-item-text">字数: </span>
-<span class="leancloud-visitors-count">20576</span>
+<span class="leancloud-visitors-count">20635</span>
 &nbsp; | &nbsp;
 <span class="post-meta-item-icon">
     <i class="fa fa-coffee"></i>
@@ -482,8 +482,8 @@ code.has-jax {
 </span></span></code></pre></div><h2 id="objects">Objects</h2>
 <p>对象字面值是键和值的集合，每个键和值都有自己的类型。</p>
 <h3 id="object-types">Object Types</h3>
-<p>当使用<code>{}</code>创建对象字面量时，<code>TypeScript</code>会根据其属性将其视为新的对象类型。新对象类型将具有与对象值相同的属性名称和值类型。访问对象值的属性可以使用<code>value.member</code>或等价的<code>value['member']</code>语法。</p>
-<p>下面代码中，<code>TypeScript</code>认为<code>poet</code>变量的类型是一个对象，该对象具有属性<code>born</code>和<code>name</code>。访问这两个成员是允许的，但试图访问任何其它成员名称都会出现编译错误：</p>
+<p>当使用<code>{}</code>创建对象字面量时，<code>TypeScript</code>会根据其属性将其视为新的对象类型。新对象类型将具有与对象字面量相同的属性名和对应的值类型。访问对象属性的值可以使用<code>value.member</code>或等价的<code>value['member']</code>语法。</p>
+<p>下面代码中，<code>TypeScript</code>认为<code>poet</code>变量的类型是一个对象，该对象具有两个属性<code>born</code>和<code>name</code>。访问这两个属性是允许的，但试图访问任何其它不存在的成员名称都会出现编译错误：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span><span style="color:#66d9ef">const</span> <span style="color:#a6e22e">poet</span> <span style="color:#f92672">=</span> {
 </span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">born</span>: <span style="color:#66d9ef">1935</span>,
 </span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">name</span><span style="color:#f92672">:</span> <span style="color:#e6db74">&#34;Mary Oliver&#34;</span>,
@@ -492,10 +492,14 @@ code.has-jax {
 </span></span><span style="display:flex;"><span><span style="color:#a6e22e">poet</span>[<span style="color:#e6db74">&#39;born&#39;</span>]; <span style="color:#75715e">// Type: number 
 </span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#a6e22e">poet</span>.<span style="color:#a6e22e">name</span>; <span style="color:#75715e">// Type: string
 </span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#a6e22e">poet</span>.<span style="color:#a6e22e">end</span>; <span style="color:#75715e">// Property &#39;end&#39; does not exist on type &#39;{ born: number; name: string; }&#39;
-</span></span></span></code></pre></div><p>对象类型是<code>TypeScript</code>理解<code>JavaScript</code>代码的核心概念。除<code>null</code>和<code>undefined</code>之外的每个值都有一组成员，因此<code>TypeScript</code>必须了解对象类型中每个值，才能对其进行类型检查。</p>
+</span></span></span></code></pre></div><p>对象类型是<code>TypeScript</code>理解<code>JavaScript</code>代码的核心概念。除<code>null</code>和<code>undefined</code>之外的每个值都有一组成员，因此<code>TypeScript</code>必须了解对象类型中的每个值，才能对其进行类型检查。</p>
 <h4 id="declaring-object-types">Declaring Object Types</h4>
-<p>对象类型可以使用与对象字面意义相似的语法来描述，但<code>fields</code>使用的是类型而不是值。<code>TypeScript</code>在关于类型可赋值性的错误信息中显示的也是这种语法（可以查看上面访问<code>end</code>时报的错）。</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span><span style="color:#66d9ef">let</span> <span style="color:#a6e22e">poetLater</span><span style="color:#f92672">:</span> { <span style="color:#a6e22e">born</span>: <span style="color:#66d9ef">number</span>; <span style="color:#a6e22e">name</span>: <span style="color:#66d9ef">string</span>; };
+<p>从现有的对象中直接推断类型固然是好的，但最终还是想要显式声明对象的类型。需要一种方式描述对象类型，将其与对象值区分开来。</p>
+<p>对象类型可以使用与对象字面量相似的语法来描述，但与属性名对应的是类型而不是值。<code>TypeScript</code>在关于对象类型变量可赋值性的错误信息中显示的也是声明时的这种语法。</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span><span style="color:#66d9ef">let</span> <span style="color:#a6e22e">poetLater</span><span style="color:#f92672">:</span> {
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">born</span>: <span style="color:#66d9ef">number</span>;
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">name</span>: <span style="color:#66d9ef">string</span>;
+</span></span><span style="display:flex;"><span>};
 </span></span><span style="display:flex;"><span><span style="color:#a6e22e">poetLater</span> <span style="color:#f92672">=</span> {<span style="color:#a6e22e">born</span>: <span style="color:#66d9ef">123</span>, <span style="color:#a6e22e">name</span><span style="color:#f92672">:</span> <span style="color:#e6db74">&#39;678&#39;</span>}
 </span></span><span style="display:flex;"><span><span style="color:#a6e22e">console</span>.<span style="color:#a6e22e">log</span>(<span style="color:#a6e22e">poetLater</span>) <span style="color:#75715e">// { born: 123, name: &#39;678&#39; }
 </span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>
