@@ -241,7 +241,7 @@ code.has-jax {
     <i class="fa fa-file-word-o"></i>
 </span>
 <span class="post-meta-item-text">字数: </span>
-<span class="leancloud-visitors-count">20561</span>
+<span class="leancloud-visitors-count">20547</span>
 &nbsp; | &nbsp;
 <span class="post-meta-item-icon">
     <i class="fa fa-coffee"></i>
@@ -1002,8 +1002,8 @@ code.has-jax {
 </span></span><span style="display:flex;"><span>}
 </span></span></code></pre></div><p>需要注意的是，<code>void</code>指的是不返回任何内容的函数，而<code>never</code>指的是永远不返回内容的函数。</p>
 <h3 id="function-overloads">Function Overloads</h3>
-<p>有些<code>JavaScript</code>函数可以使用完全不同的参数集来调用，而这些参数集不能只用可选参数和/或其余参数来表示。这些函数可以使用一种名为重载签名（<code>overload signatures</code>）的<code>TypeScript</code>语法来描述：<font color=red>在一个最终实现签名和函数体之前，多次声明不同版本的函数名称、参数和返回类型</font>。</p>
-<p>在决定是否对重载函数的调用发出语法错误时，TypeScript只会查看函数的重载签名。实现签名只用于函数的内部逻辑。</p>
+<p>有些<code>JavaScript</code>函数可以使用完全不同的实参集来调用，而这些实参集不能只用可选参数和/或可变参数来表示。这些函数可以使用一种名为重载签名（<code>overload signatures</code>）的语法来描述：<font color=red>在最终实现签名和函数体之前，多次声明不同版本的函数名称、形参和返回类型</font>。</p>
+<p>在决定是否对重载函数的调用发出语法错误时，<code>TypeScript</code>只会查看函数的重载签名。实现签名只用于函数的内部逻辑。</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span><span style="color:#66d9ef">function</span> <span style="color:#a6e22e">createDate</span>(<span style="color:#a6e22e">timestamp</span>: <span style="color:#66d9ef">number</span>)<span style="color:#f92672">:</span> Date;
 </span></span><span style="display:flex;"><span><span style="color:#66d9ef">function</span> <span style="color:#a6e22e">createDate</span>(<span style="color:#a6e22e">month</span>: <span style="color:#66d9ef">number</span>, <span style="color:#a6e22e">day</span>: <span style="color:#66d9ef">number</span>, <span style="color:#a6e22e">year</span>: <span style="color:#66d9ef">number</span>)<span style="color:#f92672">:</span> Date;
 </span></span><span style="display:flex;"><span><span style="color:#66d9ef">function</span> <span style="color:#a6e22e">createDate</span>(<span style="color:#a6e22e">monthOrTimestamp</span>: <span style="color:#66d9ef">number</span>, <span style="color:#a6e22e">day?</span>: <span style="color:#66d9ef">number</span>, <span style="color:#a6e22e">year?</span>: <span style="color:#66d9ef">number</span>) {
@@ -1012,9 +1012,10 @@ code.has-jax {
 </span></span><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span><span style="color:#a6e22e">createDate</span>(<span style="color:#ae81ff">554356800</span>); <span style="color:#75715e">// Ok
 </span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#a6e22e">createDate</span>(<span style="color:#ae81ff">7</span>, <span style="color:#ae81ff">27</span>, <span style="color:#ae81ff">1987</span>); <span style="color:#75715e">// Ok
-</span></span></span></code></pre></div><p>重载签名与其他类型系统语法一样，在编译<code>TypeScript</code>输出为<code>JavaScript</code>时会被删除。函数重载通常是复杂、难以描述的函数类型的最后手段。<font color=red>一般来说，最好保持函数简单，尽可能避免使用函数重载</font>。</p>
+</span></span></span></code></pre></div><p>重载签名与类型系统的其他语法一样，在编译<code>TypeScript</code>输出为<code>JavaScript</code>后会被删除。函数重载通常是复杂、难以描述的函数类型的最后手段。<font color=red>一般来说，最好保持函数简单，尽可能避免使用函数重载</font>。</p>
 <h4 id="call-signature-compatibility">Call-Signature Compatibility</h4>
-<p>重载函数的实现所使用的签名就是该函数的实现所使用的参数类型和返回类型。因此，函数重载签名中的返回类型和每个参数都必须可以可赋值给实现签名中同一索引处的参数。换句话说，<font color=red>实现签名必须与所有重载签名兼容</font>。下面的实现签名和所有的重载签名不兼容，会出现编译错误：</p>
+<p>重载函数的实现所使用的签名就是该函数的实现所使用的参数类型和返回类型。因此，函数重载签名中的返回类型和每个参数都必须可以可赋值给实现签名中同一索引处的参数。</p>
+<p>换句话说，重载函数的<font color=red>实现签名必须与所有重载签名兼容</font>。下面示例的实现签名和所有的重载签名不兼容，会出现编译错误：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span><span style="color:#66d9ef">function</span> <span style="color:#a6e22e">format</span>(<span style="color:#a6e22e">data</span>: <span style="color:#66d9ef">string</span>)<span style="color:#f92672">:</span> <span style="color:#66d9ef">string</span>; <span style="color:#75715e">// Ok
 </span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">function</span> <span style="color:#a6e22e">format</span>(<span style="color:#a6e22e">data</span>: <span style="color:#66d9ef">string</span>, <span style="color:#a6e22e">needle</span>: <span style="color:#66d9ef">string</span>, <span style="color:#a6e22e">haystack</span>: <span style="color:#66d9ef">string</span>)<span style="color:#f92672">:</span> <span style="color:#66d9ef">string</span>; <span style="color:#75715e">// Ok
 </span></span></span><span style="display:flex;"><span><span style="color:#75715e">// This overload signature is not compatible with its implementation signature.
@@ -1023,13 +1024,13 @@ code.has-jax {
 </span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">return</span> <span style="color:#a6e22e">needle</span> <span style="color:#f92672">&amp;&amp;</span> <span style="color:#a6e22e">haystack</span> <span style="color:#f92672">?</span> <span style="color:#a6e22e">data</span>.<span style="color:#a6e22e">replace</span>(<span style="color:#a6e22e">needle</span>, <span style="color:#a6e22e">haystack</span>) <span style="color:#f92672">:</span> <span style="color:#a6e22e">data</span>;
 </span></span><span style="display:flex;"><span>}
 </span></span></code></pre></div><h2 id="arrays">Arrays</h2>
-<p>TypeScript通过记住数组中最初的数据类型，并只允许数组对该数据类型进行操作，从而遵守了每个数组只使用一种数据类型的最佳实践。</p>
+<p><code>TypeScript</code>通过记住数组中最初的数据类型，并只允许数组对该数据类型进行操作，从而遵守了每个数组只使用一种数据类型的最佳实践。</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span><span style="color:#66d9ef">const</span> <span style="color:#a6e22e">warriors</span> <span style="color:#f92672">=</span> [<span style="color:#e6db74">&#34;Artemisia&#34;</span>, <span style="color:#e6db74">&#34;Boudica&#34;</span>];
 </span></span><span style="display:flex;"><span><span style="color:#75715e">// Ok: &#34;Zenobia&#34; is a string
 </span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#a6e22e">warriors</span>.<span style="color:#a6e22e">push</span>(<span style="color:#e6db74">&#34;Zenobia&#34;</span>);
 </span></span><span style="display:flex;"><span><span style="color:#75715e">// 编译错误：Argument of type &#39;boolean&#39; is not assignable to parameter of type &#39;string&#39;.
 </span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#a6e22e">warriors</span>.<span style="color:#a6e22e">push</span>(<span style="color:#66d9ef">true</span>);
-</span></span></code></pre></div><p>可以认为TypeScript根据数组的初始成员推断数组类型与根据变量的初始值推断变量类型类似。TypeScript通常会尝试从赋值来推断预期类型，数组也不例外。</p>
+</span></span></code></pre></div><p>可以认为根据数组的初始成员推断数组类型与根据变量的初始值推断变量类型类似。<code>TypeScript</code>通常会尝试从赋值来推断预期类型，数组也不例外。</p>
 <h3 id="array-types">Array Types</h3>
 <p>如同其他的变量声明，存储数组的变量声明的时候可以不初始化，变量一开始可以是<code>undefined</code>的，之后会收到一个数组值。同样地，如果在变量未初始化之前就使用会出现编译错误：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span><span style="color:#66d9ef">let</span> <span style="color:#a6e22e">arrayOfNumbers</span>: <span style="color:#66d9ef">number</span>[];
