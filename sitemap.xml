@@ -855,7 +855,8 @@ class RandomQuote {  readonly explicit: string = &amp;#34;Home is the nicest wor
 class Teacher {  sayHello() {  console.log(&amp;#34;Take chances, make mistakes, get messy!&amp;#34;);  } } let tearcher: Teacher; tearcher = new Teacher() // Type &amp;#39;string&amp;#39; is not assignable to type &amp;#39;Teacher&amp;#39;. tearcher = &amp;#34;Wahoo!&amp;#34; 有趣的是，TypeScript会将任何恰好包含当前类中所有相同成员的对象类型视为可赋值给当前类。这是因为 TypeScript的structural typing只关心对象的形状，并不关心它们是如何声明的。
 class SchoolBus {  getAbilities() {  return [&amp;#34;magic&amp;#34;, &amp;#34;shapeshifting&amp;#34;];  } } function withSchoolBus(bus: SchoolBus) {  console.log(bus.getAbilities()); } withSchoolBus(new SchoolBus()); withSchoolBus({  getAbilities: () =&amp;gt; [&amp;#34;transmogrification&amp;#34;] }) Classes and Interfaces TypeScript允许类在名字后添加implements关键字，并在其后添加接口名称，从而将类的实例声明为遵循这个接口。这样做向TypeScript表明，类的实例应该可以分配给这些接口中的每一个。任何不匹配都会被类型检查器称为类型错误。
 interface Learner {  name: string;  study(hours: number): void; }  class Student implements Learner {  name: string;  constructor(name: string) {  this.name = name;  }  study(hours: number) {  for (let i = 0; i &amp;lt; hours; i &#43;= 1) {  console.log(&amp;#34;...studying...&amp;#34;);  }  } } 将一个类标记为实现了一个接口并不会改变该类的使用方式。如果该类已经与接口相匹配，TypeScript的类型检查器允许在需要接口实例的地方使用该类的实例。
-</content>
+Implementing Multiple Interfaces TypeScript中的类允许声明实现多个接口。一个类实现的接口列表可以是任意多个接口名，中间用逗号隔开。在下面的代码中，两个类在实现接口Graded时必需具有属性grades，在实现接口Reporter时必需具有report属性。
+interface Graded {  grades: number[]; } interface Reporter {  report: () =&amp;gt; string; } class ReportCard implements Graded, Reporter {  grades: number[];  constructor(grades: number[]) {  this.grades = grades;  }  report() {  return this.grades.join(&amp;#34;, &amp;#34;);  } } class Empty implements Graded, Reporter { } </content>
     </entry>
     
      <entry>
