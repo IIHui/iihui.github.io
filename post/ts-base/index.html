@@ -241,13 +241,13 @@ code.has-jax {
     <i class="fa fa-file-word-o"></i>
 </span>
 <span class="post-meta-item-text">字数: </span>
-<span class="leancloud-visitors-count">21298</span>
+<span class="leancloud-visitors-count">22623</span>
 &nbsp; | &nbsp;
 <span class="post-meta-item-icon">
     <i class="fa fa-coffee"></i>
 </span>
 <span class="post-meta-item-text">阅读: </span>
-<span class="leancloud-visitors-count">43 分钟</span>
+<span class="leancloud-visitors-count">46 分钟</span>
 </span>
       </div>
     </header>
@@ -1520,7 +1520,110 @@ code.has-jax {
 </span></span><span style="display:flex;"><span>    }
 </span></span><span style="display:flex;"><span>}
 </span></span><span style="display:flex;"><span><span style="color:#75715e">// 编译错误: Property &#39;unused&#39; has no initializer and is not definitely assigned in the constructor.
-</span></span></span></code></pre></div>
+</span></span></span></code></pre></div><p>如果没有严格的初始化检查，类实例可能会被允许访问一个可能undefined的值，即使类型系统规定不能这样做。</p>
+<h5 id="definitely-assigned-properties">Definitely assigned properties</h5>
+<p>尽管严格的初始检查在多数情况下是很有用的，但在某些情况下，可能会遇到故意在类构造函数之后取消指定类属性的情况。如果绝对确定某个属性不应该应用严格的初始化检查，可以在其名称后添加一个<code>!</code>来禁用检查。这样做可以向<code>TypeScript</code>申明，该属性将在首次使用前被赋值，而不是<code>undefined</code>的值。</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span><span style="color:#66d9ef">class</span> <span style="color:#a6e22e">ActivitiesQueue</span> {
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">pending</span><span style="color:#f92672">!:</span> <span style="color:#66d9ef">string</span>[]; <span style="color:#75715e">// Ok
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>  
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">initialize</span>(<span style="color:#a6e22e">pending</span>: <span style="color:#66d9ef">string</span>[]) {
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">this</span>.<span style="color:#a6e22e">pending</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">pending</span>;
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>  
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">next() {</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">return</span> <span style="color:#66d9ef">this</span>.<span style="color:#a6e22e">pending</span>.<span style="color:#a6e22e">pop</span>();
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">const</span> <span style="color:#a6e22e">activities</span> <span style="color:#f92672">=</span> <span style="color:#66d9ef">new</span> <span style="color:#a6e22e">ActivitiesQueue</span>();
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">activities</span>.<span style="color:#a6e22e">initialize</span>([<span style="color:#e6db74">&#39;eat&#39;</span>, <span style="color:#e6db74">&#39;sleep&#39;</span>, <span style="color:#e6db74">&#39;learn&#39;</span>])
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">activities</span>.<span style="color:#a6e22e">next</span>();
+</span></span></code></pre></div><h3 id="optional-properties-2">Optional Properties</h3>
+<p>和接口相似，类可以声明可选的属性。可选属性的行为与属性类型恰巧是包含<code>| undefined</code>的联合类型属性大致相同。如果没有在构造函数中明确设置初始值，严格的初始化检查也不会在意。</p>
+<p>下面的<code>OptionalProperty</code>类中，它的<code>property</code>属性是可选的。因此，无论是否有严格的属性初始化检查，都允许不在类构造函数中赋值可选属性：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span><span style="color:#66d9ef">class</span> <span style="color:#a6e22e">MissingInitializer</span> {
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">property?</span>: <span style="color:#66d9ef">string</span>;
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">console</span>.<span style="color:#a6e22e">log</span>(<span style="color:#66d9ef">new</span> <span style="color:#a6e22e">MissingInitializer</span>().<span style="color:#a6e22e">property</span><span style="color:#f92672">?</span>.<span style="color:#a6e22e">length</span>)
+</span></span><span style="display:flex;"><span><span style="color:#75715e">// Object is possibly &#39;undefined&#39;
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#a6e22e">console</span>.<span style="color:#a6e22e">log</span>(<span style="color:#66d9ef">new</span> <span style="color:#a6e22e">MissingInitializer</span>().<span style="color:#a6e22e">property</span>.<span style="color:#a6e22e">length</span>)
+</span></span></code></pre></div><h3 id="read-only-properties-1">Read-Only Properties</h3>
+<p>类似接口，类也可以在属性前面添加<code>readonly</code>关键词。关键词<code>readonly</code>仅存在于类型系统，当编译为<code>JavaScript</code>文件后，关键字将会被移除。</p>
+<p>声明为只读的属性只能在声明处或构造函数中分配初始值。任何其它位置（包括类本身的方法）只能读取属性，而不能写入属性。</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span><span style="color:#66d9ef">class</span> <span style="color:#a6e22e">Quote</span> {
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">readonly</span> <span style="color:#a6e22e">text</span>: <span style="color:#66d9ef">string</span>;
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">constructor</span>(<span style="color:#a6e22e">text</span>: <span style="color:#66d9ef">string</span>) {
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">this</span>.<span style="color:#a6e22e">text</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">text</span>;
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">emphasize() {</span>
+</span></span><span style="display:flex;"><span>       <span style="color:#75715e">// 编译错误: Cannot assign to &#39;text&#39; because it is a read-only property.
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>        <span style="color:#66d9ef">this</span>.<span style="color:#a6e22e">text</span> <span style="color:#f92672">+=</span> <span style="color:#e6db74">&#34;!&#34;</span>;
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">let</span> <span style="color:#a6e22e">quote</span> <span style="color:#f92672">=</span> <span style="color:#66d9ef">new</span> <span style="color:#a6e22e">Quote</span>(<span style="color:#e6db74">&#34;this is a test&#34;</span>);
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">console</span>.<span style="color:#a6e22e">log</span>(<span style="color:#a6e22e">quote</span>.<span style="color:#a6e22e">text</span>)
+</span></span><span style="display:flex;"><span><span style="color:#75715e">// 只读属性不能重新赋值
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#a6e22e">quote</span>.<span style="color:#a6e22e">text</span> <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;Hello world&#34;</span>;
+</span></span></code></pre></div><p>与其它属性相比，声明为只读且初始值为基本类型字面量的属性有一个小怪癖：如果可能，它们会被推断为其值的字面量类型，而不是基本类型。</p>
+<p>TypeScript对于更激进的初始类型窄化感觉很舒服，因为它知道值以后不会改变。这类似于const变量比let变量使用更窄的类型。</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span><span style="color:#66d9ef">class</span> <span style="color:#a6e22e">RandomQuote</span> {
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">readonly</span> <span style="color:#a6e22e">explicit</span>: <span style="color:#66d9ef">string</span> <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;Home is the nicest word there is.&#34;</span>;
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">readonly</span> <span style="color:#a6e22e">implicit</span> <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;Home is the nicest word there is.&#34;</span>;
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">constructor</span>() {
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">if</span> (Math.<span style="color:#a6e22e">random</span>() <span style="color:#f92672">&gt;</span> <span style="color:#ae81ff">0.5</span>) {
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">this</span>.<span style="color:#a6e22e">explicit</span> <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;We start learning the minute we&#39;re born.&#34;</span>
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">this</span>.<span style="color:#a6e22e">implicit</span> <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;We start learning the minute we&#39;re born.&#34;</span>
+</span></span><span style="display:flex;"><span>        }
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">// 编译错误
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#a6e22e">Type</span> <span style="color:#e6db74">&#39;&#34;We start learning the minute we&#39;</span><span style="color:#a6e22e">re</span> <span style="color:#a6e22e">born</span>.<span style="color:#e6db74">&#34;&#39; is not assignable to type &#39;&#34;</span><span style="color:#a6e22e">Home</span> <span style="color:#66d9ef">is</span> <span style="color:#a6e22e">the</span> <span style="color:#a6e22e">nicest</span> <span style="color:#a6e22e">word</span> <span style="color:#a6e22e">there</span> <span style="color:#66d9ef">is</span>.<span style="color:#960050;background-color:#1e0010">&#34;&#39;</span>.
+</span></span></code></pre></div><h3 id="classes-as-types">Classes as Types</h3>
+<p>类在类型系统中相对独特，因为类声明既创建了运行时值（类本身），也创建了可用于类型标注的类型。下面示例代码中，类Teacher用于标注变量teacher，以告诉TypeScript，它应该只赋值给可赋值给Teacher类的值：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span><span style="color:#66d9ef">class</span> <span style="color:#a6e22e">Teacher</span> {
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">sayHello() {</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#a6e22e">console</span>.<span style="color:#a6e22e">log</span>(<span style="color:#e6db74">&#34;Take chances, make mistakes, get messy!&#34;</span>);
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">let</span> <span style="color:#a6e22e">tearcher</span>: <span style="color:#66d9ef">Teacher</span>;
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">tearcher</span> <span style="color:#f92672">=</span> <span style="color:#66d9ef">new</span> <span style="color:#a6e22e">Teacher</span>()
+</span></span><span style="display:flex;"><span><span style="color:#75715e">// Type &#39;string&#39; is not assignable to type &#39;Teacher&#39;.
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#a6e22e">tearcher</span> <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;Wahoo!&#34;</span>
+</span></span></code></pre></div><p>有趣的是，<code>TypeScript</code>会将任何恰好包含当前类中所有相同成员的对象类型视为可赋值给当前类。这是因为 TypeScript的<code>structural typing</code>只关心对象的形状，并不关心它们是如何声明的。</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span><span style="color:#66d9ef">class</span> <span style="color:#a6e22e">SchoolBus</span> {
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">getAbilities() {</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">return</span> [<span style="color:#e6db74">&#34;magic&#34;</span>, <span style="color:#e6db74">&#34;shapeshifting&#34;</span>];
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">function</span> <span style="color:#a6e22e">withSchoolBus</span>(<span style="color:#a6e22e">bus</span>: <span style="color:#66d9ef">SchoolBus</span>) {
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">console</span>.<span style="color:#a6e22e">log</span>(<span style="color:#a6e22e">bus</span>.<span style="color:#a6e22e">getAbilities</span>());
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">withSchoolBus</span>(<span style="color:#66d9ef">new</span> <span style="color:#a6e22e">SchoolBus</span>());
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">withSchoolBus</span>({
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">getAbilities</span><span style="color:#f92672">:</span> () <span style="color:#f92672">=&gt;</span> [<span style="color:#e6db74">&#34;transmogrification&#34;</span>]
+</span></span><span style="display:flex;"><span>})
+</span></span></code></pre></div><h3 id="classes-and-interfaces">Classes and Interfaces</h3>
+<p><code>TypeScript</code>允许类在名字后添加<code>implements</code>关键字，并在其后添加接口名称，从而将类的实例声明为遵循这个接口。这样做向TypeScript表明，类的实例应该可以分配给这些接口中的每一个。任何不匹配都会被类型检查器称为类型错误。</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span><span style="color:#66d9ef">interface</span> <span style="color:#a6e22e">Learner</span> {
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">name</span>: <span style="color:#66d9ef">string</span>;
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">study</span>(<span style="color:#a6e22e">hours</span>: <span style="color:#66d9ef">number</span>)<span style="color:#f92672">:</span> <span style="color:#66d9ef">void</span>;
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">class</span> <span style="color:#a6e22e">Student</span> <span style="color:#66d9ef">implements</span> <span style="color:#a6e22e">Learner</span> {
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">name</span>: <span style="color:#66d9ef">string</span>;
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">constructor</span>(<span style="color:#a6e22e">name</span>: <span style="color:#66d9ef">string</span>) {
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">this</span>.<span style="color:#a6e22e">name</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">name</span>;
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">study</span>(<span style="color:#a6e22e">hours</span>: <span style="color:#66d9ef">number</span>) {
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">for</span> (<span style="color:#66d9ef">let</span> <span style="color:#a6e22e">i</span> <span style="color:#f92672">=</span> <span style="color:#ae81ff">0</span>; <span style="color:#a6e22e">i</span> <span style="color:#f92672">&lt;</span> <span style="color:#a6e22e">hours</span>; <span style="color:#a6e22e">i</span> <span style="color:#f92672">+=</span> <span style="color:#ae81ff">1</span>) {
+</span></span><span style="display:flex;"><span>            <span style="color:#a6e22e">console</span>.<span style="color:#a6e22e">log</span>(<span style="color:#e6db74">&#34;...studying...&#34;</span>);
+</span></span><span style="display:flex;"><span>        }
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p>将一个类标记为实现了一个接口并不会改变该类的使用方式。如果该类已经与接口相匹配，TypeScript的类型检查器允许在需要接口实例的地方使用该类的实例。</p>
+
     </div>
     <footer class="post-footer">
         
@@ -1837,6 +1940,10 @@ code.has-jax {
                 <li><a href="#initialization-checking">Initialization Checking</a></li>
               </ul>
             </li>
+            <li><a href="#optional-properties-2">Optional Properties</a></li>
+            <li><a href="#read-only-properties-1">Read-Only Properties</a></li>
+            <li><a href="#classes-as-types">Classes as Types</a></li>
+            <li><a href="#classes-and-interfaces">Classes and Interfaces</a></li>
           </ul>
         </li>
       </ul>
