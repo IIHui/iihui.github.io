@@ -862,18 +862,18 @@ interface LinkedNode&amp;lt;Value&amp;gt; {  next?: LinkedNode&amp;lt;Value&amp;
 Promises 概括地说，JavaScript中的Promise表示仍在等待处理的事情，例如网络请求。每个Promise都提供了注册回调的方法，以防待执行操作&amp;quot;解决&amp;quot;（成功完成）或 &amp;ldquo;拒绝&amp;rdquo;（出错）。
 Promise能够在任意值类型上表示类似的操作，这与TypeScript泛型非常契合。在TypeScript类型系统中，Promise被表示为一个Promise类，该类有一个类型参数，代表最终解析的值。
 class PromiseLike&amp;lt;Value&amp;gt; {  constructor(executor: (  resolve: (value: Value) =&amp;gt; void,  reject: (reason: unknown) =&amp;gt; void,  ) =&amp;gt; void,  ) { /* ... */  } } 创建Promise时，最终是要解析出一个值。通常需要显式声明Promise的类型实参，如果没有显式的泛型类型实参，TypeScript默认假设参数类型为unknown。向Promise构造函数明确提供类型实参事，会解析Promise实例的类型。
-类型断言 需要注意的是，类型断言只能够欺骗编译器，无法避免运行时的错误。滥用类型断言可能会导致运行时错误，下面示例代码无编译错误，但会出现运行时错误：
-interface Cat {  name: string;  run(): void; } interface Fish {  name: string;  swim(): void; } function isFish(animal: Cat | Fish) {  (animal as Fish).swim() } const cat: Cat = {  name: &amp;#34;Hello&amp;#34;,  run(): void {  console.log(this.name)  } } isFish(cat)  // 出现运行时错误  animal.swim is not a function 下面的示例中，使用instanceof来判断是否是某个类的实例是合适的。但有的情况下，ApiError和HttpError不是一个真正的类，只是TypeScript的接口，接口是一个类型，并不是一个真正的值，它在编译结果中会被删除，就无法使用instanceof来做运行时的判断了。
+类型断言 需要注意的是，类型断言只能暂时欺骗编译器，无法避免运行时的错误。滥用类型断言可能会导致运行时错误，下面代码无编译错误，但会出现运行时错误：
+interface Cat {  name: string;  run(): void; } interface Fish {  name: string;  swim(): void; } function isFish(animal: Cat | Fish) {  (animal as Fish).swim() } const cat: Cat = {  name: &amp;#34;Hello&amp;#34;,  run(): void {  console.log(this.name)  } } isFish(cat)  // 出现运行时错误  animal.swim is not a function 下面代码中，使用instanceof来判断是否是某个类的实例是合适的。但有些情况下，ApiError和HttpError不是一个真正的类，只是TypeScript的接口，接口是一个类型并不是一个真正的值，它在编译结果中会被删除，因此无法使用instanceof来做运行时的判断了。
 class ApiError extends Error {  code: number = 0 } class HttpError extends Error {  statusCode: number = 200; } function isApiError(error: Error) {  return error instanceof ApiError; } 此时只能使用断言来判断：
-interface ApiError extends Error {  code: number; } interface HttpError extends Error {  statusCode: number; } function isApiError(error: Error) {  if (typeof (error as ApiError).code === &amp;#39;number&amp;#39;) {  return true;  }  return false; } Enum 由于Enum编译后是一个对象，所以不能有与它同名的变量，包括对象，函数和类等。Enum成员默认不必赋值，系统从0开始逐一递增，按顺序为每个成员赋值（默认是在上一个的基础上&#43;1），例如0，1，2，...。
-enum Foo {  A,  B,  C, } console.log(Foo.A, Foo.B, Foo.C) // 0 1 2 Enum成员的值可以是小数:
-enum Foo {  A = 0.12,  B,  C } console.log(Foo.A, Foo.B, Foo.C) // 0.12 1.12 2.12 Enum成员的值不能是BigInt:
-enum Foo {  A = 1n, }  // 编译错误：Type &amp;#39;bigint&amp;#39; is not assignable to type &amp;#39;number&amp;#39; as required for computed enum member values. Enum成员的值可以相同，成员名不能相同：
-enum Foo {  A = 0.12,  B = 0.1,  C = 0.12 } 如果只设置第一个成员的值，后面成员的值就会从这个值开始递增（默认&#43;1）。
+interface ApiError extends Error {  code: number; } interface HttpError extends Error {  statusCode: number; } function isApiError(error: Error) {  if (typeof (error as ApiError).code === &amp;#39;number&amp;#39;) {  return true;  }  return false; } Enum 由于Enum编译后是一个对象，所以不能有与它同名的变量，包括对象，函数和类等。它的成员默认不必赋值，系统从0开始逐一递增，按顺序为每个成员赋值（默认是在上一个的基础上&#43;1），例如0，1，2，...。
+enum Foo {  A,  B,  C, } console.log(Foo.A, Foo.B, Foo.C) // 0 1 2 Enum属性的值可以是小数:
+enum Foo {  A = 0.12,  B,  C } console.log(Foo.A, Foo.B, Foo.C) // 0.12 1.12 2.12 Enum属性的值不能是BigInt:
+enum Foo {  A = 1n, }  // 编译错误：Type &amp;#39;bigint&amp;#39; is not assignable to type &amp;#39;number&amp;#39; as required for computed enum member values. Enum属性的值可以相同，属性名不能相同：
+enum Foo {  A = 0.12,  B = 0.1,  C = 0.12 } 如果只设置第一个成员的值，后面成员的值就会从这个值开始递增（默认依次&#43;1）。
 enum Color {  Red = 7,  Green, // 8  Blue, // 9 }  // 或者 enum Color {  Red, // 0  Green = 7,  Blue, // 8 } Enum成员值都是只读的，不能重新赋值。
 enum Color {  Red,  Green,  Blue, }  Color.Red = 4; // 报错 为了让这一点更醒目，通常会在enum关键字前面加上const修饰，表示这是常量，不能再次赋值。加上const还有一个好处，就是编译为JavaScript代码后，Enum的成员会被替换成对应的值，这样可以提升性能。
 const enum Color {  Red,  Green,  Blue, } Enum成员的值也可以使用计算属性：
-enum Bool {  No = 123,  Yes = Math.random(), } Enum成员的值除了设为数值，还可以设为字符串。也就是说，Enum 也可以用作一组字符串的集合。
+enum Bool {  No = 123,  Yes = Math.random(), } Enum成员的值除了设为数值，还可以设为字符串。也就是说，Enum也可以用作一组字符串的集合。
 enum Direction {  Up = &amp;#34;UP&amp;#34;,  Down = &amp;#34;DOWN&amp;#34;,  Left = &amp;#34;LEFT&amp;#34;,  Right = &amp;#34;RIGHT&amp;#34;, } 注意，字符串枚举的所有成员值，都必须显式设置值。如果没有设置，成员值默认为数值，且位置必须在字符串成员之前。
 enum Foo {  A, // 0  B = &amp;#34;hello&amp;#34;,  C, // 报错 Enum member must have initializer } Enum成员可以字符串和数值混合赋值：
 enum Enum {  One = &amp;#34;One&amp;#34;,  Two = &amp;#34;Two&amp;#34;,  Three = 3,  Four = 4, } Enum的成员除了数值和字符串，不允许使用其它值。变量类型如果是字符串Enum，就不能再赋值为字符串，这跟数值Enum不一样。
