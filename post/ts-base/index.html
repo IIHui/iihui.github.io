@@ -241,7 +241,7 @@ code.has-jax {
     <i class="fa fa-file-word-o"></i>
 </span>
 <span class="post-meta-item-text">字数: </span>
-<span class="leancloud-visitors-count">25751</span>
+<span class="leancloud-visitors-count">25747</span>
 &nbsp; | &nbsp;
 <span class="post-meta-item-icon">
     <i class="fa fa-coffee"></i>
@@ -1735,7 +1735,7 @@ code.has-jax {
 </span></span><span style="display:flex;"><span>}
 </span></span></code></pre></div><p>创建<code>Promise</code>时，最终是要解析出一个值。通常需要显式声明Promise的类型实参，如果没有显式的泛型类型实参，<code>TypeScript</code>默认假设参数类型为<code>unknown</code>。向Promise构造函数明确提供类型实参事，会解析Promise实例的类型。</p>
 <h4 id="类型断言">类型断言</h4>
-<p>需要注意的是，<font color=LightSeaGreen>类型断言只能暂时欺骗编译器，无法避免运行时错误</font>。滥用类型断言可能会导致运行时错误，下面代码无编译错误，但会出现运行时错误：</p>
+<p>需要注意的是，<font color=LightSeaGreen>类型断言只能暂时欺骗编译器，无法避免运行时错误</font>。滥用类型断言可能会导致运行时错误，下面代码不会出现编译错误，但会出现运行时错误：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span><span style="color:#66d9ef">interface</span> <span style="color:#a6e22e">Cat</span> {
 </span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">name</span>: <span style="color:#66d9ef">string</span>;
 </span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">run</span>()<span style="color:#f92672">:</span> <span style="color:#66d9ef">void</span>;
@@ -1761,7 +1761,7 @@ code.has-jax {
 </span></span><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span><span style="color:#75715e">// 出现运行时错误
 </span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span> <span style="color:#a6e22e">animal</span>.<span style="color:#a6e22e">swim</span> <span style="color:#66d9ef">is</span> <span style="color:#a6e22e">not</span> <span style="color:#a6e22e">a</span> <span style="color:#66d9ef">function</span>
-</span></span></code></pre></div><p>下面代码中，使用<code>instanceof</code>来判断是否是某个类的实例是合适的。但有些情况下，<code>ApiError</code>和<code>HttpError</code>不是一个真正的类，只是接口类型，<font color=LightSeaGreen>接口是一个类型并不是一个真正的值，它在编译结果中会被删除</font>，因此无法使用<code>instanceof</code>来做运行时判断。</p>
+</span></span></code></pre></div><p>下面代码中，使用<code>instanceof</code>来判断是否是某个类的实例是合适的。但有些情况下，<code>ApiError</code>和<code>HttpError</code>不是一个真正的类，而是接口类型。<font color=LightSeaGreen>接口是一个类型并不是一个真正的值，它在编译结果中会被删除</font>，因此无法使用<code>instanceof</code>来做运行时判断。</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span><span style="color:#66d9ef">class</span> <span style="color:#a6e22e">ApiError</span> <span style="color:#66d9ef">extends</span> Error {
 </span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">code</span>: <span style="color:#66d9ef">number</span> <span style="color:#f92672">=</span> <span style="color:#ae81ff">0</span>
 </span></span><span style="display:flex;"><span>}
@@ -1775,14 +1775,13 @@ code.has-jax {
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span><span style="color:#66d9ef">interface</span> <span style="color:#a6e22e">ApiError</span> <span style="color:#66d9ef">extends</span> Error {
 </span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">code</span>: <span style="color:#66d9ef">number</span>;
 </span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span><span style="color:#66d9ef">interface</span> <span style="color:#a6e22e">HttpError</span> <span style="color:#66d9ef">extends</span> Error {
 </span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">statusCode</span>: <span style="color:#66d9ef">number</span>;
 </span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span><span style="color:#66d9ef">function</span> <span style="color:#a6e22e">isApiError</span>(<span style="color:#a6e22e">error</span>: <span style="color:#66d9ef">Error</span>) {
-</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">if</span> (<span style="color:#66d9ef">typeof</span> (<span style="color:#a6e22e">error</span> <span style="color:#66d9ef">as</span> <span style="color:#a6e22e">ApiError</span>).<span style="color:#a6e22e">code</span> <span style="color:#f92672">===</span> <span style="color:#e6db74">&#39;number&#39;</span>) {
-</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">return</span> <span style="color:#66d9ef">true</span>;
-</span></span><span style="display:flex;"><span>    }
-</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">return</span> <span style="color:#66d9ef">false</span>;
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">return</span> (<span style="color:#a6e22e">error</span> <span style="color:#66d9ef">as</span> <span style="color:#a6e22e">ApiError</span>).<span style="color:#a6e22e">code</span> <span style="color:#f92672">===</span> <span style="color:#ae81ff">23</span>;
 </span></span><span style="display:flex;"><span>}
 </span></span></code></pre></div><h4 id="enum">Enum</h4>
 <p>由于<code>Enum</code>编译后是一个对象，所以<font color=LightSeaGreen>不能有与它同名的变量，对象，函数和类等</font>。枚举的成员不是必需赋初始值，如果没有赋初始值，系统默认从0开始逐一递增，按顺序为每个成员赋值（依次增加1）。下面代码枚举属性对应值为<code>0，1，2，...</code>。</p>
