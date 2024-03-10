@@ -241,7 +241,7 @@ code.has-jax {
     <i class="fa fa-file-word-o"></i>
 </span>
 <span class="post-meta-item-text">字数: </span>
-<span class="leancloud-visitors-count">26903</span>
+<span class="leancloud-visitors-count">26921</span>
 &nbsp; | &nbsp;
 <span class="post-meta-item-icon">
     <i class="fa fa-coffee"></i>
@@ -262,7 +262,7 @@ code.has-jax {
 <li><code>bigint</code></li>
 <li><code>symbol</code></li>
 </ul>
-<p>若声明变量时不标注类型，编译器会认为该变量的类型为<code>any</code>，表示该变量可以赋值为任何类型值。如果声明变量时既不标注类型也不初始化，接着使用<code>typeof</code>得到的结果为<code>undefined</code>(编译成<code>JavaScript</code>后，未初始化变量的默认值为<code>undefined</code>)：</p>
+<p>若声明变量时不标注类型，编译器会认为该变量的类型为<code>any</code>，表示该变量可以赋值为任何类型值。如果声明变量时既不标注类型也不初始化，接着使用<code>typeof</code>得到的结果为<code>undefined</code>(编译成<code>JavaScript</code>后，因为未初始化变量的默认值为<code>undefined</code>)：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-typescript" data-lang="typescript"><span style="display:flex;"><span><span style="color:#66d9ef">let</span> <span style="color:#a6e22e">rocker</span>; <span style="color:#75715e">// Type: any
 </span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#a6e22e">console</span>.<span style="color:#a6e22e">log</span>(<span style="color:#66d9ef">typeof</span> <span style="color:#a6e22e">rocker</span>) <span style="color:#75715e">// undefined
 </span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#a6e22e">rocker</span> <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;Joan Jett&#34;</span>; <span style="color:#75715e">// 此时类型为string
@@ -347,21 +347,23 @@ code.has-jax {
 <p>窄化是指在代码中推断出一个值的类型比其声明时的类型更具体。一旦知道一个值的类型比声明时的类型范围更窄，将允许将该值的类型视为这个更具体的类型。</p>
 <p>用于<font color=LightSeaGreen>窄化类型范围的逻辑检查称为类型保护</font>。下面介绍<code>TypeScript</code>可以用来从代码中窄化类型的两种常见类型保护。</p>
 <h4 id="assignment-narrowing">Assignment Narrowing</h4>
-<p>如果直接赋值给一个联合类型变量，会将变量的类型缩小为该值的类型。下面示例代码中，变量<code>admiral</code>声明为<code>number | string</code>联合类型。一旦被赋值为字符串<code>&quot;Grace Hopper&quot;</code>，<code>TypeScript</code>就知道它是字符串类型：</p>
+<p>如果直接赋值给一个联合类型变量，会将变量的类型缩小为该值的类型。下面示例代码中，变量<code>admiral</code>声明为<code>number | string</code>联合类型。一旦变量被赋值为字符串<code>&quot;Grace Hopper&quot;</code>，<code>TypeScript</code>就知道它是字符串类型：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span><span style="color:#66d9ef">let</span> <span style="color:#a6e22e">admiral</span>: <span style="color:#66d9ef">string</span> <span style="color:#f92672">|</span> <span style="color:#66d9ef">null</span>
 </span></span><span style="display:flex;"><span><span style="color:#a6e22e">admiral</span> <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;Grace Hopper&#34;</span>;
 </span></span><span style="display:flex;"><span><span style="color:#a6e22e">admiral</span>.<span style="color:#a6e22e">toUpperCase</span>(); <span style="color:#75715e">// Ok: string
 </span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#a6e22e">admiral</span>.<span style="color:#a6e22e">toFixed</span>(); <span style="color:#75715e">// 编译错误：Property &#39;toFixed&#39; does not exist on type &#39;string&#39;
-</span></span></span></code></pre></div><p>当变量的类型显式地声明为联合类型并且同时有一个初始值时，赋值窄化就会发挥作用。<code>TypeScript</code>会知道，虽然变量以后可能会接收任何联合类型其它子类型的值，但它初始时只是初始值的类型。</p>
+</span></span></span></code></pre></div><p>当变量的类型显式地声明为联合类型并且同时有一个初始值时，赋值窄化就会发挥作用。编译会知道，虽然变量以后可能会接收任何联合类型其它子类型的值，但它初始时只是初始值的类型。</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span><span style="color:#66d9ef">let</span> <span style="color:#a6e22e">inventor</span>: <span style="color:#66d9ef">number</span> <span style="color:#f92672">|</span> <span style="color:#66d9ef">string</span> <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;Hedy Lamarr&#34;</span>;
 </span></span><span style="display:flex;"><span><span style="color:#a6e22e">inventor</span>.<span style="color:#a6e22e">toUpperCase</span>();
 </span></span><span style="display:flex;"><span><span style="color:#a6e22e">inventor</span>.<span style="color:#a6e22e">toFixed</span>(); <span style="color:#75715e">// 编译错误：Property &#39;toFixed&#39; does not exist on type &#39;string&#39;
 </span></span></span></code></pre></div><h4 id="conditional-checks">Conditional Checks</h4>
-<p>让<code>TypeScript</code>缩小变量类型范围的常见方法是编写<code>if</code>语句，<font color=LightSeaGreen>检查变量是否等于已知值</font>。<code>TypeScript</code>非常聪明，它知道在<code>if</code>语句的主体中，变量必须与已知值的类型相同：</p>
+<p>缩小变量类型范围的常见方法是编写<code>if</code>语句，<font color=LightSeaGreen>检查变量是否等于已知值</font>。编译器非常聪明，它知道在<code>if</code>语句中，变量必须与已知值的类型相同：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span><span style="color:#66d9ef">let</span> <span style="color:#a6e22e">scientist</span> <span style="color:#f92672">=</span> Math.<span style="color:#a6e22e">random</span>() <span style="color:#f92672">&gt;</span> <span style="color:#ae81ff">0.5</span> <span style="color:#f92672">?</span> <span style="color:#e6db74">&#34;Rosalind Franklin&#34;</span> <span style="color:#f92672">:</span> <span style="color:#ae81ff">51</span>
+</span></span><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span><span style="color:#66d9ef">if</span> (<span style="color:#a6e22e">scientist</span> <span style="color:#f92672">===</span> <span style="color:#e6db74">&#34;Rosalind Franklin&#34;</span>) {
 </span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">console</span>.<span style="color:#a6e22e">log</span>(<span style="color:#a6e22e">scientist</span>.<span style="color:#a6e22e">toUpperCase</span>()) <span style="color:#75715e">// ROSALIND FRANKLIN
 </span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>}
+</span></span><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span><span style="color:#a6e22e">scientist</span>.<span style="color:#a6e22e">toUpperCase</span>() <span style="color:#75715e">// 编译错误：Property &#39;toUpperCase&#39; does not exist on type &#39;string | number&#39;. Property &#39;toUpperCase&#39; does not exist on type &#39;number&#39;.
 </span></span></span></code></pre></div><p>除了直接进行值检查，可以使用<code>typeof</code>操作符缩窄变量的类型范围：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span><span style="color:#66d9ef">let</span> <span style="color:#a6e22e">scientist</span> <span style="color:#f92672">=</span> Math.<span style="color:#a6e22e">random</span>() <span style="color:#f92672">&gt;</span> <span style="color:#ae81ff">0.5</span> <span style="color:#f92672">?</span> <span style="color:#e6db74">&#34;Rosalind Franklin&#34;</span> <span style="color:#f92672">:</span> <span style="color:#ae81ff">51</span>;
@@ -376,10 +378,10 @@ code.has-jax {
 </span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">researcher</span>.<span style="color:#a6e22e">toUpperCase</span>(); <span style="color:#75715e">// Ok: string
 </span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>}
 </span></span></code></pre></div><h3 id="literal-types">Literal Types</h3>
-<p>介绍了联合类型和窄化类型用于处理可能是两种或两种以上可能类型的值之后，我想反其道而行之，介绍一下字面类型：基础类型的更具体版本。</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-js" data-lang="js"><span style="display:flex;"><span><span style="color:#66d9ef">const</span> <span style="color:#a6e22e">philosopher</span> <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;Hypatia&#34;</span>;
-</span></span><span style="display:flex;"><span><span style="color:#a6e22e">console</span>.<span style="color:#a6e22e">log</span>(<span style="color:#66d9ef">typeof</span> <span style="color:#a6e22e">philosopher</span>) <span style="color:#75715e">// string
-</span></span></span></code></pre></div><p>上面代码中，<code>philosopher</code>是什么类型？乍一看，你可能会说是字符串，没错，<code>philosopher</code>变量的确是字符串。但是，<code>philosopher</code>并不是一个普通的字符串，它的具体值是<code>&quot;Hypatia&quot;</code>。因此，从技术上讲，<code>philosopher</code>变量的类型是更具体的<code>&quot;Hypatia&quot;</code>。</p>
+<p>介绍了联合和窄化用于处理可能是两种或两种以上类型的值后，我想反其道而行之，介绍一下字面类型：基础类型的更具体版本。</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-js" data-lang="js"><span style="display:flex;"><span><span style="color:#66d9ef">const</span> <span style="color:#a6e22e">philosopher</span> <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;Hypatia&#34;</span>; <span style="color:#75715e">// 类型为&#34;Hypatia&#34;
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#a6e22e">console</span>.<span style="color:#a6e22e">log</span>(<span style="color:#66d9ef">typeof</span> <span style="color:#a6e22e">philosopher</span>) <span style="color:#75715e">// string
+</span></span></span></code></pre></div><p>上面代码中，<code>philosopher</code>是什么类型？乍一看，你可能会说是字符串，没错，<code>philosopher</code>常量的确是字符串。但是，<code>philosopher</code>并不是一个普通的字符串，它的具体值是<code>&quot;Hypatia&quot;</code>。因此，从技术上讲，<code>philosopher</code>常量的类型是更具体的<code>&quot;Hypatia&quot;</code>。</p>
 <p>这就是字面类型的概念：是已知基本类型的某个特定值，<font color=red>而不是这些基本类型的任何其他值</font>。字符串基本类型代表了所有可能存在的字符串集合，而字面类型<code>&quot;Hypatia&quot;</code>只代表了这一个字符串。</p>
 <p>如果将一个变量声明为<code>const</code>，并直接给它一个字面值，<code>TypeScript</code>将推断出这个变量的类型就是这个字面值类型。这就是为什么在IDE中将鼠标悬停在带有初始字面值的<code>const</code>变量上时，它会显示变量的类型为字面值，而不是更通用的基本类型。</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span><span style="color:#66d9ef">const</span> <span style="color:#a6e22e">philosopher</span> <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;Hypatia&#34;</span>;
@@ -402,7 +404,7 @@ code.has-jax {
 </span></span><span style="display:flex;"><span><span style="color:#a6e22e">specificallyAda</span> <span style="color:#f92672">=</span> <span style="color:#e6db74">&#39;Ada&#39;</span>
 </span></span><span style="display:flex;"><span><span style="color:#a6e22e">console</span>.<span style="color:#a6e22e">log</span>(<span style="color:#66d9ef">typeof</span> <span style="color:#a6e22e">specificallyAda</span>) <span style="color:#75715e">// Ada string
 </span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#a6e22e">specificallyAda</span> <span style="color:#f92672">=</span> <span style="color:#e6db74">&#39;B&#39;</span> <span style="color:#75715e">// 编译错误: Type &#39;&#34;B&#34;&#39; is not assignable to type &#39;&#34;Ada&#34;&#39;.
-</span></span></span></code></pre></div><p>字面量类型可以赋值给相应的基本类型。因为任何特定的字面量字符串值仍然是字符串，所以下面示例代码是合法的。</p>
+</span></span></span></code></pre></div><p>字面量类型可以赋值给相应的基本类型，因为任何特定的字面量字符串值仍然是字符串。所以，下面代码是合法的，不会出现编译错误：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span><span style="color:#66d9ef">let</span> <span style="color:#a6e22e">specificallyAda</span><span style="color:#f92672">:</span> <span style="color:#e6db74">&#34;Ada&#34;</span>;
 </span></span><span style="display:flex;"><span><span style="color:#a6e22e">specificallyAda</span> <span style="color:#f92672">=</span> <span style="color:#e6db74">&#39;Ada&#39;</span>
 </span></span><span style="display:flex;"><span><span style="color:#66d9ef">let</span> <span style="color:#a6e22e">someString</span> <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;&#34;</span>; <span style="color:#75715e">// Type: string
@@ -433,13 +435,13 @@ code.has-jax {
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span><span style="color:#66d9ef">let</span> <span style="color:#a6e22e">geneticist</span> <span style="color:#f92672">=</span> Math.<span style="color:#a6e22e">random</span>() <span style="color:#f92672">&gt;</span> <span style="color:#ae81ff">0.5</span> <span style="color:#f92672">?</span> <span style="color:#e6db74">&#34;Barbara McClintock&#34;</span> <span style="color:#f92672">:</span> <span style="color:#66d9ef">undefined</span>;
 </span></span><span style="display:flex;"><span><span style="color:#a6e22e">console</span>.<span style="color:#a6e22e">log</span>(<span style="color:#a6e22e">geneticist</span> <span style="color:#f92672">&amp;&amp;</span> <span style="color:#a6e22e">geneticist</span>.<span style="color:#a6e22e">toUpperCase</span>())
 </span></span><span style="display:flex;"><span><span style="color:#a6e22e">console</span>.<span style="color:#a6e22e">log</span>(<span style="color:#a6e22e">geneticist</span><span style="color:#f92672">?</span>.<span style="color:#a6e22e">toUpperCase</span>())
-</span></span></code></pre></div><p>遗憾的是，真值检查不能反过来使用。如果知道类型为<code>string | undefined</code>变量的值是<code>falsy</code>的，这并不能表明它是空字符串还是<code>undefined</code>。</p>
+</span></span></code></pre></div><p>需要注意的是，真值检查不能反过来使用。如果知道类型为<code>string | undefined</code>变量的值是<code>falsy</code>的，这并不能表明它是空字符串还是<code>undefined</code>。</p>
 <p>下面代码中，变量<code>biologist</code>的类型为<code>string | false</code>，虽然在<code>if</code>语句体中可以缩小了类型为字符串，但<code>else</code>语句体包含了如果变量值为<code>&quot;&quot;</code>，也就是说在<code>else</code>语句体里变量可以是字符串类型：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span><span style="color:#66d9ef">let</span> <span style="color:#a6e22e">biologist</span> <span style="color:#f92672">=</span> Math.<span style="color:#a6e22e">random</span>() <span style="color:#f92672">&gt;</span> <span style="color:#ae81ff">0.5</span> <span style="color:#f92672">&amp;&amp;</span> <span style="color:#e6db74">&#34;Rachel Carson&#34;</span>;
 </span></span><span style="display:flex;"><span><span style="color:#66d9ef">if</span> (<span style="color:#a6e22e">biologist</span>) {
-</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">biologist</span>; <span style="color:#75715e">// Type: string
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">biologist</span>; <span style="color:#75715e">// Type一定为string
 </span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>} <span style="color:#66d9ef">else</span> {
-</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">biologist</span>; <span style="color:#75715e">// Type: false | string
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">biologist</span>; <span style="color:#75715e">// Type为false | string
 </span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>}
 </span></span></code></pre></div><h4 id="variables-without-initial-values">Variables Without Initial Values</h4>
 <p>在<code>JavaScript</code>中变量没有初始值，则其默认值是<code>undefined</code>。这在类型系统中出现了一个极端情况：如果将一个变量声明为不包括<code>undefined</code>的类型，然后尝试在赋值前使用它，会出现什么情况。<code>TypeScript</code>很聪明，知道在变量赋值之前，其值是<code>undefined</code>。如果在赋值前尝试使用该变量的值，会出现编译错误：</p>
