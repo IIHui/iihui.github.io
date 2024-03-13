@@ -872,26 +872,26 @@ The Golden Rule of Generics 有一个快速测试方法可以帮助确定函数�
 function logInput&amp;lt;Input extends string&amp;gt;(input: Input) {  console.log(&amp;#34;Hi!&amp;#34;, input); } 类型断言 需要注意的是，类型断言只能暂时欺骗编译器，无法避免运行时错误。滥用类型断言可能会导致运行时错误，下面代码无编译错误，但会出现运行时错误：
 interface Cat {  name: string;  run(): void; }  interface Fish {  name: string;  swim(): void; }  function isFish(animal: Cat | Fish) {  (animal as Fish).swim() }  const cat: Cat = {  name: &amp;#34;Hello&amp;#34;,  run(): void {  console.log(this.name)  } }  isFish(cat)  // 出现运行时错误  animal.swim is not a function 下面示例代码中，使用instanceof来判断变量是否是某个类的实例是合适的。但某些情况下，ApiError和HttpError不是一个类，而是接口类型。接口是一个类型并不是一个真正的值，它在编译结果中会被删除，因此无法使用instanceof来做运行时判断。
 class ApiError extends Error {  code: number = 0 } class HttpError extends Error {  statusCode: number = 200; } function isApiError(error: Error) {  return error instanceof ApiError; } 此时只能使用类型断言：
-interface ApiError extends Error {  code: number; }  interface HttpError extends Error {  statusCode: number; }  function isApiError(error: Error) {  return (error as ApiError).code === 23; } Enum 由于Enum编译后是一个对象，所以不能有与它同名的变量，对象，函数和类等。如果有同名的非枚举变量、对象、函数或类，将会出现编译错误。
+interface ApiError extends Error {  code: number; }  interface HttpError extends Error {  statusCode: number; }  function isApiError(error: Error) {  return (error as ApiError).code === 23; } enum 由于enum编译后是一个对象，所以不能有与它同名的变量，对象，函数和类等。如果存在同名的变量、对象、函数或类，将会出现编译错误。
 // 下面代码中由于枚举和变量名重复了，所以会出现编译错误 // Enum declarations can only merge with namespace or other enum declarations. enum Test1 {  Local = &amp;#39;local&amp;#39;,  Remote = &amp;#39;remote&amp;#39; } const Test1 = &amp;#39;890&amp;#39;  // 编译错误 Enum declarations can only merge with namespace or other enum declarations. enum Test2 {  A,  B } class Test2 { } 枚举的成员不强制赋初始值，若没有赋初始值，系统默认从0开始逐一增1，按顺序为每个成员赋值。下面示例代码中，枚举成员(或称属性)对应值分别为0，1，2。
-enum Foo {  A,  B,  C, } console.log(Foo.A, Foo.B, Foo.C) // 0 1 2 Enum属性的值可以是小数:
-enum Foo {  A = 0.12,  B,  C } console.log(Foo.A, Foo.B, Foo.C) // 0.12 1.12 2.12 Enum属性（成员）的值不能是BigInt类型:
-// 编译错误：Type &amp;#39;bigint&amp;#39; is not assignable to type &amp;#39;number&amp;#39; as required for computed enum member values. enum Foo {  A = 1n, } Enum属性对应的值可以相同，但属性名一定不能相同：
+enum Foo {  A,  B,  C, } console.log(Foo.A, Foo.B, Foo.C) // 0 1 2 enum属性的值可以是小数:
+enum Foo {  A = 0.12,  B,  C } console.log(Foo.A, Foo.B, Foo.C) // 0.12 1.12 2.12 enum属性（成员）的值不能是BigInt类型:
+// 编译错误：Type &amp;#39;bigint&amp;#39; is not assignable to type &amp;#39;number&amp;#39; as required for computed enum member values. enum Foo {  A = 1n, } enum属性对应的值可以相同，但属性名一定不能相同：
 enum Foo {  A = 0.12,  B = 0.1,  C = 0.12 } 如果只设置第一个属性的值，后面成员的值就会从这个值开始依次递增（默认在上一个值的基础上&#43;1）。
-enum Color {  Red = 7,  Green, // 8  Blue, // 9 }  // 或者 enum Color {  Red, // 0  Green = 7,  Blue, // 8 } Enum所有属性对应的值都是只读的，不能重新赋值。
+enum Color {  Red = 7,  Green, // 8  Blue, // 9 }  // 或者 enum Color {  Red, // 0  Green = 7,  Blue, // 8 } enum所有属性对应的值都是只读的，不能重新被赋值。
 enum Color {  Red,  Green,  Blue, }  // 编译报错:Cannot assign to &amp;#39;Blue&amp;#39; because it is a read-only property. Color.Red = 4; 为了强调这一点，通常在enum关键字前面加上const修饰，表示这是常量，不能再次赋值。加上const还有一个好处，编译为JavaScript代码后，枚举的成员会被替换成对应的值，可以提升性能。
-const enum Color {  Red,  Green,  Blue, } Enum成员的值也可以是计算属性。但需要注意，如果在定义枚举时添加了const，就不能再使用计算属性定义其中的成员。
-enum Bool {  No = 123,  Yes = Math.random(), }  // 正常 enum Test {  No = 123,  Yes = Math.random() &#43; numb,  Third = getNum(12)  }   function getNum(x: number): number {  return Math.random() &#43; x  }  // 出现编译错误:const enum member initializers must be constant expressions. const enum Test1 {  No = 123,  Yes = Math.random() &#43; numb,  } enum成员的值除了设为数值，还可以设为字符串。也就是说，enum也可以用作一组字符串的集合。
+const enum Color {  Red,  Green,  Blue, } enum成员的值也可以是计算属性。但需要注意，如果在定义枚举时添加了const，就不能再使用计算属性定义其中的成员。
+enum Bool {  No = 123,  Yes = Math.random(), }  // 正常 enum Test {  No = 123,  Yes = Math.random() &#43; numb,  Third = getNum(12)  }   function getNum(x: number): number {  return Math.random() &#43; x  }  // 出现编译错误:const enum member initializers must be constant expressions. const enum Test1 {  No = 123,  Yes = Math.random() &#43; numb,  } enum成员的值除了设为数值，还可以设为字符串。也就是说，enum也可以作为一组字符串的集合。
 enum Direction {  Up = &amp;#34;UP&amp;#34;,  Down = &amp;#34;DOWN&amp;#34;,  Left = &amp;#34;LEFT&amp;#34;,  Right = &amp;#34;RIGHT&amp;#34;, } 需要注意的是，字符串枚举的所有成员都必须显式设置对应值。如果成员值没有显式设置为字符串，成员值默认为数值，且其位置必须在字符串成员之前。
 enum Foo {  A, // 0  B = &amp;#34;hello&amp;#34;,  C, // 报错 Enum member must have initializer } enum成员可以字符串和数值的混合，如果要使用默认的数值，则成员必需放在字符串之前：
 enum Foo {  zero,  One = &amp;#34;One&amp;#34;,  Two = &amp;#34;Two&amp;#34;,  Three = 3,  Four = 4, } enum的成员除了数值和字符串，不允许使用其它值。若变量类型是字符串enum，不能使用字符串直接赋值该变量，这跟数值enum变量不一样。
 enum Enum {  One = &amp;#34;One&amp;#34;,  Two = &amp;#34;Two&amp;#34;,  Three = 3,  Four = 4, }  function test(a: Enum) {  console.log(a) }  test(3) // 正常  // 编译错误:Argument of type &amp;#39;&amp;#34;One&amp;#34;&amp;#39; is not assignable to parameter of type &amp;#39;Enum&amp;#39;. test(&amp;#34;One&amp;#34;) 需要注意的是，字符串enum的成员值不能使用表达式赋值。
-enum MyEnum {  A = &amp;#34;one&amp;#34;,  B = [&amp;#34;T&amp;#34;, &amp;#34;w&amp;#34;, &amp;#34;o&amp;#34;].join(&amp;#34;&amp;#34;), }  // 编译错误：Type &amp;#39;string&amp;#39; is not assignable to type &amp;#39;number&amp;#39; as required for computed enum member values.  enum MyEnum {  A = &amp;#34;one&amp;#34;,  B = &amp;#34;T&amp;#34;.repeat(12) } // 编译错误：Type &amp;#39;string&amp;#39; is not assignable to type &amp;#39;number&amp;#39; as required for computed enum member values. 同名的Enum可以合并，但是合并时，不能有同名的成员，否则会报错。
-enum Foo {  A, } enum Foo {  A = 2 } // 编译错误:Duplicate identifier &amp;#39;A&amp;#39;. 同名的Enum合并时，只允许其中的一个的第一个枚举成员省略初始值，否则会报错：
-enum Foo {  A, } enum Foo {  B } // 编译错误:In an enum with multiple declarations, only one declaration can omit an initializer for its first enum element 同名的Enum合并的另一个限制是，所有定义必须同为const枚举或者非const枚举，不允许混合使用。同名Enum合并的最大用处是补充外部定义的Enum结构。
+enum MyEnum {  A = &amp;#34;one&amp;#34;,  B = [&amp;#34;T&amp;#34;, &amp;#34;w&amp;#34;, &amp;#34;o&amp;#34;].join(&amp;#34;&amp;#34;), }  // 编译错误：Type &amp;#39;string&amp;#39; is not assignable to type &amp;#39;number&amp;#39; as required for computed enum member values.  enum MyEnum {  A = &amp;#34;one&amp;#34;,  B = &amp;#34;T&amp;#34;.repeat(12) } // 编译错误：Type &amp;#39;string&amp;#39; is not assignable to type &amp;#39;number&amp;#39; as required for computed enum member values. 同名的enum可以合并，但是合并时，不能有同名的成员，否则会报错。
+enum Foo {  A, } enum Foo {  A = 2 } // 编译错误:Duplicate identifier &amp;#39;A&amp;#39;. 同名的enum合并时，只允许其中的一个的第一个枚举成员省略初始值，否则会报错：
+enum Foo {  A, } enum Foo {  B } // 编译错误:In an enum with multiple declarations, only one declaration can omit an initializer for its first enum element 同名的enum合并的另一个限制是，所有定义必须同为const枚举或者非const枚举，不允许混合使用。同名enum合并的最大用处是补充外部定义的enum结构。
 enum Foo {  A, } const enum Foo {  B = 1, } // 编译错误：Enum declarations can only merge with namespace or other enum declarations. 枚举的反向映射，是指通过属性值获取到属性名：
-enum Foo {  A = 1,  B = 2,  C = 4, } console.log(Foo[3], Foo[4] === &amp;#39;C&amp;#39;) // undefined true 枚举的反向映射只发生Enum的数值成员，对于字符串成员值，不存在反向映射，因为字符串Enum编译后只有一组赋值。
-Enum参考资料
+enum Foo {  A = 1,  B = 2,  C = 4, } console.log(Foo[3], Foo[4] === &amp;#39;C&amp;#39;) // undefined true 枚举的反向映射只发生enum的数值成员，对于字符串成员值，不存在反向映射，因为字符串enum编译后只有一组赋值。
+enum参考资料
 参考资料
 NameSpaces namespace用于建立一个容器，其内部的所有变量和函数，默认都必须在这个容器里使用。下面示例代码中，isString只能在Utils中使用，如果在外部使用，就会报错。
 namespace Utils {  function isString(value: any) {  return typeof value === &amp;#39;string&amp;#39;  }  // 在内部使用不会报错  console.log(isString(&amp;#39;test&amp;#39;)) }  // 在外部直接使用报错Cannot find name &amp;#39;isString&amp;#39;. Did you mean &amp;#39;String&amp;#39;? console.log(isString(&amp;#39;test&amp;#39;)) 如果要在命名空间以外使用内部成员，就必需在该成员前面加上export关键字，表示对外导出该成员，否则会出现编译错误：
@@ -7202,6 +7202,18 @@ void radixSort(int *data, int length) {  int max = getMax(data, length); //找�
    重复第2步，直至堆大小变为0。
   此时一个有序序列已经产生，此时将输入缓冲区中剩下的所有元素建立最小堆，开始生成下一个有序序列。
    </content>
+    </entry>
+    
+     <entry>
+        <title></title>
+        <url>https://iihui.github.io/post//</url>
+        <categories>
+          
+        </categories>
+        <tags>
+          
+        </tags>
+        <content type="html"> </content>
     </entry>
     
      <entry>
