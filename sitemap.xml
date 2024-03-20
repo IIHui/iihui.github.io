@@ -775,11 +775,11 @@ Call-Signature Compatibility 重载函数的实现所使用的签名就是该函
 换句话说，重载函数的实现签名必须与所有重载签名兼容。下面示例代码中，因为实现签名和所有的重载签名不兼容，会出现编译错误：
 function format(data: string): string; // Ok function format(data: string, needle: string, haystack: string): string; // Ok // This overload signature is not compatible with its implementation signature. function format(getData: () =&amp;gt; string): string; function format(data: string, needle?: string, haystack?: string) {  return needle &amp;amp;&amp;amp; haystack ? data.replace(needle, haystack) : data; } Arrays TypeScript通过记住数组中最初的数据类型，并只允许数组对该数据类型进行操作，从而遵守了每个数组只使用一种数据类型的最佳实践。
 const warriors = [&amp;#34;Artemisia&amp;#34;, &amp;#34;Boudica&amp;#34;]; // Ok: &amp;#34;Zenobia&amp;#34; is a string warriors.push(&amp;#34;Zenobia&amp;#34;); // 编译错误：Argument of type &amp;#39;boolean&amp;#39; is not assignable to parameter of type &amp;#39;string&amp;#39;. warriors.push(true); 可以认为根据数组的初始成员推断数组类型与根据变量的初始值推断变量类型类似。TypeScript通常会尝试从赋值来推断预期类型，数组也不例外。
-Array Types 如同其它的变量声明，数组变量声明时可以不初始化，变量一开始可以是undefined的，之后会收到一个数组值。同样地，如果变量未初始化之前就使用会出现编译错误：
+Array Types 如同其它变量声明，数组变量声明时也可以不初始化，一开始是undefined的，之后会收到一个数组值。同样地，如果数组变量未初始化之前就使用会出现编译错误：
 let arrayOfNumbers: number[]; // 编译报错： Variable &amp;#39;arrayOfNumbers&amp;#39; is used before being assigned. console.log(typeof arrayOfNumbers) arrayOfNumbers = [4, 8, 15, 16, 23, 42]; Array and Function Types 涉及数组和函数类型时可能需要使用圆括号来区分数组类型中的内容。圆括号可用于指明类型中哪一部分是函数返回值类型或哪部分是数组类型。
-// Type is a function that returns an array of strings let createStrings: () =&amp;gt; string[]; // Type is an array of functions that each return a string let stringCreators: (() =&amp;gt; string)[]; Union-Type Arrays 可以使用联合类型来标注数组中的元素是多个可能的类型。将数组类型与联合类型一起使用时，可能需要使用圆括号来指明中哪一部分是数组的内容，哪一部分是联合类型的内容。在数组联合类型中使用括号非常重要，以下两种类型并不相同：
+// Type is a function that returns an array of strings let createStrings: () =&amp;gt; string[]; // Type is an array of functions that each return a string let stringCreators: (() =&amp;gt; string)[]; Union-Type Arrays 可以使用联合类型来标注数组中元素是多个可能的类型。将数组类型与联合类型一起使用时，可能需要使用圆括号来指明中哪一部分是数组的内容，哪一部分是联合类型的内容。在数组联合类型中使用括号非常重要，以下两种类型并不相同：
 // Type is either a number or an array of strings let stringOrArrayOfNumbers: string | number[]; // Type is an array of elements that are each either a number or a string let arrayOfStringOrNumbers: (string | number)[]; 如果同一个数组中包含一种以上的元素类型，TypeScript就会从数组的声明中推断它是一个union类型的数组。换句话说，数组元素的类型是数组中所有可能元素类型的联合。
-// namesMaybe&amp;#39;s type is (string | undefined)[] const namesMaybe = [  &amp;#34;Aqualtune&amp;#34;,  &amp;#34;Blenda&amp;#34;,  undefined, ]; Evolving Any Arrays 若初始值为空的数组变量不加上类型声明，数组类型被认为是any[]。这意味着该数组可以接收任何内容，允许添加可能不正确的值，从而抵消了TypeScript类型检查器的好处。
+// namesMaybe&amp;#39;s type is (string | undefined)[] const namesMaybe = [  &amp;#34;Aqualtune&amp;#34;,  &amp;#34;Blenda&amp;#34;,  undefined, ]; Evolving Any Arrays 若初始值为空的数组变量不加上类型声明，数组类型被认为是any[]。这意味着该数组可以接收任何内容，允许添加可能不正确的值，从而抵消TypeScript类型检查器的好处。
 // Type: any[] let values = []; // Type: string[] values.push(&amp;#39;&amp;#39;); // Type: (number | string)[] values[0] = 0; 如同变量，如果允许数组是any类型，部分地违背了类型检查的目的。当TypeScript知道变量应该是什么类型时，它就会工作得更好。如果开启了严格类型检查，上面代码会出现编译错误。
 Multidimensional Arrays 一个二维数组，有两个[]：
 // 声明二维数组，下面两种方式均可以 let arrayOfArraysOfNumbers1: number[][]; let arrayOfArraysOfNumbers2: (number[])[]; arrayOfArraysOfNumbers1 = [[1, 2, 3], [2, 4, 6], [3, 6, 9],]; arrayOfArraysOfNumbers2 = [[1, 2, 3], [2, 5, 8], [4, 7, 11],]; console.log(arrayOfArraysOfNumbers1, arrayOfArraysOfNumbers2) 三维数组有3个[]，四维数组有4个[]，5个数组有5个[]。
@@ -7260,6 +7260,18 @@ iPhone 11 iOS 15.1 招乎5.13.5 启动时间viewDidAppear为:2.2245479822158813�
 招乎5.15.1 启动时间viewDidAppear为:1.6123250722885132秒 启动时间viewDidAppear为:1.6050660610198975秒 启动时间viewDidAppear为:1.6825041055679321秒 启动时间viewDidAppear为:1.5587329864501953秒 平均时间为$(1.6123&#43;1.6050&#43;1.6825&#43;1.5587)/4 = 1.614625$
 平均减少时间 平均减少时间为:$(2.234785 - 1.614625) = 0.62016$
 </content>
+    </entry>
+    
+     <entry>
+        <title></title>
+        <url>https://iihui.github.io/post/swift-s1/</url>
+        <categories>
+          
+        </categories>
+        <tags>
+          
+        </tags>
+        <content type="html"> 命名规约  【强制】对于file、class、struct、enum、protocol统一使用UpperCamelCase风格（首字母大写）命名。   </content>
     </entry>
     
 </search>
