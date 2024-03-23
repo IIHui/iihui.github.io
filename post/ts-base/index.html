@@ -241,13 +241,13 @@ code.has-jax {
     <i class="fa fa-file-word-o"></i>
 </span>
 <span class="post-meta-item-text">字数: </span>
-<span class="leancloud-visitors-count">28290</span>
+<span class="leancloud-visitors-count">28609</span>
 &nbsp; | &nbsp;
 <span class="post-meta-item-icon">
     <i class="fa fa-coffee"></i>
 </span>
 <span class="post-meta-item-text">阅读: </span>
-<span class="leancloud-visitors-count">57 分钟</span>
+<span class="leancloud-visitors-count">58 分钟</span>
 </span>
       </div>
     </header>
@@ -1805,18 +1805,42 @@ code.has-jax {
 <h2 id="top-types">Top Types</h2>
 <p>顶级类型或通用类型是一种可以代表系统中任何可能值的类型。所有类型的值都可以赋值给顶级类型的变量或常量。</p>
 <h3 id="any">any</h3>
-<p>any类型可以充当顶层类型，因为any类型都可以提供给任何类型的位置。 any通常用于允许位置接受任何类型的数据，例如console.log的参数:</p>
+<p><code>any</code>类型可以作为顶层类型，因为任何类型都可以提供给标注为<code>any</code>类型。 <code>any</code>类型通常用于允许接受任何类型的地方，例如<code>console.log</code>的参数:</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span><span style="color:#66d9ef">let</span> <span style="color:#a6e22e">anyValue</span>: <span style="color:#66d9ef">any</span>;  
 </span></span><span style="display:flex;"><span><span style="color:#a6e22e">anyValue</span> <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;Lucille Ball&#34;</span>; <span style="color:#75715e">// Ok  
 </span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#a6e22e">anyValue</span> <span style="color:#f92672">=</span> <span style="color:#ae81ff">123</span>; <span style="color:#75715e">// Ok  
 </span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#a6e22e">console</span>.<span style="color:#a6e22e">log</span>(<span style="color:#a6e22e">anyValue</span>); <span style="color:#75715e">// Ok
-</span></span></span></code></pre></div><p>使用类型any就是明确告诉编译器，在赋值或成员不执行类型检查。这种安全性的缺失是有用的，但禁用类型检降低了TypeScript的实用性。例如，下面代码不会出现编译错误，但会出现运行时错误：</p>
+</span></span></span></code></pre></div><p>使用类型<code>any</code>就是明确告诉编译器，对赋值或属性不执行类型检查。这种安全性的缺失有时有用，但禁用类型检降低了TypeScript的实用性。例如，下面代码不会出现编译错误，但会出现运行时错误：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span><span style="color:#66d9ef">function</span> <span style="color:#a6e22e">greetComedian</span>(<span style="color:#a6e22e">name</span>: <span style="color:#66d9ef">any</span>) { <span style="color:#75715e">// No type error...  
 </span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#a6e22e">console</span>.<span style="color:#a6e22e">log</span>(<span style="color:#e6db74">`Announcing </span><span style="color:#e6db74">${</span><span style="color:#a6e22e">name</span>.<span style="color:#a6e22e">toUpperCase</span>()<span style="color:#e6db74">}</span><span style="color:#e6db74">!`</span>);  
 </span></span><span style="display:flex;"><span>}  
 </span></span><span style="display:flex;"><span><span style="color:#75715e">// TypeError: name.toUpperCase is not a function
 </span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#a6e22e">greetComedian</span>({<span style="color:#a6e22e">name</span><span style="color:#f92672">:</span> <span style="color:#e6db74">&#34;Bea Arthur&#34;</span>});
-</span></span></code></pre></div><h1 id="generics">Generics</h1>
+</span></span></code></pre></div><h3 id="unknown">unknown</h3>
+<p>类型<code>unknown</code>是一种真正的顶层类型。<code>unknown</code>和<code>any</code>类似，所有对象都可以赋值给标注为<code>unknown</code>类型的变量。<code>any</code>与<code>unknown</code>的主要区别在于，<code>TypeScript</code>对<code>unknown</code>类型的值有更严格的限制：</p>
+<ul>
+<li><code>TypeScript</code>不允许直接访问<code>unkonwn</code>类型值的属性。</li>
+<li><code>unknown</code>不可赋值给非顶级类型（<code>any</code>或<code>unknown</code>）。</li>
+</ul>
+<p>如果直接访问类型为<code>unknown</code>类型值的属性，会出现编译错误：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span><span style="color:#66d9ef">function</span> <span style="color:#a6e22e">greetComedian</span>(<span style="color:#a6e22e">name</span>: <span style="color:#66d9ef">unknown</span>) {  
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">console</span>.<span style="color:#a6e22e">log</span>(<span style="color:#e6db74">`Announcing </span><span style="color:#e6db74">${</span><span style="color:#a6e22e">name</span>.<span style="color:#a6e22e">toUpperCase</span>()<span style="color:#e6db74">}</span><span style="color:#e6db74">!`</span>);  
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">// &#39;name&#39; is of type &#39;unknown&#39;.
+</span></span></span></code></pre></div><p><code>TypeScript</code>允许代码访问<code>unknwon</code>类型值的属性的唯一方法是缩小值的类型。例如，使用 <code>instanceof</code>或<code>typeof</code>，或使用类型断言。</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span><span style="color:#66d9ef">function</span> <span style="color:#a6e22e">greetComedianSafety</span>(<span style="color:#a6e22e">name</span>: <span style="color:#66d9ef">unknown</span>) {  
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">if</span> (<span style="color:#66d9ef">typeof</span> <span style="color:#a6e22e">name</span> <span style="color:#f92672">===</span> <span style="color:#e6db74">&#39;string&#39;</span>) {  
+</span></span><span style="display:flex;"><span>        <span style="color:#a6e22e">console</span>.<span style="color:#a6e22e">log</span>(<span style="color:#e6db74">`Announcing </span><span style="color:#e6db74">${</span><span style="color:#a6e22e">name</span>.<span style="color:#a6e22e">toUpperCase</span>()<span style="color:#e6db74">}</span><span style="color:#e6db74">!`</span>); <span style="color:#75715e">// Ok  
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    } <span style="color:#66d9ef">else</span> {  
+</span></span><span style="display:flex;"><span>        <span style="color:#a6e22e">console</span>.<span style="color:#a6e22e">log</span>(<span style="color:#e6db74">&#34;Well, I&#39;m off.&#34;</span>);  
+</span></span><span style="display:flex;"><span>    }  
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">greetComedianSafety</span>(<span style="color:#e6db74">&#34;Betty White&#34;</span>); <span style="color:#75715e">// Logs: 4  
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#a6e22e">greetComedianSafety</span>({});
+</span></span></code></pre></div><h2 id="type-predicates">Type Predicates</h2>
+<h1 id="generics">Generics</h1>
 <h2 id="generic-interfaces">Generic Interfaces</h2>
 <p>接口也可以声明为泛型，它们遵循与函数类似的泛型规则：可以在接口名称后面的<code>&lt;</code>和<code>&gt;</code>之间声明任意数量的类型参数。</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span><span style="color:#66d9ef">interface</span> <span style="color:#a6e22e">Box</span>&lt;<span style="color:#f92672">T</span>&gt; {
@@ -2566,8 +2590,10 @@ code.has-jax {
         <li><a href="#top-types">Top Types</a>
           <ul>
             <li><a href="#any">any</a></li>
+            <li><a href="#unknown">unknown</a></li>
           </ul>
         </li>
+        <li><a href="#type-predicates">Type Predicates</a></li>
       </ul>
     </li>
     <li><a href="#generics">Generics</a>
