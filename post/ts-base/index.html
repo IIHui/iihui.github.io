@@ -241,13 +241,13 @@ code.has-jax {
     <i class="fa fa-file-word-o"></i>
 </span>
 <span class="post-meta-item-text">字数: </span>
-<span class="leancloud-visitors-count">27909</span>
+<span class="leancloud-visitors-count">28290</span>
 &nbsp; | &nbsp;
 <span class="post-meta-item-icon">
     <i class="fa fa-coffee"></i>
 </span>
 <span class="post-meta-item-text">阅读: </span>
-<span class="leancloud-visitors-count">56 分钟</span>
+<span class="leancloud-visitors-count">57 分钟</span>
 </span>
       </div>
     </header>
@@ -1677,7 +1677,7 @@ code.has-jax {
 </span></span><span style="display:flex;"><span><span style="color:#a6e22e">activities</span>.<span style="color:#a6e22e">initialize</span>([<span style="color:#e6db74">&#39;eat&#39;</span>, <span style="color:#e6db74">&#39;sleep&#39;</span>, <span style="color:#e6db74">&#39;learn&#39;</span>])
 </span></span><span style="display:flex;"><span><span style="color:#a6e22e">activities</span>.<span style="color:#a6e22e">next</span>();
 </span></span></code></pre></div><h2 id="optional-properties-2">Optional Properties</h2>
-<p>和接口相似，类可以声明可选的属性。可选属性的行为与属性类型恰巧是包含<code>| undefined</code>的联合类型属性大致相同。如果没有在构造函数中明确设置初始值，严格的初始化检查也不会在意。</p>
+<p>和接口相似，类也可以声明可选的属性。可选属性的行为与属性类型恰巧是包含<code>| undefined</code>的联合类型属性大致相同。如果没有在构造函数中明确设置可选属性的初始值，严格的初始化检查也不会在意。</p>
 <p>下面的<code>OptionalProperty</code>类中，它的<code>property</code>属性是可选的。因此，无论是否有严格的属性初始化检查，都允许不在类构造函数中赋值可选属性：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span><span style="color:#66d9ef">class</span> <span style="color:#a6e22e">MissingInitializer</span> {
 </span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">property?</span>: <span style="color:#66d9ef">string</span>;
@@ -1689,10 +1689,13 @@ code.has-jax {
 <p>类似接口，类也可以在属性前面添加<code>readonly</code>关键词。关键词<code>readonly</code>仅存在于类型系统，当编译为<code>JavaScript</code>文件后，关键字会被移除。</p>
 <p>声明为<span style="background:#40a9ff">只读的属性只能在声明处或构造函数中分配初始值</span>。任何其它位置（包括类本身的方法）只能读取属性，而不能写入属性。</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span><span style="color:#66d9ef">class</span> <span style="color:#a6e22e">Quote</span> {
-</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">readonly</span> <span style="color:#a6e22e">text</span>: <span style="color:#66d9ef">string</span>;
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">// 只读属性只能在声明处或构造函数中分配初始值
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#66d9ef">readonly</span> <span style="color:#a6e22e">text</span>: <span style="color:#66d9ef">string</span>;
+</span></span><span style="display:flex;"><span>    
 </span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">constructor</span>(<span style="color:#a6e22e">text</span>: <span style="color:#66d9ef">string</span>) {
 </span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">this</span>.<span style="color:#a6e22e">text</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">text</span>;
 </span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>    
 </span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">emphasize() {</span>
 </span></span><span style="display:flex;"><span>        <span style="color:#75715e">// 编译错误: Cannot assign to &#39;text&#39; because it is a read-only property.
 </span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>        <span style="color:#66d9ef">this</span>.<span style="color:#a6e22e">text</span> <span style="color:#f92672">+=</span> <span style="color:#e6db74">&#34;!&#34;</span>;
@@ -1797,6 +1800,22 @@ code.has-jax {
 </span></span><span style="display:flex;"><span><span style="color:#75715e">// 下面会出现编译错误，因为Empty没有真正实现接口
 </span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">class</span> <span style="color:#a6e22e">Empty</span> <span style="color:#66d9ef">implements</span> <span style="color:#a6e22e">Graded</span>, <span style="color:#a6e22e">Reporter</span> {
 </span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><h1 id="type-modifiers">Type Modifiers</h1>
+<p>现在，已经了解了TypeScript类型系统如何与现有JavaScript结构（如数组、类和对象）协同工作。将进一步介绍类型系统本身，并展示编写更精确类型以及基于其他类型的类型的功能。</p>
+<h2 id="top-types">Top Types</h2>
+<p>顶级类型或通用类型是一种可以代表系统中任何可能值的类型。所有类型的值都可以赋值给顶级类型的变量或常量。</p>
+<h3 id="any">any</h3>
+<p>any类型可以充当顶层类型，因为any类型都可以提供给任何类型的位置。 any通常用于允许位置接受任何类型的数据，例如console.log的参数:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span><span style="color:#66d9ef">let</span> <span style="color:#a6e22e">anyValue</span>: <span style="color:#66d9ef">any</span>;  
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">anyValue</span> <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;Lucille Ball&#34;</span>; <span style="color:#75715e">// Ok  
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#a6e22e">anyValue</span> <span style="color:#f92672">=</span> <span style="color:#ae81ff">123</span>; <span style="color:#75715e">// Ok  
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#a6e22e">console</span>.<span style="color:#a6e22e">log</span>(<span style="color:#a6e22e">anyValue</span>); <span style="color:#75715e">// Ok
+</span></span></span></code></pre></div><p>使用类型any就是明确告诉编译器，在赋值或成员不执行类型检查。这种安全性的缺失是有用的，但禁用类型检降低了TypeScript的实用性。例如，下面代码不会出现编译错误，但会出现运行时错误：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span><span style="color:#66d9ef">function</span> <span style="color:#a6e22e">greetComedian</span>(<span style="color:#a6e22e">name</span>: <span style="color:#66d9ef">any</span>) { <span style="color:#75715e">// No type error...  
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#a6e22e">console</span>.<span style="color:#a6e22e">log</span>(<span style="color:#e6db74">`Announcing </span><span style="color:#e6db74">${</span><span style="color:#a6e22e">name</span>.<span style="color:#a6e22e">toUpperCase</span>()<span style="color:#e6db74">}</span><span style="color:#e6db74">!`</span>);  
+</span></span><span style="display:flex;"><span>}  
+</span></span><span style="display:flex;"><span><span style="color:#75715e">// TypeError: name.toUpperCase is not a function
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#a6e22e">greetComedian</span>({<span style="color:#a6e22e">name</span><span style="color:#f92672">:</span> <span style="color:#e6db74">&#34;Bea Arthur&#34;</span>});
 </span></span></code></pre></div><h1 id="generics">Generics</h1>
 <h2 id="generic-interfaces">Generic Interfaces</h2>
 <p>接口也可以声明为泛型，它们遵循与函数类似的泛型规则：可以在接口名称后面的<code>&lt;</code>和<code>&gt;</code>之间声明任意数量的类型参数。</p>
@@ -2538,6 +2557,15 @@ code.has-jax {
         <li><a href="#classes-and-interfaces">Classes and Interfaces</a>
           <ul>
             <li><a href="#implementing-multiple-interfaces">Implementing Multiple Interfaces</a></li>
+          </ul>
+        </li>
+      </ul>
+    </li>
+    <li><a href="#type-modifiers">Type Modifiers</a>
+      <ul>
+        <li><a href="#top-types">Top Types</a>
+          <ul>
+            <li><a href="#any">any</a></li>
           </ul>
         </li>
       </ul>
