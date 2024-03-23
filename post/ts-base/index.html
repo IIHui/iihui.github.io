@@ -241,7 +241,7 @@ code.has-jax {
     <i class="fa fa-file-word-o"></i>
 </span>
 <span class="post-meta-item-text">字数: </span>
-<span class="leancloud-visitors-count">27889</span>
+<span class="leancloud-visitors-count">27932</span>
 &nbsp; | &nbsp;
 <span class="post-meta-item-icon">
     <i class="fa fa-coffee"></i>
@@ -1246,7 +1246,7 @@ code.has-jax {
 </span></span><span style="display:flex;"><span><span style="color:#75715e">// 元组类型被展开，编译不会报错
 </span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">const</span> <span style="color:#a6e22e">pairTupleCorrect</span><span style="color:#f92672">:</span> [<span style="color:#66d9ef">string</span>, <span style="color:#66d9ef">number</span>] <span style="color:#f92672">=</span> [<span style="color:#e6db74">&#34;Amage&#34;</span>, <span style="color:#ae81ff">1</span>];
 </span></span><span style="display:flex;"><span><span style="color:#a6e22e">logPair</span>(...<span style="color:#a6e22e">pairTupleCorrect</span>); <span style="color:#75715e">// Ok
-</span></span></span></code></pre></div><p>如果想随意使用可变形参元组，可以将它们与数组混合使用，为多个函数调用存储实参列表。下面代码中<code>trios.forEach(trio =&gt; logTrio(...trio))</code>是安全的，因为每个<code>...trio</code>恰好与<code>logTrio</code>的参数类型相匹配。然而，<code>trios.forEach(logTrio)</code> 不可赋值，因为它试图将整个<code>[string, number, boolean]</code>作为第一个参数传递，实际上第一个参数类型是<code>string</code>：</p>
+</span></span></span></code></pre></div><p>如果想随意使用可变形参元组，可以将它们与数组混合使用，为多个函数调用存储实参列表。下面代码中<code>trios.forEach(trio =&gt; logTrio(...trio))</code>是安全的，因为每个<code>...trio</code>恰好与<code>logTrio</code>的参数类型相匹配。然而，<code>trios.forEach(logTrio)</code> 不可赋值，因为它试图将整个<code>[string, number, boolean]</code>作为第一个参数传递，但实际上第一个参数类型是<code>string</code>：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span><span style="color:#66d9ef">function</span> <span style="color:#a6e22e">logTrio</span>(<span style="color:#a6e22e">name</span>: <span style="color:#66d9ef">string</span>, <span style="color:#a6e22e">value</span><span style="color:#f92672">:</span> [<span style="color:#66d9ef">number</span>, <span style="color:#66d9ef">boolean</span>]) {
 </span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">console</span>.<span style="color:#a6e22e">log</span>(<span style="color:#e6db74">`</span><span style="color:#e6db74">${</span><span style="color:#a6e22e">name</span><span style="color:#e6db74">}</span><span style="color:#e6db74"> has </span><span style="color:#e6db74">${</span><span style="color:#a6e22e">value</span>[<span style="color:#ae81ff">0</span>]<span style="color:#e6db74">}</span><span style="color:#e6db74"> (</span><span style="color:#e6db74">${</span><span style="color:#a6e22e">value</span>[<span style="color:#ae81ff">1</span>]<span style="color:#e6db74">}</span><span style="color:#e6db74">`</span>);
 </span></span><span style="display:flex;"><span>}
@@ -1254,16 +1254,20 @@ code.has-jax {
 </span></span><span style="display:flex;"><span>    [<span style="color:#e6db74">&#34;Amanitore&#34;</span>, [<span style="color:#ae81ff">1</span>, <span style="color:#66d9ef">true</span>]],
 </span></span><span style="display:flex;"><span>    [<span style="color:#e6db74">&#34;Æthelflæd&#34;</span>, [<span style="color:#ae81ff">2</span>, <span style="color:#66d9ef">false</span>]],
 </span></span><span style="display:flex;"><span>    [<span style="color:#e6db74">&#34;Ann E. Dunwoody&#34;</span>, [<span style="color:#ae81ff">3</span>, <span style="color:#66d9ef">false</span>]]];
-</span></span><span style="display:flex;"><span><span style="color:#a6e22e">trios</span>.<span style="color:#a6e22e">forEach</span>(<span style="color:#a6e22e">trio</span> <span style="color:#f92672">=&gt;</span> <span style="color:#a6e22e">logTrio</span>(...<span style="color:#a6e22e">trio</span>)); <span style="color:#75715e">// Ok
-</span></span></span><span style="display:flex;"><span><span style="color:#75715e">// 下面会出现编译错误
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">// 下面方式不会出现编译错误
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#a6e22e">trios</span>.<span style="color:#a6e22e">forEach</span>(<span style="color:#a6e22e">trio</span> <span style="color:#f92672">=&gt;</span> <span style="color:#a6e22e">logTrio</span>(...<span style="color:#a6e22e">trio</span>)); <span style="color:#75715e">// Ok
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">// 下面会出现编译错误
 </span></span></span><span style="display:flex;"><span><span style="color:#75715e">// Argument of type &#39;(name: string, value: [number, boolean]) =&gt; void&#39; is not assignable to parameter of type &#39;(value: [string, [number, boolean]], index: number, array: [string, [number, boolean]][]) =&gt; void&#39;.
 </span></span></span><span style="display:flex;"><span><span style="color:#75715e">// Types of parameters &#39;name&#39; and &#39;value&#39; are incompatible.
 </span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#a6e22e">trios</span>.<span style="color:#a6e22e">forEach</span>(<span style="color:#a6e22e">logTrio</span>);
 </span></span></code></pre></div><h3 id="tuple-inferences">Tuple Inferences</h3>
-<p><code>TypeScript</code><font color="#de7802">通常将创建的数组视为长度可变的数组，而不是元组</font>。如果<font color="#245bdb">看到一个数组被用作变量的初始值或函数的返回值，那么将推断它是一个可变长度的数组</font>，而不是一个固定长度的元组。</p>
+<p><code>TypeScript</code><font color="#de7802">通常将创建的数组视为长度可变的数组，而不是元组</font>。如果<font color="#245bdb">看到一个数组被用作变量的初始值或函数的返回值，那么编译器将推断它是一个可变长度的数组</font>，而不是一个固定长度的元组。</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span><span style="color:#66d9ef">function</span> <span style="color:#a6e22e">firstCharAndSize</span>(<span style="color:#a6e22e">input</span>: <span style="color:#66d9ef">string</span>) {
 </span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">return</span> [<span style="color:#a6e22e">input</span>[<span style="color:#ae81ff">0</span>], <span style="color:#a6e22e">input</span>.<span style="color:#a6e22e">length</span>];
 </span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span><span style="color:#75715e">// firstChar的类型为 string | number
 </span></span></span><span style="display:flex;"><span><span style="color:#75715e">// size的类型为string | number
 </span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">const</span> [<span style="color:#a6e22e">firstChar</span>, <span style="color:#a6e22e">size</span>] <span style="color:#f92672">=</span> <span style="color:#a6e22e">firstCharAndSize</span>(<span style="color:#e6db74">&#34;Gudit&#34;</span>);
@@ -1276,7 +1280,7 @@ code.has-jax {
 </span></span></span><span style="display:flex;"><span><span style="color:#75715e">// size type: number
 </span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">const</span> [<span style="color:#a6e22e">firstChar</span>, <span style="color:#a6e22e">size</span>] <span style="color:#f92672">=</span> <span style="color:#a6e22e">firstCharAndSizeExplicit</span>(<span style="color:#e6db74">&#34;Cathay Williams&#34;</span>);
 </span></span></code></pre></div><h4 id="const-asserted-tuples">Const asserted tuples</h4>
-<p>显式标注元组类型比较麻烦，<code>TypeScript</code>提供了<code>as const</code>操作符，称为<code>const</code>断言，放在值的后面。<code>const</code>断言告诉<code>TypeScript</code>在推断值的类型时，<font color="#de7802">使用该值最直白的只读形式</font>。如果将<code>const</code>断言放在数组字面之后，表示数组应被视为元组：</p>
+<p>显式标注元组类型比较麻烦，<code>TypeScript</code>提供了<code>as const</code>操作符，称为<code>const</code>断言，放在值的后面。<code>const</code>断言告诉<code>TypeScript</code>在推断该值的类型时，<font color="#de7802">使用该值最直白的只读形式</font>。如果将<code>const</code>断言放在数组字面之后，表示数组应被视为元组，<span style="background:#40a9ff">并且元组类型被推断为字面量</span>：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span><span style="color:#75715e">// Type: (string | number)[]
 </span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">const</span> <span style="color:#a6e22e">unionArray</span> <span style="color:#f92672">=</span> [<span style="color:#ae81ff">1157</span>, <span style="color:#e6db74">&#34;Tomoe&#34;</span>];
 </span></span><span style="display:flex;"><span><span style="color:#75715e">// Type: readonly [1157, &#34;Tomoe&#34;]
@@ -1307,14 +1311,14 @@ code.has-jax {
 </span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">let</span> [<span style="color:#a6e22e">firstChar1</span>, <span style="color:#a6e22e">size1</span>] <span style="color:#f92672">=</span> <span style="color:#a6e22e">firstCharAndSizeAsConst</span>(<span style="color:#e6db74">&#34;Ching Shih&#34;</span>);  
 </span></span><span style="display:flex;"><span><span style="color:#a6e22e">console</span>.<span style="color:#a6e22e">log</span>(<span style="color:#a6e22e">firstChar1</span>, <span style="color:#a6e22e">size1</span>)  
 </span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span><span style="color:#75715e">// 不会出现编译错误
+</span></span><span style="display:flex;"><span><span style="color:#75715e">// 不会出现编译错误，因为是使用let定义的解构
 </span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#a6e22e">firstChar1</span> <span style="color:#f92672">=</span> <span style="color:#e6db74">&#39;chear&#39;</span>
 </span></span></code></pre></div><h1 id="interfaces">Interfaces</h1>
 <blockquote>
 <p>接口是声明具有相关名称对象的另一种方法。<font color="#de7802">接口在许多方面与别名对象类型相似，但由于其错误信息更易读、编译器性能更快以及与类的互操作性更好，通常更受青睐。</font></p>
 </blockquote>
 <h2 id="type-aliases-versus-interfaces">Type Aliases Versus Interfaces</h2>
-<p>下面是定义别名对象类型描述对象的语法：</p>
+<p>下面是定义别名类型描述对象的语法：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span><span style="color:#66d9ef">type</span> <span style="color:#a6e22e">Poet</span> <span style="color:#f92672">=</span> {
 </span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">born</span>: <span style="color:#66d9ef">number</span>;
 </span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">name</span>: <span style="color:#66d9ef">string</span>;
@@ -1349,7 +1353,7 @@ code.has-jax {
 </span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">pages</span>: <span style="color:#66d9ef">80</span>
 </span></span><span style="display:flex;"><span>};
 </span></span></code></pre></div><h3 id="read-only-properties">Read-Only Properties</h3>
-<p>有时，可能希望禁止重新赋值实现接口的对象的某个属性值。<code>TypeScript</code>允许在属性名称前添加一个<code>readonly</code>修饰符，表示该属性一旦设置，就不能再修改。也就是说<code>readonly</code>属性可以正常读取，但不能被重新赋值。</p>
+<p>有时，可能希望禁止重新赋值实现接口对象的某个属性值。<code>TypeScript</code>允许在属性名称前添加一个<code>readonly</code>修饰符，表示该属性一旦设置，就不能再修改。也就是说<code>readonly</code>属性可以正常读取，但不能被重新赋值。</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span><span style="color:#66d9ef">interface</span> <span style="color:#a6e22e">Page</span> {
 </span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">readonly</span> <span style="color:#a6e22e">text</span>: <span style="color:#66d9ef">string</span>;
 </span></span><span style="display:flex;"><span>}
@@ -1365,19 +1369,21 @@ code.has-jax {
 <p>在<code>JavaScript</code>中对象成员为函数比较常见。因此，<code>TypeScript</code>允许将<code>interface</code>的成员声明为函数类型。<code>TypeScript</code>提供了两种将接口成员声明为函数的方法：</p>
 <ul>
 <li>方法语法：声明接口成员是一个打算作为对象成员调用的函数，如<code>member(): void</code>。</li>
-<li>属性语法：声明接口成员等同于独立函数，如<code>member: () =&gt; void</code>。</li>
+<li>属性语法：声明接口成员等同于独立函数，如<code>member: () =&gt; void</code>。
+下面接口声明的<code>method</code>和<code>property</code>都是函数，可以不带实参调用，并返回一个字符串：</li>
 </ul>
-<p>下面接口声明的<code>method</code>和<code>property</code>都是函数，可以不带实参调用，并返回一个字符串：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span><span style="color:#66d9ef">interface</span> <span style="color:#a6e22e">HasBothFunctionTypes</span> {
 </span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">property</span><span style="color:#f92672">:</span> () <span style="color:#f92672">=&gt;</span> <span style="color:#66d9ef">string</span>;
 </span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">method</span>()<span style="color:#f92672">:</span> <span style="color:#66d9ef">string</span>;
 </span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span><span style="color:#66d9ef">const</span> <span style="color:#a6e22e">hasBoth</span>: <span style="color:#66d9ef">HasBothFunctionTypes</span> <span style="color:#f92672">=</span> {
 </span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">property</span><span style="color:#f92672">:</span> () <span style="color:#f92672">=&gt;</span> <span style="color:#e6db74">&#34;&#34;</span>,
 </span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">method() {</span>
 </span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">return</span> <span style="color:#e6db74">&#34;&#34;</span>;
 </span></span><span style="display:flex;"><span>    }
 </span></span><span style="display:flex;"><span>};
+</span></span><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span><span style="color:#a6e22e">hasBoth</span>.<span style="color:#a6e22e">property</span>();
 </span></span><span style="display:flex;"><span><span style="color:#a6e22e">hasBoth</span>.<span style="color:#a6e22e">method</span>()
 </span></span></code></pre></div><p>这两种形式声明的函数都支持可选的修饰器<code>?</code>，表明它们不是必需的：</p>
