@@ -241,13 +241,13 @@ code.has-jax {
     <i class="fa fa-file-word-o"></i>
 </span>
 <span class="post-meta-item-text">字数: </span>
-<span class="leancloud-visitors-count">30981</span>
+<span class="leancloud-visitors-count">31653</span>
 &nbsp; | &nbsp;
 <span class="post-meta-item-icon">
     <i class="fa fa-coffee"></i>
 </span>
 <span class="post-meta-item-text">阅读: </span>
-<span class="leancloud-visitors-count">62 分钟</span>
+<span class="leancloud-visitors-count">64 分钟</span>
 </span>
       </div>
     </header>
@@ -1985,8 +1985,39 @@ code.has-jax {
 </span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#a6e22e">JSON</span>.<span style="color:#a6e22e">parse</span>(<span style="color:#a6e22e">rawData</span>)
 </span></span><span style="display:flex;"><span><span style="color:#75715e">// Type: [&#34;grace&#34;, &#34;frankie&#34;]  
 </span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#a6e22e">JSON</span>.<span style="color:#a6e22e">parse</span>(<span style="color:#a6e22e">rawData</span>)
-</span></span></code></pre></div><p><code>TypeScript</code><font color="#de7802">最佳实践是尽可能避免使用类型断言</font>。我们的代码最好是完全类型化的，不需要使用断言来干扰<code>TypeScript</code>对其类型的理解。但有时类型断言是有用的，甚至是必要的。</p>
-<h1 id="generics">Generics</h1>
+</span></span></code></pre></div><p><code>TypeScript</code><font color="#de7802">最佳实践是尽可能避免使用类型断言</font>。我们的代码最好是完全准确类型化的，不需要使用断言来干扰<code>TypeScript</code>对其类型的理解。但有时类型断言是有用的，甚至是必要的。</p>
+<h3 id="asserting-caught-error-types">Asserting Caught Error Types</h3>
+<p>错误处理是类型断言可能派上用场的另一个地方。一般来说，我们不可能知道在<code>catch</code>代码块中捕获的错误是什么类型，因为try代码块中的代码可能会意外地抛出任何与预期不同的对象。</p>
+<p>此外，虽然JavaScript的最佳实践是始终抛出Error类的实例，但有些项目却会抛出字符串字面量或其它出人意料的值。</p>
+<p>如果确信某个代码区域只会抛出Error类的实例，可以使用类型断言将捕获的断言视为Error。下面代码段将访问捕获的错误的消息属性，并假定该错误是Error类的实例：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span><span style="color:#66d9ef">try</span> {  
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">// (code that may throw an error)  
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>} <span style="color:#66d9ef">catch</span> (<span style="color:#a6e22e">error</span>) {  
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">console</span>.<span style="color:#a6e22e">warn</span>(<span style="color:#e6db74">&#34;Oh no!&#34;</span>, (<span style="color:#a6e22e">error</span> <span style="color:#66d9ef">as</span> Error).<span style="color:#a6e22e">message</span>);  
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p>通常比较安全的做法是使用一种类型窄化形式，如<code>instanceof</code>检查，以确保抛出的错误是预期的错误类型。下面代码段会检查抛出的错误是否是Error 类的实例，以确定是记录该消息还是记录错误本身：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span><span style="color:#66d9ef">try</span> {  
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">// (code that may throw an error)  
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>} <span style="color:#66d9ef">catch</span> (<span style="color:#a6e22e">error</span>) {  
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">console</span>.<span style="color:#a6e22e">warn</span>(<span style="color:#e6db74">&#34;Oh no!&#34;</span>, <span style="color:#a6e22e">error</span> <span style="color:#66d9ef">instanceof</span> Error <span style="color:#f92672">?</span> <span style="color:#a6e22e">error.message</span> : <span style="color:#66d9ef">error</span>)  
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><h3 id="non-null-assertions">Non-Null Assertions</h3>
+<p>类型断言的另一个常见场景是从变量中移除<code>null</code>或<code>undefined</code>，而<font color="#de7802">这些变量理论上可能包含这些变量，但实际上并不包含</font>。这种情况非常常见，<code>TypeScript</code>为此提供了一种速记方法。可以使用<code>!</code>来表示同样的意思，而不用写出<code>as</code>和值的完整类型，无论该值是否包含<code>null</code>和<code>undefined</code>。换句话说，<code>!</code> 非空断言断言类型不是<code>null</code>或<code>undefined</code>。</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span><span style="color:#66d9ef">let</span> <span style="color:#a6e22e">maybeDate</span> <span style="color:#f92672">=</span> Math.<span style="color:#a6e22e">random</span>() <span style="color:#f92672">&gt;</span> <span style="color:#ae81ff">0.5</span> <span style="color:#f92672">?</span> <span style="color:#66d9ef">undefined</span> <span style="color:#f92672">:</span> <span style="color:#66d9ef">new</span> Date();  
+</span></span><span style="display:flex;"><span><span style="color:#75715e">// Asserted type: Date  
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#a6e22e">maybeDate</span> <span style="color:#66d9ef">as</span> Date;  
+</span></span><span style="display:flex;"><span><span style="color:#75715e">// Asserted type: Date  
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#a6e22e">maybeDate</span><span style="color:#f92672">!</span>;
+</span></span></code></pre></div><p>在使用Map.get等API时，非空断言尤其有用，这些API会返回一个值，如果该值不存在，则返回undefined值。</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span><span style="color:#66d9ef">const</span> <span style="color:#a6e22e">seasonCounts</span> <span style="color:#f92672">=</span> <span style="color:#66d9ef">new</span> <span style="color:#a6e22e">Map</span>([[<span style="color:#e6db74">&#34;I Love Lucy&#34;</span>, <span style="color:#ae81ff">6</span>], [<span style="color:#e6db74">&#34;The Golden Girls&#34;</span>, <span style="color:#ae81ff">7</span>],]);  
+</span></span><span style="display:flex;"><span><span style="color:#75715e">// Type: string | undefined  
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">const</span> <span style="color:#a6e22e">maybeValue</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">seasonCounts</span>.<span style="color:#66d9ef">get</span>(<span style="color:#e6db74">&#34;I Love Lucy&#34;</span>);  
+</span></span><span style="display:flex;"><span><span style="color:#75715e">// Error: Object is possibly &#39;undefined&#39;.  
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#a6e22e">console</span>.<span style="color:#a6e22e">log</span>(<span style="color:#a6e22e">maybeValue</span>.<span style="color:#a6e22e">toUpperCase</span>());  
+</span></span><span style="display:flex;"><span><span style="color:#75715e">// Type: string  
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">const</span> <span style="color:#a6e22e">knownValue</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">seasonCounts</span>.<span style="color:#66d9ef">get</span>(<span style="color:#e6db74">&#34;I Love Lucy&#34;</span>)<span style="color:#f92672">!</span>;  
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">console</span>.<span style="color:#a6e22e">log</span>(<span style="color:#a6e22e">knownValue</span>.<span style="color:#a6e22e">toUpperCase</span>()); <span style="color:#75715e">// Ok
+</span></span></span></code></pre></div><h1 id="generics">Generics</h1>
 <h2 id="generic-interfaces">Generic Interfaces</h2>
 <p>接口也可以声明为泛型，它们遵循与函数类似的泛型规则：可以在接口名称后面的<code>&lt;</code>和<code>&gt;</code>之间声明任意数量的类型参数。</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span><span style="color:#66d9ef">interface</span> <span style="color:#a6e22e">Box</span>&lt;<span style="color:#f92672">T</span>&gt; {
@@ -2747,7 +2778,12 @@ code.has-jax {
             <li><a href="#keyof-typeof">keyof typeof</a></li>
           </ul>
         </li>
-        <li><a href="#type-assertions">Type Assertions</a></li>
+        <li><a href="#type-assertions">Type Assertions</a>
+          <ul>
+            <li><a href="#asserting-caught-error-types">Asserting Caught Error Types</a></li>
+            <li><a href="#non-null-assertions">Non-Null Assertions</a></li>
+          </ul>
+        </li>
       </ul>
     </li>
     <li><a href="#generics">Generics</a>
