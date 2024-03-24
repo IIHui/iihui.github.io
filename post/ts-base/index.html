@@ -241,13 +241,13 @@ code.has-jax {
     <i class="fa fa-file-word-o"></i>
 </span>
 <span class="post-meta-item-text">字数: </span>
-<span class="leancloud-visitors-count">31653</span>
+<span class="leancloud-visitors-count">32188</span>
 &nbsp; | &nbsp;
 <span class="post-meta-item-icon">
     <i class="fa fa-coffee"></i>
 </span>
 <span class="post-meta-item-text">阅读: </span>
-<span class="leancloud-visitors-count">64 分钟</span>
+<span class="leancloud-visitors-count">65 分钟</span>
 </span>
       </div>
     </header>
@@ -2017,8 +2017,94 @@ code.has-jax {
 </span></span><span style="display:flex;"><span><span style="color:#75715e">// Type: string  
 </span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">const</span> <span style="color:#a6e22e">knownValue</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">seasonCounts</span>.<span style="color:#66d9ef">get</span>(<span style="color:#e6db74">&#34;I Love Lucy&#34;</span>)<span style="color:#f92672">!</span>;  
 </span></span><span style="display:flex;"><span><span style="color:#a6e22e">console</span>.<span style="color:#a6e22e">log</span>(<span style="color:#a6e22e">knownValue</span>.<span style="color:#a6e22e">toUpperCase</span>()); <span style="color:#75715e">// Ok
-</span></span></span></code></pre></div><h1 id="generics">Generics</h1>
-<h2 id="generic-interfaces">Generic Interfaces</h2>
+</span></span></span></code></pre></div><h3 id="type-assertion-caveats">Type Assertion Caveats</h3>
+<p>类型断言，就像any类型一样，是TypeScript类型系统的一个必要逃生舱口。因此，与any类型一样，只要合理可行，就应避免使用断言。</p>
+<p>通常情况下，在代码中使用更准确的类型比使用断言更好。因为，有时这些断言往往是错误的&ndash;要么在编写时已经是错误的，要么在代码库发生变化后错误。下面代码编译时无错误，但运行时会出错：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span><span style="color:#66d9ef">const</span> <span style="color:#a6e22e">seasonCounts</span> <span style="color:#f92672">=</span> <span style="color:#66d9ef">new</span> <span style="color:#a6e22e">Map</span>([[<span style="color:#e6db74">&#34;I Love Lucy&#34;</span>, <span style="color:#ae81ff">6</span>], [<span style="color:#e6db74">&#34;The Golden Girls&#34;</span>, <span style="color:#ae81ff">7</span>],]);  
+</span></span><span style="display:flex;"><span><span style="color:#75715e">// Type: string  
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">const</span> <span style="color:#a6e22e">knownValue</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">seasonCounts</span>.<span style="color:#66d9ef">get</span>(<span style="color:#e6db74">&#34;I Love Lucy 11&#34;</span>)<span style="color:#f92672">!</span>;  
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">console</span>.<span style="color:#a6e22e">log</span>(<span style="color:#a6e22e">knownValue</span>.<span style="color:#a6e22e">toUpperCase</span>()); <span style="color:#75715e">// Ok
+</span></span></span></code></pre></div><p>如果使用类型声明时，在编译时就会报错。而使用类型断言时，需要在运行时才会报错：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span><span style="color:#66d9ef">interface</span> <span style="color:#a6e22e">Entertainer</span> {  
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">acts</span>: <span style="color:#66d9ef">string</span>[];  
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">name</span>: <span style="color:#66d9ef">string</span>;  
+</span></span><span style="display:flex;"><span>}  
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">// 编译错误:  Property &#39;acts&#39; is missing in type &#39;{ name: string; }&#39; but required in type &#39;Entertainer&#39;.  
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">// const declared: Entertainer = {name: &#34;Moms Mabley&#34;,};  
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">const</span> <span style="color:#a6e22e">asserted</span> <span style="color:#f92672">=</span> {<span style="color:#a6e22e">name</span><span style="color:#f92672">:</span> <span style="color:#e6db74">&#34;Moms Mabley&#34;</span>,} <span style="color:#66d9ef">as</span> <span style="color:#a6e22e">Entertainer</span>; <span style="color:#75715e">// Ok, but...  
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">// 运行时错误: Cannot read properties of undefined (reading &#39;join&#39;)  
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#a6e22e">console</span>.<span style="color:#a6e22e">log</span>(<span style="color:#a6e22e">asserted</span>.<span style="color:#a6e22e">acts</span>.<span style="color:#a6e22e">join</span>(<span style="color:#e6db74">&#34;, &#34;</span>));
+</span></span></code></pre></div><p>对TypeScript被允许的前提是其中一个类型可以赋值给另一个类型。如果类型断言发生在两个完全不相关的类型之间，TypeScript就会出现编译错误。</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span><span style="color:#75715e">// Conversion of type &#39;string&#39; to type &#39;number&#39; may be a mistake because neither type sufficiently overlaps with the other. If this was intentional, convert the expression to &#39;unknown&#39; first.
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">let</span> <span style="color:#a6e22e">myValue</span> <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;Stella!&#34;</span> <span style="color:#66d9ef">as</span> <span style="color:#66d9ef">number</span>;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">let</span> <span style="color:#a6e22e">myValueDouble</span> <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;1337&#34;</span> <span style="color:#66d9ef">as</span> <span style="color:#66d9ef">unknown</span> <span style="color:#66d9ef">as</span> <span style="color:#66d9ef">number</span>;  
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">console</span>.<span style="color:#a6e22e">log</span>(<span style="color:#a6e22e">myValueDouble</span>)
+</span></span></code></pre></div><p>需要注意的是，<font color="#de7802">类型断言只能暂时欺骗编译器，无法避免运行时错误</font>。滥用类型断言可能会导致运行时错误，下面代码无编译错误，但会出现运行时错误：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span><span style="color:#66d9ef">interface</span> <span style="color:#a6e22e">Cat</span> {
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">name</span>: <span style="color:#66d9ef">string</span>;
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">run</span>()<span style="color:#f92672">:</span> <span style="color:#66d9ef">void</span>;
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">interface</span> <span style="color:#a6e22e">Fish</span> {
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">name</span>: <span style="color:#66d9ef">string</span>;
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">swim</span>()<span style="color:#f92672">:</span> <span style="color:#66d9ef">void</span>;
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">function</span> <span style="color:#a6e22e">isFish</span>(<span style="color:#a6e22e">animal</span>: <span style="color:#66d9ef">Cat</span> <span style="color:#f92672">|</span> <span style="color:#a6e22e">Fish</span>) {
+</span></span><span style="display:flex;"><span>    (<span style="color:#a6e22e">animal</span> <span style="color:#66d9ef">as</span> <span style="color:#a6e22e">Fish</span>).<span style="color:#a6e22e">swim</span>()
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">const</span> <span style="color:#a6e22e">cat</span>: <span style="color:#66d9ef">Cat</span> <span style="color:#f92672">=</span> {
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">name</span><span style="color:#f92672">:</span> <span style="color:#e6db74">&#34;Hello&#34;</span>,
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">run</span>()<span style="color:#f92672">:</span> <span style="color:#66d9ef">void</span> {
+</span></span><span style="display:flex;"><span>        <span style="color:#a6e22e">console</span>.<span style="color:#a6e22e">log</span>(<span style="color:#66d9ef">this</span>.<span style="color:#a6e22e">name</span>)
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">isFish</span>(<span style="color:#a6e22e">cat</span>)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">// 出现运行时错误
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span> <span style="color:#a6e22e">animal</span>.<span style="color:#a6e22e">swim</span> <span style="color:#66d9ef">is</span> <span style="color:#a6e22e">not</span> <span style="color:#a6e22e">a</span> <span style="color:#66d9ef">function</span>
+</span></span></code></pre></div><p>下面示例代码中，使用<code>instanceof</code>来判断变量是否是某个类的实例是合适的。但某些情况下，<code>ApiError</code>和<code>HttpError</code>不是一个类，而是接口类型。<font color=LightSeaGreen>接口是一个类型并不是一个真正的值，它在编译结果中会被删除</font>，因此无法使用<code>instanceof</code>来做运行时判断。</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span><span style="color:#66d9ef">class</span> <span style="color:#a6e22e">ApiError</span> <span style="color:#66d9ef">extends</span> Error {
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">code</span>: <span style="color:#66d9ef">number</span> <span style="color:#f92672">=</span> <span style="color:#ae81ff">0</span>
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">class</span> <span style="color:#a6e22e">HttpError</span> <span style="color:#66d9ef">extends</span> Error {
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">statusCode</span>: <span style="color:#66d9ef">number</span> <span style="color:#f92672">=</span> <span style="color:#ae81ff">200</span>;
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">function</span> <span style="color:#a6e22e">isApiError</span>(<span style="color:#a6e22e">error</span>: <span style="color:#66d9ef">Error</span>) {
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">return</span> <span style="color:#a6e22e">error</span> <span style="color:#66d9ef">instanceof</span> <span style="color:#a6e22e">ApiError</span>;
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p>此时只能使用类型断言：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span><span style="color:#66d9ef">interface</span> <span style="color:#a6e22e">ApiError</span> <span style="color:#66d9ef">extends</span> Error {
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">code</span>: <span style="color:#66d9ef">number</span>;
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">interface</span> <span style="color:#a6e22e">HttpError</span> <span style="color:#66d9ef">extends</span> Error {
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">statusCode</span>: <span style="color:#66d9ef">number</span>;
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">function</span> <span style="color:#a6e22e">isApiError</span>(<span style="color:#a6e22e">error</span>: <span style="color:#66d9ef">Error</span>) {
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">return</span> (<span style="color:#a6e22e">error</span> <span style="color:#66d9ef">as</span> <span style="color:#a6e22e">ApiError</span>).<span style="color:#a6e22e">code</span> <span style="color:#f92672">===</span> <span style="color:#ae81ff">23</span>;
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><h1 id="generics">Generics</h1>
+<h2 id="generic-functions">Generic Functions</h2>
+<p>要使函数具有泛型功能，可以在紧靠参数括号之前，用叫括号封装一个类型参数的别名。这样，该类型参数就可以在函数体内部的参数类型标注、返回类型标注和类型标注中使用。</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span><span style="color:#66d9ef">function</span> <span style="color:#a6e22e">identity</span>&lt;<span style="color:#f92672">T</span>&gt;(<span style="color:#a6e22e">input</span>: <span style="color:#66d9ef">T</span>) {  
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">return</span> <span style="color:#a6e22e">input</span>;  
+</span></span><span style="display:flex;"><span>}  
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">const</span> <span style="color:#a6e22e">numeric</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">identity</span>(<span style="color:#e6db74">&#34;me&#34;</span>); <span style="color:#75715e">// Type: &#34;me&#34;  
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">const</span> <span style="color:#a6e22e">stringy</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">identity</span>(<span style="color:#ae81ff">123</span>); <span style="color:#75715e">// Type: 123
+</span></span></span></code></pre></div><p>箭头函数也可以是泛型的：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span><span style="color:#66d9ef">const</span> <span style="color:#a6e22e">identity1</span> <span style="color:#f92672">=</span> &lt;<span style="color:#f92672">T</span>&gt;(<span style="color:#a6e22e">input</span>: <span style="color:#66d9ef">T</span>) <span style="color:#f92672">=&gt;</span> <span style="color:#a6e22e">input</span>;  
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">identity1</span>(<span style="color:#ae81ff">12</span>)  
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">identity1</span>(<span style="color:#e6db74">&#39;123&#39;</span>)
+</span></span></code></pre></div><h2 id="generic-interfaces">Generic Interfaces</h2>
 <p>接口也可以声明为泛型，它们遵循与函数类似的泛型规则：可以在接口名称后面的<code>&lt;</code>和<code>&gt;</code>之间声明任意数量的类型参数。</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span><span style="color:#66d9ef">interface</span> <span style="color:#a6e22e">Box</span>&lt;<span style="color:#f92672">T</span>&gt; {
 </span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">inside</span>: <span style="color:#66d9ef">T</span>;
@@ -2128,58 +2214,7 @@ code.has-jax {
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span><span style="color:#66d9ef">function</span> <span style="color:#a6e22e">logInput</span>&lt;<span style="color:#f92672">Input</span> <span style="color:#a6e22e">extends</span> <span style="color:#a6e22e">string</span>&gt;(<span style="color:#a6e22e">input</span>: <span style="color:#66d9ef">Input</span>) {
 </span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">console</span>.<span style="color:#a6e22e">log</span>(<span style="color:#e6db74">&#34;Hi!&#34;</span>, <span style="color:#a6e22e">input</span>);
 </span></span><span style="display:flex;"><span>}
-</span></span></code></pre></div><h3 id="type-assert">type assert</h3>
-<p>需要注意的是，<font color="#de7802">类型断言只能暂时欺骗编译器，无法避免运行时错误</font>。滥用类型断言可能会导致运行时错误，下面代码无编译错误，但会出现运行时错误：</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span><span style="color:#66d9ef">interface</span> <span style="color:#a6e22e">Cat</span> {
-</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">name</span>: <span style="color:#66d9ef">string</span>;
-</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">run</span>()<span style="color:#f92672">:</span> <span style="color:#66d9ef">void</span>;
-</span></span><span style="display:flex;"><span>}
-</span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span><span style="color:#66d9ef">interface</span> <span style="color:#a6e22e">Fish</span> {
-</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">name</span>: <span style="color:#66d9ef">string</span>;
-</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">swim</span>()<span style="color:#f92672">:</span> <span style="color:#66d9ef">void</span>;
-</span></span><span style="display:flex;"><span>}
-</span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span><span style="color:#66d9ef">function</span> <span style="color:#a6e22e">isFish</span>(<span style="color:#a6e22e">animal</span>: <span style="color:#66d9ef">Cat</span> <span style="color:#f92672">|</span> <span style="color:#a6e22e">Fish</span>) {
-</span></span><span style="display:flex;"><span>    (<span style="color:#a6e22e">animal</span> <span style="color:#66d9ef">as</span> <span style="color:#a6e22e">Fish</span>).<span style="color:#a6e22e">swim</span>()
-</span></span><span style="display:flex;"><span>}
-</span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span><span style="color:#66d9ef">const</span> <span style="color:#a6e22e">cat</span>: <span style="color:#66d9ef">Cat</span> <span style="color:#f92672">=</span> {
-</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">name</span><span style="color:#f92672">:</span> <span style="color:#e6db74">&#34;Hello&#34;</span>,
-</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">run</span>()<span style="color:#f92672">:</span> <span style="color:#66d9ef">void</span> {
-</span></span><span style="display:flex;"><span>        <span style="color:#a6e22e">console</span>.<span style="color:#a6e22e">log</span>(<span style="color:#66d9ef">this</span>.<span style="color:#a6e22e">name</span>)
-</span></span><span style="display:flex;"><span>    }
-</span></span><span style="display:flex;"><span>}
-</span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span><span style="color:#a6e22e">isFish</span>(<span style="color:#a6e22e">cat</span>)
-</span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span><span style="color:#75715e">// 出现运行时错误
-</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span> <span style="color:#a6e22e">animal</span>.<span style="color:#a6e22e">swim</span> <span style="color:#66d9ef">is</span> <span style="color:#a6e22e">not</span> <span style="color:#a6e22e">a</span> <span style="color:#66d9ef">function</span>
-</span></span></code></pre></div><p>下面示例代码中，使用<code>instanceof</code>来判断变量是否是某个类的实例是合适的。但某些情况下，<code>ApiError</code>和<code>HttpError</code>不是一个类，而是接口类型。<font color=LightSeaGreen>接口是一个类型并不是一个真正的值，它在编译结果中会被删除</font>，因此无法使用<code>instanceof</code>来做运行时判断。</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span><span style="color:#66d9ef">class</span> <span style="color:#a6e22e">ApiError</span> <span style="color:#66d9ef">extends</span> Error {
-</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">code</span>: <span style="color:#66d9ef">number</span> <span style="color:#f92672">=</span> <span style="color:#ae81ff">0</span>
-</span></span><span style="display:flex;"><span>}
-</span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span><span style="color:#66d9ef">class</span> <span style="color:#a6e22e">HttpError</span> <span style="color:#66d9ef">extends</span> Error {
-</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">statusCode</span>: <span style="color:#66d9ef">number</span> <span style="color:#f92672">=</span> <span style="color:#ae81ff">200</span>;
-</span></span><span style="display:flex;"><span>}
-</span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span><span style="color:#66d9ef">function</span> <span style="color:#a6e22e">isApiError</span>(<span style="color:#a6e22e">error</span>: <span style="color:#66d9ef">Error</span>) {
-</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">return</span> <span style="color:#a6e22e">error</span> <span style="color:#66d9ef">instanceof</span> <span style="color:#a6e22e">ApiError</span>;
-</span></span><span style="display:flex;"><span>}
-</span></span></code></pre></div><p>此时只能使用类型断言：</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span><span style="color:#66d9ef">interface</span> <span style="color:#a6e22e">ApiError</span> <span style="color:#66d9ef">extends</span> Error {
-</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">code</span>: <span style="color:#66d9ef">number</span>;
-</span></span><span style="display:flex;"><span>}
-</span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span><span style="color:#66d9ef">interface</span> <span style="color:#a6e22e">HttpError</span> <span style="color:#66d9ef">extends</span> Error {
-</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">statusCode</span>: <span style="color:#66d9ef">number</span>;
-</span></span><span style="display:flex;"><span>}
-</span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span><span style="color:#66d9ef">function</span> <span style="color:#a6e22e">isApiError</span>(<span style="color:#a6e22e">error</span>: <span style="color:#66d9ef">Error</span>) {
-</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">return</span> (<span style="color:#a6e22e">error</span> <span style="color:#66d9ef">as</span> <span style="color:#a6e22e">ApiError</span>).<span style="color:#a6e22e">code</span> <span style="color:#f92672">===</span> <span style="color:#ae81ff">23</span>;
-</span></span><span style="display:flex;"><span>}
-</span></span></code></pre></div><h3 id="enum">enum</h3>
+</span></span></code></pre></div><h1 id="enum">enum</h1>
 <p>由于enum编译后是一个对象，所以<font color="#de7802">不能有与它同名的变量，对象，函数和类等</font>。如果存在同名的变量、对象、函数或类，将会出现编译错误。</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span><span style="color:#75715e">// 下面代码中由于枚举和变量名重复了，所以会出现编译错误
 </span></span></span><span style="display:flex;"><span><span style="color:#75715e">// Enum declarations can only merge with namespace or other enum declarations.
@@ -2363,7 +2398,7 @@ code.has-jax {
 </span></span><span style="display:flex;"><span><span style="color:#75715e">// 编译错误:Cannot find name &#39;D&#39;.
 </span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#a6e22e">console</span>.<span style="color:#a6e22e">log</span>(<span style="color:#a6e22e">Foo</span>[<span style="color:#ae81ff">3</span>], <span style="color:#a6e22e">Foo</span>[<span style="color:#a6e22e">D</span>])
 </span></span></code></pre></div><p><a href="https://typescript.p6p.net/typescript-tutorial/enum.html">参考资料1</a></p>
-<h3 id="namespaces">NameSpaces</h3>
+<h1 id="namespaces">NameSpaces</h1>
 <p><code>namespace</code>用于建立一个容器，其<font color=LightSeaGreen>内部的所有变量和函数，默认都必须在这个容器里使用</font>。下面示例代码中，<code>isString</code>只能在命名空间<code>Utils</code>中使用，如果在外部直接使用函数<code>isString</code>，就会报错。</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span><span style="color:#66d9ef">namespace</span> <span style="color:#a6e22e">Utils</span> {
 </span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">function</span> <span style="color:#a6e22e">isString</span>(<span style="color:#a6e22e">value</span>: <span style="color:#66d9ef">any</span>) {
@@ -2782,12 +2817,14 @@ code.has-jax {
           <ul>
             <li><a href="#asserting-caught-error-types">Asserting Caught Error Types</a></li>
             <li><a href="#non-null-assertions">Non-Null Assertions</a></li>
+            <li><a href="#type-assertion-caveats">Type Assertion Caveats</a></li>
           </ul>
         </li>
       </ul>
     </li>
     <li><a href="#generics">Generics</a>
       <ul>
+        <li><a href="#generic-functions">Generic Functions</a></li>
         <li><a href="#generic-interfaces">Generic Interfaces</a>
           <ul>
             <li><a href="#inferred-generic-interface-types">Inferred Generic Interface Types</a></li>
@@ -2802,13 +2839,12 @@ code.has-jax {
         <li><a href="#using-generics-right">Using Generics Right</a>
           <ul>
             <li><a href="#the-golden-rule-of-generics">The Golden Rule of Generics</a></li>
-            <li><a href="#type-assert">type assert</a></li>
-            <li><a href="#enum">enum</a></li>
-            <li><a href="#namespaces">NameSpaces</a></li>
           </ul>
         </li>
       </ul>
     </li>
+    <li><a href="#enum">enum</a></li>
+    <li><a href="#namespaces">NameSpaces</a></li>
   </ul>
 </nav></div>
     </div>
