@@ -241,7 +241,7 @@ code.has-jax {
     <i class="fa fa-file-word-o"></i>
 </span>
 <span class="post-meta-item-text">字数: </span>
-<span class="leancloud-visitors-count">32659</span>
+<span class="leancloud-visitors-count">32823</span>
 &nbsp; | &nbsp;
 <span class="post-meta-item-icon">
     <i class="fa fa-coffee"></i>
@@ -1801,34 +1801,48 @@ code.has-jax {
 </span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">class</span> <span style="color:#a6e22e">Empty</span> <span style="color:#66d9ef">implements</span> <span style="color:#a6e22e">Graded</span>, <span style="color:#a6e22e">Reporter</span> {
 </span></span><span style="display:flex;"><span>}
 </span></span></code></pre></div><h1 id="type-modifiers">Type Modifiers</h1>
-<p>现在，已经了解了TypeScript类型系统如何与现有JavaScript结构（如数组、类和对象）协同工作。将进一步介绍类型系统本身，并展示编写更精确类型以及基于其他类型的类型的功能。</p>
+<p>现在，已经了解TypeScript类型系统如何与现有JavaScript结构（如数组、类和对象）协同工作，将进一步介绍类型系统本身。</p>
 <h2 id="top-types">Top Types</h2>
-<p>顶级类型或通用类型是一种可以代表系统中任何可能值的类型。所有类型的值都可以赋值给顶级类型的变量或常量。</p>
+<p>顶层类型或通用类型是一种可以代表类型系统中任何可能值的类型。所有类型的值都可以赋值给顶层类型的变量或常量。</p>
 <h3 id="any">any</h3>
-<p><code>any</code>类型可以作为顶层类型，因为任何类型都可以提供给标注为<code>any</code>类型。 <code>any</code>类型通常用于允许接受任何类型的地方，例如<code>console.log</code>的参数:</p>
+<p><code>any</code>类型可以作为顶层类型，<span style="background:#40a9ff">表示没有任何限制，该类型的变量可以赋予任意类型的值</span>。 <code>any</code>类型通常用于允许接受任何类型的地方，例如<code>console.log</code>的参数:</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span><span style="color:#66d9ef">let</span> <span style="color:#a6e22e">anyValue</span>: <span style="color:#66d9ef">any</span>;  
 </span></span><span style="display:flex;"><span><span style="color:#a6e22e">anyValue</span> <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;Lucille Ball&#34;</span>; <span style="color:#75715e">// Ok  
 </span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#a6e22e">anyValue</span> <span style="color:#f92672">=</span> <span style="color:#ae81ff">123</span>; <span style="color:#75715e">// Ok  
 </span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#a6e22e">console</span>.<span style="color:#a6e22e">log</span>(<span style="color:#a6e22e">anyValue</span>); <span style="color:#75715e">// Ok
-</span></span></span></code></pre></div><p>使用类型<code>any</code>就是明确告诉编译器，对赋值或属性不执行类型检查。这种安全性的缺失有时有用，但禁用类型检降低了TypeScript的实用性。例如，下面代码不会出现编译错误，但会出现运行时错误：</p>
+</span></span></span></code></pre></div><p>使用类型<code>any</code>就是<font color="#de7802">明确告诉编译器不需要执行类型检查</font>。这种类型检查安全性的缺失有时有用，但也降低了实用性。例如，下面示例代码不会出现编译错误，但会出现运行时错误：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span><span style="color:#66d9ef">function</span> <span style="color:#a6e22e">greetComedian</span>(<span style="color:#a6e22e">name</span>: <span style="color:#66d9ef">any</span>) { <span style="color:#75715e">// No type error...  
 </span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#a6e22e">console</span>.<span style="color:#a6e22e">log</span>(<span style="color:#e6db74">`Announcing </span><span style="color:#e6db74">${</span><span style="color:#a6e22e">name</span>.<span style="color:#a6e22e">toUpperCase</span>()<span style="color:#e6db74">}</span><span style="color:#e6db74">!`</span>);  
 </span></span><span style="display:flex;"><span>}  
 </span></span><span style="display:flex;"><span><span style="color:#75715e">// TypeError: name.toUpperCase is not a function
 </span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#a6e22e">greetComedian</span>({<span style="color:#a6e22e">name</span><span style="color:#f92672">:</span> <span style="color:#e6db74">&#34;Bea Arthur&#34;</span>});
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">let</span> <span style="color:#a6e22e">x</span>: <span style="color:#66d9ef">any</span> <span style="color:#f92672">=</span> <span style="color:#e6db74">&#39;hello&#39;</span>;  
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">x</span>(<span style="color:#ae81ff">1</span>) <span style="color:#75715e">// 编译不报错，运行时报错  
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#a6e22e">x</span>.<span style="color:#a6e22e">foo</span> <span style="color:#f92672">=</span> <span style="color:#ae81ff">100</span>; <span style="color:#75715e">// 编译不报错，运行时报错
+</span></span></span></code></pre></div><p>由于上面原因，应当尽量避免使用<code>any</code>类型。从集合论的角度看，<code>any</code>类型可以看成是所有其他类型的全集，包含了一切可能的类型。这种类型被称为<code>Top Type</code>，表示涵盖了所有下层类型。</p>
+<p><code>any</code>类型除了关闭类型检查，还有一个很大的问题，就是它会“污染”其他变量。它可以赋值给其他任何类型的变量（因为没有类型检查），导致其他变量出错。</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span><span style="color:#66d9ef">let</span> <span style="color:#a6e22e">x</span>: <span style="color:#66d9ef">any</span> <span style="color:#f92672">=</span> <span style="color:#e6db74">&#39;hello&#39;</span>;  
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">let</span> <span style="color:#a6e22e">y</span>: <span style="color:#66d9ef">number</span>;  
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">y</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">x</span>; <span style="color:#75715e">// 不报错  
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#a6e22e">y</span> <span style="color:#f92672">*</span> <span style="color:#ae81ff">123</span> <span style="color:#75715e">// 不报错  
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">// 编译不报错，运行时报错：y.toFixed is not a function
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#a6e22e">y</span>.<span style="color:#a6e22e">toFixed</span>() 
 </span></span></code></pre></div><h3 id="unknown">unknown</h3>
-<p>类型<code>unknown</code>是一种真正的顶层类型。<code>unknown</code>和<code>any</code>类似，所有对象都可以赋值给标注为<code>unknown</code>类型的变量。<code>any</code>与<code>unknown</code>的主要区别在于，<code>TypeScript</code>对<code>unknown</code>类型的值有更严格的限制：</p>
+<p>为了解决any类型污染其他类型的问题，引入了unkonw类型。类型<code>unknown</code>是一种真正的顶层类型。<code>unknown</code>和<code>any</code>类似，所有对象都可以赋值给标注为<code>unknown</code>类型的变量。<code>any</code>与<code>unknown</code>的主要区别在于，<code>TypeScript</code>对<code>unknown</code>类型的值有更严格的限制：</p>
 <ul>
-<li><code>TypeScript</code>不允许直接访问<code>unkonwn</code>类型值的属性。</li>
-<li><code>unknown</code>不可赋值给非顶级类型（<code>any</code>或<code>unknown</code>）。</li>
+<li>不允许直接访问<code>unkonwn</code>类型值的方法和属性。</li>
+<li><code>unknown</code>不可赋值给非顶级类型（非<code>any</code>或<code>unknown</code>）。</li>
 </ul>
 <p>如果直接访问类型为<code>unknown</code>类型值的属性，会出现编译错误：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span><span style="color:#66d9ef">function</span> <span style="color:#a6e22e">greetComedian</span>(<span style="color:#a6e22e">name</span>: <span style="color:#66d9ef">unknown</span>) {  
 </span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">console</span>.<span style="color:#a6e22e">log</span>(<span style="color:#e6db74">`Announcing </span><span style="color:#e6db74">${</span><span style="color:#a6e22e">name</span>.<span style="color:#a6e22e">toUpperCase</span>()<span style="color:#e6db74">}</span><span style="color:#e6db74">!`</span>);  
 </span></span><span style="display:flex;"><span>}
 </span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span><span style="color:#75715e">// &#39;name&#39; is of type &#39;unknown&#39;.
-</span></span></span></code></pre></div><p><code>TypeScript</code>允许代码访问<code>unknwon</code>类型值的属性的唯一方法是缩小值的类型。例如，使用 <code>instanceof</code>或<code>typeof</code>，或使用类型断言。</p>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">// 编译错误：&#39;name&#39; is of type &#39;unknown&#39;.
+</span></span></span></code></pre></div><p>允许在代码中访问<code>unknwon</code>类型值的唯一方法是窄化值的类型范围。例如，使用<code>instanceof</code>或<code>typeof</code>或使用类型断言。</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span><span style="color:#66d9ef">function</span> <span style="color:#a6e22e">greetComedianSafety</span>(<span style="color:#a6e22e">name</span>: <span style="color:#66d9ef">unknown</span>) {  
 </span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">if</span> (<span style="color:#66d9ef">typeof</span> <span style="color:#a6e22e">name</span> <span style="color:#f92672">===</span> <span style="color:#e6db74">&#39;string&#39;</span>) {  
 </span></span><span style="display:flex;"><span>        <span style="color:#a6e22e">console</span>.<span style="color:#a6e22e">log</span>(<span style="color:#e6db74">`Announcing </span><span style="color:#e6db74">${</span><span style="color:#a6e22e">name</span>.<span style="color:#a6e22e">toUpperCase</span>()<span style="color:#e6db74">}</span><span style="color:#e6db74">!`</span>); <span style="color:#75715e">// Ok  
@@ -1840,8 +1854,8 @@ code.has-jax {
 </span></span><span style="display:flex;"><span><span style="color:#a6e22e">greetComedianSafety</span>(<span style="color:#e6db74">&#34;Betty White&#34;</span>); <span style="color:#75715e">// Logs: 4  
 </span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#a6e22e">greetComedianSafety</span>({});
 </span></span></code></pre></div><h2 id="type-predicates">Type Predicates</h2>
-<p>使用<code>instanceof</code>和<code>typeof</code>，可以窄化类型范围。对于直接使用有限的检查集窄化类型来说，这一切都很好。但如果用函数来包装类型窄化逻辑，原来的窄化就会失去作用。</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span><span style="color:#75715e">// 将窄化封装
+<p>使用<code>instanceof</code>和<code>typeof</code>，可以窄化类型范围。对于直接使用有限检查集窄化类型来说，这一切都很好。但如果用函数来包装类型窄化逻辑，就会使得原来的窄化失去作用。</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span><span style="color:#75715e">// 将窄化封装成函数
 </span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">function</span> <span style="color:#a6e22e">isNumberOrString</span>(<span style="color:#a6e22e">value</span>: <span style="color:#66d9ef">unknown</span>) {  
 </span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">return</span> [<span style="color:#e6db74">&#39;number&#39;</span>, <span style="color:#e6db74">&#39;string&#39;</span>].<span style="color:#a6e22e">includes</span>(<span style="color:#66d9ef">typeof</span> <span style="color:#a6e22e">value</span>);  
 </span></span><span style="display:flex;"><span>}
@@ -1854,9 +1868,9 @@ code.has-jax {
 </span></span><span style="display:flex;"><span>        <span style="color:#a6e22e">console</span>.<span style="color:#a6e22e">log</span>(<span style="color:#e6db74">&#34;Value does not exist:&#34;</span>, <span style="color:#a6e22e">value</span>);  
 </span></span><span style="display:flex;"><span>    }  
 </span></span><span style="display:flex;"><span>}
-</span></span></code></pre></div><p><code>TypeScript</code>有一种特殊的语法，<span style="background:#40a9ff">用于返回布尔值的函数，以指示参数是否为特定类型</span>。这被称为<code>type predicate</code>(类型谓词)，有时也被称为<code>user-defined type guard</code>，表示开发者正在创建自己的类型保护，类似于<code>instanceof</code>或<code>typeof</code>。类型谓词的返回类型可以声明为参数名称，is关键字和某种类型：</p>
+</span></span></code></pre></div><p><code>TypeScript</code>有一种特殊的语法，<span style="background:#40a9ff">用于返回布尔值的函数，以指示参数是否为特定类型</span>。称为<code>type predicate</code>(类型谓词)，有时也被称为<code>user-defined type guard</code>，表示开发者正在创建自己的类型保护，类似于<code>instanceof</code>或<code>typeof</code>。</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span><span style="color:#66d9ef">function</span> <span style="color:#a6e22e">typePredicate</span>(<span style="color:#a6e22e">input</span>: <span style="color:#66d9ef">WideType</span>)<span style="color:#f92672">:</span> <span style="color:#a6e22e">input</span> <span style="color:#66d9ef">is</span> <span style="color:#a6e22e">NarrowType</span>;
-</span></span></code></pre></div><p>可以修改上一个示例的辅助函数<code>isNumberOrString</code>，使其具有明确的返回类型，明确说明<code>value</code>是<code>string | number</code>。</p>
+</span></span></code></pre></div><p>可以修改上面定义的函数<code>isNumberOrString</code>，使其具有明确的返回类型，明确说明<code>value</code>是<code>string | number</code>。</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span><span style="color:#66d9ef">function</span> <span style="color:#a6e22e">isNumberOrString</span>(<span style="color:#a6e22e">value</span>: <span style="color:#66d9ef">unknown</span>)<span style="color:#f92672">:</span> <span style="color:#a6e22e">value</span> <span style="color:#66d9ef">is</span> <span style="color:#66d9ef">number</span> <span style="color:#f92672">|</span> <span style="color:#66d9ef">string</span> {  
 </span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">return</span> [<span style="color:#e6db74">&#39;number&#39;</span>, <span style="color:#e6db74">&#39;string&#39;</span>].<span style="color:#a6e22e">includes</span>(<span style="color:#66d9ef">typeof</span> <span style="color:#a6e22e">value</span>);  
 </span></span><span style="display:flex;"><span>}  
@@ -1889,7 +1903,7 @@ code.has-jax {
 </span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#75715e">// 编译错误: Property &#39;routine&#39; does not exist on type &#39;Comedian&#39;.
 </span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#a6e22e">console</span>.<span style="color:#a6e22e">log</span>(<span style="color:#a6e22e">value</span>.<span style="color:#a6e22e">routine</span>);  
 </span></span><span style="display:flex;"><span>}
-</span></span></code></pre></div><p>请注意：由于类型谓词在<code>false</code>情况下也会窄化类型范围，因此如果类型谓词不仅检查输入类型，还检查其他类型，可能会得到令人惊讶的结果。</p>
+</span></span></code></pre></div><p>需要注意的是，因为类型谓词在<code>false</code>情况下也会窄化类型范围，如果类型谓词不仅检查输入类型，还检查其他，可能会得到令人惊讶的结果。</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span><span style="color:#66d9ef">function</span> <span style="color:#a6e22e">isLongString</span>(<span style="color:#a6e22e">input</span>: <span style="color:#66d9ef">string</span> <span style="color:#f92672">|</span> <span style="color:#66d9ef">undefined</span>)<span style="color:#f92672">:</span> <span style="color:#a6e22e">input</span> <span style="color:#66d9ef">is</span> <span style="color:#66d9ef">string</span> {  
 </span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">return</span> <span style="color:#f92672">!!</span>(<span style="color:#a6e22e">input</span> <span style="color:#f92672">&amp;&amp;</span> <span style="color:#a6e22e">input</span>.<span style="color:#a6e22e">length</span> <span style="color:#f92672">&gt;=</span> <span style="color:#ae81ff">7</span>);  
 </span></span><span style="display:flex;"><span>}
@@ -1903,12 +1917,12 @@ code.has-jax {
 </span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>        <span style="color:#a6e22e">console</span>.<span style="color:#a6e22e">log</span>(<span style="color:#e6db74">&#34;Short text:&#34;</span>, <span style="color:#a6e22e">text</span><span style="color:#f92672">?</span>.<span style="color:#a6e22e">length</span>);  
 </span></span><span style="display:flex;"><span>    }  
 </span></span><span style="display:flex;"><span>}
-</span></span></code></pre></div><p>类型谓词除了验证属性或值的类型外，还可以验证其他类型，因此很容易被滥用。一般建议尽可能避免使用它们。在大多数情况下，简单的类型谓词就足够了。</p>
+</span></span></code></pre></div><p>类型谓词除了验证类型外，还可以验证其他，因此很容易被滥用。一般建议尽可能避免使用它们。大多数情况下，简单的类型谓词就足够了。</p>
 <h2 id="type-operators">Type Operators</h2>
-<p>并非所有类型都可以只使用关键字或现有类型的名称来表示。有时，有必要创建一种新类型，将两者结合起来，对现有类型的属性进行一些转换。</p>
+<p>并非所有类型都可以只使用关键字或现有类型的名称来表示。有时，需要创建一种新类型，将两者结合起来，对现有类型的属性进行一些转换。</p>
 <h3 id="keyof">keyof</h3>
-<p><code>JavaScript</code>对象可以使用动态值检索成员，动态值通常（但不一定）是字符串类型的。在类型系统中表示这些键可能很棘手。使用诸如字符串之类的<code>catchall primitive</code>将导致容器值的键无效。</p>
-<p>这就是为什么<code>TypeScript</code>在使用更严格的编译设置时，直接使用<code>ratings[key]</code>会报错。如下所示，类型<code>string</code>允许的值很可能不允许作为<code>Ratings</code>接口上的属性，而且<code>Ratings</code>没有声明允许任何字符串键的索引签名：</p>
+<p><code>JavaScript</code>对象可以使用动态值访问成员，动态值通常（但不一定）是字符串类型的。在类型系统中表示这些键可能很棘手。使用诸如字符串<code>catchall primitive</code>将导致容器值的键无效。</p>
+<p>这就是为什么<code>TypeScript</code>在使用更严格的编译设置时，直接使用<code>ratings[key]</code>会报错。如下所示，类型<code>string</code>允许的值很可能不允许作为<code>Ratings</code>接口上的属性，而且<code>Ratings</code>在定义时并没有允许任何字符串键的索引签名：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span><span style="color:#66d9ef">interface</span> <span style="color:#a6e22e">Ratings</span> {  
 </span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">audience</span>: <span style="color:#66d9ef">number</span>;  
 </span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">critics</span>: <span style="color:#66d9ef">number</span>;  
@@ -1919,7 +1933,7 @@ code.has-jax {
 </span></span><span style="display:flex;"><span>}
 </span></span><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span><span style="color:#75715e">//  Element implicitly has an &#39;any&#39; type because expression of type &#39;string&#39; can&#39;t be used to index type &#39;Ratings&#39;.
-</span></span></span></code></pre></div><p>另一种方法是对允许的键使用字面类型联合。这样可以更准确地限制容器值中存在的键，下面代码中使用了字面量联合类型限制了键：</p>
+</span></span></span></code></pre></div><p>有一种方法是对允许的键使用字面类型联合。这样可以更准确地限制容器值中存在的键，下面代码使用了字面量联合限制了键的范围：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span><span style="color:#66d9ef">interface</span> <span style="color:#a6e22e">Ratings</span> {  
 </span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">audience</span>: <span style="color:#66d9ef">number</span>;  
 </span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">critics</span>: <span style="color:#66d9ef">number</span>;  
@@ -1932,7 +1946,7 @@ code.has-jax {
 </span></span><span style="display:flex;"><span><span style="color:#66d9ef">const</span> <span style="color:#a6e22e">ratings</span>: <span style="color:#66d9ef">Ratings</span> <span style="color:#f92672">=</span> {<span style="color:#a6e22e">audience</span>: <span style="color:#66d9ef">66</span>, <span style="color:#a6e22e">critics</span>: <span style="color:#66d9ef">84</span>};  
 </span></span><span style="display:flex;"><span><span style="color:#a6e22e">getRating</span>(<span style="color:#a6e22e">ratings</span>, <span style="color:#e6db74">&#39;audience&#39;</span>);
 </span></span></code></pre></div><p>但如果接口有很多属性时，必须把每个成员的<code>key</code>都输入到联合类型中，并随时更新。这样就会非常麻烦。</p>
-<p><code>TypeScript</code>提供了<code>keyof</code>操作符，它接收现有类型，并返回该类型允许的所有键的联合。在任何可能使用类型的地方（如类型标注），将它放在类型名称的前面。下面代码中，<code>keyof Ratings</code>等同于<code>'audience' | 'critic'</code>，但这种方式更方便：</p>
+<p><code>TypeScript</code>提供了<code>keyof</code>操作符，<span style="background:#40a9ff">它接收现有类型，并返回该类型允许的所有键的联合</span>。在任何需要使用类型的地方，可以将它放在类型名称的前面。下面代码中，<code>keyof Ratings</code>等同于<code>'audience' | 'critic'</code>：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span><span style="color:#66d9ef">function</span> <span style="color:#a6e22e">getCountKeyof</span>(<span style="color:#a6e22e">ratings</span>: <span style="color:#66d9ef">Ratings</span>, <span style="color:#a6e22e">key</span>: <span style="color:#66d9ef">keyof</span> <span style="color:#a6e22e">Ratings</span>)<span style="color:#f92672">:</span> <span style="color:#66d9ef">number</span> {  
 </span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">return</span> <span style="color:#a6e22e">ratings</span>[<span style="color:#a6e22e">key</span>];  
 </span></span><span style="display:flex;"><span>}
@@ -1951,7 +1965,7 @@ code.has-jax {
 </span></span><span style="display:flex;"><span>    <span style="color:#75715e">// Error: Type &#39;number&#39; is not assignable to type &#39;string&#39;.  
 </span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#a6e22e">adaptation</span> <span style="color:#f92672">=</span> {...<span style="color:#a6e22e">original</span>, <span style="color:#a6e22e">medium</span>: <span style="color:#66d9ef">2</span>};  
 </span></span><span style="display:flex;"><span>}
-</span></span></code></pre></div><p>尽管<code>typeof</code>类型操作符从外观上看很像运行时的<code>typeof</code>操作符，后者用于返回值类型的字符串描述，但两者是不同的。<span style="background:#40a9ff">它们只是巧合地使用了同一个词。请记住：JavaScript操作符是一个运行时操作符，用于返回类型的字符串名称</span>。TypeScript版本因为是类型操作符，所以只能在类型中使用，不会出现在编译后的代码中。</p>
+</span></span></code></pre></div><p>尽管<code>typeof</code>类型操作符从外观上看很像运行时的<code>typeof</code>操作符，后者返回值类型的字符串描述，但两者是不同的。<span style="background:#40a9ff">它们只是巧合地使用了同一个词。请记住：JavaScript操作符是一个运行时操作符，用于返回类型的字符串名称</span>。TypeScript中的<code>typeof</code>因为是类型操作符，所以只能在类型中使用，不会出现在编译后的代码中。</p>
 <h3 id="keyof-typeof">keyof typeof</h3>
 <p><code>typeof</code>检索值的类型，<code>keyof</code>检索类型允许的键。<code>typeScript</code>允许将这两个关键字串联起来，以简洁地检索值的类型上允许的键。将它们组合在一起，<code>typeof</code>类型操作符在处理<code>keyof</code>类型操作时变得非常有用。</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span><span style="color:#66d9ef">const</span> <span style="color:#a6e22e">ratings</span> <span style="color:#f92672">=</span> {  
@@ -1963,9 +1977,9 @@ code.has-jax {
 </span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">console</span>.<span style="color:#a6e22e">log</span>(<span style="color:#a6e22e">ratings</span>[<span style="color:#a6e22e">key</span>]);  
 </span></span><span style="display:flex;"><span>}
 </span></span></code></pre></div><h2 id="type-assertions">Type Assertions</h2>
-<p>当我们的代码是「强类型」代码时，<code>TypeScript</code>的效果最好，因为代码中所有值都有精确的已知类型。顶层类型和类型保护等功能可以让<code>TypeScript</code>的类型检查程序理解复杂的代码。然而，有时并不能合理地100%准确告诉类型系统我们代码的工作原理。</p>
+<p>当我们的代码是「强类型」代码时，<code>TypeScript</code>的效果最好，因为代码中所有值都有精确的类型。顶层类型和类型保护等功能可以让类型检查程序理解复杂的代码。然而，有时并不能100%准确地告诉类型系统。</p>
 <p>例如，<code>JSON.parse</code>故意返回顶层类型<code>any</code>。我们无法安全地告知类型系统，<code>JSON.parse</code>的特定字符串值应返回任何特定的值类型。</p>
-<p><code>TypeScript</code>提供了一种语法，用于覆盖类型系统对值类型的理解。即<code>type assertion</code>，也称为<code>type cast</code>。如果一个值的类型不同，可以在<code>as</code>关键字后面加上一个类型。<code>TypeScript</code>将遵从我们的断言，并将该值视为该类型。</p>
+<p><code>TypeScript</code>提供了一种语法，用于覆盖类型系统对值类型的理解。即<code>type assertion</code>，也称为<code>type cast</code>。如果一个值的类型不同，可以在<code>as</code>关键字后面加上一个类型。<code>TypeScript</code>将遵从断言，将该值视为该类型。</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span><span style="color:#66d9ef">const</span> <span style="color:#a6e22e">rawData</span> <span style="color:#f92672">=</span> <span style="color:#e6db74">`[&#34;grace&#34;, &#34;frankie&#34;]`</span>;  
 </span></span><span style="display:flex;"><span><span style="color:#75715e">// Type: any  
 </span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#a6e22e">JSON</span>.<span style="color:#a6e22e">parse</span>(<span style="color:#a6e22e">rawData</span>);  
@@ -1975,7 +1989,7 @@ code.has-jax {
 </span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#a6e22e">JSON</span>.<span style="color:#a6e22e">parse</span>(<span style="color:#a6e22e">rawData</span>) <span style="color:#66d9ef">as</span> [<span style="color:#66d9ef">string</span>, <span style="color:#66d9ef">string</span>];  
 </span></span><span style="display:flex;"><span><span style="color:#75715e">// Type: [&#34;grace&#34;, &#34;frankie&#34;]  
 </span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#a6e22e">JSON</span>.<span style="color:#a6e22e">parse</span>(<span style="color:#a6e22e">rawData</span>) <span style="color:#66d9ef">as</span> [<span style="color:#e6db74">&#34;grace&#34;</span>, <span style="color:#e6db74">&#34;frankie&#34;</span>];
-</span></span></code></pre></div><p>类型断言仅存在于<code>TypeScript</code>d类型系统，当编译为<code>JavaScript</code>时，它们会与类型系统语法的所有其他部分一起被删除。<code>编译为JavaScript时</code>，之前的代码将变成如下：</p>
+</span></span></code></pre></div><p>类型断言仅存在于<code>TypeScript</code>类型系统，当编译为<code>JavaScript</code>时，它们会与类型系统语法的所有其他部分一起被删除。编译为<code>JavaScript</code>时，之前的代码将变成如下形式：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span><span style="color:#66d9ef">const</span> <span style="color:#a6e22e">rawData</span> <span style="color:#f92672">=</span> <span style="color:#e6db74">`[&#34;grace&#34;, &#34;frankie&#34;]`</span>;  
 </span></span><span style="display:flex;"><span><span style="color:#75715e">// Type: any  
 </span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#a6e22e">JSON</span>.<span style="color:#a6e22e">parse</span>(<span style="color:#a6e22e">rawData</span>);  
