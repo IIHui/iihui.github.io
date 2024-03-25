@@ -241,7 +241,7 @@ code.has-jax {
     <i class="fa fa-file-word-o"></i>
 </span>
 <span class="post-meta-item-text">字数: </span>
-<span class="leancloud-visitors-count">8230</span>
+<span class="leancloud-visitors-count">8515</span>
 &nbsp; | &nbsp;
 <span class="post-meta-item-icon">
     <i class="fa fa-coffee"></i>
@@ -1236,6 +1236,69 @@ code.has-jax {
 </span></span><span style="display:flex;"><span><span style="color:#66d9ef">let</span> originalMethod = class_getInstanceMethod(Bundle.<span style="color:#66d9ef">self</span>, <span style="color:#66d9ef">#selector</span>(getter: Bundle.bundleIdentifier))
 </span></span><span style="display:flex;"><span><span style="color:#66d9ef">let</span> swizzledMethod = class_getInstanceMethod(Bundle.<span style="color:#66d9ef">self</span>, <span style="color:#66d9ef">#selector</span>(getter: Bundle.customBundleIdentifier))
 </span></span><span style="display:flex;"><span>method_exchangeImplementations(originalMethod!, swizzledMethod!)
+</span></span></code></pre></div><div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span><span style="color:#66d9ef">import</span> <span style="color:#a6e22e">ObjectiveC</span>.<span style="color:#a6e22e">runtime</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">extension</span> <span style="color:#a6e22e">Bundle</span> {
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">// 用于确保代码只被执行一次的静态属性</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">private</span> <span style="color:#66d9ef">static</span> <span style="color:#66d9ef">let</span> doOnce: Void = {
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">let</span> originalSelector = <span style="color:#66d9ef">#selector</span>(getter: Bundle.bundleIdentifier)
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">let</span> swizzledSelector = <span style="color:#66d9ef">#selector</span>(getter: Bundle.customBundleIdentifier)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">guard</span> <span style="color:#66d9ef">let</span> originalMethod = class_getInstanceMethod(Bundle.<span style="color:#66d9ef">self</span>, originalSelector),
+</span></span><span style="display:flex;"><span>              <span style="color:#66d9ef">let</span> swizzledMethod = class_getInstanceMethod(Bundle.<span style="color:#66d9ef">self</span>, swizzledSelector) <span style="color:#66d9ef">else</span> { <span style="color:#66d9ef">return</span> }
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>        method_exchangeImplementations(originalMethod, swizzledMethod)
+</span></span><span style="display:flex;"><span>    }()
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">// 自定义的bundleIdentifier的getter</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">@objc</span> <span style="color:#66d9ef">var</span> customBundleIdentifier: String? {
+</span></span><span style="display:flex;"><span>        <span style="color:#75715e">// 这里返回你想要的bundleIdentifier，用于绕过SDK校验</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">return</span> <span style="color:#e6db74">&#34;com.your.custom.bundleIdentifier&#34;</span>
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">// 在应用启动时调用此方法来执行方法交换</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">static</span> <span style="color:#66d9ef">func</span> <span style="color:#a6e22e">swizzleBundleIdentifier</span>() {
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">_</span> = Bundle.doOnce
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span><span style="color:#66d9ef">extension</span> <span style="color:#a6e22e">Bundle</span> {
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">// 方法交换</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">static</span> <span style="color:#66d9ef">func</span> <span style="color:#a6e22e">swizzleBundle</span>() {
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">let</span> originalSelector = <span style="color:#66d9ef">#selector</span>(getter: Bundle.bundleIdentifier)
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">let</span> swizzledSelector = <span style="color:#66d9ef">#selector</span>(getter: Bundle.customBundleIdentifier)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">guard</span> <span style="color:#66d9ef">let</span> originalMethod = class_getInstanceMethod(Bundle.<span style="color:#66d9ef">self</span>, originalSelector),
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>              <span style="color:#66d9ef">let</span> swizzledMethod = class_getInstanceMethod(Bundle.<span style="color:#66d9ef">self</span>, swizzledSelector) <span style="color:#66d9ef">else</span> {
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">return</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>        }
+</span></span><span style="display:flex;"><span>        method_exchangeImplementations(originalMethod, swizzledMethod)
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>  
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">// 自定义的bundleIdentifier的getter</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">@objc</span> <span style="color:#66d9ef">var</span> customBundleIdentifier: String? {
+</span></span><span style="display:flex;"><span>        <span style="color:#75715e">// 这里返回想要的bundleIdentifier，用于绕过校验</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">return</span> <span style="color:#e6db74">&#34;xxx.bundleIdentifier&#34;</span>
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">private</span> <span style="color:#66d9ef">var</span> privateKey: String? {
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    Bundle.swizzleBundle()
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">let</span> key = xxx <span style="color:#75715e">// 获取key</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    Bundle.swizzleBundle()
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">return</span> key
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>}
 </span></span></code></pre></div><div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-fallback" data-lang="fallback"><span style="display:flex;"><span>dyld: could not load inserted library &#39;/System/Library/PrivateFrameworks/GPUToolsCapture.framework/GPUToolsCapture&#39; because image not found
 </span></span></code></pre></div><p><a href="https://developer.apple.com/forums/thread/736487">https://developer.apple.com/forums/thread/736487</a></p>
 <p>JSON解析</p>
