@@ -643,8 +643,8 @@ Keep Alive 配置 Min Pool Size=2;Max Pool Size=50;Connection Timeout=15;Keep Al
           <tag>ts</tag>
         </tags>
         <content type="html"> TypeScript的7种基本类型为：
- null undefined boolean string number bigint symbol  若声明变量时不标注类型，编译器会认为该变量的类型为any，表示该变量可以赋值为任何类型值。如果声明变量时既不标注类型也不初始化，接着使用typeof得到的结果为undefined(编译成JavaScript后，因为未初始化变量的默认值为undefined)：
-let rocker; // Type: any console.log(typeof rocker) // undefined rocker = &amp;#34;Joan Jett&amp;#34;; // 此时类型为string rocker.toUpperCase(); // JOAN JETT console.log(rocker, typeof rocker) // Joan Jett string rocker = 19.58; // 此时类型为number console.log(rocker, typeof rocker) // 19.58 number 函数的可选参数必须是最后一个参数，若将可选参数放在必需参数前，会出现编译错误。下面代码编译时会出现A required parameter cannot follow an optional parameter。
+ null undefined boolean string number bigint symbol  若声明变量时不标注类型，编译器会认为该变量的类型为any，表示该变量可以赋值为任何类型值。如果声明变量时既不标注类型也不初始化，接着使用typeof得到的结果为undefined(typescript编译成JavaScript后，因为未初始化变量的默认值为undefined)：
+let rocker; // Type: any console.log(typeof rocker) // undefined rocker = &amp;#34;Joan Jett&amp;#34;; // 此时类型为string rocker.toUpperCase(); // JOAN JETT console.log(rocker, typeof rocker) // Joan Jett string rocker = 19.58; // 此时类型为number console.log(rocker, typeof rocker) // 19.58 number 函数的可选参数必须是最后一个参数，若将可选参数放在必需参数前，会出现编译错误。下面代码编译时会出现A required parameter cannot follow an optional parameter错误。
 function hello3(x?: string, y: number) {  console.log(x, y) }  // 编译错误：A required parameter cannot follow an optional parameter 具有默认值的参数若不位于参数列表的末尾，调用时不能省略该参数，如果要触发默认值，必须显式地传入undefined。
 function hello3(x = 3, y: number) {  console.log(x, y) } hello3(undefined, 890)  // 执行结果 3 890 Modules JavaScript编程语言最近才规范了文件之间如何共享代码。ECMAScript 2015增加了ECMAScript Modules以规范文件间的import和export语法。
 在module文件中声明的任何内容都只能在该文件中使用，除非该文件中有明确的export语句。下面代码test.ts文件从同级的./values文件中导入了一个值，并导出了一个doubled常量值:
@@ -829,7 +829,7 @@ interface Writing {  title: string; }  interface Novella extends Writing {  page
 interface WithNullableName {  name: string | null; }  interface WithNonNullableName extends WithNullableName {  name: string; }  // 编译错误，子接口的范围没有缩小 interface WithNumericName extends WithNullableName {  name: number | string; } Extending Multiple Interfaces TypeScript中的接口定义时可以声明为扩展多个其它接口。即派生接口的extends关键字之后，存在多个用逗号分隔的接口名。派生接口将接收所有基础接口的所有成员。
 interface GivesNumber {  giveNumber(): number; }  interface GivesString {  giveString(): string; }  interface GivesBothAndEither extends GivesNumber, GivesString {  giveEither(): number | string; }  function useGivesBoth(instance: GivesBothAndEither) {  instance.giveEither(); // Type: number | string  instance.giveNumber(); // Type: number  instance.giveString(); // Type: string } 将一个接口标注为扩展多个其它接口，既可以减少代码重复，又可以使对象更容易在不同的代码区域重复使用。
 Interface Merging 接口的一个重要特性是可以合并。接口合并意味着，如果在同一作用域中声明了两个名称相同的接口，它们就会合并成一个更大的接口，并在该名称下包含所有声明的字段。
-interface Merged {  fromFirst: string; }  interface Merged {  fromSecond: number; } 接口merge并不经常使用，建议在可能的情况下尽量避免使用该功能。因为，如果在多个地方声明了一个接口，就很难理解代码。
+interface Merged {  fromFirst: string; }  interface Merged {  fromSecond: number; } 接口merge并不经常使用，建议在可能的情况下尽量避免使用该功能。因为，如果在多个地方声明了一个接口，就较难理解代码。
 然而，接口合并对于增强来自外部包或内置的全局接口（如Window）特别有用。例如，当使用默认的编译器选项时，在带有myEnvironmentVariable属性的文件中声明Window接口，就可以使用 window.myEnvironmentVariable：
 interface Window {  myEnvironmentVariable: string; }  window.myEnvironmentVariable; Member Naming Conflicts 请注意，合并后的接口不能以不同类型多次声明相同名称的属性。如果一个接口中已经声明了一个属性，那么以后合并的接口必须使用相同的类型。但是，合并后的接口可以定义一个名称相同但签名不同的方法。这样做会为该方法创建一个函数重载。
 interface MergedMethods {  different(input: string): string; }  interface MergedMethods {  different(input: number): string; // Ok } Classes  除了类型检查，TypeScript还强调了它的转换器（transpiler），类就是一个常见的例子。TypeScript中的类只是支持所有JavaScript语言特性的众多特性之一。TypeScript既不鼓励也不反对类的使用或任何其它流行的JavaScript模式。
