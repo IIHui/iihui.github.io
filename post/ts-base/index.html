@@ -241,7 +241,7 @@ code.has-jax {
     <i class="fa fa-file-word-o"></i>
 </span>
 <span class="post-meta-item-text">字数: </span>
-<span class="leancloud-visitors-count">33262</span>
+<span class="leancloud-visitors-count">33247</span>
 &nbsp; | &nbsp;
 <span class="post-meta-item-icon">
     <i class="fa fa-coffee"></i>
@@ -1137,8 +1137,8 @@ code.has-jax {
 </span></span><span style="display:flex;"><span><span style="color:#a6e22e">console</span>.<span style="color:#a6e22e">log</span>(<span style="color:#a6e22e">records</span>) <span style="color:#75715e">// [ &#39;123&#39;, &#39;456&#39;, &#39;21&#39;, &#39;Come On Over&#39;, &#39;The Bodyguard&#39; ]
 </span></span></span></code></pre></div><p><code>void</code>类型不属于<code>JavaScript</code>，是<code>TypeScript</code>的一个关键字，用于声明函数的返回值类型。请记住，<font color=red>它表示函数的返回值不打算被使用，而不是表示返回值可以被返回</font>。</p>
 <h3 id="never-returns">Never Returns</h3>
-<p>有些函数不仅不返回值，而且根本不返回。永不返回的函数是那些总是抛出错误或运行无限循环的函数（通常是故意的）。</p>
-<p>如果一个函数永远不会返回，那么显式添加一个<code>: never</code>类型标注表示调用该函数后的任何代码都不会运行。下面<code>fail</code>函数只抛出一个错误，它有助于<code>TypeScript</code>的控制流分析，将参数<code>param</code>窄化为<code>string</code>：</p>
+<p>有些函数不仅不返回值，而且根本不返回。<font color="#f79646">永不返回的函数是那些总是抛出错误或运行无限循环的函数</font>（希望是故意的）。</p>
+<p>如果一个函数永远不返回，那么显式添加一个<code>: never</code>类型标注，表示调用该函数后的任何代码都不会运行。下面<code>fail</code>函数只是抛出一个错误，它有助于控制流分析，将参数<code>param</code>窄化为<code>string</code>：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span><span style="color:#66d9ef">function</span> <span style="color:#a6e22e">fail</span>(<span style="color:#a6e22e">message</span>: <span style="color:#66d9ef">string</span>)<span style="color:#f92672">:</span> <span style="color:#66d9ef">never</span> {
 </span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">throw</span> <span style="color:#66d9ef">new</span> Error(<span style="color:#e6db74">`Invariant failure: </span><span style="color:#e6db74">${</span><span style="color:#a6e22e">message</span><span style="color:#e6db74">}</span><span style="color:#e6db74">.`</span>);
 </span></span><span style="display:flex;"><span>}
@@ -1149,7 +1149,7 @@ code.has-jax {
 </span></span><span style="display:flex;"><span>    }
 </span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">param</span>.<span style="color:#a6e22e">toUpperCase</span>();
 </span></span><span style="display:flex;"><span>}
-</span></span></code></pre></div><p>需要注意的是，返回类型<code>void</code>指的是函数不返回任何内容，而<code>never</code>指的是函数执行后永远不返回内容。</p>
+</span></span></code></pre></div><p>需要注意的是，返回类型为<code>void</code>指的是函数不返回任何内容，而<code>never</code>指的是函数执行后永远不返回内容。</p>
 <h2 id="function-overloads">Function Overloads</h2>
 <p>有些<code>JavaScript</code>函数可以使用完全不同的实参来调用，而这些实参集不能只用可选参数或可变参数来表示。这些函数可以使用一种名为重载签名（<code>overload signatures</code>）的语法来描述：<font color="#f79646">在最终实现签名和函数体之前，多次声明不同版本的函数名称、形参和返回类型</font>。</p>
 <p>在决定是否对重载函数的调用发出语法错误时，<code>TypeScript</code>只会查看函数的重载签名。实现签名只用于函数的内部逻辑。</p>
@@ -1161,15 +1161,16 @@ code.has-jax {
 </span></span><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span><span style="color:#a6e22e">createDate</span>(<span style="color:#ae81ff">554356800</span>); <span style="color:#75715e">// Ok
 </span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#a6e22e">createDate</span>(<span style="color:#ae81ff">7</span>, <span style="color:#ae81ff">27</span>, <span style="color:#ae81ff">1987</span>); <span style="color:#75715e">// Ok
-</span></span></span></code></pre></div><p>重载签名与类型系统的其它语法一样，在编译<code>TypeScript</code>输出为<code>JavaScript</code>后会被删除。函数重载通常是复杂、难以描述的函数类型的最后手段。<font color="#e36c09">一般来说，最好保持函数简单，尽可能避免使用函数重载</font>。</p>
+</span></span></span></code></pre></div><p>函数的重载签名与类型系统的其它语法一样，在编译输出为<code>JavaScript</code>后会被删除。函数重载通常是复杂、难以描述的函数类型的最后手段。<font color="#e36c09">一般来说，最好保持函数简单，尽可能避免使用函数重载</font>。</p>
 <h3 id="call-signature-compatibility">Call-Signature Compatibility</h3>
 <p>重载函数的实现所使用的签名就是该函数的实现所使用的参数类型和返回类型。因此，<font color="#e36c09">函数重载签名中的返回类型和每个参数都必须可以可赋值给实现签名中同一索引处的参数</font>。</p>
 <p>换句话说，重载函数的<font color="#0070c0">实现签名必须与所有重载签名兼容</font>。下面示例代码中，因为实现签名和所有的重载签名不兼容，会出现编译错误：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span><span style="color:#66d9ef">function</span> <span style="color:#a6e22e">format</span>(<span style="color:#a6e22e">data</span>: <span style="color:#66d9ef">string</span>)<span style="color:#f92672">:</span> <span style="color:#66d9ef">string</span>; <span style="color:#75715e">// Ok
 </span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">function</span> <span style="color:#a6e22e">format</span>(<span style="color:#a6e22e">data</span>: <span style="color:#66d9ef">string</span>, <span style="color:#a6e22e">needle</span>: <span style="color:#66d9ef">string</span>, <span style="color:#a6e22e">haystack</span>: <span style="color:#66d9ef">string</span>)<span style="color:#f92672">:</span> <span style="color:#66d9ef">string</span>; <span style="color:#75715e">// Ok
-</span></span></span><span style="display:flex;"><span><span style="color:#75715e">// This overload signature is not compatible with its implementation signature.
 </span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">function</span> <span style="color:#a6e22e">format</span>(<span style="color:#a6e22e">getData</span><span style="color:#f92672">:</span> () <span style="color:#f92672">=&gt;</span> <span style="color:#66d9ef">string</span>)<span style="color:#f92672">:</span> <span style="color:#66d9ef">string</span>;
-</span></span><span style="display:flex;"><span><span style="color:#66d9ef">function</span> <span style="color:#a6e22e">format</span>(<span style="color:#a6e22e">data</span>: <span style="color:#66d9ef">string</span>, <span style="color:#a6e22e">needle?</span>: <span style="color:#66d9ef">string</span>, <span style="color:#a6e22e">haystack?</span>: <span style="color:#66d9ef">string</span>) {
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">// This overload signature is not compatible with its implementation signature.
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">function</span> <span style="color:#a6e22e">format</span>(<span style="color:#a6e22e">data</span>: <span style="color:#66d9ef">string</span>, <span style="color:#a6e22e">needle?</span>: <span style="color:#66d9ef">string</span>, <span style="color:#a6e22e">haystack?</span>: <span style="color:#66d9ef">string</span>) {
 </span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">return</span> <span style="color:#a6e22e">needle</span> <span style="color:#f92672">&amp;&amp;</span> <span style="color:#a6e22e">haystack</span> <span style="color:#f92672">?</span> <span style="color:#a6e22e">data</span>.<span style="color:#a6e22e">replace</span>(<span style="color:#a6e22e">needle</span>, <span style="color:#a6e22e">haystack</span>) <span style="color:#f92672">:</span> <span style="color:#a6e22e">data</span>;
 </span></span><span style="display:flex;"><span>}
 </span></span></code></pre></div><h1 id="arrays">Arrays</h1>
@@ -1181,10 +1182,11 @@ code.has-jax {
 </span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#a6e22e">warriors</span>.<span style="color:#a6e22e">push</span>(<span style="color:#66d9ef">true</span>);
 </span></span></code></pre></div><p>可以认为根据数组的初始成员推断数组类型与根据变量的初始值推断变量类型类似。<code>TypeScript</code>通常会尝试从赋值来推断预期类型，数组也不例外。</p>
 <h2 id="array-types">Array Types</h2>
-<p>如同其它变量声明，数组变量声明时也可以不初始化。同样地，<span style="background:#ff4d4f">如果数组变量未初始化之前就使用会出现编译错误</span>：</p>
+<p>如同其它变量声明，数组变量声明时也可以不初始化。同样地，<span style="background:rgba(255, 183, 139, 0.55)">如果数组变量未初始化之前就使用会出现编译错误</span>：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span><span style="color:#66d9ef">let</span> <span style="color:#a6e22e">arrayOfNumbers</span>: <span style="color:#66d9ef">number</span>[];
 </span></span><span style="display:flex;"><span><span style="color:#75715e">// 编译报错： Variable &#39;arrayOfNumbers&#39; is used before being assigned.
 </span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#a6e22e">console</span>.<span style="color:#a6e22e">log</span>(<span style="color:#66d9ef">typeof</span> <span style="color:#a6e22e">arrayOfNumbers</span>)
+</span></span><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span><span style="color:#a6e22e">arrayOfNumbers</span> <span style="color:#f92672">=</span> [<span style="color:#ae81ff">4</span>, <span style="color:#ae81ff">8</span>, <span style="color:#ae81ff">15</span>, <span style="color:#ae81ff">16</span>, <span style="color:#ae81ff">23</span>, <span style="color:#ae81ff">42</span>];
 </span></span></code></pre></div><h3 id="array-and-function-types">Array and Function Types</h3>
 <p>涉及数组和函数类型时<font color="#245bdb">可能需要使用圆括号来区分数组类型中的内容</font>。圆括号可用于指明类型中哪一部分是函数的返回值，哪一部分是数组内容。</p>
@@ -1206,7 +1208,7 @@ code.has-jax {
 </span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">undefined</span>,
 </span></span><span style="display:flex;"><span>];
 </span></span></code></pre></div><h3 id="evolving-any-arrays">Evolving Any Arrays</h3>
-<p>若初始值为空的数组变量不加上类型声明，数组类型被认为是<code>any[]</code>。这意味着该数组可以接收任何内容，允许添加可能不正确的值，这会抵消类型检查器的好处。如果编译器开启了严格类型检查，下面代码会出现编译错误：</p>
+<p>若初始值为空的数组变量不加上类型标注，则数组类型被推断为<code>any[]</code>。这意味着该数组可以接收任何内容，若允许添加可能不正确的值，会抵消类型检查器的好处。如果编译器开启了严格类型检查，下面代码会出现编译错误：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span><span style="color:#75715e">// Type: any[]
 </span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">let</span> <span style="color:#a6e22e">values</span> <span style="color:#f92672">=</span> [];
 </span></span><span style="display:flex;"><span><span style="color:#75715e">// Type: string[]
@@ -1233,7 +1235,7 @@ code.has-jax {
 </span></span><span style="display:flex;"><span><span style="color:#75715e">// Type: Date | string
 </span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">const</span> <span style="color:#a6e22e">soldierOrDate</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">soldiersOrDates</span>[<span style="color:#ae81ff">0</span>];
 </span></span></code></pre></div><h3 id="caveat-unsound-members">Caveat: Unsound Members</h3>
-<p>众所周知，<code>TypeScript</code>的<span style="background:#40a9ff">类型系统在技术上是不健全的，它可以使类型在多数情况下是正确的</span>，但有时对值类型的理解可能是不正确的，<font color=red>数组尤其是类型系统不健全的根源</font>。</p>
+<p>众所周知，<code>TypeScript</code>的<span style="background:rgba(255, 183, 139, 0.55)">类型系统在技术上是不健全的，它可以使类型在多数情况下是正确的</span>，但有时对值类型的理解可能是不正确的，<font color=red>数组尤其是类型系统不健全的根源</font>。</p>
 <p>默认情况下，<code>TypeScript</code>假设所有数组成员的访问都会返回该相应的成员，尽管在<code>JavaScript</code>中，访问数组元素的索引大于数组的长度会得到<code>undefined</code>。在编译器默认设置下，下面这段代码<font color="#245bdb">编译没有任何问题，但运行时会报错</font>：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span><span style="color:#66d9ef">function</span> <span style="color:#a6e22e">withElements</span>(<span style="color:#a6e22e">elements</span>: <span style="color:#66d9ef">string</span>[]) {
 </span></span><span style="display:flex;"><span>    <span style="color:#75715e">// No type error
