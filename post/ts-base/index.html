@@ -241,7 +241,7 @@ code.has-jax {
     <i class="fa fa-file-word-o"></i>
 </span>
 <span class="post-meta-item-text">字数: </span>
-<span class="leancloud-visitors-count">34871</span>
+<span class="leancloud-visitors-count">34892</span>
 &nbsp; | &nbsp;
 <span class="post-meta-item-icon">
     <i class="fa fa-coffee"></i>
@@ -2184,13 +2184,13 @@ code.has-jax {
 </span></span><span style="display:flex;"><span><span style="color:#75715e">// Type: readonly [0, &#39;&#39;]   
 </span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">let</span> <span style="color:#a6e22e">typle</span> <span style="color:#f92672">=</span> [<span style="color:#ae81ff">0</span>, <span style="color:#e6db74">&#39;&#39;</span>] <span style="color:#66d9ef">as</span> <span style="color:#66d9ef">const</span>;
 </span></span></code></pre></div><h3 id="literals-to-primitives">Literals to Primitives</h3>
-<p>对于类型系统来说，<font color="#de7802">将字面值理解为特定的字面值，而不是将其扩大为一般的基础类型</font>，在某些情况是非常有用的。</p>
-<p>例如，与返回元组的函数类似，已知一个函数会产生一个特定的字面而非一般的基础类型，这可能会很有用。这些函数还可以返回更具体的字面值：</p>
+<p>对于类型系统来说，<font color="#de7802">将字面值理解为特定的字面值，而不是将其扩大到对应的基础类型</font>，在某些情况是非常有用的。</p>
+<p>例如，与返回元组的函数类似，一个函数会产生一个特定的字面量类型而非一般的基础类型，这可能会很有用。这些函数还可以返回更具体的字面值：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span><span style="color:#75715e">// Type: () =&gt; string  
 </span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">const</span> <span style="color:#a6e22e">getName</span> <span style="color:#f92672">=</span> () <span style="color:#f92672">=&gt;</span> <span style="color:#e6db74">&#34;Maria Bamford&#34;</span>;  
 </span></span><span style="display:flex;"><span><span style="color:#75715e">// Type: () =&gt; &#34;Maria Bamford&#34;  
 </span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">const</span> <span style="color:#a6e22e">getNameConst</span> <span style="color:#f92672">=</span> () <span style="color:#f92672">=&gt;</span> <span style="color:#e6db74">&#34;Maria Bamford&#34;</span> <span style="color:#66d9ef">as</span> <span style="color:#66d9ef">const</span>;
-</span></span></code></pre></div><p>让值的特定字段成为更具体的字面量也可能是有用的。许多流行的库都要求值的判别字段是一个特定的字面量，这样它们的代码类型就能更具体地对值进行推断：</p>
+</span></span></code></pre></div><p>让值的特定字段成为更具体的字面量类型也可能是有用的。许多流行的库都要求值的判别字段是一个特定的字面量，这样它们的代码类型就能更具体地对值进行推断：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span><span style="color:#66d9ef">interface</span> <span style="color:#a6e22e">Joke</span> {  
 </span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">quote</span>: <span style="color:#66d9ef">string</span>;  
 </span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">style</span><span style="color:#f92672">:</span> <span style="color:#e6db74">&#34;story&#34;</span> <span style="color:#f92672">|</span> <span style="color:#e6db74">&#34;one-liner&#34;</span>;  
@@ -2211,12 +2211,13 @@ code.has-jax {
 </span></span><span style="display:flex;"><span>};  
 </span></span><span style="display:flex;"><span><span style="color:#a6e22e">tellJoke</span>(<span style="color:#a6e22e">narrowJoke</span>); <span style="color:#75715e">// OK  
 </span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>
-</span></span><span style="display:flex;"><span><span style="color:#75715e">// Type: { quote: string; style: string }  
+</span></span><span style="display:flex;"><span><span style="color:#75715e">// 下面的wideObject类型为{ quote: string; style: string }  
 </span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">const</span> <span style="color:#a6e22e">wideObject</span> <span style="color:#f92672">=</span> {  
 </span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">quote</span><span style="color:#f92672">:</span> <span style="color:#e6db74">&#34;Time flies when you are anxious!&#34;</span>,  
 </span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">style</span><span style="color:#f92672">:</span> <span style="color:#e6db74">&#34;one-liner&#34;</span>,  
 </span></span><span style="display:flex;"><span>};
-</span></span><span style="display:flex;"><span><span style="color:#75715e">// 编译错误
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">// 会出现编译错误
 </span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#a6e22e">tellJoke</span>(<span style="color:#a6e22e">wideObject</span>);
 </span></span></code></pre></div><h3 id="read-only-objects">Read-Only Objects</h3>
 <p>对象字面量（如用作变量初始值的对象字面量）通常会拓宽属性类型，这与<code>let</code>变量初始值的拓宽方式相同。字符串值（如 <code>&quot;apple&quot;</code>）变成了基本类型（如字符串），数组类型变成了数组而不是元组。如果这些值中的一部分或全部以后要用于需要其特定字面类型的地方，这可能会带来不便。</p>
