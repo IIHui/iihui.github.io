@@ -241,7 +241,7 @@ code.has-jax {
     <i class="fa fa-file-word-o"></i>
 </span>
 <span class="post-meta-item-text">字数: </span>
-<span class="leancloud-visitors-count">35115</span>
+<span class="leancloud-visitors-count">35122</span>
 &nbsp; | &nbsp;
 <span class="post-meta-item-icon">
     <i class="fa fa-coffee"></i>
@@ -335,7 +335,7 @@ code.has-jax {
 </span></span><span style="display:flex;"><span>}
 </span></span><span style="display:flex;"><span><span style="color:#a6e22e">console</span>.<span style="color:#a6e22e">log</span>(<span style="color:#a6e22e">thinker</span>, <span style="color:#66d9ef">typeof</span> <span style="color:#a6e22e">thinker</span>)  <span style="color:#75715e">// 每次执行时生成随机数不同，结果就会不同
 </span></span></span></code></pre></div><p>联合类型标注可以放置在任何需要类型标注的地方。<font color=red>当已知值是一个联合类型时，<code>TypeScript</code>只允许访问联合中所有子类型都存在的共有成员属性</font>。如果尝试访问的属性不是联合类型所有子类型的共有属性，将会出现编译错误。</p>
-<p>下面代码中，<code>physicist</code>是一个<code>number | string</code>联合类型变量。方法<code>toString()</code>在两种类型中都存在，但<code>toUpperCase</code>方法仅存在于<code>string</code>类型，<code>toFixed</code>方法仅存在于<code>number</code>类型。所以，直接调用<code>toUpperCase</code>和<code>toFixed</code>都会出现编译错误：</p>
+<p>下面代码中，<code>physicist</code>是一个<code>number | string</code>联合类型变量。方法<code>toString()</code>在两种子类型中都存在，但<code>toUpperCase</code>方法仅存在于<code>string</code>类型，<code>toFixed</code>方法仅存在于<code>number</code>类型。所以，直接调用<code>toUpperCase</code>和<code>toFixed</code>都会出现编译错误：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span><span style="color:#75715e">// physicist变量类型为string | number
 </span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">let</span> <span style="color:#a6e22e">physicist</span> <span style="color:#f92672">=</span> Math.<span style="color:#a6e22e">random</span>() <span style="color:#f92672">&gt;</span> <span style="color:#ae81ff">0.5</span> <span style="color:#f92672">?</span> <span style="color:#e6db74">&#34;Marie Curie&#34;</span> <span style="color:#f92672">:</span> <span style="color:#ae81ff">84</span>;
 </span></span><span style="display:flex;"><span><span style="color:#a6e22e">physicist</span>.<span style="color:#a6e22e">toString</span>()
@@ -347,10 +347,10 @@ code.has-jax {
 </span></span><span style="display:flex;"><span><span style="color:#75715e">// 编译错误：Property &#39;toFixed&#39; does not exist on type &#39;string | number&#39;.
 </span></span></span><span style="display:flex;"><span><span style="color:#75715e">// Property &#39;toFixed&#39; does not exist on type &#39;string&#39;
 </span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#a6e22e">physicist</span>.<span style="color:#a6e22e">toFixed</span>();
-</span></span></code></pre></div><p><font color="#de7802">限制访问并不存在于联合类型所有子类型的属性或方法是一种安全措施</font>。如果一个对象还不确定是否为包含某个属性的子类型，<code>TypeScript</code>则认为尝试使用该子类型独有的属性是不安全的。</p>
+</span></span></code></pre></div><p><font color="#de7802">限制访问并不存在于联合类型所有子类型的属性或方法是一种安全措施</font>。如果一个对象还不确定是否为包含某个属性的子类型，<code>TypeScript</code>则认为尝试访问该子类型独有的属性是不安全的。</p>
 <p>如果要使用仅存在于联合类型中某个子类型的属性或方法，我们的代码需要向<code>TypeScript</code>表明在当前位置的值就是某个具体的子类型，这一过程被称为窄化（<code>narrowing</code>）。</p>
 <h2 id="narrowing">Narrowing</h2>
-<p>窄化是指在代码中推断出一个变量值的类型比其声明时的类型更具体。一旦知道一个值的类型比声明时的类型范围更窄，将允许将该值的类型视为这个更具体的类型。</p>
+<p>窄化是指在代码中推断出一个变量值的类型比其声明时的类型更具体（范围更窄）。一旦知道一个值的类型比声明时的类型范围更窄，将允许将该值的类型视为这个更具体的类型。</p>
 <p>用于<font color="#de7802">窄化类型范围的逻辑检查称为类型保护</font>。下面介绍<code>TypeScript</code>可以用来从代码中窄化类型的两种常见类型保护。</p>
 <h3 id="assignment-narrowing">Assignment Narrowing</h3>
 <p>如果直接赋值给一个联合类型变量，会将变量的类型缩小为该值的类型。下面示例代码中，变量<code>admiral</code>声明为<code>number | string</code>联合类型。一旦变量被赋值为字符串<code>&quot;Grace Hopper&quot;</code>，<code>TypeScript</code>就知道它是字符串类型：</p>
