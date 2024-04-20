@@ -849,7 +849,7 @@ class WithPropertyParameters {  takesParameters = (input: boolean) =&amp;gt; inp
 这种严格初始化检查非常有用，可以防止因意外忘记为属性赋值。下面定义的类WithValue在构造函数中没有为属性unused赋值，会出现编译错误：
 class WithValue {  immediate = 0; // Ok  later: number; // Ok (set in the constructor)  mayBeUndefined: number | undefined; // Ok (allowed to be undefined)  unused: number;   constructor() {  this.later = 1;  } }  // 编译错误: Property &amp;#39;unused&amp;#39; has no initializer and is not definitely assigned in the constructor. 如果没有严格的初始化检查，类实例可能会被允许访问一个可能为undefined的值，即使类型系统规定不能这样做。
 Definitely assigned properties 尽管严格的初始检查在多数情况下是很有用的，但在某些情况下，可能会遇到故意在类构造函数之后取消检查类的某个属性的情况。
-如果绝对确定某个属性不需要应用严格初始化检查，可以在其名称后添加一个!来禁用检查。这样做可以向TypeScript申明，该属性将在首次使用前一定会被赋值，而不是undefined的值。
+如果œ绝对确定某个属性不需要应用严格初始化检查，可以在其名称后添加一个!来禁用检查。这样做可以向TypeScript申明，该属性将在首次使用前一定会被赋值，而不是undefined的值。
 class ActivitiesQueue {  pending!: string[]; // Ok   initialize(pending: string[]) {  this.pending = pending;  }   next() {  return this.pending.pop();  } }  const activities = new ActivitiesQueue(); activities.initialize([&amp;#39;eat&amp;#39;, &amp;#39;sleep&amp;#39;, &amp;#39;learn&amp;#39;]) activities.next(); Optional Properties 和接口相似，类也可以声明可选的属性。可选属性的行为与属性类型恰巧是包含| undefined的联合类型属性大致相同。如果没有在构造函数中明确设置可选属性的初始值，严格的初始化检查也不会在意。
 下面的OptionalProperty类中，它的property属性是可选的。因此，无论是否有严格的属性初始化检查，都允许不在类构造函数中赋值可选属性：
 class MissingInitializer {  property?: string; } console.log(new MissingInitializer().property?.length) // Object is possibly &amp;#39;undefined&amp;#39; console.log(new MissingInitializer().property.length) Read-Only Properties 类似接口，类也可以在属性前面添加readonly关键词。关键词readonly仅存在于类型系统，当编译为JavaScript文件后，readonly关键字会被移除。
