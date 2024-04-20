@@ -241,7 +241,7 @@ code.has-jax {
     <i class="fa fa-file-word-o"></i>
 </span>
 <span class="post-meta-item-text">字数: </span>
-<span class="leancloud-visitors-count">35285</span>
+<span class="leancloud-visitors-count">35295</span>
 &nbsp; | &nbsp;
 <span class="post-meta-item-icon">
     <i class="fa fa-coffee"></i>
@@ -918,7 +918,7 @@ code.has-jax {
 <p>交叉类型很容易被滥用，创建出一种不可能的类型。基本类型不能作为交叉类型的成员组合在一起，因为一个值不可能同时是多个基本类型（除了<code>null</code>和<code>undefined</code>）。如果尝试将两个基本类型交叉在一起，就会产生由关键字<code>never</code>表示的<code>never</code>类型：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span><span style="color:#75715e">// 一个变量不可能既是number又是string类型，所以NotPossible的类型为never
 </span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">type</span> <span style="color:#a6e22e">NotPossible</span> <span style="color:#f92672">=</span> <span style="color:#66d9ef">number</span> <span style="color:#f92672">&amp;</span> <span style="color:#66d9ef">string</span>
-</span></span></code></pre></div><p>类型<code>never</code>称为<code>bottom type</code>或<code>empty type</code>。<font color=red>底层类型是指没有可能的值，也是无法到达的类型</font>。不能向标注为底层类型的位置提供任何类型：</p>
+</span></span></code></pre></div><p>类型<code>never</code>称为<code>bottom type</code>或<code>empty type</code>。<font color="#de7802">底层类型是指没有可能的值，也是无法到达的类型</font>。不能向标注为底层类型的位置提供任何类型值，否则会出现编译错误：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span><span style="color:#66d9ef">type</span> <span style="color:#a6e22e">NotPossible</span> <span style="color:#f92672">=</span> <span style="color:#66d9ef">number</span> <span style="color:#f92672">&amp;</span> <span style="color:#66d9ef">string</span>
 </span></span><span style="display:flex;"><span><span style="color:#75715e">// 编译错误：Type &#39;number&#39; is not assignable to type &#39;never&#39;.
 </span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">let</span> <span style="color:#a6e22e">notNumber</span>: <span style="color:#66d9ef">NotPossible</span> <span style="color:#f92672">=</span> <span style="color:#ae81ff">0</span>; 
@@ -926,11 +926,9 @@ code.has-jax {
 </span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">let</span> <span style="color:#a6e22e">notString</span>: <span style="color:#66d9ef">never</span> <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;&#34;</span>; 
 </span></span></code></pre></div><p>大多数<code>TypeScript</code>项目很少使用<code>never</code>类型，<code>never</code>偶尔会出现在代码中表示不可能的状态。但多数情况下，很可能是误用交叉类型造成的错误。</p>
 <h1 id="functions">Functions</h1>
-<blockquote>
-<p>前面介绍了如何使用类型标注来表明变量类型。现在，可以看到如何对函数参数和返回类型进行同样的标注。</p>
-</blockquote>
+<p>前面介绍了如何使用类型标注来声明变量类型。现在，可以看看如何对函数参数和返回类型进行同样的标注。</p>
 <h2 id="function-parameters">Function Parameters</h2>
-<p>下面定义了一个函数，参数为<code>song</code>，在函数体中打印了这个参数的值。在声明该函数时参数并没有显式地标注类型，那么<code>TypeScript</code>会认为这个参数的类型是<code>any</code>：</p>
+<p>下面定义了一个函数，参数为<code>song</code>，在函数体中打印了这个参数的值。在声明该函数时形参并没有显式地标注类型，那么<code>TypeScript</code>会认为这个参数的类型是<code>any</code>：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span><span style="color:#66d9ef">function</span> <span style="color:#a6e22e">sing</span>(<span style="color:#a6e22e">song</span>) {
 </span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">console</span>.<span style="color:#a6e22e">log</span>(<span style="color:#e6db74">`Singing: </span><span style="color:#e6db74">${</span><span style="color:#a6e22e">song</span><span style="color:#e6db74">}</span><span style="color:#e6db74">!`</span>);
 </span></span><span style="display:flex;"><span>}
@@ -940,12 +938,14 @@ code.has-jax {
 </span></span><span style="display:flex;"><span>}
 </span></span></code></pre></div><h3 id="required-parameters">Required Parameters</h3>
 <p><code>JavaScript</code>函数允许使用任意数量的实参(<code>arguments</code>)调用函数，而<code>TypeScript</code><span style="background:rgba(255, 183, 139, 0.55)">假定函数中声明的所有参数都是必需的</span>。如果使用错误的实参数来调用函数，将会出现编译错误。</p>
-<p>如果函数调用的实参过少或过多，<code>TypeScript</code>的实参计数就会发挥作用。下面函数<code>singTwo</code>要求有两个参数，因此传递<code>1</code>个或<code>3</code>个参数都是不允许的：</p>
+<p>如果函数调用的实参过少或过多，<code>TypeScript</code>的实参计数器就会发挥作用。下面函数<code>singTwo</code>要求有两个参数，因此传递<code>1</code>个或<code>3</code>个参数都是不允许的：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span><span style="color:#66d9ef">function</span> <span style="color:#a6e22e">singTwo</span>(<span style="color:#a6e22e">first</span>: <span style="color:#66d9ef">string</span>, <span style="color:#a6e22e">second</span>: <span style="color:#66d9ef">string</span>) {
 </span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">console</span>.<span style="color:#a6e22e">log</span>(<span style="color:#e6db74">`</span><span style="color:#e6db74">${</span><span style="color:#a6e22e">first</span><span style="color:#e6db74">}</span><span style="color:#e6db74"> / </span><span style="color:#e6db74">${</span><span style="color:#a6e22e">second</span><span style="color:#e6db74">}</span><span style="color:#e6db74">`</span>);
 </span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span><span style="color:#75715e">// Expected 2 arguments, but got 1.
 </span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#a6e22e">singTwo</span>(<span style="color:#e6db74">&#34;Ball and Chain&#34;</span>)
+</span></span><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span><span style="color:#75715e">// Expected 2 arguments, but got 3.
 </span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#a6e22e">singTwo</span>(<span style="color:#e6db74">&#34;Go Your Own Way&#34;</span>, <span style="color:#e6db74">&#34;The Chain&#34;</span>, <span style="color:#e6db74">&#34;Dreams&#34;</span>);
 </span></span></code></pre></div><p><font color="#e36c09">强制要求向函数提供必需的参数</font>，有助于执行类型安全。如果不能确保这些参数值都存在，可能会导致代码出现意外行为。</p>
@@ -995,7 +995,7 @@ code.has-jax {
 </span></span><span style="display:flex;"><span>        <span style="color:#a6e22e">console</span>.<span style="color:#a6e22e">log</span>(<span style="color:#e6db74">`Singer: </span><span style="color:#e6db74">${</span><span style="color:#a6e22e">singer</span><span style="color:#e6db74">}</span><span style="color:#e6db74">`</span>)  
 </span></span><span style="display:flex;"><span>    }  
 </span></span><span style="display:flex;"><span>}
-</span></span></code></pre></div><p>如果函数中有多个可选参数，调用时若想省略前面的可选参数，可以传入<code>undefined</code>：</p>
+</span></span></code></pre></div><p>如果定义的函数中有多个可选参数，调用时若想省略前面的可选参数，可以传入<code>undefined</code>：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span><span style="color:#66d9ef">function</span> <span style="color:#a6e22e">announceSong</span>(<span style="color:#a6e22e">song?</span>: <span style="color:#66d9ef">string</span>, <span style="color:#a6e22e">singer?</span>: <span style="color:#66d9ef">string</span>, <span style="color:#a6e22e">name?</span>: <span style="color:#66d9ef">string</span>) {  
 </span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">console</span>.<span style="color:#a6e22e">log</span>(<span style="color:#e6db74">`Song: </span><span style="color:#e6db74">${</span><span style="color:#a6e22e">song</span><span style="color:#e6db74">}</span><span style="color:#e6db74">`</span>);  
 </span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">if</span> (<span style="color:#a6e22e">singer</span>) {  
@@ -1025,6 +1025,7 @@ code.has-jax {
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span><span style="color:#66d9ef">function</span> <span style="color:#a6e22e">hello3</span>(<span style="color:#a6e22e">x</span> <span style="color:#f92672">=</span> <span style="color:#ae81ff">3</span>, <span style="color:#a6e22e">y</span>: <span style="color:#66d9ef">number</span>) {
 </span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">console</span>.<span style="color:#a6e22e">log</span>(<span style="color:#a6e22e">x</span>, <span style="color:#a6e22e">y</span>)
 </span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span><span style="color:#a6e22e">hello3</span>(<span style="color:#66d9ef">undefined</span>, <span style="color:#ae81ff">890</span>)
 </span></span><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span><span style="color:#75715e">// 执行结果
@@ -1052,7 +1053,7 @@ code.has-jax {
 </span></span><span style="display:flex;"><span><span style="color:#a6e22e">Just</span> <span style="color:#a6e22e">Dance</span>, <span style="color:#a6e22e">by</span> <span style="color:#a6e22e">Lady</span> <span style="color:#a6e22e">Gaga</span>
 </span></span><span style="display:flex;"><span><span style="color:#a6e22e">Poker</span> <span style="color:#a6e22e">Face</span>, <span style="color:#a6e22e">by</span> <span style="color:#a6e22e">Lady</span> <span style="color:#a6e22e">Gaga</span>
 </span></span></code></pre></div><h2 id="return-types">Return Types</h2>
-<p>如果知道函数的所有可能返回值，编译器就能推断出函数返回什么类型。下面代码中，<code>TypeScript</code>推断函数<code>singSongs</code>返回一个<code>number</code>：</p>
+<p>如果知道函数的所有可能返回值，编译器就能推断出函数的返回类型。下面代码中，<code>TypeScript</code>推断函数<code>singSongs</code>返回一个<code>number</code>：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span><span style="color:#66d9ef">function</span> <span style="color:#a6e22e">singSongs</span>(<span style="color:#a6e22e">songs</span>: <span style="color:#66d9ef">string</span>[]) {
 </span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">for</span> (<span style="color:#66d9ef">const</span> <span style="color:#a6e22e">song</span> <span style="color:#66d9ef">of</span> <span style="color:#a6e22e">songs</span>) {
 </span></span><span style="display:flex;"><span>        <span style="color:#a6e22e">console</span>.<span style="color:#a6e22e">log</span>(<span style="color:#e6db74">`</span><span style="color:#e6db74">${</span><span style="color:#a6e22e">song</span><span style="color:#e6db74">}</span><span style="color:#e6db74">`</span>);
@@ -1064,19 +1065,19 @@ code.has-jax {
 </span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">return</span> <span style="color:#a6e22e">index</span> <span style="color:#f92672">&lt;</span> <span style="color:#a6e22e">songs</span>.<span style="color:#a6e22e">length</span> <span style="color:#f92672">?</span> <span style="color:#a6e22e">songs</span>[<span style="color:#a6e22e">index</span>] <span style="color:#f92672">:</span> <span style="color:#66d9ef">undefined</span>;
 </span></span><span style="display:flex;"><span>}
 </span></span></code></pre></div><h3 id="explicit-return-types">Explicit Return Types</h3>
-<p>与变量一样，通常不建议使用类型标注来显式声明函数的返回值类型。不过，在某些情况下，显式类型标注对函数很有用：</p>
+<p>通常不建议使用类型标注来显式声明函数的返回值类型。不过，在某些情况下，显式的返回类型标注对函数很有用：</p>
 <ul>
 <li>可能希望强制具有多种可能返回值的函数始终返回相同类型的值。</li>
 <li><code>TypeScript</code>拒绝尝试推理递归函数的返回类型。</li>
 <li>加快超大型项目中的<code>TypeScript</code>类型检查速度。</li>
 </ul>
-<p>函数声明的返回值类型标注位于参数列表的后圆括号之后。对于函数声明来说，这恰好位于左花括号<code>{</code>之前：</p>
+<p>函数声明的返回值类型标注位于参数列表的后圆括号之后。对于函数声明来说，这恰好位于左大括号<code>{</code>之前：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span><span style="color:#66d9ef">function</span> <span style="color:#a6e22e">singSongsRecursive</span>(<span style="color:#a6e22e">songs</span>: <span style="color:#66d9ef">string</span>[], <span style="color:#a6e22e">count</span> <span style="color:#f92672">=</span> <span style="color:#ae81ff">0</span>)<span style="color:#f92672">:</span> <span style="color:#66d9ef">number</span> {
 </span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">return</span> <span style="color:#a6e22e">songs</span>.<span style="color:#a6e22e">length</span> <span style="color:#f92672">?</span> <span style="color:#a6e22e">singSongsRecursive</span>(<span style="color:#a6e22e">songs</span>.<span style="color:#a6e22e">slice</span>(<span style="color:#ae81ff">1</span>), <span style="color:#a6e22e">count</span> <span style="color:#f92672">+</span> <span style="color:#ae81ff">1</span>) <span style="color:#f92672">:</span> <span style="color:#a6e22e">count</span>;
 </span></span><span style="display:flex;"><span>}
 </span></span></code></pre></div><p>对于箭头函数（也称为<code>lambdas</code>表达式）来说，返回类型标注正好位于箭头<code>=&gt;</code>之前。下面定义了一个箭头函数<code>singSongsRecursive</code>：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span><span style="color:#66d9ef">const</span> <span style="color:#a6e22e">singSongsRecursive</span> <span style="color:#f92672">=</span> (<span style="color:#a6e22e">songs</span>: <span style="color:#66d9ef">string</span>[], <span style="color:#a6e22e">count</span> <span style="color:#f92672">=</span> <span style="color:#ae81ff">0</span>)<span style="color:#f92672">:</span> <span style="color:#66d9ef">number</span> <span style="color:#f92672">=&gt;</span> <span style="color:#a6e22e">songs</span>.<span style="color:#a6e22e">length</span> <span style="color:#f92672">?</span> <span style="color:#a6e22e">singSongsRecursive</span>(<span style="color:#a6e22e">songs</span>.<span style="color:#a6e22e">slice</span>(<span style="color:#ae81ff">1</span>), <span style="color:#a6e22e">count</span> <span style="color:#f92672">+</span> <span style="color:#ae81ff">1</span>) <span style="color:#f92672">:</span> <span style="color:#a6e22e">count</span>;
-</span></span></code></pre></div><p>如果<font color="#e36c09">函数体中返回语句对应的值不能赋值给函数标注的返回类型</font>，将会出现编译错误。下面代码本中，函数本应返回的类型为<code>Date | undefined</code>，但在函数体中却返回了<code>string</code>，因此会出现编译错误：</p>
+</span></span></code></pre></div><p>如果<font color="#e36c09">函数体中返回语句对应的值不能赋值给函数标注的返回类型</font>，将会出现编译错误。下面代码中，函数本应返回的类型为<code>Date | undefined</code>，但在函数体中却返回了<code>string</code>，因此会出现编译错误：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span><span style="color:#66d9ef">function</span> <span style="color:#a6e22e">getSongRecordingDate</span>(<span style="color:#a6e22e">song</span>: <span style="color:#66d9ef">string</span>)<span style="color:#f92672">:</span> Date <span style="color:#f92672">|</span> <span style="color:#66d9ef">undefined</span> {
 </span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">switch</span> (<span style="color:#a6e22e">song</span>) {
 </span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">case</span> <span style="color:#e6db74">&#34;Strange Fruit&#34;</span><span style="color:#f92672">:</span>
