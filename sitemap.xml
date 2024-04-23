@@ -865,8 +865,8 @@ interface Graded {  grades: number[]; }  interface Reporter {  report: () =&amp;
 Top Types 顶层类型或通用类型是一种可以代表类型系统中任何可能值的类型。所有类型的值都可以赋值给顶层类型的变量或常量，但相反时不一定正确。
 any any类型可以作为顶层类型，表示没有任何限制，该类型的变量可以被赋予任意类型的值。 any类型可用于允许接受任何类型的地方，例如作为console.log的参数:
 let anyValue: any; anyValue = &amp;#34;Lucille Ball&amp;#34;; // Ok anyValue = 123; // Ok console.log(anyValue); // Ok 使用any就是明确告诉编译器不需要执行类型检查。这种类型检查的缺失有时会有用，但也降低了实用性。例如，下面代码不会出现编译错误，但会出现运行时错误：
-function greetComedian(name: any) {  // No type error...  console.log(`Announcing ${name.toUpperCase()}!`); }  // TypeError: name.toUpperCase is not a function greetComedian({name: &amp;#34;Bea Arthur&amp;#34;});  let x: any = &amp;#39;hello&amp;#39;; // 编译不报错，但运行时报错 x(1) // 编译不报错，但运行时报错 x.foo = 100; 因为上面原因，应当尽量避免使用any类型。从集合论的角度看，any类型可以看成是所有其他类型的全集，它包含了一切可能的类型。这种类型被称为Top Type，表示它涵盖了所有下层类型。
-any类型除了关闭类型检查，还有一个很大的问题，就是它会“污染”其他变量。它可以赋值给其他任何类型的变量（因为没有类型检查），导致其他变量出错。
+function greetComedian(name: any) {  // 此时无类型错误  console.log(`Announcing ${name.toUpperCase()}!`); }  // 运行时错误: name.toUpperCase is not a function greetComedian({name: &amp;#34;Bea Arthur&amp;#34;});  let x: any = &amp;#39;hello&amp;#39;; // 编译不报错，但运行时报错 x(1) // 编译不报错，但运行时报错 x.foo = 100; 因为上面原因，应当尽量避免使用any类型。从集合论的角度看，any类型可以看成是所有其它类型的全集，它包含了一切可能的类型。这种类型被称为Top Type，表示它涵盖了所有下层类型。
+类型any除了关闭类型检查，还有一个很大的问题，就是它会“污染”其他变量。它可以赋值给其他任何类型的变量（因为没有类型检查），导致其他变量出错。
 let x: any = &amp;#39;hello&amp;#39;; let y: number; y = x; // 不报错 y * 123 // 不报错  // 编译不报错，运行时报错：y.toFixed is not a function y.toFixed() unknown 为了解决any类型污染其他类型的问题，引入了unkonw类型，它是一种真正的顶层类型。unknown和any类似，所有对象都可以赋值给标注为unknown类型的变量。
 类型any与unknown的主要区别在于，TypeScript对unknown类型的值有更严格的限制：
  不允许直接访问unkonwn类型值的方法和属性。 unknown不可赋值给非顶级类型（非any或unknown）。  如果直接访问类型为unknown类型值的属性，会出现编译错误：
