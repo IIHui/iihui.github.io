@@ -299,7 +299,8 @@ Error Domain=NSCocoaErrorDomain Code=3840 &amp;#34;Unexpected end of file during
 ImageLoaderMachO::doModInitFunctions 升级到Xcode 15后，原工程编译后在iOS 11~14均出现启动闪退，闪退时的具体堆栈信息如所示：
 0x000000010c375228 in ImageLoaderMachO::doModInitFunctions(ImageLoader::LinkContext const&amp;amp;) () 0x000000010c3755f0 in ImageLoaderMachO::doInitialization(ImageLoader::LinkContext const&amp;amp;) () 0x000000010c36fe8c in ImageLoader::recursiveInitialization(ImageLoader::LinkContext const&amp;amp;, unsigned int, char const*, ImageLoader::InitializerTimingList&amp;amp;, ImageLoader::UninitedUpwards&amp;amp;) () 0x000000010c36e0d8 in ImageLoader::processInitializers(ImageLoader::LinkContext const&amp;amp;, unsigned int, ImageLoader::InitializerTimingList&amp;amp;, ImageLoader::UninitedUpwards&amp;amp;) () 0x000000010c36e1a0 in ImageLoader::runInitializers(ImageLoader::LinkContext const&amp;amp;, ImageLoader::InitializerTimingList&amp;amp;) () 0x000000010c35e80c in dyld::initializeMainExecutable() () 0x000000010c363e3c in dyld::_main(macho_header const*, unsigned long, int, char const**, char const**, char const**, unsigned long*) () 0x000000010c35d208 in dyldbootstrap::start(dyld3::MachOLoaded const*, int, char const**, dyld3::MachOLoaded const*, unsigned long*) () 0x000000010c35d038 in _dyld_start () 参考该文章，只需将OTHER_LDFLAGS的设置加上-Wl,-ld_classic 选项即可。实际上，只需要加上-ld_classic就可以解决启动闪退问题。
 dyld: could not load inserted library &amp;#39;/System/Library/PrivateFrameworks/GPUToolsCapture.framework/GPUToolsCapture&amp;#39; because image not found https://developer.apple.com/forums/thread/736487
-</content>
+Can&amp;rsquo;t map file, errno=22 在主项目中的build setting --&amp;gt; other linker flags中添加了一个新的framework。出现了报错Can&#39;t map file, errno=22。是因为只添加到framework这一层，真正要添加的是到下面一层：
+$(SRCROOT)/Pods/ddd/xxx.framework/xxx </content>
     </entry>
     
      <entry>
