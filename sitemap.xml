@@ -3955,8 +3955,8 @@ struct Stack {  var items = [Int]()  mutating func push(_ item:Int){  items.appe
           <tag>iOS</tag>
         </tags>
         <content type="html">  从语言设计上来说，defer是为了进行资源清理和返回前避免重复执行相关的代码。而不是用来取巧实现某些功能，如果这样做只会让代码的可读性降低。
- 典型用法 Swift中defer声明的block会在当前代码执行退出后调用，这种延迟调用特性，一般用来进行资源释放或者销毁，避免重复代码。
-func operateOnFile(descriptor: Int32) {  let fileHandle = FileHandle(fileDescriptor: descriptor)   let data = fileHandle.readDataToEndOfFile()   if /* onlyRead */ {  fileHandle.closeFile()  return  }   let shouldWrite = /* 是否需要写文件 */  guard shouldWrite else {  fileHandle.closeFile()  return  }   fileHandle.seekToEndOfFile()  fileHandle.write(someData)  fileHandle.closeFile() } 上面代码在不同的地方调用fileHandle.closeFile()来关闭文件，更好的方法是使用defer来统一处理。这不仅可以就近在资源申请的地方就声明释放，也减少了未来添加代码时忘记释放资源的可能性，如下所示：
+ 典型用法 Swift中defer声明的block会在当前代码块执行退出后调用。这种延迟调用特性，一般用来进行资源释放或者销毁，避免重复代码。
+func operateOnFile(descriptor: Int32) {  let fileHandle = FileHandle(fileDescriptor: descriptor)   let data = fileHandle.readDataToEndOfFile()   if /* onlyRead */ {  fileHandle.closeFile()  return  }   let shouldWrite = /* 是否需要写文件 */  guard shouldWrite else {  fileHandle.closeFile()  return  }   fileHandle.seekToEndOfFile()  fileHandle.write(someData)  fileHandle.closeFile() } 上面代码在不同的地方调用fileHandle.closeFile()来关闭文件，更好的方法是使用defer来统一处理。不仅可以就近在资源申请的地方就声明释放，也减少了未来添加代码时忘记释放资源的可能性：
 func operateOnFile(descriptor: Int32) {  let fileHandle = FileHandle(fileDescriptor: descriptor)  defer { fileHandle.closeFile() }  let data = fileHandle.readDataToEndOfFile()   if /* onlyRead */ { return }   let shouldWrite = /* 是否需要写文件 */  guard shouldWrite else { return }   fileHandle.seekToEndOfFile()  fileHandle.write(someData) } 作用域 一般认为defer是在函数退出时调用，实际上它是在**当前scope退出时调用**。在 if，guard，for，try这些语句中使用defer时，应该要特别注意。
 A defer statement is used for executing code just before transferring program control outside of the scope that the defer statement appears in.：
 func remove(_ id: ID, acquireLock: Bool) {  if acquireLock {  lock.lock()  defer { lock.unlock() }  }  tasks[id] = nil } 因为defer是在当前scope退出时调用，上面加锁方式等同于：
