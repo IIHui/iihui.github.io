@@ -241,7 +241,7 @@ code.has-jax {
     <i class="fa fa-file-word-o"></i>
 </span>
 <span class="post-meta-item-text">字数: </span>
-<span class="leancloud-visitors-count">887</span>
+<span class="leancloud-visitors-count">876</span>
 &nbsp; | &nbsp;
 <span class="post-meta-item-icon">
     <i class="fa fa-coffee"></i>
@@ -253,10 +253,10 @@ code.has-jax {
     </header>
     <div class="post-body" itemprop="articleBody">
     <blockquote>
-<p>从语言设计上来说，<code>defer</code>是为了进行资源清理和返回前避免重复执行相关的代码。而不是用来取巧实现某些功能，如果这样做只会让代码的可读性降低。</p>
+<p>从语言设计上来说，<code>defer</code>是为了进行资源清理和返回前避免重复执行相关代码。它不是用来取巧实现某些功能，如果这样做只会让代码的可读性降低。</p>
 </blockquote>
 <h1 id="典型用法">典型用法</h1>
-<p><code>Swift</code>中<code>defer</code>声明的<code>block</code>会在<font color=red>当前代码块执行退出后</font>调用。这种延迟调用特性，一般用来进行资源释放或者销毁，避免重复代码。</p>
+<p><code>Swift</code>中<code>defer</code>声明的<code>block</code>会在<font color=red>当前代码块执行退出后调用</font>。这种延迟调用特性，一般用来进行资源释放或避免重复代码。</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">operateOnFile</span>(descriptor: Int32) {
 </span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">let</span> fileHandle = FileHandle(fileDescriptor: descriptor)
 </span></span><span style="display:flex;"><span>    
@@ -277,7 +277,7 @@ code.has-jax {
 </span></span><span style="display:flex;"><span>    fileHandle.write(someData)
 </span></span><span style="display:flex;"><span>    fileHandle.closeFile()
 </span></span><span style="display:flex;"><span>}
-</span></span></code></pre></div><p>上面代码在不同的地方调用<code>fileHandle.closeFile()</code>来关闭文件，更好的方法是使用<code>defer</code>来统一处理。不仅可以<font color=red>就近在资源申请的地方就声明释放</font>，也减少了未来添加代码时忘记释放资源的可能性：</p>
+</span></span></code></pre></div><p>上面代码需要在不同的地方调用<code>fileHandle.closeFile()</code>来关闭文件，更好的方法是使用<code>defer</code>统一处理。<code>defer</code>既可以<font color=red>就近在资源申请的地方就声明释放</font>，也减少了未来添加代码时忘记释放资源的可能性。</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">operateOnFile</span>(descriptor: Int32) {
 </span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">let</span> fileHandle = FileHandle(fileDescriptor: descriptor)
 </span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">defer</span> { fileHandle.closeFile() }
@@ -292,16 +292,20 @@ code.has-jax {
 </span></span><span style="display:flex;"><span>    fileHandle.write(someData)
 </span></span><span style="display:flex;"><span>}
 </span></span></code></pre></div><h1 id="作用域">作用域</h1>
-<p>一般认为<code>defer</code>是在函数退出时调用，实际上它是在**<font color=red>当前<code>scope</code>退出时调用</font>**。在 <code>if，guard，for，try</code>这些语句中使用<code>defer</code>时，应该要特别注意。</p>
-<p><code>A defer statement is used for executing code just before transferring program control outside of the scope that the defer statement appears in.</code>：</p>
+<blockquote>
+<p>A defer statement is used for executing code just before transferring program control outside of the scope that the defer statement appears in.</p>
+</blockquote>
+<p>一般认为<code>defer</code>是在函数退出时调用，实际上它是在<font color=red>当前<code>scope</code>退出时调用</font>。在 <code>if，guard，for，try</code>这些语句中使用<code>defer</code>时，应该要特别注意。</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">remove</span>(<span style="color:#66d9ef">_</span> id: ID, acquireLock: Bool) {
 </span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">if</span> acquireLock {
 </span></span><span style="display:flex;"><span>        lock.lock()
-</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">defer</span> { lock.unlock() }
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">defer</span> {
+</span></span><span style="display:flex;"><span>            lock.unlock()
+</span></span><span style="display:flex;"><span>        }
 </span></span><span style="display:flex;"><span>    }
 </span></span><span style="display:flex;"><span>    tasks[id] = <span style="color:#66d9ef">nil</span>
 </span></span><span style="display:flex;"><span>}
-</span></span></code></pre></div><p>因为<code>defer</code>是在当前<code>scope</code>退出时调用，上面加锁方式等同于：</p>
+</span></span></code></pre></div><p>因为<code>defer</code>是在当前<code>scope</code>退出时调用，上面代码等同于：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">remove</span>(<span style="color:#66d9ef">_</span> id: ID, acquireLock: Bool) {
 </span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">if</span> acquireLock {
 </span></span><span style="display:flex;"><span>        lock.lock()
@@ -330,18 +334,22 @@ code.has-jax {
 <p>虽然<code>defer</code>后面跟了一个闭包，但是它更多地像是一个语法糖，和我们所熟知的闭包不一样，<font color=red>它并不会捕获持有里面的值</font>：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">foo</span>() {
 </span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">var</span> number = <span style="color:#ae81ff">1</span>
-</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">defer</span> { print(<span style="color:#e6db74">&#34;Statement 2: </span><span style="color:#e6db74">\(</span>number<span style="color:#e6db74">)</span><span style="color:#e6db74">&#34;</span>) }
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">defer</span> {
+</span></span><span style="display:flex;"><span>        print(<span style="color:#e6db74">&#34;Statement 2: </span><span style="color:#e6db74">\(</span>number<span style="color:#e6db74">)</span><span style="color:#e6db74">&#34;</span>)
+</span></span><span style="display:flex;"><span>    }
 </span></span><span style="display:flex;"><span>    number = <span style="color:#ae81ff">100</span>
 </span></span><span style="display:flex;"><span>    print(<span style="color:#e6db74">&#34;Statement 1: </span><span style="color:#e6db74">\(</span>number<span style="color:#e6db74">)</span><span style="color:#e6db74">&#34;</span>)
 </span></span><span style="display:flex;"><span>}
 </span></span></code></pre></div><p>上面代码将会输出：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span>Statement <span style="color:#ae81ff">1</span>: <span style="color:#ae81ff">100</span>
 </span></span><span style="display:flex;"><span>Statement <span style="color:#ae81ff">2</span>: <span style="color:#ae81ff">100</span>
-</span></span></code></pre></div><p>如果在<code>defer</code>中要依赖某个变量时，需要自行进行复制：</p>
+</span></span></code></pre></div><p>如果在<code>defer</code>中要依赖某个变量时，需要自行复制：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">foo</span>() {
 </span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">var</span> number = <span style="color:#ae81ff">1</span>
 </span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">var</span> closureNumber = number
-</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">defer</span> { print(<span style="color:#e6db74">&#34;Statement 2: </span><span style="color:#e6db74">\(</span>closureNumber<span style="color:#e6db74">)</span><span style="color:#e6db74">&#34;</span>) }
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">defer</span> {
+</span></span><span style="display:flex;"><span>        print(<span style="color:#e6db74">&#34;Statement 2: </span><span style="color:#e6db74">\(</span>closureNumber<span style="color:#e6db74">)</span><span style="color:#e6db74">&#34;</span>)
+</span></span><span style="display:flex;"><span>    }
 </span></span><span style="display:flex;"><span>    number = <span style="color:#ae81ff">100</span>
 </span></span><span style="display:flex;"><span>    print(<span style="color:#e6db74">&#34;Statement 1: </span><span style="color:#e6db74">\(</span>number<span style="color:#e6db74">)</span><span style="color:#e6db74">&#34;</span>)
 </span></span><span style="display:flex;"><span>}
@@ -351,14 +359,17 @@ code.has-jax {
 </span></span><span style="display:flex;"><span>Statement <span style="color:#ae81ff">1</span>: <span style="color:#ae81ff">100</span>
 </span></span><span style="display:flex;"><span>Statement <span style="color:#ae81ff">2</span>: <span style="color:#ae81ff">1</span>
 </span></span></code></pre></div><h1 id="执行时机">执行时机</h1>
-<p><code>defer</code>的执行时机紧接在<font color=red>离开作用域之后，但在其他语句之前</font>。这个特性为<code>defer</code>带来了一些很微妙的使用方式。下面代码先执行返回语句，然后自增，所以输出为<code>0，1，2</code>而不是<code>1，2，3</code>：</p>
+<p><code>defer</code>的执行时机紧接在<font color=red>离开作用域之后，但在其它语句之前</font>。这个特性为<code>defer</code>带来了一些很微妙的使用方式。下面代码先执行返回语句，然后自增，所以输出为<code>0，1，2</code>而不是<code>1，2，3</code>：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span><span style="color:#66d9ef">class</span> <span style="color:#a6e22e">Foo</span> {
 </span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">var</span> num = <span style="color:#ae81ff">0</span>
+</span></span><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">func</span> <span style="color:#a6e22e">foo</span>() -&gt; Int {
-</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">defer</span> { num <span style="color:#f92672">+=</span> <span style="color:#ae81ff">1</span> }
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">defer</span> {
+</span></span><span style="display:flex;"><span>            num <span style="color:#f92672">+=</span> <span style="color:#ae81ff">1</span>
+</span></span><span style="display:flex;"><span>        }
 </span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">return</span> num
 </span></span><span style="display:flex;"><span>    }
-</span></span><span style="display:flex;"><span> }
+</span></span><span style="display:flex;"><span>}
 </span></span><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span><span style="color:#66d9ef">let</span> f = Foo()
 </span></span><span style="display:flex;"><span>f.foo() <span style="color:#75715e">// 返回值为0，然后num再自增</span>
