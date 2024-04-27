@@ -3961,11 +3961,12 @@ func operateOnFile(descriptor: Int32) {  let fileHandle = FileHandle(fileDescrip
  一般认为defer是在函数退出时调用，实际上它是在当前scope退出时调用。在 if，guard，for，try这些语句中使用defer时，应该要特别注意。
 func remove(_ id: ID, acquireLock: Bool) {  if acquireLock {  lock.lock()  defer {  lock.unlock()  }  }  tasks[id] = nil } 因为defer是在当前scope退出时调用，上面代码等同于：
 func remove(_ id: ID, acquireLock: Bool) {  if acquireLock {  lock.lock()  lock.unlock()  }  tasks[id] = nil } 同理，下面的代码中只有need为true时才执行：
-func deferTest(need: Bool) {  if need {  defer {  print(&amp;#34;defer&amp;#34;)  }  }  print(&amp;#34;outside&amp;#34;) }  deferTest(need: false) deferTest(need: true)  执行后的结果 outside defer outside defer闭包不持有值 虽然defer后面跟了一个闭包，但是它更多地像是一个语法糖，和我们所熟知的闭包不一样，它并不会捕获持有里面的值：
+func deferTest(need: Bool) {  if need {  defer {  print(&amp;#34;defer&amp;#34;)  }  }  print(&amp;#34;outside&amp;#34;) }  deferTest(need: false) deferTest(need: true)  执行后的结果 outside defer outside defer闭包不持有值 虽然defer后面跟了一个闭包，但是它更多地像是一个语法糖，和我们所熟知的闭包不一样，它并不会捕获持有闭包里的值：
 func foo() {  var number = 1  defer {  print(&amp;#34;Statement 2: \(number)&amp;#34;)  }  number = 100  print(&amp;#34;Statement 1: \(number)&amp;#34;) } 上面代码将会输出：
 Statement 1: 100 Statement 2: 100 如果在defer中要依赖某个变量时，需要自行复制：
 func foo() {  var number = 1  var closureNumber = number  defer {  print(&amp;#34;Statement 2: \(closureNumber)&amp;#34;)  }  number = 100  print(&amp;#34;Statement 1: \(number)&amp;#34;) }  foo()  Statement 1: 100 Statement 2: 1 执行时机 defer的执行时机紧接在离开作用域之后，但在其它语句之前。这个特性为defer带来了一些很微妙的使用方式。下面代码先执行返回语句，然后自增，所以输出为0，1，2而不是1，2，3：
-class Foo {  var num = 0   func foo() -&amp;gt; Int {  defer {  num &#43;= 1  }  return num  } }  let f = Foo() f.foo() // 返回值为0，然后num再自增 f.foo() // 返回值为1，然后num再自增 f.num // 最后num的值为2 参考资料
+class Foo {  var num = 0   func foo() -&amp;gt; Int {  defer {  num &#43;= 1  }  return num  } }  let f = Foo() f.foo() // 返回值为0，然后num再自增 f.foo() // 返回值为1，然后num再自增 f.num // 最后num的值为2 如果没有defer，可能需要按下面这样定义foo方法：
+class Foo {  var num = 0  func foo() -&amp;gt; Int {  num &#43;= 1  return num - 1  } } let f11 = Foo() debugPrint(f11.foo(), f11.foo()) 参考资料
 </content>
     </entry>
     
