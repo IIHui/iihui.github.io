@@ -334,7 +334,7 @@ code.has-jax {
 <p>双私有源的方案是将二进制的包上传到服务器中，同时产生一份二进制的podspec，将其发布到二进制私有源中。</p>
 <p>在执行<code>pod install</code>后，<code>Cocoapods</code>在解析依赖的过程中，根据<code>podfile.lock</code>指定的版本，构建<code>Specification</code>对象「定义在<code>cocoapod-core</code>中用来描述<code>podspec</code>对象」。</p>
 <p>在分析依赖的过程中，会生成一个叫<code>resolver_specs_by_target</code>的<code>hash</code>，包含<code>podfile</code>中配置的所有<code>target</code>以及对应<code>target</code>下所有的<code>pod</code>库信息。整个过程比较复杂，流程结束之后整个依赖关系就确定了。内部会根据前面生成的<code>Milinilo</code>图遍历，将所有的<code>target</code>依赖的<code>pod</code>库构建为<code>ResolverSpecification</code>对象。</p>
-<p>通过<code>hook resolver_specs_by_target</code>，遍历所有的<code>podspec</code>，<font color=red>找到做了二进制标记的<code>pod</code>库，对其进行重组，来进行二进制的切换</font>。</p>
+<p>通过<code>hook resolver_specs_by_target</code>，遍历所有的<code>podspec</code>，<font color="#de7802">找到做了二进制标记的<code>pod</code>库，对其进行重组，来进行二进制的切换</font>。</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ruby" data-lang="ruby"><span style="display:flex;"><span><span style="color:#75715e"># &gt;= 1.4.0 才有 resolver_specs_by_target 以及 ResolverSpecification</span>
 </span></span><span style="display:flex;"><span>    <span style="color:#75715e"># &gt;= 1.5.0 ResolverSpecification 才有 source，供 install 或者其他操作时，输入 source 变更</span>
 </span></span><span style="display:flex;"><span>    <span style="color:#75715e">#</span>
@@ -498,17 +498,17 @@ code.has-jax {
 </span></span><span style="display:flex;"><span><span style="color:#75715e"># 单行注释</span>
 </span></span></code></pre></div><h2 id="变量">变量</h2>
 <p>在<code>Ruby</code>中，变量<font color=Blue>不需要提前声明，为变量赋初值时会自动创建</font>。例如，<code>a = 300</code> 会创建一个名为<code>a</code>的变量，并将300存储在该变量中。</p>
-<p><code>Ruby</code>变量可以<font color=red>容纳任何类型的数据，甚至可以对一个已经定义的变量，更改其数据类型</font>，如下所示：</p>
+<p><code>Ruby</code>变量可以<font color="#de7802">容纳任何类型的数据，甚至可以对一个已经定义的变量，更改其数据类型</font>，如下所示：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ruby" data-lang="ruby"><span style="display:flex;"><span>b <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;test&#34;</span>
 </span></span><span style="display:flex;"><span>puts b
 </span></span><span style="display:flex;"><span>b <span style="color:#f92672">=</span> <span style="color:#ae81ff">233</span>
 </span></span><span style="display:flex;"><span>puts b
 </span></span></code></pre></div><h3 id="命名">命名</h3>
-<p><code>Ruby</code>中变量名的风格偏好：使用<font color=red>小写字母，以下划线连接，不使用缩写，不以数字开头，以内容的含义命名</font>。</p>
+<p><code>Ruby</code>中变量名的风格偏好：使用<font color="#de7802">小写字母，以下划线连接，不使用缩写，不以数字开头，以内容的含义命名</font>。</p>
 <h3 id="作用域">作用域</h3>
 <p><a href="https://jameszhan.github.io/2018/02/03/ruby-variable-scope.html">参考资料</a></p>
 <h2 id="字符串">字符串</h2>
-<p><code>Ruby</code>中字符串分为单引号和双引号字符串，区别在于<font color=red>双引号字符串能够支持更多的转义字符</font>。即在双引号括起来的字符串中，转义字符会被解析。而在单引号括起来的字符串中，转义字符多数不会被解析，基本按照原样输出。</p>
+<p><code>Ruby</code>中字符串分为单引号和双引号字符串，区别在于<font color="#de7802">双引号字符串能够支持更多的转义字符</font>。即在双引号括起来的字符串中，转义字符会被解析。而在单引号括起来的字符串中，转义字符多数不会被解析，基本按照原样输出。</p>
 <h3 id="单引号">单引号</h3>
 <p>如果需要在单引号字符串中使用单引号，必须使用转义字符，例如<code>'Won\'t you read O\'Reilly\'s book?'</code></p>
 <p><code>Ruby</code>中还支持一种采用<code>%q</code>来引导的字符串（单引号引用规则），后面紧跟 <code>!,{,[,|,&lt;</code>的开始定界符，最后以<code>!,},],|,&gt;</code>结尾的定界符，如下所示：</p>
