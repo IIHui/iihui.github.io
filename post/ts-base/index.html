@@ -241,13 +241,13 @@ code.has-jax {
     <i class="fa fa-file-word-o"></i>
 </span>
 <span class="post-meta-item-text">字数: </span>
-<span class="leancloud-visitors-count">36140</span>
+<span class="leancloud-visitors-count">36904</span>
 &nbsp; | &nbsp;
 <span class="post-meta-item-icon">
     <i class="fa fa-coffee"></i>
 </span>
 <span class="post-meta-item-text">阅读: </span>
-<span class="leancloud-visitors-count">73 分钟</span>
+<span class="leancloud-visitors-count">74 分钟</span>
 </span>
       </div>
     </header>
@@ -2275,14 +2275,14 @@ code.has-jax {
 </span></span></code></pre></div><p><code>TypeScript</code><span style="background:#F5D6A9">最佳实践是尽可能避免使用类型断言</span>。我们写的代码最好是完全准确类型化的，不需要使用断言来干扰<code>TypeScript</code>对其类型的理解。但有时类型断言是有用的，甚至是必要的。</p>
 <h3 id="asserting-caught-error-types">Asserting Caught Error Types</h3>
 <p>错误处理是类型断言可能派上用场的另一个地方。一般来说，我们不清楚在<code>catch</code>代码块中捕获的错误是什么类型，因为<code>try</code>代码块中的代码可能会意外地抛出与预期不同的对象。</p>
-<p>此外，虽然<code>JavaScript</code>的最佳实践是始终抛出<code>Error</code>类的实例，但<font color="#de7802">有些项目却会抛出字符串字面量或其它出人意料的值</font>。</p>
-<p>如果确信某个代码区域只会抛出<code>Error</code>类的实例，可以使用类型断言将捕获的断言视为<code>Error</code>。下面代码将访问捕获的错误的消息属性，并假定该错误是<code>Error</code>类的实例：</p>
+<p>此外，虽然<code>JavaScript</code>的最佳实践是始终抛出<code>Error</code>类的实例，但**<font color="#de7802">有些项目却会抛出字符串字面量或其它出人意料的值</font>**。</p>
+<p>如果确信某个代码区域只会抛出<code>Error</code>类的实例，可以使用类型断言将捕获的断言视为<code>Error</code>。下面代码将访问捕获的<code>error</code>的<code>message</code>属性，并假定该<code>error</code>是<code>Error</code>类的实例：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span><span style="color:#66d9ef">try</span> {  
 </span></span><span style="display:flex;"><span>    <span style="color:#75715e">// code that may throw an error
 </span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>} <span style="color:#66d9ef">catch</span> (<span style="color:#a6e22e">error</span>) {  
 </span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">console</span>.<span style="color:#a6e22e">warn</span>(<span style="color:#e6db74">&#34;Oh no!&#34;</span>, (<span style="color:#a6e22e">error</span> <span style="color:#66d9ef">as</span> Error).<span style="color:#a6e22e">message</span>);  
 </span></span><span style="display:flex;"><span>}
-</span></span></code></pre></div><p>比较安全的做法是使用类型窄化形式，如使用<code>instanceof</code>检查，以确保抛出的错误是预期的类型。下面代码检查抛出的错误是否为<code>Error</code>类的实例，以确定是记录消息还是记录错误本身：</p>
+</span></span></code></pre></div><p>比较安全的做法是使用类型窄化形式，如使用<code>instanceof</code>检查，以确保抛出的错误是预期的类型。下面代码检查抛出的错误是否为<code>Error</code>类的实例，以确定是记录<code>message</code>还是记录错误本身：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span><span style="color:#66d9ef">try</span> {  
 </span></span><span style="display:flex;"><span>    <span style="color:#75715e">// (code that may throw an error)  
 </span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>} <span style="color:#66d9ef">catch</span> (<span style="color:#a6e22e">error</span>) {  
@@ -2313,7 +2313,7 @@ code.has-jax {
 </span></span><span style="display:flex;"><span><span style="color:#75715e">// Type: string  
 </span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">const</span> <span style="color:#a6e22e">knownValue</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">seasonCounts</span>.<span style="color:#66d9ef">get</span>(<span style="color:#e6db74">&#34;I Love Lucy 11&#34;</span>)<span style="color:#f92672">!</span>;  
 </span></span><span style="display:flex;"><span><span style="color:#a6e22e">console</span>.<span style="color:#a6e22e">log</span>(<span style="color:#a6e22e">knownValue</span>.<span style="color:#a6e22e">toUpperCase</span>()); <span style="color:#75715e">// Ok
-</span></span></span></code></pre></div><p>作为对比，如果使用类型声明时，在编译时可能就会报错。而使用类型断言时，需要在运行时才会报错，需要特别注意：</p>
+</span></span></span></code></pre></div><p>作为对比，如果使用类型声明时，在编译时可能就会报错。而<font color="#de7802">使用类型断言时，需要在运行时才会报错</font>，需要特别注意：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span><span style="color:#66d9ef">interface</span> <span style="color:#a6e22e">Entertainer</span> {  
 </span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">acts</span>: <span style="color:#66d9ef">string</span>[];  
 </span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">name</span>: <span style="color:#66d9ef">string</span>;  
@@ -2570,7 +2570,117 @@ code.has-jax {
 </span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#a6e22e">value</span>: <span style="color:#66d9ef">false</span>,
 </span></span><span style="display:flex;"><span>}
 </span></span></code></pre></div><p>请注意，<span style="background:#f8d9c3">如果接口声明时使用类型参数（即接口是泛型的），则任何引用该接口类型的地方都必须提供相应的类型参数。</span></p>
-<h2 id="promises">Promises</h2>
+<h2 id="generic-classes">Generic Classes</h2>
+<p>如同接口，类也支持泛型，并且支持任意数量的类型参数。每一个类的实例可能使用不同的类型实参数。下面定义的类声明了两个类型参数<code>key</code>和<code>value</code>:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span><span style="color:#66d9ef">class</span> <span style="color:#a6e22e">Secret</span>&lt;<span style="color:#f92672">Key</span><span style="color:#960050;background-color:#1e0010">,</span> <span style="color:#a6e22e">Value</span>&gt; {
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">key</span>: <span style="color:#66d9ef">Key</span>;
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">value</span>: <span style="color:#66d9ef">Value</span>;
+</span></span><span style="display:flex;"><span>  
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">constructor</span>(<span style="color:#a6e22e">key</span>: <span style="color:#66d9ef">Key</span>, <span style="color:#a6e22e">value</span>: <span style="color:#66d9ef">Value</span>) {
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">this</span>.<span style="color:#a6e22e">key</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">key</span>;
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">this</span>.<span style="color:#a6e22e">value</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">value</span>;
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>  
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">getValue</span>(<span style="color:#a6e22e">key</span>: <span style="color:#66d9ef">Key</span>)<span style="color:#f92672">:</span> <span style="color:#a6e22e">Value</span> <span style="color:#f92672">|</span> <span style="color:#66d9ef">undefined</span> {
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">return</span> <span style="color:#66d9ef">this</span>.<span style="color:#a6e22e">key</span> <span style="color:#f92672">===</span> <span style="color:#a6e22e">key</span> <span style="color:#f92672">?</span> <span style="color:#66d9ef">this</span>.<span style="color:#a6e22e">value</span> : <span style="color:#66d9ef">undefined</span>;
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">const</span> <span style="color:#a6e22e">storage</span> <span style="color:#f92672">=</span> <span style="color:#66d9ef">new</span> <span style="color:#a6e22e">Secret</span>(<span style="color:#ae81ff">12345</span>, <span style="color:#e6db74">&#34;luggage&#34;</span>); <span style="color:#75715e">// Type: Secret&lt;number, string&gt;
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#a6e22e">storage</span>.<span style="color:#a6e22e">getValue</span>(<span style="color:#ae81ff">1987</span>); <span style="color:#75715e">// Type: string | undefined
+</span></span></span></code></pre></div><h3 id="explicit-generic-class-types">Explicit Generic Class Types</h3>
+<p>实例化泛型类和泛型接口类似，如果类型实参可以从构造器中的参数中推断出来，就可以省略显式的类型实参标注，但如果省略了类型实参，编译器却推断不出来类型实参，则使用默认类型<code>unknown</code>。例如，上面示例代码使用了<code>new Secret(12345, &quot;luggage&quot;)</code>：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span><span style="color:#66d9ef">const</span> <span style="color:#a6e22e">storage</span> <span style="color:#f92672">=</span> <span style="color:#66d9ef">new</span> <span style="color:#a6e22e">Secret</span>(<span style="color:#ae81ff">12345</span>, <span style="color:#e6db74">&#34;luggage&#34;</span>); <span style="color:#75715e">// Type: Secret&lt;number, string&gt;
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#a6e22e">storage</span>.<span style="color:#a6e22e">getValue</span>(<span style="color:#ae81ff">1987</span>); <span style="color:#75715e">// Type: string | undefined
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">class</span> <span style="color:#a6e22e">CurriedCallback</span>&lt;<span style="color:#f92672">Input</span>&gt; {
+</span></span><span style="display:flex;"><span>    <span style="color:#960050;background-color:#1e0010">#</span><span style="color:#a6e22e">callback</span><span style="color:#f92672">:</span> (<span style="color:#a6e22e">input</span>: <span style="color:#66d9ef">Input</span>) <span style="color:#f92672">=&gt;</span> <span style="color:#66d9ef">void</span>;
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">constructor</span>(<span style="color:#a6e22e">callback</span><span style="color:#f92672">:</span> (<span style="color:#a6e22e">input</span>: <span style="color:#66d9ef">Input</span>) <span style="color:#f92672">=&gt;</span> <span style="color:#66d9ef">void</span>) {
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">this</span>.<span style="color:#960050;background-color:#1e0010">#</span><span style="color:#a6e22e">callback</span> <span style="color:#f92672">=</span> (<span style="color:#a6e22e">input</span>: <span style="color:#66d9ef">Input</span>) <span style="color:#f92672">=&gt;</span> {
+</span></span><span style="display:flex;"><span>            <span style="color:#a6e22e">console</span>.<span style="color:#a6e22e">log</span>(<span style="color:#e6db74">&#34;Input:&#34;</span>, <span style="color:#a6e22e">input</span>);
+</span></span><span style="display:flex;"><span>            <span style="color:#a6e22e">callback</span>(<span style="color:#a6e22e">input</span>);
+</span></span><span style="display:flex;"><span>        };
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>  
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">call</span>(<span style="color:#a6e22e">input</span>: <span style="color:#66d9ef">Input</span>) {
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">this</span>.<span style="color:#960050;background-color:#1e0010">#</span><span style="color:#a6e22e">callback</span>(<span style="color:#a6e22e">input</span>);
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">// Type: CurriedCallback&lt;string&gt;
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">new</span> <span style="color:#a6e22e">CurriedCallback</span>((<span style="color:#a6e22e">input</span>: <span style="color:#66d9ef">string</span>) <span style="color:#f92672">=&gt;</span> {
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">console</span>.<span style="color:#a6e22e">log</span>(<span style="color:#a6e22e">input</span>.<span style="color:#a6e22e">length</span>);
+</span></span><span style="display:flex;"><span>});
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">// 编译错误：&#39;input&#39; is of type &#39;unknown&#39;.
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">// Type: CurriedCallback&lt;unknown&gt;
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">new</span> <span style="color:#a6e22e">CurriedCallback</span>((<span style="color:#a6e22e">input</span>) <span style="color:#f92672">=&gt;</span> {
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">console</span>.<span style="color:#a6e22e">log</span>(<span style="color:#a6e22e">input</span>.<span style="color:#a6e22e">length</span>);
+</span></span><span style="display:flex;"><span>})
+</span></span></code></pre></div><h3 id="extending-generic-classes">Extending Generic Classes</h3>
+<p>泛型类可以作为其他类的父类，需要注意的是编译器<font color="#de7802">不会尝试从使用中推断基类的类型参数</font>。任何没有默认值的类型参数都需要使用显式类型标注来指定。</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span><span style="color:#66d9ef">class</span> <span style="color:#a6e22e">Quote</span>&lt;<span style="color:#f92672">T</span>&gt; {
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">lines</span>: <span style="color:#66d9ef">T</span>;
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">constructor</span>(<span style="color:#a6e22e">lines</span>: <span style="color:#66d9ef">T</span>) {
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">this</span>.<span style="color:#a6e22e">lines</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">lines</span>;
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">class</span> <span style="color:#a6e22e">SpokenQuote</span> <span style="color:#66d9ef">extends</span> <span style="color:#a6e22e">Quote</span>&lt;<span style="color:#f92672">string</span><span style="color:#960050;background-color:#1e0010">[]</span>&gt; {
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">speak() {</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#a6e22e">console</span>.<span style="color:#a6e22e">log</span>(<span style="color:#66d9ef">this</span>.<span style="color:#a6e22e">lines</span>.<span style="color:#a6e22e">join</span>(<span style="color:#e6db74">&#34;\n&#34;</span>));
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">new</span> <span style="color:#a6e22e">Quote</span>(<span style="color:#e6db74">&#34;The only real failure is the failure to try.&#34;</span>).<span style="color:#a6e22e">lines</span>;
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">new</span> <span style="color:#a6e22e">Quote</span>([<span style="color:#ae81ff">4</span>, <span style="color:#ae81ff">8</span>, <span style="color:#ae81ff">15</span>, <span style="color:#ae81ff">16</span>, <span style="color:#ae81ff">23</span>, <span style="color:#ae81ff">42</span>]).<span style="color:#a6e22e">lines</span>;
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">new</span> <span style="color:#a6e22e">SpokenQuote</span>([<span style="color:#e6db74">&#34;Greed is so destructive.&#34;</span>, <span style="color:#e6db74">&#34;It destroys everything&#34;</span>,]).<span style="color:#a6e22e">lines</span>;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">// 编译错误：Type &#39;number&#39; is not assignable to type &#39;string&#39;.
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">new</span> <span style="color:#a6e22e">SpokenQuote</span>([<span style="color:#ae81ff">4</span>, <span style="color:#ae81ff">8</span>, <span style="color:#ae81ff">15</span>, <span style="color:#ae81ff">16</span>, <span style="color:#ae81ff">23</span>, <span style="color:#ae81ff">42</span>]);
+</span></span></code></pre></div><p>泛型派生类也可以将自己的类型参数传递给基类，类型名称不必与基类一致：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span><span style="color:#66d9ef">class</span> <span style="color:#a6e22e">AttributedQuote</span>&lt;<span style="color:#f92672">Value</span>&gt; <span style="color:#66d9ef">extends</span> <span style="color:#a6e22e">Quote</span>&lt;<span style="color:#f92672">Value</span>&gt; {
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">speaker</span>: <span style="color:#66d9ef">string</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">constructor</span>(<span style="color:#a6e22e">value</span>: <span style="color:#66d9ef">Value</span>, <span style="color:#a6e22e">speaker</span>: <span style="color:#66d9ef">string</span>) {
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">super</span>(<span style="color:#a6e22e">value</span>);
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">this</span>.<span style="color:#a6e22e">speaker</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">speaker</span>;
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">const</span> <span style="color:#a6e22e">value</span> <span style="color:#f92672">=</span> <span style="color:#66d9ef">new</span> <span style="color:#a6e22e">AttributedQuote</span>(
+</span></span><span style="display:flex;"><span>    <span style="color:#e6db74">&#34;The road to success is always under construction.&#34;</span>,
+</span></span><span style="display:flex;"><span>    <span style="color:#e6db74">&#34;Lily Tomlin&#34;</span>);
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">console</span>.<span style="color:#a6e22e">log</span>(<span style="color:#a6e22e">value</span>.<span style="color:#a6e22e">speaker</span>);
+</span></span></code></pre></div><h3 id="implementing-generic-interfaces">Implementing Generic Interfaces</h3>
+<p>泛型类也可以通过提供必要的类型参数来实现泛型接口。这与扩展泛型基类的原理类似：基接口上的任何类型参数都必须由类来声明。</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span><span style="color:#66d9ef">interface</span> <span style="color:#a6e22e">ActingCredit</span>&lt;<span style="color:#f92672">Role</span>&gt; {
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">role</span>: <span style="color:#66d9ef">Role</span>;
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">class</span> <span style="color:#a6e22e">MoviePart</span> <span style="color:#66d9ef">implements</span> <span style="color:#a6e22e">ActingCredit</span>&lt;<span style="color:#f92672">string</span>&gt; {
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">role</span>: <span style="color:#66d9ef">string</span>;
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">speaking</span>: <span style="color:#66d9ef">boolean</span>;
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">constructor</span>(<span style="color:#a6e22e">role</span>: <span style="color:#66d9ef">string</span>, <span style="color:#a6e22e">speaking</span>: <span style="color:#66d9ef">boolean</span>) {
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">this</span>.<span style="color:#a6e22e">role</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">role</span>;
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">this</span>.<span style="color:#a6e22e">speaking</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">speaking</span>;
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">const</span> <span style="color:#a6e22e">part</span> <span style="color:#f92672">=</span> <span style="color:#66d9ef">new</span> <span style="color:#a6e22e">MoviePart</span>(<span style="color:#e6db74">&#34;Miranda Priestly&#34;</span>, <span style="color:#66d9ef">true</span>);
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">console</span>.<span style="color:#a6e22e">log</span>(<span style="color:#a6e22e">part</span>.<span style="color:#a6e22e">role</span>);
+</span></span></code></pre></div><h3 id="method-generics">Method Generics</h3>
+<p>类方法可以在类实例之外声明自己的泛型类型。对类属方法的每次调用，其每个类型参数都可能有不同的类型参数。</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span><span style="color:#66d9ef">class</span> <span style="color:#a6e22e">CreatePairFactory</span>&lt;<span style="color:#f92672">Key</span>&gt; {
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">key</span>: <span style="color:#66d9ef">Key</span>;
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">constructor</span>(<span style="color:#a6e22e">key</span>: <span style="color:#66d9ef">Key</span>) {
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">this</span>.<span style="color:#a6e22e">key</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">key</span>;
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">createPair</span>&lt;<span style="color:#f92672">Value</span>&gt;(<span style="color:#a6e22e">value</span>: <span style="color:#66d9ef">Value</span>) {
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">return</span> {<span style="color:#a6e22e">key</span>: <span style="color:#66d9ef">this.key</span>, <span style="color:#a6e22e">value</span>};
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">const</span> <span style="color:#a6e22e">factory</span> <span style="color:#f92672">=</span> <span style="color:#66d9ef">new</span> <span style="color:#a6e22e">CreatePairFactory</span>(<span style="color:#e6db74">&#34;role&#34;</span>);
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">const</span> <span style="color:#a6e22e">numberPair</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">factory</span>.<span style="color:#a6e22e">createPair</span>(<span style="color:#ae81ff">10</span>);
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">const</span> <span style="color:#a6e22e">stringPair</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">factory</span>.<span style="color:#a6e22e">createPair</span>(<span style="color:#e6db74">&#34;Sophie&#34;</span>);
+</span></span></code></pre></div><h2 id="promises">Promises</h2>
 <p><code>JavaScript</code>中的<code>Promise</code>表示<font color="#de7802">仍在等待处理的事情</font>，例如网络请求。每个<code>Promise</code>都提供了注册回调的方法，以防待执行操作<code>resolve</code>（成功完成）或 <code>reject</code>（抛出异常）。</p>
 <p><code>Promise</code>能够在任意值类型上表示类似地操作，这与<code>TypeScript</code>泛型非常契合。在<code>TypeScript</code>类型系统中，<code>Promises</code>使用<code>Promise</code>类表示，该类有一个类型参数，代表最终解析的值。</p>
 <h3 id="creating-promises">Creating Promises</h3>
@@ -3262,6 +3372,14 @@ code.has-jax {
         <li><a href="#generic-interfaces">Generic Interfaces</a>
           <ul>
             <li><a href="#inferred-generic-interface-types">Inferred Generic Interface Types</a></li>
+          </ul>
+        </li>
+        <li><a href="#generic-classes">Generic Classes</a>
+          <ul>
+            <li><a href="#explicit-generic-class-types">Explicit Generic Class Types</a></li>
+            <li><a href="#extending-generic-classes">Extending Generic Classes</a></li>
+            <li><a href="#implementing-generic-interfaces">Implementing Generic Interfaces</a></li>
+            <li><a href="#method-generics">Method Generics</a></li>
           </ul>
         </li>
         <li><a href="#promises">Promises</a>
