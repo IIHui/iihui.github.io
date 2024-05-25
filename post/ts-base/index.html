@@ -241,13 +241,13 @@ code.has-jax {
     <i class="fa fa-file-word-o"></i>
 </span>
 <span class="post-meta-item-text">字数: </span>
-<span class="leancloud-visitors-count">36904</span>
+<span class="leancloud-visitors-count">37829</span>
 &nbsp; | &nbsp;
 <span class="post-meta-item-icon">
     <i class="fa fa-coffee"></i>
 </span>
 <span class="post-meta-item-text">阅读: </span>
-<span class="leancloud-visitors-count">74 分钟</span>
+<span class="leancloud-visitors-count">76 分钟</span>
 </span>
       </div>
     </header>
@@ -2680,7 +2680,99 @@ code.has-jax {
 </span></span><span style="display:flex;"><span><span style="color:#66d9ef">const</span> <span style="color:#a6e22e">factory</span> <span style="color:#f92672">=</span> <span style="color:#66d9ef">new</span> <span style="color:#a6e22e">CreatePairFactory</span>(<span style="color:#e6db74">&#34;role&#34;</span>);
 </span></span><span style="display:flex;"><span><span style="color:#66d9ef">const</span> <span style="color:#a6e22e">numberPair</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">factory</span>.<span style="color:#a6e22e">createPair</span>(<span style="color:#ae81ff">10</span>);
 </span></span><span style="display:flex;"><span><span style="color:#66d9ef">const</span> <span style="color:#a6e22e">stringPair</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">factory</span>.<span style="color:#a6e22e">createPair</span>(<span style="color:#e6db74">&#34;Sophie&#34;</span>);
-</span></span></code></pre></div><h2 id="promises">Promises</h2>
+</span></span></code></pre></div><h3 id="static-class-generics">Static Class Generics</h3>
+<p>类的静态成员独立于实例成员，与类的任何特定实例无关。它们无法访问任何类实例或任何类实例特有的类型信息。因此，虽然静态类方法可以声明自己的类型参数，但<font color=red>它们不能访问类上声明的任何类型参数</font>。</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span><span style="color:#66d9ef">class</span> <span style="color:#a6e22e">BothLogger</span>&lt;<span style="color:#f92672">OnInstance</span>&gt; {
+</span></span><span style="display:flex;"><span>  
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">instanceLog</span>(<span style="color:#a6e22e">value</span>: <span style="color:#66d9ef">OnInstance</span>) {
+</span></span><span style="display:flex;"><span>        <span style="color:#a6e22e">console</span>.<span style="color:#a6e22e">log</span>(<span style="color:#a6e22e">value</span>);
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">return</span> <span style="color:#a6e22e">value</span>;
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>  
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">static</span> <span style="color:#a6e22e">staticLog</span>&lt;<span style="color:#f92672">OnStatic</span>&gt;(<span style="color:#a6e22e">value</span>: <span style="color:#66d9ef">OnStatic</span>) {
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">let</span> <span style="color:#a6e22e">fromInstance</span>: <span style="color:#66d9ef">OnInstance</span>;
+</span></span><span style="display:flex;"><span>        <span style="color:#a6e22e">console</span>.<span style="color:#a6e22e">log</span>(<span style="color:#a6e22e">value</span>);
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">return</span> <span style="color:#a6e22e">value</span>;
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>  
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">// 出现编译错误： Static members cannot reference class type parameters.
+</span></span></span></code></pre></div><h2 id="generic-type-aliases">Generic Type Aliases</h2>
+<p>类型别名也支持泛型，每一个别名类型可以有任意数量的类型参数。泛型别名通常与函数一起使用，用于描述通用函数的类型。</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span><span style="color:#66d9ef">type</span> <span style="color:#a6e22e">Nullish</span>&lt;<span style="color:#f92672">T</span>&gt; <span style="color:#f92672">=</span> <span style="color:#a6e22e">T</span> <span style="color:#f92672">|</span> <span style="color:#66d9ef">null</span> <span style="color:#f92672">|</span> <span style="color:#66d9ef">undefined</span>;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">type</span> <span style="color:#a6e22e">CreatesValue</span>&lt;<span style="color:#f92672">Input</span><span style="color:#960050;background-color:#1e0010">,</span> <span style="color:#a6e22e">Output</span>&gt; <span style="color:#f92672">=</span> (<span style="color:#a6e22e">input</span>: <span style="color:#66d9ef">Input</span>) <span style="color:#f92672">=&gt;</span> <span style="color:#a6e22e">Output</span>;
+</span></span></code></pre></div><h3 id="generic-discriminated-unions">Generic Discriminated Unions</h3>
+<p>在<code>TypeScript</code>中，判别联合将常见的优雅<code>JavaScript</code>模式与<code>TypeScript</code>的类型窄化完美地结合在一起。我最喜欢的判别联合用法是添加一个类型参数，以创建一个泛型的&quot;result&quot;类型，它可以代表成功的数据结果，也可以代表失败的错误结果。</p>
+<p>该<code>Result</code>泛型有一个<code>succeeded</code>判别式，必须使用该判别式才能确定结果是成功还是失败。这意味着任何返回<code>Result</code>的操作都可以表示错误或数据结果，并确保消费者需要检查结果是否成功：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span><span style="color:#66d9ef">interface</span> <span style="color:#a6e22e">FailureResult</span> {
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">error</span>: <span style="color:#66d9ef">Error</span>;
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">succeeded</span>: <span style="color:#66d9ef">false</span>;
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">interface</span> <span style="color:#a6e22e">SuccessfulResult</span>&lt;<span style="color:#f92672">Data</span>&gt; {
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">data</span>: <span style="color:#66d9ef">Data</span>;
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">succeeded</span>: <span style="color:#66d9ef">true</span>;
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">function</span> <span style="color:#a6e22e">handleResult</span>(<span style="color:#a6e22e">result</span>: <span style="color:#66d9ef">Result</span>&lt;<span style="color:#f92672">string</span>&gt;) {
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">if</span> (<span style="color:#a6e22e">result</span>.<span style="color:#a6e22e">succeeded</span>) {
+</span></span><span style="display:flex;"><span>        <span style="color:#75715e">// 正常
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>        <span style="color:#a6e22e">result</span>.<span style="color:#a6e22e">data</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#a6e22e">console</span>.<span style="color:#a6e22e">log</span>(<span style="color:#e6db74">`We did it! </span><span style="color:#e6db74">${</span><span style="color:#a6e22e">result</span>.<span style="color:#a6e22e">data</span><span style="color:#e6db74">}</span><span style="color:#e6db74">`</span>);
+</span></span><span style="display:flex;"><span>    } <span style="color:#66d9ef">else</span> {
+</span></span><span style="display:flex;"><span>        <span style="color:#a6e22e">console</span>.<span style="color:#a6e22e">error</span>(<span style="color:#e6db74">`Awww... </span><span style="color:#e6db74">${</span><span style="color:#a6e22e">result</span>.<span style="color:#a6e22e">error</span><span style="color:#e6db74">}</span><span style="color:#e6db74">`</span>);
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">// 会出现编译错误：Property &#39;data&#39; does not exist on type &#39;Result&lt;string&gt;&#39;.
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#a6e22e">result</span>.<span style="color:#a6e22e">data</span>
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p>将泛型和<code>discriminated types</code>结合在一起，就能为像结果这样的可重用类型提供绝佳的建模方式。</p>
+<h2 id="generic-modifiers">Generic Modifiers</h2>
+<p>TypeScript包含允许修改泛型参数行为的语法。</p>
+<h3 id="generic-defaults">Generic Defaults</h3>
+<p>到目前为止，如果在类型标注中使用泛型，或者将其作为类的扩展或实现的基类，那么它必须为每个类型参数提供一个类型参数。可以在类型参数的声明后加上一个<code>=</code>符号和一个默认类型，从而避免显式地提供类型参数。</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span><span style="color:#66d9ef">interface</span> <span style="color:#a6e22e">Quote</span>&lt;<span style="color:#f92672">T</span> <span style="color:#960050;background-color:#1e0010">=</span> <span style="color:#a6e22e">string</span>&gt; {
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">value</span>: <span style="color:#66d9ef">T</span>;
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">let</span> <span style="color:#a6e22e">explicit</span>: <span style="color:#66d9ef">Quote</span>&lt;<span style="color:#f92672">number</span>&gt; <span style="color:#f92672">=</span> {<span style="color:#a6e22e">value</span>: <span style="color:#66d9ef">123</span>};
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">let</span> <span style="color:#a6e22e">implicit</span>: <span style="color:#66d9ef">Quote</span> <span style="color:#f92672">=</span> {<span style="color:#a6e22e">value</span><span style="color:#f92672">:</span> <span style="color:#e6db74">&#34;Be yourself. The world worships the original.&#34;</span>};
+</span></span><span style="display:flex;"><span><span style="color:#75715e">// 编译错误：Type &#39;number&#39; is not assignable to type &#39;string&#39;.
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">let</span> <span style="color:#a6e22e">mismatch</span>: <span style="color:#66d9ef">Quote</span> <span style="color:#f92672">=</span> {<span style="color:#a6e22e">value</span>: <span style="color:#66d9ef">123</span>};
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">interface</span> <span style="color:#a6e22e">KeyValuePair</span>&lt;<span style="color:#f92672">Key</span><span style="color:#960050;background-color:#1e0010">,</span> <span style="color:#a6e22e">Value </span><span style="color:#f92672">=</span> <span style="color:#a6e22e">Key</span>&gt; {
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">key</span>: <span style="color:#66d9ef">Key</span>;
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">value</span>: <span style="color:#66d9ef">Value</span>;
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">let</span> <span style="color:#a6e22e">allExplicit</span>: <span style="color:#66d9ef">KeyValuePair</span>&lt;<span style="color:#f92672">string</span><span style="color:#960050;background-color:#1e0010">,</span> <span style="color:#a6e22e">number</span>&gt; <span style="color:#f92672">=</span> {
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">key</span><span style="color:#f92672">:</span> <span style="color:#e6db74">&#34;rating&#34;</span>,
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">value</span>: <span style="color:#66d9ef">10</span>,
+</span></span><span style="display:flex;"><span>};
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">let</span> <span style="color:#a6e22e">oneDefaulting</span>: <span style="color:#66d9ef">KeyValuePair</span>&lt;<span style="color:#f92672">string</span>&gt; <span style="color:#f92672">=</span> {
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">key</span><span style="color:#f92672">:</span> <span style="color:#e6db74">&#34;rating&#34;</span>,
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">value</span><span style="color:#f92672">:</span> <span style="color:#e6db74">&#34;ten&#34;</span>,
+</span></span><span style="display:flex;"><span>};
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">// 编译错误： Generic type &#39;KeyValuePair&lt;Key, Value&gt;&#39; requires between 1 and 2 type arguments.
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">let</span> <span style="color:#a6e22e">firstMissing</span>: <span style="color:#66d9ef">KeyValuePair</span> <span style="color:#f92672">=</span> {
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">key</span><span style="color:#f92672">:</span> <span style="color:#e6db74">&#34;rating&#34;</span>,
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">value</span>: <span style="color:#66d9ef">10</span>,
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p>需要注意的是，<font color=red>所有缺省类型参数都必须在声明列表中的最后，这与缺省函数参数类似</font>。没有默认值的泛型类型不能排在有默认值的通用类型之后。</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span><span style="color:#75715e">// 正常
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">function</span> <span style="color:#a6e22e">inTheEnd</span>&lt;<span style="color:#f92672">First</span><span style="color:#960050;background-color:#1e0010">,</span> <span style="color:#a6e22e">Second</span><span style="color:#960050;background-color:#1e0010">,</span> <span style="color:#a6e22e">Third </span><span style="color:#f92672">=</span> <span style="color:#a6e22e">number</span><span style="color:#960050;background-color:#1e0010">,</span> <span style="color:#a6e22e">Fourth </span><span style="color:#f92672">=</span> <span style="color:#a6e22e">string</span>&gt;() {
+</span></span><span style="display:flex;"><span>  <span style="color:#75715e">//
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>}
+</span></span><span style="display:flex;"><span><span style="color:#75715e">// 有默认值的类型参数放在了中间，会出现编译错误:Required type parameters may not follow optional type parameters.
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">function</span> <span style="color:#a6e22e">inTheMiddle</span>&lt;<span style="color:#f92672">First</span><span style="color:#960050;background-color:#1e0010">,</span> <span style="color:#a6e22e">Second </span><span style="color:#f92672">=</span> <span style="color:#a6e22e">boolean</span><span style="color:#960050;background-color:#1e0010">,</span> <span style="color:#a6e22e">Third </span><span style="color:#f92672">=</span> <span style="color:#a6e22e">number</span><span style="color:#960050;background-color:#1e0010">,</span> <span style="color:#a6e22e">Fourth</span>&gt;() {
+</span></span><span style="display:flex;"><span>  <span style="color:#75715e">//
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>}
+</span></span></code></pre></div><h2 id="constrained-generic-types">Constrained Generic Types</h2>
+<h2 id="promises">Promises</h2>
 <p><code>JavaScript</code>中的<code>Promise</code>表示<font color="#de7802">仍在等待处理的事情</font>，例如网络请求。每个<code>Promise</code>都提供了注册回调的方法，以防待执行操作<code>resolve</code>（成功完成）或 <code>reject</code>（抛出异常）。</p>
 <p><code>Promise</code>能够在任意值类型上表示类似地操作，这与<code>TypeScript</code>泛型非常契合。在<code>TypeScript</code>类型系统中，<code>Promises</code>使用<code>Promise</code>类表示，该类有一个类型参数，代表最终解析的值。</p>
 <h3 id="creating-promises">Creating Promises</h3>
@@ -3380,8 +3472,20 @@ code.has-jax {
             <li><a href="#extending-generic-classes">Extending Generic Classes</a></li>
             <li><a href="#implementing-generic-interfaces">Implementing Generic Interfaces</a></li>
             <li><a href="#method-generics">Method Generics</a></li>
+            <li><a href="#static-class-generics">Static Class Generics</a></li>
           </ul>
         </li>
+        <li><a href="#generic-type-aliases">Generic Type Aliases</a>
+          <ul>
+            <li><a href="#generic-discriminated-unions">Generic Discriminated Unions</a></li>
+          </ul>
+        </li>
+        <li><a href="#generic-modifiers">Generic Modifiers</a>
+          <ul>
+            <li><a href="#generic-defaults">Generic Defaults</a></li>
+          </ul>
+        </li>
+        <li><a href="#constrained-generic-types">Constrained Generic Types</a></li>
         <li><a href="#promises">Promises</a>
           <ul>
             <li><a href="#creating-promises">Creating Promises</a></li>
