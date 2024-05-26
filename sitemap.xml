@@ -972,6 +972,14 @@ Declaring Runtime Values 虽然定义文件不能创建函数或变量等运行�
 下面代码中，globals.d.ts文件全局声明了一个const version: string。这样，尽管没有从globals.d.ts导入，version.ts文件也能引用全局版本变量：
 // globals.d.ts declare const version: string;  // version.ts export function logVersion() {  console.log(`Version: ${version}`); // Ok } 全局声明值最常用于使用全局变量的浏览器应用程序中。虽然大多数现代网络框架一般都使用ECMAScript模块等较新的技术，但全局变量存储仍然非常有用，尤其是在较小的项目中。
 如果发现无法自动访问.d.ts文件中声明的全局类型，需要检查.d.ts文件是否导入和导出了任何内容。即使是一次导出也会导致整个文件不再在全局范围内可用！
+Global Interface Merging 变量并不是唯一可以设置为全局的东西，许多类型声明都是为全局API和值而存在的。因为接口会与其它同名的接口合并，所以在全局脚本上下文中声明接口（例如不包含任何import或export语句的.d.ts文件）会在全局范围内对该接口进行补充。
+例如，依赖于服务器设置的全局变量的网络应用程序可能希望将其声明为存在于全局Window interface上。接口合并将允许types/window.d.ts这样的文件声明一个存在于Window类型全局window变量：
+&amp;lt;script type = &amp;#34;text/javascript&amp;#34; &amp;gt; window.myVersion = &amp;#34;3.1.1&amp;#34;; &amp;lt;/script&amp;gt;  // types/window.d.ts interface Window {  myVersion: string; }  // index.ts export function logWindowVersion() {  console.log(`Window version is: ${window.myVersion}`);  window.alert(&amp;#34;Built-in window types still work! Hooray!&amp;#34;) } Global Augmentations 在.d.ts文件中避免使用import或export语句，以保持该文件的全局范围作用域并不总是可行的。有时，mudule文件中声明的类型会在全局范围内使用。
+在这种情况下，TypeScript允许使用一种语法来声明代码块的全局性。这样做会将该代码块的内容标记为全局上下文，即使其周围环境并非如此：
+// types.d.ts // (module context) declare global {  // (global context) } // (module context) Built-In Declarations 既然已经了解了声明是如何工作的，那么是时候揭开它在TypeScript中的神秘面纱了：它一直在为类型检查提供动力。数组（Array）、函数（Function）、映射（Map）和集合（Set）等全局对象是类型系统需要了解的构造示例，但它们并未在我们的代码中声明。它们由代码要运行的运行时提供，Deno、Node、Web浏览器等。
+Library Declarations 所有JavaScript运行时都存在的Array和Function等内置全局对象都是在文件中声明，文件名如lib.[target].d.ts。target是项目所针对的JavaScript的最小支持版本，如ES5、ES2020或ESNext。
+内置库定义文件（或称lib文件）相当庞大，因为它们代表JavaScript内置API的全部内容。例如，内置数组类型的成员由一个全局数组interface表示，该接口的开头是这样的：
+// lib.es5.d.ts  interface Array&amp;lt;T&amp;gt; {  /** * Gets or sets the length of the array. This is a number one higher than the highest index in the array. */  length: number;  /** * Returns a string representation of an array. */  toString(): string;  /** * Returns a string representation of an array. The elements are converted to string using their toLocaleString methods. */  toLocaleString(): string; } Lib文件作为TypeScript npm软件包的一部分发布。可以在软件包中找到它们，路径类似node_modules/typescript/lib/lib.es5.d.ts。
 enum 由于enum编译后是一个对象，所以不能有与它同名的变量，对象，函数和类等。如果存在同名的变量、对象、函数或类，将会出现编译错误。
 // 下面代码因为枚举和变量名重复了，会出现编译错误 // Enum declarations can only merge with namespace or other enum declarations. enum Test1 {  Local = &amp;#39;local&amp;#39;,  Remote = &amp;#39;remote&amp;#39; } const Test1 = &amp;#39;890&amp;#39;  // 编译错误，因为枚举和类名重复 // Enum declarations can only merge with namespace or other enum declarations. enum Test2 {  A,  B } class Test2 { } 枚举的成员不强制赋初始值。若没有初始值，默认从0开始逐一增1，按顺序为每个成员赋值。下面示例代码中，枚举成员(或称属性)对应值分别为0，1，2。
 enum Foo {  A,  B,  C, } console.log(Foo.A, Foo.B, Foo.C) // 0 1 2 enum属性的值可以是小数:

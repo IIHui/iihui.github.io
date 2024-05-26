@@ -241,13 +241,13 @@ code.has-jax {
     <i class="fa fa-file-word-o"></i>
 </span>
 <span class="post-meta-item-text">字数: </span>
-<span class="leancloud-visitors-count">39787</span>
+<span class="leancloud-visitors-count">40746</span>
 &nbsp; | &nbsp;
 <span class="post-meta-item-icon">
     <i class="fa fa-coffee"></i>
 </span>
 <span class="post-meta-item-text">阅读: </span>
-<span class="leancloud-visitors-count">80 分钟</span>
+<span class="leancloud-visitors-count">82 分钟</span>
 </span>
       </div>
     </header>
@@ -2927,6 +2927,54 @@ code.has-jax {
 </span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>}
 </span></span></code></pre></div><p>全局声明值最常用于使用全局变量的浏览器应用程序中。虽然大多数现代网络框架一般都使用<code>ECMAScript</code>模块等较新的技术，但全局变量存储仍然非常有用，尤其是在较小的项目中。</p>
 <p>如果发现无法自动访问<code>.d.ts</code>文件中声明的全局类型，需要检查<code>.d.ts</code>文件是否导入和导出了任何内容。即使是一次导出也会导致整个文件不再在全局范围内可用！</p>
+<h3 id="global-interface-merging">Global Interface Merging</h3>
+<p>变量并不是唯一可以设置为全局的东西，许多类型声明都是为全局API和值而存在的。因为接口会与其它同名的接口合并，所以在全局脚本上下文中声明接口（例如不包含任何<code>import</code>或<code>export</code>语句的<code>.d.ts</code>文件）会在全局范围内对该接口进行补充。</p>
+<p>例如，依赖于服务器设置的全局变量的网络应用程序可能希望将其声明为存在于全局<code>Window interface</code>上。接口合并将允许<code>types/window.d.ts</code>这样的文件声明一个存在于<code>Window</code>类型全局<code>window</code>变量：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span>&lt;<span style="color:#f92672">script</span> <span style="color:#a6e22e">type </span><span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;text/javascript&#34;</span> &gt;
+</span></span><span style="display:flex;"><span>window.<span style="color:#a6e22e">myVersion</span> <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;3.1.1&#34;</span>;
+</span></span><span style="display:flex;"><span>&lt;/<span style="color:#f92672">script</span>&gt;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">// types/window.d.ts
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">interface</span> <span style="color:#a6e22e">Window</span> {
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">myVersion</span>: <span style="color:#66d9ef">string</span>;
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">// index.ts
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">export</span> <span style="color:#66d9ef">function</span> <span style="color:#a6e22e">logWindowVersion() {</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">console</span>.<span style="color:#a6e22e">log</span>(<span style="color:#e6db74">`Window version is: </span><span style="color:#e6db74">${</span>window.<span style="color:#a6e22e">myVersion</span><span style="color:#e6db74">}</span><span style="color:#e6db74">`</span>);
+</span></span><span style="display:flex;"><span>    window.<span style="color:#a6e22e">alert</span>(<span style="color:#e6db74">&#34;Built-in window types still work! Hooray!&#34;</span>)
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><h3 id="global-augmentations">Global Augmentations</h3>
+<p>在<code>.d.ts</code>文件中避免使用<code>import</code>或<code>export</code>语句，以保持该文件的全局范围作用域并不总是可行的。有时，<code>mudule</code>文件中声明的类型会在全局范围内使用。</p>
+<p>在这种情况下，<code>TypeScript</code>允许使用一种语法来声明代码块的全局性。这样做会将该代码块的内容标记为全局上下文，即使其周围环境并非如此：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span><span style="color:#75715e">// types.d.ts 
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">// (module context)
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">declare</span> <span style="color:#66d9ef">global</span> { 
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">// (global context) 
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>}
+</span></span><span style="display:flex;"><span><span style="color:#75715e">// (module context)
+</span></span></span></code></pre></div><h2 id="built-in-declarations">Built-In Declarations</h2>
+<p>既然已经了解了声明是如何工作的，那么是时候揭开它在<code>TypeScript</code>中的神秘面纱了：它一直在为类型检查提供动力。数组（Array）、函数（Function）、映射（Map）和集合（Set）等全局对象是类型系统需要了解的构造示例，但它们并未在我们的代码中声明。它们由代码要运行的运行时提供，<code>Deno、Node、Web</code>浏览器等。</p>
+<h3 id="library-declarations">Library Declarations</h3>
+<p>所有<code>JavaScript</code>运行时都存在的<code>Array</code>和<code>Function</code>等内置全局对象都是在文件中声明，文件名如<code>lib.[target].d.ts</code>。<code>target</code>是项目所针对的<code>JavaScript</code>的最小支持版本，如<code>ES5、ES2020</code>或<code>ESNext</code>。</p>
+<p>内置库定义文件（或称<code>lib</code>文件）相当庞大，因为它们代表<code>JavaScript</code>内置<code>API</code>的全部内容。例如，内置数组类型的成员由一个全局数组<code>interface</code>表示，该接口的开头是这样的：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span><span style="color:#75715e">// lib.es5.d.ts
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">interface</span> Array&lt;<span style="color:#f92672">T</span>&gt; {
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">/**
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">     * Gets or sets the length of the array. This is a number one higher than the highest index in the array.
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">     */</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">length</span>: <span style="color:#66d9ef">number</span>;
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">/**
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">     * Returns a string representation of an array.
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">     */</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">toString</span>()<span style="color:#f92672">:</span> <span style="color:#66d9ef">string</span>;
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">/**
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">     * Returns a string representation of an array. The elements are converted to string using their toLocaleString methods.
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">     */</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">toLocaleString</span>()<span style="color:#f92672">:</span> <span style="color:#66d9ef">string</span>;
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p><code>Lib</code>文件作为<code>TypeScript npm</code>软件包的一部分发布。可以在软件包中找到它们，路径类似<code>node_modules/typescript/lib/lib.es5.d.ts</code>。</p>
 <h1 id="enum">enum</h1>
 <p>由于<code>enum</code>编译后是一个对象，所以<font color="#de7802">不能有与它同名的变量，对象，函数和类等</font>。如果存在同名的变量、对象、函数或类，将会出现编译错误。</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span><span style="color:#75715e">// 下面代码因为枚举和变量名重复了，会出现编译错误
@@ -3602,6 +3650,13 @@ code.has-jax {
         <li><a href="#declaring-runtime-values">Declaring Runtime Values</a>
           <ul>
             <li><a href="#global-values">Global Values</a></li>
+            <li><a href="#global-interface-merging">Global Interface Merging</a></li>
+            <li><a href="#global-augmentations">Global Augmentations</a></li>
+          </ul>
+        </li>
+        <li><a href="#built-in-declarations">Built-In Declarations</a>
+          <ul>
+            <li><a href="#library-declarations">Library Declarations</a></li>
           </ul>
         </li>
       </ul>
