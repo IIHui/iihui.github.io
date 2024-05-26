@@ -241,13 +241,13 @@ code.has-jax {
     <i class="fa fa-file-word-o"></i>
 </span>
 <span class="post-meta-item-text">字数: </span>
-<span class="leancloud-visitors-count">39488</span>
+<span class="leancloud-visitors-count">39787</span>
 &nbsp; | &nbsp;
 <span class="post-meta-item-icon">
     <i class="fa fa-coffee"></i>
 </span>
 <span class="post-meta-item-text">阅读: </span>
-<span class="leancloud-visitors-count">79 分钟</span>
+<span class="leancloud-visitors-count">80 分钟</span>
 </span>
       </div>
     </header>
@@ -2883,7 +2883,7 @@ code.has-jax {
 </span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">declare</span> <span style="color:#66d9ef">let</span> <span style="color:#a6e22e">declared</span>: <span style="color:#66d9ef">string</span>;
 </span></span><span style="display:flex;"><span><span style="color:#75715e">// 不合法声明，会出现编译错误，因为不能包括可执行的代码
 </span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">declare</span> <span style="color:#66d9ef">let</span> <span style="color:#a6e22e">initializer</span>: <span style="color:#66d9ef">string</span> <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;Wanda&#34;</span>;
-</span></span></code></pre></div><p>函数和类的声明也与普通的变量相似，但在声明时不能有函数体或方法体：</p>
+</span></span></code></pre></div><p>函数和类的声明也与普通的变量相似，但在声明时不能有函数体或方法体，即不能有相关实现：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span><span style="color:#75715e">// 正常，因为没有函数体
 </span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">declare</span> <span style="color:#66d9ef">function</span> <span style="color:#a6e22e">canGrantWish</span>(<span style="color:#a6e22e">wish</span>: <span style="color:#66d9ef">string</span>)<span style="color:#f92672">:</span> <span style="color:#66d9ef">boolean</span>; <span style="color:#75715e">// Ok
 </span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>
@@ -2898,24 +2898,35 @@ code.has-jax {
 </span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">return</span> <span style="color:#66d9ef">true</span>;
 </span></span><span style="display:flex;"><span>    }
 </span></span><span style="display:flex;"><span>}
-</span></span></code></pre></div><p>对于<code>ambient context</code>中声明的函数和变量，TypeScript的隐式any规则与在普通源代码中的规则相同。由于环境上下文可能不提供函数体或变量初始值，因此显式类型标注（包括显式返回类型标注）通常是阻止它们隐式成为<code>any</code>类型的唯一方法。</p>
-<p>尽管使用<code>declare</code>关键字的类型声明在<code>.d.ts</code>文件中最为常见，但在声明文件之外也可以使用<code>declare</code>关键字。模块或脚本文件也可以使用<code>declare</code>，当一个全局可用的变量只能在该文件中使用时，这就非常有用了。下面代码中，变量<code>myGlobalValue</code>定义在一个<code>index.ts</code>文件中，因此可以在这个文件中使用：</p>
+</span></span></code></pre></div><p>对于<code>ambient context</code>中声明的函数和变量，隐式<code>any</code>规则同样适用。由于<code>ambient context</code>中可能不提供函数体或变量初始值，因此显式类型标注（包括显式返回类型标注）通常是阻止它们隐式成为<code>any</code>类型的唯一方法。</p>
+<p>尽管在<code>.d.ts</code>中使用<code>declare</code>关键字进行类型声明很常见，但在声明文件之外也可以使用<code>declare</code>关键字。模块或脚本文件中也可以使用<code>declare</code>，当一个全局可用的变量只能在该文件中使用时，这就很有用了。下面代码中，变量<code>myGlobalValue</code>定义在一个<code>index.ts</code>文件中，因此可以在这个文件中使用：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span><span style="color:#75715e">// index.ts 
 </span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">declare</span> <span style="color:#66d9ef">const</span> <span style="color:#a6e22e">myGlobalValue</span>: <span style="color:#66d9ef">string</span>; 
 </span></span><span style="display:flex;"><span><span style="color:#a6e22e">console</span>.<span style="color:#a6e22e">log</span>(<span style="color:#a6e22e">myGlobalValue</span>); <span style="color:#75715e">// Ok
-</span></span></span></code></pre></div><p>需要注意的是，在<code>.d.ts</code>定义文件中，无论是否有<code>declare</code>，都允许使用接口等类型声明，而函数或变量等运行时构造则会在没有<code>declare</code>的情况下触发类型申诉：</p>
+</span></span></span></code></pre></div><p>需要注意的是，在<code>.d.ts</code>文件中，无论是否有<code>declare</code>，都允许使用接口等类型声明。而函数或变量等在r<code>untime constructs</code>没有<code>declare</code>的情况下会出现编译错误：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span><span style="color:#75715e">// index.d.ts
 </span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">interface</span> <span style="color:#a6e22e">Writer</span> {} <span style="color:#75715e">// Ok
 </span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">declare</span> <span style="color:#66d9ef">interface</span> <span style="color:#a6e22e">Writer</span> {} <span style="color:#75715e">// Ok
 </span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>
-</span></span><span style="display:flex;"><span><span style="color:#66d9ef">declare</span> <span style="color:#66d9ef">const</span> <span style="color:#a6e22e">firstName</span><span style="color:#f92672">:</span> <span style="color:#e6db74">&#34;Liz&#34;</span>; <span style="color:#75715e">// Ok: type is the literal &#34;value&#34;
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">declare</span> <span style="color:#66d9ef">const</span> <span style="color:#a6e22e">fullName</span>: <span style="color:#66d9ef">string</span>; <span style="color:#75715e">// Ok: type is the primitive string
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">declare</span> <span style="color:#66d9ef">const</span> <span style="color:#a6e22e">firstName</span><span style="color:#f92672">:</span> <span style="color:#e6db74">&#34;Liz&#34;</span>; <span style="color:#75715e">// Ok: type is the literal &#34;value&#34;
 </span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>
 </span></span><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span><span style="color:#75715e">// Error: Top-level declarations in .d.ts files must 
 </span></span></span><span style="display:flex;"><span><span style="color:#75715e">// start with either a &#39;declare&#39; or &#39;export&#39; modifier.
 </span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">const</span> <span style="color:#a6e22e">lastName</span> <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;Lemon&#34;</span>; 
 </span></span></code></pre></div><h3 id="global-values">Global Values</h3>
-<p>由于没有导入或导出语句的<code>TypeScript</code>文件被视为脚本而非模块，因此其中声明的构造（包括类型）在全局范围内可用。没有导入或导出语句的定义文件可以利用这种行为在全局范围内声明类型。全局定义文件对于声明应用程序中所有文件都可用的全局类型或变量特别有用。</p>
+<p>因为没有导入或导出语句的<code>TypeScript</code>文件被视为脚本而非模块，因此其中声明的<code>constructs—including types</code>在全局范围内可用。在没有导入或导出语句的定义文件可以利用这种行为在全局范围内声明类型。全局定义文件对于声明应用程序中所有文件都可用的全局类型或变量特别有用。</p>
+<p>下面代码中，<code>globals.d.ts</code>文件全局声明了一个<code>const version: string</code>。这样，尽管没有从<code>globals.d.ts</code>导入，<code>version.ts</code>文件也能引用全局版本变量：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span><span style="color:#75715e">// globals.d.ts 
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">declare</span> <span style="color:#66d9ef">const</span> <span style="color:#a6e22e">version</span>: <span style="color:#66d9ef">string</span>;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">// version.ts 
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">export</span> <span style="color:#66d9ef">function</span> <span style="color:#a6e22e">logVersion() {</span> 
+</span></span><span style="display:flex;"><span>  <span style="color:#a6e22e">console</span>.<span style="color:#a6e22e">log</span>(<span style="color:#e6db74">`Version: </span><span style="color:#e6db74">${</span><span style="color:#a6e22e">version</span><span style="color:#e6db74">}</span><span style="color:#e6db74">`</span>); <span style="color:#75715e">// Ok 
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>}
+</span></span></code></pre></div><p>全局声明值最常用于使用全局变量的浏览器应用程序中。虽然大多数现代网络框架一般都使用<code>ECMAScript</code>模块等较新的技术，但全局变量存储仍然非常有用，尤其是在较小的项目中。</p>
+<p>如果发现无法自动访问<code>.d.ts</code>文件中声明的全局类型，需要检查<code>.d.ts</code>文件是否导入和导出了任何内容。即使是一次导出也会导致整个文件不再在全局范围内可用！</p>
 <h1 id="enum">enum</h1>
 <p>由于<code>enum</code>编译后是一个对象，所以<font color="#de7802">不能有与它同名的变量，对象，函数和类等</font>。如果存在同名的变量、对象、函数或类，将会出现编译错误。</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span><span style="color:#75715e">// 下面代码因为枚举和变量名重复了，会出现编译错误
