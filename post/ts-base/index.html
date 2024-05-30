@@ -241,7 +241,7 @@ code.has-jax {
     <i class="fa fa-file-word-o"></i>
 </span>
 <span class="post-meta-item-text">字数: </span>
-<span class="leancloud-visitors-count">41198</span>
+<span class="leancloud-visitors-count">41266</span>
 &nbsp; | &nbsp;
 <span class="post-meta-item-icon">
     <i class="fa fa-coffee"></i>
@@ -2600,7 +2600,7 @@ code.has-jax {
 </span></span><span style="display:flex;"><span><span style="color:#66d9ef">const</span> <span style="color:#a6e22e">storage</span> <span style="color:#f92672">=</span> <span style="color:#66d9ef">new</span> <span style="color:#a6e22e">Secret</span>(<span style="color:#ae81ff">12345</span>, <span style="color:#e6db74">&#34;luggage&#34;</span>); <span style="color:#75715e">// Type: Secret&lt;number, string&gt;
 </span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#a6e22e">storage</span>.<span style="color:#a6e22e">getValue</span>(<span style="color:#ae81ff">1987</span>); <span style="color:#75715e">// Type: string | undefined
 </span></span></span></code></pre></div><h3 id="explicit-generic-class-types">Explicit Generic Class Types</h3>
-<p>实例化泛型类和泛型接口类似，如果类型实参可以从构造器中的参数中推断出来，就可以省略显式的类型实参标注，但如果省略了类型实参，编译器却推断不出来类型实参，则使用默认类型<code>unknown</code>。例如，上面示例代码使用了<code>new Secret(12345, &quot;luggage&quot;)</code>：</p>
+<p>实例化泛型类和泛型接口类似，如果类型参数可以从构造器中的参数中推断出来，就可以省略显式的类型实参标注，但如果省略了类型实参，编译器却推断不出来类型实参，则使用默认的类型<code>unknown</code>。例如，上面示例代码使用了<code>new Secret(12345, &quot;luggage&quot;)</code>：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span><span style="color:#66d9ef">const</span> <span style="color:#a6e22e">storage</span> <span style="color:#f92672">=</span> <span style="color:#66d9ef">new</span> <span style="color:#a6e22e">Secret</span>(<span style="color:#ae81ff">12345</span>, <span style="color:#e6db74">&#34;luggage&#34;</span>); <span style="color:#75715e">// Type: Secret&lt;number, string&gt;
 </span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#a6e22e">storage</span>.<span style="color:#a6e22e">getValue</span>(<span style="color:#ae81ff">1987</span>); <span style="color:#75715e">// Type: string | undefined
 </span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>
@@ -2623,29 +2623,33 @@ code.has-jax {
 </span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">console</span>.<span style="color:#a6e22e">log</span>(<span style="color:#a6e22e">input</span>.<span style="color:#a6e22e">length</span>);
 </span></span><span style="display:flex;"><span>});
 </span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span><span style="color:#75715e">// 编译错误：&#39;input&#39; is of type &#39;unknown&#39;.
-</span></span></span><span style="display:flex;"><span><span style="color:#75715e">// Type: CurriedCallback&lt;unknown&gt;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">// Type: CurriedCallback&lt;unknown&gt;
 </span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">new</span> <span style="color:#a6e22e">CurriedCallback</span>((<span style="color:#a6e22e">input</span>) <span style="color:#f92672">=&gt;</span> {
-</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">console</span>.<span style="color:#a6e22e">log</span>(<span style="color:#a6e22e">input</span>.<span style="color:#a6e22e">length</span>);
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">// 编译错误：&#39;input&#39; is of type &#39;unknown&#39;
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#75715e">// unknown需要类型窄化才可以访问属性
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#a6e22e">console</span>.<span style="color:#a6e22e">log</span>(<span style="color:#a6e22e">input</span>.<span style="color:#a6e22e">length</span>);
 </span></span><span style="display:flex;"><span>})
 </span></span></code></pre></div><h3 id="extending-generic-classes">Extending Generic Classes</h3>
-<p>泛型类可以作为其它类的基类。但需要注意的是，编译器<font color="#de7802">不会尝试从使用中推断基类的类型参数，任何没有默认值的类型参数都需要使用显式类型标注来指定。</font></p>
+<p>泛型类可以作为其它普通类的基类。需要注意的是，编译器<font color="#de7802">不会尝试从使用中推断基类的类型参数，任何没有默认值的类型参数都需要使用显式类型标注来指定。</font></p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span><span style="color:#66d9ef">class</span> <span style="color:#a6e22e">Quote</span>&lt;<span style="color:#f92672">T</span>&gt; {
 </span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">lines</span>: <span style="color:#66d9ef">T</span>;
 </span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">constructor</span>(<span style="color:#a6e22e">lines</span>: <span style="color:#66d9ef">T</span>) {
 </span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">this</span>.<span style="color:#a6e22e">lines</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">lines</span>;
 </span></span><span style="display:flex;"><span>    }
 </span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span><span style="color:#66d9ef">class</span> <span style="color:#a6e22e">SpokenQuote</span> <span style="color:#66d9ef">extends</span> <span style="color:#a6e22e">Quote</span>&lt;<span style="color:#f92672">string</span><span style="color:#960050;background-color:#1e0010">[]</span>&gt; {
 </span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">speak() {</span>
 </span></span><span style="display:flex;"><span>        <span style="color:#a6e22e">console</span>.<span style="color:#a6e22e">log</span>(<span style="color:#66d9ef">this</span>.<span style="color:#a6e22e">lines</span>.<span style="color:#a6e22e">join</span>(<span style="color:#e6db74">&#34;\n&#34;</span>));
 </span></span><span style="display:flex;"><span>    }
 </span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span><span style="color:#66d9ef">new</span> <span style="color:#a6e22e">Quote</span>(<span style="color:#e6db74">&#34;The only real failure is the failure to try.&#34;</span>).<span style="color:#a6e22e">lines</span>;
 </span></span><span style="display:flex;"><span><span style="color:#66d9ef">new</span> <span style="color:#a6e22e">Quote</span>([<span style="color:#ae81ff">4</span>, <span style="color:#ae81ff">8</span>, <span style="color:#ae81ff">15</span>, <span style="color:#ae81ff">16</span>, <span style="color:#ae81ff">23</span>, <span style="color:#ae81ff">42</span>]).<span style="color:#a6e22e">lines</span>;
 </span></span><span style="display:flex;"><span><span style="color:#66d9ef">new</span> <span style="color:#a6e22e">SpokenQuote</span>([<span style="color:#e6db74">&#34;Greed is so destructive.&#34;</span>, <span style="color:#e6db74">&#34;It destroys everything&#34;</span>,]).<span style="color:#a6e22e">lines</span>;
 </span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span><span style="color:#75715e">// 编译错误：Type &#39;number&#39; is not assignable to type &#39;string&#39;.
+</span></span><span style="display:flex;"><span><span style="color:#75715e">// 实参类型不对，会出现编译错误：Type &#39;number&#39; is not assignable to type &#39;string&#39;.
 </span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">new</span> <span style="color:#a6e22e">SpokenQuote</span>([<span style="color:#ae81ff">4</span>, <span style="color:#ae81ff">8</span>, <span style="color:#ae81ff">15</span>, <span style="color:#ae81ff">16</span>, <span style="color:#ae81ff">23</span>, <span style="color:#ae81ff">42</span>]);
 </span></span></code></pre></div><p>泛型派生类也可以将自己的类型参数传递给基类，派生泛型类中的类型名称不必与基类泛型声明时使用的名称一致：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span><span style="color:#66d9ef">class</span> <span style="color:#a6e22e">AttributedQuote</span>&lt;<span style="color:#f92672">Value</span>&gt; <span style="color:#66d9ef">extends</span> <span style="color:#a6e22e">Quote</span>&lt;<span style="color:#f92672">Value</span>&gt; {
@@ -2693,7 +2697,7 @@ code.has-jax {
 </span></span><span style="display:flex;"><span><span style="color:#66d9ef">const</span> <span style="color:#a6e22e">numberPair</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">factory</span>.<span style="color:#a6e22e">createPair</span>(<span style="color:#ae81ff">10</span>);
 </span></span><span style="display:flex;"><span><span style="color:#66d9ef">const</span> <span style="color:#a6e22e">stringPair</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">factory</span>.<span style="color:#a6e22e">createPair</span>(<span style="color:#e6db74">&#34;Sophie&#34;</span>);
 </span></span></code></pre></div><h3 id="static-class-generics">Static Class Generics</h3>
-<p>类的静态成员独立于实例成员，与类的任何特定实例无关。它们无法访问任何类实例或任何类实例特有的类型信息。因此，虽然静态类方法可以声明自己的类型参数，但<font color=red>它们不能访问泛型类声明时的任何类型参数</font>。</p>
+<p>类的静态成员独立于实例成员，与类的任何特定实例无关。它们无法访问任何类实例或任何类实例特有的类型信息。因此，虽然静态类方法可以声明自己的类型参数，但**<font color=red>它们不能访问泛型类声明时的任何类型参数</font>**。</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span><span style="color:#66d9ef">class</span> <span style="color:#a6e22e">BothLogger</span>&lt;<span style="color:#f92672">OnInstance</span>&gt; {
 </span></span><span style="display:flex;"><span>  
 </span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">instanceLog</span>(<span style="color:#a6e22e">value</span>: <span style="color:#66d9ef">OnInstance</span>) {
@@ -2716,9 +2720,11 @@ code.has-jax {
 </span></span><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span><span style="color:#66d9ef">type</span> <span style="color:#a6e22e">CreatesValue</span>&lt;<span style="color:#f92672">Input</span><span style="color:#960050;background-color:#1e0010">,</span> <span style="color:#a6e22e">Output</span>&gt; <span style="color:#f92672">=</span> (<span style="color:#a6e22e">input</span>: <span style="color:#66d9ef">Input</span>) <span style="color:#f92672">=&gt;</span> <span style="color:#a6e22e">Output</span>;
 </span></span></code></pre></div><h3 id="generic-discriminated-unions">Generic Discriminated Unions</h3>
-<p>在<code>TypeScript</code>中，判别联合优雅地将<code>JavaScript</code>常见模式与<code>TypeScript</code>的类型窄化完美地结合在一起。我最喜欢的判别联合用法是添加一个类型参数，以创建一个泛型的&quot;result&quot;类型，它可以代表成功的数据结果，也可以代表失败的错误结果。</p>
+<p>在<code>TypeScript</code>中，判别联合优雅地将<code>JavaScript</code>常见模式与<code>TypeScript</code>的类型窄化完美地结合在一起。我最喜欢的判别联合用法是添加一个类型参数，以创建一个泛型的<code>Result</code>类型，它可以代表成功的数据结果，也可以代表失败的错误结果。</p>
 <p>该<code>Result</code>泛型有一个<code>succeeded</code>判别式，必须使用该判别式才能确定结果是成功还是失败。这意味着任何返回<code>Result</code>的操作都可以表示错误或数据结果，并确保消费者需要检查结果是否成功：</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span><span style="color:#66d9ef">interface</span> <span style="color:#a6e22e">FailureResult</span> {
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span><span style="color:#66d9ef">type</span> <span style="color:#a6e22e">Result</span>&lt;<span style="color:#f92672">Data</span>&gt; <span style="color:#f92672">=</span> <span style="color:#a6e22e">FailureResult</span> <span style="color:#f92672">|</span> <span style="color:#a6e22e">SuccessfulResult</span>&lt;<span style="color:#f92672">Data</span>&gt;;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">interface</span> <span style="color:#a6e22e">FailureResult</span> {
 </span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">error</span>: <span style="color:#66d9ef">Error</span>;
 </span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">succeeded</span>: <span style="color:#66d9ef">false</span>;
 </span></span><span style="display:flex;"><span>}
@@ -2741,7 +2747,7 @@ code.has-jax {
 </span></span><span style="display:flex;"><span>}
 </span></span></code></pre></div><p>将泛型和<code>discriminated types</code>结合在一起，就能为像结果这样的可重用类型提供绝佳的建模方式。</p>
 <h2 id="generic-modifiers">Generic Modifiers</h2>
-<p>TypeScript包含允许修改泛型参数行为的语法。</p>
+<p><code>TypeScript</code>包含允许修改泛型参数行为的语法，下面介绍泛型默认类型参数和类型参数约束。</p>
 <h3 id="generic-defaults">Generic Defaults</h3>
 <p>到目前为止，如果在类型标注中使用泛型，或者将其作为类的扩展或实现的基类，那么它必须为每个类型参数提供一个类型参数。可以在类型参数的声明后加上一个<code>=</code>符号和一个默认类型，从而避免显式地提供类型参数。</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span><span style="color:#66d9ef">interface</span> <span style="color:#a6e22e">Quote</span>&lt;<span style="color:#f92672">T</span> <span style="color:#960050;background-color:#1e0010">=</span> <span style="color:#a6e22e">string</span>&gt; {
@@ -2774,7 +2780,7 @@ code.has-jax {
 </span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">key</span><span style="color:#f92672">:</span> <span style="color:#e6db74">&#34;rating&#34;</span>,
 </span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">value</span>: <span style="color:#66d9ef">10</span>,
 </span></span><span style="display:flex;"><span>}
-</span></span></code></pre></div><p>需要注意的是，<font color=red>所有缺省类型参数都必须在声明列表中的最后，这与缺省函数参数类似</font>。没有默认值的泛型类型不能排在有默认值的通用类型之后。</p>
+</span></span></code></pre></div><p>需要注意的是，<font color=red>所有缺省类型参数都必须在声明在类型列表的最后，这与缺省函数参数类似</font>。也就是说，没有默认值的类型参数不能排在有默认值的类型参数之后。</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span><span style="color:#75715e">// 正常
 </span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">function</span> <span style="color:#a6e22e">inTheEnd</span>&lt;<span style="color:#f92672">First</span><span style="color:#960050;background-color:#1e0010">,</span> <span style="color:#a6e22e">Second</span><span style="color:#960050;background-color:#1e0010">,</span> <span style="color:#a6e22e">Third </span><span style="color:#f92672">=</span> <span style="color:#a6e22e">number</span><span style="color:#960050;background-color:#1e0010">,</span> <span style="color:#a6e22e">Fourth </span><span style="color:#f92672">=</span> <span style="color:#a6e22e">string</span>&gt;() {
 </span></span><span style="display:flex;"><span>  <span style="color:#75715e">//
@@ -2785,7 +2791,7 @@ code.has-jax {
 </span></span><span style="display:flex;"><span>  <span style="color:#75715e">//
 </span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>}
 </span></span></code></pre></div><h2 id="constrained-generic-types">Constrained Generic Types</h2>
-<p>默认情况下，泛型的实参类型可以是任何类型：类、接口、基本类型、联合。但是，有些函数只能用于有限的类型集。允许一个类型参数声明自己需要扩展一个类型：这意味着它只允许别名可分配给该类型的类型。约束类型参数的语法是在类型参数名称后加上<code>extends</code>关键字，然后再加上要约束它的类型。</p>
+<p>默认情况下，泛型的实参类型可以是任何类型：类、接口、基本类型、联合。但是，有些函数只能用于有限的类型集。允许一个类型参数声明自己需要<code>extends</code>一个类型：这意味着它只允许别名可分配给该类型的类型。约束类型参数的语法是在类型参数名称后加上<code>extends</code>关键字，然后再加上要约束它的类型。</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span><span style="color:#66d9ef">interface</span> <span style="color:#a6e22e">WithLength</span> {
 </span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">length</span>: <span style="color:#66d9ef">number</span>;
 </span></span><span style="display:flex;"><span>}
@@ -2795,7 +2801,7 @@ code.has-jax {
 </span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">return</span> <span style="color:#a6e22e">input</span>;
 </span></span><span style="display:flex;"><span>}
 </span></span></code></pre></div><h3 id="keyof-and-constrained-type-parameters">keyof and Constrained Type Parameters</h3>
-<p>关键词<code>keyof</code>也可以用于泛型中的类型约束，将<code>extends</code>和<code>keyof</code>一起使用，可以将<code>key</code>限定在为某个类型参数的键。</p>
+<p>关键词<code>keyof</code>也可以用于泛型中的类型约束。将<code>extends</code>和<code>keyof</code>一起使用，可以将<code>key</code>限定在某个类型参数的所有<code>key</code>之内。</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span><span style="color:#66d9ef">function</span> <span style="color:#66d9ef">get</span>&lt;<span style="color:#f92672">T</span><span style="color:#960050;background-color:#1e0010">,</span> <span style="color:#a6e22e">Key</span> <span style="color:#a6e22e">extends</span> <span style="color:#a6e22e">keyof</span> <span style="color:#a6e22e">T</span>&gt;(<span style="color:#a6e22e">container</span>: <span style="color:#66d9ef">T</span>, <span style="color:#a6e22e">key</span>: <span style="color:#66d9ef">Key</span>) {
 </span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">return</span> <span style="color:#a6e22e">container</span>[<span style="color:#a6e22e">key</span>];
 </span></span><span style="display:flex;"><span>}
