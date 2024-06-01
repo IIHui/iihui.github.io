@@ -241,13 +241,13 @@ code.has-jax {
     <i class="fa fa-file-word-o"></i>
 </span>
 <span class="post-meta-item-text">字数: </span>
-<span class="leancloud-visitors-count">41449</span>
+<span class="leancloud-visitors-count">41784</span>
 &nbsp; | &nbsp;
 <span class="post-meta-item-icon">
     <i class="fa fa-coffee"></i>
 </span>
 <span class="post-meta-item-text">阅读: </span>
-<span class="leancloud-visitors-count">83 分钟</span>
+<span class="leancloud-visitors-count">84 分钟</span>
 </span>
       </div>
     </header>
@@ -2498,7 +2498,7 @@ code.has-jax {
 </span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#a6e22e">console</span>.<span style="color:#a6e22e">log</span>(<span style="color:#a6e22e">identity</span>(<span style="color:#e6db74">&#39;133&#39;</span>)) <span style="color:#75715e">// 133
 </span></span></span></code></pre></div><p>但需要注意的是，在<code>.tsx</code>文件中泛型箭头语法有一些限制，因为它与<code>JSX</code>语法冲突。修改相关的配置可以支持<code>JSX</code>和<code>React</code>。</p>
 <h3 id="explicit-generic-call-types">Explicit Generic Call Types</h3>
-<p>多数情况下，在调用泛型函数时，能够根据函数的调用方式推断出类型实参。例如，在前面的<code>identity</code>函数中，类型检查器根据提供给它的实参来推断泛型函数的类型参数。</p>
+<p>多数情况下，在调用泛型函数时，能够根据函数的调用方式推断出类型实参。例如，在前面的<code>identity</code>函数中，类型检查器根据提供给它的实参来推断泛型函数的类型实参。</p>
 <p>不幸的是，与类成员和变量类型一样，有时函数调用时没有足够的信息来告知编译器类型参数应解析成什么类型。如果一个泛型构造器被提供给另一个泛型构造器，而后者的类型参数未知，则可能会发生这种情况。<span style="background:#f8d9c3">对于无法推断的类型参数，将被认为是<code>unknown</code>类型。</span></p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span><span style="color:#66d9ef">function</span> <span style="color:#a6e22e">logWrapper</span>&lt;<span style="color:#f92672">Input</span>&gt;(<span style="color:#a6e22e">callback</span><span style="color:#f92672">:</span> (<span style="color:#a6e22e">input</span>: <span style="color:#66d9ef">Input</span>) <span style="color:#f92672">=&gt;</span> <span style="color:#66d9ef">void</span>) {  
 </span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">return</span> (<span style="color:#a6e22e">input</span>: <span style="color:#66d9ef">Input</span>) <span style="color:#f92672">=&gt;</span> {  
@@ -2508,15 +2508,18 @@ code.has-jax {
 </span></span><span style="display:flex;"><span>}
 </span></span><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span><span style="color:#75715e">// 正常
-</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#a6e22e">logWrapper</span>((<span style="color:#a6e22e">input</span>: <span style="color:#66d9ef">string</span>) <span style="color:#f92672">=&gt;</span> {  
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">const</span> <span style="color:#a6e22e">test</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">logWrapper</span>((<span style="color:#a6e22e">input</span>: <span style="color:#66d9ef">string</span>) <span style="color:#f92672">=&gt;</span> {  
 </span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">console</span>.<span style="color:#a6e22e">log</span>(<span style="color:#a6e22e">input</span>.<span style="color:#a6e22e">length</span>);  
 </span></span><span style="display:flex;"><span>})
 </span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">test</span>(<span style="color:#e6db74">&#39;1233&#39;</span>)
+</span></span><span style="display:flex;"><span><span style="color:#75715e">// 上面test的执行后打印的是Input: 1233 4
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>
 </span></span><span style="display:flex;"><span><span style="color:#75715e">// 异常：&#39;input&#39; is of type &#39;unknown&#39;.
 </span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#a6e22e">logWrapper</span>((<span style="color:#a6e22e">input</span>) <span style="color:#f92672">=&gt;</span> {  
 </span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">console</span>.<span style="color:#a6e22e">log</span>(<span style="color:#a6e22e">input</span>.<span style="color:#a6e22e">length</span>);  
 </span></span><span style="display:flex;"><span>})
-</span></span></code></pre></div><p>为了避免使用默认的<code>unknown</code>，泛型函数调用时<font color="#de7802">可能需要显式标注泛型实参的类型</font>。编译器将对泛型函数调用执行类型检查，以确保显式标注的类型参数是正确的。</p>
+</span></span></code></pre></div><p>为了避免使用默认的<code>unknown</code>，泛型函数调用时<font color="#de7802">可能需要显式标注泛型的类型实参</font>。编译器将对泛型函数调用执行类型检查，以确保显式标注的类型参数是正确的。</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span><span style="color:#66d9ef">function</span> <span style="color:#a6e22e">logWrapper</span>&lt;<span style="color:#f92672">Input</span>&gt;(<span style="color:#a6e22e">callback</span><span style="color:#f92672">:</span> (<span style="color:#a6e22e">input</span>: <span style="color:#66d9ef">Input</span>) <span style="color:#f92672">=&gt;</span> <span style="color:#66d9ef">void</span>) {  
 </span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">return</span> (<span style="color:#a6e22e">input</span>: <span style="color:#66d9ef">Input</span>) <span style="color:#f92672">=&gt;</span> {  
 </span></span><span style="display:flex;"><span>        <span style="color:#a6e22e">console</span>.<span style="color:#a6e22e">log</span>(<span style="color:#e6db74">&#34;Input:&#34;</span>, <span style="color:#a6e22e">input</span>);  
@@ -2524,23 +2527,42 @@ code.has-jax {
 </span></span><span style="display:flex;"><span>    };  
 </span></span><span style="display:flex;"><span>}  
 </span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span><span style="color:#a6e22e">logWrapper</span>&lt;<span style="color:#f92672">string</span>&gt;((<span style="color:#a6e22e">input</span>) <span style="color:#f92672">=&gt;</span> {  
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">const</span> <span style="color:#a6e22e">test</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">logWrapper</span>&lt;<span style="color:#f92672">string</span>&gt;((<span style="color:#a6e22e">input</span>) <span style="color:#f92672">=&gt;</span> {  
 </span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">console</span>.<span style="color:#a6e22e">log</span>(<span style="color:#a6e22e">input</span>.<span style="color:#a6e22e">length</span>);  
 </span></span><span style="display:flex;"><span>});
 </span></span></code></pre></div><h3 id="multiple-function-type-parameters">Multiple Function Type Parameters</h3>
-<p>泛型函数可以定义任意数量的类型参数，参数之间用逗号隔开。泛型函数每次调用时都可以为每个类型参数确定相应的类型。</p>
+<p>泛型函数可以定义任意数量的类型参数，参数之间用逗号隔开。泛型函数每次调用时都可以为每个类型参数确定相应的实际类型。</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span><span style="color:#66d9ef">function</span> <span style="color:#a6e22e">makeTuple</span>&lt;<span style="color:#f92672">First</span><span style="color:#960050;background-color:#1e0010">,</span> <span style="color:#a6e22e">Second</span>&gt;(<span style="color:#a6e22e">first</span>: <span style="color:#66d9ef">First</span>, <span style="color:#a6e22e">second</span>: <span style="color:#66d9ef">Second</span>) {  
 </span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">return</span> [<span style="color:#a6e22e">first</span>, <span style="color:#a6e22e">second</span>] <span style="color:#66d9ef">as</span> <span style="color:#66d9ef">const</span>;  
 </span></span><span style="display:flex;"><span>}  
 </span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span><span style="color:#66d9ef">let</span> <span style="color:#a6e22e">tuple</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">makeTuple</span>(<span style="color:#66d9ef">true</span>, <span style="color:#e6db74">&#34;abc&#34;</span>);
-</span></span></code></pre></div><h2 id="generic-interfaces">Generic Interfaces</h2>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">// 因为使用了const，所以let tuple: readonly [boolean, string]
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">let</span> <span style="color:#a6e22e">tuple</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">makeTuple</span>(<span style="color:#66d9ef">true</span>, <span style="color:#e6db74">&#34;abc&#34;</span>);
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">// 下面修改tuple会出现编译错误：Cannot assign to &#39;0&#39; because it is a read-only property.
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#a6e22e">tuple</span>[<span style="color:#ae81ff">0</span>] <span style="color:#f92672">=</span> <span style="color:#66d9ef">false</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">function</span> <span style="color:#a6e22e">makePair</span>&lt;<span style="color:#f92672">Key</span><span style="color:#960050;background-color:#1e0010">,</span> <span style="color:#a6e22e">Value</span>&gt;(<span style="color:#a6e22e">key</span>: <span style="color:#66d9ef">Key</span>, <span style="color:#a6e22e">value</span>: <span style="color:#66d9ef">Value</span>) {
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">return</span> {<span style="color:#a6e22e">key</span>, <span style="color:#a6e22e">value</span>};
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">makePair</span>(<span style="color:#ae81ff">123</span>, <span style="color:#e6db74">&#39;123&#39;</span>)
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">makePair</span>&lt;<span style="color:#f92672">string</span><span style="color:#960050;background-color:#1e0010">,</span> <span style="color:#a6e22e">number</span>&gt;(<span style="color:#e6db74">&#34;abc&#34;</span>, <span style="color:#ae81ff">123</span>);
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">makePair</span><span style="color:#f92672">&lt;</span><span style="color:#e6db74">&#34;abc&#34;</span>, <span style="color:#ae81ff">123</span><span style="color:#f92672">&gt;</span>(<span style="color:#e6db74">&#34;abc&#34;</span>, <span style="color:#ae81ff">123</span>);
+</span></span></code></pre></div><p>在任何泛型结构中，尽量不要使用超过两个类型参数。与运行时函数参数一样，使用的参数越多，代码就越难阅读和理解。</p>
+<h2 id="generic-interfaces">Generic Interfaces</h2>
 <p>接口也可以声明为泛型，它们遵循与函数类似的泛型规则：可以在接口名称后面的<code>&lt;</code>和<code>&gt;</code>之间声明任意数量的类型参数。</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span><span style="color:#66d9ef">interface</span> <span style="color:#a6e22e">Box</span>&lt;<span style="color:#f92672">T</span>&gt; {
 </span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">inside</span>: <span style="color:#66d9ef">T</span>;
 </span></span><span style="display:flex;"><span>}
 </span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span><span style="color:#66d9ef">let</span> <span style="color:#a6e22e">stringyBox</span>: <span style="color:#66d9ef">Box</span>&lt;<span style="color:#f92672">string</span>&gt; <span style="color:#f92672">=</span> {
+</span></span><span style="display:flex;"><span><span style="color:#75715e">// 编译错误： Generic type &#39;Box&lt;T&gt;&#39; requires 1 type argument(s)
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">let</span> <span style="color:#a6e22e">d</span>: <span style="color:#66d9ef">Box</span> <span style="color:#f92672">=</span> {
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">inside</span>: <span style="color:#66d9ef">123</span>
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">// 正常
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">let</span> <span style="color:#a6e22e">stringyBox</span>: <span style="color:#66d9ef">Box</span>&lt;<span style="color:#f92672">string</span>&gt; <span style="color:#f92672">=</span> {
 </span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">inside</span><span style="color:#f92672">:</span> <span style="color:#e6db74">&#34;abc&#34;</span>,
 </span></span><span style="display:flex;"><span>};
 </span></span><span style="display:flex;"><span>
@@ -2552,8 +2574,14 @@ code.has-jax {
 </span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">let</span> <span style="color:#a6e22e">incorrectBox</span>: <span style="color:#66d9ef">Box</span>&lt;<span style="color:#f92672">number</span>&gt; <span style="color:#f92672">=</span> {
 </span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">inside</span>: <span style="color:#66d9ef">false</span>,
 </span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p>实际上，内置的Array就是一个泛型接口，它使用类型参数T来表示存储在数组里的元素，它的pop和push方法大抵类似如下：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span><span style="color:#66d9ef">interface</span> Array&lt;<span style="color:#f92672">T</span>&gt; {
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">pop</span>()<span style="color:#f92672">:</span> <span style="color:#a6e22e">T</span> <span style="color:#f92672">|</span> <span style="color:#66d9ef">undefined</span>;
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">push</span>(...<span style="color:#a6e22e">items</span>: <span style="color:#66d9ef">T</span>[])<span style="color:#f92672">:</span> <span style="color:#66d9ef">number</span>;
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">// ...
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>}
 </span></span></code></pre></div><h3 id="inferred-generic-interface-types">Inferred Generic Interface Types</h3>
-<p>如同泛型函数，泛型接口类型的实参可以从使用中推断出来。</p>
+<p>如同泛型函数，泛型接口类型的实参可以从使用中推断出来。<code>TypeScript</code>会尽力从提供给声明为接收泛型类型的位置的值类型中推断出类型实参：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span><span style="color:#66d9ef">interface</span> <span style="color:#a6e22e">LinkedNode</span>&lt;<span style="color:#f92672">Value</span>&gt; {
 </span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">next?</span>: <span style="color:#66d9ef">LinkedNode</span>&lt;<span style="color:#f92672">Value</span>&gt;;
 </span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">value</span>: <span style="color:#66d9ef">Value</span>;
@@ -2583,8 +2611,14 @@ code.has-jax {
 </span></span><span style="display:flex;"><span>    <span style="color:#75715e">// Error: type &#39;boolean&#39; is not assignable to type &#39;number&#39;.
 </span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#a6e22e">value</span>: <span style="color:#66d9ef">false</span>,
 </span></span><span style="display:flex;"><span>}
-</span></span></code></pre></div><p>请注意，<span style="background:#f8d9c3">如果接口声明时使用类型参数（即接口是泛型的），则任何引用该接口类型的地方都必须提供相应的类型参数。</span></p>
-<h2 id="generic-classes">Generic Classes</h2>
+</span></span></code></pre></div><p>请注意，<span style="background:#f8d9c3">如果接口声明时使用类型参数（即接口声明是泛型的），则任何引用该接口类型的地方都必须提供相应的类型参数，</span>，否则会出现编译错误。</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span><span style="color:#66d9ef">interface</span> <span style="color:#a6e22e">CrateLike</span>&lt;<span style="color:#f92672">T</span>&gt; {
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">contents</span>: <span style="color:#66d9ef">T</span>;
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">// Generic type &#39;CrateLike&lt;T&gt;&#39; requires 1 type argument(s).
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">let</span> <span style="color:#a6e22e">missingGeneric</span>: <span style="color:#66d9ef">CrateLike</span> <span style="color:#f92672">=</span> {<span style="color:#a6e22e">inside</span><span style="color:#f92672">:</span> <span style="color:#e6db74">&#34;??&#34;</span>};
+</span></span></code></pre></div><h2 id="generic-classes">Generic Classes</h2>
 <p>如同接口，类也支持泛型，并且支持任意数量的类型参数。每一个类的实例可能使用不同的类型实参数。下面定义的类声明了两个类型参数<code>key</code>和<code>value</code>:</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span><span style="color:#66d9ef">class</span> <span style="color:#a6e22e">Secret</span>&lt;<span style="color:#f92672">Key</span><span style="color:#960050;background-color:#1e0010">,</span> <span style="color:#a6e22e">Value</span>&gt; {
 </span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">key</span>: <span style="color:#66d9ef">Key</span>;
