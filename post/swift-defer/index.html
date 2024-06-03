@@ -241,7 +241,7 @@ code.has-jax {
     <i class="fa fa-file-word-o"></i>
 </span>
 <span class="post-meta-item-text">字数: </span>
-<span class="leancloud-visitors-count">931</span>
+<span class="leancloud-visitors-count">937</span>
 &nbsp; | &nbsp;
 <span class="post-meta-item-icon">
     <i class="fa fa-coffee"></i>
@@ -253,7 +253,7 @@ code.has-jax {
     </header>
     <div class="post-body" itemprop="articleBody">
     <blockquote>
-<p>从语言设计上来说，<code>defer</code>是为了进行资源清理和返回前避免重复执行相关代码。它不是用来取巧实现某些功能，如果这样做只会让代码的可读性降低。</p>
+<p>从语言设计上来说，<code>defer</code>是为了<font color="#de7802">进行资源清理和返回前避免重复执行相关代码</font>。它不是用来取巧实现某些功能，如果这样做只会让代码的可读性降低。</p>
 </blockquote>
 <h1 id="典型用法">典型用法</h1>
 <p><code>Swift</code>中<code>defer</code>声明的<code>block</code>会在<font color="#de7802">当前代码块执行退出后调用</font>。这种延迟调用特性，一般用来进行资源释放或避免重复代码。</p>
@@ -277,7 +277,7 @@ code.has-jax {
 </span></span><span style="display:flex;"><span>    fileHandle.write(someData)
 </span></span><span style="display:flex;"><span>    fileHandle.closeFile()
 </span></span><span style="display:flex;"><span>}
-</span></span></code></pre></div><p>上面代码需要在不同的地方调用<code>fileHandle.closeFile()</code>来关闭文件，更好的方法是使用<code>defer</code>统一处理。<code>defer</code>既可以<font color="#de7802">就近在资源申请的地方就声明释放</font>，也减少了未来添加代码时忘记释放资源的可能性。</p>
+</span></span></code></pre></div><p>上面代码需要在不同地方调用<code>fileHandle.closeFile()</code>关闭文件，更好的方法是使用<code>defer</code>统一处理。<code>defer</code>既可以<font color="#de7802">就近在资源申请的地方就声明释放</font>，也减少了未来添加代码时忘记释放资源的可能性。</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">operateOnFile</span>(descriptor: Int32) {
 </span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">let</span> fileHandle = FileHandle(fileDescriptor: descriptor)
 </span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">defer</span> { fileHandle.closeFile() }
@@ -313,7 +313,7 @@ code.has-jax {
 </span></span><span style="display:flex;"><span>    }
 </span></span><span style="display:flex;"><span>    tasks[id] = <span style="color:#66d9ef">nil</span>
 </span></span><span style="display:flex;"><span>}
-</span></span></code></pre></div><p>同理，下面的代码中只有<code>need</code>为<code>true</code>时才执行：</p>
+</span></span></code></pre></div><p>同理，下面的<code>defer</code>相关的代码只有<code>need</code>为<code>true</code>时才执行：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">deferTest</span>(need: Bool) {
 </span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">if</span> need {
 </span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">defer</span> {
@@ -326,12 +326,12 @@ code.has-jax {
 </span></span><span style="display:flex;"><span>deferTest(need: <span style="color:#66d9ef">false</span>)
 </span></span><span style="display:flex;"><span>deferTest(need: <span style="color:#66d9ef">true</span>)
 </span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">执行后的结果</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">// 执行后的结果</span>
 </span></span><span style="display:flex;"><span>outside
 </span></span><span style="display:flex;"><span><span style="color:#66d9ef">defer</span>
 </span></span><span style="display:flex;"><span>outside
 </span></span></code></pre></div><h1 id="defer闭包不持有值">defer闭包不持有值</h1>
-<p>虽然<code>defer</code>后面跟了一个闭包，但是它更多地像是一个语法糖，和我们所熟知的闭包不一样，<font color=red>它并不会捕获持有闭包里的值</font>：</p>
+<p>虽然<code>defer</code>后面跟了一个闭包，但是它更多地像是一个语法糖，和我们所熟知的闭包不一样，<font color="#de7802">它并不会捕获持有闭包里的值</font>：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">foo</span>() {
 </span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">var</span> number = <span style="color:#ae81ff">1</span>
 </span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">defer</span> {
