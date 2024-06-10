@@ -241,7 +241,7 @@ code.has-jax {
     <i class="fa fa-file-word-o"></i>
 </span>
 <span class="post-meta-item-text">字数: </span>
-<span class="leancloud-visitors-count">42589</span>
+<span class="leancloud-visitors-count">42641</span>
 &nbsp; | &nbsp;
 <span class="post-meta-item-icon">
     <i class="fa fa-coffee"></i>
@@ -1632,13 +1632,16 @@ code.has-jax {
 <li>其它情况则建议使用属性。</li>
 </ul>
 <h3 id="call-signatures">Call Signatures</h3>
-<p>接口和对象类型均可以声明<code>call signatures</code>（类型系统对值如何像函数一样被调用的描述）。只有按照<code>call signatures</code>方式声明的值才可以赋值给接口，即具有可赋值参数和返回类型的函数。<code>call signatures</code>与函数类型相似，只是用冒号代替<code>=&gt;</code>。</p>
+<p>接口和对象类型均可以声明<code>call signatures</code>，这是类型系统对值如何像函数一样被调用的描述。只有按照<code>call signatures</code>方式声明的值才可以赋值给<code>interface</code>，即具有可赋值参数和返回类型的函数。<code>call signatures</code><font color="#de7802">看起来和函数类型相似，只是用冒号代替<code>=&gt;</code></font>。</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span><span style="color:#66d9ef">interface</span> <span style="color:#a6e22e">CallSignature</span> {
 </span></span><span style="display:flex;"><span>    <span style="color:#75715e">// 调用签名
 </span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    (<span style="color:#a6e22e">input</span>: <span style="color:#66d9ef">string</span>)<span style="color:#f92672">:</span> <span style="color:#66d9ef">number</span>;
 </span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">type</span> <span style="color:#a6e22e">FunctionAlias</span> <span style="color:#f92672">=</span> (<span style="color:#a6e22e">input</span>: <span style="color:#66d9ef">string</span>) <span style="color:#f92672">=&gt;</span> <span style="color:#66d9ef">number</span>;
 </span></span><span style="display:flex;"><span><span style="color:#66d9ef">const</span> <span style="color:#a6e22e">typedFunctionAlias</span>: <span style="color:#66d9ef">FunctionAlias</span> <span style="color:#f92672">=</span> (<span style="color:#a6e22e">input</span>) <span style="color:#f92672">=&gt;</span> <span style="color:#a6e22e">input</span>.<span style="color:#a6e22e">length</span>; <span style="color:#75715e">// Ok
-</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">const</span> <span style="color:#a6e22e">typedCallSignature</span>: <span style="color:#66d9ef">CallSignature</span> <span style="color:#f92672">=</span> (<span style="color:#a6e22e">input</span>) <span style="color:#f92672">=&gt;</span> <span style="color:#a6e22e">input</span>.<span style="color:#a6e22e">length</span>; <span style="color:#75715e">// Ok
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">const</span> <span style="color:#a6e22e">typedCallSignature</span>: <span style="color:#66d9ef">CallSignature</span> <span style="color:#f92672">=</span> (<span style="color:#a6e22e">input</span>) <span style="color:#f92672">=&gt;</span> <span style="color:#a6e22e">input</span>.<span style="color:#a6e22e">length</span>; <span style="color:#75715e">// Ok
 </span></span></span></code></pre></div><p><code>call signatures</code>可用于<font color="#f79646">描述附加了一些自定义属性的函数</font>。<code>TypeScript</code>会识别添加到函数声明中的属性，并将其添加到函数声明的类型中。</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span><span style="color:#66d9ef">interface</span> <span style="color:#a6e22e">FunctionWithCount</span> {
 </span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">count</span>: <span style="color:#66d9ef">number</span>;
@@ -1661,7 +1664,7 @@ code.has-jax {
 </span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#a6e22e">hasCallCount</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">doesNotHaveCount</span>;
 </span></span></code></pre></div><h3 id="index-signatures">Index Signatures</h3>
 <p>有些<code>JavaScript</code>项目创建的对象可以使用任意字符串<code>key</code>存储值。对于这些「容器」对象来说，为接口的每一个可能的<code>key</code>声明一个属性是不切实际的。</p>
-<p><code>TypeScript</code>提供了一种称为<code>index signature</code>的语法，允许接口接收任意的<code>key</code>，并返回该<code>key</code>下的某个类型。最常见的是<code>string keys</code>，这是因为<code>JavaScript</code>对象查找属性时会将<code>key</code><font color="#de7802">隐式转换为字符串</font>。索引签名看起来就像普通的属性定义，只是在键后面加上了类型，并用数组括号将其括起来：</p>
+<p><code>TypeScript</code>提供了一种称为<code>index signature</code>的语法，允许接口接收任意的<code>key</code>，并返回该<code>key</code>下的某个类型值。常见的是<code>string keys</code>，这是因为<code>JavaScript</code>对象查找属性时会将<code>key</code><font color="#de7802">隐式转换为字符串</font>。<font color="#de7802">索引签名看起来就像普通的属性定义，只是在键后面加上了类型，并用数组括号将其括起来</font>：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span><span style="color:#66d9ef">interface</span> <span style="color:#a6e22e">WordCounts</span> {
 </span></span><span style="display:flex;"><span>    [<span style="color:#a6e22e">i</span>: <span style="color:#66d9ef">string</span>]<span style="color:#f92672">:</span> <span style="color:#66d9ef">number</span>;
 </span></span><span style="display:flex;"><span>}
@@ -1670,10 +1673,11 @@ code.has-jax {
 </span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#a6e22e">counts</span>.<span style="color:#a6e22e">banana</span> <span style="color:#f92672">=</span> <span style="color:#ae81ff">1</span>; <span style="color:#75715e">// Ok
 </span></span></span><span style="display:flex;"><span><span style="color:#75715e">// 编译错误：Type &#39;boolean&#39; is not assignable to type &#39;number&#39;.
 </span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#a6e22e">counts</span>.<span style="color:#a6e22e">cherry</span> <span style="color:#f92672">=</span> <span style="color:#66d9ef">false</span>;
-</span></span></code></pre></div><p>虽然<span style="background:rgba(255, 183, 139, 0.55)">索引签名便于将值赋值给对象，但并非完全类型安全</span>。因为索引签名表示，<font color="#de7802">无论访问的是什么属性，对象都应返回一个值</font>。</p>
+</span></span></code></pre></div><p>虽然<span style="background:rgba(255, 183, 139, 0.55)">索引签名便于将值赋值给对象，但并非完全类型安全</span>。因为索引签名表示，<font color="#de7802">无论访问的是什么属性，对象都应返回一个值</font>，这一点和数组的索引相似。</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span><span style="color:#66d9ef">interface</span> <span style="color:#a6e22e">DatesByName</span> {
 </span></span><span style="display:flex;"><span>    [<span style="color:#a6e22e">i</span>: <span style="color:#66d9ef">string</span>]<span style="color:#f92672">:</span> Date;
 </span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span><span style="color:#66d9ef">const</span> <span style="color:#a6e22e">publishDates</span>: <span style="color:#66d9ef">DatesByName</span> <span style="color:#f92672">=</span> {
 </span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">Frankenstein</span>: <span style="color:#66d9ef">new</span> Date(<span style="color:#e6db74">&#34;1 January 1818&#34;</span>),
 </span></span><span style="display:flex;"><span>};
@@ -1742,7 +1746,7 @@ code.has-jax {
 </span></span><span style="display:flex;"><span><span style="color:#75715e">// 这样赋值不会出现编译错误
 </span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#a6e22e">myNovella</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">extraProperty1</span>
 </span></span></code></pre></div><h3 id="overridden-properties">Overridden Properties</h3>
-<p>派生接口可以通过<font color="#de7802">再次声明同名的不同类型属性来覆盖或替换其基础接口的属性</font>。<span style="background:rgba(255, 183, 139, 0.55)">类型检查器会强制要求覆盖的属性必须可赋值给其基础接口对应的属性</span>，也就是说<code>override</code>的属性类型<font color=red>只能缩小不能扩大</font>。目的是确保派生接口类型的实例始终可赋值给基础接口类型变量。</p>
+<p>派生接口可以通过<font color="#de7802">再次声明同名的不同类型属性来覆盖或替换其基础接口的属性</font>。<span style="background:rgba(255, 183, 139, 0.55)">类型检查器会强制要求覆盖的属性必须可赋值给其基础接口对应的属性</span>，也就是说<code>override</code>的<font color=red>属性类型只能缩小不能扩大</font>。目的是确保派生接口类型的实例始终可赋值给基础接口类型变量。</p>
 <p><font color="#de7802">大多数派生接口在重新声明属性时，通常是为了使得这些属性成为一个联合类型的更具体的子类型</font>，也可能是为了使属性成为一个从基本接口类型扩展而来的类型（通常是扩展多个接口）。</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span><span style="color:#66d9ef">interface</span> <span style="color:#a6e22e">WithNullableName</span> {
 </span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">name</span>: <span style="color:#66d9ef">string</span> <span style="color:#f92672">|</span> <span style="color:#66d9ef">null</span>;
@@ -1795,11 +1799,13 @@ code.has-jax {
 </span></span></code></pre></div><h3 id="member-naming-conflicts">Member Naming Conflicts</h3>
 <p>请注意，<font color="#de7802">合并后的接口不能以不同类型多次声明相同名称的属性</font>。<font color="#548dd4">如果一个接口中已经声明了一个属性，那么以后合并的接口必须使用相同的类型</font>。但是，<span style="background:rgba(255, 183, 139, 0.55)">合并后的接口可以定义一个名称相同但签名不同的方法</span>。这样做会为该方法创建一个函数重载。</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span><span style="color:#66d9ef">interface</span> <span style="color:#a6e22e">MergedMethods</span> {
-</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">different</span>(<span style="color:#a6e22e">input</span>: <span style="color:#66d9ef">string</span>)<span style="color:#f92672">:</span> <span style="color:#66d9ef">string</span>;
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">// 名称相同的方法
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#a6e22e">different</span>(<span style="color:#a6e22e">input</span>: <span style="color:#66d9ef">string</span>)<span style="color:#f92672">:</span> <span style="color:#66d9ef">string</span>;
 </span></span><span style="display:flex;"><span>}
 </span></span><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span><span style="color:#66d9ef">interface</span> <span style="color:#a6e22e">MergedMethods</span> {
-</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">different</span>(<span style="color:#a6e22e">input</span>: <span style="color:#66d9ef">number</span>)<span style="color:#f92672">:</span> <span style="color:#66d9ef">string</span>; <span style="color:#75715e">// Ok 
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">// 名称相同的方法，但签名不同
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#a6e22e">different</span>(<span style="color:#a6e22e">input</span>: <span style="color:#66d9ef">number</span>)<span style="color:#f92672">:</span> <span style="color:#66d9ef">string</span>; <span style="color:#75715e">// Ok 
 </span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>}
 </span></span><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span><span style="color:#75715e">// 因为类型相同，下面代码不会出现编译错误
