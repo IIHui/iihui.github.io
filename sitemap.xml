@@ -995,12 +995,12 @@ enum Bool {  No = 123,  // 非const枚举可以使用计算属性  Yes = Math.ra
 enum Direction {  Up = &amp;#34;UP&amp;#34;,  Down = &amp;#34;DOWN&amp;#34;,  Left = &amp;#34;LEFT&amp;#34;,  Right = &amp;#34;RIGHT&amp;#34;, } 需要注意的是，字符串枚举的所有成员都必须显式设置对应值。如果成员值没有显式设置为string，则默认为number，且其位置必须在字符串成员之前。也就是说一旦设置了字符串的成员，其后的成员一定要赋初值，否则会出现编译错误：
 enum Foo {  A, // 0  B = &amp;#34;hello&amp;#34;,  C, // 报错 Enum member must have initializer } enum成员可以是字符串和数值的混合，如果要使用默认的数值，则成员必需放在字符串值成员之前。下面定义的Foo枚举的第一个成员使用了默认的number，然后是string，再是number：
 enum Foo {  zero,  One = &amp;#34;One&amp;#34;,  Two = &amp;#34;Two&amp;#34;,  Three = 3,  Four = 4, } enum的成员除了number和string，不允许使用其它类型值。需要特别注意的是，若变量类型是字符串的enum，不能使用字符串直接赋值该变量，这跟数值enum变量不一样。
-enum Enum {  One = &amp;#34;One&amp;#34;,  Two = &amp;#34;Two&amp;#34;,  Three = 3,  Four = 4, }  function test(a: Enum) {  console.log(a) }  test(3) // 正常  // 编译错误:Argument of type &amp;#39;&amp;#34;One&amp;#34;&amp;#39; is not assignable to parameter of type &amp;#39;Enum&amp;#39;. test(&amp;#34;One&amp;#34;) 需要注意的是，enum的字符串类型成员值不能使用表达式赋值。
-enum MyEnum {  A = &amp;#34;one&amp;#34;,  // 使用表达式时会出现编译错误  B = [&amp;#34;T&amp;#34;, &amp;#34;w&amp;#34;, &amp;#34;o&amp;#34;].join(&amp;#34;&amp;#34;), }  // 编译错误：Type &amp;#39;string&amp;#39; is not assignable to type &amp;#39;number&amp;#39; as required for computed enum member values.  enum MyEnum {  A = &amp;#34;one&amp;#34;,  B = &amp;#34;T&amp;#34;.repeat(12) }  // 编译错误：Type &amp;#39;string&amp;#39; is not assignable to type &amp;#39;number&amp;#39; as required for computed enum member values. 同名的enum可以合并，但合并时不能有同名的成员，否则会出现编译报错。
+enum Enum {  One = &amp;#34;One&amp;#34;,  Two = &amp;#34;Two&amp;#34;,  Three = 3,  Four = 4, }  function test(a: Enum) {  console.log(a) }  test(3) // 正常  // 编译错误:Argument of type &amp;#39;&amp;#34;One&amp;#34;&amp;#39; is not assignable to parameter of type &amp;#39;Enum&amp;#39;. test(&amp;#34;One&amp;#34;) 需要注意的是，enum的字符串类型成员值不能使用运行时才能计算的表达式赋值。
+enum MyEnum {  A = &amp;#34;one&amp;#34;,  // 使用表达式时会出现编译错误  B = [&amp;#34;T&amp;#34;, &amp;#34;w&amp;#34;, &amp;#34;o&amp;#34;].join(&amp;#34;&amp;#34;), }  // 编译错误：Type &amp;#39;string&amp;#39; is not assignable to type &amp;#39;number&amp;#39; as required for computed enum member values.  enum MyEnum {  A = &amp;#34;one&amp;#34;,  B = &amp;#34;T&amp;#34;.repeat(12) }  enum MyEnum {  A = &amp;#34;one&amp;#34;,  B = &amp;#34;T&amp;#34; &#43; &amp;#34;B&amp;#34; }  // 编译错误：Type &amp;#39;string&amp;#39; is not assignable to type &amp;#39;number&amp;#39; as required for computed enum member values. 同名的enum可以合并，但合并时不能有同名的成员，否则会出现编译报错。
 enum Foo {  A, }  // 因为有同名的属性会出现编译错误:Duplicate identifier &amp;#39;A&amp;#39;. enum Foo {  A = 2 } 同名enum合并时，只允许其中的一个同名枚举的第一个成员省略初始值，否则会出现编译错误：
 enum Foo {  A, }  // 编译错误：In an enum with multiple declarations, only one declaration can omit an initializer for its first enum element. enum Foo {  B } 同名enum合并的另一个限制，所有枚举定义必须同为const或者非const，不允许混合使用。同名枚举合并的最大用处是补充外部定义的enum。
-enum Foo {  A, }  // 编译错误：Enum declarations can only merge with namespace or other enum declarations. const enum Foo {  B = 1, } 枚举的反向映射，是指通过属性值获取到属性名：
-enum Foo {  A = 1,  B = 2,  C = 4, } console.log(Foo[3], Foo[4] === &amp;#39;C&amp;#39;) // undefined true 枚举的反向映射只发生enum的数值成员。对于字符串成员值，不存在反向映射，因为字符串枚举编译后只有一组赋值。
+enum Foo {  A, }  // 编译错误：Enum declarations can only merge with namespace or other enum declarations. const enum Foo {  B = 1, } 枚举的反向映射，是指通过属性值获取到属性名，但仅限于number类型枚举：
+enum Foo {  A = 1,  B = 2,  C = 4, } console.log(Foo[3], Foo[4] === &amp;#39;C&amp;#39;) // undefined true 枚举的反向映射只发生enum的数值成员。对于字符串成员值的枚举，不存在反向映射，因为字符串枚举编译后只有一组赋值。
 enum Foo {  A = 1,  B = 2,  C = 4,  D = &amp;#39;CHEN&amp;#39;, } // 编译错误:Cannot find name &amp;#39;D&amp;#39;. console.log(Foo[3], Foo[D]) 参考资料1
 NameSpaces namespace用于建立一个容器，其内部的所有变量和函数，默认都必须在这个容器里使用。下面示例代码中，isString只能在命名空间Utils中使用，如果在外部直接使用函数isString，就会报错。
 namespace Utils {  function isString(value: any) {  return typeof value === &amp;#39;string&amp;#39;  }  // 在内部使用不会报错  console.log(isString(&amp;#39;test&amp;#39;)) }  // 在外部直接使用报错Cannot find name &amp;#39;isString&amp;#39;. Did you mean &amp;#39;String&amp;#39;? console.log(isString(&amp;#39;test&amp;#39;)) 如果要在命名空间以外使用内部成员，就必须在该成员前面加上export关键字，表示对外导出该成员，否则会出现编译错误：
@@ -4705,18 +4705,6 @@ range
     </entry>
     
      <entry>
-        <title>2019旅行</title>
-        <url>https://iihui.github.io/post/travel-guizhou/</url>
-        <categories>
-          <category>旅行</category>
-        </categories>
-        <tags>
-          <tag>旅行</tag>
-        </tags>
-        <content type="html"> 黄果树瀑布景区 娄山关 外伶仃岛 </content>
-    </entry>
-    
-     <entry>
         <title>Cocoapods 使用</title>
         <url>https://iihui.github.io/post/ios-cocoapods-storage/</url>
         <categories>
@@ -7371,18 +7359,6 @@ iPhone 11 iOS 15.1 招乎5.13.5 启动时间viewDidAppear为:2.2245479822158813�
 招乎5.15.1 启动时间viewDidAppear为:1.6123250722885132秒 启动时间viewDidAppear为:1.6050660610198975秒 启动时间viewDidAppear为:1.6825041055679321秒 启动时间viewDidAppear为:1.5587329864501953秒 平均时间为$(1.6123&#43;1.6050&#43;1.6825&#43;1.5587)/4 = 1.614625$
 平均减少时间 平均减少时间为:$(2.234785 - 1.614625) = 0.62016$
 </content>
-    </entry>
-    
-     <entry>
-        <title></title>
-        <url>https://iihui.github.io/post/swift-s1/</url>
-        <categories>
-          
-        </categories>
-        <tags>
-          
-        </tags>
-        <content type="html"> 命名规约  【强制】对于file、class、struct、enum、protocol统一使用UpperCamelCase风格（首字母大写）命名。   </content>
     </entry>
     
 </search>
