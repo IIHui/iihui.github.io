@@ -241,7 +241,7 @@ code.has-jax {
     <i class="fa fa-file-word-o"></i>
 </span>
 <span class="post-meta-item-text">字数: </span>
-<span class="leancloud-visitors-count">42849</span>
+<span class="leancloud-visitors-count">42927</span>
 &nbsp; | &nbsp;
 <span class="post-meta-item-icon">
     <i class="fa fa-coffee"></i>
@@ -1151,7 +1151,11 @@ code.has-jax {
 </span></span><span style="display:flex;"><span>}
 </span></span></code></pre></div><p>对于箭头函数（也称为<code>lambdas</code>表达式）来说，返回类型标注正好位于箭头<code>=&gt;</code>之前。下面定义了一个箭头函数<code>singSongsRecursive</code>：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span><span style="color:#66d9ef">const</span> <span style="color:#a6e22e">singSongsRecursive</span> <span style="color:#f92672">=</span> (<span style="color:#a6e22e">songs</span>: <span style="color:#66d9ef">string</span>[], <span style="color:#a6e22e">count</span> <span style="color:#f92672">=</span> <span style="color:#ae81ff">0</span>)<span style="color:#f92672">:</span> <span style="color:#66d9ef">number</span> <span style="color:#f92672">=&gt;</span> <span style="color:#a6e22e">songs</span>.<span style="color:#a6e22e">length</span> <span style="color:#f92672">?</span> <span style="color:#a6e22e">singSongsRecursive</span>(<span style="color:#a6e22e">songs</span>.<span style="color:#a6e22e">slice</span>(<span style="color:#ae81ff">1</span>), <span style="color:#a6e22e">count</span> <span style="color:#f92672">+</span> <span style="color:#ae81ff">1</span>) <span style="color:#f92672">:</span> <span style="color:#a6e22e">count</span>;
-</span></span></code></pre></div><p>如果<font color="#e36c09">函数体中返回语句对应的值不能赋值给函数标注的返回类型</font>，将会出现编译错误。下面代码中，函数本应返回的类型为<code>Date | undefined</code>，但在函数体中却返回了<code>string</code>，因此会出现编译错误：</p>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">const</span> <span style="color:#a6e22e">singRecursive</span> <span style="color:#f92672">=</span> (<span style="color:#a6e22e">input</span>: <span style="color:#66d9ef">string</span>)<span style="color:#f92672">:</span> <span style="color:#66d9ef">number</span> <span style="color:#f92672">=&gt;</span> <span style="color:#a6e22e">input</span>.<span style="color:#a6e22e">length</span> <span style="color:#f92672">?</span> <span style="color:#a6e22e">singRecursive</span>(<span style="color:#a6e22e">input</span>.<span style="color:#a6e22e">slice</span>(<span style="color:#ae81ff">1</span>)) <span style="color:#f92672">:</span> <span style="color:#a6e22e">input</span>.<span style="color:#a6e22e">length</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">const</span> <span style="color:#a6e22e">len</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">singRecursive</span>(<span style="color:#e6db74">&#39;123&#39;</span>)
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">console</span>.<span style="color:#a6e22e">log</span>(<span style="color:#a6e22e">len</span>) <span style="color:#75715e">// 0
+</span></span></span></code></pre></div><p>如果<font color="#e36c09">函数体中返回语句对应的值不能赋值给函数标注的返回类型</font>，将会出现编译错误。下面代码中，函数本应返回的类型为<code>Date | undefined</code>，但在函数体中却返回了<code>string</code>，因此会出现编译错误：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span><span style="color:#66d9ef">function</span> <span style="color:#a6e22e">getSongRecordingDate</span>(<span style="color:#a6e22e">song</span>: <span style="color:#66d9ef">string</span>)<span style="color:#f92672">:</span> Date <span style="color:#f92672">|</span> <span style="color:#66d9ef">undefined</span> {
 </span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">switch</span> (<span style="color:#a6e22e">song</span>) {
 </span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">case</span> <span style="color:#e6db74">&#34;Strange Fruit&#34;</span><span style="color:#f92672">:</span>
@@ -1193,10 +1197,12 @@ code.has-jax {
 </span></span><span style="display:flex;"><span><span style="color:#75715e">// Type is either undefined or a function that returns a string 
 </span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">let</span> <span style="color:#a6e22e">maybeReturnsString</span><span style="color:#f92672">:</span> (() <span style="color:#f92672">=&gt;</span> <span style="color:#66d9ef">string</span>) <span style="color:#f92672">|</span> <span style="color:#66d9ef">undefined</span>;
 </span></span></code></pre></div><h3 id="parameter-type-inferences">Parameter Type Inferences</h3>
-<p>如果必须为编写的每个函数（包括用作参数的内联函数）声明参数类型，将会非常麻烦。幸运的是，可以推断出函数中的参数类型，即使用声明时相同位置的参数类型。</p>
+<p>如果必须为编写的每个函数（包括用作参数的内联函数）声明参数类型，将会非常麻烦。幸运的是，可以推断出函数中的参数类型，即<font color="#de7802">使用声明时相同位置的参数类型</font>。</p>
 <p>下面示例代码中，变量<code>singer</code>是一个接收字符串类型形参的函数，因此赋值给<code>singer</code>的函数中的<code>song</code>参数也是一个字符串类型：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span><span style="color:#66d9ef">let</span> <span style="color:#a6e22e">singer</span><span style="color:#f92672">:</span> (<span style="color:#a6e22e">song</span>: <span style="color:#66d9ef">string</span>) <span style="color:#f92672">=&gt;</span> <span style="color:#66d9ef">string</span>;
-</span></span><span style="display:flex;"><span><span style="color:#75715e">// Type of song: string
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">// song的类型被推断为string
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">// Type of song: string
 </span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#a6e22e">singer</span> <span style="color:#f92672">=</span> <span style="color:#66d9ef">function</span> (<span style="color:#a6e22e">song</span>) {
 </span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">let</span> <span style="color:#a6e22e">str</span> <span style="color:#f92672">=</span> <span style="color:#e6db74">`Singing: </span><span style="color:#e6db74">${</span><span style="color:#a6e22e">song</span>.<span style="color:#a6e22e">toUpperCase</span>()<span style="color:#e6db74">}</span><span style="color:#e6db74">!`</span>
 </span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">console</span>.<span style="color:#a6e22e">log</span>(<span style="color:#a6e22e">str</span>)
@@ -1204,6 +1210,13 @@ code.has-jax {
 </span></span><span style="display:flex;"><span>}
 </span></span><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span><span style="color:#a6e22e">singer</span>(<span style="color:#e6db74">&#39;test&#39;</span>)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">// 参数名可以定义时不一致
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#a6e22e">singer</span> <span style="color:#f92672">=</span> <span style="color:#66d9ef">function</span> (<span style="color:#a6e22e">singer</span>) {
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">let</span> <span style="color:#a6e22e">str</span> <span style="color:#f92672">=</span> <span style="color:#e6db74">`Singing: </span><span style="color:#e6db74">${</span><span style="color:#a6e22e">singer</span>.<span style="color:#a6e22e">toUpperCase</span>()<span style="color:#e6db74">}</span><span style="color:#e6db74">!`</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">console</span>.<span style="color:#a6e22e">log</span>(<span style="color:#a6e22e">str</span>)
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">return</span> <span style="color:#a6e22e">str</span>
+</span></span><span style="display:flex;"><span>}
 </span></span></code></pre></div><p>实际上，<font color="#de7802">作为实参传递给函数类型形参的函数，其参数类型也能被推断出来</font>。下面示例代码中，参数<code>song</code>和<code>index</code>的类型被推断为<code>string</code>和<code>number</code>:</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span><span style="color:#66d9ef">const</span> <span style="color:#a6e22e">songs</span> <span style="color:#f92672">=</span> [<span style="color:#e6db74">&#34;Call Me&#34;</span>, <span style="color:#e6db74">&#34;Jolene&#34;</span>, <span style="color:#e6db74">&#34;The Chain&#34;</span>];
 </span></span><span style="display:flex;"><span><span style="color:#a6e22e">songs</span>.<span style="color:#a6e22e">forEach</span>((<span style="color:#a6e22e">song</span>, <span style="color:#a6e22e">index</span>) <span style="color:#f92672">=&gt;</span> {
@@ -1229,7 +1242,7 @@ code.has-jax {
 </span></span><span style="display:flex;"><span>}
 </span></span></code></pre></div><h2 id="more-return-types">More Return Types</h2>
 <p>有些函数并不返回任何值，它们要么没有<code>return</code>语句，要么只有无返回值的<code>return</code>语句。<code>TypeScript</code>允许<font color="#e36c09">使用<code>void</code>关键字来说明这种不返回任何值函数的返回类型</font>。</p>
-<p>返回类型为<code>void</code>的函数体中不能返回任何值。下面<code>logSong</code>函数被声明为返回<code>void</code>，因此在函数体中不允许有返回值。因为出现了<code>return true</code>，所以会出现编译错误：</p>
+<p>返回类型为<code>void</code>的函数体中不能返回任何值，否则会出现编译错误。下面<code>logSong</code>函数被声明为返回<code>void</code>，因此在函数体中不允许有返回值。因为在函数体中出现了<code>return true</code>，所以会出现编译错误：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span><span style="color:#66d9ef">function</span> <span style="color:#a6e22e">logSong</span>(<span style="color:#a6e22e">song</span>: <span style="color:#66d9ef">string</span> <span style="color:#f92672">|</span> <span style="color:#66d9ef">undefined</span>)<span style="color:#f92672">:</span> <span style="color:#66d9ef">void</span> {
 </span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">if</span> (<span style="color:#f92672">!</span><span style="color:#a6e22e">song</span>) {
 </span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">return</span>; <span style="color:#75715e">// Ok
