@@ -241,7 +241,7 @@ code.has-jax {
     <i class="fa fa-file-word-o"></i>
 </span>
 <span class="post-meta-item-text">字数: </span>
-<span class="leancloud-visitors-count">42722</span>
+<span class="leancloud-visitors-count">42762</span>
 &nbsp; | &nbsp;
 <span class="post-meta-item-icon">
     <i class="fa fa-coffee"></i>
@@ -511,7 +511,7 @@ code.has-jax {
 </span></span><span style="display:flex;"><span><span style="color:#66d9ef">let</span> <span style="color:#a6e22e">rawDataThird</span>: <span style="color:#66d9ef">RawData</span>;
 </span></span></code></pre></div><p>类型别名是一项便捷功能，只要代码中使用的类型开始变得复杂，就可以使用它。目前，只包括长联合类型，以后还将包括数组、函数和对象类型等。</p>
 <h3 id="type-aliases-are-not-javascript">Type Aliases Are Not JavaScript</h3>
-<p>类型别名与类型标注一样，编译后不会输出到<code>JavaScript</code>文件中。<strong><font color="#de7802">类型别名仅存在于类型系统</font></strong>，因此不能在运行时引用它们。如果试图访问运行时不存在的内容，<code>TypeScript</code>会出现编译错误：</p>
+<p>类型别名与类型标注一样，编译后不会输出到<code>JavaScript</code>文件中。<strong><font color="#de7802">类型别名仅存在于类型系统</font></strong>，因此不能在运行时的代码中引用它们。如果试图访问运行时不存在的内容，<code>TypeScript</code>会出现编译错误：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span><span style="color:#66d9ef">type</span> <span style="color:#a6e22e">RawData</span> <span style="color:#f92672">=</span> <span style="color:#66d9ef">boolean</span> <span style="color:#f92672">|</span> <span style="color:#66d9ef">number</span> <span style="color:#f92672">|</span> <span style="color:#66d9ef">string</span> <span style="color:#f92672">|</span> <span style="color:#66d9ef">null</span> <span style="color:#f92672">|</span> <span style="color:#66d9ef">undefined</span>;
 </span></span><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span><span style="color:#75715e">// 编译错误：&#39;RawData&#39; only refers to a type, but is being used as a value here.
@@ -537,7 +537,7 @@ code.has-jax {
 </blockquote>
 <h2 id="object-types">Object Types</h2>
 <p>当使用<code>{}</code>创建对象字面量时，<code>TypeScript</code>会根据其属性将其视为新的对象类型。新的对象类型将具有与对象字面量相同的属性名和对应的值类型。访问对象属性的值时可以使用<code>value.member</code>或等同的<code>value['member']</code>语法。</p>
-<p>下面代码中，<code>TypeScript</code>认为常量<code>poet</code>的类型是一个对象，该对象具有<code>born</code>和<code>name</code>两个属性。访问这两个属性是允许的，但<font color="#de7802">试图访问任何其它不存在的成员名都会出现编译错误</font>：</p>
+<p>下面代码中，<code>TypeScript</code>认为常量<code>poet</code>的类型是一个对象，该对象具有<code>born</code>和<code>name</code>两个属性，属性<code>born</code>对应的值类型为<code>number</code>，而<code>name</code>属性对应值类型为<code>string</code>。访问这两个属性是允许的，但<font color="#de7802">试图访问任何其它不存在的属性都会出现编译错误</font>：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span><span style="color:#66d9ef">const</span> <span style="color:#a6e22e">poet</span> <span style="color:#f92672">=</span> {
 </span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">born</span>: <span style="color:#66d9ef">1935</span>,
 </span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">name</span><span style="color:#f92672">:</span> <span style="color:#e6db74">&#34;Mary Oliver&#34;</span>,
@@ -550,8 +550,8 @@ code.has-jax {
 </span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#a6e22e">poet</span>.<span style="color:#a6e22e">end</span>; 
 </span></span></code></pre></div><p>对象类型是<code>TypeScript</code>理解<code>JavaScript</code>代码的核心概念。除<code>null</code>和<code>undefined</code>之外的每个对象值都有一组成员，因此<code>TypeScript</code>必须了解对象类型中的每个值，才能对其进行类型检查。</p>
 <h3 id="declaring-object-types">Declaring Object Types</h3>
-<p>从现有的对象中直接推断出类型固然是好的，但有时还是想要显式声明对象的类型。这时需要一种方式描述对象类型，将其与满足其类型的对象值区分开来。</p>
-<p>对象类型使用与对象字面量相似的语法来描述，但<font color="#f79646">与属性名对应的是其值的类型而不是相应的值</font>。若对象类型变量出现赋值错误，显示的是声明对象时的语法，清晰易读。</p>
+<p>从现有的对象中直接推断出类型固然是好的，但有时还是需要显式标注对象类型。这时需要一种方式描述对象类型，将其与满足其类型的对象值区分开来。</p>
+<p>对象类型使用与对象字面量相似的语法来描述，但*<font color="#f79646">与属性名对应的是其值的类型而不是相应的值</font>*。若对象类型变量出现赋值错误，显示的是声明对象类型时的语法，清晰易读。</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span><span style="color:#66d9ef">let</span> <span style="color:#a6e22e">poetLater</span><span style="color:#f92672">:</span> {
 </span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">born</span>: <span style="color:#66d9ef">number</span>;
 </span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">name</span>: <span style="color:#66d9ef">string</span>;
@@ -629,21 +629,20 @@ code.has-jax {
 </span></span><span style="display:flex;"><span><span style="color:#75715e">// 赋值时字面量缺少属性，会出现编译错误
 </span></span></span><span style="display:flex;"><span><span style="color:#75715e">// Property &#39;last&#39; is missing in type &#39;{ first: string; }&#39; but required in type &#39;FirstAndLastNames&#39;.
 </span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">const</span> <span style="color:#a6e22e">hasOnlyOne</span>: <span style="color:#66d9ef">FirstAndLastNames</span> <span style="color:#f92672">=</span> {<span style="color:#a6e22e">first</span><span style="color:#f92672">:</span> <span style="color:#e6db74">&#34;Sappho&#34;</span>}; 
-</span></span></code></pre></div><p>当<span style="background:rgba(255, 183, 139, 0.55)">使用对象字面量赋值时</span>，也不允许两者之间值的类型不匹配。<font color="#de7802">对象类型既指定了所需属性的名称，也指定了这些属性对应值的类型</font>。如果对象的属性值类型不匹配，也会出现编译错误。</p>
+</span></span></code></pre></div><p>当<span style="background:rgba(255, 183, 139, 0.55)">使用对象字面量赋值时</span>，也不允许两者之间值的类型不匹配。<font color="#de7802">对象类型既指定了所需属性的名称，也指定了这些属性对应值的类型</font>。如果对象属性的对应值类型不匹配，也会出现编译错误。</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span><span style="color:#66d9ef">type</span> <span style="color:#a6e22e">TimeRange</span> <span style="color:#f92672">=</span> { <span style="color:#a6e22e">start</span>: <span style="color:#66d9ef">Date</span>; };
 </span></span><span style="display:flex;"><span><span style="color:#75715e">// 编译错误: Type &#39;string&#39; is not assignable to type &#39;Date&#39;.
-</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">const</span> <span style="color:#a6e22e">hasStartStr</span>: <span style="color:#66d9ef">TimeRange</span> <span style="color:#f92672">=</span> {
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">const</span> <span style="color:#a6e22e">hasDateStr</span>: <span style="color:#66d9ef">TimeRange</span> <span style="color:#f92672">=</span> {
 </span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">start</span><span style="color:#f92672">:</span> <span style="color:#e6db74">&#34;1879-02-13&#34;</span>, 
 </span></span><span style="display:flex;"><span>}
 </span></span><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span><span style="color:#75715e">// 下面属性类型是正确的，不会出现编译错误
-</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">type</span> <span style="color:#a6e22e">TimeRange</span> <span style="color:#f92672">=</span> { <span style="color:#a6e22e">start</span>: <span style="color:#66d9ef">Date</span>; };
-</span></span><span style="display:flex;"><span><span style="color:#66d9ef">const</span> <span style="color:#a6e22e">hasStartStr</span>: <span style="color:#66d9ef">TimeRange</span> <span style="color:#f92672">=</span> {
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">const</span> <span style="color:#a6e22e">hasDate</span>: <span style="color:#66d9ef">TimeRange</span> <span style="color:#f92672">=</span> {
 </span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">start</span>: <span style="color:#66d9ef">new</span> Date(),
 </span></span><span style="display:flex;"><span>}
-</span></span><span style="display:flex;"><span><span style="color:#a6e22e">console</span>.<span style="color:#a6e22e">log</span>(<span style="color:#a6e22e">hasStartString</span>)
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">console</span>.<span style="color:#a6e22e">log</span>(<span style="color:#a6e22e">hasDate</span>)
 </span></span></code></pre></div><h3 id="excess-property-checking">Excess Property Checking</h3>
-<p>如果一个变量声明为对象类型，并且使用字面量初始化时<font color="#de7802">若字面量中的字段多于其类型所描述的字段时，也会出现编译错误</font>。因此，将变量显式标注为对象类型是一种让类型检查程序确保变量恰好只包含该类型预期字段的方法。</p>
+<p>如果一个变量声明为对象类型，并且<font color="#de7802">使用字面量初始化时，若字面量中的字段多于其类型所描述的字段时，也会出现编译错误</font>。因此，将变量显式标注为对象类型是一种让类型检查程序确保变量恰好只包含该类型预期字段的方法。</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span><span style="color:#66d9ef">type</span> <span style="color:#a6e22e">Poet</span> <span style="color:#f92672">=</span> {
 </span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">born</span>: <span style="color:#66d9ef">number</span>;
 </span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">name</span>: <span style="color:#66d9ef">string</span>;
@@ -661,7 +660,7 @@ code.has-jax {
 </span></span><span style="display:flex;"><span>};
 </span></span><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span><span style="color:#75715e">// 编译错误：Object literal may only specify known properties, and &#39;activity&#39; does not exist in type &#39;Poet&#39;.
-</span></span></span></code></pre></div><p>但需要注意的是，<span style="background:rgba(255, 183, 139, 0.55)">只有在标注为对象类型的位置创建的对象字面量才会触发多余属性检查</span>。提供<font color="#de7802">已有常量或变量保存的对象字面量可以绕过多余属性检查</font>，下面示例代码绕过了多余属性检查：</p>
+</span></span></span></code></pre></div><p>但需要注意的是，<span style="background:rgba(255, 183, 139, 0.55)">只有在标注为对象类型的位置创建的对象字面量才会触发多余属性检查</span>。提供<font color="#de7802">已有常量或变量存储的对象字面量可以绕过多余属性检查</font>，下面示例代码绕过了多余属性检查：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span><span style="color:#66d9ef">type</span> <span style="color:#a6e22e">Poet</span> <span style="color:#f92672">=</span> {  
 </span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">born</span>: <span style="color:#66d9ef">number</span>;  
 </span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">name</span>: <span style="color:#66d9ef">string</span>;  
@@ -682,9 +681,9 @@ code.has-jax {
 </span></span><span style="display:flex;"><span><span style="color:#75715e">// 绕过多余属性检查
 </span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">const</span> <span style="color:#a6e22e">extraProperty</span>: <span style="color:#66d9ef">Poet</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">existingObject</span>  
 </span></span><span style="display:flex;"><span><span style="color:#a6e22e">console</span>.<span style="color:#a6e22e">log</span>(<span style="color:#a6e22e">poetMatch</span>) <span style="color:#75715e">// { activity: &#39;walking&#39;, born: 1935, name: &#39;Mary Oliver&#39; }
-</span></span></span></code></pre></div><p>在<span style="background:rgba(255, 183, 139, 0.55)">需要对象类型的任何地方创建新对象时，都会触发多余属性检查</span>，即创建的对象必须与标注的对象类型匹配。禁止多余的属性能确保代码整洁并按照期望的方式运行，因为在对象类型中声明的多余属性通常是书写时输入了错误的属性名。</p>
+</span></span></span></code></pre></div><p>在<span style="background:rgba(255, 183, 139, 0.55)">需要对象类型的任何地方创建新对象时，都会触发多余属性检查</span>，即创建的对象字必须与标注的对象类型匹配。禁止多余属性能确保代码整洁并按照期望的方式运行，因为在对象类型中声明的多余属性通常是书写时输入了错误的属性名。</p>
 <h3 id="nested-object-types">Nested Object Types</h3>
-<p>由于<code>JavaScript</code>对象中可以嵌入其它对象成员，因此<code>TypeScript</code>的对象类型也必须能够在类型系统中表示嵌套的对象类型。语法与以前相同，但使用<code>{ ... }</code>对象类型来代替基础类型。</p>
+<p>由于<code>JavaScript</code>对象中可以嵌入其它对象成员，因此<code>TypeScript</code>的对象类型也必须能够表示嵌套的对象类型。嵌套类型语法与之前相同，但使用<code>{ ... }</code>对象类型来代替基础类型。</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span><span style="color:#75715e">// 创建别名类型
 </span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">type</span> <span style="color:#a6e22e">Poem</span> <span style="color:#f92672">=</span> {
 </span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">author</span><span style="color:#f92672">:</span> {
