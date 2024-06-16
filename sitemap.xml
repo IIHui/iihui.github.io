@@ -384,7 +384,7 @@ ticket = Ticket.new puts ticket.event  Can&amp;#39;t really be specified yet... 
 下面的类C定义了两个m方法，新的版本会优先使用：
 class C  def m  puts &amp;#34;First definition of method m&amp;#34;  end   def m  puts &amp;#34;Second definition of method m&amp;#34;  end end  C.new.m // 调用方法m  // 执行结果 Second definition of method m 实例变量使单个对象能够记住状态，它的工作方式与其它变量很相似。可以给它们赋值，然后读取这些值，把它们加在一起，打印出来等等。但实例变量有一些区别：
  实例变量名称总是以一个@开始。 实例变量只对它们所属的对象可见。(「对一个对象可见」有一个技术上的定义，与默认的对象self有关)。 在一个类方法中初始化的实例变量可以被该类中定义的任何实例方法使用。  class Person  def set_name(string)  puts &amp;#34;Setting person&amp;#39;s name...&amp;#34;  @name = string  end   def get_name  puts &amp;#34;Returning the person&amp;#39;s name...&amp;#34;  @name  end end  joe = Person.new joe.set_name(&amp;#34;Joe&amp;#34;) puts joe.get_name 当编写一个类（如Ticket）时，如果我们愿意，可以定义一个特殊的方法，称为initialize。如果这样做了，每次创建一个新的类的实例时，这个方法就会被自动调用：
-class Ticket  def initialize  puts &amp;#34;Creating a new ticket!&amp;#34;  end end  Ticket.new   Creating a new ticket! 当需要在程序中的某个点设置或改变一个对象的状态，而不是初始化方法时，问题的核心是为实例变量赋值（或重新赋值）。当然，可以在任何方法中改变任何实例变量的值。例如，如果想让门票具有打折的能力，可以在Ticket类的定义中写一个实例方法:
+class Ticket  def initialize  puts &amp;#34;Creating a new ticket!&amp;#34;  end end  Ticket.new  // 执行结果 Creating a new ticket! 当需要在程序中的某个点设置或改变一个对象的状态，而不是初始化方法时，问题的核心是为实例变量赋值（或重新赋值）。当然，可以在任何方法中改变任何实例变量的值。例如，如果想让门票具有打折的能力，可以在Ticket类的定义中写一个实例方法:
 def discount(percent)  @price = @price * (100 - percent) / 100.0 end Data, Expressions, and Flow Control 计算机程序几乎所有的时间都在操作数据或等待数据从其它地方送达。当输入文字、短语和数字，听音乐，看视频时计算机进行计算，作出决定，并向我们传递信息。要编写计算机程序，必须先了解数据及其操作的基本知识。
 Numbers and Expressions 编程时，表达式是数据（例如数字或字符串）、运算符（例如&#43;或-）和变量的组合。当计算机理解这些表达式时，会产生某种形式的结果。Ruby代码是由表达式组成的，每个表达式都会被评估为一个特定的值：
 5 1 &#43; 2 &amp;#34;a&amp;#34; &#43; &amp;#34;b&amp;#34; &#43; &amp;#34;c&amp;#34; 100 - 5 * (2 - 1) x &#43; y 变量是占位符或对象的引用，包括数字、文本或创建的任何类型的对象。可以随心所欲地命名变量，只是有一些限制，必须满足下面3个条件：
@@ -392,12 +392,12 @@ Numbers and Expressions 编程时，表达式是数据（例如数字或字符�
 没有逻辑的程序仅仅是一个计算器。计算机不只是对数据进行单一操作，还使用逻辑来决定不同的行动方案。逻辑的一个基本形式是在表达式中使用比较运算符来做决定:
 age = 10 puts &amp;#34;You&amp;#39;re too young to use this system&amp;#34; if age &amp;lt; 18  age = 24 puts &amp;#34;You&amp;#39;re NOT a teenager&amp;#34; unless age &amp;gt; 12 &amp;amp;&amp;amp; age &amp;lt; 20 Ruby提供了另一个更方便的between?方法。如果对象等于两个提供的边界值，或介于它们之间，会返回true，否则返回false。例如，在处理整数时，age.between?(13, 19)相当于age &amp;gt;= 13 &amp;amp;&amp;amp; age &amp;lt;= 19：
 age = 18 puts &amp;#34;You&amp;#39;re a teenager&amp;#34; if age.between?(12, 20) puts和print的区别 函数puts输出内容后会自动将光标移动到下一行，而print不会。在下面的代码中，print输出内容后不会换行，所以使用puts输出时world将紧接着hello，然后换行，最后输出test：
-print(&amp;#34;hello &amp;#34;) puts(&amp;#34;world&amp;#34;) puts(&amp;#34;test&amp;#34;)  # hello world # test Looping Through Numbers with Blocks and Iterators 在下面的代码中，首先取了5，然后调用times方法（这个方法对于所有的数值类型都适用）。不是向这个方法传递数据，而是向它传递代码：do和end之间的代码。然后，times方法将会连续使用该代码五次，打印5行Test：
-5.times do puts &amp;#34;Test&amp;#34; end 另一种写法是用花括号代替do和end。尽管鼓励do和end用于多行代码块，但花括号使代码在单行上更易于阅读。因此，下面的代码的执行后结果完全相同：
+print(&amp;#34;hello &amp;#34;) puts(&amp;#34;world&amp;#34;) puts(&amp;#34;test&amp;#34;)  # hello world # test Looping Through Numbers with Blocks and Iterators 在下面的代码中，首先取了5，然后调用times方法（这个方法对于所有的数值类型都适用）。不是向这个方法传递数据，而是向它传递代码：do和end之间的代码。然后，times方法将会连续使用该代码5次:
+5.times do puts &amp;#34;Test&amp;#34; end 另一种写法是用花括号代替do和end。尽管鼓励do和end用于多行代码块，但花括号使代码在单行上更易于阅读。因此，下面代码执行后结果完全相同：
 5.times { puts &amp;#34;Test&amp;#34;}  Test Test Test Test Test  5.times { puts _1 } 0 1 2 3 4 也就说，对于单行代码建议使用花括号，但对较长的代码块建议使用do和end。这是一个很好的习惯，几乎所有专业的Ruby开发者都遵循这种风格。
 在Ruby中，有一种创建循环的机制称为迭代器，一个迭代器是逐个遍历项目列表中的东西。还有其它迭代器可用于数值类型，下面是3个常用的迭代器：
 1.upto(5) { ...code to loop here... }  10.downto(5) { ...code to loop here... }  0.step(50, 5) { ...code to loop here... }   1.upto(5) { puts _1 } 1 2 3 4 5  9.downto(7) { puts _1 } 9 8 7  6.step(20, 6) { puts _1 } 6 12 18  30.step(10, -4) { puts _1 } 30 26 22 18 14 10  目前为止还不知道每一步迭代的数字，以便能在循环的代码中使用当前迭代次数做一些其它事情。刚才讲解的所有迭代器都会自动将当前迭代的状态作为参数传递给循环代码，可以将其提取到一个变量中使用：
-1.upto(5) do |number|  puts number end  6.downto(1) do |i|  puts i end  1.step(50, 10) do |i|  puts i end   10.times do |i|  puts i end 需要注意的是，有些方法会执行代码块并传递数据，然后这些数据能够捕获到变量中。在上面的示例代码中，对整数可用的upto方法将每次迭代的值传递到代码块中，我们将其captured到变量number中，以便在代码中使用。
+1.upto(5) do |number|  puts number end  6.downto(1) do |i|  puts i end  1.step(50, 10) do |i|  puts i end   10.times do |i|  puts i end 需要注意的是，有些方法会执行代码块并传递数据，然后这些数据能够捕获到变量中。在上面示例代码中，对整数可用的upto方法将每次迭代的值传递到代码块中，我们将其captured到变量number中，以便在代码中使用。
 Floating Point Numbers 默认情况下，Ruby将任何没有小数点的数字视为整数。当使用10 / 3 时，实际上是要求Ruby将两个整数相除，而Ruby会给出一个整数作为结果。因此，下面的代码运行后的结果为3，而不是3.333：
 puts 10 / 3 如果将代码做一些小小地改动：
 puts 10 / 3.0 puts 10.0 / 3 puts 10.0 / 3.0 那么，上面3个表达式输出的结果将会是3.3333333333333335。上面的代码中Ruby处理Float类型的数字对象，并返回一个Float，并提供期望的精度级别。
