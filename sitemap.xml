@@ -372,7 +372,7 @@ def change_string(str)  str.replace(&amp;#34;New string content!&amp;#34;) end s
 numbers = [&amp;#34;one&amp;#34;, &amp;#34;two&amp;#34;, &amp;#34;three&amp;#34;] numbers.freeze # 虽然数组本身被冻结了，但还可以改变数组中的某个元素 numbers[2].replace(&amp;#34;four&amp;#34;) p numbers // 执行结果 [&amp;#34;one&amp;#34;, &amp;#34;two&amp;#34;, &amp;#34;four&amp;#34;]  numbers = %w[one two three] numbers.freeze numbers[2].replace(&amp;#34;four&amp;#34;) p numbers // 执行结果[&amp;#34;one&amp;#34;, &amp;#34;two&amp;#34;, &amp;#34;four&amp;#34;] 数组调用freeze的意思是不能改变数组，即指向数组对象的引用不能再被赋值。但是，数组里面的某个对象还是可以被改变的。
 Local variables and the things that look like them 当Ruby看到一个普通的单词（裸词标识符），例如s、ticket、puts或user_name这些词，会将其理解为下面三种情况之一：
  局部变量 关键字 方法调用  关键字是特殊的保留字，不能用它们作为变量名。在Ruby中方法调用可以是普通的单词（不包含圆括号），或者是一对圆括号中包含参数列表。如果普通单词后面跟上一对圆括号，显然不是局部变量。对于其它情况，可能会有一些含糊不清的地方，Ruby必须弄清楚：
- 如果标识符是一个关键字，Ruby能够识别到（Ruby有一个内部关键字列表）。 如果标识符的右边有一个等号（=），那么它就是一个正在进行赋值的变量。 否则，标识符会被认为是一个局部变量或方法调用。Ruby解释器对这两者的处理方式是相同的。  Ruby将call推测到的局部变量或方法，这会导致标识符被评估。如果使用的标识符不是上面列出的三种中的任何一种，那么Ruby将以致命错误停止执行：
+ 如果标识符是一个关键字，Ruby能够识别到（Ruby有一个内部关键字列表）。 如果标识符的右边有一个等号（=），那么它就是一个正在进行赋值的变量。 否则，标识符会被认为是一个局部变量或方法调用。Ruby解释器对*这两者的处理方式是相同的*。  Ruby将call推测到的局部变量或方法，这会导致标识符被评估。如果使用的标识符不是上面列出的三种中的任何一种，那么Ruby将以致命错误停止执行：
 ruby -e &amp;#34;x&amp;#34;  Traceback (most recent call last): -e:1:in `&amp;lt;main&amp;gt;&amp;#39;: undefined local variable or method `x&amp;#39; for main:Object (NameError) Organizing objects with classes 使用Object.new创建一个新的对象，并为这个对象创建它自己的方法，一次定义一个新方法，这是感受Ruby以对象为中心编程的一个好方法。
 定义一个类可以把方法组合成一个通用集合，这样就可以快速创建许多行为基本相同的对象。虽然可以为单个对象添加方法，但如果把我们的领域建模为类，就不必对每个对象都这样做了。
 在Ruby中处理的所有东西要么是一个对象，要么是一个可以评估为对象的结构体，而每个对象都是某个类的实例。整数是一个类的实例，而类本身就是对象。
@@ -382,7 +382,7 @@ obj = Object.new 实际上Object是一个内置类，当在一个类上使用点
 class Ticket  def event  &amp;#34;Can&amp;#39;t really be specified yet...&amp;#34;  end end 现在可以创建一个新的Ticket类的实例，并能够调用event方法：
 ticket = Ticket.new puts ticket.event  Can&amp;#39;t really be specified yet... 为一个特定对象定义的方法，例如def ticket.price被称为单子方法。在一个类中定义一个实例方法后，没有什么可以阻止再次定义它。也就是说，新定义的实例方法会覆盖之前定义的方法。
 下面的类C定义了两个m方法，新的版本会优先使用：
-class C  def m  puts &amp;#34;First definition of method m&amp;#34;  end   def m  puts &amp;#34;Second definition of method m&amp;#34;  end end  C.new.m Second definition of method m 实例变量使单个对象能够记住状态，它的工作方式与其他变量很相似。可以给它们赋值，然后读取这些值，把它们加在一起，打印出来等等。但实例变量有一些区别：
+class C  def m  puts &amp;#34;First definition of method m&amp;#34;  end   def m  puts &amp;#34;Second definition of method m&amp;#34;  end end  C.new.m // 调用方法m  // 执行结果 Second definition of method m 实例变量使单个对象能够记住状态，它的工作方式与其他变量很相似。可以给它们赋值，然后读取这些值，把它们加在一起，打印出来等等。但实例变量有一些区别：
  实例变量名称总是以一个@（at符号）开始。 实例变量只对它们所属的对象可见。(&amp;ldquo;对一个对象可见&amp;quot;有一个技术上的定义，与默认的对象self有关)。 在一个类方法中初始化的实例变量可以被该类中定义的任何实例方法使用。  class Person  def set_name(string)  puts &amp;#34;Setting person&amp;#39;s name...&amp;#34;  @name = string  end   def get_name  puts &amp;#34;Returning the person&amp;#39;s name...&amp;#34;  @name  end end  joe = Person.new joe.set_name(&amp;#34;Joe&amp;#34;) puts joe.get_name 当编写一个类（如Ticket）时，如果我们愿意，可以定义一个特殊的方法，称为initialize。如果这样做了，每次创建一个新的类的实例时，这个方法就会被自动调用：
 class Ticket  def initialize  puts &amp;#34;Creating a new ticket!&amp;#34;  end end  Ticket.new   Creating a new ticket! 当需要在程序中的某个点设置或改变一个对象的状态，而不是初始化方法时，问题的核心是为实例变量赋值（或重新赋值）。当然，可以在任何方法中改变任何实例变量的值。例如，如果想让门票具有打折的能力，可以在Ticket类的定义中写一个实例方法:
 def discount(percent)  @price = @price * (100 - percent) / 100.0 end Data, Expressions, and Flow Control 计算机程序几乎所有的时间都在操作数据或等待数据从其它地方送达。当输入文字、短语和数字，听音乐，看视频时计算机进行计算，作出决定，并向我们传递信息。要编写计算机程序，必须先了解数据及其操作的基本知识。
