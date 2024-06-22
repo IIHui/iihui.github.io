@@ -374,17 +374,17 @@ Local variables and the things that look like them 当Ruby看到一个普通的�
  局部变量 关键字 方法调用  关键字是特殊的保留字，不能用它们作为变量名。在Ruby中方法调用可以是普通的单词（不包含圆括号），或者是一对圆括号中包含参数列表。如果普通单词后面跟上一对圆括号，显然不是局部变量。对于其它情况，可能会有一些含糊不清的地方，Ruby必须弄清楚：
  如果标识符是一个关键字，Ruby能够识别到（Ruby有一个内部关键字列表）。 如果标识符的右边有一个等号（=），那么它就是一个正在进行赋值的变量。 否则，标识符会被认为是一个局部变量或方法调用。Ruby解释器对*这两者的处理方式是相同的*。  Ruby将call推测到的局部变量或方法，这会导致标识符被评估。如果使用的标识符不是上面列出的三种中的任何一种，那么Ruby将以致命错误停止执行：
 ruby -e &amp;#34;x&amp;#34;  Traceback (most recent call last): -e:1:in `&amp;lt;main&amp;gt;&amp;#39;: undefined local variable or method `x&amp;#39; for main:Object (NameError) Organizing objects with classes 使用Object.new创建一个新的对象，并为这个对象创建它自己的方法，一次定义一个新方法，这是感受Ruby以对象为中心编程的一个好方法。
-定义一个类可以把方法组合成一个通用集合，这样就可以快速创建许多行为基本相同的对象。虽然可以为单个对象添加方法，但如果把我们的领域建模为类，就不必对每个对象都这样做了。
+定义一个类可以把方法组合成一个通用集合，这样就可以快速创建许多行为相同的对象。虽然可以为单个对象添加方法，但如果把我们的领域建模为类，就不必对每个对象都这样做了。
 在Ruby中处理的所有东西要么是一个对象，要么是一个可以评估为对象的结构体，而每个对象都是某个类的实例。整数是一个类的实例，而类本身就是对象。
-一个典型的类是由方法定义的集合组成的。类的存在通常是为了被实例化，也就是说，创建的对象是类的实例。例如，之前创建了一个类的实例：
+一个典型的类是由方法定义集合组成的。类的存在通常是为了被实例化，也就是说，创建的对象是类的实例。例如，之前创建了一个类的实例：
 obj = Object.new 实际上Object是一个内置类，当在一个类上使用点符号时，就是向该类发送了一条消息。类可以响应消息，就像对象一样。事实上，类就是对象，new方法是一个构造函数，这个方法的目的是制造并返回给一个新的实例。
 可以使用class关键字来定义一个类，类的命名规则和常量的一致：
-class Ticket  def event  &amp;#34;Can&amp;#39;t really be specified yet...&amp;#34;  end end 现在可以创建一个新的Ticket类的实例，并能够调用event方法：
-ticket = Ticket.new puts ticket.event  Can&amp;#39;t really be specified yet... 为一个特定对象定义的方法，例如def ticket.price被称为单子方法。在一个类中定义一个实例方法后，没有什么可以阻止再次定义它。也就是说，新定义的实例方法会覆盖之前定义的方法。
+class Ticket  def event  &amp;#34;Can&amp;#39;t really be specified yet...&amp;#34;  end end 现在可以创建一个新的Ticket实例，并能够调用event方法：
+ticket = Ticket.new puts ticket.event  # 调用了event方法 Can&amp;#39;t really be specified yet... 为一个特定对象定义的方法（例如def ticket.price）被称为**单子方法**。在类中定义一个实例方法后，没有什么可以阻止再次定义它。也就是说，新定义的实例方法会覆盖之前定义的方法。
 下面的类C定义了两个m方法，新的版本会优先使用：
 class C  def m  puts &amp;#34;First definition of method m&amp;#34;  end   def m  puts &amp;#34;Second definition of method m&amp;#34;  end end  C.new.m // 调用方法m  // 执行结果 Second definition of method m 实例变量使单个对象能够记住状态，它的工作方式与其它变量很相似。可以给它们赋值，然后读取这些值，把它们加在一起，打印出来等等。但实例变量有一些区别：
- 实例变量名称总是以一个@开始。 实例变量只对它们所属的对象可见。(「对一个对象可见」有一个技术上的定义，与默认的对象self有关)。 在一个类方法中初始化的实例变量可以被该类中定义的任何实例方法使用。  class Person  def set_name(string)  puts &amp;#34;Setting person&amp;#39;s name...&amp;#34;  @name = string  end   def get_name  puts &amp;#34;Returning the person&amp;#39;s name...&amp;#34;  @name  end end  joe = Person.new joe.set_name(&amp;#34;Joe&amp;#34;) puts joe.get_name 当编写一个类（如Ticket）时，如果我们愿意，可以定义一个特殊的方法，称为initialize。如果这样做了，每次创建一个新的类的实例时，这个方法就会被自动调用：
-class Ticket  def initialize  puts &amp;#34;Creating a new ticket!&amp;#34;  end end  Ticket.new  // 执行结果 Creating a new ticket! 当需要在程序中的某个点设置或改变一个对象的状态，而不是初始化方法时，问题的核心是为实例变量赋值（或重新赋值）。当然，可以在任何方法中改变任何实例变量的值。例如，如果想让门票具有打折的能力，可以在Ticket类的定义中写一个实例方法:
+ 实例变量名称总是以一个@开始。 实例变量只对它们所属的对象可见。(「对一个对象可见」有一个技术上的定义，与默认的对象self有关)。 在一个类方法中初始化的实例变量可以被该类中定义的任何实例方法使用。  class Person  def set_name(string)  puts &amp;#34;Setting person&amp;#39;s name...&amp;#34;  @name = string  end   def get_name  puts &amp;#34;Returning the person&amp;#39;s name...&amp;#34;  @name  end end  joe = Person.new joe.set_name(&amp;#34;Joe&amp;#34;) puts joe.get_name 当编写一个类时，可以定义一个特殊的方法，称为initialize。如果这样做了，每次创建一个新的类的实例时，这个方法就会被自动调用：
+class Ticket  def initialize  puts &amp;#34;Creating a new ticket!&amp;#34;  end end  Ticket.new  # 执行结果 Creating a new ticket! 当需要在程序中的某个点设置或改变一个对象的状态，而不是初始化方法时，问题的核心是为实例变量赋值（或重新赋值）。当然，可以在任何方法中改变任何实例变量的值。例如，如果想让门票具有打折的能力，可以在Ticket类的定义中写一个实例方法:
 def discount(percent)  @price = @price * (100 - percent) / 100.0 end Data, Expressions, and Flow Control 计算机程序几乎所有的时间都在操作数据或等待数据从其它地方送达。当输入文字、短语和数字，听音乐，看视频时计算机进行计算，作出决定，并向我们传递信息。要编写计算机程序，必须先了解数据及其操作的基本知识。
 Numbers and Expressions 编程时，表达式是数据（例如数字或字符串）、运算符（例如&#43;或-）和变量的组合。当计算机理解这些表达式时，会产生某种形式的结果。Ruby代码是由表达式组成的，每个表达式都会被评估为一个特定的值：
 5 1 &#43; 2 &amp;#34;a&amp;#34; &#43; &amp;#34;b&amp;#34; &#43; &amp;#34;c&amp;#34; 100 - 5 * (2 - 1) x &#43; y 变量是占位符或对象的引用，包括数字、文本或创建的任何类型的对象。可以随心所欲地命名变量，只是有一些限制，必须满足下面3个条件：
