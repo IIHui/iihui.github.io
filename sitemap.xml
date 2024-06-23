@@ -423,17 +423,17 @@ x = &amp;#34;This is a test&amp;#34; puts x.sub(/^../, &amp;#39;Hello&amp;#39;) 
 x = &amp;#34;This is a test&amp;#34; puts x.sub(/..$/, &amp;#39;Hello&amp;#39;)  # 执行结果 This is a teHello  x = &amp;lt;&amp;lt;TEST this is a test dddd TEST # $表示行尾 puts x.sub(/..$/, &amp;#39;Hello&amp;#39;)  # 执行结果 this is a tesHello dddd 如果想锚定一个字符串的绝对开始或结束，可以分别使用\A和\Z（字母均为大写），而^和$则只是锚定一个字符串中的行的开始和结束:
 x = &amp;lt;&amp;lt;TEST This is a test dd TEST puts x.sub(/..\Z/, &amp;#39;Hello&amp;#39;)  # 执行结果 This is a test Hello  x = &amp;lt;&amp;lt;TEST This is a test dd TEST puts x.sub(/\A../, &amp;#39;NA&amp;#39;)  # 执行结果 NAis is a test dd 如果想遍历一个字符串中的每个字符，怎么办呢？scan就是我们要找的迭代器方法。下面代码中，scan方法扫描字符串以查找与传递给它的正则表达式匹配的任何内容：
 &amp;#34;xyz&amp;#34;.scan(/./) { |letter| puts letter }  # 执行结果 x y z 上面代码中，提供了一次查找单个字符的正则表达式。这就是在输出中分别得到x、y和z的原因。每个字母都被输入到块中，赋值给letter，然后打印到屏幕上。
-&amp;#34;This is a test&amp;#34;.scan(/../) { |x| puts x } 在上面的代码中，一次扫描两个字符，最后的执行结果如下所示：
+&amp;#34;This is a test&amp;#34;.scan(/../) { |x| puts x } 在上面的代码中，一次扫描两个字符，执行结果如下：
 Th is  i s a te st 实际上，上面扫描的结果中是包含空格的，如果想要只包含数字和字母，可以使用如下方式：
-&amp;#34;This is a test&amp;#34;.scan(/\w\w/) { |x| puts x }  Th is is te st 上面的\w表示任何数字和字母字符以及下划线。在正则表达式中，有一些用反斜杠表示的特殊字符，它们具有特殊的含义，如下表所示：
+&amp;#34;This is a test&amp;#34;.scan(/\w\w/) { |x| puts x }  Th is is te st 上面的\w表示任何数字和字母字符以及下划线。在正则表达式中，有一些用反斜杠表示的特殊字符，它们具有特殊含义，如下表所示：
 参考上表，可以很轻松地从字符串中提取所有数字：
-&amp;#34;The car costs $1000 and the cat costs $10&amp;#34;.scan(/\d&#43;/) do |x|  puts x end  # 1000 # 10 在上面\d后面跟着的&#43;被称为修饰器，它表示尽可能多地匹配，并且至少匹配一个。如果不添加&#43;，则只会匹配一个数字：
-&amp;#34;The car costs $1000 and the cat costs $10&amp;#34;.scan(/\d/) do |x|  puts x end  # 1 # 0 # 0 # 0 # 1 # 0 还有其它类型的修饰符，如下表所示：
+&amp;#34;The car costs $1000 and the cat costs $10&amp;#34;.scan(/\d&#43;/) do |x|  puts x end  # 执行结果 1000 10 在上面\d后面跟着的&#43;被称为修饰器，它表示尽可能多地匹配，并且至少匹配一个。如果不添加&#43;，则只会匹配一个数字：
+&amp;#34;The car costs $1000 and the cat costs $10&amp;#34;.scan(/\d/) do |x|  puts x end  # 执行结果 # 1 # 0 # 0 # 0 # 1 # 0 还有其它类型的修饰符，如下表所示：
 在正则表达式中，还有一个重要的方面是字符类，它允许匹配一组特定的字符。例如，可以扫描字符串中的所有元音字符：
-&amp;#34;This is a test&amp;#34;.scan(/[aeiou]/) { |x| puts x } # i # i # a # e 也可以在方括号内指定字符范围：
-&amp;#34;This is a test&amp;#34;.scan(/[a-m]/) { |x| puts x } # h # i # i # a # e 进行替换并从字符串中提取某些文本很有用，但有时只想检查某个字符串是否与选择的模式匹配。如果字符串包含任何元音，你可能希望快速确定：
-puts &amp;#34;String has vowels&amp;#34; if &amp;#34;This is a test&amp;#34; =~ /[aeiou]/  String has vowels 在上面的代码中=~是匹配运算符，如果字符串与运算符后面的正则表达式匹配，则表达式会返回第一个匹配项的位置（在上面这种情况下返回的是2——逻辑上为true，因此满足if条件）。当然，也可以做相反的事情：
-puts &amp;#34;String contains no digits&amp;#34; unless &amp;#34;This is a test&amp;#34; =~ /[0-9]/  String contains no digits 上面代码的意思是除非0到9的数字范围与测试字符串匹配，否则告诉用户字符串中没有数字。也可以使用String类提供的match方法。=~根据正则表达式是否匹配字符串，返回第一个匹配项的位置或nil，而match提供了更多的功能。
+&amp;#34;This is a test&amp;#34;.scan(/[aeiou]/) { |x| puts x }  # 执行结果 # i # i # a # e 也可以在方括号内指定字符范围：
+&amp;#34;This is a test&amp;#34;.scan(/[a-m]/) { |x| puts x }  # 执行结果 # h # i # i # a # e 进行替换并从字符串中提取某些文本很有用，但有时只想检查某个字符串是否与选择的模式匹配。如果字符串包含任何元音，你可能希望快速确定：
+puts &amp;#34;String has vowels&amp;#34; if &amp;#34;This is a test&amp;#34; =~ /[aeiou]/  # 执行结果 String has vowels 在上面的代码中=~是匹配运算符，如果字符串与运算符后面的正则表达式匹配，则表达式会返回第一个匹配项的位置（在上面这种情况下返回的是2——逻辑上为true，因此满足if条件）。当然，也可以做相反的事情：
+puts &amp;#34;String contains no digits&amp;#34; unless &amp;#34;This is a test&amp;#34; =~ /[0-9]/  # 执行结果 String contains no digits 上面代码的意思是除非0到9的数字范围与测试字符串匹配，否则告诉用户字符串中没有数字。也可以使用String类提供的match方法。=~根据正则表达式是否匹配字符串，返回第一个匹配项的位置或nil，而match提供了更多的功能。
 puts &amp;#34;String has vowels&amp;#34; if &amp;#34;This is a test&amp;#34;.match(/[aeiou]/)  String has vowels 在正则表达式中，如果用圆括号（）括住表达式的一部分，则与正则表达式该部分匹配的数据将与其余部分分开使用，match允许访问此数据：
 x = &amp;#34;This is a test&amp;#34;.match(/(\w&#43;) (\w&#43;)/) puts x[0] puts x[1]  This is This is 字符串的match方法返回一个MatchData对象，它可以像数组一样被访问。第一个元素（x[0]）包含由整个正则表达式匹配的数据。剩下的每个连续的元素都包含被正则表达式的每个匹配组所匹配的数据。在上面的例子中，第一个（\w&#43;）匹配的是This，第二个（\w&#43;）匹配的是is。
 Arrays and Lists 数组是一个对象的**有序集合**，有序的意思是可以根据一个一致的、连续的数字索引从这个集合中选择对象。数组中的对象可以是hash，file handle，classes，true和false，以及其它任意对象。
