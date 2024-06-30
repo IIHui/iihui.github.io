@@ -392,28 +392,28 @@ Numbers and Expressions 编程时，表达式是数据（例如数字或字符�
 没有逻辑的程序仅仅是一个计算器。计算机不只是对数据进行单一操作，还使用逻辑来决定不同的行动方案。逻辑的一个基本形式是在表达式中使用比较运算符来做决定:
 age = 10 puts &amp;#34;You&amp;#39;re too young to use this system&amp;#34; if age &amp;lt; 18  age = 24 puts &amp;#34;You&amp;#39;re NOT a teenager&amp;#34; unless age &amp;gt; 12 &amp;amp;&amp;amp; age &amp;lt; 20 Ruby提供了另一个更方便的between?方法。如果对象等于两个提供的边界值，或介于它们之间，会返回true，否则返回false。例如，在处理整数时，age.between?(13, 19)相当于age &amp;gt;= 13 &amp;amp;&amp;amp; age &amp;lt;= 19：
 age = 18 puts &amp;#34;You&amp;#39;re a teenager&amp;#34; if age.between?(12, 20) puts和print的区别 函数puts输出内容后会自动将光标移动到下一行，但print不会换行。在下面代码中，print输出内容后不会换行，所以使用puts输出world时将紧接着hello，然后再换行，最后输出test再换行：
-print(&amp;#34;hello &amp;#34;) puts(&amp;#34;world&amp;#34;) puts(&amp;#34;test&amp;#34;)  # 执行结果 # hello world # test Looping Through Numbers with Blocks and Iterators 在下面代码中，首先取了5，然后调用其times方法（这个方法对于所有的数值类型都适用）。此时，不是向times方法传递数据，而是传递代码，即do和end之间的代码。然后，times方法将会连续使用该代码5次:
-5.times do puts &amp;#34;Test&amp;#34; end 另一种写法是用花括号代替do和end。尽管鼓励do和end用于多行代码块，但花括号使代码在单行上更易于阅读。因此，下面代码执行后结果完全相同：
-5.times { puts &amp;#34;Test&amp;#34;}  # 执行结果 Test Test Test Test Test  5.times { puts _1 }  # 执行结果 0 1 2 3 4 也就说，对于单行代码建议使用花括号，多行代码块建议使用do和end。这是一个很好的习惯，几乎所有专业的Ruby开发者都遵循这种风格。
+print(&amp;#34;hello &amp;#34;) puts(&amp;#34;world&amp;#34;) puts(&amp;#34;test&amp;#34;)  # 执行结果 # hello world # test Looping Through Numbers with Blocks and Iterators 下面代码中，首先取了5，然后调用其times方法（这个方法对于所有的数值类型都适用）。此时，不是向times方法传递数据，而是传递代码，即do和end之间的代码。然后，times方法将会连续使用该代码5次:
+5.times do puts &amp;#34;Test&amp;#34; end 另一种方式是用花括号代替do和end。尽管鼓励do和end用于多行代码块，但花括号使代码在单行上更易于阅读。因此，下面代码执行后结果完全相同：
+5.times { puts &amp;#34;Test&amp;#34;}  # 执行结果 Test Test Test Test Test  5.times { puts _1 }  # 执行结果 0 1 2 3 4 也就说，对于单行代码建议使用花括号，多行代码块建议使用do和end。这是一种惯例，几乎所有Ruby开发者都遵循这种风格。
 在Ruby中，有一种创建循环的机制称为迭代器，迭代器用于逐个遍历列表中的东西。还有其它迭代器可用于数值类型，下面是3个常用的迭代器：
-1.upto(5) { ...code to loop here... }  10.downto(5) { ...code to loop here... }  0.step(50, 5) { ...code to loop here... }   1.upto(5) { puts _1 } # 执行结果 1 2 3 4 5  9.downto(7) { puts _1 } # 执行结果 9 8 7  6.step(20, 6) { puts _1 } # 执行结果 6 12 18  30.step(10, -4) { puts _1 } # 执行结果 30 26 22 18 14 10 目前为止还不知道每一步迭代的数字，若知道迭代数字就可以在循环中使用它做一些事情。上面示例代码的所有迭代器都会自动将当前迭代的状态作为参数传递给循环代码，实际上可以将其提取到一个变量中使用：
+1.upto(5) { ...code to loop here... }  10.downto(5) { ...code to loop here... }  0.step(50, 5) { ...code to loop here... }   1.upto(5) { puts _1 }  # 执行结果 1 2 3 4 5  9.downto(7) { puts _1 }  # 执行结果 9 8 7  6.step(20, 6) { puts _1 }  # 执行结果 6 12 18  30.step(10, -4) { puts _1 }  # 执行结果 30 26 22 18 14 10 目前为止还不知道每一步迭代的数字，若知道迭代数字就可以在循环中使用它做一些事情。上面的所有迭代器都会自动将当前迭代的状态作为参数传递给循环代码，实际上可以将其提取到一个变量中使用：
 1.upto(5) do |number|  puts number end  6.downto(1) do |i|  puts i end  1.step(50, 10) do |i|  puts i end # 执行结果 1 11 21 31 41  10.times do |i|  puts i end 需要注意的是，有些方法会执行代码块并传递数据，然后这些数据能够捕获到变量中。上面示例代码中，对整数可用的upto方法将每次迭代的值传递到代码块中，我们将其captured到变量number中，以便在代码块中使用。
-Floating Point Numbers 默认情况下，Ruby将任何没有小数点的数字视为整数。当使用10 / 3 时，实际上是要求Ruby将两个整数相除，结果也是一个整数。因此，下面代码运行后的结果为3，而不是3.333：
+Floating Point Numbers 默认情况下，Ruby将没有小数点的数字视为整数。当使用10 / 3 时，实际上是要求Ruby将两个整数相除，结果也是一个整数。因此，下面代码运行后的结果为3，而不是3.333：
 puts 10 / 3 如果将代码做一些小小的改动：
 puts 10 / 3.0 puts 10.0 / 3 puts 10.0 / 3.0 那么，上面3个表达式输出的结果是3.3333333333333335。上面代码中Ruby处理Float类型的数字对象，并返回一个Float，并提供期望的精度级别。
 在某些情况下，无法控制传入的数字，但仍希望将它们被视为浮点数。考虑下面这种情况，用户输入两个要除的数字，而这些数字需要一个精确的结果：
 x = 10 y = 3 puts x / y 上面代码中两个输入数字都是整数，所以结果只会是一个整数。幸运的是，整数有一种特殊的方法可以即时将自身转换为浮点数，只需像下面这样重写代码即可：
 x = 10 y = 3 puts x.to_f / y 相似地，浮点数也可以转换为整型，只要使用to_i方法即可：
 puts(5.7.to_i) puts(5.7.to_int)  # 执行结果 5 5 Constants 考虑一些永远不会改变的值——例如pi的值，这些不变的值称为常量。在Ruby中可以用以大写字母开头的变量名来表示：
-Pi = 3.141592  puts(Math::PI) // 3.141592653589793   Math::PI = 34 puts(Math::PI) // 34 如果尝试改变Pi的值，虽然目前是可以的，但编译器会产生警告already initialized constant Pi。需要注意的是，修改常量不会出现编译错误，只是一个警告，但不建议这样做。
+Pi = 3.141592  puts(Math::PI) # 3.141592653589793  Math::PI = 34 # warning: already initialized constant Math::PI puts(Math::PI) # 34 如果尝试改变Pi的值，虽然目前是可以的，但编译器会产生警告already initialized constant Pi。需要注意的是，修改常量不会出现编译错误，只是一个警告，但不建议这样做。
 实际上，目前在Ruby中可以改变常量的值，但编译器会发出明确的警告信息。将来，Ruby可能会对常量实施更严格的控制，因此尽量不要在程序中给常量重新赋值。
 Text and Strings 字符串是任意长度的文本字符（包括数字、字母、空格和符号）的集合。Ruby中所有字符串都是String类型，可以通过调用字符串的类方法class来证实：
 puts &amp;#34;Hello world&amp;#34;.class # String 如同数值类型，字符串也可以使用操作符：
 x = &amp;#34;Test&amp;#34; y = &amp;#34;String&amp;#34; puts &amp;#34;Success!&amp;#34; if x &#43; y == &amp;#34;TestString&amp;#34;  # 执行结果 Success! 需要注意的是，双引号仅适用单行字符串，如果想要字符串文本跨越多行，可以使用如下方式：
-x = %q{This is a test of the multi line capabilities} puts x  # 执行结果 This is a test of the multi line capabilities 上面例子中，多行字符串以%q{}包裹。实际上分隔符使用花括号是非必须的，也可以使用&amp;lt;和&amp;gt;，或（和），或者简单地使用自己选择的其它两个定界符，例如！和！。下面代码将以完全相同的方式工作：
+x = %q{This is a test of the multi line capabilities} puts x  # 执行结果 This is a test of the multi line capabilities 上面例子中，多行字符串以%q{}包裹。实际上分隔符使用一对花括号是非必须的，也可以使用&amp;lt;和&amp;gt;，或（和），或者简单地使用自己选择的其它定界符，例如！和！。下面代码将以完全相同的方式工作：
 x = %q!This is a test of the multi line capabilities! puts x  x = %q&#43;This is a test of the multi line capabilities&#43; puts x 如果使用感叹号作为分隔符，那么字符串文本中的任何感叹号都会导致多行字符串提前结束，Ruby会认为剩余的字符串文本都是错误的，所以应该谨慎地选择多行字符串的分隔符：
 x = %q!This is a test of the multi line! capabilities! puts x  # Uncaught exception: undefined method `capabilities!&amp;#39; for main:Object 构建多行字符串字面量的另一种方法是使用here文档或heredoc，这个概念在许多其它编程语言中都可以找到。它的工作方式与前面的示例代码类似，不同之处在于**分隔符可以是多个字符**：
-x = &amp;lt;&amp;lt;END_MY_STRING_PLEASE This is the string And a second line END_MY_STRING_PLEASE puts x   x = &amp;lt;&amp;lt;END_TEST This is the string And a second line END_TEST puts x  # 执行结果 This is the string And a second line  This is the string And a second line 在上面的实例代码中，&amp;lt;&amp;lt;标记字符串字面量的开头，然后使用END_MY_STRING_PLEASE作为字符串常量的分隔符。字符串真正的内容从下一个新行开始，分隔符在最后一行再次重复时表示字符串字面量结束。
+x = &amp;lt;&amp;lt;END_MY_STRING_PLEASE This is the string And a second line END_MY_STRING_PLEASE puts x  # 执行结果 This is the string And a second line  x = &amp;lt;&amp;lt;END_TEST This is the string And a second line END_TEST puts x  # 执行结果 This is the string And a second line 在上面示例代码中，&amp;lt;&amp;lt;标记字符串字面量的开头，然后使用END_MY_STRING_PLEASE作为字符串常量的分隔符。字符串真正的内容从下一个新行开始，分隔符在最后一行再次重复时表示字符串字面量结束。
 当比较字符串时，实际上比较的是字符串中每个字符对应的数字，即字符的ASCII码值。如前所述，字符在计算机内存中存储为数字，每个字母和符号都有一个值，称为ASCII码值。
 puts &amp;#34;Success!&amp;#34; if &amp;#34;Test&amp;#34; &#43; &amp;#34;String&amp;#34; == &amp;#34;TestString&amp;#34; puts &amp;#34;abc&amp;#34; * 5 puts &amp;#34;x&amp;#34; &amp;gt; &amp;#34;y&amp;#34;  # 执行结果 Success! abcabcabcabcabc false 可以通过字符的ord方法获取ASCII值。相应地，也可以通过chr函数将ASCII码值转换为相应字符：
 puts &amp;#34;x&amp;#34;.ord #Integer puts 120.chr #String  # 执行结果 120 x 插值是指将表达式的结果插入到字符串常量中的过程。在字符串中进行插值的方法是将表达式放在#{}内。下面是一个简单的例子：
