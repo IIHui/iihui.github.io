@@ -2444,7 +2444,7 @@ code.has-jax {
 <p>线程是执行线程的简称。用线程把一个程序的执行分成多个部分，可以同时运行。例如，一个被设计为同时给数千人发送电子邮件的程序可能会将任务分成<code>20</code>个不同的线程，这些线程都会同时发送电子邮件。</p>
 <p>这种并行性比一个接一个地处理要快，特别是在有多<code>CPU</code>的系统上，因为不同的执行线程可以在不同的处理器上运行。即使在单<code>CPU</code>上它也可以更快，因为与其浪费时间等待远程机器的响应，不如继续进行其它操作。</p>
 <p><code>Ruby 1.8</code>并不支持传统意义上的线程。通常，<font color="#de7802">线程能力是由操作系统提供的，并且在不同的系统中有所不同</font>。然而，<code>Ruby 1.8</code>提供了<code>Ruby</code>的线程能力，这意味着它们缺乏传统系统级线程的一些能力。在<code>Ruby 1.9</code>中，<code>Ruby</code>开始使用基于系统的线程，这也是是<code>Rubyists</code>中所期望的结果。</p>
-<p>虽然<code>Ruby 1.9</code>和<code>2.x</code>的线程是系统（原生）线程，<font color=Blue>但为了与<code>1.8</code>代码保持兼容，全局解释器锁（<code>GIL</code>）被保留下来，所以线程不会真正同时运行</font>。这意味着本节所涉及的所有内容都与<code>1.8、1.9、2.0</code>及以后的所有版本有关。本章的下一个主要部分将介绍<code>Ruby 1.9</code>及更高版本的替代品&ndash;<code>fibers</code>，它现在支持非阻塞并发。</p>
+<p>虽然<code>Ruby 1.9</code>和<code>2.x</code>的线程是系统（原生）线程，<font color="#de7802">但为了与<code>1.8</code>代码保持兼容，全局解释器锁（<code>GIL</code>）被保留下来，所以线程不会真正同时运行</font>。这意味着本节所涉及的所有内容都与<code>1.8、1.9、2.0</code>及以后的所有版本有关。本章的下一个主要部分将介绍<code>Ruby 1.9</code>及更高版本的替代品&ndash;<code>fibers</code>，它现在支持非阻塞并发。</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ruby" data-lang="ruby"><span style="display:flex;"><span>threads <span style="color:#f92672">=</span> <span style="color:#f92672">[]</span>
 </span></span><span style="display:flex;"><span><span style="color:#ae81ff">10</span><span style="color:#f92672">.</span>times <span style="color:#66d9ef">do</span>
 </span></span><span style="display:flex;"><span>  thread <span style="color:#f92672">=</span> <span style="color:#66d9ef">Thread</span><span style="color:#f92672">.</span>new <span style="color:#66d9ef">do</span>
@@ -2460,7 +2460,7 @@ code.has-jax {
 <h2 id="fibers">Fibers</h2>
 <p>在<code>Ruby 1.9</code>及以后的版本中提供了线程的替代品<code>Fibers</code>。在<code>Ruby 3</code>中<code>Fiber</code>被重写了，<font color="#de7802">它不再对<code>IO</code>操作进行阻塞，并支持非阻塞的<code>fibers</code></font>。</p>
 <p><code>fibers</code>是轻量级的执行单元，它可以控制自己的调度（通常被称为合作调度）。线程通常会持续运行，而<code>fibers</code>一旦执行完某些任务就会移交控制权。</p>
-<p>与常规方法不同，一旦<code>fibers</code>交出控制权，<font color=Blue>它就会继续存在，并可以随意恢复</font>。简而言之，<code>fibers</code>在实用上类似于线程，但<code>fibers</code>并不被安排在一起运行，我们必须手动控制<code>fibers</code>的调度。</p>
+<p>与常规方法不同，一旦<code>fibers</code>交出控制权，<font color="#de7802">它就会继续存在，并可以随意恢复</font>。简而言之，<code>fibers</code>在实用上类似于线程，但<code>fibers</code>并不被安排在一起运行，我们必须手动控制<code>fibers</code>的调度。</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ruby" data-lang="ruby"><span style="display:flex;"><span>sg <span style="color:#f92672">=</span> <span style="color:#66d9ef">Fiber</span><span style="color:#f92672">.</span>new <span style="color:#66d9ef">do</span>
 </span></span><span style="display:flex;"><span>  s <span style="color:#f92672">=</span> <span style="color:#ae81ff">0</span>
 </span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">loop</span> <span style="color:#66d9ef">do</span>
@@ -2530,7 +2530,7 @@ code.has-jax {
 <p>在某些情况下，使用<code>fiber</code>而不是线程的动机是效率。创建数百个<code>fiber</code>比创建同等的线程要快得多，因为线程是在操作系统层面创建的。此外，<code>fiber</code>还有显著的内存效率优势。</p>
 <p><code>Fiber</code>最大的好处之一是在其他库中实现轻量级的<code>I/O</code>管理例程，所以即使你不直接使用<code>fiber</code>，你最终也可能从其他地方的使用中获益。</p>
 <h1 id="organizing-objects-with-classes-1">Organizing objects with classes</h1>
-<p><code>Object</code>是一个内置类，当在一个类上使用点符号时，就是向这个类发送了一个信息。如同对象一样，类也可以接受消息。事实上，<font color=red>类就是对象</font>。</p>
+<p><code>Object</code>是一个内置类，当在一个类上使用点符号时，就是向这个类发送了一个信息。如同对象一样，类也可以接受消息。事实上，<font color="#de7802">类就是对象</font>。</p>
 <p>在类定义时，用<code>class</code>关键字。类名是用常量名的规则来命名的，这是一种特殊的标识符。而常量用于存储信息和在程序运行过程中不会改变的值。</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ruby" data-lang="ruby"><span style="display:flex;"><span><span style="color:#66d9ef">class</span> <span style="color:#a6e22e">C</span>
 </span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">def</span> <span style="color:#a6e22e">m</span>
