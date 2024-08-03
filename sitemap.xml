@@ -521,7 +521,7 @@ module NumberStuff  def self.random  rand (1000000)  end end  module LetterStuff
 module ToolBox  class Ruler  attr_accessor :length  end end  module Country  class Ruler  attr_accessor :name  end end  a = ToolBox::Ruler.new a.length = 50 b = Country::Ruler.new b.name = &amp;#34;Genghis Khan from Moskau&amp;#34;  puts a.length, b.name  # 执行结果 50 Genghis Khan from Moskau Mix-Ins 因为Ruby不支持多重继承，所以不具备同时从多个类中继承的能力。Ruby的继承功能只允许创建简单的类树，避免了多重继承系统所带来的混乱。
 但是，在某些情况下，在不同类之间共享功能是很有用的。在这个意义上，模块就像一种方法、类和常量的捆绑，它可以被包含在其它类中。例如，用模块提供的方法来扩展该类:
 module UsefulFeatures  def class_name  self.class.to_s  end end  class Person  include UsefulFeatures end  x = Person.new puts x.class_name  # 执行结果 Person 上面代码中，UsefulFeatures看起来像是一个类，并且它几乎就是一个类。但是，模块是组织工具，而不是类本身。class_ name方法存在于模块中，然后被包含在Person类中，下面是另一个例子：
-module AnotherModule  def do_stuff  puts &amp;#34;This is a test&amp;#34;  end end  include AnotherModule do_stuff  # 执行结果 This is a test 从上面的代码中可以看出，即使没有直接在一个类中，也可以在当前作用域里include一个模块，然后直接使用里面的方法。也可以直接使用模块中的方法：
+module AnotherModule  def do_stuff  puts &amp;#34;This is a test&amp;#34;  end end  # 导入模块后可以直接使用其中的方法 include AnotherModule do_stuff  # 执行结果 This is a test 从上面示例代码中可以看出，即使没有在类的定义中，也可以在当前作用域中include一个模块，然后直接使用模块里面的方法：
 # 需要先include该模块 include AnotherModule AnotherModule.do_stuff 也就是说，include接收一个模块并将其内容包含在当前范围内。Kernel模块包含了所有「标准」命令（如load、require、exit、puts和eval）。这些方法不是直接在对象的范围内定义的，而是通过默认包含Kernel模块实现。
 然而，我们更感兴趣的是Ruby提供的模块，可以在自己的类中包含这些模块来立即获得更多的功能。其中两个模块是Enumerable和Comparable。
 Enumerable 数组类已经pre-included了Enumerable模块提供的方法，这个模块提供了大约20个相关的方法，包括collect, detect, find, find_all, include?, max, min, select, sort, and to_a：
