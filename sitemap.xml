@@ -511,12 +511,12 @@ puts 1000.to_s puts [1, 2, 3].to_s puts ({ name: &amp;#39;Fred&amp;#39;, age: 10
 class Drawing  class Line  end   class Circle  end end 内嵌类的定义和普通类的定义一样，但是使用方式上有差异。如果要从Drawing之外访问Line和Circle，必须使用Drawing::Line和Drawing::Circle：
 class Drawing  def self.give_me_a_circle  Circle.new  end   class Line  end   class Circle  def what_am_i  &amp;#34;This is a circle&amp;#34;  end  end end  a = Drawing.give_me_a_circle puts a.what_am_i b = Drawing::Circle.new puts b.what_am_i c = Drawing::Circle.new puts c.what_am_i  # 打印的结果 This is a circle This is a circle This is a circle The Scope of Constants 常量是值在整个应用程序中不变且永久存在的特殊变量。从这个意义上说，常量的作用似乎类似于全局变量，但其实不然。常量是在当前类的范围内定义的，其所有子类都可以使用，除非它们被重载。
 def circumference_of_circle(radius)  2 * Pi * radius end  Pi = 3.141592 puts circumference_of_circle(10)  class OtherPlanet  # Pi虽然是常量，但也可以被重置  Pi = 4.5   def self.circumference_of_circle(radius)  radius * 2 * Pi  end end  puts OtherPlanet.circumference_of_circle(10) puts OtherPlanet::Pi puts OtherPlanet.circumference_of_circle(10)  # 打印的结果 # Pi未被赋值前的结果 62.83184 # Pi被重新赋值后的结果 90.0 4.5 90.0 上面示例说明常量在类的上下文中具有作用域。OtherPlanet类有自己的Pi定义。但是，如果没有在这里重新定义Pi，那么最初的Pi就会被OtherPlanet使用，因为OtherPlanet类是在全局范围内定义的。
-Modules, Namespaces, and Mix-Ins 模块提供了一种方式将Ruby的类、方法和常量收集到一个单独命名的单元中。这样就可以避免与现有的类、方法和常量发生冲突，也可以把模块的功能加入到你的类中。首先，来看看如何使用模块来创建命名空间，以避免同名冲突。
-Namespaces Ruby的一个常用功能是将其它文件中的代码包含到当前程序中。在包含其它文件时，可能很快就会遇到冲突，尤其是当包含的文件或库又包含了多个文件时。我们不能保证任何被包含的文件（或被包含在一长串包含链中的文件）都不会与已经编写或处理过的代码发生冲突。
+Modules, Namespaces, and Mix-Ins 模块提供了一种方式将Ruby的类、方法和常量收集到一个单独命名的单元中。这样可以避免与现有的类、方法和常量发生冲突，也可以把模块的功能加入到自定义的类中。首先，来看看如何使用模块来创建命名空间，以避免同名冲突。
+Namespaces Ruby的一个常用功能是将其它文件中的代码包含到当前程序中。在包含其它文件时，可能很快就会遇到冲突，尤其是当包含的文件或库又包含了多个文件时，不能保证任何被包含的文件（或被包含在一长串包含链中的文件）都不会与已经编写或处理过的代码发生冲突。
 # number_stuff文件 def random  rand(1000000) end puts random  # 某个可能的执行结果 373411 上面定义的random方法返回0到999999之间的随机数。这个方法可能在一个远程文件中，它很容易被遗忘，如果有另一个文件也定义了同名方法，就会造成问题：
 # letter_stuff文件 def random  (rand(26) &#43; 65).chr end 上面方法产生A到Z的随机字母。现在有两个名为random的方法了，如果第一个random方法所在文件为number_stuff.rb，第二个random方法所在文件为letter_stuff.rb。require是一个Ruby语句，用于加载另一个文件中的代码，下面的代码就会出现问题：
 require &amp;#39;./number_stuff&amp;#39; require &amp;#39;./letter_stuff&amp;#39;  puts random 可以看到，当代码运行后，使用的是字母版的random方法，这是因为上面出现了名字冲突，数字版的random被数字版的random覆盖。
-这就是所谓的名字冲突，模块有助于解决这些冲突，它提供了可以包含任何数量的类、方法和常量的命名空间，并允许直接处理它们。上面的示例冲突可以使用module解决：
+这就是所谓的名字冲突，模块有助于解决这些冲突，它提供了可以包含任何数量的类、方法和常量的命名空间，并允许直接处理它们。上面示例中的冲突可以使用module解决：
 module NumberStuff  def self.random  rand (1000000)  end end  module LetterStuff  def self.random  (rand(26) &#43; 65).chr  end end  puts NumberStuff.random puts LetterStuff.random 下面代码定义了两个模块，第一个module中定义了一个Ruler类，它有一个length属性。第二个模块也定义了一个Ruler类，它包含了name属性：
 module ToolBox  class Ruler  attr_accessor :length  end end  module Country  class Ruler  attr_accessor :name  end end  a = ToolBox::Ruler.new a.length = 50 b = Country::Ruler.new b.name = &amp;#34;Genghis Khan from Moskau&amp;#34;  puts a.length, b.name  # 执行结果 50 Genghis Khan from Moskau Mix-Ins 因为Ruby不支持多重继承，所以不具备同时从多个类中继承的能力。Ruby的继承功能只允许创建简单的类树，避免了多重继承系统所带来的混乱。
 但是，在某些情况下，在不同类之间共享功能是很有用的。在这个意义上，模块就像一种方法、类和常量的捆绑，它可以被包含在其它类中。例如，用模块提供的方法来扩展该类:
