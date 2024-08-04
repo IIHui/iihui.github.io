@@ -241,13 +241,13 @@ code.has-jax {
     <i class="fa fa-file-word-o"></i>
 </span>
 <span class="post-meta-item-text">字数: </span>
-<span class="leancloud-visitors-count">28498</span>
+<span class="leancloud-visitors-count">28885</span>
 &nbsp; | &nbsp;
 <span class="post-meta-item-icon">
     <i class="fa fa-coffee"></i>
 </span>
 <span class="post-meta-item-text">阅读: </span>
-<span class="leancloud-visitors-count">57 分钟</span>
+<span class="leancloud-visitors-count">58 分钟</span>
 </span>
       </div>
     </header>
@@ -2327,7 +2327,34 @@ code.has-jax {
 <p><code>Ruby</code>默认情况下不会将当前目录包含在搜索<code>Ruby</code>文件的目录路径中，因此可以使用 <code>./</code>或<code>require_relative</code>来指定当前目录。因此，本例在操作上与前例完全相同：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ruby" data-lang="ruby"><span style="display:flex;"><span>require_relative <span style="color:#e6db74">&#39;string_extensions&#39;</span> 
 </span></span><span style="display:flex;"><span>puts <span style="color:#e6db74">&#34;This is a test&#34;</span><span style="color:#f92672">.</span>vowels<span style="color:#f92672">.</span>join(<span style="color:#e6db74">&#39;-&#39;</span>)
-</span></span></code></pre></div><h1 id="advanced-ruby-features">Advanced Ruby Features</h1>
+</span></span></code></pre></div><p>除了<code>require</code>和<code>require_relative</code>，还可以使用<code>load</code>将外部源代码文件加载到程序中。例如，这段代码的功能似乎与前面的代码相同</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ruby" data-lang="ruby"><span style="display:flex;"><span>load <span style="color:#e6db74">&#39;string_extensions.rb&#39;</span>
+</span></span><span style="display:flex;"><span>puts <span style="color:#e6db74">&#34;This is a test&#34;</span><span style="color:#f92672">.</span>vowels<span style="color:#f92672">.</span>join(<span style="color:#e6db74">&#39;-&#39;</span>)
+</span></span></code></pre></div><p>实际上<code>load</code>需要完整的文件名，包括后缀<code>.rb</code>，而<code>require</code>则假定后缀为<code>.rb</code>。在这种情况下，输出结果是一样的，但让我们换个例子看看有什么不同，把下面代码放到<code>.rb</code>文件中：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ruby" data-lang="ruby"><span style="display:flex;"><span>puts <span style="color:#e6db74">&#34;Hello from a.rb&#34;</span>
+</span></span></code></pre></div><p>然后在另一个文件<code>b.rb</code>中放入如下代码：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ruby" data-lang="ruby"><span style="display:flex;"><span>require_relative <span style="color:#e6db74">&#39;a&#39;</span> 
+</span></span><span style="display:flex;"><span>puts <span style="color:#e6db74">&#34;Hello from b.rb&#34;</span> 
+</span></span><span style="display:flex;"><span>require_relative <span style="color:#e6db74">&#39;a&#39;</span> 
+</span></span><span style="display:flex;"><span>puts <span style="color:#e6db74">&#34;Hello again from b.rb&#34;</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 执行结果</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">Hello</span> from a<span style="color:#f92672">.</span>rb 
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">Hello</span> rom b<span style="color:#f92672">.</span>rb 
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">Hello</span> again from b<span style="color:#f92672">.</span>rb
+</span></span></code></pre></div><p>但如果使用<code>load</code>，同样的代码运行结果不同：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ruby" data-lang="ruby"><span style="display:flex;"><span>load <span style="color:#e6db74">&#39;a.rb&#39;</span>
+</span></span><span style="display:flex;"><span>puts <span style="color:#e6db74">&#34;Hello from b.rb&#34;</span>
+</span></span><span style="display:flex;"><span>load <span style="color:#e6db74">&#39;a.rb&#39;</span>
+</span></span><span style="display:flex;"><span>puts <span style="color:#e6db74">&#34;Hello again from b.rb&#34;</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 执行结果</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">Hello</span> from a<span style="color:#f92672">.</span>rb
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">Hello</span> from b<span style="color:#f92672">.</span>rb
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">Hello</span> from a<span style="color:#f92672">.</span>rb
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">Hello</span> again from b<span style="color:#f92672">.</span>rb
+</span></span></code></pre></div><p>使用<code>load</code>方式时，每次使用<code>load</code>文件时，代码都会被加载并重新处理。而<code>require</code>和<code>require_relative</code>只处理外部文件一次。Ruby程序员几乎总是使用<code>require</code>或<code>require_relative</code>，而不是<code>load</code>。</p>
+<h1 id="advanced-ruby-features">Advanced Ruby Features</h1>
 <h2 id="dynamic-code-execution">Dynamic Code Execution</h2>
 <p>作为一种动态解释型语言，<code>Ruby</code>能够执行动态创建的代码。这样做的方法是使用<code>eval</code>方法，例如下面的代码执行后打印结果为<code>4</code>。</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ruby" data-lang="ruby"><span style="display:flex;"><span>eval <span style="color:#e6db74">&#34;puts 2 + 2&#34;</span>

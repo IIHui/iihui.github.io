@@ -537,7 +537,12 @@ puts &amp;#34;This is a test&amp;#34;.vowels.join(&amp;#39;-&amp;#39;)  # 出现
 class String  def vowels  self.scan(/[aeiou]/i)  end end  puts &amp;#34;This is a test&amp;#34;.vowels.join(&amp;#39;-&amp;#39;)  # 执行结果 i-i-a-e 不过，可能想编写一些方法添加到String中，并在多个程序中使用。与其每次都复制粘贴代码，不如将其复制到一个单独的文件中，然后使用require命令将外部文件加载到当前程序中。例如，把这段代码放到一个名为string_extensions.rb的文件中：
 # string_extensions.rb文件 class String  def vowels  self.scan(/[aeiou]/i)  end end  # 在另外一个文件vowel_test.rb中包含string_extensions require &amp;#39;./string_extensions&amp;#39; puts &amp;#34;This is a test&amp;#34;.vowels.join(&amp;#39;-&amp;#39;) 如果运行vowel_test.rb，就会出现预期的结果。第一行require &#39;./string_extensions&#39; 简单地从当前目录（以./符号表示）加载string_extensions.rb文件，并像本地代码一样进行处理。这意味着，在这种情况下，只需一行即可使用vowels方法。
 Ruby默认情况下不会将当前目录包含在搜索Ruby文件的目录路径中，因此可以使用 ./或require_relative来指定当前目录。因此，本例在操作上与前例完全相同：
-require_relative &amp;#39;string_extensions&amp;#39; puts &amp;#34;This is a test&amp;#34;.vowels.join(&amp;#39;-&amp;#39;) Advanced Ruby Features Dynamic Code Execution 作为一种动态解释型语言，Ruby能够执行动态创建的代码。这样做的方法是使用eval方法，例如下面的代码执行后打印结果为4。
+require_relative &amp;#39;string_extensions&amp;#39; puts &amp;#34;This is a test&amp;#34;.vowels.join(&amp;#39;-&amp;#39;) 除了require和require_relative，还可以使用load将外部源代码文件加载到程序中。例如，这段代码的功能似乎与前面的代码相同
+load &amp;#39;string_extensions.rb&amp;#39; puts &amp;#34;This is a test&amp;#34;.vowels.join(&amp;#39;-&amp;#39;) 实际上load需要完整的文件名，包括后缀.rb，而require则假定后缀为.rb。在这种情况下，输出结果是一样的，但让我们换个例子看看有什么不同，把下面代码放到.rb文件中：
+puts &amp;#34;Hello from a.rb&amp;#34; 然后在另一个文件b.rb中放入如下代码：
+require_relative &amp;#39;a&amp;#39; puts &amp;#34;Hello from b.rb&amp;#34; require_relative &amp;#39;a&amp;#39; puts &amp;#34;Hello again from b.rb&amp;#34;  # 执行结果 Hello from a.rb Hello rom b.rb Hello again from b.rb 但如果使用load，同样的代码运行结果不同：
+load &amp;#39;a.rb&amp;#39; puts &amp;#34;Hello from b.rb&amp;#34; load &amp;#39;a.rb&amp;#39; puts &amp;#34;Hello again from b.rb&amp;#34;  # 执行结果 Hello from a.rb Hello from b.rb Hello from a.rb Hello again from b.rb 使用load方式时，每次使用load文件时，代码都会被加载并重新处理。而require和require_relative只处理外部文件一次。Ruby程序员几乎总是使用require或require_relative，而不是load。
+Advanced Ruby Features Dynamic Code Execution 作为一种动态解释型语言，Ruby能够执行动态创建的代码。这样做的方法是使用eval方法，例如下面的代码执行后打印结果为4。
 eval &amp;#34;puts 2 &#43; 2&amp;#34; 上面eval表达式的返回值并非4，而是nil，因为puts作为表达式的放回值为nil。如果要返回4，必须这样写：
 puts eval(&amp;#34;2 &#43; 2&amp;#34;) 下面是一个使用字符串和插值的更复杂的示例：
 my_number = 15 my_code = %{#{my_number}* 2} puts my_code puts eval(my_code)  15 * 2 30 实际上eval方法只是执行（或求值）传递给它的代码并返回结果。最上面的例子是让eval执行puts 2 &#43; 2，上面的例子是执行15 * 2。
