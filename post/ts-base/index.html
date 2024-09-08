@@ -241,7 +241,7 @@ code.has-jax {
     <i class="fa fa-file-word-o"></i>
 </span>
 <span class="post-meta-item-text">字数: </span>
-<span class="leancloud-visitors-count">43124</span>
+<span class="leancloud-visitors-count">43228</span>
 &nbsp; | &nbsp;
 <span class="post-meta-item-icon">
     <i class="fa fa-coffee"></i>
@@ -416,7 +416,7 @@ code.has-jax {
 </span></span></span><span style="display:flex;"><span><span style="color:#75715e">// 编译错误：Type &#39;true&#39; is not assignable to type &#39;number | &#34;ongoing&#34; | &#34;uncertain&#34;&#39;.
 </span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#a6e22e">lifespan</span> <span style="color:#f92672">=</span> <span style="color:#66d9ef">true</span>; 
 </span></span></code></pre></div><h3 id="literal-assignability">Literal Assignability</h3>
-<p>我们已经知道，不同的基本类型（如<code>number</code>和<code>string</code>）是不能相互赋值的。同样，<font color="#de7802">同一基本类型中的不同字面量类型（如0和1）也不能互相赋值</font>。</p>
+<p>我们已经知道，不同的基本类型（如<code>number</code>和<code>string</code>）是不能相互赋值的。同样，<font color="#de7802">同一基本类型中的不同字面量类型（如0和1）也不能互相赋值</font>，下面代码会出现编译错误：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span><span style="color:#75715e">// specificallyAda的类型为Ada
 </span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">let</span> <span style="color:#a6e22e">specificallyAda</span><span style="color:#f92672">:</span> <span style="color:#e6db74">&#34;Ada&#34;</span>; 
 </span></span><span style="display:flex;"><span><span style="color:#a6e22e">specificallyAda</span> <span style="color:#f92672">=</span> <span style="color:#e6db74">&#39;Ada&#39;</span>
@@ -485,7 +485,7 @@ code.has-jax {
 </span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>}
 </span></span></code></pre></div><h3 id="variables-without-initial-values">Variables Without Initial Values</h3>
 <p>在<code>JavaScript</code>中，变量若没有初始值，则其默认值是<code>undefined</code>。这在类型系统中出现了一种情况：如果将一个变量声明为不包括<code>undefined</code>的类型，然后尝试在赋值前使用它，会出现什么情况。</p>
-<p>实际上，<code>TypeScript</code>很聪明，知道在变量赋值之前，其值是<code>undefined</code>，如果在赋值前尝试使用该变量的值，会出现编译错误：</p>
+<p>实际上，<code>TypeScript</code>很聪明，知道在变量赋值之前，其值是<code>undefined</code>，<font color="#de7802">如果在赋值前尝试使用该变量的值</font>，会出现编译错误：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span><span style="color:#66d9ef">let</span> <span style="color:#a6e22e">mathematician</span>: <span style="color:#66d9ef">string</span>;
 </span></span><span style="display:flex;"><span><span style="color:#75715e">// 即是使用?来访问属性，也会出现编译错误
 </span></span></span><span style="display:flex;"><span><span style="color:#75715e">// Variable &#39;mathematician&#39; is used before being assigned.
@@ -498,8 +498,11 @@ code.has-jax {
 </span></span><span style="display:flex;"><span><span style="color:#75715e">// 执行结果
 </span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">undefined</span>
 </span></span><span style="display:flex;"><span><span style="color:#66d9ef">undefined</span>
-</span></span></code></pre></div><h2 id="type-aliases">Type Aliases</h2>
-<p>在代码中看到的大多数联合类型的子类型一般只有两到三个。但是，有时可能会遇到一些较长的联合类型，如果出现次数较多，则不方便重复输入。</p>
+</span></span></code></pre></div><p>但需要注意的是，如果在定义联合类型变量时，如果只包含了 <code>| null</code>，而不包含 <code>| undefined</code>，则需要初始化，否则会出现编译错误：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span><span style="color:#66d9ef">const</span> <span style="color:#a6e22e">mathematician</span>: <span style="color:#66d9ef">string</span> <span style="color:#f92672">|</span> <span style="color:#66d9ef">null</span>
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">console</span>.<span style="color:#a6e22e">log</span>(<span style="color:#a6e22e">mathematician</span>) <span style="color:#75715e">// 编译错误：Variable &#39;mathematician&#39; is used before being assigned.
+</span></span></span></code></pre></div><h2 id="type-aliases">Type Aliases</h2>
+<p>在代码中看到的大多数联合类型的子类型一般只有两到三个。但是，有时可能会遇到一些较长的联合类型，如果这种联合出现次数较多，会不太方便。</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span><span style="color:#66d9ef">let</span> <span style="color:#a6e22e">rawDataFirst</span>: <span style="color:#66d9ef">boolean</span> <span style="color:#f92672">|</span> <span style="color:#66d9ef">number</span> <span style="color:#f92672">|</span> <span style="color:#66d9ef">string</span> <span style="color:#f92672">|</span> <span style="color:#66d9ef">null</span> <span style="color:#f92672">|</span> <span style="color:#66d9ef">undefined</span>;
 </span></span><span style="display:flex;"><span><span style="color:#66d9ef">let</span> <span style="color:#a6e22e">rawDataSecond</span>: <span style="color:#66d9ef">boolean</span> <span style="color:#f92672">|</span> <span style="color:#66d9ef">number</span> <span style="color:#f92672">|</span> <span style="color:#66d9ef">string</span> <span style="color:#f92672">|</span> <span style="color:#66d9ef">null</span> <span style="color:#f92672">|</span> <span style="color:#66d9ef">undefined</span>;
 </span></span><span style="display:flex;"><span><span style="color:#66d9ef">let</span> <span style="color:#a6e22e">rawDataThird</span>: <span style="color:#66d9ef">boolean</span> <span style="color:#f92672">|</span> <span style="color:#66d9ef">number</span> <span style="color:#f92672">|</span> <span style="color:#66d9ef">string</span> <span style="color:#f92672">|</span> <span style="color:#66d9ef">null</span> <span style="color:#f92672">|</span> <span style="color:#66d9ef">undefined</span>;
