@@ -714,8 +714,8 @@ let geneticist = Math.random() &amp;gt; 0.5 ? &amp;#34;Barbara McClintock&amp;#3
 // 变量类型为联合类型 string | false let biologist = Math.random() &amp;gt; 0.5 &amp;amp;&amp;amp; &amp;#34;Rachel Carson&amp;#34;; if (biologist) {  biologist; // Type一定为string } else {  biologist; // Type为false | string } Variables Without Initial Values 在JavaScript中，变量若没有初始值，则其默认值是undefined。这在类型系统中出现了一种情况：如果将一个变量声明为不包括undefined的类型，然后尝试在赋值前使用它，会出现什么情况。
 实际上，TypeScript很聪明，知道在变量赋值之前，其值是undefined。如果在赋值前尝试使用该变量的值，会出现编译错误，即使使用?来访问变量的属性也会出现编译错误：
 let mathematician: string; // 即使使用?来访问属性，也会出现编译错误！！！ // Variable &amp;#39;mathematician&amp;#39; is used before being assigned. mathematician?.length; 请注意，如果变量的类型中包括undefined类型，在未初始化时就使用，不会出现编译错误。在变量类型中添加| undefined是向TypeScript说明，在使用前无需初始化，因为undefined是变量的有效值。
-let mathematician: string | undefined; console.log(mathematician) console.log(mathematician?.length)  // 执行结果 undefined undefined 但需要注意的是，如果在定义联合类型变量时，如果只包含了 | null，而不包含 | undefined，则需要初始化，否则会出现编译错误：
-const mathematician: string | null // 会出现编译错误：Variable &amp;#39;mathematician&amp;#39; is used before being assigned. console.log(mathematician) Type Aliases 在代码中看到的大多数联合类型的子类型一般只有两到三个。但是，有时可能会遇到一些较长的联合类型，如果这种联合出现次数较多，会不太方便。
+let mathematician: string | undefined; // 变量类型包含了undefined，使用前无需初始化 console.log(mathematician) console.log(mathematician?.length)  // 执行结果 undefined undefined 但需要注意的是，如果在定义联合类型变量时，如果只包含了 | null，而不包含 | undefined，则需要初始化，否则会出现编译错误：
+const mathematician: string | null // 未初始化时就调用会出现编译错误：Variable &amp;#39;mathematician&amp;#39; is used before being assigned. console.log(mathematician) Type Aliases 在代码中看到的大多数联合类型的子类型一般只有两到三个。但是，有时可能会遇到一些较长的联合类型，如果这种联合出现次数较多，会不太方便。
 let rawDataFirst: boolean | number | string | null | undefined; let rawDataSecond: boolean | number | string | null | undefined; let rawDataThird: boolean | number | string | null | undefined; TypeScript包含类型别名，可以为重复使用的类型分配更简单的名称。类型别名以如下方式声明，按照惯例，类型别名以大驼峰命名：
 type MyName = ...; 之前的联合类型，可以简写成如下形式：
 type RawData = boolean | number | string | null | undefined; let rawDataFirst: RawData; let rawDataSecond: RawData; let rawDataThird: RawData; 类型别名是一项便捷功能，只要代码中使用的类型开始变得复杂，就可以使用它。目前，只包括长联合类型，以后还将包括数组、函数和对象类型等。
