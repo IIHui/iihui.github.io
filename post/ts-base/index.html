@@ -241,13 +241,13 @@ code.has-jax {
     <i class="fa fa-file-word-o"></i>
 </span>
 <span class="post-meta-item-text">字数: </span>
-<span class="leancloud-visitors-count">43553</span>
+<span class="leancloud-visitors-count">43620</span>
 &nbsp; | &nbsp;
 <span class="post-meta-item-icon">
     <i class="fa fa-coffee"></i>
 </span>
 <span class="post-meta-item-text">阅读: </span>
-<span class="leancloud-visitors-count">87 分钟</span>
+<span class="leancloud-visitors-count">88 分钟</span>
 </span>
       </div>
     </header>
@@ -788,6 +788,10 @@ code.has-jax {
 </span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">author</span>: <span style="color:#66d9ef">undefined</span>,
 </span></span><span style="display:flex;"><span>};
 </span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">// 变量带undefined的联合类型可以不初始化，但属性undefined的联合类型
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">let</span> <span style="color:#a6e22e">test</span>: <span style="color:#66d9ef">string</span> <span style="color:#f92672">|</span> <span style="color:#66d9ef">undefined</span>
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">console</span>.<span style="color:#a6e22e">log</span>(<span style="color:#a6e22e">test</span>)
+</span></span><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span><span style="color:#75715e">// 触发属性检查，author属性必须有，且必须提供值
 </span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">const</span> <span style="color:#a6e22e">missingRequired</span>: <span style="color:#66d9ef">Writers</span> <span style="color:#f92672">=</span> {}; <span style="color:#75715e">//  Property &#39;author&#39; is missing in type &#39;{}&#39; but required in type &#39;Writers&#39;.
 </span></span></span></code></pre></div><h2 id="unions-of-object-types">Unions of Object Types</h2>
@@ -1032,8 +1036,8 @@ code.has-jax {
 </span></span></code></pre></div><p>实际上，<font color="#e36c09">强制要求向函数提供必需的参数</font>，有助于执行类型安全。如果不能确保这些参数值都存在，可能会导致代码出现意外行为。</p>
 <p>形参（<code>parameter</code>）是指函数声明的预期参数。实参（<code>arguments</code>）是指函数调用时提供给形参的值。在上面示例中，<code>first</code>和<code>second</code>是形参，而<code>&quot;Dream&quot;</code>等字符串是实参。</p>
 <h3 id="optional-parameters">Optional Parameters</h3>
-<p><code>TypeScript</code>允许将形参标注为可选参数，即在其类型标注的<code>:</code>前添加<code>?</code>（类似于对象类型的可选属性）。<font color="#de7802">函数调用不需要向可选参数提供实参，因为它们的类型总是以<code>| undefined</code>作为联合类型</font>。</p>
-<p>下面函数中，<code>singer</code>形参被标记为可选参数，它的类型是<code>string | undefined</code>，函数的调用者可以不提供实参（此时其值为<code>undefined</code>）。如果主动提供了<code>singer</code>对应的实参，它可能是一个字符串值或<code>undefined</code>：</p>
+<p><code>TypeScript</code>允许将形参标注为可选参数，即在其类型标注的<code>:</code>前添加<code>?</code>（类似于对象类型的可选属性）。<font color=red>函数调用不需要向可选参数提供实参，因为它们的类型总是以<code>| undefined</code>作为联合类型</font>。</p>
+<p>下面<code>announceSong</code>函数中，<code>singer</code>形参被标记为可选参数，它的类型是<code>string | undefined</code>。对于可选参数，函数的调用者可以不提供实参（此时其值为<code>undefined</code>）。如果主动提供了<code>singer</code>对应的实参，它的值可能是一个字符串值或<code>undefined</code>：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span><span style="color:#75715e">// 声明singer为可选参数，且为最后一个形参
 </span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">function</span> <span style="color:#a6e22e">announceSong</span>(<span style="color:#a6e22e">song</span>: <span style="color:#66d9ef">string</span>, <span style="color:#a6e22e">singer?</span>: <span style="color:#66d9ef">string</span>) {
 </span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">console</span>.<span style="color:#a6e22e">log</span>(<span style="color:#e6db74">`Song: </span><span style="color:#e6db74">${</span><span style="color:#a6e22e">song</span><span style="color:#e6db74">}</span><span style="color:#e6db74">`</span>);
@@ -1046,23 +1050,19 @@ code.has-jax {
 </span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#a6e22e">announceSong</span>(<span style="color:#e6db74">&#34;Greensleeves&#34;</span>, <span style="color:#66d9ef">undefined</span>); <span style="color:#75715e">// Ok
 </span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#a6e22e">announceSong</span>(<span style="color:#e6db74">&#34;Chandelier&#34;</span>, <span style="color:#e6db74">&#34;Sia&#34;</span>); <span style="color:#75715e">// Ok
 </span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>
-</span></span><span style="display:flex;"><span><span style="color:#75715e">// 执行结果
+</span></span><span style="display:flex;"><span><span style="color:#75715e">// 上面三次调用的执行结果
 </span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#a6e22e">Song</span>: <span style="color:#66d9ef">Greensleeves</span>
 </span></span><span style="display:flex;"><span><span style="color:#a6e22e">Song</span>: <span style="color:#66d9ef">Greensleeves</span>
 </span></span><span style="display:flex;"><span><span style="color:#a6e22e">Song</span>: <span style="color:#66d9ef">Chandelier</span>
 </span></span><span style="display:flex;"><span><span style="color:#a6e22e">Singer</span>: <span style="color:#66d9ef">Sia</span>
 </span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span><span style="color:#75715e">// 在调用函数式，如果没有为可选参数提供实参，其值为undefined
+</span></span><span style="display:flex;"><span><span style="color:#75715e">// 在调用函数时，如果没有为可选参数提供实参，其值为undefined
 </span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">function</span> <span style="color:#a6e22e">announceSong</span>(<span style="color:#a6e22e">song</span>: <span style="color:#66d9ef">string</span>, <span style="color:#a6e22e">singer?</span>: <span style="color:#66d9ef">string</span>) {
 </span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">console</span>.<span style="color:#a6e22e">log</span>(<span style="color:#e6db74">`Song: </span><span style="color:#e6db74">${</span><span style="color:#a6e22e">song</span><span style="color:#e6db74">}</span><span style="color:#e6db74">`</span>);
-</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">if</span> (<span style="color:#a6e22e">singer</span>) {
-</span></span><span style="display:flex;"><span>        <span style="color:#a6e22e">console</span>.<span style="color:#a6e22e">log</span>(<span style="color:#e6db74">`Singer: </span><span style="color:#e6db74">${</span><span style="color:#a6e22e">singer</span><span style="color:#e6db74">}</span><span style="color:#e6db74">`</span>);
-</span></span><span style="display:flex;"><span>    } <span style="color:#66d9ef">else</span> {
-</span></span><span style="display:flex;"><span>        <span style="color:#a6e22e">console</span>.<span style="color:#a6e22e">log</span>(<span style="color:#e6db74">`Singer: </span><span style="color:#e6db74">${</span><span style="color:#a6e22e">singer</span><span style="color:#e6db74">}</span><span style="color:#e6db74">`</span>)
-</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">console</span>.<span style="color:#a6e22e">log</span>(<span style="color:#e6db74">`Singer: </span><span style="color:#e6db74">${</span><span style="color:#a6e22e">singer</span><span style="color:#e6db74">}</span><span style="color:#e6db74">`</span>);
 </span></span><span style="display:flex;"><span>}
 </span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span><span style="color:#a6e22e">console</span>.<span style="color:#a6e22e">log</span>(<span style="color:#a6e22e">announceSong</span>(<span style="color:#e6db74">&#34;test&#34;</span>))
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">announceSong</span>(<span style="color:#e6db74">&#34;test&#34;</span>)
 </span></span><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span><span style="color:#75715e">// 执行结果
 </span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#a6e22e">Song</span>: <span style="color:#66d9ef">test</span>
