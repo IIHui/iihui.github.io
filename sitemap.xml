@@ -978,8 +978,8 @@ const resolvesUnknown = new Promise((resolve) =&amp;gt; {  setTimeout(() =&amp;g
 // Type: Promise&amp;lt;string&amp;gt; const textEventually = new Promise&amp;lt;string&amp;gt;((resolve) =&amp;gt; {  setTimeout(() =&amp;gt; resolve(&amp;#34;Done!&amp;#34;), 1000); });  // Type: Promise&amp;lt;number&amp;gt; const lengthEventually = textEventually.then((text) =&amp;gt; text.length) Async Functions 在JavaScript中任何以async关键字声明的函数都返回一个Promise。如果在async函数中返回的值不是Thenable的（一个对象使用.then方法，几乎总是一个Promise），返回值会被封装在一个Promise中，就像调用了Promise.resolve一样。TypeScript可以识别这一点，并会推断async函数的返回类型始终是Promise的。
 下面示例代码中，函数lengthAfterSecond返回一个Promise&amp;lt;number&amp;gt;。因为lengthImmediately标记为async的，因此它的返回类型也被推为Promise&amp;lt;number&amp;gt;：
 async function lengthAfterSecond(text: string) {  await new Promise((resolve) =&amp;gt; setTimeout(resolve, 1000))  return text.length; }  // Type: (text: string) =&amp;gt; Promise&amp;lt;number&amp;gt; async function lengthImmediately(text: string) {  return text.length; } 因此，在async函数上手动声明的任何返回类型都必须是Promise类型，即使在函数的实现中没有明确提及任何Promise：
-async function givesPromiseForString(): Promise&amp;lt;string&amp;gt; {  return &amp;#34;Done!&amp;#34;; }  // 函数声明时使用了async但返回类型的标注不是promise，会出现编译错误 async function givesString(): string {  // ~~~~~~ // Error: The return type of an async function // or method must be the global Promise&amp;lt;T&amp;gt; type.  return &amp;#34;Done!&amp;#34;; } Using Generics Right 如前面的Promise&amp;lt;Value&amp;gt;实现一样，虽然泛型可在代码中描述类型提供很大的灵活性，但它们也会很快变得相当复杂。刚接触TypeScript时可能经常会经历一个过度使用泛型的阶段，以至于代码读起来令人困惑，使用起来过于复杂。TypeScript的最佳实践通常是在必要时才使用泛型，并明确泛型的用途。
-The Golden Rule of Generics 有一个快速测试方法可以帮助确定函数是否需要类型参数，那就是类型参数至少要使用两次。泛型描述的是类型之间的关系，如果一个泛型类型参数只出现在一个地方，它就不可能定义多个类型之间的关系。
+async function givesPromiseForString(): Promise&amp;lt;string&amp;gt; {  return &amp;#34;Done!&amp;#34;; }  // 函数声明时使用了async但返回类型的标注不是promise，会出现编译错误 async function givesString(): string {  // ~~~~~~ // Error: The return type of an async function // or method must be the global Promise&amp;lt;T&amp;gt; type.  return &amp;#34;Done!&amp;#34;; } Using Generics Right 如前面的Promise&amp;lt;Value&amp;gt;实现一样，虽然泛型可在代码中描述类型提供很大的灵活性，但它们也会很快变得相当复杂。刚接触TypeScript时可能经常会经历一个过度使用泛型的阶段，以至于代码读起来令人困惑。TypeScript的最佳实践通常是在必要时才使用泛型。
+The Golden Rule of Generics 有一个快速测试方法可以帮助确定函数是否需要类型参数，那就是类型参数至少要使用两次。泛型描述的是类型之间的关系，如果一个泛型类型参数只出现在一次，它就不可能定义多个类型之间的关系。
 在泛型函数中，每个类型参数都应该用于一个形参，还至少用于一个其它参数和/或函数的返回类型。下面示例中，泛型函数logInput只使用了Input类型形参一次：
 function logInput&amp;lt;Input extends string&amp;gt;(input: Input) {  console.log(&amp;#34;Hi!&amp;#34;, input); } 在函数体中，函数logInput中的类型参数后没有做任何操作，例如返回或声明更多参数。因此，声明Input类型参数的用处不大。可以重写logInput，不需要声明为泛型：
 function logInput(input: string) {  console.log(&amp;#34;Hi!&amp;#34;, input); } Declaration Files TypeScript允许将类型声明与其实现分开。类型声明通常放在以.d.ts扩展名结尾的文件中，称为声明文件。声明文件通常放在项目中，随项目编译的npm包一起构建和发布，或作为独立的typings包共享。
@@ -1029,8 +1029,8 @@ namespace Utils {  export function isString(value: any) {  return typeof value =
 namespace Utils {  export function isString(value: any) {  return typeof value === &amp;#34;string&amp;#34;;  } }  namespace App {  import isString = Utils.isString;   isString(&amp;#34;yes&amp;#34;);  // 等同于  Utils.isString(&amp;#34;yes&amp;#34;); } 参考资料2
 WK中使用sock5代理
 openAdapter
-module 任何包含import 或export语句的文件，就是一个模块（module）。相应地，如果文件不包含export语句，就是一个全局的脚本文件。
-模块本身就是一个作用域，不属于全局作用域。模块内部的变量、函数、类只在内部可见，对于模块外部是不可见的。暴露给外部的接口，必须用export命令声明；如果其他文件要使用模块的接口，必须用import命令来输入。
+Module 任何包含import 或export语句的文件，就是一个模块（module）。相应地，如果文件不包含export语句，就是一个全局的脚本文件。
+模块本身就是一个作用域，但不属于全局作用域。模块内部的变量、函数、类只在内部可见，对于模块外部是不可见的。暴露给外部的接口，必须用export命令声明；如果其他文件要使用模块的接口，必须用import命令来输入。
 如果一个文件不包含export语句，但是希望把它当作一个模块（即内部变量对外不可见），可以在脚本头部添加一行语句。下面这行语句不产生任何实际作用，但会让当前文件被当作模块处理，所有它的代码都变成了内部代码。
 export {}; TypeScript模块除了支持所有ES模块的语法，特别之处在于允许导出和导入类型。下面示例中，当前脚本输出一个类型别名Bool。这行语句把类型定义和接口输出写在一行，也可以写成两行。
 export type Bool = true | false;  // 一行可以拆成两行 type Bool = true | false; export { Bool }; 假定上面的模块文件为a.ts，另一个文件b.ts就可以使用import语句，导入这个类型。下面示例中，import 语句加载的是一个类型。加载文件写成了./a，没有加上脚本文件的后缀名。TypeScript允许加载模块时，省略模块文件的后缀名，它会自动定位，将./a定位到./a.ts。
