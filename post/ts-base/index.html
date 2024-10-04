@@ -241,13 +241,13 @@ code.has-jax {
     <i class="fa fa-file-word-o"></i>
 </span>
 <span class="post-meta-item-text">字数: </span>
-<span class="leancloud-visitors-count">46124</span>
+<span class="leancloud-visitors-count">46636</span>
 &nbsp; | &nbsp;
 <span class="post-meta-item-icon">
     <i class="fa fa-coffee"></i>
 </span>
 <span class="post-meta-item-text">阅读: </span>
-<span class="leancloud-visitors-count">93 分钟</span>
+<span class="leancloud-visitors-count">94 分钟</span>
 </span>
       </div>
     </header>
@@ -3151,7 +3151,7 @@ code.has-jax {
 </span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#a6e22e">logData</span>(<span style="color:#a6e22e">locallyDeclared</span>);
 </span></span></code></pre></div><p>如何让全局声明和模块声明很好地结合在一起是一件棘手的事情。正确使用<code>TypeScript</code>的<code>declare</code>和<code>global</code>关键字可以描述哪些类型定义在项目中全局可用。</p>
 <h2 id="built-in-declarations">Built-In Declarations</h2>
-<p>既然已经了解了声明是如何工作的，那么是时候揭开它在<code>TypeScript</code>中的神秘面纱了：它一直在为类型检查提供动力。数组（<code>Array</code>）、函数（<code>Function</code>）、映射（<code>Map</code>）和集合（<code>Set</code>）等全局对象是类型系统需要了解的构造示例，但它们并未在我们的代码中声明。它们由代码要运行的运行时提供，<code>Deno、Node、Web</code>浏览器等。</p>
+<p>既然已经了解了声明是如何工作的，那么是时候揭开它在<code>TypeScript</code>中的神秘面纱了：它一直在为类型检查提供动力。全局对象（如数组（<code>Array</code>）、函数（<code>Function</code>）、映射（<code>Map</code>）和集合（<code>Set</code>）等）是类型系统需要了解的构造示例，但并未在我们的代码中声明。它们由代码要运行的<code>runtime</code>提供，例如<code>Deno、Node、Web</code>浏览器等。</p>
 <h3 id="library-declarations">Library Declarations</h3>
 <p>所有<code>JavaScript</code>运行时都存在的<code>Array</code>和<code>Function</code>等内置全局对象都是在文件中声明，文件名如<code>lib.[target].d.ts</code>。<code>target</code>是项目所针对的<code>JavaScript</code>的最小支持版本，如<code>ES5、ES2020</code>或<code>ESNext</code>。</p>
 <p>内置库定义文件（或称<code>lib</code>文件）相当庞大，因为它们代表<code>JavaScript</code>内置<code>API</code>的全部内容。例如，内置数组类型的成员由一个全局数组<code>interface</code>表示，该接口的开头是这样的：</p>
@@ -3171,7 +3171,33 @@ code.has-jax {
 </span></span></span><span style="display:flex;"><span><span style="color:#75715e">     */</span>
 </span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">toLocaleString</span>()<span style="color:#f92672">:</span> <span style="color:#66d9ef">string</span>;
 </span></span><span style="display:flex;"><span>}
-</span></span></code></pre></div><p><code>Lib</code>文件作为<code>TypeScript npm</code>软件包的一部分发布，可以在软件包中找到它们，路径类似<code>node_modules/typescript/lib/lib.es5.d.ts</code>。</p>
+</span></span></code></pre></div><p><code>Lib</code>文件作为<code>TypeScript npm</code>软件包的一部分发布，可以在软件包中找到它们，路径类似<code>node_modules/typescript/lib/lib.es5.d.ts</code>。对于<code>VS Code</code>等使用自己打包的<code>TypeScript</code>版本进行代码类型检查的集成开发环境，可以右键单击代码中的内置方法（如数组的<code>forEach</code>），然后选择<code>“Go to Definition”</code>等选项，找到正在使用的<code>lib</code>文件。</p>
+<h3 id="library-targets">Library targets</h3>
+<p>默认情况下，<code>TypeScript</code>将根据提供给<code>tsc CLI</code>和/或项目<code>tsconfig.json</code>的目标设置（默认为<code>“es5”</code>），包含相应的<code>lib</code>文件。新版本<code>JavaScript</code>的连续<code>lib</code>文件会使用接口合并功能相互构建。例如，<code>ES2015</code>中添加的 <code>EPSILON</code>和<code>isFinite</code>等静态<code>Number</code>成员都列在<code>lib.es2015.d.ts</code>中。</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span><span style="color:#66d9ef">interface</span> <span style="color:#a6e22e">NumberConstructor</span> {
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">/**
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">     * The value of Number.EPSILON is the difference between 1 and the smallest value greater than 1
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">     * that is representable as a Number value, which is approximately:
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">     * 2.2204460492503130808472633361816 x 10‍−‍16.
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">     */</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">readonly</span> <span style="color:#a6e22e">EPSILON</span>: <span style="color:#66d9ef">number</span>;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">/**
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">     * Returns true if passed value is finite.
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">     * Unlike the global isFinite, Number.isFinite doesn&#39;t forcibly convert the parameter to a
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">     * number. Only finite values of the type number, result in true.
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">     * @param number A numeric value.
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">     */</span>
+</span></span><span style="display:flex;"><span>    isFinite(<span style="color:#66d9ef">number</span><span style="color:#f92672">:</span> <span style="color:#66d9ef">unknown</span>)<span style="color:#f92672">:</span> <span style="color:#66d9ef">boolean</span>;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">/**
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">     * Returns true if the value passed is an integer, false otherwise.
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">     * @param number A numeric value.
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">     */</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">isInteger</span>(<span style="color:#66d9ef">number</span><span style="color:#f92672">:</span> <span style="color:#66d9ef">unknown</span>)<span style="color:#f92672">:</span> <span style="color:#66d9ef">boolean</span>;
+</span></span><span style="display:flex;"><span>    ...
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p><code>TypeScript</code>项目将包括<code>JavaScript</code>所有版本目标的<code>lib</code>文件，直至其最小目标。例如，目标为<code>“es2016”</code>的项目将包含<code>lib.es5.d.ts、lib.es2015.d.ts</code>和<code>lib.es2016.d.ts</code>。</p>
 <h2 id="module-declarations">Module Declarations</h2>
 <p>声明文件的另一个重要特点是可以描述模块的形状。可以在模块的字符串名称前使用<code>declare</code>关键字，以告知类型系统该模块的内容。<code>“my-example-lib”</code>模块在<code>modules.d.ts</code>声明脚本文件中声明为存在，然后在<code>index.ts</code>文件中使用：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span><span style="color:#75715e">// modules.d.ts
@@ -3946,6 +3972,7 @@ code.has-jax {
         <li><a href="#built-in-declarations">Built-In Declarations</a>
           <ul>
             <li><a href="#library-declarations">Library Declarations</a></li>
+            <li><a href="#library-targets">Library targets</a></li>
           </ul>
         </li>
         <li><a href="#module-declarations">Module Declarations</a>
