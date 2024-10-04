@@ -982,7 +982,9 @@ async function givesPromiseForString(): Promise&amp;lt;string&amp;gt; {  return 
 The Golden Rule of Generics 有一个快速测试方法可以帮助确定函数是否需要类型参数，那就是类型参数至少要使用两次。泛型描述的是类型之间的关系，如果一个泛型类型参数只出现在一次，它就不可能定义多个类型之间的关系。
 在泛型函数中，每个类型参数都应该用于一个形参，还至少用于一个其它参数和/或函数的返回类型。下面示例中，泛型函数logInput只使用了Input类型形参一次：
 function logInput&amp;lt;Input extends string&amp;gt;(input: Input) {  console.log(&amp;#34;Hi!&amp;#34;, input); } 在函数体中，函数logInput中的类型参数后没有做任何操作，例如返回或声明更多参数。因此，声明Input类型参数的用处不大。可以重写logInput，不需要声明为泛型：
-function logInput(input: string) {  console.log(&amp;#34;Hi!&amp;#34;, input); } Declaration Files TypeScript允许将类型声明与其实现分开。类型声明通常放在以.d.ts扩展名结尾的文件中，称为声明文件。声明文件通常放在项目中，随项目编译的npm包一起构建和发布，或作为独立的typings包共享。
+function logInput(input: string) {  console.log(&amp;#34;Hi!&amp;#34;, input); } Declaration Files 尽管用TypeScript编写代码很棒，但还是需要能够在TypeScript项目中处理原始JavaScript文件。许多软件包都是直接用JavaScript而不是TypeScript编写的。即使是用TypeScript编写的软件包也是以JavaScript文件的形式发布的。
+此外，TypeScript项目还需要一种方法来获知环境特定功能（如全局变量和API）的type shapes。例如，在Node.js中运行的项目可能可以访问浏览器中不可用的内置Node模块，反之亦然。
+TypeScript允许将类型声明与其实现分开。类型声明通常放在以.d.ts扩展名结尾的文件中，称为声明文件。声明文件通常放在项目中，随项目编译的npm包一起构建和发布，或作为独立的typings包共享。
 .d.ts文件的工作原理与.ts文件类似，但有一个明显的限制，不允许包含运行时代码。.d.ts文件只包含对可用运行时值、接口、模块和一般类型的描述。它们不能包含任何可编译为JavaScript的运行时代码。可以像导入其它TypeScript源文件一样导入声明文件。
 // types.d.ts export interface Character {  catchphrase?: string;  name: string; }  // index.ts import {Character} from &amp;#34;./type&amp;#34;; export const character: Character = {  catchphrase: &amp;#34;Yee-haw!&amp;#34;,  name: &amp;#34;Sandy Cheeks&amp;#34;, }; 声明文件会创建所谓的ambient context，表示在代码中只能声明类型而不能声明值的区域。接下来主要介绍声明文件及其中最常用的类型声明形式。
 Declaring Runtime Values 虽然定义文件不能创建函数或变量等运行时值，但它们可以使用declare关键字声明这些构造的存在。这样做可以告诉类型系统，某些外部影响（如网页中的&amp;lt;script&amp;gt;标记）已经创建了具有特定类型的该名称的值。也就是说declare关键字用来告诉编译器，某个类型或值是存在的，可以在当前文件中使用。
@@ -1002,7 +1004,11 @@ Global Interface Merging 变量并不是唯一可以设置为全局的东西，�
 Library Declarations 所有JavaScript运行时都存在的Array和Function等内置全局对象都是在文件中声明，文件名如lib.[target].d.ts。target是项目所针对的JavaScript的最小支持版本，如ES5、ES2020或ESNext。
 内置库定义文件（或称lib文件）相当庞大，因为它们代表JavaScript内置API的全部内容。例如，内置数组类型的成员由一个全局数组interface表示，该接口的开头是这样的：
 // lib.es5.d.ts  interface Array&amp;lt;T&amp;gt; {  /** * Gets or sets the length of the array. This is a number one higher than the highest index in the array. */  length: number;  /** * Returns a string representation of an array. */  toString(): string;  /** * Returns a string representation of an array. The elements are converted to string using their toLocaleString methods. */  toLocaleString(): string; } Lib文件作为TypeScript npm软件包的一部分发布，可以在软件包中找到它们，路径类似node_modules/typescript/lib/lib.es5.d.ts。
-enum 由于enum编译后是一个对象，所以**不能有与它同名的变量，对象，函数和类等**。如果存在同名的变量、对象、函数或类，将会出现编译错误。
+Module Declarations 声明文件的另一个重要特点是可以描述模块的形状。可以在模块的字符串名称前使用declare关键字，以告知类型系统该模块的内容。“my-example-lib”模块在modules.d.ts声明脚本文件中声明为存在，然后在index.ts文件中使用：
+// modules.d.ts declare module &amp;#34;my-example-lib&amp;#34; {  export const value: string; }  // index.ts import {value} from &amp;#34;my-example-lib&amp;#34;;  console.log(value); // Ok 在我们自己的代码中，应该不会经常用到declare module。它主要用于下一节的通配符模块声明和本章后面涉及的包类型。此外，请参见第 13 章 “配置选项”，了解有关resolveJsonModule的信息，这是一个编译器选项，允许TypeScript原生识别来自.json文件的导入。
+Wildcard Module Declarations 模块声明的一个常见用途是告诉网络应用程序，某个特定的非JavaScript/TypeScript文件扩展名可以导入到代码中。模块声明可以包含一个*通配符，以表示与该模式匹配的任何模块看起来都是一样的。
+例如，许多Web项目（如create-react-app和create-next-app等流行的React启动程序中预置的项目）都支持CSS模块，以便将CSS文件中的样式导入为可在运行时使用的对象。它们会使用以下模式定义模块：&amp;quot;*.module.css&amp;quot;
+// styles.d.ts declare module &amp;#34;*.module.css&amp;#34; {  const styles: { [i: string]: string };  export default styles; }  // component.ts import styles from &amp;#34;./styles.module.css&amp;#34;; styles.anyClassName; // Type: string enum 由于enum编译后是一个对象，所以**不能有与它同名的变量，对象，函数和类等**。如果存在同名的变量、对象、函数或类，将会出现编译错误。
 // 下面代码因为枚举和变量名重复了，会出现编译错误 // Enum declarations can only merge with namespace or other enum declarations. enum Test1 {  Local = &amp;#39;local&amp;#39;,  Remote = &amp;#39;remote&amp;#39; }  // 同名的常量，会出现编译错误 const Test1 = &amp;#39;890&amp;#39;  // 编译错误，因为枚举和类名重复 // Enum declarations can only merge with namespace or other enum declarations. enum Test2 {  A,  B }  // 类名和枚举同名了 class Test2 {  // 类的定义部分 } 枚举的成员不强制赋初始值。若没有初始值，默认从0开始逐一增1，按顺序为每个成员赋值。下面示例代码中，枚举成员对应值分别为0，1，2。
 enum Foo {  A,  B,  C, }  console.log(Foo.A, Foo.B, Foo.C) // 0 1 2  enum Foo {  A,  B = 4,  C, } console.log(Foo.A, Foo.B, Foo.C) // 0 4 5 enum属性的值可以是小数，若某个成员没有初始值，则其后的值也依次在上一个的基础上&#43;1:
 enum Foo {  A = 0.12,  B,  C }  console.log(Foo.A, Foo.B, Foo.C) // 0.12 1.12 2.12 enum属性（成员）的值不能是BigInt类型，否则会出现编译错误:
