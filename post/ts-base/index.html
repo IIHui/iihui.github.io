@@ -241,13 +241,13 @@ code.has-jax {
     <i class="fa fa-file-word-o"></i>
 </span>
 <span class="post-meta-item-text">字数: </span>
-<span class="leancloud-visitors-count">47940</span>
+<span class="leancloud-visitors-count">48357</span>
 &nbsp; | &nbsp;
 <span class="post-meta-item-icon">
     <i class="fa fa-coffee"></i>
 </span>
 <span class="post-meta-item-text">阅读: </span>
-<span class="leancloud-visitors-count">96 分钟</span>
+<span class="leancloud-visitors-count">97 分钟</span>
 </span>
       </div>
     </header>
@@ -340,8 +340,8 @@ code.has-jax {
 </span></span><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span><span style="color:#75715e">// 每次执行时生成随机数不同，结果就会不同
 </span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#a6e22e">console</span>.<span style="color:#a6e22e">log</span>(<span style="color:#a6e22e">thinker</span>, <span style="color:#66d9ef">typeof</span> <span style="color:#a6e22e">thinker</span>)  
-</span></span></code></pre></div><p>联合类型标注可以放置在任何需要类型标注的地方。<font color=red>当已知值是一个联合类型时，<code>TypeScript</code>只允许访问联合中所有子类型都存在的共有成员属性</font>。如果尝试访问的属性不是联合类型所有子类型的共</p>
-<p>有属性，会出现编译错误。</p>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">// 结果可能是Susanne Langer string 或 null object
+</span></span></span></code></pre></div><p>联合类型标注可以放置在任何需要类型标注的地方。<font color=red>当已知值是一个联合类型时，<code>TypeScript</code>只允许访问联合中所有子类型都存在的共有成员属性</font>。如果尝试访问的属性不是联合类型所有子类型的共有属性，会出现编译错误。</p>
 <p>下面代码中，<code>physicist</code>是一个<code>number | string</code>联合类型变量。方法<code>toString()</code>在两种子类型中都存在，但<code>toUpperCase</code>方法仅存在于<code>string</code>类型，而<code>toFixed</code>方法仅存在于<code>number</code>类型。所以，如果直接调用<code>toUpperCase</code>和<code>toFixed</code>都会出现编译错误：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span><span style="color:#75715e">// physicist变量类型为string | number
 </span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">let</span> <span style="color:#a6e22e">physicist</span> <span style="color:#f92672">=</span> Math.<span style="color:#a6e22e">random</span>() <span style="color:#f92672">&gt;</span> <span style="color:#ae81ff">0.5</span> <span style="color:#f92672">?</span> <span style="color:#e6db74">&#34;Marie Curie&#34;</span> <span style="color:#f92672">:</span> <span style="color:#ae81ff">84</span>;
@@ -357,7 +357,7 @@ code.has-jax {
 </span></span></code></pre></div><p>需要注意的是，<font color="#de7802">限制访问并不存在于联合类型所有子类型的属性或方法是一种安全措施</font>。如果一个对象还不确定是包含某个属性的子类型，<code>TypeScript</code>则认为尝试访问该子类型独有的属性是不安全的。</p>
 <p>如果要使用仅存在于联合类型中某个子类型的属性或方法，我们的代码需向<code>TypeScript</code><font color=blue>表明在当前位置该值的类型就是某个具体的子类型，这一过程被称为窄化（<code>narrowing</code>）</font>。</p>
 <h2 id="narrowing">Narrowing</h2>
-<p>窄化是指在代码中推断出一个变量值的类型比其声明时的类型更具体（范围更窄）。一旦知道一个值的类型比声明时的类型范围更窄，将允许将该值的类型视为这个更具体（更窄）的类型。用于<font color="#de7802">窄化类型范围的逻辑检查称为类型保护</font>。下面介绍<code>TypeScript</code>可以用来从代码中窄化类型的两种常见类型保护。</p>
+<p>窄化是指在代码的某个位置推断出一个变量值的类型比其声明时的类型更具体（范围更窄）。一旦知道一个值的类型比声明时的类型范围更窄，允许将该值的类型视为这个更具体（更窄）的类型。用于<font color="#de7802">窄化类型范围的逻辑检查称为类型保护</font>。下面介绍<code>TypeScript</code>可以用来从代码中窄化类型的两种常见类型保护。</p>
 <h3 id="assignment-narrowing">Assignment Narrowing</h3>
 <p>如果<font color="#de7802">直接赋值给一个联合类型变量，会将变量的类型缩小为该值的类型</font>。下面示例代码中，变量<code>admiral</code>声明为<code>number | string</code>联合类型。一旦变量被赋值为字符串<code>&quot;Grace Hopper&quot;</code>，编译器就知道它是字符串类型：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span><span style="color:#66d9ef">let</span> <span style="color:#a6e22e">admiral</span>: <span style="color:#66d9ef">string</span> <span style="color:#f92672">|</span> <span style="color:#66d9ef">null</span>
@@ -399,7 +399,7 @@ code.has-jax {
 </span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">researcher</span>.<span style="color:#a6e22e">toUpperCase</span>(); <span style="color:#75715e">// Ok: string
 </span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>}
 </span></span></code></pre></div><h2 id="literal-types">Literal Types</h2>
-<p>介绍了联合和窄化用于处理可能是两种或两种以上类型的值后，再来介绍一下字面量类型。字面量类型是基础类型的更具体版本。</p>
+<p>介绍了联合和窄化用于处理可能是两种或两种以上类型的变量后，再来介绍一下字面量类型。字面量类型是基础类型的更具体版本。这与其它语言区别较大：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span><span style="color:#75715e">// 类型为&#34;Hypatia&#34;
 </span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">const</span> <span style="color:#a6e22e">philosopher</span> <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;Hypatia&#34;</span>
 </span></span><span style="display:flex;"><span>
@@ -410,7 +410,7 @@ code.has-jax {
 <p>如果将一个变量声明为<code>const</code>，并直接给它一个字面值，<code>TypeScript</code><font color="#de7802">将推断这个变量的类型是这个字面值类型</font>。这就是为什么在IDE中将鼠标悬停在带有初始字面值的<code>const</code>常量上时，会显示常量的类型为字面值，而不是其基本类型。</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span><span style="color:#75715e">// philosopher的类型为Hypatia
 </span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">const</span> <span style="color:#a6e22e">philosopher</span> <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;Hypatia&#34;</span>
-</span></span></code></pre></div><p>可以把每个基本类型看作是所有可能的字面值的联合类型。换句话说，基本类型是该类型所有可能字面值的集合。除了<code>boolean</code>，<code>null</code>和<code>undefined</code>类型，所有其它基本类型（例如<code>number</code>和<code>string</code>）均有无限多的字面值类型。在<code>TypeScript</code>代码中会出现的常见类型如下：</p>
+</span></span></code></pre></div><p>可以把每个基本类型看作是所有可能的字面值的联合类型。换句话说，<font color=red>基本类型是该类型所有可能字面值的集合</font>。除了<code>boolean</code>，<code>null</code>和<code>undefined</code>类型，所有其它基本类型（例如<code>number</code>和<code>string</code>）均有无限多的字面值类型。在<code>TypeScript</code>代码中会出现的常见类型如下：</p>
 <ul>
 <li><code>boolean</code>: 只有<code>true | false</code></li>
 <li><code>null</code>和<code>undefined</code>只有一个字面值，就是它们自己</li>
@@ -429,7 +429,7 @@ code.has-jax {
 </span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">let</span> <span style="color:#a6e22e">specificallyAda</span><span style="color:#f92672">:</span> <span style="color:#e6db74">&#34;Ada&#34;</span>; 
 </span></span><span style="display:flex;"><span><span style="color:#a6e22e">specificallyAda</span> <span style="color:#f92672">=</span> <span style="color:#e6db74">&#39;Ada&#39;</span>
 </span></span><span style="display:flex;"><span><span style="color:#75715e">// 执行结果为string
-</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#a6e22e">console</span>.<span style="color:#a6e22e">log</span>(<span style="color:#66d9ef">typeof</span> <span style="color:#a6e22e">specificallyAda</span>)  <span style="color:#75715e">// string
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#a6e22e">console</span>.<span style="color:#a6e22e">log</span>(<span style="color:#66d9ef">typeof</span> <span style="color:#a6e22e">specificallyAda</span>)  <span style="color:#75715e">// 打印出来还是字符串string
 </span></span></span><span style="display:flex;"><span><span style="color:#75715e">// 编译错误: Type &#39;&#34;B&#34;&#39; is not assignable to type &#39;&#34;Ada&#34;&#39;.
 </span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#a6e22e">specificallyAda</span> <span style="color:#f92672">=</span> <span style="color:#e6db74">&#39;B&#39;</span> 
 </span></span></code></pre></div><p>需要注意的是，<font color="#de7802">基本类型的变量不能赋值给对应的字面量类型，但字面量类型可以赋值给相应的基本类型</font>。因为任何特定的字面量字符串值仍然是字符串，下面代码不会出现编译错误：</p>
@@ -466,6 +466,14 @@ code.has-jax {
 </span></span><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span><span style="color:#75715e">// 执行结果
 </span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">false</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">let</span> <span style="color:#a6e22e">falseTest</span>: <span style="color:#66d9ef">string</span> <span style="color:#f92672">|</span> <span style="color:#66d9ef">null</span> <span style="color:#f92672">=</span> <span style="color:#66d9ef">null</span> <span style="color:#75715e">// 或者空字符串
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">if</span> (<span style="color:#f92672">!</span><span style="color:#a6e22e">falseTest</span>) {
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">console</span>.<span style="color:#a6e22e">log</span>(<span style="color:#e6db74">&#34;false&#34;</span>)
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">// 执行结果
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">false</span>
 </span></span></code></pre></div><p>下面代码中，变量<code>geneticist</code>的类型是<code>string | undefined</code>，因为<code>undefined</code>是<code>falsy</code>值。代码进入<code>if</code>语句体的前提是变量<code>geneticist</code>为<code>truthy</code>值，所以在<code>if</code>语句体中推断出它必须是<code>string</code>类型：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span><span style="color:#66d9ef">let</span> <span style="color:#a6e22e">geneticist</span> <span style="color:#f92672">=</span> Math.<span style="color:#a6e22e">random</span>() <span style="color:#f92672">&gt;</span> <span style="color:#ae81ff">0.5</span> <span style="color:#f92672">?</span> <span style="color:#e6db74">&#34;Barbara McClintock&#34;</span> <span style="color:#f92672">:</span> <span style="color:#66d9ef">undefined</span>;
 </span></span><span style="display:flex;"><span>
@@ -473,6 +481,13 @@ code.has-jax {
 </span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">if</span> (<span style="color:#a6e22e">geneticist</span>) {
 </span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">console</span>.<span style="color:#a6e22e">log</span>(<span style="color:#a6e22e">geneticist</span>.<span style="color:#a6e22e">toUpperCase</span>()) <span style="color:#75715e">// BARBARA MCCLINTOCK
 </span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">let</span> <span style="color:#a6e22e">falsyTest</span>: <span style="color:#66d9ef">string</span> <span style="color:#f92672">|</span> <span style="color:#66d9ef">undefined</span> 
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">if</span> (<span style="color:#f92672">!</span><span style="color:#a6e22e">falsyTest</span>) {
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">console</span>.<span style="color:#a6e22e">log</span>(<span style="color:#e6db74">&#34;false&#34;</span>)
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span><span style="color:#75715e">// 执行结果
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">false</span>
 </span></span></code></pre></div><p>逻辑运算符执行<code>truthy</code>值检查也同样有效，即使用<code>&amp;&amp;</code>和<code>?</code>运算符:</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span><span style="color:#75715e">// 变量geneticist类型为string | undefined
 </span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">let</span> <span style="color:#a6e22e">geneticist</span> <span style="color:#f92672">=</span> Math.<span style="color:#a6e22e">random</span>() <span style="color:#f92672">&gt;</span> <span style="color:#ae81ff">0.5</span> <span style="color:#f92672">?</span> <span style="color:#e6db74">&#34;Barbara McClintock&#34;</span> <span style="color:#f92672">:</span> <span style="color:#66d9ef">undefined</span>;
@@ -482,8 +497,8 @@ code.has-jax {
 </span></span><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span><span style="color:#75715e">// 执行结果可能为undefined或BARBARA MCCLINTOCK
 </span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#a6e22e">console</span>.<span style="color:#a6e22e">log</span>(<span style="color:#a6e22e">geneticist</span><span style="color:#f92672">?</span>.<span style="color:#a6e22e">toUpperCase</span>()) 
-</span></span></code></pre></div><p>需要注意的是，<span style="background:rgba(255, 183, 139, 0.55)">真值检查不能反过来使用</span>。如果知道类型为<code>string | undefined</code>变量的值是<code>falsy</code>的，并不能推断这个值是空字符串还是<code>undefined</code>。</p>
-<p>下面代码中，变量<code>biologist</code>的类型为<code>string | false</code>。虽然在<code>if</code>语句体中可以窄化类型为字符串，但<code>else</code>语句体包含<code>biologist</code>为字符串且值为<code>&quot;&quot;</code>，也就是说在<code>else</code>里变量的类型依然为<code>string | false</code>：</p>
+</span></span></code></pre></div><p>需要注意的是，<span style="background:rgba(255, 183, 139, 0.55)">真值检查不能反过来使用</span>。如果知道类型为<code>string | undefined</code>的变量的值是<code>falsy</code>的，并不能推断出这个值是空字符串还是<code>undefined</code>。</p>
+<p>下面代码中，变量<code>biologist</code>的类型为<code>string | false</code>。虽然在<code>if</code>语句体中可以窄化类型为字符串，但<code>else</code>语句体包含了<code>biologist</code>是字符串类型且值为<code>&quot;&quot;</code>，也就是说在<code>else</code>里变量的类型依然为<code>string | false</code>：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span><span style="color:#75715e">// 变量类型为联合类型 string | false
 </span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">let</span> <span style="color:#a6e22e">biologist</span> <span style="color:#f92672">=</span> Math.<span style="color:#a6e22e">random</span>() <span style="color:#f92672">&gt;</span> <span style="color:#ae81ff">0.5</span> <span style="color:#f92672">&amp;&amp;</span> <span style="color:#e6db74">&#34;Rachel Carson&#34;</span>;
 </span></span><span style="display:flex;"><span><span style="color:#66d9ef">if</span> (<span style="color:#a6e22e">biologist</span>) {
@@ -507,7 +522,7 @@ code.has-jax {
 </span></span><span style="display:flex;"><span><span style="color:#75715e">// 执行结果
 </span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">undefined</span>
 </span></span><span style="display:flex;"><span><span style="color:#66d9ef">undefined</span>
-</span></span></code></pre></div><p>特别注意的是，在严格模式下（<code>&quot;strictNullChecks&quot;: true</code>），在定义联合类型变量时，<font color=red>如果类型中只包含了 <code>| null</code>，而不包含 <code>| undefined</code>，则需要初始化</font>，否则会出现编译错误：</p>
+</span></span></code></pre></div><p>特别注意的是，在设置了严格空值检查模式下（<code>strict: true</code>），定义联合类型变量时，<font color=red>如果类型中只包含了 <code>| null</code>，而不包含 <code>| undefined</code>，则需要初始化</font>，否则会出现编译错误：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span><span style="color:#66d9ef">let</span> <span style="color:#a6e22e">mathematician</span>: <span style="color:#66d9ef">string</span> <span style="color:#f92672">|</span> <span style="color:#66d9ef">null</span>
 </span></span><span style="display:flex;"><span><span style="color:#75715e">// 未初始化时就调用会出现编译错误：Variable &#39;mathematician&#39; is used before being assigned.
 </span></span></span><span style="display:flex;"><span><span style="color:#75715e">// error TS2454: Variable &#39;mathematician&#39; is used before being assigned.
@@ -516,12 +531,23 @@ code.has-jax {
 </span></span><span style="display:flex;"><span><span style="color:#66d9ef">let</span> <span style="color:#a6e22e">mathematician</span>: <span style="color:#66d9ef">string</span> <span style="color:#f92672">|</span> <span style="color:#66d9ef">undefined</span> 
 </span></span><span style="display:flex;"><span><span style="color:#75715e">// 未初始化不会出现编译错误
 </span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#a6e22e">console</span>.<span style="color:#a6e22e">log</span>(<span style="color:#a6e22e">mathematician</span>)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">// 设置如下所示
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>{
+</span></span><span style="display:flex;"><span>  <span style="color:#e6db74">&#34;compilerOptions&#34;</span><span style="color:#f92672">:</span> {
+</span></span><span style="display:flex;"><span>    <span style="color:#e6db74">&#34;target&#34;</span><span style="color:#f92672">:</span> <span style="color:#e6db74">&#34;ES2022&#34;</span>,
+</span></span><span style="display:flex;"><span>    <span style="color:#e6db74">&#34;module&#34;</span><span style="color:#f92672">:</span> <span style="color:#e6db74">&#34;CommonJS&#34;</span>,
+</span></span><span style="display:flex;"><span>    <span style="color:#e6db74">&#34;outDir&#34;</span><span style="color:#f92672">:</span> <span style="color:#e6db74">&#34;out&#34;</span>,
+</span></span><span style="display:flex;"><span>    <span style="color:#e6db74">&#34;sourceMap&#34;</span><span style="color:#f92672">:</span> <span style="color:#66d9ef">true</span>,
+</span></span><span style="display:flex;"><span>    <span style="color:#e6db74">&#34;strict&#34;</span><span style="color:#f92672">:</span> <span style="color:#66d9ef">true</span>,
+</span></span><span style="display:flex;"><span>  }
+</span></span><span style="display:flex;"><span>}
 </span></span></code></pre></div><h2 id="type-aliases">Type Aliases</h2>
 <p>在代码中看到的大多数联合类型的子类型一般只有两到三个。但是，有时可能会遇到一些较长的联合类型，如果这种联合类型出现次数较多，会不太方便。</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span><span style="color:#66d9ef">let</span> <span style="color:#a6e22e">rawDataFirst</span>: <span style="color:#66d9ef">boolean</span> <span style="color:#f92672">|</span> <span style="color:#66d9ef">number</span> <span style="color:#f92672">|</span> <span style="color:#66d9ef">string</span> <span style="color:#f92672">|</span> <span style="color:#66d9ef">null</span> <span style="color:#f92672">|</span> <span style="color:#66d9ef">undefined</span>;
 </span></span><span style="display:flex;"><span><span style="color:#66d9ef">let</span> <span style="color:#a6e22e">rawDataSecond</span>: <span style="color:#66d9ef">boolean</span> <span style="color:#f92672">|</span> <span style="color:#66d9ef">number</span> <span style="color:#f92672">|</span> <span style="color:#66d9ef">string</span> <span style="color:#f92672">|</span> <span style="color:#66d9ef">null</span> <span style="color:#f92672">|</span> <span style="color:#66d9ef">undefined</span>;
 </span></span><span style="display:flex;"><span><span style="color:#66d9ef">let</span> <span style="color:#a6e22e">rawDataThird</span>: <span style="color:#66d9ef">boolean</span> <span style="color:#f92672">|</span> <span style="color:#66d9ef">number</span> <span style="color:#f92672">|</span> <span style="color:#66d9ef">string</span> <span style="color:#f92672">|</span> <span style="color:#66d9ef">null</span> <span style="color:#f92672">|</span> <span style="color:#66d9ef">undefined</span>;
-</span></span></code></pre></div><p><code>TypeScript</code>包含类型别名，可以为重复使用的类型分配更简单的名称。类型别名以如下方式声明，按照惯例，<font color="#de7802">类型别名以大驼峰命名</font>（表示类型）：</p>
+</span></span></code></pre></div><p><code>TypeScript</code>包含类型别名，可以为重复使用的类型分配更简单的名称。类型别名以如下方式声明，按照惯例，<font color="#de7802">类型别名以大驼峰命名</font>（遵循类型命名规范）：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span><span style="color:#66d9ef">type</span> <span style="color:#a6e22e">MyName</span> <span style="color:#f92672">=</span> ...;
 </span></span></code></pre></div><p>前面的联合类型，可以简写成如下形式：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span><span style="color:#66d9ef">type</span> <span style="color:#a6e22e">RawData</span> <span style="color:#f92672">=</span> <span style="color:#66d9ef">boolean</span> <span style="color:#f92672">|</span> <span style="color:#66d9ef">number</span> <span style="color:#f92672">|</span> <span style="color:#66d9ef">string</span> <span style="color:#f92672">|</span> <span style="color:#66d9ef">null</span> <span style="color:#f92672">|</span> <span style="color:#66d9ef">undefined</span>;
@@ -534,6 +560,7 @@ code.has-jax {
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span><span style="color:#66d9ef">type</span> <span style="color:#a6e22e">RawData</span> <span style="color:#f92672">=</span> <span style="color:#66d9ef">boolean</span> <span style="color:#f92672">|</span> <span style="color:#66d9ef">number</span> <span style="color:#f92672">|</span> <span style="color:#66d9ef">string</span> <span style="color:#f92672">|</span> <span style="color:#66d9ef">null</span> <span style="color:#f92672">|</span> <span style="color:#66d9ef">undefined</span>;
 </span></span><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span><span style="color:#75715e">// 编译错误：&#39;RawData&#39; only refers to a type, but is being used as a value here.
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">// “RawData”仅表示类型，但在此处却作为值使用。ts(2693)
 </span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#a6e22e">console</span>.<span style="color:#a6e22e">log</span>(<span style="color:#a6e22e">RawData</span>) 
 </span></span><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span><span style="color:#66d9ef">let</span> <span style="color:#a6e22e">rawData</span>: <span style="color:#66d9ef">RawData</span> <span style="color:#f92672">=</span> <span style="color:#66d9ef">false</span>
@@ -546,7 +573,8 @@ code.has-jax {
 </span></span><span style="display:flex;"><span><span style="color:#66d9ef">type</span> <span style="color:#a6e22e">IdMaybe</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">Id</span> <span style="color:#f92672">|</span> <span style="color:#66d9ef">undefined</span> <span style="color:#f92672">|</span> <span style="color:#66d9ef">null</span>;
 </span></span></code></pre></div><p>需要注意的是，<span style="background:rgba(255, 183, 139, 0.55)">类型别名不必按使用顺序声明</span>。可以让文件中较早声明的类型别名引用在文件中较后声明的别名。上面代码可以重写，将<code>IdMaybe</code>放在<code>Id</code>之前声明：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span><span style="color:#66d9ef">type</span> <span style="color:#a6e22e">IdMaybe</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">Id</span> <span style="color:#f92672">|</span> <span style="color:#66d9ef">undefined</span> <span style="color:#f92672">|</span> <span style="color:#66d9ef">null</span>;
-</span></span><span style="display:flex;"><span><span style="color:#66d9ef">type</span> <span style="color:#a6e22e">Id</span> <span style="color:#f92672">=</span> <span style="color:#66d9ef">number</span> <span style="color:#f92672">|</span> <span style="color:#66d9ef">string</span>;
+</span></span><span style="display:flex;"><span><span style="color:#75715e">// 别名的定义在后，使用在前
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">type</span> <span style="color:#a6e22e">Id</span> <span style="color:#f92672">=</span> <span style="color:#66d9ef">number</span> <span style="color:#f92672">|</span> <span style="color:#66d9ef">string</span>;
 </span></span><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span><span style="color:#66d9ef">let</span> <span style="color:#a6e22e">id</span>: <span style="color:#66d9ef">IdMaybe</span>
 </span></span><span style="display:flex;"><span><span style="color:#a6e22e">console</span>.<span style="color:#a6e22e">log</span>(<span style="color:#a6e22e">id</span>) <span style="color:#75715e">// undefined
@@ -556,7 +584,7 @@ code.has-jax {
 </blockquote>
 <h2 id="object-types">Object Types</h2>
 <p>使用<code>{}</code>创建对象字面量时，<code>TypeScript</code>会<font color="#de7802">根据其属性将其视为新的对象类型</font>。新对象类型具有与对象字面量相同的属性名和对应值类型。访问对象属性的值时可以使用<code>value.member</code>或等同的<code>value['member']</code>语法。</p>
-<p>下面代码中，<code>TypeScript</code>认为常量<code>poet</code>的类型是一个对象，该对象具有<code>born</code>和<code>name</code>两个属性，属性<code>born</code>对应的值类型为<code>number</code>，<code>name</code>属性对应值类型为<code>string</code>。访问这两个属性是允许的，但<font color="#de7802">试图访问任何其它不存在的属性都会出现编译错误</font>：</p>
+<p>下面代码中，<code>TypeScript</code>认为常量<code>poet</code>的类型是一个对象，该对象具有<code>born</code>和<code>name</code>两个属性，属性<code>born</code>的值类型为<code>number</code>，<code>name</code>属性的值类型为<code>string</code>。访问这两个属性是允许的，但<font color="#de7802">试图访问任何其它不存在的属性都会出现编译错误</font>：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span><span style="color:#66d9ef">const</span> <span style="color:#a6e22e">poet</span> <span style="color:#f92672">=</span> {
 </span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">born</span>: <span style="color:#66d9ef">1935</span>,
 </span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">name</span><span style="color:#f92672">:</span> <span style="color:#e6db74">&#34;Mary Oliver&#34;</span>,
@@ -572,6 +600,7 @@ code.has-jax {
 <p>从现有的对象中直接推断出类型固然是好的，但有时还是需要显式标注对象类型。此时，需要一种方式描述对象类型，将其与满足其类型的对象值区分开来。</p>
 <p>对象类型使用与对象字面量相似的语法来描述，但<font color="#f79646">与属性名对应的是其值的类型而不是相应的值</font>。若对象类型变量出现赋值相关的编译错误，显示的是声明对象类型时的语法，清晰易读。</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span><span style="color:#75715e">// 先声明，声明时未被初始化
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">// 定义时最后一个分号是可以去除的
 </span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">let</span> <span style="color:#a6e22e">poetLater</span><span style="color:#f92672">:</span> {
 </span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">born</span>: <span style="color:#66d9ef">number</span>;
 </span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">name</span>: <span style="color:#66d9ef">string</span>;
@@ -583,7 +612,7 @@ code.has-jax {
 </span></span><span style="display:flex;"><span><span style="color:#75715e">// 编译错误：Type &#39;number&#39; is not assignable to type &#39;{ born: number; name: string; }&#39;.
 </span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#a6e22e">poetLater</span> <span style="color:#f92672">=</span> <span style="color:#ae81ff">123</span> 
 </span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span><span style="color:#75715e">// 定义时属性之间也可以使用逗号分隔
+</span></span><span style="display:flex;"><span><span style="color:#75715e">// 定义时属性之间也可以使用逗号分隔，最后一个逗号是可以去掉的
 </span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">let</span> <span style="color:#a6e22e">poetLater</span><span style="color:#f92672">:</span> {
 </span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">born</span>: <span style="color:#66d9ef">number</span>,
 </span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">name</span>: <span style="color:#66d9ef">string</span>,
@@ -655,7 +684,7 @@ code.has-jax {
 </span></span><span style="display:flex;"><span><span style="color:#75715e">// 赋值时字面量缺少属性，会出现编译错误
 </span></span></span><span style="display:flex;"><span><span style="color:#75715e">// Property &#39;last&#39; is missing in type &#39;{ first: string; }&#39; but required in type &#39;FirstAndLastNames&#39;.
 </span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">const</span> <span style="color:#a6e22e">hasOnlyOne</span>: <span style="color:#66d9ef">FirstAndLastNames</span> <span style="color:#f92672">=</span> {<span style="color:#a6e22e">first</span><span style="color:#f92672">:</span> <span style="color:#e6db74">&#34;Sappho&#34;</span>}; 
-</span></span></code></pre></div><p>当<span style="background:rgba(255, 183, 139, 0.55)">使用对象字面量赋值时</span>，也不允许两者之间值的类型不匹配。<font color="#de7802">对象类型既指定了所需属性的名称，也指定了这些属性对应值的类型</font>。如果对象属性的对应值类型不匹配，也会出现编译错误。</p>
+</span></span></code></pre></div><p>当<span style="background:rgba(255, 183, 139, 0.55)">使用对象字面量赋值时</span>，也不允许两者之间值的类型不匹配。即<font color="#de7802">对象类型既指定了所需属性的名称，也指定了这些属性对应值的类型</font>。如果对象属性的对应值类型不匹配，也会出现编译错误。</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span><span style="color:#66d9ef">type</span> <span style="color:#a6e22e">TimeRange</span> <span style="color:#f92672">=</span> { <span style="color:#a6e22e">start</span>: <span style="color:#66d9ef">Date</span>; };
 </span></span><span style="display:flex;"><span><span style="color:#75715e">// 编译错误: Type &#39;string&#39; is not assignable to type &#39;Date&#39;.
 </span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">const</span> <span style="color:#a6e22e">hasDateStr</span>: <span style="color:#66d9ef">TimeRange</span> <span style="color:#f92672">=</span> {
@@ -700,17 +729,17 @@ code.has-jax {
 </span></span><span style="display:flex;"><span><span style="color:#66d9ef">const</span> <span style="color:#a6e22e">existingObject</span> <span style="color:#f92672">=</span> {    
 </span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">born</span>: <span style="color:#66d9ef">1935</span>, 
 </span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">name</span><span style="color:#f92672">:</span> <span style="color:#e6db74">&#34;Mary Oliver&#34;</span>,  
-</span></span><span style="display:flex;"><span>    <span style="color:#75715e">// 相对于Poet来说是多余属性  
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">// 相对于Poet类型来说，activity是多余属性  
 </span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#a6e22e">activity</span><span style="color:#f92672">:</span> <span style="color:#e6db74">&#34;walking&#34;</span>,
 </span></span><span style="display:flex;"><span>};  
 </span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span><span style="color:#75715e">// 绕过多余属性检查
+</span></span><span style="display:flex;"><span><span style="color:#75715e">// 使用变量绕过多余属性检查
 </span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">const</span> <span style="color:#a6e22e">extraProperty</span>: <span style="color:#66d9ef">Poet</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">existingObject</span>  
 </span></span><span style="display:flex;"><span><span style="color:#a6e22e">console</span>.<span style="color:#a6e22e">log</span>(<span style="color:#a6e22e">poetMatch</span>) 
 </span></span><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span><span style="color:#75715e">// 执行结果
 </span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>{ <span style="color:#a6e22e">activity</span><span style="color:#f92672">:</span> <span style="color:#e6db74">&#39;walking&#39;</span>, <span style="color:#a6e22e">born</span>: <span style="color:#66d9ef">1935</span>, <span style="color:#a6e22e">name</span><span style="color:#f92672">:</span> <span style="color:#e6db74">&#39;Mary Oliver&#39;</span> }
-</span></span></code></pre></div><p>在<span style="background:rgba(255, 183, 139, 0.55)">需要对象类型的任何地方创建新对象时，都会触发多余属性检查</span>，即创建的对象字面量必须与标注的对象类型匹配。禁止多余属性能确保代码整洁并按照期望的方式运行，因为通常在对象类型中声明的多余属性通常是书写时输入了错误的属性名。</p>
+</span></span></code></pre></div><p>在<span style="background:rgba(255, 183, 139, 0.55)">需要对象类型的任何地方创建新对象时，都会触发多余属性检查</span>，即创建的对象字面量必须与标注的对象类型匹配。禁止多余属性能确保代码整洁并按照期望的方式运行，因为通常在对象类型中声明的多余属性是书写时输入了错误的属性名。</p>
 <h3 id="nested-object-types">Nested Object Types</h3>
 <p>由于<code>JavaScript</code>对象中可以嵌入其它对象成员，因此<code>TypeScript</code>的对象类型也必须能够表示嵌套的对象类型。嵌套类型语法与之前相同，但使用<code>{ ... }</code>对象类型来代替基础类型。</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span><span style="color:#75715e">// 创建别名类型
@@ -769,7 +798,7 @@ code.has-jax {
 </span></span></span><span style="display:flex;"><span><span style="color:#75715e">    name: string,
 </span></span></span><span style="display:flex;"><span><span style="color:#75715e">};
 </span></span></span><span style="display:flex;"><span><span style="color:#75715e">*/</span>
-</span></span></code></pre></div><p>通常来说，为嵌套对象类型创建一个别名类型是个好主意，这样既能使代码更易读，也能使<code>TypeScript</code>的错误信息更易读。</p>
+</span></span></code></pre></div><p>通常来说，为嵌套对象类型创建一个别名类型是个好主意，这样既能使具有嵌套类型的代码更易读，也能使<code>TypeScript</code>的错误信息更易读。</p>
 <h3 id="optional-properties">Optional Properties</h3>
 <p>对象类型的属性不一定都是必需属性，<font color="#de7802">可以在属性的类型标注的<code>:</code>前加上<code>?</code>来表示它是一个可选属性</font>。下面代码中，<code>Book</code>中的<code>author</code>属性是可选的：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span><span style="color:#66d9ef">type</span> <span style="color:#a6e22e">Book</span> <span style="color:#f92672">=</span> {
@@ -785,6 +814,9 @@ code.has-jax {
 </span></span><span style="display:flex;"><span><span style="color:#66d9ef">const</span> <span style="color:#a6e22e">normal</span>: <span style="color:#66d9ef">Book</span> <span style="color:#f92672">=</span> {
 </span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">pages</span>: <span style="color:#66d9ef">80</span>,
 </span></span><span style="display:flex;"><span>};
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">console</span>.<span style="color:#a6e22e">log</span>(<span style="color:#a6e22e">book</span>)
+</span></span><span style="display:flex;"><span><span style="color:#75715e">// 执行结果
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>{<span style="color:#a6e22e">pages</span>: <span style="color:#66d9ef">80</span>}
 </span></span><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span><span style="color:#75715e">// 不能缺少必需属性，否则会出现编译错误
 </span></span></span><span style="display:flex;"><span><span style="color:#75715e">// Property &#39;pages&#39; is missing in type &#39;{ author: string; }&#39; but required in type &#39;Book&#39;.
@@ -807,12 +839,13 @@ code.has-jax {
 </span></span><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span><span style="color:#75715e">// 触发属性检查，author属性必须有，且必须提供值
 </span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">const</span> <span style="color:#a6e22e">missingRequired</span>: <span style="color:#66d9ef">Writers</span> <span style="color:#f92672">=</span> {}; <span style="color:#75715e">//  Property &#39;author&#39; is missing in type &#39;{}&#39; but required in type &#39;Writers&#39;.
-</span></span></span></code></pre></div><h2 id="unions-of-object-types">Unions of Object Types</h2>
+</span></span></span></code></pre></div><p>请特别注意，上面类型的属性类型为<code>undefined</code>的联合，与变量的类型为<code>undefined</code>的联合区别较大。类型中包含了<code>undefined</code>的联合时也是需要初始化的。</p>
+<h2 id="unions-of-object-types">Unions of Object Types</h2>
 <blockquote>
 <p>如果变量的初始值可能是多种对象类型之一，<code>TypeScript</code>将推断变量的类型为对象类型的联合。<font color="#de7802">该联合类型为每种可能的类型提供一个成分</font>，类型上的每种可能属性都将出现在每个组成元素中，尽管它们<span style="background:rgba(255, 183, 139, 0.55)">在没有初始值的任何类型中都是可选类型</span>。</p>
 </blockquote>
 <h3 id="inferred-object-type-unions">Inferred Object-Type Unions</h3>
-<p>下面代码中，常量<code>poem</code>值一定有<code>name</code>属性，可能有<code>pages</code>或<code>rhymes</code>属性。常量<code>poem</code>的类型被推断为<code>{name: string, pages: number, rhymes?: undefined} | {name: string, rhymes: boolean, pages?: undefined}</code> 。请注意下面非共有属性在不包含该属性的对象类型中是可选的，并且值类型是<code>undefined</code>:</p>
+<p>下面代码中，常量<code>poem</code>值一定有<code>name</code>属性，可能有<code>pages</code>或<code>rhymes</code>属性。常量<code>poem</code>的类型被推断为<code>{name: string, pages: number, rhymes?: undefined} | {name: string, rhymes: boolean, pages?: undefined}</code> 。也就是说在推断类型时，在某个对象类型中非共有属性在不包含该属性的对象类型中是可选的，并且值类型是<code>undefined</code>:</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span><span style="color:#75715e">// poem的类型被推断为{name: string, pages: number, rhymes?: undefined} | {name: string, rhymes: boolean, pages?: undefined}
 </span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">const</span> <span style="color:#a6e22e">poem</span> <span style="color:#f92672">=</span> Math.<span style="color:#a6e22e">random</span>() <span style="color:#f92672">&gt;</span> <span style="color:#ae81ff">0.5</span> <span style="color:#f92672">?</span> {
 </span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">name</span><span style="color:#f92672">:</span> <span style="color:#e6db74">&#34;The Double Image&#34;</span>,
@@ -830,8 +863,13 @@ code.has-jax {
 </span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#a6e22e">console</span>.<span style="color:#a6e22e">log</span>(<span style="color:#a6e22e">poem</span>.<span style="color:#a6e22e">name</span>, <span style="color:#a6e22e">poem</span>.<span style="color:#a6e22e">pages</span>, <span style="color:#a6e22e">poem</span>.<span style="color:#a6e22e">rhymes</span>, <span style="color:#66d9ef">typeof</span> <span style="color:#a6e22e">poem</span>)
 </span></span><span style="display:flex;"><span><span style="color:#75715e">// 可能的执行结果：string undefined boolean
 </span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#a6e22e">console</span>.<span style="color:#a6e22e">log</span>(<span style="color:#66d9ef">typeof</span> <span style="color:#a6e22e">poem</span>.<span style="color:#a6e22e">name</span>, <span style="color:#66d9ef">typeof</span> <span style="color:#a6e22e">poem</span>.<span style="color:#a6e22e">pages</span>, <span style="color:#66d9ef">typeof</span> <span style="color:#a6e22e">poem</span>.<span style="color:#a6e22e">rhymes</span>);
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">console</span>.<span style="color:#a6e22e">log</span>(<span style="color:#a6e22e">poem</span>)
+</span></span><span style="display:flex;"><span><span style="color:#75715e">// 执行结果下面二者之一
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>{<span style="color:#a6e22e">name</span><span style="color:#f92672">:</span> <span style="color:#e6db74">&#39;Her Kind&#39;</span>, <span style="color:#a6e22e">rhymes</span>: <span style="color:#66d9ef">true</span>}
+</span></span><span style="display:flex;"><span>{<span style="color:#a6e22e">name</span><span style="color:#f92672">:</span> <span style="color:#e6db74">&#39;The Double Image&#39;</span>, <span style="color:#a6e22e">pages</span>: <span style="color:#66d9ef">7</span>}
 </span></span></code></pre></div><h3 id="explicit-object-type-unions">Explicit Object-Type Unions</h3>
-<p>也可以通过对象类型的联合来更明确地标注对象类型，这样做需要写更多的代码，好处是可以对对象类型有更多的控制。需要注意的是，<strong><font color="#de7802">如果是对象类型的联合，则只允许访问存在于联合类型所有子类型上的属性</font></strong>。这与上面将变量推断为对象类型的联合有明显区别：</p>
+<p>也可以通过对象类型的联合来更明确地标注对象类型，这样做需要写更多代码，好处是可以对对象类型有更多的控制。但需要注意的是，<strong><font color="#de7802">如果是对象类型的联合，则只允许访问存在于联合类型所有子类型上的属性</font></strong>。这与上面将变量推断为对象类型的联合有明显区别：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span><span style="color:#66d9ef">type</span> <span style="color:#a6e22e">PoemWithPages</span> <span style="color:#f92672">=</span> {
 </span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">name</span>: <span style="color:#66d9ef">string</span>;
 </span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">pages</span>: <span style="color:#66d9ef">number</span>;
@@ -878,7 +916,7 @@ code.has-jax {
 </span></span><span style="display:flex;"><span>    <span style="color:#75715e">// 如果没有pages，那么必定有属性rhymes
 </span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#a6e22e">console</span>.<span style="color:#a6e22e">log</span>(<span style="color:#a6e22e">poem</span>.<span style="color:#a6e22e">rhymes</span>)
 </span></span><span style="display:flex;"><span>}
-</span></span></code></pre></div><p>请注意，<code>TypeScript</code>不允许使用像<code>if (poem.pages)</code>这样的真值检查。<span style="background:rgba(255, 183, 139, 0.55)">试图访问可能不存在的对象属性会被视为错误，即使用起来的方式看起来像是类型保护</span>。</p>
+</span></span></code></pre></div><p>请注意，<code>TypeScript</code>不允许使用像<code>if (poem.pages)</code>这样的真值检查，因为还不确定是否有该属性。<span style="background:rgba(255, 183, 139, 0.55)">试图访问可能不存在的对象属性会被视为错误，即使用起来的方式看起来像是类型保护</span>。</p>
 <h3 id="discriminated-unions">Discriminated Unions</h3>
 <p><code>JavaScript</code>和<code>TypeScript</code>中另一种流行的联合类型对象形式是在对象上设置一个属性，用于指示对象具体是哪种类型。这种类型被称为判别联合（<code>discriminated union</code>），指示对象类型的属性被称为<code>discriminant</code>。<code>TypeScript</code>对<code>discriminant</code>属性进行类型保护的代码执行类型窄化。</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span><span style="color:#75715e">// type表示判别类型
@@ -912,7 +950,7 @@ code.has-jax {
 </span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">console</span>.<span style="color:#a6e22e">log</span>(<span style="color:#e6db74">`It rhymes: </span><span style="color:#e6db74">${</span><span style="color:#a6e22e">poem</span>.<span style="color:#a6e22e">rhymes</span><span style="color:#e6db74">}</span><span style="color:#e6db74">`</span>);
 </span></span><span style="display:flex;"><span>}
 </span></span></code></pre></div><h2 id="intersection-types">Intersection Types</h2>
-<p>联合类型表示一个值的类型可能是两个或多个不同类型中的一个。<code>TypeScript</code>允许同时表示多种类型，即<code>intersection</code>（交叉）类型。<code>intersection</code>类型通常与别名对象类型一起使用，以创建结合多个现有类型的新类型。</p>
+<p>联合类型表示一个值的类型可能是两个或多个不同类型中的一个。<code>TypeScript</code>允许同时表示多种类型，即<code>intersection</code>（交叉）类型。<code>intersection</code>类型通常与别名对象类型一起使用，以创建合并多个现有类型的新类型。</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span><span style="color:#66d9ef">type</span> <span style="color:#a6e22e">Artwork</span> <span style="color:#f92672">=</span> {
 </span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">genre</span>: <span style="color:#66d9ef">string</span>;
 </span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">name</span>: <span style="color:#66d9ef">string</span>;
@@ -924,7 +962,8 @@ code.has-jax {
 </span></span><span style="display:flex;"><span>};
 </span></span><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span><span style="color:#75715e">/*
-</span></span></span><span style="display:flex;"><span><span style="color:#75715e">// 可以直接使用换行区分属性
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">// 也可以直接使用换行区分属性，
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">// 即可以使用分号，逗号，换行符
 </span></span></span><span style="display:flex;"><span><span style="color:#75715e">type Artwork = {
 </span></span></span><span style="display:flex;"><span><span style="color:#75715e">    genre: string
 </span></span></span><span style="display:flex;"><span><span style="color:#75715e">    name: string
@@ -991,7 +1030,7 @@ code.has-jax {
 </span></span><span style="display:flex;"><span>};
 </span></span></code></pre></div><h3 id="dangers-of-intersection-types">Dangers of Intersection Types</h3>
 <p><code>Intersection</code>（交叉类型）是一个有用的概念，但使用时很容易让自己或<code>TypeScript</code>编译器感到困惑。<font color="#de7802">建议在使用交叉类型时尽量简化代码</font>。</p>
-<p>当创建了复杂的交叉类型（例如与联合类型交叉）时，赋值错误信息就会变得难以理解。这是类型编程语言的一个共同主题：<font color="#4f81bd">创建的类型越复杂，就越难理解来自类型检查器的错误信息</font>。</p>
+<p>当创建了复杂的交叉类型（例如与联合类型交叉）时，赋值错误信息就会变得难以理解。这是类型编程语言的一个共同主题：<font color="#4f81bd">创建的类型越复杂，就越难理解来自类型检查器给出的错误信息</font>。</p>
 <p>以前面代码片段中的<code>ShortPoem</code>为例，如果将该类型拆分为一系列别名对象类型，<code>TypeScript</code>就可以打印这些别名，可读性就会大大提高：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span><span style="color:#66d9ef">type</span> <span style="color:#a6e22e">ShortPoemBase</span> <span style="color:#f92672">=</span> {
 </span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">author</span>: <span style="color:#66d9ef">string</span>
@@ -1018,7 +1057,10 @@ code.has-jax {
 <p>使用<code>&amp;</code>声明<code>Intersection</code><font color="#de7802">类型很容易被滥用，创建出一种不可能的类型</font>。基本类型不能作为交叉类型的成员组合在一起，因为一个值不可能同时是多个基本类型（除了<code>null</code>或<code>undefined</code>）。如果尝试将两个基本类型交叉在一起，就会产生由关键字<code>never</code>表示的<code>never</code>类型：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span><span style="color:#75715e">// 一个变量不可能既是number又是string类型，所以NotPossible的类型为never
 </span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">type</span> <span style="color:#a6e22e">NotPossible</span> <span style="color:#f92672">=</span> <span style="color:#66d9ef">number</span> <span style="color:#f92672">&amp;</span> <span style="color:#66d9ef">string</span>
-</span></span></code></pre></div><p>类型<code>never</code>称为<code>bottom type</code>或<code>empty type</code>。<font color="#de7802">底层类型是指没有可能的值，也是无法到达的类型</font>。==不能向标注为底层类型的位置提供任何类型值，否则会出现编译错误==：</p>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">let</span> <span style="color:#a6e22e">notPossible</span>: <span style="color:#66d9ef">NotPossible</span> <span style="color:#f92672">=</span> <span style="color:#ae81ff">123</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">// 编译错误：Type &#39;number&#39; is not assignable to type &#39;never&#39;.
+</span></span></span></code></pre></div><p>类型<code>never</code>称为<code>bottom type</code>或<code>empty type</code>。<font color="#de7802">底层类型是指没有可能的值，也是无法到达的类型</font>。<strong>不能向标注为底层类型的位置提供任何类型值，否则会出现编译错误</strong>：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span><span style="color:#66d9ef">type</span> <span style="color:#a6e22e">NotPossible</span> <span style="color:#f92672">=</span> <span style="color:#66d9ef">number</span> <span style="color:#f92672">&amp;</span> <span style="color:#66d9ef">string</span>
 </span></span><span style="display:flex;"><span><span style="color:#75715e">// 编译错误：Type &#39;number&#39; is not assignable to type &#39;never&#39;.
 </span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">let</span> <span style="color:#a6e22e">notNumber</span>: <span style="color:#66d9ef">NotPossible</span> <span style="color:#f92672">=</span> <span style="color:#ae81ff">0</span>; 
@@ -1028,10 +1070,13 @@ code.has-jax {
 <h1 id="functions">Functions</h1>
 <p>前面介绍了如何使用类型标注来声明变量和常量的类型。现在，可以看看如何对函数的参数和返回值类型进行同样的标注。</p>
 <h2 id="function-parameters">Function Parameters</h2>
-<p>下面定义了一个函数，参数为<code>song</code>，并在函数体中打印了这个参数的值。在声明该函数时形参并没有显式地标注类型，那么<code>TypeScript</code>会认为这个参数的类型是<code>any</code>：</p>
+<p>下面定义了一个函数，入参只有一个名为<code>song</code>，在函数体中打印了这个参数的值。在声明该函数时形参并没有显式地标注类型，那么<code>TypeScript</code>会认为这个参数的类型是<code>any</code>：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span><span style="color:#66d9ef">function</span> <span style="color:#a6e22e">sing</span>(<span style="color:#a6e22e">song</span>) {
 </span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">console</span>.<span style="color:#a6e22e">log</span>(<span style="color:#e6db74">`Singing: </span><span style="color:#e6db74">${</span><span style="color:#a6e22e">song</span><span style="color:#e6db74">}</span><span style="color:#e6db74">!`</span>);
 </span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">// 编译报错
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#a6e22e">Parameter</span> <span style="color:#e6db74">&#39;song&#39;</span> <span style="color:#a6e22e">implicitly</span> <span style="color:#a6e22e">has</span> <span style="color:#a6e22e">an</span> <span style="color:#e6db74">&#39;any&#39;</span> <span style="color:#66d9ef">type</span>.
 </span></span></code></pre></div><p>如果编译设置的是严格模式，上面代码会出现编译错误：<code>Parameter 'song' implicitly has an 'any' type</code>。与变量一样，允许使用类型标注函数形参的类型。可以使用<code>: string</code>来告诉编译器形参<code>song</code>的类型是字符串类型：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span><span style="color:#66d9ef">function</span> <span style="color:#a6e22e">sing</span>(<span style="color:#a6e22e">song</span>: <span style="color:#66d9ef">string</span>) {
 </span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">console</span>.<span style="color:#a6e22e">log</span>(<span style="color:#e6db74">`Singing: </span><span style="color:#e6db74">${</span><span style="color:#a6e22e">song</span><span style="color:#e6db74">}</span><span style="color:#e6db74">!`</span>);
@@ -1089,7 +1134,7 @@ code.has-jax {
 </span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">console</span>.<span style="color:#a6e22e">log</span>(<span style="color:#e6db74">`Song: </span><span style="color:#e6db74">${</span><span style="color:#a6e22e">song</span><span style="color:#e6db74">}</span><span style="color:#e6db74">`</span>);
 </span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">console</span>.<span style="color:#a6e22e">log</span>(<span style="color:#e6db74">`Singer: </span><span style="color:#e6db74">${</span><span style="color:#a6e22e">singer</span><span style="color:#e6db74">}</span><span style="color:#e6db74">`</span>);
 </span></span><span style="display:flex;"><span>}
-</span></span></code></pre></div><p>如果定义的函数参数列表后面有多个可选参数，<font color="#de7802">调用时若想省略前面的可选参数，需要显式传入<code>undefined</code></font>。下面定义的<code>announceSong</code>函数，如果只想给函数最后一个参数传入有效实参，则需要将前面的参数都传入<code>undefined</code>：</p>
+</span></span></code></pre></div><p>如果定义的函数参数列表后面有多个可选参数，<font color="#de7802">调用时若想略过前面的可选参数，则需要显式传入<code>undefined</code></font>。下面定义的<code>announceSong</code>函数，如果只想给函数最后一个参数传入有效实参，则需要将前面的参数都传入<code>undefined</code>：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span><span style="color:#66d9ef">function</span> <span style="color:#a6e22e">announceSong</span>(<span style="color:#a6e22e">song?</span>: <span style="color:#66d9ef">string</span>, <span style="color:#a6e22e">singer?</span>: <span style="color:#66d9ef">string</span>, <span style="color:#a6e22e">name?</span>: <span style="color:#66d9ef">string</span>) {  
 </span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">console</span>.<span style="color:#a6e22e">log</span>(<span style="color:#e6db74">`Song: </span><span style="color:#e6db74">${</span><span style="color:#a6e22e">song</span><span style="color:#e6db74">}</span><span style="color:#e6db74">`</span>);  
 </span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">console</span>.<span style="color:#a6e22e">log</span>(<span style="color:#e6db74">`Singer: </span><span style="color:#e6db74">${</span><span style="color:#a6e22e">singer</span><span style="color:#e6db74">}</span><span style="color:#e6db74">`</span>);  
@@ -1111,7 +1156,7 @@ code.has-jax {
 </span></span><span style="display:flex;"><span><span style="color:#a6e22e">Singer</span>: <span style="color:#66d9ef">undefined</span>
 </span></span><span style="display:flex;"><span><span style="color:#a6e22e">test</span>
 </span></span></code></pre></div><h3 id="default-parameters">Default Parameters</h3>
-<p>如果函数定义时参数有默认值且没有指明类型，将会根据默认值推断参数的类型。下面<code>rateSong</code>函数中，参数<code>rating</code>的类型被推断为<code>number</code>：</p>
+<p>如果函数定义时参数有默认值且没有指明类型，将编译器会根据默认值推断参数的类型。下面<code>rateSong</code>函数中，参数<code>rating</code>的类型被推断为<code>number</code>：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span><span style="color:#66d9ef">function</span> <span style="color:#a6e22e">rateSong</span>(<span style="color:#a6e22e">song</span>: <span style="color:#66d9ef">string</span>, <span style="color:#a6e22e">rating</span> <span style="color:#f92672">=</span> <span style="color:#ae81ff">0</span>) {
 </span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">console</span>.<span style="color:#a6e22e">log</span>(<span style="color:#e6db74">`</span><span style="color:#e6db74">${</span><span style="color:#a6e22e">song</span><span style="color:#e6db74">}</span><span style="color:#e6db74"> gets </span><span style="color:#e6db74">${</span><span style="color:#a6e22e">rating</span><span style="color:#e6db74">}</span><span style="color:#e6db74">/5 stars!`</span>);
 </span></span><span style="display:flex;"><span>}
@@ -1134,7 +1179,7 @@ code.has-jax {
 </span></span><span style="display:flex;"><span><span style="color:#75715e">// 如果省略默认参数则会出现编译错误: Expected 2 arguments, but got 1.
 </span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#a6e22e">hello3</span>(<span style="color:#ae81ff">13</span>)
 </span></span></code></pre></div><h3 id="rest-parameters">Rest Parameters</h3>
-<p>在<code>JavaScript</code>中<font color="#e36c09">展开操作符<code>...</code>必须是函数声明的最后一个参数</font>，表示从该参数开始传递给函数的所有<code>rest</code>参数都应存储在一个数组中。需要注意的是，<font color=red>一个函数只能有一个<code>rest</code>参数</font>。</p>
+<p>在<code>JavaScript</code>中<font color="#e36c09">展开操作符<code>...</code>必须是函数声明的最后一个参数</font>，表示从该参数开始传递给函数的所有<code>rest</code>参数都应存储在一个数组中。需要特别注意的是，<font color=red>一个函数只能有一个<code>rest</code>参数</font>。</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span><span style="color:#75715e">// 编译错误： A rest parameter must be last in a parameter list.
 </span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">function</span> <span style="color:#a6e22e">singAllTheSongs</span>(...<span style="color:#a6e22e">songs</span>: <span style="color:#66d9ef">string</span>[], <span style="color:#a6e22e">singer</span>: <span style="color:#66d9ef">string</span>) {  
 </span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">for</span> (<span style="color:#66d9ef">const</span> <span style="color:#a6e22e">song</span> <span style="color:#66d9ef">of</span> <span style="color:#a6e22e">songs</span>) {  
@@ -1148,7 +1193,9 @@ code.has-jax {
 </span></span><span style="display:flex;"><span>        <span style="color:#a6e22e">console</span>.<span style="color:#a6e22e">log</span>(<span style="color:#e6db74">`</span><span style="color:#e6db74">${</span><span style="color:#a6e22e">song</span><span style="color:#e6db74">}</span><span style="color:#e6db74">, by </span><span style="color:#e6db74">${</span><span style="color:#a6e22e">singer</span><span style="color:#e6db74">}</span><span style="color:#e6db74">`</span>);
 </span></span><span style="display:flex;"><span>    }
 </span></span><span style="display:flex;"><span>}
-</span></span></code></pre></div><p>在<code>TypeScript</code>中允许标注<code>rest</code>参数的类型，与普通参数类似，只是在末尾添加了<code>[]</code>语法，表示这是一个数组。下面函数<code>singAllTheSongs</code>允许接受<code>0</code>个或多个字符串类型的实参：</p>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">// 编译错误error TS1014: A rest parameter must be last in a parameter list.
+</span></span></span></code></pre></div><p>在<code>TypeScript</code>中允许标注<code>rest</code>参数的类型，与普通参数类似，只是在末尾添加了<code>[]</code>语法，表示这是一个数组。下面函数<code>singAllTheSongs</code>允许<font color=red>接受<code>0</code>个或多个字符串类型的实参</font>：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span><span style="color:#66d9ef">function</span> <span style="color:#a6e22e">singAllTheSongs</span>(<span style="color:#a6e22e">singer</span>: <span style="color:#66d9ef">string</span>, ...<span style="color:#a6e22e">songs</span>: <span style="color:#66d9ef">string</span>[]) {
 </span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">for</span> (<span style="color:#66d9ef">const</span> <span style="color:#a6e22e">song</span> <span style="color:#66d9ef">of</span> <span style="color:#a6e22e">songs</span>) {
 </span></span><span style="display:flex;"><span>        <span style="color:#a6e22e">console</span>.<span style="color:#a6e22e">log</span>(<span style="color:#e6db74">`</span><span style="color:#e6db74">${</span><span style="color:#a6e22e">song</span><span style="color:#e6db74">}</span><span style="color:#e6db74">, by </span><span style="color:#e6db74">${</span><span style="color:#a6e22e">singer</span><span style="color:#e6db74">}</span><span style="color:#e6db74">`</span>);
