@@ -241,13 +241,13 @@ code.has-jax {
     <i class="fa fa-file-word-o"></i>
 </span>
 <span class="post-meta-item-text">字数: </span>
-<span class="leancloud-visitors-count">53552</span>
+<span class="leancloud-visitors-count">55136</span>
 &nbsp; | &nbsp;
 <span class="post-meta-item-icon">
     <i class="fa fa-coffee"></i>
 </span>
 <span class="post-meta-item-text">阅读: </span>
-<span class="leancloud-visitors-count">107 分钟</span>
+<span class="leancloud-visitors-count">111 分钟</span>
 </span>
       </div>
     </header>
@@ -4013,26 +4013,155 @@ code.has-jax {
 </span></span><span style="display:flex;"><span>    <span style="color:#75715e">// ...
 </span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>  }
 </span></span><span style="display:flex;"><span>}
-</span></span></code></pre></div><hr>
+</span></span></code></pre></div><p>其它文件可以使用<code>import</code>命名加载这个命名空间：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span><span style="color:#75715e">// 写法一
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">import</span> { <span style="color:#a6e22e">Shapes</span> } <span style="color:#66d9ef">from</span> <span style="color:#e6db74">&#39;./shapes&#39;</span>;
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">let</span> <span style="color:#a6e22e">t</span> <span style="color:#f92672">=</span> <span style="color:#66d9ef">new</span> <span style="color:#a6e22e">Shapes</span>.<span style="color:#a6e22e">Triangle</span>();
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">// 写法二
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">import</span> <span style="color:#f92672">*</span> <span style="color:#66d9ef">as</span> <span style="color:#a6e22e">shapes</span> <span style="color:#66d9ef">from</span> <span style="color:#e6db74">&#34;./shapes&#34;</span>;
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">let</span> <span style="color:#a6e22e">t</span> <span style="color:#f92672">=</span> <span style="color:#66d9ef">new</span> <span style="color:#a6e22e">shapes</span>.<span style="color:#a6e22e">Shapes</span>.<span style="color:#a6e22e">Triangle</span>();
+</span></span></code></pre></div><p>更好的方法是建议使用模块，采用模块的输出和输入：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span><span style="color:#75715e">// shapes.ts
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">export</span> <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">Triangle</span> {
+</span></span><span style="display:flex;"><span>  <span style="color:#75715e">/* ... */</span>
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">export</span> <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">Square</span> {
+</span></span><span style="display:flex;"><span>  <span style="color:#75715e">/* ... */</span>
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">// shapeConsumer.ts
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">import</span> <span style="color:#f92672">*</span> <span style="color:#66d9ef">as</span> <span style="color:#a6e22e">shapes</span> <span style="color:#66d9ef">from</span> <span style="color:#e6db74">&#34;./shapes&#34;</span>;
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">let</span> <span style="color:#a6e22e">t</span> <span style="color:#f92672">=</span> <span style="color:#66d9ef">new</span> <span style="color:#a6e22e">shapes</span>.<span style="color:#a6e22e">Triangle</span>();
+</span></span></code></pre></div><h2 id="merge-1">merge</h2>
+<p>多个同名的namespace会自动合并，这一点跟interface一样。</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span><span style="color:#66d9ef">namespace</span> <span style="color:#a6e22e">Animals</span> {
+</span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">export</span> <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">Cat</span> {}
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">namespace</span> <span style="color:#a6e22e">Animals</span> {
+</span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">export</span> <span style="color:#66d9ef">interface</span> <span style="color:#a6e22e">Legged</span> {
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">numberOfLegs</span>: <span style="color:#66d9ef">number</span>;
+</span></span><span style="display:flex;"><span>  }
+</span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">export</span> <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">Dog</span> {}
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">// 等同于
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">namespace</span> <span style="color:#a6e22e">Animals</span> {
+</span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">export</span> <span style="color:#66d9ef">interface</span> <span style="color:#a6e22e">Legged</span> {
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">numberOfLegs</span>: <span style="color:#66d9ef">number</span>;
+</span></span><span style="display:flex;"><span>  }
+</span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">export</span> <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">Cat</span> {}
+</span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">export</span> <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">Dog</span> {}
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p>这样做的目的是，如果同名的命名空间分布在不同的文件中，TypeScript会将它们合并在一起。这样就比较方便扩展别人的代码。合并命名空间时，<font color="#de7802">命名空间中的非<code>export</code>的成员不会被合并，它们只能在各自的命名空间中使用</font>。</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span><span style="color:#66d9ef">namespace</span> <span style="color:#a6e22e">N</span> {
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">const</span> <span style="color:#a6e22e">a</span> <span style="color:#f92672">=</span> <span style="color:#ae81ff">0</span>;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">export</span> <span style="color:#66d9ef">function</span> <span style="color:#a6e22e">foo() {</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#a6e22e">console</span>.<span style="color:#a6e22e">log</span>(<span style="color:#a6e22e">a</span>);  <span style="color:#75715e">// 正确
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    }
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">namespace</span> <span style="color:#a6e22e">N</span> {
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">export</span> <span style="color:#66d9ef">function</span> <span style="color:#a6e22e">bar() {</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#a6e22e">foo</span>(); <span style="color:#75715e">// 正确
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>        <span style="color:#a6e22e">console</span>.<span style="color:#a6e22e">log</span>(<span style="color:#a6e22e">a</span>);  <span style="color:#75715e">// 报错
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    }
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span><span style="color:#75715e">// 编译报错
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#a6e22e">Cannot</span> <span style="color:#a6e22e">find</span> <span style="color:#a6e22e">name</span> <span style="color:#e6db74">&#39;a&#39;</span>
+</span></span></code></pre></div><p>命名空间还可以跟同名函数合并，但<font color="#de7802">要求同名函数必须在命名空间之前声明</font>。这样做是为了确保先创建出一个函数对象，然后同名的命名空间就相当于给这个函数对象添加额外的属性。</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span><span style="color:#66d9ef">function</span> <span style="color:#a6e22e">f() {</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">return</span> <span style="color:#a6e22e">f</span>.<span style="color:#a6e22e">version</span>;
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">namespace</span> <span style="color:#a6e22e">f</span> {
+</span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">export</span> <span style="color:#66d9ef">const</span> <span style="color:#a6e22e">version</span> <span style="color:#f92672">=</span> <span style="color:#e6db74">&#39;1.0&#39;</span>;
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">f</span>()   <span style="color:#75715e">// &#39;1.0&#39;
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#a6e22e">f</span>.<span style="color:#a6e22e">version</span> <span style="color:#75715e">// &#39;1.0&#39;
+</span></span></span></code></pre></div><p>命名空间也能与同名<code>class</code>合并，也要求<code>class</code>必须在命名空间之前声明，原因同上。</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span><span style="color:#66d9ef">class</span> <span style="color:#a6e22e">C</span> {
+</span></span><span style="display:flex;"><span>  <span style="color:#a6e22e">foo</span> <span style="color:#f92672">=</span> <span style="color:#ae81ff">1</span>;
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">namespace</span> <span style="color:#a6e22e">C</span> {
+</span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">export</span> <span style="color:#66d9ef">const</span> <span style="color:#a6e22e">bar</span> <span style="color:#f92672">=</span> <span style="color:#ae81ff">2</span>;
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">C</span>.<span style="color:#a6e22e">bar</span> <span style="color:#75715e">// 2
+</span></span></span></code></pre></div><p>命名空间还能与同名枚举合并，此时不要求枚举在命名空间之前声明：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span><span style="color:#66d9ef">namespace</span> <span style="color:#a6e22e">E</span> {
+</span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">export</span> <span style="color:#66d9ef">function</span> <span style="color:#a6e22e">foo() {</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">console</span>.<span style="color:#a6e22e">log</span>(<span style="color:#a6e22e">E</span>.<span style="color:#a6e22e">C</span>);
+</span></span><span style="display:flex;"><span>  }
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">enum</span> <span style="color:#a6e22e">E</span> {
+</span></span><span style="display:flex;"><span>  <span style="color:#a6e22e">A</span>,
+</span></span><span style="display:flex;"><span>  <span style="color:#a6e22e">B</span>,
+</span></span><span style="display:flex;"><span>  <span style="color:#a6e22e">C</span>,
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">E</span>.<span style="color:#a6e22e">foo</span>() <span style="color:#75715e">// 2
+</span></span></span></code></pre></div><p>需要注意的是，枚举成员与命名空间<code>export</code>成员不允许同名：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span><span style="color:#66d9ef">enum</span> <span style="color:#a6e22e">E</span> {
+</span></span><span style="display:flex;"><span>  <span style="color:#a6e22e">A</span>,
+</span></span><span style="display:flex;"><span>  <span style="color:#a6e22e">B</span>,
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">namespace</span> <span style="color:#a6e22e">E</span> {
+</span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">export</span> <span style="color:#66d9ef">function</span> <span style="color:#a6e22e">A() {</span>} 
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span><span style="color:#75715e">// 编译错误：Duplicate identifier &#39;A&#39;.
+</span></span></span></code></pre></div><hr>
 <p><a href="https://ts.xcatliu.com/basics/declaration-files.html">参考资料2</a></p>
 <p><a href="https://forums.developer.apple.com/forums/thread/110312">WK中使用sock5代理</a></p>
 <p><a href="https://github.com/betafish-inc/OpenVPNAdapter">openAdapter</a></p>
 <h1 id="module">Module</h1>
-<p>任何<font color="#de7802">包含<code>import</code> 或<code>export</code>语句的文件，就是一个模块（<code>module</code>）</font>。相应地，如果文件不包含<code>export</code>语句，就是一个全局的脚本文件。</p>
-<p>模块本身就是一个作用域，但<font color="#de7802">不属于全局作用域</font>。模块内部的变量，函数和类只在内部可见。暴露给外部的接口，必须用<code>export</code>声明，如果其它文件要使用模块的接口，必须用<code>import</code>命令来输入。</p>
-<p>如果一个文件不包含<code>export</code>语句，但是希望把它当作一个模块（即内部变量对外不可见），可以在脚本头部添加一行语句。下面这行语句不产生任何实际作用，但会让当前文件被当作模块处理，所有它的代码都变成了内部代码。</p>
+<p>任何<font color="#de7802">包含<code>import</code>或<code>export</code>语句的文件，就是一个模块</font>。如果文件不包含<code>export</code>语句，就是一个全局的脚本文件。模块本身就是一个作用域，但<font color="#de7802">不属于全局作用域</font>。模块内部的变量，函数和类只在内部可见。暴露给外部的接口，必须用<code>export</code>声明，如果其它文件要使用模块的接口，必须用<code>import</code>命令来输入。</p>
+<p>如果一个文件不包含<code>export</code>语句，但是希望把它当作一个模块（即内部变量对外不可见），可以在文件头部添加<code>export {};</code>。下面这行语句不产生任何实际作用，但会让当前文件被当作模块处理，文件内部的代码都变成了内部可见的了。</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span><span style="color:#66d9ef">export</span> {};
-</span></span></code></pre></div><p><code>TypeScript</code>模块除了支持所有<code>ES</code>模块的语法，特别之处在于允许导出和导入类型。下面示例中，当前脚本输出一个类型别名<code>Bool</code>。这行语句把类型定义和接口输出写在一行，也可以写成两行。</p>
+</span></span></code></pre></div><p><code>TypeScript</code>模块除了支持所有<code>ES</code>模块的语法，特别之处在于允许<code>export</code>和<code>import</code>类型。下面示例中，当前文件输导出一个类型别名<code>Bool</code>。可以把类型定义导出写在一行，也可以写成两行。</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span><span style="color:#66d9ef">export</span> <span style="color:#66d9ef">type</span> <span style="color:#a6e22e">Bool</span> <span style="color:#f92672">=</span> <span style="color:#66d9ef">true</span> <span style="color:#f92672">|</span> <span style="color:#66d9ef">false</span>;
 </span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span><span style="color:#75715e">// 一行可以拆成两行
+</span></span><span style="display:flex;"><span><span style="color:#75715e">// 一行拆成两行，先定义类型别名，再导出类型
 </span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">type</span> <span style="color:#a6e22e">Bool</span> <span style="color:#f92672">=</span> <span style="color:#66d9ef">true</span> <span style="color:#f92672">|</span> <span style="color:#66d9ef">false</span>;
 </span></span><span style="display:flex;"><span><span style="color:#66d9ef">export</span> { <span style="color:#a6e22e">Bool</span> };
-</span></span></code></pre></div><p>假定上面的模块文件为<code>a.ts</code>，另一个文件<code>b.ts</code>就可以使用<code>import</code>语句，导入这个类型。下面示例中，<code>import</code> 语句加载的是一个类型。加载文件写成了<code>./a</code>，没有加上脚本文件的后缀名。<code>TypeScript</code>允许加载模块时，<font color="#de7802">省略模块文件的后缀名，它会自动定位</font>，将<code>./a</code>定位到<code>./a.ts</code>。</p>
+</span></span></code></pre></div><h2 id="import">import</h2>
+<p>若上面的模块文件为<code>a.ts</code>，在另一个文件<code>b.ts</code>就可以使用<code>import</code>语句，导入这个类型。下面示例代码中，<code>import</code> 语句导入的是一个类型。文件写成了<code>./a</code>，没有加上后缀名。这是因为<code>TypeScript</code>允许加载模块时，<font color="#de7802">省略模块文件的后缀名，它会自动定位</font>，将<code>./a</code>定位到<code>./a.ts</code>。</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span><span style="color:#66d9ef">import</span> { <span style="color:#a6e22e">Bool</span> } <span style="color:#66d9ef">from</span> <span style="color:#e6db74">&#34;./a&#34;</span>;
 </span></span><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span><span style="color:#66d9ef">let</span> <span style="color:#a6e22e">foo</span>: <span style="color:#66d9ef">Bool</span> <span style="color:#f92672">=</span> <span style="color:#66d9ef">true</span>;
-</span></span></code></pre></div><p>在一条<code>import</code>语句中，可以同时导入类型接口。下面示例中，文件<code>a.ts</code>的<code>export</code>语句导出了一个类型<code>A</code>和一个正常接口<code>a</code>，另一个文件<code>b.ts</code>则在同一条语句中导入了类型和正常接口。</p>
+</span></span></code></pre></div><h3 id="all-import">all import</h3>
+<p>若想导入某个模块中的所有导出内容，语法为<code>import * as moduleName from'modulePath';</code>。若有一个名为<code>mathUtils</code>的模块，其中包含了一些数学工具函数，如<code>add</code>和<code>subtract</code>，模块路径为<code>./mathUtils</code>，可以使用如下方式导入所有导出的内容：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span><span style="color:#66d9ef">import</span> <span style="color:#f92672">*</span> <span style="color:#66d9ef">as</span> <span style="color:#a6e22e">math</span> <span style="color:#66d9ef">from</span> <span style="color:#e6db74">&#39;./mathUtils&#39;</span>;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">console</span>.<span style="color:#a6e22e">log</span>(<span style="color:#a6e22e">math</span>.<span style="color:#a6e22e">add</span>(<span style="color:#ae81ff">1</span>, <span style="color:#ae81ff">2</span>)); 
+</span></span></code></pre></div><h3 id="named-export">named export</h3>
+<p>当只需要模块中的某些特定的导出内容时，可以使用具名导入。语法是<code>import {Name1, Name2} from'modulePath';</code>。例如，如果<code>mathUtils</code>模块导出了<code>add</code>和<code>subtract</code>函数，可以按下面方式进行具名导入：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span><span style="color:#66d9ef">import</span> {<span style="color:#a6e22e">add</span>, <span style="color:#a6e22e">subtract</span>} <span style="color:#66d9ef">from</span> <span style="color:#e6db74">&#39;./mathUtils&#39;</span>;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">console</span>.<span style="color:#a6e22e">log</span>(<span style="color:#a6e22e">add</span>(<span style="color:#ae81ff">1</span>, <span style="color:#ae81ff">2</span>));
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">console</span>.<span style="color:#a6e22e">log</span>(<span style="color:#a6e22e">subtract</span>(<span style="color:#ae81ff">3</span>, <span style="color:#ae81ff">1</span>));
+</span></span></code></pre></div><h3 id="default-import">default import</h3>
+<p>一个模块可以有一个默认导出，默认导入的语法是<code>import defaultExportedName from'modulePath';</code>。例如，有一个模块<code>person</code>默认导出了一个名为<code>Person</code>的类：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span><span style="color:#66d9ef">import</span> <span style="color:#a6e22e">Person</span> <span style="color:#66d9ef">from</span> <span style="color:#e6db74">&#39;./person&#39;</span>;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">const</span> <span style="color:#a6e22e">p</span> <span style="color:#f92672">=</span> <span style="color:#66d9ef">new</span> <span style="color:#a6e22e">Person</span>();
+</span></span></code></pre></div><h3 id="rename-import">rename import</h3>
+<p>无论是具名导入还是默认导入，都可以对导入的内容进行重命名。对于具名导入，语法是<code>import {exportedName1 as newName1, exportedName2 as newName2} from'modulePath';</code>：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span><span style="color:#66d9ef">import</span> {<span style="color:#a6e22e">add</span> <span style="color:#66d9ef">as</span> <span style="color:#a6e22e">sum</span>, <span style="color:#a6e22e">subtract</span> <span style="color:#66d9ef">as</span> <span style="color:#a6e22e">diff</span>} <span style="color:#66d9ef">from</span> <span style="color:#e6db74">&#39;./mathUtils&#39;</span>;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">console</span>.<span style="color:#a6e22e">log</span>(<span style="color:#a6e22e">sum</span>(<span style="color:#ae81ff">1</span>, <span style="color:#ae81ff">2</span>));
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">console</span>.<span style="color:#a6e22e">log</span>(<span style="color:#a6e22e">diff</span>(<span style="color:#ae81ff">3</span>, <span style="color:#ae81ff">1</span>));
+</span></span></code></pre></div><p>对于默认导入，语法是<code>import newName from'modulePath';</code>。若在<code>person</code>模块默认导出了<code>Person</code>类，重命名默认导入方式如下：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span><span style="color:#66d9ef">import</span> <span style="color:#a6e22e">Human</span> <span style="color:#66d9ef">from</span> <span style="color:#e6db74">&#39;./person&#39;</span>;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">const</span> <span style="color:#a6e22e">h</span> <span style="color:#f92672">=</span> <span style="color:#66d9ef">new</span> <span style="color:#a6e22e">Human</span>();
+</span></span></code></pre></div><h3 id="type-import">type import</h3>
+<p>在同一条<code>import</code>语句中，可以同时导入变量和类型。下面示例代码中，文件<code>a.ts</code>的<code>export</code>语句导出了一个接口类型<code>A</code>和一个普通的变量<code>a</code>，另一个文件<code>b.ts</code>则在同一条语句中导入了这个类型和变量。</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span><span style="color:#75715e">// a.ts
 </span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">export</span> <span style="color:#66d9ef">interface</span> <span style="color:#a6e22e">A</span> {
 </span></span><span style="display:flex;"><span>  <span style="color:#a6e22e">foo</span>: <span style="color:#66d9ef">string</span>;
@@ -4042,19 +4171,53 @@ code.has-jax {
 </span></span><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span><span style="color:#75715e">// b.ts
 </span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">import</span> { <span style="color:#a6e22e">A</span>, <span style="color:#a6e22e">a</span> } <span style="color:#66d9ef">from</span> <span style="color:#e6db74">&#34;./a&#34;</span>;
-</span></span></code></pre></div><p>这样很不利于区分类型和正常接口，容易造成混淆。为了解决这个问题，<code>TypeScript</code>引入了两个解决方法。第一个方法是在<code>import</code>语句输入的类型前面加上<code>type</code>关键字。</p>
+</span></span></code></pre></div><p>这样很不利于区分类型和普通变量，容易造成混淆。为了解决这个问题，<code>TypeScript</code>提供了两种方案。第一种是在<code>import</code>语句的待导入类型前加上<code>type</code>关键字，表示要导入的是一个类型。</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span><span style="color:#66d9ef">import</span> { <span style="color:#66d9ef">type</span> <span style="color:#a6e22e">A</span>, <span style="color:#a6e22e">a</span> } <span style="color:#66d9ef">from</span> <span style="color:#e6db74">&#34;./a&#34;</span>;
-</span></span></code></pre></div><p>第二个方法是使用<code>import type</code>语句，这个语句只能导入类型，不能导出正常接口。下面示例中，<code>import</code>语句输入的类型<code>A</code>前面有<code>type</code>关键字，表示这是一个类型。</p>
+</span></span></code></pre></div><p>第二个方法是使用<code>import type</code>语句：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span><span style="color:#75715e">// 正确
 </span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">import</span> <span style="color:#66d9ef">type</span> { <span style="color:#a6e22e">A</span> } <span style="color:#66d9ef">from</span> <span style="color:#e6db74">&#34;./a&#34;</span>;
-</span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span><span style="color:#75715e">// 报错
-</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">import</span> <span style="color:#66d9ef">type</span> { <span style="color:#a6e22e">a</span> } <span style="color:#66d9ef">from</span> <span style="color:#e6db74">&#34;./a&#34;</span>;
-</span></span></code></pre></div><p>使用<code>import type</code>时，也可以导入默认类型：</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span><span style="color:#66d9ef">import</span> <span style="color:#66d9ef">type</span> <span style="color:#a6e22e">DefaultType</span> <span style="color:#66d9ef">from</span> <span style="color:#e6db74">&#34;moduleA&#34;</span>;
+</span></span></code></pre></div><p>使用<code>import type</code>时，也可以导入默认类型。假如有一个模块<code>person</code>默认导出了一个名为<code>Person</code>的类，那么就可以默认导入<code>Person</code>：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span><span style="color:#66d9ef">import</span> <span style="color:#66d9ef">type</span> <span style="color:#a6e22e">Person</span> <span style="color:#66d9ef">from</span> <span style="color:#e6db74">&#34;./Person&#34;</span>;
 </span></span></code></pre></div><p><code>import type</code>在一个名称空间下，导入所有类型的写法如下：</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span><span style="color:#66d9ef">import</span> <span style="color:#66d9ef">type</span> <span style="color:#f92672">*</span> <span style="color:#66d9ef">as</span> <span style="color:#a6e22e">TypeNS</span> <span style="color:#66d9ef">from</span> <span style="color:#e6db74">&#34;moduleA&#34;</span>;
-</span></span></code></pre></div><p>同样的，<code>export</code>语句也有两种方法，表示导出的是类型。</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span><span style="color:#66d9ef">import</span> <span style="color:#66d9ef">type</span> <span style="color:#f92672">*</span> <span style="color:#66d9ef">as</span> <span style="color:#a6e22e">NewType</span> <span style="color:#66d9ef">from</span> <span style="color:#e6db74">&#34;moduleA&#34;</span>;
+</span></span></code></pre></div><h2 id="export-1">export</h2>
+<h3 id="default-export">default export</h3>
+<p>一个模块（<code>.ts</code>文件）只能有一个默认导出。语法为<code>export default expression;</code>，其中<code>expression</code>可以是一个类、函数、对象等。例如，导出一个函数作为默认导出：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span><span style="color:#75715e">// mathUtils.ts
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">export</span> <span style="color:#66d9ef">default</span> <span style="color:#66d9ef">function</span> <span style="color:#a6e22e">add</span>(<span style="color:#a6e22e">a</span>: <span style="color:#66d9ef">number</span>, <span style="color:#a6e22e">b</span>: <span style="color:#66d9ef">number</span>)<span style="color:#f92672">:</span> <span style="color:#66d9ef">number</span> {
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">return</span> <span style="color:#a6e22e">a</span> <span style="color:#f92672">+</span> <span style="color:#a6e22e">b</span>;
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><h3 id="named-export-1">named export</h3>
+<p>可以在一个模块中导出多个具名的变量、函数、类等。具名导出的语法是<code>export const/function/class/interface name = value;</code>。</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span><span style="color:#75715e">// stringUtils.ts
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">export</span> <span style="color:#66d9ef">const</span> <span style="color:#a6e22e">joinStrings</span> <span style="color:#f92672">=</span> (<span style="color:#a6e22e">str1</span>: <span style="color:#66d9ef">string</span>, <span style="color:#a6e22e">str2</span>: <span style="color:#66d9ef">string</span>)<span style="color:#f92672">:</span> <span style="color:#66d9ef">string</span> <span style="color:#f92672">=&gt;</span> {
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">return</span> <span style="color:#a6e22e">str1</span> <span style="color:#f92672">+</span> <span style="color:#a6e22e">str2</span>;
+</span></span><span style="display:flex;"><span>};
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">export</span> <span style="color:#66d9ef">function</span> <span style="color:#a6e22e">splitString</span>(<span style="color:#a6e22e">str</span>: <span style="color:#66d9ef">string</span>, <span style="color:#a6e22e">separator</span>: <span style="color:#66d9ef">string</span>)<span style="color:#f92672">:</span> <span style="color:#66d9ef">string</span>[] {
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">return</span> <span style="color:#a6e22e">str</span>.<span style="color:#a6e22e">split</span>(<span style="color:#a6e22e">separator</span>);
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><h3 id="re-export">re-export</h3>
+<p>可以在一个模块中导出另一个模块的内容。语法为<code>export { name1, name2 } from'modulePath';</code>。例如，有一个<code>utils</code>目录，其中<code>mathUtils.ts</code>和<code>stringUtils.ts</code>是两个工具模块，现在创建了一个<code>index.ts</code>来重导出这些工具：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span><span style="color:#75715e">// utils/index.ts
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">export</span> {<span style="color:#a6e22e">add</span>} <span style="color:#66d9ef">from</span> <span style="color:#e6db74">&#39;./mathUtils&#39;</span>;
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">export</span> {<span style="color:#a6e22e">joinStrings</span>, <span style="color:#a6e22e">splitString</span>} <span style="color:#66d9ef">from</span> <span style="color:#e6db74">&#39;./stringUtils&#39;</span>;
+</span></span></code></pre></div><p>这样，其它模块就可以通过导入<code>utils/index.ts</code>来使用所有重导出的内容：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span><span style="color:#75715e">// main.ts
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">import</span> {<span style="color:#a6e22e">add</span>, <span style="color:#a6e22e">joinStrings</span>, <span style="color:#a6e22e">splitString</span>} <span style="color:#66d9ef">from</span> <span style="color:#e6db74">&#39;./utils&#39;</span>;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">console</span>.<span style="color:#a6e22e">log</span>(<span style="color:#a6e22e">add</span>(<span style="color:#ae81ff">1</span>, <span style="color:#ae81ff">2</span>));
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">console</span>.<span style="color:#a6e22e">log</span>(<span style="color:#a6e22e">joinStrings</span>(<span style="color:#e6db74">&#34;Good&#34;</span>, <span style="color:#e6db74">&#34;bye&#34;</span>));
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">console</span>.<span style="color:#a6e22e">log</span>(<span style="color:#a6e22e">splitString</span>(<span style="color:#e6db74">&#34;Good,bye&#34;</span>, <span style="color:#e6db74">&#34;,&#34;</span>));
+</span></span></code></pre></div><p>在一个模块中，具名导出的名称必须是唯一的。如果尝试使用相同的名称导出两个不同的内容，会导致编译错误：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span><span style="color:#75715e">// 错误示例
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">export</span> <span style="color:#66d9ef">const</span> <span style="color:#a6e22e">value</span> <span style="color:#f92672">=</span> <span style="color:#ae81ff">1</span>;
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">export</span> <span style="color:#66d9ef">const</span> <span style="color:#a6e22e">value</span> <span style="color:#f92672">=</span> <span style="color:#ae81ff">2</span>; 
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">// 编译错误
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#a6e22e">Cannot</span> <span style="color:#a6e22e">redeclare</span> <span style="color:#a6e22e">block</span><span style="color:#f92672">-</span><span style="color:#a6e22e">scoped</span> <span style="color:#a6e22e">variable</span> <span style="color:#e6db74">&#39;value&#39;</span>.
+</span></span></code></pre></div><h3 id="export-type">export type</h3>
+<p>同样地，<code>export</code>语句也有两种方法，表示导出的是类型。</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span><span style="color:#66d9ef">type</span> <span style="color:#a6e22e">A</span> <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;a&#34;</span>;
 </span></span><span style="display:flex;"><span><span style="color:#66d9ef">type</span> <span style="color:#a6e22e">B</span> <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;b&#34;</span>;
 </span></span><span style="display:flex;"><span>
@@ -4541,9 +4704,30 @@ code.has-jax {
     <li><a href="#namespaces">NameSpaces</a>
       <ul>
         <li><a href="#export">export</a></li>
+        <li><a href="#merge-1">merge</a></li>
       </ul>
     </li>
-    <li><a href="#module">Module</a></li>
+    <li><a href="#module">Module</a>
+      <ul>
+        <li><a href="#import">import</a>
+          <ul>
+            <li><a href="#all-import">all import</a></li>
+            <li><a href="#named-export">named export</a></li>
+            <li><a href="#default-import">default import</a></li>
+            <li><a href="#rename-import">rename import</a></li>
+            <li><a href="#type-import">type import</a></li>
+          </ul>
+        </li>
+        <li><a href="#export-1">export</a>
+          <ul>
+            <li><a href="#default-export">default export</a></li>
+            <li><a href="#named-export-1">named export</a></li>
+            <li><a href="#re-export">re-export</a></li>
+            <li><a href="#export-type">export type</a></li>
+          </ul>
+        </li>
+      </ul>
+    </li>
   </ul>
 </nav></div>
     </div>

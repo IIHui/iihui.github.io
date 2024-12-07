@@ -1074,20 +1074,37 @@ namespace Shapes {  export namespace Polygons {  export class Triangle {  //  } 
 namespace Utils {  export namespace Messaging {  export function log(msg: string) {  console.log(msg);  }  } } Utils.Messaging.log(&amp;#34;Test namespace&amp;#34;)  // 执行结果 Test namespace namespace与模块的作用是一致的，都是把相关代码组织在一起，对外输出接口。区别是一个文件只能有一个模块，但可以有多个 namespace。由于模块可以取代namespace，而且是 JavaScript 的标准语法，还不需要编译转换，所以建议总是使用模块，替代 namespace。
 如果namespace代码放在一个单独的文件里，那么引入这个文件需要使用三斜杠的语法。
 /// &amp;lt;reference path = &amp;#34;SomeFileName.ts&amp;#34; /&amp;gt; export 命名空间本身也支持使用export命令输出，供其它文件使用：
-// shapes.ts export namespace Shapes {  export class Triangle {  // ...  }  export class Square {  // ...  } }  参考资料2
+// shapes.ts export namespace Shapes {  export class Triangle {  // ...  }  export class Square {  // ...  } } 其它文件可以使用import命名加载这个命名空间：
+// 写法一 import { Shapes } from &amp;#39;./shapes&amp;#39;; let t = new Shapes.Triangle();  // 写法二 import * as shapes from &amp;#34;./shapes&amp;#34;; let t = new shapes.Shapes.Triangle(); 更好的方法是建议使用模块，采用模块的输出和输入：
+// shapes.ts export class Triangle {  /* ... */ } export class Square {  /* ... */ }  // shapeConsumer.ts import * as shapes from &amp;#34;./shapes&amp;#34;; let t = new shapes.Triangle(); merge 多个同名的namespace会自动合并，这一点跟interface一样。
+namespace Animals {  export class Cat {} } namespace Animals {  export interface Legged {  numberOfLegs: number;  }  export class Dog {} }  // 等同于 namespace Animals {  export interface Legged {  numberOfLegs: number;  }  export class Cat {}  export class Dog {} } 这样做的目的是，如果同名的命名空间分布在不同的文件中，TypeScript会将它们合并在一起。这样就比较方便扩展别人的代码。合并命名空间时，命名空间中的非export的成员不会被合并，它们只能在各自的命名空间中使用。
+namespace N {  const a = 0;   export function foo() {  console.log(a); // 正确  } }  namespace N {  export function bar() {  foo(); // 正确  console.log(a); // 报错  } } // 编译报错 Cannot find name &amp;#39;a&amp;#39; 命名空间还可以跟同名函数合并，但要求同名函数必须在命名空间之前声明。这样做是为了确保先创建出一个函数对象，然后同名的命名空间就相当于给这个函数对象添加额外的属性。
+function f() {  return f.version; }  namespace f {  export const version = &amp;#39;1.0&amp;#39;; }  f() // &amp;#39;1.0&amp;#39; f.version // &amp;#39;1.0&amp;#39; 命名空间也能与同名class合并，也要求class必须在命名空间之前声明，原因同上。
+class C {  foo = 1; }  namespace C {  export const bar = 2; }  C.bar // 2 命名空间还能与同名枚举合并，此时不要求枚举在命名空间之前声明：
+namespace E {  export function foo() {  console.log(E.C);  } }  enum E {  A,  B,  C, }  E.foo() // 2 需要注意的是，枚举成员与命名空间export成员不允许同名：
+enum E {  A,  B, }  namespace E {  export function A() {} } // 编译错误：Duplicate identifier &amp;#39;A&amp;#39;.  参考资料2
 WK中使用sock5代理
 openAdapter
-Module 任何包含import 或export语句的文件，就是一个模块（module）。相应地，如果文件不包含export语句，就是一个全局的脚本文件。
-模块本身就是一个作用域，但不属于全局作用域。模块内部的变量，函数和类只在内部可见。暴露给外部的接口，必须用export声明，如果其它文件要使用模块的接口，必须用import命令来输入。
-如果一个文件不包含export语句，但是希望把它当作一个模块（即内部变量对外不可见），可以在脚本头部添加一行语句。下面这行语句不产生任何实际作用，但会让当前文件被当作模块处理，所有它的代码都变成了内部代码。
-export {}; TypeScript模块除了支持所有ES模块的语法，特别之处在于允许导出和导入类型。下面示例中，当前脚本输出一个类型别名Bool。这行语句把类型定义和接口输出写在一行，也可以写成两行。
-export type Bool = true | false;  // 一行可以拆成两行 type Bool = true | false; export { Bool }; 假定上面的模块文件为a.ts，另一个文件b.ts就可以使用import语句，导入这个类型。下面示例中，import 语句加载的是一个类型。加载文件写成了./a，没有加上脚本文件的后缀名。TypeScript允许加载模块时，省略模块文件的后缀名，它会自动定位，将./a定位到./a.ts。
-import { Bool } from &amp;#34;./a&amp;#34;;  let foo: Bool = true; 在一条import语句中，可以同时导入类型接口。下面示例中，文件a.ts的export语句导出了一个类型A和一个正常接口a，另一个文件b.ts则在同一条语句中导入了类型和正常接口。
-// a.ts export interface A {  foo: string; }  export let a = 123;  // b.ts import { A, a } from &amp;#34;./a&amp;#34;; 这样很不利于区分类型和正常接口，容易造成混淆。为了解决这个问题，TypeScript引入了两个解决方法。第一个方法是在import语句输入的类型前面加上type关键字。
-import { type A, a } from &amp;#34;./a&amp;#34;; 第二个方法是使用import type语句，这个语句只能导入类型，不能导出正常接口。下面示例中，import语句输入的类型A前面有type关键字，表示这是一个类型。
-// 正确 import type { A } from &amp;#34;./a&amp;#34;;  // 报错 import type { a } from &amp;#34;./a&amp;#34;; 使用import type时，也可以导入默认类型：
-import type DefaultType from &amp;#34;moduleA&amp;#34;; import type在一个名称空间下，导入所有类型的写法如下：
-import type * as TypeNS from &amp;#34;moduleA&amp;#34;; 同样的，export语句也有两种方法，表示导出的是类型。
+Module 任何包含import或export语句的文件，就是一个模块。如果文件不包含export语句，就是一个全局的脚本文件。模块本身就是一个作用域，但不属于全局作用域。模块内部的变量，函数和类只在内部可见。暴露给外部的接口，必须用export声明，如果其它文件要使用模块的接口，必须用import命令来输入。
+如果一个文件不包含export语句，但是希望把它当作一个模块（即内部变量对外不可见），可以在文件头部添加export {};。下面这行语句不产生任何实际作用，但会让当前文件被当作模块处理，文件内部的代码都变成了内部可见的了。
+export {}; TypeScript模块除了支持所有ES模块的语法，特别之处在于允许export和import类型。下面示例中，当前文件输导出一个类型别名Bool。可以把类型定义导出写在一行，也可以写成两行。
+export type Bool = true | false;  // 一行拆成两行，先定义类型别名，再导出类型 type Bool = true | false; export { Bool }; import 若上面的模块文件为a.ts，在另一个文件b.ts就可以使用import语句，导入这个类型。下面示例代码中，import 语句导入的是一个类型。文件写成了./a，没有加上后缀名。这是因为TypeScript允许加载模块时，省略模块文件的后缀名，它会自动定位，将./a定位到./a.ts。
+import { Bool } from &amp;#34;./a&amp;#34;;  let foo: Bool = true; all import 若想导入某个模块中的所有导出内容，语法为import * as moduleName from&#39;modulePath&#39;;。若有一个名为mathUtils的模块，其中包含了一些数学工具函数，如add和subtract，模块路径为./mathUtils，可以使用如下方式导入所有导出的内容：
+import * as math from &amp;#39;./mathUtils&amp;#39;;  console.log(math.add(1, 2)); named export 当只需要模块中的某些特定的导出内容时，可以使用具名导入。语法是import {Name1, Name2} from&#39;modulePath&#39;;。例如，如果mathUtils模块导出了add和subtract函数，可以按下面方式进行具名导入：
+import {add, subtract} from &amp;#39;./mathUtils&amp;#39;;  console.log(add(1, 2)); console.log(subtract(3, 1)); default import 一个模块可以有一个默认导出，默认导入的语法是import defaultExportedName from&#39;modulePath&#39;;。例如，有一个模块person默认导出了一个名为Person的类：
+import Person from &amp;#39;./person&amp;#39;;  const p = new Person(); rename import 无论是具名导入还是默认导入，都可以对导入的内容进行重命名。对于具名导入，语法是import {exportedName1 as newName1, exportedName2 as newName2} from&#39;modulePath&#39;;：
+import {add as sum, subtract as diff} from &amp;#39;./mathUtils&amp;#39;;  console.log(sum(1, 2)); console.log(diff(3, 1)); 对于默认导入，语法是import newName from&#39;modulePath&#39;;。若在person模块默认导出了Person类，重命名默认导入方式如下：
+import Human from &amp;#39;./person&amp;#39;;  const h = new Human(); type import 在同一条import语句中，可以同时导入变量和类型。下面示例代码中，文件a.ts的export语句导出了一个接口类型A和一个普通的变量a，另一个文件b.ts则在同一条语句中导入了这个类型和变量。
+// a.ts export interface A {  foo: string; }  export let a = 123;  // b.ts import { A, a } from &amp;#34;./a&amp;#34;; 这样很不利于区分类型和普通变量，容易造成混淆。为了解决这个问题，TypeScript提供了两种方案。第一种是在import语句的待导入类型前加上type关键字，表示要导入的是一个类型。
+import { type A, a } from &amp;#34;./a&amp;#34;; 第二个方法是使用import type语句：
+// 正确 import type { A } from &amp;#34;./a&amp;#34;; 使用import type时，也可以导入默认类型。假如有一个模块person默认导出了一个名为Person的类，那么就可以默认导入Person：
+import type Person from &amp;#34;./Person&amp;#34;; import type在一个名称空间下，导入所有类型的写法如下：
+import type * as NewType from &amp;#34;moduleA&amp;#34;; export default export 一个模块（.ts文件）只能有一个默认导出。语法为export default expression;，其中expression可以是一个类、函数、对象等。例如，导出一个函数作为默认导出：
+// mathUtils.ts export default function add(a: number, b: number): number {  return a &#43; b; } named export 可以在一个模块中导出多个具名的变量、函数、类等。具名导出的语法是export const/function/class/interface name = value;。
+// stringUtils.ts export const joinStrings = (str1: string, str2: string): string =&amp;gt; {  return str1 &#43; str2; };  export function splitString(str: string, separator: string): string[] {  return str.split(separator); } re-export 可以在一个模块中导出另一个模块的内容。语法为export { name1, name2 } from&#39;modulePath&#39;;。例如，有一个utils目录，其中mathUtils.ts和stringUtils.ts是两个工具模块，现在创建了一个index.ts来重导出这些工具：
+// utils/index.ts export {add} from &amp;#39;./mathUtils&amp;#39;; export {joinStrings, splitString} from &amp;#39;./stringUtils&amp;#39;; 这样，其它模块就可以通过导入utils/index.ts来使用所有重导出的内容：
+// main.ts import {add, joinStrings, splitString} from &amp;#39;./utils&amp;#39;;  console.log(add(1, 2)); console.log(joinStrings(&amp;#34;Good&amp;#34;, &amp;#34;bye&amp;#34;)); console.log(splitString(&amp;#34;Good,bye&amp;#34;, &amp;#34;,&amp;#34;)); 在一个模块中，具名导出的名称必须是唯一的。如果尝试使用相同的名称导出两个不同的内容，会导致编译错误：
+// 错误示例 export const value = 1; export const value = 2;  // 编译错误 Cannot redeclare block-scoped variable &amp;#39;value&amp;#39;. export type 同样地，export语句也有两种方法，表示导出的是类型。
 type A = &amp;#34;a&amp;#34;; type B = &amp;#34;b&amp;#34;;  // 方法一 export { type A, type B };  // 方法二 export type { A, B }; </content>
     </entry>
     
