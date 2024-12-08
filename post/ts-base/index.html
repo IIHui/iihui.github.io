@@ -241,7 +241,7 @@ code.has-jax {
     <i class="fa fa-file-word-o"></i>
 </span>
 <span class="post-meta-item-text">字数: </span>
-<span class="leancloud-visitors-count">55135</span>
+<span class="leancloud-visitors-count">55401</span>
 &nbsp; | &nbsp;
 <span class="post-meta-item-icon">
     <i class="fa fa-coffee"></i>
@@ -2634,7 +2634,7 @@ code.has-jax {
 </span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#75715e">// 编译错误: Property &#39;routine&#39; does not exist on type &#39;Comedian&#39;.
 </span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#a6e22e">console</span>.<span style="color:#a6e22e">log</span>(<span style="color:#a6e22e">value</span>.<span style="color:#a6e22e">routine</span>);  
 </span></span><span style="display:flex;"><span>}
-</span></span></code></pre></div><p>需要注意的是，因为类型谓词在<code>false</code>情况下也会窄化类型范围，<font color="#de7802">如果类型谓词不仅检查输入类型，还过多地检查其它，可能会出现令人惊讶的结果</font>。</p>
+</span></span></code></pre></div><p>需要注意的是，因为类型谓词在<code>false</code>情况下也会窄化类型范围，<font color="#de7802">如果类型谓词不仅检查输入类型，还过多地检查其它条件，可能会出现令人惊讶的结果</font>。</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span><span style="color:#66d9ef">function</span> <span style="color:#a6e22e">isLongString</span>(<span style="color:#a6e22e">input</span>: <span style="color:#66d9ef">string</span> <span style="color:#f92672">|</span> <span style="color:#66d9ef">undefined</span>)<span style="color:#f92672">:</span> <span style="color:#a6e22e">input</span> <span style="color:#66d9ef">is</span> <span style="color:#66d9ef">string</span> {  
 </span></span><span style="display:flex;"><span>    <span style="color:#75715e">// !!的含义就是为了将结果转为真正的boolean值
 </span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#66d9ef">return</span> <span style="color:#f92672">!!</span>(<span style="color:#a6e22e">input</span> <span style="color:#f92672">&amp;&amp;</span> <span style="color:#a6e22e">input</span>.<span style="color:#a6e22e">length</span> <span style="color:#f92672">&gt;=</span> <span style="color:#ae81ff">7</span>);  
@@ -2651,7 +2651,7 @@ code.has-jax {
 </span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>        <span style="color:#a6e22e">console</span>.<span style="color:#a6e22e">log</span>(<span style="color:#e6db74">&#34;Short text:&#34;</span>, <span style="color:#a6e22e">text</span><span style="color:#f92672">?</span>.<span style="color:#a6e22e">length</span>);  
 </span></span><span style="display:flex;"><span>    }  
 </span></span><span style="display:flex;"><span>}
-</span></span></code></pre></div><p>上面示例代码中，因为<code>else</code>部分推断的类型必须是<code>undefined</code>，而函数<code>isLongString</code>为<code>false</code>时的类型推断既可以是<code>undefined</code>也可以是长度小于7的字符串，两部分交叉的结果是undefined，当编译器给出的提示是never类型。</p>
+</span></span></code></pre></div><p>上面示例代码中，因为<code>else</code>部分推断的类型必须是<code>undefined</code>，而函数<code>isLongString</code>为<code>false</code>时的类型推断既可以是<code>undefined</code>也可以是长度小于7的字符串，两部分交叉的结果是<code>undefined</code>，编译器给出的提示是<code>never</code>类型。</p>
 <p>因为<span style="background:rgba(240, 107, 5, 0.2)">类型谓词除了验证类型外，还可以验证其他，因此很容易被滥用</span>，一般建议尽可能避免使用它们。多数情况下，简单的类型谓词就足够使用了。</p>
 <h2 id="type-operators">Type Operators</h2>
 <p>并非所有类型都可以只使用关键字或现有类型的名称来表示。有时，需要创建一种新类型，将两者结合起来，对现有类型的属性进行一些转换。</p>
@@ -2680,7 +2680,7 @@ code.has-jax {
 </span></span><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span><span style="color:#66d9ef">const</span> <span style="color:#a6e22e">ratings</span>: <span style="color:#66d9ef">Ratings</span> <span style="color:#f92672">=</span> {<span style="color:#a6e22e">audience</span>: <span style="color:#66d9ef">66</span>, <span style="color:#a6e22e">critics</span>: <span style="color:#66d9ef">84</span>};  
 </span></span><span style="display:flex;"><span><span style="color:#a6e22e">getRating</span>(<span style="color:#a6e22e">ratings</span>, <span style="color:#e6db74">&#39;audience&#39;</span>);
-</span></span></code></pre></div><p>但如果接口有很多属性时，必须把每个成员的<code>key</code>都输入到联合类型中，并随时更新。这样后续维护就会变得非常麻烦。</p>
+</span></span></code></pre></div><p>但如果接口有很多属性时，必须把每个成员的<code>key</code>都输入到联合类型中。若接口的属性发生变化时，需要随时更新。这样后续维护就会变得非常麻烦。</p>
 <p><code>TypeScript</code>提供了<code>keyof</code>操作符，<span style="background:rgba(240, 107, 5, 0.2)">它接收现有类型，并返回该类型允许的所有键的联合</span>。在任何需要使用类型的地方，可以将它放在类型名称的前面。下面代码中，<code>keyof Ratings</code>等同于<code>'audience' | 'critic'</code>：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span><span style="color:#66d9ef">interface</span> <span style="color:#a6e22e">Ratings</span> {  
 </span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">audience</span>: <span style="color:#66d9ef">number</span>;  
@@ -2728,7 +2728,7 @@ code.has-jax {
 </span></span></code></pre></div><p>尽管<code>typeof</code><font color="#de7802">类型操作符从外观上看很像运行时的</font><code>typeof</code>操作符，后者返回值类型的字符串描述，但两者是不同的。也就是说，<span style="background:rgba(255, 183, 139, 0.55)">它们只是巧合地使用了同一个词。</span></p>
 <p>请记住：<code>JavaScript</code>操作符是一个运行时操作符，用于返回类型的字符串名称。<code>typeScript</code>中的<code>typeof</code>因为是类型操作符，所以只能在类型中使用，不会出现在编译后的代码中。</p>
 <h3 id="keyof-typeof">keyof typeof</h3>
-<p><code>typeof</code>检索值的类型，<code>keyof</code>检索类型允许的键。<code>typeScript</code>允许将这两个关键字串联起来，以简洁地检索值类型上允许的键。将它们组合在一起，<code>typeof</code>类型操作符在处理<code>keyof</code>类型操作时变得非常有用。</p>
+<p><code>typeof</code>检索值的类型，<code>keyof</code>检索类型允许的键。<code>typeScript</code>允许将这两个关键字串联起来，以简洁地检索值对应类型上允许的键。将它们组合在一起，<code>typeof</code>类型操作符在处理<code>keyof</code>类型操作时变得非常有用。</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span><span style="color:#66d9ef">const</span> <span style="color:#a6e22e">ratings</span> <span style="color:#f92672">=</span> {  
 </span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">imdb</span>: <span style="color:#66d9ef">8.4</span>,  
 </span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">metacritic</span>: <span style="color:#66d9ef">82</span>,  
@@ -2738,9 +2738,9 @@ code.has-jax {
 </span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">console</span>.<span style="color:#a6e22e">log</span>(<span style="color:#a6e22e">ratings</span>[<span style="color:#a6e22e">key</span>]);  
 </span></span><span style="display:flex;"><span>}
 </span></span></code></pre></div><h2 id="type-assertions">Type Assertions</h2>
-<p>当我们的代码是「强类型」时，所有值都有精确的类型，<code>TypeScript</code>的效果最好。顶层类型和类型保护等特性可以让类型检查程序理解复杂的代码。但是，有时并不能<code>100%</code>准确地告诉类型系统值的准确类型。</p>
+<p>当我们的代码是「强类型」时，若所有值都有精确的类型，此时<code>TypeScript</code>的效果最好。顶层类型和类型保护等特性可以让类型检查程序理解复杂的代码。但是，有时并不能百分之百准确地告诉类型系统值的准确类型。</p>
 <p>例如，<code>JSON.parse</code>故意返回顶层类型<code>any</code>。我们无法安全地告知类型系统，传递给<code>JSON.parse</code>的特定字符串值应返回任何特定的值类型。</p>
-<p><code>TypeScript</code>提供了一种语法，<font color="#de7802">用于覆盖类型系统对值类型的理解</font>。即<code>type assertion</code>，也称为<code>type cast</code>。如果一个值的类型不同，可以在<code>as</code>关键字后面加上一个类型，<code>TypeScript</code>将遵从断言，将该值视为该类型。<font color="#de7802">类型断言也称为类型强制转换，如果转换失败会抛出异常</font>，因此在使用时要格外注意 。</p>
+<p><code>TypeScript</code>提供了一种语法，<font color="#de7802">用于覆盖类型系统对值类型的理解</font>。即<code>type assertion</code>，也称为<code>type cast</code>。如果一个值的类型不同，可以在<code>as</code>关键字后面加上一个类型，<code>TypeScript</code>将遵从断言，将该值视为该类型。<font color=red>类型断言也称为类型强制转换，如果转换失败会抛出异常</font>，因此在使用时要格外注意 。</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span><span style="color:#66d9ef">const</span> <span style="color:#a6e22e">rawData</span> <span style="color:#f92672">=</span> <span style="color:#e6db74">`[&#34;grace&#34;, &#34;frankie&#34;]`</span>;  
 </span></span><span style="display:flex;"><span><span style="color:#75715e">// Type: any  
 </span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#a6e22e">JSON</span>.<span style="color:#a6e22e">parse</span>(<span style="color:#a6e22e">rawData</span>);  
@@ -2776,7 +2776,7 @@ code.has-jax {
 </span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">console</span>.<span style="color:#a6e22e">warn</span>(<span style="color:#e6db74">&#34;Oh no!&#34;</span>, <span style="color:#a6e22e">error</span> <span style="color:#66d9ef">instanceof</span> Error <span style="color:#f92672">?</span> <span style="color:#a6e22e">error.message</span> : <span style="color:#66d9ef">error</span>)  
 </span></span><span style="display:flex;"><span>}
 </span></span></code></pre></div><h3 id="non-null-assertions">Non-Null Assertions</h3>
-<p>类型断言的另一个常见场景是从变量中移除<code>null</code>或<code>undefined</code>，而<font color="#de7802">这些变量理论上可能包含<code>null</code>或<code>undefined</code>，但实际上并不包含</font>。</p>
+<p>类型断言的另一个常见场景是从变量中移除<code>null</code>或<code>undefined</code>，因为<font color="#de7802">这些变量理论上可能包含<code>null</code>或<code>undefined</code>，但实际上并不包含</font>，所以要手动去除。</p>
 <p>这种情况十分常见，<code>TypeScript</code>为此提供了一种速记方法。使用<code>!</code>表示同样的意思，不用写出<code>as</code>和值的完整类型，无论该值是否包含<code>null</code>和<code>undefined</code>。换句话说，<code>!</code>表示变量的类型不是<code>null</code>或<code>undefined</code>。</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span><span style="color:#66d9ef">let</span> <span style="color:#a6e22e">maybeDate</span> <span style="color:#f92672">=</span> Math.<span style="color:#a6e22e">random</span>() <span style="color:#f92672">&gt;</span> <span style="color:#ae81ff">0.5</span> <span style="color:#f92672">?</span> <span style="color:#66d9ef">undefined</span> <span style="color:#f92672">:</span> <span style="color:#66d9ef">new</span> Date();  
 </span></span><span style="display:flex;"><span><span style="color:#75715e">// Asserted type: Date  
@@ -2785,22 +2785,31 @@ code.has-jax {
 </span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#a6e22e">maybeDate</span><span style="color:#f92672">!</span>;
 </span></span></code></pre></div><p>在使用<code>Map.get</code>等<code>API</code>时，非空断言尤其有用，这些<code>API</code>会返回一个值，如果该键对应的值不存在时，则返回<code>undefined</code>。</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span><span style="color:#66d9ef">const</span> <span style="color:#a6e22e">seasonCounts</span> <span style="color:#f92672">=</span> <span style="color:#66d9ef">new</span> <span style="color:#a6e22e">Map</span>([[<span style="color:#e6db74">&#34;I Love Lucy&#34;</span>, <span style="color:#ae81ff">6</span>], [<span style="color:#e6db74">&#34;The Golden Girls&#34;</span>, <span style="color:#ae81ff">7</span>],]);  
-</span></span><span style="display:flex;"><span><span style="color:#75715e">// Type: string | undefined  
+</span></span><span style="display:flex;"><span><span style="color:#75715e">// Type: number | undefined  
 </span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">const</span> <span style="color:#a6e22e">maybeValue</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">seasonCounts</span>.<span style="color:#66d9ef">get</span>(<span style="color:#e6db74">&#34;I Love Lucy&#34;</span>);  
 </span></span><span style="display:flex;"><span><span style="color:#75715e">// Error: Object is possibly &#39;undefined&#39;.  
-</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#a6e22e">console</span>.<span style="color:#a6e22e">log</span>(<span style="color:#a6e22e">maybeValue</span>.<span style="color:#a6e22e">toUpperCase</span>());  
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#a6e22e">console</span>.<span style="color:#a6e22e">log</span>(<span style="color:#a6e22e">maybeValue</span>.<span style="color:#a6e22e">toFixed</span>());  
 </span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span><span style="color:#75715e">// Type: string  
+</span></span><span style="display:flex;"><span><span style="color:#75715e">// Type: number 
 </span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">const</span> <span style="color:#a6e22e">knownValue</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">seasonCounts</span>.<span style="color:#66d9ef">get</span>(<span style="color:#e6db74">&#34;I Love Lucy&#34;</span>)<span style="color:#f92672">!</span>;  
-</span></span><span style="display:flex;"><span><span style="color:#a6e22e">console</span>.<span style="color:#a6e22e">log</span>(<span style="color:#a6e22e">knownValue</span>.<span style="color:#a6e22e">toUpperCase</span>()); <span style="color:#75715e">// Ok
+</span></span><span style="display:flex;"><span><span style="color:#75715e">// 除非十分确认，否则上面代码会有运行时报错
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#a6e22e">console</span>.<span style="color:#a6e22e">log</span>(<span style="color:#a6e22e">knownValue</span>.<span style="color:#a6e22e">toFixed</span>()); <span style="color:#75715e">// Ok
 </span></span></span></code></pre></div><h3 id="type-assertion-caveats">Type Assertion Caveats</h3>
 <p>类型断言，像<code>any</code>类型一样，是<code>TypeScript</code><font color="#de7802">类型系统的一个必要逃生舱口</font>。因此，与<code>any</code>类型一样，如果有其它方案，应当避免使用断言。</p>
 <p>通常情况下，在代码中使用更准确的类型比使用断言更好。因为，有时断言往往是错误的，要么在编写代码时已经是错误的，要么是在代码库变化后产生的错误。下面代码无编译错误，但运行时会报错：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span><span style="color:#66d9ef">const</span> <span style="color:#a6e22e">seasonCounts</span> <span style="color:#f92672">=</span> <span style="color:#66d9ef">new</span> <span style="color:#a6e22e">Map</span>([[<span style="color:#e6db74">&#34;I Love Lucy&#34;</span>, <span style="color:#e6db74">&#34;6&#34;</span>], [<span style="color:#e6db74">&#34;The Golden Girls&#34;</span>, <span style="color:#e6db74">&#34;7&#34;</span>]]); 
-</span></span><span style="display:flex;"><span><span style="color:#75715e">// 打印错误是出现，Type: string  
+</span></span><span style="display:flex;"><span><span style="color:#75715e">// 打印错误是出现，Type: number  
 </span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">const</span> <span style="color:#a6e22e">knownValue</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">seasonCounts</span>.<span style="color:#66d9ef">get</span>(<span style="color:#e6db74">&#34;I Love Lucy 11&#34;</span>)<span style="color:#f92672">!</span>;  
-</span></span><span style="display:flex;"><span><span style="color:#a6e22e">console</span>.<span style="color:#a6e22e">log</span>(<span style="color:#a6e22e">knownValue</span>.<span style="color:#a6e22e">toUpperCase</span>()); <span style="color:#75715e">// 不会出现编译错误，但会出现运行错误
-</span></span></span></code></pre></div><p>作为对比，如果使用类型声明，在编译时可能就会报错。而<font color="#de7802">使用类型断言，需要在运行时才会报错</font>：</p>
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">console</span>.<span style="color:#a6e22e">log</span>(<span style="color:#a6e22e">knownValue</span>.<span style="color:#a6e22e">toFixed</span>()); <span style="color:#75715e">// 不会出现编译错误，但会出现运行错误
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">// 运行时会出现错误，应当捕获异常
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">try</span> {
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">const</span> <span style="color:#a6e22e">knownValue</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">seasonCounts</span>.<span style="color:#66d9ef">get</span>(<span style="color:#e6db74">&#34;I Love Lucy1&#34;</span>)<span style="color:#f92672">!</span>;
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">console</span>.<span style="color:#a6e22e">log</span>(<span style="color:#a6e22e">knownValue</span>.<span style="color:#a6e22e">toFixed</span>()); <span style="color:#75715e">// Ok
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>} <span style="color:#66d9ef">catch</span> (<span style="color:#a6e22e">err</span>) {
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">console</span>.<span style="color:#a6e22e">log</span>((<span style="color:#a6e22e">err</span> <span style="color:#66d9ef">as</span> Error).<span style="color:#a6e22e">message</span>);
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p>作为对比，如果使用类型声明，在编译时可能就会报错。而<font color="#de7802">使用类型断言，需要在运行时才会报错</font>：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span><span style="color:#66d9ef">interface</span> <span style="color:#a6e22e">Entertainer</span> {  
 </span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">acts</span>: <span style="color:#66d9ef">string</span>[];  
 </span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">name</span>: <span style="color:#66d9ef">string</span>;  
@@ -2912,7 +2921,7 @@ code.has-jax {
 </span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>
 </span></span><span style="display:flex;"><span><span style="color:#75715e">// 编译错误：Cannot assign to &#39;movie&#39; because it is a read-only property.  
 </span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#a6e22e">preferencesReadonly</span>.<span style="color:#a6e22e">movie</span> <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;no&#34;</span>;
-</span></span></code></pre></div><p>需要注意的是，<font color="#de7802">类型断言只能暂时欺骗编译器，无法避免运行时错误</font>。因此，滥用类型断言可能会导致运行时错误，下面代码无编译错误，但会出现运行时错误：</p>
+</span></span></code></pre></div><p>需要注意的是，<strong><font color="#de7802">类型断言只能暂时欺骗编译器，无法避免运行时错误</font></strong>。因此，滥用类型断言可能会导致运行时错误，下面代码无编译错误，但会出现运行时错误：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span><span style="color:#66d9ef">interface</span> <span style="color:#a6e22e">Cat</span> {
 </span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">name</span>: <span style="color:#66d9ef">string</span>;
 </span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">run</span>()<span style="color:#f92672">:</span> <span style="color:#66d9ef">void</span>;
@@ -2924,7 +2933,8 @@ code.has-jax {
 </span></span><span style="display:flex;"><span>}
 </span></span><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span><span style="color:#66d9ef">function</span> <span style="color:#a6e22e">isFish</span>(<span style="color:#a6e22e">animal</span>: <span style="color:#66d9ef">Cat</span> <span style="color:#f92672">|</span> <span style="color:#a6e22e">Fish</span>) {
-</span></span><span style="display:flex;"><span>    (<span style="color:#a6e22e">animal</span> <span style="color:#66d9ef">as</span> <span style="color:#a6e22e">Fish</span>).<span style="color:#a6e22e">swim</span>()
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">// 使用类型断言，因为cat没有swim方法，可能会出现运行时错误
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    (<span style="color:#a6e22e">animal</span> <span style="color:#66d9ef">as</span> <span style="color:#a6e22e">Fish</span>).<span style="color:#a6e22e">swim</span>()
 </span></span><span style="display:flex;"><span>}
 </span></span><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span><span style="color:#66d9ef">const</span> <span style="color:#a6e22e">cat</span>: <span style="color:#66d9ef">Cat</span> <span style="color:#f92672">=</span> {
@@ -3700,7 +3710,7 @@ code.has-jax {
 </span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">B</span>  
 </span></span><span style="display:flex;"><span>}  
 </span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span><span style="color:#75715e">// 类名和枚举同名了
+</span></span><span style="display:flex;"><span><span style="color:#75715e">// 类名和枚举同名，出现编译错误
 </span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">class</span> <span style="color:#a6e22e">Test2</span> {  
 </span></span><span style="display:flex;"><span>  <span style="color:#75715e">// 类的定义部分
 </span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>}
@@ -3798,7 +3808,7 @@ code.has-jax {
 </span></span><span style="display:flex;"><span>  <span style="color:#a6e22e">Left</span> <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;LEFT&#34;</span>,
 </span></span><span style="display:flex;"><span>  <span style="color:#a6e22e">Right</span> <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;RIGHT&#34;</span>,
 </span></span><span style="display:flex;"><span>}
-</span></span></code></pre></div><p>需要注意的是，<strong><font color="#de7802">字符串枚举的所有成员都必须显式设置对应值</font></strong>。如果成员值没有显式设置为<code>string</code>，则值默认为<code>number</code>的，且其<font color="#31859b">位置必须放在字符串成员之前</font>。也就是说在枚举定义时<font color=red>一旦设置了字符串的成员，其后的成员一定要赋初值，否则会出现编译错误</font>：</p>
+</span></span></code></pre></div><p>需要注意的是，<strong><font color="#de7802">字符串枚举的所有成员都必须显式设置对应值</font></strong>。如果成员值没有显式设置为<code>string</code>，则值默认为<code>number</code>的，且其<font color="#31859b">位置必须放在字符串成员之前</font>。即在枚举定义时<font color=red>一旦设置了字符串的成员，其后的成员一定要赋初值，否则会出现编译错误</font>：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span><span style="color:#66d9ef">enum</span> <span style="color:#a6e22e">Foo</span> {
 </span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">A</span>, <span style="color:#75715e">// 0
 </span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#a6e22e">B</span> <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;hello&#34;</span>,
@@ -3812,7 +3822,7 @@ code.has-jax {
 </span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">Three</span> <span style="color:#f92672">=</span> <span style="color:#ae81ff">3</span>,  
 </span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">Four</span> <span style="color:#f92672">=</span> <span style="color:#ae81ff">4</span>,  
 </span></span><span style="display:flex;"><span>}
-</span></span></code></pre></div><p><code>enum</code>的成员<font color="#de7802">除了<code>number</code>和<code>string</code>，不允许使用其它类型值。</font>需要特别注意的是，<font color=red>若变量类型是字符串的枚举，不能使用字符串直接赋值该变量</font>，这跟数值<code>enum</code>变量不一样。</p>
+</span></span></code></pre></div><p><code>enum</code>的成员<font color="#de7802">除了<code>number</code>和<code>string</code>，不允许使用其它类型值。</font>需要特别注意的是，<strong><font color=red>若变量类型是字符串的枚举，不能使用字符串直接赋值该变量</font></strong>，这跟数值<code>enum</code>变量不一样。</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span><span style="color:#66d9ef">enum</span> <span style="color:#a6e22e">Enum</span> {
 </span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">One</span> <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;One&#34;</span>,
 </span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">Two</span> <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;Two&#34;</span>,
@@ -3843,7 +3853,8 @@ code.has-jax {
 </span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#a6e22e">B</span> <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;T&#34;</span>.<span style="color:#a6e22e">repeat</span>(<span style="color:#ae81ff">12</span>)
 </span></span><span style="display:flex;"><span>}
 </span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span><span style="color:#66d9ef">enum</span> <span style="color:#a6e22e">MyEnum</span> {
+</span></span><span style="display:flex;"><span><span style="color:#75715e">// 下面是正常的，因为&#34;T&#34; + &#34;B&#34;编译时就能确定值
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">enum</span> <span style="color:#a6e22e">MyEnum</span> {
 </span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">A</span> <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;one&#34;</span>,
 </span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">B</span> <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;T&#34;</span> <span style="color:#f92672">+</span> <span style="color:#e6db74">&#34;B&#34;</span>
 </span></span><span style="display:flex;"><span>}
@@ -3913,7 +3924,7 @@ code.has-jax {
 </span></span><span style="display:flex;"><span>}  
 </span></span><span style="display:flex;"><span><span style="color:#75715e">// 编译错误:Cannot find name &#39;D&#39;.
 </span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#a6e22e">console</span>.<span style="color:#a6e22e">log</span>(<span style="color:#a6e22e">Foo</span>[<span style="color:#ae81ff">3</span>], <span style="color:#a6e22e">Foo</span>[<span style="color:#a6e22e">D</span>])
-</span></span></code></pre></div><p>常量枚举也没有反向映射，因为它在编译时会被完全内联。下面示例代码会出现编译错误：</p>
+</span></span></code></pre></div><p>需要注意的是，<font color=red>常量枚举也没有反向映射</font>，因为它在编译时会被完全内联。下面示例代码会出现编译错误：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span><span style="color:#66d9ef">const</span> <span style="color:#66d9ef">enum</span> <span style="color:#a6e22e">ConstDirection</span> {
 </span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">Up</span>,
 </span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">Down</span>
@@ -3935,7 +3946,7 @@ code.has-jax {
 </span></span><span style="display:flex;"><span><span style="color:#75715e">// 在外部直接使用命名空间中的函数编译报错
 </span></span></span><span style="display:flex;"><span><span style="color:#75715e">// Cannot find name &#39;isString&#39;. Did you mean &#39;String&#39;?
 </span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#a6e22e">console</span>.<span style="color:#a6e22e">log</span>(<span style="color:#a6e22e">isString</span>(<span style="color:#e6db74">&#39;test&#39;</span>))
-</span></span></code></pre></div><p>如果<font color="#de7802">要在命名空间以外使用其中的内部成员，就必须在该成员前面加上<code>export</code>关键字，表示对外导出该成员</font>，否则会出现编译错误：</p>
+</span></span></code></pre></div><p>如果想<font color="#de7802">要在命名空间以外使用其中的内部成员，就必须在该成员前面加上<code>export</code>关键字，表示对外导出该成员（即声明对外可见）</font>，否则会出现编译错误：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span><span style="color:#66d9ef">namespace</span> <span style="color:#a6e22e">Utils</span> {
 </span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">function</span> <span style="color:#a6e22e">isString</span>(<span style="color:#a6e22e">value</span>: <span style="color:#66d9ef">any</span>) {
 </span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">return</span> <span style="color:#66d9ef">typeof</span> <span style="color:#a6e22e">value</span> <span style="color:#f92672">===</span> <span style="color:#e6db74">&#39;string&#39;</span>
@@ -3954,7 +3965,7 @@ code.has-jax {
 </span></span><span style="display:flex;"><span>}
 </span></span><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span><span style="color:#a6e22e">console</span>.<span style="color:#a6e22e">log</span>(<span style="color:#a6e22e">Utils</span>.<span style="color:#a6e22e">isString</span>(<span style="color:#e6db74">&#39;test&#39;</span>))
-</span></span></code></pre></div><p>编译成<code>JavaScript</code>代码后，命名空间<code>Utils</code>变成了<code>JavaScript</code>的一个对象，<font color="#f79646">凡是在命名空间中<code>export</code>的内部成员，都成为了该对象的属性</font>。也就是说<code>namespace</code>会变成一个值，保留在编译后的代码中，这一点要小心，它不是纯类型代码。</p>
+</span></span></code></pre></div><p>编译成<code>JavaScript</code>代码后，命名空间<code>Utils</code>变成了<code>JavaScript</code>的一个对象，<font color=red>凡是在命名空间中<code>export</code>的内部成员，都成为了该对象的属性。也就是说<code>namespace</code>会变成一个值</font>，保留在编译后的代码中，这一点要小心，它不是纯类型代码。</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span><span style="color:#66d9ef">namespace</span> <span style="color:#a6e22e">Utils</span> {
 </span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">export</span> <span style="color:#66d9ef">function</span> <span style="color:#a6e22e">isString</span>(<span style="color:#a6e22e">value</span>: <span style="color:#66d9ef">any</span>) {
 </span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">return</span> <span style="color:#66d9ef">typeof</span> <span style="color:#a6e22e">value</span> <span style="color:#f92672">===</span> <span style="color:#e6db74">&#39;string&#39;</span>
@@ -3999,8 +4010,8 @@ code.has-jax {
 </span></span><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span><span style="color:#75715e">// 执行结果
 </span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#a6e22e">Test</span> <span style="color:#66d9ef">namespace</span>
-</span></span></code></pre></div><p><code>namespace</code>与模块的作用是一致的，都是把相关代码组织在一起，对外输出接口。区别是一个文件只能有一个模块，但可以有多个 <code>namespace</code>。由于模块可以取代<code>namespace</code>，而且是 <code>JavaScript</code> 的标准语法，还不需要编译转换，所以建议总是使用模块，替代 <code>namespace</code>。</p>
-<p>如果<code>namespace</code>代码放在一个单独的文件里，那么引入这个文件需要使用三斜杠的语法。</p>
+</span></span></code></pre></div><p>命名空间与模块的作用是一致的，都是把相关代码组织在一起，对外导出内容。区别是一个文件只能有一个模块，但可以有多个 <code>namespace</code>。由于模块可以取代<code>namespace</code>，而且是 <code>JavaScript</code> 的标准语法，还不需要编译转换，所以建议使用模块。</p>
+<p>如果<code>namespace</code>的代码放在一个单独的文件里，那么引入这个文件需要使用三斜杠的语法。</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span><span style="color:#75715e">/// &lt;reference path = &#34;SomeFileName.ts&#34; /&gt;
 </span></span></span></code></pre></div><h2 id="export">export</h2>
 <p>命名空间本身也支持使用<code>export</code>命令输出，供其它文件使用：</p>
@@ -4120,10 +4131,10 @@ code.has-jax {
 <p><a href="https://forums.developer.apple.com/forums/thread/110312">WK中使用sock5代理</a></p>
 <p><a href="https://github.com/betafish-inc/OpenVPNAdapter">openAdapter</a></p>
 <h1 id="module">Module</h1>
-<p>任何<font color="#de7802">包含<code>import</code>或<code>export</code>语句的文件，就是一个模块</font>。如果文件不包含<code>export</code>语句，就是一个全局的脚本文件。模块本身就是一个作用域，但<font color="#de7802">不属于全局作用域</font>。模块内部的变量，函数和类只在内部可见。若想暴露给外部使用，必须用<code>export</code>声明，其它文件要使用模块内导出的项，必须用<code>import</code>命令来输入。</p>
-<p>如果一个文件不包含<code>export</code>语句，但是希望把它当作一个模块（即内部变量对外不可见），可以在文件头部添加<code>export {};</code>。这条语句不产生任何实际作用，但会让当前文件被当作模块处理，文件内部的代码都变成了仅内部可见的了。</p>
+<p>任何<font color="#de7802">包含<code>import</code>或<code>export</code>语句的文件，就是一个模块</font>。如果文件中不包含<code>export</code>语句，就是一个全局的脚本文件。模块本身就是一个作用域，但<font color="#de7802">不属于全局作用域</font>。模块内部的变量，函数和类只在内部可见。若想暴露给外部使用，需要使用<code>export</code>声明，其它文件要使用模块内导出的项，必须用<code>import</code>命令导入。</p>
+<p>如果一个文件不包含<code>export</code>语句，但是希望把它当作一个模块（即让内部代码对外不可见），可以在文件头部添加<code>export {};</code>。这条语句不产生任何实际作用，但会让当前文件被当作模块处理，文件内部的代码都变成了仅内部可见的了。</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span><span style="color:#66d9ef">export</span> {};
-</span></span></code></pre></div><p><code>TypeScript</code>模块除了支持所有<code>ES</code>模块的语法，特别之处在于允许<code>export</code>和<code>import</code>类型。下面示例中，当前文件输导出一个类型别名<code>Bool</code>。可以把类型定义导出写在一行，也可以写成两行。</p>
+</span></span></code></pre></div><p><code>TypeScript</code>模块除了支持所有<code>ES</code>模块的语法，特别之处在于允许<code>export</code>和<code>import</code>类型。下面示例中，当前文件导出一个类型别名<code>Bool</code>。可以把类型定义和导出写在一行，也可以写成两行。</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span><span style="color:#66d9ef">export</span> <span style="color:#66d9ef">type</span> <span style="color:#a6e22e">Bool</span> <span style="color:#f92672">=</span> <span style="color:#66d9ef">true</span> <span style="color:#f92672">|</span> <span style="color:#66d9ef">false</span>;
 </span></span><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span><span style="color:#75715e">// 一行拆成两行，先定义类型别名，再导出类型
@@ -4135,18 +4146,18 @@ code.has-jax {
 </span></span><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span><span style="color:#66d9ef">let</span> <span style="color:#a6e22e">foo</span>: <span style="color:#66d9ef">Bool</span> <span style="color:#f92672">=</span> <span style="color:#66d9ef">true</span>;
 </span></span></code></pre></div><h3 id="all-import">all import</h3>
-<p>若想导入某个模块中的所有导出内容，语法为<code>import * as moduleName from'modulePath';</code>。若有一个名为<code>mathUtils</code>的模块，其中包含了一些数学工具函数，如<code>add</code>和<code>subtract</code>，模块路径为<code>./mathUtils</code>，可以使用如下方式导入所有导出的内容：</p>
+<p>若想导入某个模块中的所有导出内容，语法为<code>import * as moduleName from'modulePath';</code>。若有一个名为<code>mathUtils</code>的模块，里面包含了一些数学工具函数，如<code>add</code>和<code>subtract</code>，模块路径为<code>./mathUtils</code>，可以使用如下方式导入在模块中的所有导出内容：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span><span style="color:#66d9ef">import</span> <span style="color:#f92672">*</span> <span style="color:#66d9ef">as</span> <span style="color:#a6e22e">math</span> <span style="color:#66d9ef">from</span> <span style="color:#e6db74">&#39;./mathUtils&#39;</span>;
 </span></span><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span><span style="color:#a6e22e">console</span>.<span style="color:#a6e22e">log</span>(<span style="color:#a6e22e">math</span>.<span style="color:#a6e22e">add</span>(<span style="color:#ae81ff">1</span>, <span style="color:#ae81ff">2</span>)); 
-</span></span></code></pre></div><h3 id="named-export">named export</h3>
-<p>当只需要模块中的某些特定的导出内容时，可以使用具名导入。语法是<code>import {Name1, Name2} from'modulePath';</code>。例如，如果<code>mathUtils</code>模块导出了<code>add</code>和<code>subtract</code>函数，可以按下面方式进行具名导入：</p>
+</span></span></code></pre></div><h3 id="named-import">named import</h3>
+<p>当只需要模块中的某些特定的导出内容时，可以使用具名导入。语法是<code>import {Name1, Name2} from'modulePath';</code>。例如，如果<code>mathUtils</code>模块导出了<code>add</code>和<code>subtract</code>函数，可以按下面方式具名导入：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span><span style="color:#66d9ef">import</span> {<span style="color:#a6e22e">add</span>, <span style="color:#a6e22e">subtract</span>} <span style="color:#66d9ef">from</span> <span style="color:#e6db74">&#39;./mathUtils&#39;</span>;
 </span></span><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span><span style="color:#a6e22e">console</span>.<span style="color:#a6e22e">log</span>(<span style="color:#a6e22e">add</span>(<span style="color:#ae81ff">1</span>, <span style="color:#ae81ff">2</span>));
 </span></span><span style="display:flex;"><span><span style="color:#a6e22e">console</span>.<span style="color:#a6e22e">log</span>(<span style="color:#a6e22e">subtract</span>(<span style="color:#ae81ff">3</span>, <span style="color:#ae81ff">1</span>));
 </span></span></code></pre></div><h3 id="default-import">default import</h3>
-<p>一个模块可以有一个默认导出，默认导入的语法是<code>import defaultExportedName from'modulePath';</code>。例如，有一个模块<code>person</code>默认导出了一个名为<code>Person</code>的类：</p>
+<p>一个模块可以有一个默认导出，默认导入的语法是<code>import defaultExportedName from'modulePath';</code>。例如，有一个模块<code>person</code>中默认导出了一个名为<code>Person</code>的类，可以使用如下方式导入：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span><span style="color:#66d9ef">import</span> <span style="color:#a6e22e">Person</span> <span style="color:#66d9ef">from</span> <span style="color:#e6db74">&#39;./person&#39;</span>;
 </span></span><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span><span style="color:#66d9ef">const</span> <span style="color:#a6e22e">p</span> <span style="color:#f92672">=</span> <span style="color:#66d9ef">new</span> <span style="color:#a6e22e">Person</span>();
@@ -4156,7 +4167,7 @@ code.has-jax {
 </span></span><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span><span style="color:#a6e22e">console</span>.<span style="color:#a6e22e">log</span>(<span style="color:#a6e22e">sum</span>(<span style="color:#ae81ff">1</span>, <span style="color:#ae81ff">2</span>));
 </span></span><span style="display:flex;"><span><span style="color:#a6e22e">console</span>.<span style="color:#a6e22e">log</span>(<span style="color:#a6e22e">diff</span>(<span style="color:#ae81ff">3</span>, <span style="color:#ae81ff">1</span>));
-</span></span></code></pre></div><p>对于默认导入，语法是<code>import newName from'modulePath';</code>。若在<code>person</code>模块默认导出了<code>Person</code>类，重命名默认导入方式如下：</p>
+</span></span></code></pre></div><p>但对于默认导入，因为没有大括号，所以语法变成了<code>import newName from'modulePath';</code>，即重命名导入也不需要使用<code>as</code>关键字。若在<code>person</code>模块默认导出了<code>Person</code>类，重命名默认导入方式如下：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span><span style="color:#66d9ef">import</span> <span style="color:#a6e22e">Human</span> <span style="color:#66d9ef">from</span> <span style="color:#e6db74">&#39;./person&#39;</span>;
 </span></span><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span><span style="color:#66d9ef">const</span> <span style="color:#a6e22e">h</span> <span style="color:#f92672">=</span> <span style="color:#66d9ef">new</span> <span style="color:#a6e22e">Human</span>();
@@ -4182,13 +4193,19 @@ code.has-jax {
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span><span style="color:#66d9ef">import</span> <span style="color:#66d9ef">type</span> <span style="color:#f92672">*</span> <span style="color:#66d9ef">as</span> <span style="color:#a6e22e">NewType</span> <span style="color:#66d9ef">from</span> <span style="color:#e6db74">&#34;moduleA&#34;</span>;
 </span></span></code></pre></div><h2 id="export-1">export</h2>
 <h3 id="default-export">default export</h3>
-<p>一个模块（<code>.ts</code>文件）只能有一个默认导出，语法为<code>export default expression;</code>。其中<code>expression</code>可以是一个类、函数、对象等。例如，导出一个函数作为默认导出：</p>
+<p>在<font color=red>一个模块（<code>.ts</code>文件）中只能有一个默认导出</font>，语法为<code>export default expression;</code>。其中<code>expression</code>可以是一个类、函数、对象等。例如，对一个函数作为默认导出：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span><span style="color:#75715e">// mathUtils.ts
 </span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">export</span> <span style="color:#66d9ef">default</span> <span style="color:#66d9ef">function</span> <span style="color:#a6e22e">add</span>(<span style="color:#a6e22e">a</span>: <span style="color:#66d9ef">number</span>, <span style="color:#a6e22e">b</span>: <span style="color:#66d9ef">number</span>)<span style="color:#f92672">:</span> <span style="color:#66d9ef">number</span> {
 </span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">return</span> <span style="color:#a6e22e">a</span> <span style="color:#f92672">+</span> <span style="color:#a6e22e">b</span>;
 </span></span><span style="display:flex;"><span>}
-</span></span></code></pre></div><h3 id="named-export-1">named export</h3>
-<p>可以在一个模块中导出多个具名的变量、函数、类等。具名导出的语法是<code>export const/function/class/interface name = value;</code>。</p>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">// 如果有两个默认导出，则会出现编译错误
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">// Cannot redeclare exported variable &#39;default&#39;.
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">export</span> <span style="color:#66d9ef">default</span> <span style="color:#66d9ef">function</span> <span style="color:#a6e22e">add1</span>(<span style="color:#a6e22e">a</span>: <span style="color:#66d9ef">number</span>, <span style="color:#a6e22e">b</span>: <span style="color:#66d9ef">number</span>)<span style="color:#f92672">:</span> <span style="color:#66d9ef">number</span> {
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">return</span> <span style="color:#a6e22e">a</span> <span style="color:#f92672">+</span> <span style="color:#a6e22e">b</span>;
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><h3 id="named-export">named export</h3>
+<p>可以在一个模块中导出多个具名的变量、函数、类等。具名导出的语法是<code>export const/function/class/interface name = value;</code>，即定义时在最前面加上<code>export</code>关键词。</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span><span style="color:#75715e">// stringUtils.ts
 </span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">export</span> <span style="color:#66d9ef">const</span> <span style="color:#a6e22e">joinStrings</span> <span style="color:#f92672">=</span> (<span style="color:#a6e22e">str1</span>: <span style="color:#66d9ef">string</span>, <span style="color:#a6e22e">str2</span>: <span style="color:#66d9ef">string</span>)<span style="color:#f92672">:</span> <span style="color:#66d9ef">string</span> <span style="color:#f92672">=&gt;</span> {
 </span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">return</span> <span style="color:#a6e22e">str1</span> <span style="color:#f92672">+</span> <span style="color:#a6e22e">str2</span>;
@@ -4711,7 +4728,7 @@ code.has-jax {
         <li><a href="#import">import</a>
           <ul>
             <li><a href="#all-import">all import</a></li>
-            <li><a href="#named-export">named export</a></li>
+            <li><a href="#named-import">named import</a></li>
             <li><a href="#default-import">default import</a></li>
             <li><a href="#rename-import">rename import</a></li>
             <li><a href="#type-import">type import</a></li>
@@ -4720,7 +4737,7 @@ code.has-jax {
         <li><a href="#export-1">export</a>
           <ul>
             <li><a href="#default-export">default export</a></li>
-            <li><a href="#named-export-1">named export</a></li>
+            <li><a href="#named-export">named export</a></li>
             <li><a href="#re-export">re-export</a></li>
             <li><a href="#export-type">export type</a></li>
           </ul>
