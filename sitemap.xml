@@ -670,7 +670,7 @@ https://blog.csdn.net/yzm272/article/details/86506615
         </tags>
         <content type="html"> TypeScript的7种基本类型为：
  null undefined boolean string number bigint symbol  若声明变量时不标注类型，编译器会推断该变量的类型为any，表示该变量可以被赋为任何类型的值。如果声明变量时既不标注类型也不初始化，接着使用typeof得到的结果为undefined。这是因为TypeScript编译成JavaScript后，未初始化变量的默认值为undefined，所以使用typeof得到的类型为undefined：
-let rocker; // Type: any console.log(typeof rocker) // 运行结果为undefined  rocker = &amp;#34;Joan Jett&amp;#34;; // 此时类型为string rocker.toUpperCase(); // JOAN JETT console.log(rocker, typeof rocker) // Joan Jett string  rocker = 19.58; // 此时类型为number console.log(rocker, typeof rocker) // 19.58 number 函数的可选参数必须是最后一个参数，若将可选参数放在必需参数前，会出现编译错误。下面代码编译时会出现A required parameter cannot follow an optional parameter错误。
+let rocker; // Type: any console.log(typeof rocker) // 运行结果为undefined  rocker = &amp;#34;Joan Jett&amp;#34;; // 此时类型为string rocker.toUpperCase(); // JOAN JETT console.log(rocker, typeof rocker) // Joan Jett string  rocker = 19.58; // 此时类型为number console.log(rocker, typeof rocker) // 19.58 number 函数的可选参数必须是最后一个参数，若将可选参数放在必需参数前，会出现编译错误。下面示例代码会出现编译错误A required parameter cannot follow an optional parameter。
 // 编译错误：A required parameter cannot follow an optional parameter function hello3(x?: string, y: number) {  console.log(x, y) } 具有默认值的参数若不位于参数列表的末尾，调用时不能省略该参数，此时如果要触发默认值，必须显式地传入undefined，下面第一个参数传入了undefined，触发了x的默认值3：
 function hello3(x = 3, y: number) {  console.log(x, y) }  hello3(undefined, 890)  // 执行结果 3 890 Modules JavaScript编程语言最近才规范了文件之间如何共享代码。ECMAScript 2015增加了ECMAScript Modules以规范文件间的import和export语法。
 在module文件中声明的任何内容都只能在该文件中使用，除非该文件中有明确的export语句。下面代码中，test.ts文件从同级的./values文件中导入了value，并导出了一个doubled常量值:
@@ -679,7 +679,7 @@ function hello3(x = 3, y: number) {  console.log(x, y) }  hello3(undefined, 890)
 下面a.ts和b.ts文件均会被认为是脚本，因为它们中没有export和import语句。这意味着，如果在这两个文件中有同名的变量，就会有冲突：
 // a.ts const shared = &amp;#34;Cher&amp;#34;;  // b.ts const shared = &amp;#34;Cher&amp;#34;; // 编译错误：Cannot redeclare block-scoped variable &amp;#39;shared&amp;#39;. 根据ECMAScript规范，如果要将一个没有export或import语句的文件变成模块，可以在文件的某个地方添加一个export {};语句来强制让它成为一个模块。
 // a.ts const shared = &amp;#34;Cher&amp;#34;;  // b.ts const shared = &amp;#34;Cher&amp;#34;; export {}; Unions and Literals  联合：将值的允许类型扩展为两种或两种以上的可能类型。窄化：减少值的允许类型，使其不属于一种或多种可能的类型。联合和窄化是一种强大的概念，允许对代码做出比其他主流语言更智能的推断。
- Union Types 下面定义的变量mathematician的类型既可以是undefined，也可以是string，这种非此即彼的类型称为联合类型。联合类型是一个奇妙的概念，它可以让我们在代码中处理这样的情况：暂时还不知道某个值的确切类型，但确定它是两个或多个类型之一。
+ Union Types 下面变量mathematician的类型既可以是undefined，也可以是string，这种非此即彼的类型称为联合类型。联合类型是一个奇妙的概念，它可以让我们在代码中处理这样的情况：暂时还不知道某个值的确切类型，但确定它是两个或多个类型之一。
 // 变量类型为string | undefined let mathematician = Math.random() &amp;gt; 0.5 ? undefined : &amp;#34;Mark Goldberg&amp;#34;; TypeScript使用管道操作符|来连接可能的类型：
 let mathematician: string | undefined = Math.random() &amp;gt; 0.5 ? undefined : &amp;#34;Mark Goldberg&amp;#34;; 在变量在有初始值的情况下，也显式地将其类型标注为联合类型有时很有用。下面代码中，thinker一开始是null，但在某些情况下可能是字符串。将变量thinker的类型显式标注为string | null联合类型，意味着后续给它赋字符串类型的值是允许的：
 let thinker: string | null = null; if (Math.random() &amp;gt; 0.5) {  thinker = &amp;#34;Susanne Langer&amp;#34;; }  // 每次执行时生成随机数不同，结果就会不同 console.log(thinker, typeof thinker) // 结果可能是Susanne Langer string 或 null object 联合类型可以放置在任何需要类型标注的地方。当已知值是一个联合类型时，只允许访问联合中所有子类型都存在的共有成员属性。如果尝试访问的属性不是联合类型所有子类型的共有属性，会出现编译错误。
