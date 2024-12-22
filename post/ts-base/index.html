@@ -241,7 +241,7 @@ code.has-jax {
     <i class="fa fa-file-word-o"></i>
 </span>
 <span class="post-meta-item-text">字数: </span>
-<span class="leancloud-visitors-count">56641</span>
+<span class="leancloud-visitors-count">57079</span>
 &nbsp; | &nbsp;
 <span class="post-meta-item-icon">
     <i class="fa fa-coffee"></i>
@@ -1220,7 +1220,7 @@ code.has-jax {
 </span></span><span style="display:flex;"><span>}
 </span></span><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span><span style="color:#75715e">// 编译错误error TS1014: A rest parameter must be last in a parameter list.
-</span></span></span></code></pre></div><p>需要注意的是，如果**<font color=red>同时有可选参数和可变参数时，可变参数需要放到最后，否则会出现编译错误</font>**。对于函数最后一个参数来说，可变参数具有更高的优先级：</p>
+</span></span></span></code></pre></div><p>函数中若**<font color=red>同时有可选参数和可变参数时，可变参数需要放到最后，否则会出现编译错误</font>**。也就是说，对于函数最后一个参数来说，可变参数具有更高优先级：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span><span style="color:#66d9ef">function</span> <span style="color:#a6e22e">singTwo</span>(<span style="color:#a6e22e">first?</span>: <span style="color:#66d9ef">string</span>, ...<span style="color:#a6e22e">second</span>: <span style="color:#66d9ef">string</span>[]) {
 </span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">console</span>.<span style="color:#a6e22e">log</span>(<span style="color:#e6db74">`</span><span style="color:#e6db74">${</span><span style="color:#a6e22e">first</span><span style="color:#e6db74">}</span><span style="color:#e6db74"> / </span><span style="color:#e6db74">${</span><span style="color:#a6e22e">second</span><span style="color:#e6db74">}</span><span style="color:#e6db74">`</span>);
 </span></span><span style="display:flex;"><span>}
@@ -1298,28 +1298,17 @@ code.has-jax {
 </span></span><span style="display:flex;"><span>}
 </span></span></code></pre></div><h2 id="function-types">Function Types</h2>
 <p><code>JavaScript</code>允许将函数作为值传递。这意味着需要一种方法来声明用于存放函数类型的参数或变量。<font color=red>函数类型标注语法与箭头函数类似，只是用类型代替了函数体</font>。下面变量<code>nothingInGivesString</code>的类型标注描述了一个无参数，返回字符串的函数：</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span><span style="color:#66d9ef">let</span> <span style="color:#a6e22e">nothingInGivesString</span><span style="color:#f92672">:</span> () <span style="color:#f92672">=&gt;</span> <span style="color:#66d9ef">string</span>;
-</span></span></code></pre></div><p>下面变量<code>inputAndOutput</code>的类型标注是一个函数，该函数有一个<code>string[]</code>类型的形参，一个可选的形参<code>count</code>，并返回一个<code>number</code>类型值：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span><span style="color:#66d9ef">let</span> <span style="color:#a6e22e">nothingInGivesString</span><span style="color:#f92672">:</span> () <span style="color:#f92672">=&gt;</span> <span style="color:#66d9ef">string</span>; <span style="color:#75715e">// 个人猜测是因为已经有冒号了，所以不使用冒号来定义返回值类型
+</span></span></span></code></pre></div><p>下面变量<code>inputAndOutput</code>的类型标注是一个函数，该函数有一个<code>string[]</code>类型的形参，一个可选的形参<code>count</code>，并返回一个<code>number</code>类型值：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span><span style="color:#66d9ef">let</span> <span style="color:#a6e22e">inputAndOutput</span><span style="color:#f92672">:</span> (<span style="color:#a6e22e">songs</span>: <span style="color:#66d9ef">string</span>[], <span style="color:#a6e22e">count?</span>: <span style="color:#66d9ef">number</span>) <span style="color:#f92672">=&gt;</span> <span style="color:#66d9ef">number</span>;
 </span></span></code></pre></div><p>函数类型常用于描述回调：</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span><span style="color:#66d9ef">function</span> <span style="color:#a6e22e">runOnSongs</span>(<span style="color:#a6e22e">songs</span>: <span style="color:#66d9ef">string</span>[], <span style="color:#a6e22e">getSongAt</span><span style="color:#f92672">:</span> (<span style="color:#a6e22e">index</span>: <span style="color:#66d9ef">number</span>) <span style="color:#f92672">=&gt;</span> <span style="color:#66d9ef">string</span>) {
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span><span style="color:#66d9ef">const</span> <span style="color:#a6e22e">songs</span> <span style="color:#f92672">=</span> [<span style="color:#e6db74">&#39;123&#39;</span>, <span style="color:#e6db74">&#39;789&#39;</span>, <span style="color:#e6db74">&#39;778&#39;</span>]
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">function</span> <span style="color:#a6e22e">runOnSongs</span>(<span style="color:#a6e22e">songs</span>: <span style="color:#66d9ef">string</span>[], <span style="color:#a6e22e">getSongAt</span><span style="color:#f92672">:</span> (<span style="color:#a6e22e">index</span>: <span style="color:#66d9ef">number</span>) <span style="color:#f92672">=&gt;</span> <span style="color:#66d9ef">string</span>) {
 </span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">for</span> (<span style="color:#66d9ef">let</span> <span style="color:#a6e22e">i</span> <span style="color:#f92672">=</span> <span style="color:#ae81ff">0</span>; <span style="color:#a6e22e">i</span> <span style="color:#f92672">&lt;</span> <span style="color:#a6e22e">songs</span>.<span style="color:#a6e22e">length</span>; <span style="color:#a6e22e">i</span> <span style="color:#f92672">+=</span> <span style="color:#ae81ff">1</span>) {
-</span></span><span style="display:flex;"><span>        <span style="color:#75715e">// 传了函数调用
-</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>        <span style="color:#a6e22e">console</span>.<span style="color:#a6e22e">log</span>(<span style="color:#a6e22e">getSongAt</span>(<span style="color:#a6e22e">i</span>));
+</span></span><span style="display:flex;"><span>        <span style="color:#a6e22e">console</span>.<span style="color:#a6e22e">log</span>(<span style="color:#a6e22e">getSongAt</span>(<span style="color:#a6e22e">i</span>));
 </span></span><span style="display:flex;"><span>    }
 </span></span><span style="display:flex;"><span>}
-</span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span><span style="color:#66d9ef">function</span> <span style="color:#a6e22e">getSongAt</span>(<span style="color:#a6e22e">index</span>: <span style="color:#66d9ef">number</span>) {
-</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">return</span> <span style="color:#e6db74">`</span><span style="color:#e6db74">${</span><span style="color:#a6e22e">songs</span>[<span style="color:#a6e22e">index</span>]<span style="color:#e6db74">}</span><span style="color:#e6db74">`</span>;
-</span></span><span style="display:flex;"><span>}
-</span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span><span style="color:#66d9ef">const</span> <span style="color:#a6e22e">songs</span> <span style="color:#f92672">=</span> [<span style="color:#e6db74">&#39;123&#39;</span>, <span style="color:#e6db74">&#39;789&#39;</span>, <span style="color:#e6db74">&#39;778&#39;</span>]
-</span></span><span style="display:flex;"><span><span style="color:#a6e22e">runOnSongs</span>(<span style="color:#a6e22e">songs</span>, <span style="color:#a6e22e">getSongAt</span>);
-</span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span><span style="color:#75715e">// 执行结果
-</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#ae81ff">12</span>
-</span></span><span style="display:flex;"><span><span style="color:#ae81ff">34</span>
-</span></span><span style="display:flex;"><span><span style="color:#ae81ff">78</span>
 </span></span><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span><span style="color:#66d9ef">function</span> <span style="color:#a6e22e">runOnSongs2</span>(<span style="color:#a6e22e">songs</span>: <span style="color:#66d9ef">string</span>[], <span style="color:#a6e22e">getSongAt</span><span style="color:#f92672">:</span> (<span style="color:#a6e22e">index</span>: <span style="color:#66d9ef">number</span>) <span style="color:#f92672">=&gt;</span> [<span style="color:#66d9ef">string</span>, <span style="color:#66d9ef">number</span>]) {
 </span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">for</span> (<span style="color:#66d9ef">let</span> <span style="color:#a6e22e">i</span> <span style="color:#f92672">=</span> <span style="color:#ae81ff">0</span>; <span style="color:#a6e22e">i</span> <span style="color:#f92672">&lt;</span> <span style="color:#a6e22e">songs</span>.<span style="color:#a6e22e">length</span>; <span style="color:#a6e22e">i</span> <span style="color:#f92672">+=</span> <span style="color:#ae81ff">1</span>) {
@@ -1327,20 +1316,16 @@ code.has-jax {
 </span></span><span style="display:flex;"><span>    }
 </span></span><span style="display:flex;"><span>}
 </span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span><span style="color:#a6e22e">runOnSongs2</span>([<span style="color:#e6db74">&#39;12&#39;</span>, <span style="color:#e6db74">&#39;34&#39;</span>], (<span style="color:#a6e22e">index</span>: <span style="color:#66d9ef">number</span>)<span style="color:#f92672">:</span> [<span style="color:#66d9ef">string</span>, <span style="color:#66d9ef">number</span>] <span style="color:#f92672">=&gt;</span> {
-</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">const</span> <span style="color:#a6e22e">str</span> <span style="color:#f92672">=</span> <span style="color:#e6db74">`</span><span style="color:#e6db74">${</span><span style="color:#a6e22e">index</span><span style="color:#e6db74">}</span><span style="color:#e6db74">`</span>
-</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">return</span> [<span style="color:#a6e22e">str</span>, <span style="color:#a6e22e">str</span>.<span style="color:#a6e22e">length</span>]
-</span></span><span style="display:flex;"><span>})
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">function</span> <span style="color:#a6e22e">getSongAt</span>(<span style="color:#a6e22e">index</span>: <span style="color:#66d9ef">number</span>) {
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">return</span> <span style="color:#e6db74">`</span><span style="color:#e6db74">${</span><span style="color:#a6e22e">songs</span>[<span style="color:#a6e22e">index</span>]<span style="color:#e6db74">}</span><span style="color:#e6db74">`</span>;
+</span></span><span style="display:flex;"><span>}
 </span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span><span style="color:#75715e">// 执行结果
-</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>[ <span style="color:#e6db74">&#39;0&#39;</span>, <span style="color:#ae81ff">1</span> ]
-</span></span><span style="display:flex;"><span>[ <span style="color:#e6db74">&#39;1&#39;</span>, <span style="color:#ae81ff">1</span> ]
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">runOnSongs</span>(<span style="color:#a6e22e">songs</span>, <span style="color:#a6e22e">getSongAt</span>);
 </span></span></code></pre></div><h3 id="function-type-parentheses">Function Type Parentheses</h3>
-<p>函数类型可以放置在任何需要类型标注的地方，包括联合类型。在联合类型中，可以<font color="#e36c09">使用圆括号来表示标识哪一部分是函数返回值，哪一部分是联合类型的函数子类型</font>：</p>
+<p>函数类型可以放置在任何需要类型标注的地方，包括联合类型。在联合类型中，可以<font color="#e36c09">使用圆括号来表示哪一部分是函数返回值哪一部分是联合类型的函数子类型</font>：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span><span style="color:#75715e">// 定义了一个函数类型变量，该函数的返回的类型是string和undefine的联合
 </span></span></span><span style="display:flex;"><span><span style="color:#75715e">// Type is a function that returns a union: string | undefined
 </span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">let</span> <span style="color:#a6e22e">returnsStringOrUndefined</span><span style="color:#f92672">:</span> () <span style="color:#f92672">=&gt;</span> <span style="color:#66d9ef">string</span> <span style="color:#f92672">|</span> <span style="color:#66d9ef">undefined</span>;
-</span></span><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span><span style="color:#75715e">// 定义了一个变量，该变量的类型是函数类型和undefined的联合
 </span></span></span><span style="display:flex;"><span><span style="color:#75715e">// Type is either undefined or a function that returns a string 
 </span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">let</span> <span style="color:#a6e22e">maybeReturnsString</span><span style="color:#f92672">:</span> (() <span style="color:#f92672">=&gt;</span> <span style="color:#66d9ef">string</span>) <span style="color:#f92672">|</span> <span style="color:#66d9ef">undefined</span>;
@@ -1367,12 +1352,12 @@ code.has-jax {
 </span></span></code></pre></div><p>实际上，<font color="#de7802">作为实参传递给函数类型形参的函数，其参数类型也能被推断出来</font>。下面示例代码中，参数<code>song</code>和<code>index</code>的类型被推断为<code>string</code>和<code>number</code>:</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span><span style="color:#66d9ef">const</span> <span style="color:#a6e22e">songs</span> <span style="color:#f92672">=</span> [<span style="color:#e6db74">&#34;Call Me&#34;</span>, <span style="color:#e6db74">&#34;Jolene&#34;</span>, <span style="color:#e6db74">&#34;The Chain&#34;</span>];
 </span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span><span style="color:#75715e">// 省略了第3个数组参数，这里有个疑问为什么可以省略第3个参数？
+</span></span><span style="display:flex;"><span><span style="color:#75715e">// 省略了第3个数组参数，这里有个疑问为什么可以省略第3个参数？？？
 </span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#a6e22e">songs</span>.<span style="color:#a6e22e">forEach</span>((<span style="color:#a6e22e">song</span>, <span style="color:#a6e22e">index</span>) <span style="color:#f92672">=&gt;</span> {
 </span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">console</span>.<span style="color:#a6e22e">log</span>(<span style="color:#e6db74">`</span><span style="color:#e6db74">${</span><span style="color:#a6e22e">song</span><span style="color:#e6db74">}</span><span style="color:#e6db74"> is at index </span><span style="color:#e6db74">${</span><span style="color:#a6e22e">index</span><span style="color:#e6db74">}</span><span style="color:#e6db74">`</span>);
 </span></span><span style="display:flex;"><span>});
 </span></span></code></pre></div><h3 id="function-type-aliases">Function Type Aliases</h3>
-<p>创建类型别名的<code>type</code>也可以用于函数。下面示例代码中，类型别名<code>StringToNumber</code>定义的是一个接收<code>string</code>并返回<code>number</code>的函数类型，这意味着别名类型<code>StringToNumber</code>可以用来标注函数变量的类型：</p>
+<p>创建类型别名的<code>type</code>也可以用于函数。下面示例代码中类型别名<code>StringToNumber</code>是一个接收<code>string</code>并返回<code>number</code>的函数，这意味着别名类型<code>StringToNumber</code>可以用来标注函数变量的类型：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span><span style="color:#66d9ef">type</span> <span style="color:#a6e22e">StringToNumber</span> <span style="color:#f92672">=</span> (<span style="color:#a6e22e">input</span>: <span style="color:#66d9ef">string</span>) <span style="color:#f92672">=&gt;</span> <span style="color:#66d9ef">number</span>;
 </span></span><span style="display:flex;"><span><span style="color:#66d9ef">let</span> <span style="color:#a6e22e">stringToNumber</span>: <span style="color:#66d9ef">StringToNumber</span>;
 </span></span><span style="display:flex;"><span>
@@ -1392,7 +1377,7 @@ code.has-jax {
 </span></span><span style="display:flex;"><span>}
 </span></span></code></pre></div><h2 id="more-return-types">More Return Types</h2>
 <p>接下来看两个特殊的函数返回值<code>void</code>和<code>never</code>。有些函数并不返回任何值，它们要么没有<code>return</code>语句，要么只有无返回值的<code>return</code>语句。<code>TypeScript</code>允许<font color="#e36c09">使用<code>void</code>关键字来说明这种不返回任何值函数的返回类型</font>。</p>
-<p>返回类型为<code>void</code>的函数体中不能返回任何值，否则会出现编译错误。下面<code>logSong</code>函数被声明为返回<code>void</code>类型，因此在函数体中不允许有返回值。因为在函数体中出现了<code>return true</code>，所以会出现编译错误：</p>
+<p>在返回类型声明为<code>void</code>的函数体中不能返回任何值，否则会出现编译错误。下面<code>logSong</code>函数被声明为返回<code>void</code>类型，因此在函数体中不允许有返回值。在函数体中出现了<code>return true</code>，所以会出现编译错误：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span><span style="color:#66d9ef">function</span> <span style="color:#a6e22e">logSong</span>(<span style="color:#a6e22e">song</span>: <span style="color:#66d9ef">string</span> <span style="color:#f92672">|</span> <span style="color:#66d9ef">undefined</span>)<span style="color:#f92672">:</span> <span style="color:#66d9ef">void</span> {
 </span></span><span style="display:flex;"><span>    <span style="color:#75715e">// 空字符串或undefined直接返回
 </span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#66d9ef">if</span> (<span style="color:#f92672">!</span><span style="color:#a6e22e">song</span>) {
@@ -1403,7 +1388,7 @@ code.has-jax {
 </span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#75715e">// 无返回值的函数不能返回值
 </span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#66d9ef">return</span> <span style="color:#66d9ef">true</span>; 
 </span></span><span style="display:flex;"><span>}
-</span></span></code></pre></div><p>在函数类型声明时（不是使用<code>function</code>关键字定义函数），<code>void</code>可以作为返回类型很有用。在函数类型声明时，将函数返回类型标注<code>void</code>时，它**<font color=red>表示函数中的任何返回值都将被忽略</font>**。下面代码中，<code>songLogger</code>变量代表了一个函数，它接受一个<code>string</code>参数，并且不返回任何值：</p>
+</span></span></code></pre></div><p>在箭头函数类型声明时（不是使用<code>function</code>关键字定义函数），<code>void</code>作为返回类型很有用。在函数类型声明时，将函数返回类型标注<code>void</code>时，它**<font color=red>表示函数中的任何返回值都将被忽略</font>**。下面代码中，<code>songLogger</code>变量代表了一个函数，它接受一个<code>string</code>参数，并且不返回任何值：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span><span style="color:#66d9ef">let</span> <span style="color:#a6e22e">songLogger</span><span style="color:#f92672">:</span> (<span style="color:#a6e22e">song</span>: <span style="color:#66d9ef">string</span>) <span style="color:#f92672">=&gt;</span> <span style="color:#66d9ef">void</span>;
 </span></span><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span><span style="color:#a6e22e">songLogger</span> <span style="color:#f92672">=</span> (<span style="color:#a6e22e">song</span>) <span style="color:#f92672">=&gt;</span> {
@@ -1412,14 +1397,21 @@ code.has-jax {
 </span></span><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span><span style="color:#a6e22e">songLogger</span>(<span style="color:#e6db74">&#34;Heart of Glass&#34;</span>); <span style="color:#75715e">// Ok
 </span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>
-</span></span><span style="display:flex;"><span><span style="color:#75715e">// 下面函数类型声明时使用void，但函数中有返回值时会被忽略
+</span></span><span style="display:flex;"><span><span style="color:#75715e">// 下面函数类型声明时使用void，但实参函数中有返回值时会被忽略
 </span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">let</span> <span style="color:#a6e22e">songLogger</span><span style="color:#f92672">:</span> (<span style="color:#a6e22e">song</span>: <span style="color:#66d9ef">string</span>) <span style="color:#f92672">=&gt;</span> <span style="color:#66d9ef">void</span>;
 </span></span><span style="display:flex;"><span><span style="color:#a6e22e">songLogger</span> <span style="color:#f92672">=</span> (<span style="color:#a6e22e">song</span>: <span style="color:#66d9ef">string</span>) <span style="color:#f92672">=&gt;</span> {
 </span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">console</span>.<span style="color:#a6e22e">log</span>(<span style="color:#a6e22e">song</span>);
 </span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">return</span> <span style="color:#a6e22e">song</span>;
 </span></span><span style="display:flex;"><span>}
-</span></span></code></pre></div><p>请注意，尽管<code>JavaScript</code>函数在没有真实返回值的情况下默认会返回<code>undefined</code>，但返回类型<font color="#e36c09"><code>void</code>并不等同于<code>undefined</code>。<code>void</code>意味着函数的返回值将被忽略，而<code>undefined</code>则是要返回的字面量</font>。</p>
-<p>还需要特别注意的是，如果尝试将<code>void</code>类型值赋给类型包括<code>undefined</code>的变量，将会出现编译错误：</p>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">const</span> <span style="color:#a6e22e">songs</span> <span style="color:#f92672">=</span> [<span style="color:#e6db74">&#34;Call Me&#34;</span>, <span style="color:#e6db74">&#34;Jolene&#34;</span>, <span style="color:#e6db74">&#34;The Chain&#34;</span>];
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">songs</span>.<span style="color:#a6e22e">forEach</span>((<span style="color:#a6e22e">song</span>, <span style="color:#a6e22e">index</span>) <span style="color:#f92672">=&gt;</span> {
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">console</span>.<span style="color:#a6e22e">log</span>(<span style="color:#e6db74">`</span><span style="color:#e6db74">${</span><span style="color:#a6e22e">song</span><span style="color:#e6db74">}</span><span style="color:#e6db74"> is at index </span><span style="color:#e6db74">${</span><span style="color:#a6e22e">index</span><span style="color:#e6db74">}</span><span style="color:#e6db74">`</span>);
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">// 即使有返回值也会被忽略
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#66d9ef">return</span> <span style="color:#e6db74">&#34;&#34;</span>
+</span></span><span style="display:flex;"><span>});
+</span></span></code></pre></div><p>请注意，尽管<code>JavaScript</code>函数在没有真实返回值的情况下默认会返回<code>undefined</code>，但返回类型<font color="#e36c09"><code>void</code>并不等同于<code>undefined</code>。<code>void</code>意味着函数的返回值将被忽略，而<code>undefined</code>则是要返回的字面量</font>。此外，若尝试将<code>void</code>类型值赋给类型包括<code>undefined</code>的变量，将会出现编译错误：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span><span style="color:#66d9ef">function</span> <span style="color:#a6e22e">returnsVoid() {</span>
 </span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">return</span>;
 </span></span><span style="display:flex;"><span>}
@@ -1435,13 +1427,14 @@ code.has-jax {
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span><span style="color:#66d9ef">let</span> <span style="color:#a6e22e">records</span> <span style="color:#f92672">=</span> [<span style="color:#e6db74">&#39;123&#39;</span>, <span style="color:#e6db74">&#39;456&#39;</span>]  
 </span></span><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span><span style="color:#66d9ef">function</span> <span style="color:#a6e22e">saveRecords</span>(<span style="color:#a6e22e">newRecords</span>: <span style="color:#66d9ef">string</span>[]) {  
-</span></span><span style="display:flex;"><span>    <span style="color:#75715e">// 实际上传入的实参是有返回值，但被忽略了
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">// records.push有返回值，且没有使用大括号，因此records.push就是箭头函数的返回值
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#75715e">// 实际上传入的实参是有返回值，但被忽略了
 </span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#a6e22e">newRecords</span>.<span style="color:#a6e22e">forEach</span>(<span style="color:#a6e22e">record</span> <span style="color:#f92672">=&gt;</span> <span style="color:#a6e22e">records</span>.<span style="color:#a6e22e">push</span>(<span style="color:#a6e22e">record</span>));  
 </span></span><span style="display:flex;"><span>}
 </span></span><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span><span style="color:#a6e22e">saveRecords</span>([<span style="color:#e6db74">&#39;21&#39;</span>, <span style="color:#e6db74">&#39;Come On Over&#39;</span>, <span style="color:#e6db74">&#39;The Bodyguard&#39;</span>])  
 </span></span><span style="display:flex;"><span><span style="color:#a6e22e">console</span>.<span style="color:#a6e22e">log</span>(<span style="color:#a6e22e">records</span>) <span style="color:#75715e">// [ &#39;123&#39;, &#39;456&#39;, &#39;21&#39;, &#39;Come On Over&#39;, &#39;The Bodyguard&#39; ]
-</span></span></span></code></pre></div><p><code>void</code>类型不属于<code>JavaScript</code>，是<code>TypeScript</code>的一个关键字，用于声明函数的返回值类型。需要注意的是，<font color=red>它表示函数的返回值不打算被使用，而不是表示返回值可以被返回</font>。</p>
+</span></span></span></code></pre></div><p><code>void</code>类型不属于<code>JavaScript</code>，仅是<code>TypeScript</code>的一个关键字，用于声明函数的返回值类型。需要注意的是，<font color=red>它表示函数的返回值不打算被使用，而不是表示返回值可以被返回</font>。</p>
 <h3 id="never-returns">Never Returns</h3>
 <p>有些函数不仅没有返回值，而且根本不返回。<font color="#de7802">永不返回的函数是那些总是抛出错误或运行无限循环的函数</font>（希望是故意的）。如果一个函数永远不返回，那么显式添加<code>: never</code>类型标注，表示调用该函数后的任何代码都不会运行。下面<code>fail</code>函数只是抛出一个错误，它有助于控制流分析，将参数<code>param</code>窄化为<code>string</code>：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span><span style="color:#66d9ef">function</span> <span style="color:#a6e22e">fail</span>(<span style="color:#a6e22e">message</span>: <span style="color:#66d9ef">string</span>)<span style="color:#f92672">:</span> <span style="color:#66d9ef">never</span> {
@@ -1478,13 +1471,13 @@ code.has-jax {
 </span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">return</span> <span style="color:#a6e22e">needle</span> <span style="color:#f92672">&amp;&amp;</span> <span style="color:#a6e22e">haystack</span> <span style="color:#f92672">?</span> <span style="color:#a6e22e">data</span>.<span style="color:#a6e22e">replace</span>(<span style="color:#a6e22e">needle</span>, <span style="color:#a6e22e">haystack</span>) <span style="color:#f92672">:</span> <span style="color:#a6e22e">data</span>;
 </span></span><span style="display:flex;"><span>}
 </span></span></code></pre></div><h1 id="arrays">Arrays</h1>
-<p><code>TypeScript</code>通过记住数组中最初的数据类型，并只允许数组对该数据类型进行操作，从而遵守了每个数组只使用一种数据类型的最佳实践。</p>
+<p><code>TypeScript</code>通过记住数组中最初的数据类型，并且只允许数组对该数据类型进行操作，从而遵守了每个数组只使用一种数据类型的最佳实践。</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span><span style="color:#66d9ef">const</span> <span style="color:#a6e22e">warriors</span> <span style="color:#f92672">=</span> [<span style="color:#e6db74">&#34;Artemisia&#34;</span>, <span style="color:#e6db74">&#34;Boudica&#34;</span>];
 </span></span><span style="display:flex;"><span><span style="color:#75715e">// Ok: &#34;Zenobia&#34; is a string
 </span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#a6e22e">warriors</span>.<span style="color:#a6e22e">push</span>(<span style="color:#e6db74">&#34;Zenobia&#34;</span>);
 </span></span><span style="display:flex;"><span><span style="color:#75715e">// 编译错误：Argument of type &#39;boolean&#39; is not assignable to parameter of type &#39;string&#39;.
 </span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#a6e22e">warriors</span>.<span style="color:#a6e22e">push</span>(<span style="color:#66d9ef">true</span>);
-</span></span></code></pre></div><p>根据数组的初始成员推断数组类型与根据变量的初始值推断变量类型类似。<font color="#de7802">编译器通常会尝试从初始赋值来推断类型</font>，数组也不例外。</p>
+</span></span></code></pre></div><p>通常，<font color="#de7802">编译器通常会尝试从初始赋值来推断类型</font>，数组也不例外。根据数组的初始成员推断数组类型与根据变量的初始值推断变量类型类似。</p>
 <h2 id="array-types">Array Types</h2>
 <p>如同其它变量声明，数组变量声明时也可以不初始化。同样地，在严格模式下，<span style="background:rgba(255, 183, 139, 0.55)">如果数组变量未初始化之前就使用会出现编译错误</span>：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span><span style="color:#66d9ef">let</span> <span style="color:#a6e22e">arrayOfNumbers</span>: <span style="color:#66d9ef">number</span>[];
@@ -1523,7 +1516,7 @@ code.has-jax {
 </span></span><span style="display:flex;"><span><span style="color:#75715e">// 执行结果
 </span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>[ <span style="color:#e6db74">&#39;Aqualtune&#39;</span>, <span style="color:#e6db74">&#39;Blenda&#39;</span>, <span style="color:#66d9ef">undefined</span> ]
 </span></span></code></pre></div><h3 id="evolving-any-arrays">Evolving Any Arrays</h3>
-<p>若初始值为空的数组变量不加上类型标注，则数组的类型将被推断为<code>any[]</code>。这意味着该数组可以接收任何内容，若不小心添加了可能不正确的值，会抵消类型检查器的益处。</p>
+<p>若初始值为空的数组变量不加上类型标注，则数组的类型将被推断为<code>any[]</code>。这意味着该数组可以接收任何内容，若不小心添加了可能不正确的值，会抵消类型检查器的好处。</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span><span style="color:#75715e">// Type: any[]
 </span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">let</span> <span style="color:#a6e22e">values</span> <span style="color:#f92672">=</span> [];
 </span></span><span style="display:flex;"><span><span style="color:#75715e">// Type: string[]
@@ -1531,7 +1524,7 @@ code.has-jax {
 </span></span><span style="display:flex;"><span><span style="color:#75715e">// Type: (number | string)[]
 </span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#a6e22e">values</span>[<span style="color:#ae81ff">0</span>] <span style="color:#f92672">=</span> <span style="color:#ae81ff">0</span>; 
 </span></span><span style="display:flex;"><span><span style="color:#a6e22e">console</span>.<span style="color:#a6e22e">log</span>(<span style="color:#a6e22e">values</span>, <span style="color:#66d9ef">typeof</span> <span style="color:#a6e22e">values</span>) <span style="color:#75715e">// [ &#39;&#39;, 0 ] object
-</span></span></span></code></pre></div><p>如同变量，如果允许数组是<code>any</code>类型，也就违背了类型检查的目的。当精确地知道变量是什么类型时，就会工作得更好。</p>
+</span></span></span></code></pre></div><p>如同变量，如果允许数组的元素是<code>any</code>类型，也就违背了类型检查的目的。当精确地知道变量是什么类型时，编译器会工作得更好。</p>
 <h3 id="multidimensional-arrays">Multidimensional Arrays</h3>
 <p>一个二维数组，有两个<code>[]</code>：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span><span style="color:#75715e">// 声明二维数组，下面两种方式均可以
@@ -1554,7 +1547,7 @@ code.has-jax {
 </span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">const</span> <span style="color:#a6e22e">soldierOrDate</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">soldiersOrDates</span>[<span style="color:#ae81ff">0</span>];
 </span></span></code></pre></div><h3 id="caveat-unsound-members">Caveat: Unsound Members</h3>
 <p>众所周知，<code>TypeScript</code>的<span style="background:rgba(255, 183, 139, 0.55)">类型系统在技术上是不健全的，它可以使类型在多数情况下是正确的</span>，但有时对值类型的理解可能是不正确的，<strong><font color=red>数组尤其是类型系统不健全的根源</font></strong>。</p>
-<p>默认情况下，<code>TypeScript</code><font color="#de7802">假设所有数组成员的访问都会返回相应成员</font>，尽管在<code>JavaScript</code>中，访问数组元素的索引大于数组的长度会得到<code>undefined</code>。在编译器默认设置下，下面这段代码<font color="#245bdb">编译没有任何问题，但运行时会报错</font>：</p>
+<p>默认情况下，<code>TypeScript</code><font color="#de7802">假设所有数组成员的访问都会返回相应成员</font>，尽管在<code>JavaScript</code>中，访问数组元素的索引大于数组的长度会得到<code>undefined</code>。下面这段代码<font color="#245bdb">编译没有任何问题，但运行时会报错</font>，因为访问了undefined没有length属性：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span><span style="color:#66d9ef">function</span> <span style="color:#a6e22e">withElements</span>(<span style="color:#a6e22e">elements</span>: <span style="color:#66d9ef">string</span>[]) {
 </span></span><span style="display:flex;"><span>    <span style="color:#75715e">// 不会出现编译错误
 </span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#a6e22e">console</span>.<span style="color:#a6e22e">log</span>(<span style="color:#a6e22e">elements</span>[<span style="color:#ae81ff">9001</span>].<span style="color:#a6e22e">length</span>);
@@ -1564,7 +1557,7 @@ code.has-jax {
 </span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#a6e22e">withElements</span>([<span style="color:#e6db74">&#34;It&#39;s&#34;</span>, <span style="color:#e6db74">&#34;over&#34;</span>]);
 </span></span></code></pre></div><p><code>TypeScript</code><span style="background:rgba(255, 183, 139, 0.55)">故意不确保检索到的数组成员是否存在</span>，它认为上面代码片段中的<code>elements[9001]</code>是字符串类型，而不是<code>undefined</code>类型。</p>
 <h2 id="spreads-and-rests">Spreads and Rests</h2>
-<p>在函数定义时使用了<code>...</code>表示可变参数，在数组中也有同样的操作符<code>...</code>，被称为<code>spread</code>操作符，表示可以将数组展开。</p>
+<p>在函数定义时可以使用<code>...</code>表示可变参数，在数组中也有同样的操作符<code>...</code>，被称为<code>spread</code>操作符，表示将数组展开。同样的符号，代表不同的含义，需要特别注意。</p>
 <h3 id="spreads">Spreads</h3>
 <p>可以使用<code>...</code>展开操作符将将数组连接在一起，<font color="#de7802">结果数组将包含来自输入数组的所有值</font>。如果输入数组的元素类型相同，则结果数组的元素类型也相同。<font color="#de7802">如果将两个不同类型的数组展开在一起创建一个新数组，新数组将被推断为联合类型数组</font>。</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span><span style="color:#75715e">// 数组类型为 string[]
@@ -1598,13 +1591,16 @@ code.has-jax {
 </span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">let</span> <span style="color:#a6e22e">yearAndWarrior</span><span style="color:#f92672">:</span> [<span style="color:#66d9ef">number</span>, <span style="color:#66d9ef">string</span>];
 </span></span><span style="display:flex;"><span><span style="color:#a6e22e">yearAndWarrior</span> <span style="color:#f92672">=</span> [<span style="color:#ae81ff">530</span>, <span style="color:#e6db74">&#34;Tomyris&#34;</span>]; <span style="color:#75715e">// Ok
 </span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#a6e22e">console</span>.<span style="color:#a6e22e">log</span>(<span style="color:#a6e22e">yearAndWarrior</span>[<span style="color:#ae81ff">0</span>], <span style="color:#a6e22e">yearAndWarrior</span>[<span style="color:#ae81ff">1</span>]);
-</span></span></code></pre></div><p>在<code>JavaScript</code>中，<span style="background:rgba(255, 183, 139, 0.55)">元组通常与数组解构一起使用，以便一次赋值多个变量</span>。例如，可以根据条件判断设置两个变量的初始值。</p>
+</span></span></code></pre></div><p>在<code>JavaScript</code>中，<span style="background:rgba(255, 183, 139, 0.55)">元组通常与数组解构一起使用，以便一次赋值多个变量</span>。例如，可以根据条件判断设置两个变量的初始值。下面使用元组来解构数组的元素，得到的类型和直接访问某个元素得到的结果不一样：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span><span style="color:#75715e">// year的类型为number,warrior的类型为string
 </span></span></span><span style="display:flex;"><span><span style="color:#75715e">// 注意year和warrior类型不是sting | number
 </span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">let</span> [<span style="color:#a6e22e">year</span>, <span style="color:#a6e22e">warrior</span>] <span style="color:#f92672">=</span> Math.<span style="color:#a6e22e">random</span>() <span style="color:#f92672">&gt;</span> <span style="color:#ae81ff">0.5</span> <span style="color:#f92672">?</span> [<span style="color:#ae81ff">340</span>, <span style="color:#e6db74">&#34;Archidamia&#34;</span>] <span style="color:#f92672">:</span> [<span style="color:#ae81ff">1828</span>, <span style="color:#e6db74">&#34;Rani of Jhansi&#34;</span>];
-</span></span><span style="display:flex;"><span><span style="color:#a6e22e">console</span>.<span style="color:#a6e22e">log</span>(<span style="color:#a6e22e">year</span>, <span style="color:#a6e22e">warrior</span>) <span style="color:#75715e">// 每次执行结果不同，结果为340 Archidamia 或1828 Archidamia
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">console</span>.<span style="color:#a6e22e">log</span>(<span style="color:#a6e22e">year</span>, <span style="color:#a6e22e">warrior</span>) <span style="color:#75715e">// 每次执行结果可能不同，结果为340 Archidamia 或1828 Archidamia
 </span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#a6e22e">console</span>.<span style="color:#a6e22e">log</span>(<span style="color:#66d9ef">typeof</span> <span style="color:#a6e22e">year</span>, <span style="color:#66d9ef">typeof</span> <span style="color:#a6e22e">warrior</span>); <span style="color:#75715e">// number string
-</span></span></span></code></pre></div><h3 id="tuple-assignability">Tuple Assignability</h3>
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">// other的类型为string ｜ number
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">let</span> <span style="color:#a6e22e">other</span> <span style="color:#f92672">=</span> (Math.<span style="color:#a6e22e">random</span>() <span style="color:#f92672">&gt;</span> <span style="color:#ae81ff">0.5</span> <span style="color:#f92672">?</span> [<span style="color:#ae81ff">340</span>, <span style="color:#e6db74">&#34;Archidamia&#34;</span>] <span style="color:#f92672">:</span> [<span style="color:#ae81ff">1828</span>, <span style="color:#e6db74">&#34;Rani of Jhansi&#34;</span>])[<span style="color:#ae81ff">0</span>];
+</span></span></code></pre></div><h3 id="tuple-assignability">Tuple Assignability</h3>
 <p><code>TypeScript</code>将元组类型视为比变长数组更特殊的类型，<font color=red>这意味着变长数组类型不能赋值给元组类型</font>。下面代码中，变量<code>pairLoose</code>是数组类型<code>(boolean | number)[]</code>，即数组中元素类型是<code>(boolean | number)</code>。</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span><span style="color:#75715e">// 推断为数组类型，数组中元素的类型为 (boolean | number)[]
 </span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">const</span> <span style="color:#a6e22e">pairLoose</span> <span style="color:#f92672">=</span> [<span style="color:#66d9ef">false</span>, <span style="color:#ae81ff">123</span>];
@@ -1667,9 +1663,13 @@ code.has-jax {
 </span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#66d9ef">return</span> [<span style="color:#a6e22e">input</span>[<span style="color:#ae81ff">0</span>], <span style="color:#a6e22e">input</span>.<span style="color:#a6e22e">length</span>];
 </span></span><span style="display:flex;"><span>}
 </span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span><span style="color:#75715e">// firstChar的类型为 string | number
+</span></span><span style="display:flex;"><span><span style="color:#75715e">// 这里和对数组字面量的解构有很大区别！！！
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">// firstChar的类型为 string | number
 </span></span></span><span style="display:flex;"><span><span style="color:#75715e">// size的类型也为string | number
 </span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">const</span> [<span style="color:#a6e22e">firstChar</span>, <span style="color:#a6e22e">size</span>] <span style="color:#f92672">=</span> <span style="color:#a6e22e">firstCharAndSize</span>(<span style="color:#e6db74">&#34;Gudit&#34;</span>);
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">// year为number类型，warrior为string类型
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">let</span> [<span style="color:#a6e22e">year</span>, <span style="color:#a6e22e">warrior</span>] <span style="color:#f92672">=</span> Math.<span style="color:#a6e22e">random</span>() <span style="color:#f92672">&gt;</span> <span style="color:#ae81ff">0.5</span> <span style="color:#f92672">?</span> [<span style="color:#ae81ff">340</span>, <span style="color:#e6db74">&#34;Archidamia&#34;</span>] <span style="color:#f92672">:</span> [<span style="color:#ae81ff">1828</span>, <span style="color:#e6db74">&#34;Rani of Jhansi&#34;</span>];
 </span></span></code></pre></div><h4 id="explicit-tuple-types">Explicit tuple types</h4>
 <p>元组可能会被用于类型标注，例如函数的返回值类型标注。<font color="#de7802">如果一个函数的返回类型声明为元组类型，并且在函数里返回一个数组字面量，则这个数组字面量会被推断为元组而不是可变数组。</font></p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span><span style="color:#66d9ef">function</span> <span style="color:#a6e22e">firstCharAndSizeExplicit</span>(<span style="color:#a6e22e">input</span>: <span style="color:#66d9ef">string</span>)<span style="color:#f92672">:</span> [<span style="color:#66d9ef">string</span>, <span style="color:#66d9ef">number</span>] {
@@ -1694,7 +1694,7 @@ code.has-jax {
 </span></span><span style="display:flex;"><span><span style="color:#75715e">// Cannot assign to &#39;0&#39; because it is a read-only property.  
 </span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#a6e22e">readonlyTuple</span>[<span style="color:#ae81ff">0</span>] <span style="color:#f92672">=</span> <span style="color:#ae81ff">12</span>
 </span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span><span style="color:#75715e">// 使用变量直接接收只读元组，编译器推断变量的类型是只读的元组
+</span></span><span style="display:flex;"><span><span style="color:#75715e">// 使用变量直接接收只读元组，编译器推断变量的类型是只读的元组：readonly [1157, &#34;Tomoe&#34;]
 </span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">let</span> <span style="color:#a6e22e">readonlyTuple</span> <span style="color:#f92672">=</span> [<span style="color:#ae81ff">1157</span>, <span style="color:#e6db74">&#34;Tomoe&#34;</span>] <span style="color:#66d9ef">as</span> <span style="color:#66d9ef">const</span>;
 </span></span><span style="display:flex;"><span><span style="color:#75715e">// 使用let声明，是可以重新赋值的，即指向新的地方
 </span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#a6e22e">readonlyTuple</span> <span style="color:#f92672">=</span> [<span style="color:#ae81ff">1157</span>, <span style="color:#e6db74">&#34;Tomoe&#34;</span>]
@@ -1705,7 +1705,7 @@ code.has-jax {
 </span></span></span><span style="display:flex;"><span><span style="color:#75715e">// Cannot assign to &#39;0&#39; because it is a read-only property
 </span></span></span><span style="display:flex;"><span><span style="color:#75715e">// 从编译错误信息来看，即使使用索引访问数组，但其也是属性！！！
 </span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#a6e22e">readonlyTuple</span>[<span style="color:#ae81ff">0</span>] <span style="color:#f92672">=</span> <span style="color:#ae81ff">12</span>
-</span></span></code></pre></div><p>请注意，<code>const</code>断言不仅将数组字面量转换为固定大小的元组，还向<code>TypeScript</code>表明，<font color="#de7802">元组是只读的，不能在希望允许修改值的地方使用</font>。</p>
+</span></span></code></pre></div><p>请注意，<code>const</code>断言不仅将数组字面量转换为固定大小的元组，还向<code>TypeScript</code>表明，<font color=red>元组是只读的，不能在希望允许修改值的地方使用</font>。</p>
 <p>下面代码中，<code>pairMutable</code>中的元素是允许被修改的，因为它是传统的元组类型。但是，<code>as const</code>使得常量<code>pairConst</code>中的成员也不允许被修改：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span><span style="color:#66d9ef">const</span> <span style="color:#a6e22e">pairMutable</span><span style="color:#f92672">:</span> [<span style="color:#66d9ef">number</span>, <span style="color:#66d9ef">string</span>] <span style="color:#f92672">=</span> [<span style="color:#ae81ff">1157</span>, <span style="color:#e6db74">&#34;Tomoe&#34;</span>];
 </span></span><span style="display:flex;"><span><span style="color:#a6e22e">pairMutable</span>[<span style="color:#ae81ff">0</span>] <span style="color:#f92672">=</span> <span style="color:#ae81ff">1247</span>; <span style="color:#75715e">// Ok
@@ -1728,6 +1728,7 @@ code.has-jax {
 </span></span><span style="display:flex;"><span>}
 </span></span><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span><span style="color:#75715e">// 函数返回的元组立即被解构
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">// firstChar的类型是string而size的类型是number
 </span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">const</span> [<span style="color:#a6e22e">firstChar</span>, <span style="color:#a6e22e">size</span>] <span style="color:#f92672">=</span> <span style="color:#a6e22e">firstCharAndSizeAsConst</span>(<span style="color:#e6db74">&#34;Ching Shih&#34;</span>);
 </span></span><span style="display:flex;"><span><span style="color:#a6e22e">console</span>.<span style="color:#a6e22e">log</span>(<span style="color:#a6e22e">firstChar</span>, <span style="color:#a6e22e">size</span>)
 </span></span><span style="display:flex;"><span>
@@ -1750,27 +1751,21 @@ code.has-jax {
 </span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">born</span>: <span style="color:#66d9ef">number</span>;
 </span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">name</span>: <span style="color:#66d9ef">string</span>;
 </span></span><span style="display:flex;"><span>};
-</span></span></code></pre></div><p>下面是使用<code>interface</code>声明的等效语法：</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span><span style="color:#66d9ef">interface</span> <span style="color:#a6e22e">Poet</span> {
+</span></span></code></pre></div><p>下面是使用<code>interface</code>声明的等效语法，如同使用type定义对象别名类型一样，既可以使用分号，也可以逗号或换行符来分隔属性：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span><span style="color:#75715e">// 可以在定义后面添加分号
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">interface</span> <span style="color:#a6e22e">Poet</span> {
 </span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">born</span>: <span style="color:#66d9ef">number</span>;
 </span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">name</span>: <span style="color:#66d9ef">string</span>;
 </span></span><span style="display:flex;"><span>}
 </span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span><span style="color:#75715e">// 可以在定义后面添加分号
-</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">type</span> <span style="color:#a6e22e">Poet</span> <span style="color:#f92672">=</span> {
-</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">born</span>: <span style="color:#66d9ef">number</span>;
-</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">name</span>: <span style="color:#66d9ef">string</span>;
-</span></span><span style="display:flex;"><span>};
-</span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span><span style="color:#75715e">// 定义时属性间既可以使用分号也可以使用逗号
-</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">type</span> <span style="color:#a6e22e">Poet</span> <span style="color:#f92672">=</span> {
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">interface</span> <span style="color:#a6e22e">Poet</span> {
 </span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">born</span>: <span style="color:#66d9ef">number</span>,
 </span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">name</span>: <span style="color:#66d9ef">string</span>,
-</span></span><span style="display:flex;"><span>};
+</span></span><span style="display:flex;"><span>}
 </span></span><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span><span style="color:#75715e">// 也可以使用换行符区分属性
-</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">type</span> <span style="color:#a6e22e">Poet</span> <span style="color:#f92672">=</span> {
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">interface</span> <span style="color:#a6e22e">Poet</span> {
 </span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">born</span>: <span style="color:#66d9ef">number</span>
 </span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">name</span>: <span style="color:#66d9ef">string</span>
 </span></span><span style="display:flex;"><span>}
@@ -1797,7 +1792,7 @@ code.has-jax {
 </span></span><span style="display:flex;"><span><span style="color:#66d9ef">const</span> <span style="color:#a6e22e">missing</span>: <span style="color:#66d9ef">Book</span> <span style="color:#f92672">=</span> {
 </span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">pages</span>: <span style="color:#66d9ef">80</span>
 </span></span><span style="display:flex;"><span>};
-</span></span></code></pre></div><p>同样地，如果在接口中定义的属性的类型即使包含了<code>undefined</code>的联合，如果在初始化的时候没有为该属性提供初始值，也会出现编译错误：</p>
+</span></span></code></pre></div><p>如同对象类型定义，<font color="#de7802">若在接口中定义的属性的值类型是包含了<code>undefined</code>的联合类型，如果在初始化的时候没有为该属性提供初始值，也会出现编译错误</font>：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span><span style="color:#66d9ef">interface</span> <span style="color:#a6e22e">Book</span> {
 </span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">author?</span>: <span style="color:#66d9ef">string</span>;
 </span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">pages</span>: <span style="color:#66d9ef">number</span> <span style="color:#f92672">|</span> <span style="color:#66d9ef">undefined</span>;
@@ -1855,7 +1850,7 @@ code.has-jax {
 <li>方法不能声明为<code>readonly</code>，但属性可以。</li>
 <li>同名<font color="#de7802">接口合并时，认为方法和属性是不同的</font>（需要特别注意）。</li>
 </ul>
-<p><code>TypeScript</code>的未来版本可能会添加某些选项，对方法和属性函数之间的差异进行更严格地区分。目前，推荐依照如下原则即可：</p>
+<p><code>TypeScript</code>的未来版本可能会添加某些选项，对方法和属性函数之间的差异进行更严格地区分。目前，推荐按照如下原则：</p>
 <ul>
 <li>如果知道底层函数可能会引用<code>this</code>，建议使用方法<code>method</code>。</li>
 <li>其它情况则建议使用属性。</li>
@@ -1976,7 +1971,7 @@ code.has-jax {
 </span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    [<span style="color:#a6e22e">i</span>: <span style="color:#66d9ef">string</span>]<span style="color:#f92672">:</span> <span style="color:#66d9ef">string</span>;
 </span></span><span style="display:flex;"><span>}
 </span></span></code></pre></div><h3 id="nested-interfaces">Nested Interfaces</h3>
-<p>如同对象类型可以嵌套其他对象类型作为属性的类型一样，接口类型也可以拥有本身就是接口类型（或对象类型）的属性。</p>
+<p>如同对象类型可以嵌套其他对象类型作为属性值的类型一样，接口类型也可以拥有本身就是接口类型（或对象类型）的属性。下面定义的接口<code>Novel</code>，它的属性<code>setting</code>的值类型是<code>Setting</code>：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span><span style="color:#66d9ef">interface</span> <span style="color:#a6e22e">Novel</span> {
 </span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">author</span><span style="color:#f92672">:</span> { <span style="color:#a6e22e">name</span>: <span style="color:#66d9ef">string</span>; };
 </span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">setting</span>: <span style="color:#66d9ef">Setting</span>;
@@ -2203,7 +2198,8 @@ code.has-jax {
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span><span style="color:#66d9ef">class</span> <span style="color:#a6e22e">WithValue</span> {
 </span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">immediate</span> <span style="color:#f92672">=</span> <span style="color:#ae81ff">0</span>; <span style="color:#75715e">// Ok
 </span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#a6e22e">later</span>: <span style="color:#66d9ef">number</span>; <span style="color:#75715e">// Ok (set in the constructor)
-</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#a6e22e">mayBeUndefined</span>: <span style="color:#66d9ef">number</span> <span style="color:#f92672">|</span> <span style="color:#66d9ef">undefined</span>; <span style="color:#75715e">// Ok (allowed to be undefined)，这与object有区别
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#75715e">// 类中的属性值的类型包含了undefined与对象类型和接口类型不同
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#a6e22e">mayBeUndefined</span>: <span style="color:#66d9ef">number</span> <span style="color:#f92672">|</span> <span style="color:#66d9ef">undefined</span>; <span style="color:#75715e">// Ok (allowed to be undefined)，这与Object有区别
 </span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#a6e22e">unused</span>: <span style="color:#66d9ef">number</span>;
 </span></span><span style="display:flex;"><span>    
 </span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">constructor</span>() {
@@ -2212,10 +2208,9 @@ code.has-jax {
 </span></span><span style="display:flex;"><span>}
 </span></span><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span><span style="color:#75715e">// 编译错误: Property &#39;unused&#39; has no initializer and is not definitely assigned in the constructor.
-</span></span></span></code></pre></div><p>上面示例代码中，与对象类型有很大区别，对于属性的类型包含了<code>undefined</code>类型来说，在构造函数中可以初始化。如果没有严格的初始化检查，类实例可能会被允许访问一个可能为<code>undefined</code>的值，即使类型系统规定不能这样做。</p>
+</span></span></span></code></pre></div><p>对于<font color=red>在类中属性值类型包含了<code>undefined</code>类型来说，与对象类型以及接口类型有很大区别，在构造函数中可以初始化该属性，也可以不初始化</font>。如果没有严格的初始化检查，类实例可能会被允许访问一个可能为<code>undefined</code>的值，即使类型系统规定不能这样做。</p>
 <h4 id="definitely-assigned-properties">Definitely assigned properties</h4>
-<p>尽管严格的初始检查在多数情况下是很有用的。但在某些情况下，可能会遇到故意在类构造函数之后取消检查类的某个属性的情况。</p>
-<p>如果<font color="#de7802">绝对确定某个属性不需要应用严格初始化检查</font>，可以在其名称后添加一个<code>!</code>来禁用属性检查。这样做可以向<code>TypeScript</code>申明，该属性将在首次使用前一定会被赋值，不会是<code>undefined</code>值。</p>
+<p>尽管严格的初始检查在多数情况下是很有用的。但在某些情况下，可能会遇到故意在类构造函数之后取消检查类的某个属性的情况。如果<font color="#de7802">绝对确定某个属性不需要应用严格初始化检查</font>，可以在其名称后添加一个<code>!</code>来禁用属性检查。这样做可以向<code>TypeScript</code>申明，该属性将在首次使用前一定会被赋值，不会是<code>undefined</code>值。</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span><span style="color:#66d9ef">class</span> <span style="color:#a6e22e">ActivitiesQueue</span> {
 </span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">pending</span><span style="color:#f92672">!:</span> <span style="color:#66d9ef">string</span>[]; <span style="color:#75715e">// Ok
 </span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>  
@@ -2264,7 +2259,7 @@ code.has-jax {
 </span></span><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span><span style="color:#75715e">// 只读属性不能重新被赋值
 </span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#a6e22e">quote</span>.<span style="color:#a6e22e">text</span> <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;Hello world&#34;</span>;
-</span></span></code></pre></div><p>与其它属性相比，<font color=red>声明为只读且初始值为基础类型字面量的属性有一个特性：它们会被推断为其值的字面量类型，而不是基本类型</font>，<span style="background:rgba(255, 183, 139, 0.55)">这样的属性在类构造函数中也不能重新赋值</span>，这与<code>const</code>断言相似。</p>
+</span></span></code></pre></div><p>与其它属性相比，<font color=red>声明为只读且同时初始化为基础类型字面量的属性有一个特性：它们会被推断为其值的字面量类型，而不是基本类型</font>，<span style="background:rgba(255, 183, 139, 0.55)">这样的属性在类构造函数中也不能重新赋值</span>，这与<code>const</code>断言相似。</p>
 <p><code>TypeScript</code>对于这种激进的字面量初始类型窄化感觉良好，因为知道其值以后不会改变。类似于使用<code>const</code>断言定义变量会比<code>let</code>变量使用更窄的类型。</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span><span style="color:#66d9ef">class</span> <span style="color:#a6e22e">RandomQuote</span> {
 </span></span><span style="display:flex;"><span>    <span style="color:#75715e">// 显式声明为string类型，在初始化器中可以被修改
@@ -2389,6 +2384,7 @@ code.has-jax {
 </span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">this</span>.<span style="color:#a6e22e">subject</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">subject</span>;
 </span></span><span style="display:flex;"><span>    }
 </span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span><span style="color:#66d9ef">class</span> <span style="color:#a6e22e">OnlineLesson</span> <span style="color:#66d9ef">extends</span> <span style="color:#a6e22e">Lesson</span> {
 </span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">url</span>: <span style="color:#66d9ef">string</span>;
 </span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">constructor</span>(<span style="color:#a6e22e">subject</span>: <span style="color:#66d9ef">string</span>, <span style="color:#a6e22e">url</span>: <span style="color:#66d9ef">string</span>) {
@@ -2396,6 +2392,7 @@ code.has-jax {
 </span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">this</span>.<span style="color:#a6e22e">url</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">url</span>;
 </span></span><span style="display:flex;"><span>    }
 </span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span><span style="color:#66d9ef">let</span> <span style="color:#a6e22e">lesson</span>: <span style="color:#66d9ef">Lesson</span>;
 </span></span><span style="display:flex;"><span><span style="color:#a6e22e">lesson</span> <span style="color:#f92672">=</span> <span style="color:#66d9ef">new</span> <span style="color:#a6e22e">Lesson</span>(<span style="color:#e6db74">&#34;coding&#34;</span>); <span style="color:#75715e">// Ok
 </span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#a6e22e">lesson</span> <span style="color:#f92672">=</span> <span style="color:#66d9ef">new</span> <span style="color:#a6e22e">OnlineLesson</span>(<span style="color:#e6db74">&#34;coding&#34;</span>, <span style="color:#e6db74">&#34;oreilly.com&#34;</span>); <span style="color:#75715e">// Ok
@@ -2404,34 +2401,37 @@ code.has-jax {
 </span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>
 </span></span><span style="display:flex;"><span><span style="color:#75715e">// 出现编译错误
 </span></span></span><span style="display:flex;"><span><span style="color:#75715e">// Property &#39;url&#39; is missing in type &#39;Lesson&#39; but required in type &#39;OnlineLesson&#39;. 
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">// 父类中缺少子类中的成员url
 </span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#a6e22e">online</span> <span style="color:#f92672">=</span> <span style="color:#66d9ef">new</span> <span style="color:#a6e22e">Lesson</span>(<span style="color:#e6db74">&#34;coding&#34;</span>);
-</span></span></code></pre></div><p>根据<code>TypeScript</code>的结构类型，如果子类上的所有成员都已经存在于具有相同类型的基类中，那么仍允许使用基类的实例来代替子类。</p>
+</span></span></code></pre></div><p>根据<code>TypeScript</code>的结构类型，如果子类上的所有成员都已经存在于具有相同类型的基类中，那么仍允许使用基类的实例来代替子类。下面示例中，子类定义的可选类型，因此赋值是允许的：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span><span style="color:#66d9ef">class</span> <span style="color:#a6e22e">PastGrades</span> {
 </span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">grades</span>: <span style="color:#66d9ef">number</span>[] <span style="color:#f92672">=</span> [];
 </span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span><span style="color:#66d9ef">class</span> <span style="color:#a6e22e">LabeledPastGrades</span> <span style="color:#66d9ef">extends</span> <span style="color:#a6e22e">PastGrades</span> {
 </span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">label?</span>: <span style="color:#66d9ef">string</span>;
 </span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span><span style="color:#66d9ef">let</span> <span style="color:#a6e22e">subClass</span>: <span style="color:#66d9ef">LabeledPastGrades</span>;
 </span></span><span style="display:flex;"><span><span style="color:#a6e22e">subClass</span> <span style="color:#f92672">=</span> <span style="color:#66d9ef">new</span> <span style="color:#a6e22e">LabeledPastGrades</span>(); <span style="color:#75715e">// Ok 
 </span></span></span><span style="display:flex;"><span><span style="color:#75715e">// 因为子类扩展父类时，其自定义属性时可选的，
 </span></span></span><span style="display:flex;"><span><span style="color:#75715e">// 所以父类相当于拥有子类的所有属性
 </span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#a6e22e">subClass</span> <span style="color:#f92672">=</span> <span style="color:#66d9ef">new</span> <span style="color:#a6e22e">PastGrades</span>(); <span style="color:#75715e">// Ok
 </span></span></span></code></pre></div><h3 id="overridden-constructors">Overridden Constructors</h3>
-<p>与普通<code>JavaScript</code> 一样，<code>TypeScript</code>并不要求子类定义自己的构造函数。没有自定义构造函数的子类会隐式地使用基类的构造函数。</p>
-<p>在<code>JavaScript</code>中，如果子类声明了自己的构造函数，那么它必须通过<code>super</code>关键字调用基类的构造函数。子类构造函数可以声明任何参数，而无需考虑基类的要求。<code>TypeScript</code>的类型检查器将确保对基类构造函数的调用使用了正确的参数。</p>
+<p>与<code>JavaScript</code> 一样，<code>TypeScript</code>并不要求子类定义自己的构造函数。没有自定义构造函数的子类会隐式地使用基类的构造函数。在<code>JavaScript</code>中，如果子类声明了自己的构造函数，那么它必须通过<code>super</code>关键字调用基类的构造函数。子类构造函数可以声明任何参数，而无需考虑基类的要求。<code>TypeScript</code>的类型检查器将确保对基类构造函数的调用使用了正确的参数。</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span><span style="color:#66d9ef">class</span> <span style="color:#a6e22e">GradeAnnouncer</span> {
 </span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">message</span>: <span style="color:#66d9ef">string</span>;
 </span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">constructor</span>(<span style="color:#a6e22e">grade</span>: <span style="color:#66d9ef">number</span>) {
 </span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">this</span>.<span style="color:#a6e22e">message</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">grade</span> <span style="color:#f92672">&gt;=</span> <span style="color:#ae81ff">65</span> <span style="color:#f92672">?</span> <span style="color:#e6db74">&#34;Maybe next time...&#34;</span> <span style="color:#f92672">:</span> <span style="color:#e6db74">&#34;You pass!&#34;</span>;
 </span></span><span style="display:flex;"><span>    }
 </span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span><span style="color:#66d9ef">class</span> <span style="color:#a6e22e">PassingAnnouncer</span> <span style="color:#66d9ef">extends</span> <span style="color:#a6e22e">GradeAnnouncer</span> {
 </span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">constructor</span>() {
 </span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">super</span>(<span style="color:#ae81ff">100</span>);
 </span></span><span style="display:flex;"><span>    }
 </span></span><span style="display:flex;"><span>}
-</span></span></code></pre></div><p>根据JavaScript的规则，子类的构造器在使用this或super之前必须调用基类的构造器。如果在调用用<code>super()</code>之前使用this或super，会出现编译错误：</p>
+</span></span></code></pre></div><p>根据<code>JavaScript</code>的规则，子类的构造器在使用<code>this</code>或<code>super</code>之前必须调用基类的构造器。如果在调用<code>super()</code>之前使用<code>this</code>或<code>super</code>会出现编译错误：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span><span style="color:#66d9ef">class</span> <span style="color:#a6e22e">GradesTally</span> {
 </span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">grades</span>: <span style="color:#66d9ef">number</span>[] <span style="color:#f92672">=</span> [];
 </span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">addGrades</span>(...<span style="color:#a6e22e">grades</span>: <span style="color:#66d9ef">number</span>[]) {
@@ -2510,8 +2510,8 @@ code.has-jax {
 </span></span><span style="display:flex;"><span>}
 </span></span></code></pre></div><p>抽象类不能立即实例化，非抽象类才能被实例化。</p>
 <h2 id="member-visibility">Member Visibility</h2>
-<p><code>JavaScript</code>可以在类成员名称的开头加上<code>#</code>，将其标记为<code>private</code>成员。私有类成员只能被该类的实例访问。如果类外的代码区域试图访问私有方法或属性，<code>JavaScript</code>运行时会抛出错误，从而强制执行这种私有性。</p>
-<p><code>TypeScript</code>对类的可见性的支持早于<code>JavaScript</code>，在<code>TypeScript</code>不仅支持<code>#</code>形式的私有类成员，也允许对类方法和属性（仅存在于类型系统中）的隐私定义进行略微细微的调整。<code>TypeScript</code>中成员可见性是通过在类成员声明的名称前添加以下关键字来实现的：</p>
+<p><code>JavaScript</code>可以在类成员名称的开头加上<code>#</code>，将其标记为<code>private</code>成员。私有类成员只能被该类的实例访问。如果类外的代码试图访问私有方法或属性，<code>JavaScript</code>运行时会抛出错误，从而强制执行这种私有性。</p>
+<p><code>TypeScript</code>对类的可见性的支持早于<code>JavaScript</code>，在<code>TypeScript</code>不仅支持<code>#</code>形式的私有类成员，也允许对类方法和属性（仅存在于类型系统中）的隐私定义进行细微的调整。<code>TypeScript</code>中成员可见性是通过在类成员声明的名称前添加以下关键字来实现的：</p>
 <ul>
 <li><code>public</code>(默认的)：允许在任何地方使用。</li>
 <li><code>protected</code>: 只允许在类本身或其子类中使用。</li>
