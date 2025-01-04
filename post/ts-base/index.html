@@ -241,7 +241,7 @@ code.has-jax {
     <i class="fa fa-file-word-o"></i>
 </span>
 <span class="post-meta-item-text">字数: </span>
-<span class="leancloud-visitors-count">58147</span>
+<span class="leancloud-visitors-count">58173</span>
 &nbsp; | &nbsp;
 <span class="post-meta-item-icon">
     <i class="fa fa-coffee"></i>
@@ -2144,7 +2144,7 @@ code.has-jax {
 <p>除了类型检查，<code>TypeScript</code>还强调了它的转换器（<code>transpiler</code>），类就是一个常见的例子。<code>TypeScript</code>中的类只是支持所有<code>JavaScript</code>语言特性的众多特性之一。<code>TypeScript</code>既不鼓励也不反对类的使用或任何其它流行的<code>JavaScript</code>模式。</p>
 </blockquote>
 <h2 id="class-methods">Class Methods</h2>
-<p><code>TypeScript</code>对类中方法的理解与对独立函数的理解相同。<font color="#de7802">除非显式给出类型或默认值，否则方法形参的类型被编译器推断为</font><code>any</code>。如果编译设置的是严格模式，形参不允许省略类型标注。调用方法时<font color="#0070c0">需要给出正确的实参数量</font>，如果函数不是递归的，返回类型通常可以被编译器推断出来。</p>
+<p><code>TypeScript</code>对类中方法的理解与对独立函数的理解相同。<font color="#de7802">除非显式地标注类型或给出默认值，否则方法形参的类型被推断为</font><code>any</code>。如果编译设置的是严格模式，形参不允许省略类型标注。调用方法时<font color="#0070c0">需要给出正确的实参数量</font>和正确的类型，否则会出现编译错误。如果函数不是递归的，返回类型通常可以被编译器推断出来。</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span><span style="color:#66d9ef">class</span> <span style="color:#a6e22e">Greeter</span> {
 </span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">greet</span>(<span style="color:#a6e22e">name</span>: <span style="color:#66d9ef">string</span>) {
 </span></span><span style="display:flex;"><span>        <span style="color:#a6e22e">console</span>.<span style="color:#a6e22e">log</span>(<span style="color:#e6db74">`</span><span style="color:#e6db74">${</span><span style="color:#a6e22e">name</span><span style="color:#e6db74">}</span><span style="color:#e6db74">, do your stuff!`</span>);
@@ -2163,7 +2163,7 @@ code.has-jax {
 </span></span><span style="display:flex;"><span><span style="color:#75715e">// 执行结果
 </span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#a6e22e">As</span> <span style="color:#a6e22e">I</span> <span style="color:#a6e22e">always</span> <span style="color:#a6e22e">say</span>: <span style="color:#66d9ef">take</span> <span style="color:#a6e22e">chances</span>, <span style="color:#a6e22e">make</span> <span style="color:#a6e22e">mistakes</span>, <span style="color:#66d9ef">get</span> <span style="color:#a6e22e">messy</span><span style="color:#f92672">!</span>
 </span></span></code></pre></div><h2 id="class-properties">Class Properties</h2>
-<p>在<code>TypeScript</code>中，若要读取或写入类的属性，必须在类中明确声明。类属性的声明语法与接口相同，名称后跟一个类型标注。不同于<code>JavaScrpit</code>，<code>TypeScript</code><font color="#de7802">不会试图通过构造函数中的赋值来推断类中可能存在的成员</font>。</p>
+<p>在<code>TypeScript</code>中，若要读取或写入类的属性，必须在类中明确声明。类属性声明语法与接口相同，名称后跟一个类型标注。不同于<code>JavaScrpit</code>，<code>TypeScript</code><font color="#de7802">不会试图通过构造函数中的赋值来推断类中可能存在的成员</font>。</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span><span style="color:#66d9ef">class</span> <span style="color:#a6e22e">FieldTrip</span> {
 </span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">destination</span>: <span style="color:#66d9ef">string</span>;
 </span></span><span style="display:flex;"><span>    
@@ -2191,14 +2191,17 @@ code.has-jax {
 </span></span><span style="display:flex;"><span><span style="color:#75715e">// 编译错误:  Property &#39;nonexistent&#39; does not exist on type &#39;FieldTrip&#39;.
 </span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#a6e22e">console</span>.<span style="color:#a6e22e">log</span>(<span style="color:#a6e22e">trip</span>.<span style="color:#a6e22e">nonexistent</span>)
 </span></span></code></pre></div><h3 id="function-properties">Function Properties</h3>
-<p>下面<code>WithMethod</code>类定义了一个<code>myMethod</code>方法，所有实例都可以引用该方法。<strong><font color="#de7802">这种方式定义的方法，不会为每个类的实例创建一个副本</font></strong>：</p>
+<p>下面<code>WithMethod</code>类定义了一个<code>myMethod</code>方法，所有<code>WithMethod</code>的实例都可以引用该方法。<strong><font color="#de7802">这种方式定义的方法，不会为每个类的实例创建一个副本</font></strong>：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span><span style="color:#66d9ef">class</span> <span style="color:#a6e22e">WithMethod</span> {
 </span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">myMethod() {</span>
 </span></span><span style="display:flex;"><span>        <span style="color:#75715e">//
 </span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    }
 </span></span><span style="display:flex;"><span>}
-</span></span><span style="display:flex;"><span><span style="color:#75715e">// 执行结果为true
-</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#a6e22e">console</span>.<span style="color:#a6e22e">log</span>(<span style="color:#66d9ef">new</span> <span style="color:#a6e22e">WithMethod</span>().<span style="color:#a6e22e">myMethod</span> <span style="color:#f92672">===</span> <span style="color:#66d9ef">new</span> <span style="color:#a6e22e">WithMethod</span>().<span style="color:#a6e22e">myMethod</span>) 
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">console</span>.<span style="color:#a6e22e">log</span>(<span style="color:#66d9ef">new</span> <span style="color:#a6e22e">WithMethod</span>().<span style="color:#a6e22e">myMethod</span> <span style="color:#f92672">===</span> <span style="color:#66d9ef">new</span> <span style="color:#a6e22e">WithMethod</span>().<span style="color:#a6e22e">myMethod</span>) 
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">// 执行结果
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">true</span>
 </span></span></code></pre></div><p>另一种定义方法的语法是声明一个属性，其值恰好是一个函数。<span style="background:rgba(255, 183, 139, 0.55)">这种方式将会为类的每个实例创建一个新函数</span>，这对于箭头函数可能很有用，因为箭头函数的<code>this</code>作用域应始终指向类的当前实例。</p>
 <p>下面<code>WithProperty</code>类定义了单个属性<code>myProperty</code>，它的类型为<code>() =&gt; void</code>。<font color="#de7802">每个类的实例都会创建一个新副本</font>，新创建的类实例比较该属性时总是返回<code>false</code>：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span><span style="color:#66d9ef">class</span> <span style="color:#a6e22e">WithProperty</span> {
@@ -2210,8 +2213,9 @@ code.has-jax {
 </span></span><span style="display:flex;"><span>    }
 </span></span><span style="display:flex;"><span>}
 </span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span><span style="color:#75715e">// false
-</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#a6e22e">console</span>.<span style="color:#a6e22e">log</span>(<span style="color:#66d9ef">new</span> <span style="color:#a6e22e">WithProperty</span>().<span style="color:#a6e22e">myProperty</span> <span style="color:#f92672">===</span> <span style="color:#66d9ef">new</span> <span style="color:#a6e22e">WithProperty</span>().<span style="color:#a6e22e">myProperty</span>) 
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">console</span>.<span style="color:#a6e22e">log</span>(<span style="color:#66d9ef">new</span> <span style="color:#a6e22e">WithProperty</span>().<span style="color:#a6e22e">myProperty</span> <span style="color:#f92672">===</span> <span style="color:#66d9ef">new</span> <span style="color:#a6e22e">WithProperty</span>().<span style="color:#a6e22e">myProperty</span>) 
+</span></span><span style="display:flex;"><span><span style="color:#75715e">// 执行结果
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">false</span>
 </span></span></code></pre></div><p>属性函数的形参和返回值类型与独立函数相同。因为，它们只是赋给类成员的值，而该值恰好是一个函数而已，所以并没有什么特殊。</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span><span style="color:#66d9ef">class</span> <span style="color:#a6e22e">WithPropertyParameters</span> {
 </span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">takesParameters</span> <span style="color:#f92672">=</span> (<span style="color:#a6e22e">input</span>: <span style="color:#66d9ef">boolean</span>) <span style="color:#f92672">=&gt;</span> <span style="color:#a6e22e">input</span> <span style="color:#f92672">?</span> <span style="color:#e6db74">&#34;Yes&#34;</span> <span style="color:#f92672">:</span> <span style="color:#e6db74">&#34;No&#34;</span>;
