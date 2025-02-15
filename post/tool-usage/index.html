@@ -241,13 +241,13 @@ code.has-jax {
     <i class="fa fa-file-word-o"></i>
 </span>
 <span class="post-meta-item-text">字数: </span>
-<span class="leancloud-visitors-count">3376</span>
+<span class="leancloud-visitors-count">3660</span>
 &nbsp; | &nbsp;
 <span class="post-meta-item-icon">
     <i class="fa fa-coffee"></i>
 </span>
 <span class="post-meta-item-text">阅读: </span>
-<span class="leancloud-visitors-count">7 分钟</span>
+<span class="leancloud-visitors-count">8 分钟</span>
 </span>
       </div>
     </header>
@@ -403,7 +403,61 @@ code.has-jax {
 <h1 id="pandorabox">PandoraBox</h1>
 <p>在14.09版本中，如果要设置端口转发，在左侧的网络&mdash;&gt;防火墙&mdash;&gt;端口转发中添加即可。如果要固定IP可以到左侧的网络&mdash;&gt;DHCP/DNS&mdash;&gt;静态地址分配中添加。</p>
 <p><a href="https://www.cfos.de/zh-cn/cfos-personal-net/port-forwarding/pandorabox-sdk-version-14-09.htm#">https://www.cfos.de/zh-cn/cfos-personal-net/port-forwarding/pandorabox-sdk-version-14-09.htm#</a></p>
-
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span><span style="color:#66d9ef">private</span> <span style="color:#66d9ef">func</span> <span style="color:#a6e22e">chunkedToFile</span>(dict: [AnyHashable: Any], outputStream: OutputStream, chunkSize: Int) {
+</span></span><span style="display:flex;"><span>    outputStream.open()
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">defer</span> { outputStream.close() }
+</span></span><span style="display:flex;"><span>    
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">// 手动写入JSON起始符号</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">let</span> writeStr = { (str: String) <span style="color:#66d9ef">in</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">guard</span> <span style="color:#66d9ef">let</span> data = str.data(using: .utf8) <span style="color:#66d9ef">else</span> {
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">return</span>
+</span></span><span style="display:flex;"><span>        }
+</span></span><span style="display:flex;"><span>        data.withUnsafeBytes { ptr <span style="color:#66d9ef">in</span>
+</span></span><span style="display:flex;"><span>            outputStream.write(ptr.bindMemory(to: UInt8.<span style="color:#66d9ef">self</span>).baseAddress!, maxLength: data.count)
+</span></span><span style="display:flex;"><span>        }
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">// JSON开始</span>
+</span></span><span style="display:flex;"><span>    writeStr(<span style="color:#e6db74">&#34;{&#34;</span>)
+</span></span><span style="display:flex;"><span>    
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">let</span> keys = Array(dict.keys)
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">for</span> (index, key) <span style="color:#66d9ef">in</span> keys.enumerated() {
+</span></span><span style="display:flex;"><span>        autoreleasepool {
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">guard</span> <span style="color:#66d9ef">let</span> keyStr = key <span style="color:#66d9ef">as</span>? String,<span style="color:#66d9ef">let</span> value = dict[key] <span style="color:#66d9ef">else</span> {
+</span></span><span style="display:flex;"><span>                <span style="color:#66d9ef">return</span>
+</span></span><span style="display:flex;"><span>            }
+</span></span><span style="display:flex;"><span>            <span style="color:#75715e">// 先写入Key</span>
+</span></span><span style="display:flex;"><span>            writeStr(<span style="color:#e6db74">&#34;</span><span style="color:#ae81ff">\&#34;</span><span style="color:#e6db74">\(</span>keyStr<span style="color:#e6db74">)</span><span style="color:#ae81ff">\&#34;</span><span style="color:#e6db74">:&#34;</span>)
+</span></span><span style="display:flex;"><span>            
+</span></span><span style="display:flex;"><span>            <span style="color:#75715e">// 再写入Value（仅处理可直接序列化的部分）</span>
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">if</span> JSONSerialization.isValidJSONObject([value]),
+</span></span><span style="display:flex;"><span>               <span style="color:#66d9ef">let</span> data = <span style="color:#66d9ef">try</span>? JSONSerialization.data(withJSONObject: value, options: []) {
+</span></span><span style="display:flex;"><span>                outputStream.write([UInt8](data), maxLength: data.count)
+</span></span><span style="display:flex;"><span>            } <span style="color:#66d9ef">else</span> {
+</span></span><span style="display:flex;"><span>                writeStr(<span style="color:#e6db74">&#34;null&#34;</span>)
+</span></span><span style="display:flex;"><span>            }
+</span></span><span style="display:flex;"><span>            <span style="color:#75715e">// 非最后一个元素添加逗号</span>
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">if</span> index <span style="color:#f92672">!=</span> keys.count <span style="color:#f92672">-</span> <span style="color:#ae81ff">1</span> {
+</span></span><span style="display:flex;"><span>                writeStr(<span style="color:#e6db74">&#34;,&#34;</span>)
+</span></span><span style="display:flex;"><span>            }
+</span></span><span style="display:flex;"><span>        }
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">// JSON结束</span>
+</span></span><span style="display:flex;"><span>    writeStr(<span style="color:#e6db74">&#34;}&#34;</span>)
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span>  <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">override</span> <span style="color:#66d9ef">var</span> canGoBack: Bool {
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">guard</span> webView.canGoBack <span style="color:#66d9ef">else</span> {
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">return</span> <span style="color:#66d9ef">false</span>
+</span></span><span style="display:flex;"><span>        }
+</span></span><span style="display:flex;"><span>        <span style="color:#75715e">// 若返回列表中只有一个，并且url和initialURL不同，则认为是重定向的url，此时不该显示返回按钮，否则点返回按钮，无法真正返回</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#75715e">// 这个结论只是个人观察出来的</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">if</span> webView?.backForwardList.backList.count == <span style="color:#ae81ff">1</span>,
+</span></span><span style="display:flex;"><span>              <span style="color:#66d9ef">let</span> firstItem = webView?.backForwardList.backList.first,
+</span></span><span style="display:flex;"><span>              firstItem.url <span style="color:#f92672">!=</span> firstItem.initialURL {
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">return</span> <span style="color:#66d9ef">false</span>
+</span></span><span style="display:flex;"><span>        }
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">return</span> <span style="color:#66d9ef">true</span>
+</span></span><span style="display:flex;"><span>    }
+</span></span></code></pre></div>
     </div>
     <footer class="post-footer">
         
