@@ -190,55 +190,6 @@ error build: &amp;#39;/Users/xxx/Library/Developer/Xcode/DerivedData/xxx-fjdqujf
     </entry>
     
      <entry>
-        <title>ArkTs</title>
-        <url>https://iihui.github.io/post/arkts-base/</url>
-        <categories>
-          <category>ts</category>
-        </categories>
-        <tags>
-          <tag>ts</tag>
-        </tags>
-        <content type="html"> 基本知识 类型  ArkTS是一种静态类型语言，所有数据的类型都必须在编译时确定，但如果一个变量或常量的声明包含了初始值，那么开发者就不需要显式指定其类型。
- void类型 类型void只有一个值，也是void。void类型用于指定函数没有返回值，不能用于普通变量的类型标注。因为void是引用类型，所以也可用于泛型类型参数。
-class Class&amp;lt;T&amp;gt; {  //... } let instance: Class &amp;lt;void&amp;gt; Object类型 大写开头的Object是一个内置interface，它描述所有对象都具有的属性和方法。Object类型可以接受任何类型的赋值，但只能赋值给Object或any类型。Object类型不太安全，因为它允许原始类型也可以赋值给它。Object类型是所有引用类型的基类型。任何值，包括基本类型的值（它们会被自动装箱），都可以直接被赋给Object类型的变量。
-let obj: Object; obj = { name: &amp;#39;John&amp;#39;, age: 25 }; // 合法 obj = [1, 2, 3]; // 合法 obj = &amp;#39;hello&amp;#39;; // 合法 obj = 123; // 合法 obj = true; // 合法 小写开头的object 类型表示非原始类型，即除string、number、bigint、boolean、symbol、null 和undefined之外的任何类型。任何对象类型都可以赋值给object类型，但是object类型只能赋值给object和any类型。object类型可以用来表示不确定的输入参数或返回值，或者用来进行疲劳性检查。
-语句 使用for-of语句可遍历数组或字符串：
-for (forVar of expression) {  statements }   const arr = [12, 31, 98956] for (const item of arr) {  console.log(item); }  const str = &amp;#34;Hi&amp;#34;; for (const item of str) {  console.log(item); } 语句try用于捕获或处理异常，并支持finally语句：
-function processData(s: string) {  let error: Error | null = null;   try {  console.log(&amp;#39;Data processed: &amp;#39; &#43; s);  // ...  // 可能发生异常的语句  // ...  } catch (e) {  error = e as Error;  // ...  // 异常处理  // ...  } finally {  if (error != null) {  console.log(`Error caught: input=&amp;#39;${s}&amp;#39;, message=&amp;#39;${error.message}&amp;#39;`);  }  } } 函数 不需要返回值的函数的返回类型可以显式标注为void类型或省略返回类型标注，在这类函数中不需要返回语句。下面示例代码中两种函数声明方式都是有效的：
-function hi1() {  console.log(&amp;#39;hi&amp;#39;); }  function hi2(): void {  console.log(&amp;#39;hi&amp;#39;); } 在函数中定义的变量和对象实例仅可以在函数内部访问，外部不能访问。如果函数中定义的变量与外部作用域中已有实例同名，则函数内的局部变量定义将覆盖外部定义。
-箭头函数 函数可以定义为箭头函数（箭头函数又被称为Lambda函数），例如：
-let sum = (x: number, y: number): number =&amp;gt; {  return x &#43; y; } 箭头函数的返回类型标注可以省略。若箭头函数省略返回类型标注时，返回类型通常通过函数体推断。表达式可以指定为箭头函数，使表达更简短，因此以下两种表达方式是等价的：
-let sum1 = (x: number, y: number) =&amp;gt; {  return x &#43; y; }  let sum2 = (x: number, y: number) =&amp;gt; x &#43; y 闭包 闭包是由函数及声明该函数的环境组合而成的，该环境包含了这个闭包创建时作用域内的任何局部变量。在下面示例代码中，ff函数返回了一个闭包，它捕获了count变量，每次调用z，count的值会被保留并递增。
-function ff(): () =&amp;gt; number {  let count = 0;  let g = (): number =&amp;gt; {  count&#43;&#43;;  return count;  };  return g; }  let z = ff(); let ret = z(); console.log(ret); ret = z(); console.log(ret);  // 执行结果 1 2 函数重载 ArkTs可以声明函数重载，重载可以指定函数的不同调用方式。即为同一个函数写入多个同名但签名不同的函数头，函数实现紧随其后。
-function foo(x: number): void; /* 第一个函数定义 */ function foo(x: string): void; /* 第二个函数定义 */ function foo(x: number | string): void { /* 函数实现 */ }  foo(123); // OK，使用第一个定义 foo(&amp;#39;aa&amp;#39;); // OK，使用第二个定义 类 字段 为了减少运行时的错误和获得更好的执行性能，ArkTS要求所有字段在声明时或者构造函数中显式初始化。这和标准TS中的strictPropertyInitialization模式一样。
-class Person {  name: string; // undefined   setName(n:string): void {  this.name = n;  }   getName(): string {  // 开发者使用&amp;#34;string&amp;#34;作为返回类型，这隐藏了name可能为&amp;#34;undefined&amp;#34;的事实。  // 更合适的做法是将返回类型标注为&amp;#34;string | undefined&amp;#34;，以告诉开发者这个API所有可能的返回值。  return this.name;  } }  let jack = new Person(); // 假设代码中没有对name赋值，例如调用&amp;#34;jack.setName(&amp;#39;Jack&amp;#39;)&amp;#34; jack.getName().length; // 运行时异常：name is undefined 继承 继承类继承基类的字段和方法，但不继承构造函数。继承类可以新增定义自有的字段和方法，也可以覆盖其基类定义的方法。基类也称为父类或超类，继承类也称为派生类或子类。
-class Person {  name: string = &amp;#39;&amp;#39;;  private _age = 0;  get age(): number {  return this._age;  } }  class Employee extends Person {  salary: number = 0;  calculateTaxes(): number {  return this.salary * 0.42;  } } 包含implements子句的类必须实现列出的接口中定义的所有方法，但使用默认实现定义的方法除外。
-interface DateInterface {  now(): string; } class MyDate implements DateInterface {  now(): string {  // 在此实现  return &amp;#39;now&amp;#39;;  } } 子类可以重写其父类中定义的方法的实现。但需要注意的是，重写的方法**必须具有与原始方法相同的参数类型和相同或派生的返回类型**。
-class RectangleSize {  // ...  area(): number {  // 实现  return 0;  } }  class Square extends RectangleSize {  private side: number = 0;  area(): number {  return this.side * this.side;  } } Record类型的对象字面量 泛型Record&amp;lt;K, V&amp;gt;用于将类型（键类型）的属性映射到另一个类型（值类型）。常用对象字面量来初始化该类型的值：
-let map: Record&amp;lt;string, number&amp;gt; = {  &amp;#39;John&amp;#39;: 25,  &amp;#39;Mary&amp;#39;: 21, }  map[&amp;#39;John&amp;#39;]; // 25 类型K可以是字符串类型或数值类型，而V可以是任何类型。
-interface PersonInfo {  age: number;  salary: number; }  let map: Record&amp;lt;string, PersonInfo&amp;gt; = {  &amp;#39;John&amp;#39;: { age: 25, salary: 10},  &amp;#39;Mary&amp;#39;: { age: 21, salary: 20} } 抽象类 带有修饰符abstract的类称为抽象类。抽象类可用于表示一组更具体的概念所共有的概念。如果尝试创建抽象类的实例，则会发生编译时的错误：
-abstract class X {  field: number;  constructor(p: number) {  this.field = p;  } }  let x = new X(666) //编译时错误：不能创建抽象类的具体实例 抽象类的子类可以是抽象类也可以是非抽象类。抽象父类的非抽象子类可以实例化。因此，执行抽象类的构造函数和该类非静态字段的字段初始化器：
-abstract class Base {  field: number;  constructor(p: number) {  this.field = p;  } }  class Derived extends Base {  constructor(p: number) {  super(p);  } } 带有abstract修饰符的方法称为抽象方法，抽象方法可以被声明但不能被实现。只有抽象类内才能有抽象方法，如果非抽象类具有抽象方法，则会发生编译时错误：
-class Y {  abstract method(p: string) //编译时错误：抽象方法只能在抽象类内。 } </content>
-    </entry>
-    
-     <entry>
-        <title>一些问题的解决方案2021</title>
-        <url>https://iihui.github.io/post/ios-solutions-2023/</url>
-        <categories>
-          <category>iOS</category>
-        </categories>
-        <tags>
-          <tag>iOS</tag>
-        </tags>
-        <content type="html"> 开启高版本调试 在macOS中调试真机上使用WKWebView打开的网页，发现真机上开启了Safari浏览器&amp;ndash;&amp;gt;高级&amp;ndash;&amp;gt;网页检测器，也无法调试，需要按如下开启isInspectable开关：
-// 高版本调试需要开启该属性，默认关闭 if #available(iOS 16.4, *) {  webView.isInspectable = true } 在macOS开启网页服务 最近在优化WKWebView弹框相关代码，需要编写相关网页进行测试。因为macOS自带Apatch服务，只需要开启并将网页放进去即可，参考如下方式。
-&amp;lt;!DOCTYPE html&amp;gt; &amp;lt;html lang=&amp;#34;zh-CN&amp;#34;&amp;gt; &amp;lt;head&amp;gt;  &amp;lt;meta charset=&amp;#34;UTF-8&amp;#34;&amp;gt;  &amp;lt;meta name=&amp;#34;viewport&amp;#34; content=&amp;#34;width=device-width, initial-scale=1.0&amp;#34;&amp;gt;  &amp;lt;title&amp;gt;确认框和输入提示示例&amp;lt;/title&amp;gt;  &amp;lt;script&amp;gt;  // 确保在页面加载完成后执行  window.onload = function() {  // 使用 window.confirm 弹出确认框  var result = window.confirm(&amp;#34;您确定要继续吗？&amp;#34;);  if (result) {  // 用户点击了确定，弹出输入提示框  var userInput = window.prompt(&amp;#34;请输入您的名字：&amp;#34;);  if (userInput !== null &amp;amp;&amp;amp; userInput !== &amp;#34;&amp;#34;) {  alert(&amp;#34;您好，&amp;#34; &#43; userInput &#43; &amp;#34;！感谢您的输入。&amp;#34;);  } else {  alert(&amp;#34;您没有输入任何内容。&amp;#34;);  }  } else {  alert(&amp;#34;您点击了取消。&amp;#34;);  }  };  &amp;lt;/script&amp;gt; &amp;lt;/head&amp;gt; &amp;lt;body&amp;gt;  &amp;lt;h1&amp;gt;欢迎来到确认框和输入提示示例页面&amp;lt;/h1&amp;gt; &amp;lt;/body&amp;gt; &amp;lt;/html&amp;gt; WKWebView弹框
-开启Apatch服务
-</content>
-    </entry>
-    
-     <entry>
         <title>一些问题的解决方案2022</title>
         <url>https://iihui.github.io/post/ios-solutions-2022/</url>
         <categories>
@@ -350,6 +301,55 @@ ImageLoaderMachO::doModInitFunctions 升级到Xcode 15后，原工程编译后�
 dyld: could not load inserted library &amp;#39;/System/Library/PrivateFrameworks/GPUToolsCapture.framework/GPUToolsCapture&amp;#39; because image not found https://developer.apple.com/forums/thread/736487
 Can&amp;rsquo;t map file, errno=22 在主项目中的build setting --&amp;gt; other linker flags中添加了一个新的framework。出现了报错Can&#39;t map file, errno=22。是因为只添加到framework这一层，真正要添加的是到下面一层：
 $(SRCROOT)/Pods/ddd/xxx.framework/xxx </content>
+    </entry>
+    
+     <entry>
+        <title>ArkTs</title>
+        <url>https://iihui.github.io/post/arkts-base/</url>
+        <categories>
+          <category>ts</category>
+        </categories>
+        <tags>
+          <tag>ts</tag>
+        </tags>
+        <content type="html"> 基本知识 类型  ArkTS是一种静态类型语言，所有数据的类型都必须在编译时确定，但如果一个变量或常量的声明包含了初始值，那么开发者就不需要显式指定其类型。
+ void类型 类型void只有一个值，也是void。void类型用于指定函数没有返回值，不能用于普通变量的类型标注。因为void是引用类型，所以也可用于泛型类型参数。
+class Class&amp;lt;T&amp;gt; {  //... } let instance: Class &amp;lt;void&amp;gt; Object类型 大写开头的Object是一个内置interface，它描述所有对象都具有的属性和方法。Object类型可以接受任何类型的赋值，但只能赋值给Object或any类型。Object类型不太安全，因为它允许原始类型也可以赋值给它。Object类型是所有引用类型的基类型。任何值，包括基本类型的值（它们会被自动装箱），都可以直接被赋给Object类型的变量。
+let obj: Object; obj = { name: &amp;#39;John&amp;#39;, age: 25 }; // 合法 obj = [1, 2, 3]; // 合法 obj = &amp;#39;hello&amp;#39;; // 合法 obj = 123; // 合法 obj = true; // 合法 小写开头的object 类型表示非原始类型，即除string、number、bigint、boolean、symbol、null 和undefined之外的任何类型。任何对象类型都可以赋值给object类型，但是object类型只能赋值给object和any类型。object类型可以用来表示不确定的输入参数或返回值，或者用来进行疲劳性检查。
+语句 使用for-of语句可遍历数组或字符串：
+for (forVar of expression) {  statements }   const arr = [12, 31, 98956] for (const item of arr) {  console.log(item); }  const str = &amp;#34;Hi&amp;#34;; for (const item of str) {  console.log(item); } 语句try用于捕获或处理异常，并支持finally语句：
+function processData(s: string) {  let error: Error | null = null;   try {  console.log(&amp;#39;Data processed: &amp;#39; &#43; s);  // ...  // 可能发生异常的语句  // ...  } catch (e) {  error = e as Error;  // ...  // 异常处理  // ...  } finally {  if (error != null) {  console.log(`Error caught: input=&amp;#39;${s}&amp;#39;, message=&amp;#39;${error.message}&amp;#39;`);  }  } } 函数 不需要返回值的函数的返回类型可以显式标注为void类型或省略返回类型标注，在这类函数中不需要返回语句。下面示例代码中两种函数声明方式都是有效的：
+function hi1() {  console.log(&amp;#39;hi&amp;#39;); }  function hi2(): void {  console.log(&amp;#39;hi&amp;#39;); } 在函数中定义的变量和对象实例仅可以在函数内部访问，外部不能访问。如果函数中定义的变量与外部作用域中已有实例同名，则函数内的局部变量定义将覆盖外部定义。
+箭头函数 函数可以定义为箭头函数（箭头函数又被称为Lambda函数），例如：
+let sum = (x: number, y: number): number =&amp;gt; {  return x &#43; y; } 箭头函数的返回类型标注可以省略。若箭头函数省略返回类型标注时，返回类型通常通过函数体推断。表达式可以指定为箭头函数，使表达更简短，因此以下两种表达方式是等价的：
+let sum1 = (x: number, y: number) =&amp;gt; {  return x &#43; y; }  let sum2 = (x: number, y: number) =&amp;gt; x &#43; y 闭包 闭包是由函数及声明该函数的环境组合而成的，该环境包含了这个闭包创建时作用域内的任何局部变量。在下面示例代码中，ff函数返回了一个闭包，它捕获了count变量，每次调用z，count的值会被保留并递增。
+function ff(): () =&amp;gt; number {  let count = 0;  let g = (): number =&amp;gt; {  count&#43;&#43;;  return count;  };  return g; }  let z = ff(); let ret = z(); console.log(ret); ret = z(); console.log(ret);  // 执行结果 1 2 函数重载 ArkTs可以声明函数重载，重载可以指定函数的不同调用方式。即为同一个函数写入多个同名但签名不同的函数头，函数实现紧随其后。
+function foo(x: number): void; /* 第一个函数定义 */ function foo(x: string): void; /* 第二个函数定义 */ function foo(x: number | string): void { /* 函数实现 */ }  foo(123); // OK，使用第一个定义 foo(&amp;#39;aa&amp;#39;); // OK，使用第二个定义 类 字段 为了减少运行时的错误和获得更好的执行性能，ArkTS要求所有字段在声明时或者构造函数中显式初始化。这和标准TS中的strictPropertyInitialization模式一样。
+class Person {  name: string; // undefined   setName(n:string): void {  this.name = n;  }   getName(): string {  // 开发者使用&amp;#34;string&amp;#34;作为返回类型，这隐藏了name可能为&amp;#34;undefined&amp;#34;的事实。  // 更合适的做法是将返回类型标注为&amp;#34;string | undefined&amp;#34;，以告诉开发者这个API所有可能的返回值。  return this.name;  } }  let jack = new Person(); // 假设代码中没有对name赋值，例如调用&amp;#34;jack.setName(&amp;#39;Jack&amp;#39;)&amp;#34; jack.getName().length; // 运行时异常：name is undefined 继承 继承类继承基类的字段和方法，但不继承构造函数。继承类可以新增定义自有的字段和方法，也可以覆盖其基类定义的方法。基类也称为父类或超类，继承类也称为派生类或子类。
+class Person {  name: string = &amp;#39;&amp;#39;;  private _age = 0;  get age(): number {  return this._age;  } }  class Employee extends Person {  salary: number = 0;  calculateTaxes(): number {  return this.salary * 0.42;  } } 包含implements子句的类必须实现列出的接口中定义的所有方法，但使用默认实现定义的方法除外。
+interface DateInterface {  now(): string; } class MyDate implements DateInterface {  now(): string {  // 在此实现  return &amp;#39;now&amp;#39;;  } } 子类可以重写其父类中定义的方法的实现。但需要注意的是，重写的方法**必须具有与原始方法相同的参数类型和相同或派生的返回类型**。
+class RectangleSize {  // ...  area(): number {  // 实现  return 0;  } }  class Square extends RectangleSize {  private side: number = 0;  area(): number {  return this.side * this.side;  } } Record类型的对象字面量 泛型Record&amp;lt;K, V&amp;gt;用于将类型（键类型）的属性映射到另一个类型（值类型）。常用对象字面量来初始化该类型的值：
+let map: Record&amp;lt;string, number&amp;gt; = {  &amp;#39;John&amp;#39;: 25,  &amp;#39;Mary&amp;#39;: 21, }  map[&amp;#39;John&amp;#39;]; // 25 类型K可以是字符串类型或数值类型，而V可以是任何类型。
+interface PersonInfo {  age: number;  salary: number; }  let map: Record&amp;lt;string, PersonInfo&amp;gt; = {  &amp;#39;John&amp;#39;: { age: 25, salary: 10},  &amp;#39;Mary&amp;#39;: { age: 21, salary: 20} } 抽象类 带有修饰符abstract的类称为抽象类。抽象类可用于表示一组更具体的概念所共有的概念。如果尝试创建抽象类的实例，则会发生编译时的错误：
+abstract class X {  field: number;  constructor(p: number) {  this.field = p;  } }  let x = new X(666) //编译时错误：不能创建抽象类的具体实例 抽象类的子类可以是抽象类也可以是非抽象类。抽象父类的非抽象子类可以实例化。因此，执行抽象类的构造函数和该类非静态字段的字段初始化器：
+abstract class Base {  field: number;  constructor(p: number) {  this.field = p;  } }  class Derived extends Base {  constructor(p: number) {  super(p);  } } 带有abstract修饰符的方法称为抽象方法，抽象方法可以被声明但不能被实现。只有抽象类内才能有抽象方法，如果非抽象类具有抽象方法，则会发生编译时错误：
+class Y {  abstract method(p: string) //编译时错误：抽象方法只能在抽象类内。 } </content>
+    </entry>
+    
+     <entry>
+        <title>一些问题的解决方案2023</title>
+        <url>https://iihui.github.io/post/ios-solutions-2023/</url>
+        <categories>
+          <category>iOS</category>
+        </categories>
+        <tags>
+          <tag>iOS</tag>
+        </tags>
+        <content type="html"> 开启高版本调试 在macOS中调试真机上使用WKWebView打开的网页，发现真机上开启了Safari浏览器&amp;ndash;&amp;gt;高级&amp;ndash;&amp;gt;网页检测器，也无法调试，需要按如下开启isInspectable开关：
+// 高版本调试需要开启该属性，默认关闭 if #available(iOS 16.4, *) {  webView.isInspectable = true } 在macOS开启网页服务 最近在优化WKWebView弹框相关代码，需要编写相关网页进行测试。因为macOS自带Apatch服务，只需要开启并将网页放进去即可，参考如下方式。
+&amp;lt;!DOCTYPE html&amp;gt; &amp;lt;html lang=&amp;#34;zh-CN&amp;#34;&amp;gt; &amp;lt;head&amp;gt;  &amp;lt;meta charset=&amp;#34;UTF-8&amp;#34;&amp;gt;  &amp;lt;meta name=&amp;#34;viewport&amp;#34; content=&amp;#34;width=device-width, initial-scale=1.0&amp;#34;&amp;gt;  &amp;lt;title&amp;gt;确认框和输入提示示例&amp;lt;/title&amp;gt;  &amp;lt;script&amp;gt;  // 确保在页面加载完成后执行  window.onload = function() {  // 使用 window.confirm 弹出确认框  var result = window.confirm(&amp;#34;您确定要继续吗？&amp;#34;);  if (result) {  // 用户点击了确定，弹出输入提示框  var userInput = window.prompt(&amp;#34;请输入您的名字：&amp;#34;);  if (userInput !== null &amp;amp;&amp;amp; userInput !== &amp;#34;&amp;#34;) {  alert(&amp;#34;您好，&amp;#34; &#43; userInput &#43; &amp;#34;！感谢您的输入。&amp;#34;);  } else {  alert(&amp;#34;您没有输入任何内容。&amp;#34;);  }  } else {  alert(&amp;#34;您点击了取消。&amp;#34;);  }  };  &amp;lt;/script&amp;gt; &amp;lt;/head&amp;gt; &amp;lt;body&amp;gt;  &amp;lt;h1&amp;gt;欢迎来到确认框和输入提示示例页面&amp;lt;/h1&amp;gt; &amp;lt;/body&amp;gt; &amp;lt;/html&amp;gt; WKWebView弹框
+开启Apatch服务
+</content>
     </entry>
     
      <entry>
