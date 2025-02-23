@@ -223,6 +223,22 @@ class Y {  abstract method(p: string) //编译时错误：抽象方法只能在�
     </entry>
     
      <entry>
+        <title>一些问题的解决方案2021</title>
+        <url>https://iihui.github.io/post/ios-solutions-2023/</url>
+        <categories>
+          <category>iOS</category>
+        </categories>
+        <tags>
+          <tag>iOS</tag>
+        </tags>
+        <content type="html"> 开启高版本调试 在macOS中调试真机上使用WKWebView打开的网页，发现真机上开启了Safari浏览器&amp;ndash;&amp;gt;高级&amp;ndash;&amp;gt;网页检测器，也无法调试，需要按如下开启isInspectable开关：
+// 高版本调试需要开启该属性，默认关闭 if #available(iOS 16.4, *) {  webView.isInspectable = true } 在macOS开启网页服务 最近在优化WKWebView弹框相关代码，需要编写相关网页进行测试。因为macOS自带Apatch服务，只需要开启并将网页放进去即可，参考如下方式。
+&amp;lt;!DOCTYPE html&amp;gt; &amp;lt;html lang=&amp;#34;zh-CN&amp;#34;&amp;gt; &amp;lt;head&amp;gt;  &amp;lt;meta charset=&amp;#34;UTF-8&amp;#34;&amp;gt;  &amp;lt;meta name=&amp;#34;viewport&amp;#34; content=&amp;#34;width=device-width, initial-scale=1.0&amp;#34;&amp;gt;  &amp;lt;title&amp;gt;确认框和输入提示示例&amp;lt;/title&amp;gt;  &amp;lt;script&amp;gt;  // 确保在页面加载完成后执行  window.onload = function() {  // 使用 window.confirm 弹出确认框  var result = window.confirm(&amp;#34;您确定要继续吗？&amp;#34;);  if (result) {  // 用户点击了确定，弹出输入提示框  var userInput = window.prompt(&amp;#34;请输入您的名字：&amp;#34;);  if (userInput !== null &amp;amp;&amp;amp; userInput !== &amp;#34;&amp;#34;) {  alert(&amp;#34;您好，&amp;#34; &#43; userInput &#43; &amp;#34;！感谢您的输入。&amp;#34;);  } else {  alert(&amp;#34;您没有输入任何内容。&amp;#34;);  }  } else {  alert(&amp;#34;您点击了取消。&amp;#34;);  }  };  &amp;lt;/script&amp;gt; &amp;lt;/head&amp;gt; &amp;lt;body&amp;gt;  &amp;lt;h1&amp;gt;欢迎来到确认框和输入提示示例页面&amp;lt;/h1&amp;gt; &amp;lt;/body&amp;gt; &amp;lt;/html&amp;gt; WKWebView弹框
+开启Apatch服务
+</content>
+    </entry>
+    
+     <entry>
         <title>一些问题的解决方案2022</title>
         <url>https://iihui.github.io/post/ios-solutions-2022/</url>
         <categories>
@@ -333,11 +349,7 @@ ImageLoaderMachO::doModInitFunctions 升级到Xcode 15后，原工程编译后�
 0x000000010c375228 in ImageLoaderMachO::doModInitFunctions(ImageLoader::LinkContext const&amp;amp;) () 0x000000010c3755f0 in ImageLoaderMachO::doInitialization(ImageLoader::LinkContext const&amp;amp;) () 0x000000010c36fe8c in ImageLoader::recursiveInitialization(ImageLoader::LinkContext const&amp;amp;, unsigned int, char const*, ImageLoader::InitializerTimingList&amp;amp;, ImageLoader::UninitedUpwards&amp;amp;) () 0x000000010c36e0d8 in ImageLoader::processInitializers(ImageLoader::LinkContext const&amp;amp;, unsigned int, ImageLoader::InitializerTimingList&amp;amp;, ImageLoader::UninitedUpwards&amp;amp;) () 0x000000010c36e1a0 in ImageLoader::runInitializers(ImageLoader::LinkContext const&amp;amp;, ImageLoader::InitializerTimingList&amp;amp;) () 0x000000010c35e80c in dyld::initializeMainExecutable() () 0x000000010c363e3c in dyld::_main(macho_header const*, unsigned long, int, char const**, char const**, char const**, unsigned long*) () 0x000000010c35d208 in dyldbootstrap::start(dyld3::MachOLoaded const*, int, char const**, dyld3::MachOLoaded const*, unsigned long*) () 0x000000010c35d038 in _dyld_start () 参考该文章，只需将OTHER_LDFLAGS的设置加上-Wl,-ld_classic 选项即可。实际上，只需要加上-ld_classic就可以解决启动闪退问题。
 dyld: could not load inserted library &amp;#39;/System/Library/PrivateFrameworks/GPUToolsCapture.framework/GPUToolsCapture&amp;#39; because image not found https://developer.apple.com/forums/thread/736487
 Can&amp;rsquo;t map file, errno=22 在主项目中的build setting --&amp;gt; other linker flags中添加了一个新的framework。出现了报错Can&#39;t map file, errno=22。是因为只添加到framework这一层，真正要添加的是到下面一层：
-$(SRCROOT)/Pods/ddd/xxx.framework/xxx 在macOS开启网页服务
-https://zhuanlan.zhihu.com/p/676258385
-https://www.duidaima.com/Group/Topic/IOS/18322
-&amp;lt;!DOCTYPE html&amp;gt; &amp;lt;html lang=&amp;#34;zh-CN&amp;#34;&amp;gt; &amp;lt;head&amp;gt;  &amp;lt;meta charset=&amp;#34;UTF-8&amp;#34;&amp;gt;  &amp;lt;meta name=&amp;#34;viewport&amp;#34; content=&amp;#34;width=device-width, initial-scale=1.0&amp;#34;&amp;gt;  &amp;lt;title&amp;gt;确认框和输入提示示例&amp;lt;/title&amp;gt;  &amp;lt;script&amp;gt;  // 确保在页面加载完成后执行  window.onload = function() {  // 使用 window.confirm 弹出确认框  var result = window.confirm(&amp;#34;您确定要继续吗？&amp;#34;);  if (result) {  // 用户点击了确定，弹出输入提示框  var userInput = window.prompt(&amp;#34;请输入您的名字：&amp;#34;);  if (userInput !== null &amp;amp;&amp;amp; userInput !== &amp;#34;&amp;#34;) {  alert(&amp;#34;您好，&amp;#34; &#43; userInput &#43; &amp;#34;！感谢您的输入。&amp;#34;);  } else {  alert(&amp;#34;您没有输入任何内容。&amp;#34;);  }  } else {  alert(&amp;#34;您点击了取消。&amp;#34;);  }  };  &amp;lt;/script&amp;gt; &amp;lt;/head&amp;gt; &amp;lt;body&amp;gt;  &amp;lt;h1&amp;gt;欢迎来到确认框和输入提示示例页面&amp;lt;/h1&amp;gt; &amp;lt;/body&amp;gt; &amp;lt;/html&amp;gt; 开启高版本调试 在macOS中调试真机上使用WKWebView打开的网页，发现真机上开启了Safari浏览器&amp;ndash;&amp;gt;高级&amp;ndash;&amp;gt;网页检测器，也无法调试，需要按如下开启isInspectable开关：
-// 高版本调试需要开启该属性，默认关闭 if #available(iOS 16.4, *) {  webView.isInspectable = true } </content>
+$(SRCROOT)/Pods/ddd/xxx.framework/xxx </content>
     </entry>
     
      <entry>
