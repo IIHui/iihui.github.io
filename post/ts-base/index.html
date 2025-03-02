@@ -241,7 +241,7 @@ code.has-jax {
     <i class="fa fa-file-word-o"></i>
 </span>
 <span class="post-meta-item-text">字数: </span>
-<span class="leancloud-visitors-count">58861</span>
+<span class="leancloud-visitors-count">58879</span>
 &nbsp; | &nbsp;
 <span class="post-meta-item-icon">
     <i class="fa fa-coffee"></i>
@@ -934,7 +934,7 @@ code.has-jax {
 </span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">const</span> <span style="color:#a6e22e">missing</span>: <span style="color:#66d9ef">Book</span> <span style="color:#f92672">=</span> {
 </span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">author</span><span style="color:#f92672">:</span> <span style="color:#e6db74">&#34;Rita Dove&#34;</span>,
 </span></span><span style="display:flex;"><span>};
-</span></span></code></pre></div><p>需要注意的是，可选属性与属性的类型标注为包括<code>undefined</code>的联合类型是不同的。<font color="#de7802">声明为可选属性，属性可以不存在</font>（此时属性对应值为<code>undefined</code>）。<font color=red>但使用<code>| undefined</code>声明的属性，其值必须存在</font>，即使该属性的值就是<code>undefined</code>。</p>
+</span></span></code></pre></div><p>需要注意的是，可选属性与属性的类型标注为包括<code>undefined</code>的联合类型是不同的。<font color="#de7802">声明为可选属性，属性可以不存在</font>（此时属性对应值为<code>undefined</code>）。<font color=red>但使用<code>| undefined</code>声明的属性，其值必须存在</font>，即便该属性的值就是<code>undefined</code>也不能省略。</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span><span style="color:#66d9ef">type</span> <span style="color:#a6e22e">Writers</span> <span style="color:#f92672">=</span> {
 </span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">author</span>: <span style="color:#66d9ef">string</span> <span style="color:#f92672">|</span> <span style="color:#66d9ef">undefined</span>;
 </span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">editor?</span>: <span style="color:#66d9ef">string</span>;
@@ -950,15 +950,15 @@ code.has-jax {
 </span></span><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span><span style="color:#75715e">// 对象中属性为undefined的联合类型时必须赋初值
 </span></span></span><span style="display:flex;"><span><span style="color:#75715e">// 触发属性检查，author属性必须有，且必须提供值
-</span></span></span><span style="display:flex;"><span><span style="color:#75715e">//  Property &#39;author&#39; is missing in type &#39;{}&#39; but required in type &#39;Writers&#39;.
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">// Property &#39;author&#39; is missing in type &#39;{}&#39; but required in type &#39;Writers&#39;.
 </span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">const</span> <span style="color:#a6e22e">missingRequired</span>: <span style="color:#66d9ef">Writers</span> <span style="color:#f92672">=</span> {}; 
-</span></span></code></pre></div><p>请特别注意，对象类型中某个属性的类型为<code>undefined</code>的联合，与普通变量类型为<code>undefined</code>的联合区别较大。<font color="#de7802">对象类型中属性的类型是包含了<code>undefined</code>的联合类型时也需要初始化</font>。</p>
+</span></span></code></pre></div><p>请特别注意，对象类型中某个属性的类型标注为与<code>undefined</code>的联合，与普通变量类型标注为<code>undefined</code>的联合区别较大。<font color="#de7802">对象类型中属性的类型是包含了<code>undefined</code>的联合类型时也需要初始化</font>。</p>
 <h2 id="unions-of-object-types">Unions of Object Types</h2>
 <blockquote>
 <p>如果变量的初始值可能是多种对象类型之一，<code>TypeScript</code>将推断变量的类型为对象类型的联合。<font color="#de7802">该联合类型为每种可能的类型提供一个成分</font>，类型上的每种可能属性都将出现在每个组成元素中，尽管它们<span style="background:rgba(255, 183, 139, 0.55)">在没有初始值的任何类型中都是可选类型</span>。</p>
 </blockquote>
 <h3 id="inferred-object-type-unions">Inferred Object-Type Unions</h3>
-<p>下面代码中，常量<code>poem</code>值一定有<code>name</code>属性，可能有<code>pages</code>或<code>rhymes</code>属性。常量<code>poem</code>的类型被推断为<code>{name: string, pages: number, rhymes?: undefined} | {name: string, rhymes: boolean, pages?: undefined}</code> 。也就是说编译器在推断对象类型的联合时，在某个对象类型中非共有属性在不包含该属性的对象类型中是可选的，并且对应的值类型是<code>undefined</code>:</p>
+<p>下面代码中，常量<code>poem</code>的值一定有<code>name</code>属性，可能有<code>pages</code>或<code>rhymes</code>属性。常量<code>poem</code>的类型被推断为<code>{name: string, pages: number, rhymes?: undefined} | {name: string, rhymes: boolean, pages?: undefined}</code> 。也就是说编译器在推断对象类型的联合时，在某个对象类型中非共有属性在不包含该属性的对象类型中是可选的，并且对应的值类型是<code>undefined</code>:</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span><span style="color:#75715e">// poem的类型被推断为{name: string, pages: number, rhymes?: undefined} | {name: string, rhymes: boolean, pages?: undefined}
 </span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">const</span> <span style="color:#a6e22e">poem</span> <span style="color:#f92672">=</span> Math.<span style="color:#a6e22e">random</span>() <span style="color:#f92672">&gt;</span> <span style="color:#ae81ff">0.5</span> <span style="color:#f92672">?</span> {
 </span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">name</span><span style="color:#f92672">:</span> <span style="color:#e6db74">&#34;The Double Image&#34;</span>,
@@ -972,9 +972,9 @@ code.has-jax {
 </span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#a6e22e">poem</span>.<span style="color:#a6e22e">pages</span>; <span style="color:#75715e">// 类型为 number | undefined
 </span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#a6e22e">poem</span>.<span style="color:#a6e22e">rhymes</span>; <span style="color:#75715e">// 类型为 boolean | undefined
 </span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>
-</span></span><span style="display:flex;"><span><span style="color:#75715e">// 可能的执行结果:The Double Image 7 undefined 
+</span></span><span style="display:flex;"><span><span style="color:#75715e">// 执行后的可能结果:The Double Image 7 undefined 
 </span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#a6e22e">console</span>.<span style="color:#a6e22e">log</span>(<span style="color:#a6e22e">poem</span>.<span style="color:#a6e22e">name</span>, <span style="color:#a6e22e">poem</span>.<span style="color:#a6e22e">pages</span>, <span style="color:#a6e22e">poem</span>.<span style="color:#a6e22e">rhymes</span>, <span style="color:#66d9ef">typeof</span> <span style="color:#a6e22e">poem</span>)
-</span></span><span style="display:flex;"><span><span style="color:#75715e">// 可能的执行结果：string undefined boolean
+</span></span><span style="display:flex;"><span><span style="color:#75715e">// 执行后的可能结果：string undefined boolean
 </span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#a6e22e">console</span>.<span style="color:#a6e22e">log</span>(<span style="color:#66d9ef">typeof</span> <span style="color:#a6e22e">poem</span>.<span style="color:#a6e22e">name</span>, <span style="color:#66d9ef">typeof</span> <span style="color:#a6e22e">poem</span>.<span style="color:#a6e22e">pages</span>, <span style="color:#66d9ef">typeof</span> <span style="color:#a6e22e">poem</span>.<span style="color:#a6e22e">rhymes</span>);
 </span></span><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span><span style="color:#a6e22e">console</span>.<span style="color:#a6e22e">log</span>(<span style="color:#a6e22e">poem</span>)
@@ -1033,7 +1033,7 @@ code.has-jax {
 </span></span><span style="display:flex;"><span>    <span style="color:#75715e">// 如果没有pages，那么必定有属性rhymes
 </span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#a6e22e">console</span>.<span style="color:#a6e22e">log</span>(<span style="color:#a6e22e">poem</span>.<span style="color:#a6e22e">rhymes</span>)
 </span></span><span style="display:flex;"><span>}
-</span></span></code></pre></div><p>请注意，<code>TypeScript</code>不允许使用像<code>if (poem.pages)</code>这样的真值检查，因为还不确定变量中是否有该属性。<font color="#de7802">试图访问可能不存在的对象属性会被视为错误，即使用起来的方式看起来像是类型保护</font>。</p>
+</span></span></code></pre></div><p>请注意，<code>TypeScript</code>不允许使用<code>if (poem.pages)</code>这样的真值检查，因为还不确定变量中是否有该属性。<font color="#de7802">试图访问可能不存在的对象属性会被视为错误，即使用起来的方式看起来像是类型保护</font>。</p>
 <h3 id="discriminated-unions">Discriminated Unions</h3>
 <p><code>JavaScript</code>和<code>TypeScript</code>中另一种流行的联合类型对象形式是在对象上设置一个属性，用于指示对象具体是哪种类型。这种类型被称为判别联合（<code>discriminated union</code>），指示对象类型的属性被称为<code>discriminant</code>。<code>TypeScript</code>对<code>discriminant</code>属性进行类型保护的代码执行类型窄化。</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span><span style="color:#75715e">// type表示判别类型
@@ -1124,7 +1124,7 @@ code.has-jax {
 </span></span><span style="display:flex;"><span>};
 </span></span></code></pre></div><h3 id="dangers-of-intersection-types">Dangers of Intersection Types</h3>
 <p><code>Intersection</code>（交叉类型）是一个有用的概念，但使用时很容易让自己或<code>TypeScript</code>编译器感到困惑。<font color="#de7802">建议在使用交叉类型时尽量简化代码</font>。</p>
-<p>当创建了复杂的交叉类型（例如与联合类型交叉）时，赋值错误信息就会变得难以理解。这是类型编程语言的一个共同主题：<font color="#4f81bd">创建的类型越复杂，就越难理解来自类型检查器给出的错误信息</font>。</p>
+<p>当创建了复杂的交叉类型（如与联合类型交叉）时，赋值错误信息就会变得难以理解。这是类型编程语言的一个共同主题：<font color=green>创建的类型越复杂，就越难理解来自类型检查器给出的错误信息</font>。</p>
 <p>以前面代码片段中的<code>ShortPoem</code>为例，如果将该类型拆分为一系列别名对象类型，<code>TypeScript</code>就可以打印这些别名，可读性就会大大提高：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span><span style="color:#66d9ef">type</span> <span style="color:#a6e22e">ShortPoemBase</span> <span style="color:#f92672">=</span> {
 </span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">author</span>: <span style="color:#66d9ef">string</span>
@@ -1154,7 +1154,7 @@ code.has-jax {
 </span></span><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span><span style="color:#66d9ef">let</span> <span style="color:#a6e22e">notPossible</span>: <span style="color:#66d9ef">NotPossible</span> <span style="color:#f92672">=</span> <span style="color:#ae81ff">123</span>
 </span></span><span style="display:flex;"><span><span style="color:#75715e">// 编译错误：Type &#39;number&#39; is not assignable to type &#39;never&#39;.
-</span></span></span></code></pre></div><p>类型<code>never</code>称为<code>bottom type</code>或<code>empty type</code>。<font color="#de7802">底层类型是指没有可能的值，也是无法到达的类型</font>。<strong>不能向标注为底层类型的位置提供任何类型值，否则会出现编译错误</strong>：</p>
+</span></span></span></code></pre></div><p>类型<code>never</code>称为<code>bottom type</code>或<code>empty type</code>。<font color="#de7802">底层类型是指没有可能的值，也是无法到达的类型</font>。需要注意的是，<font color=green>不能向标注为底层类型的位置提供任何类型值</font>，否则会出现编译错误：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span><span style="color:#66d9ef">type</span> <span style="color:#a6e22e">NotPossible</span> <span style="color:#f92672">=</span> <span style="color:#66d9ef">number</span> <span style="color:#f92672">&amp;</span> <span style="color:#66d9ef">string</span>
 </span></span><span style="display:flex;"><span><span style="color:#75715e">// 编译错误：Type &#39;number&#39; is not assignable to type &#39;never&#39;.
 </span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">let</span> <span style="color:#a6e22e">notNumber</span>: <span style="color:#66d9ef">NotPossible</span> <span style="color:#f92672">=</span> <span style="color:#ae81ff">0</span>; 
