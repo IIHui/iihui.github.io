@@ -241,7 +241,7 @@ code.has-jax {
     <i class="fa fa-file-word-o"></i>
 </span>
 <span class="post-meta-item-text">字数: </span>
-<span class="leancloud-visitors-count">58879</span>
+<span class="leancloud-visitors-count">58915</span>
 &nbsp; | &nbsp;
 <span class="post-meta-item-icon">
     <i class="fa fa-coffee"></i>
@@ -1162,32 +1162,32 @@ code.has-jax {
 </span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">let</span> <span style="color:#a6e22e">notString</span>: <span style="color:#66d9ef">never</span> <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;&#34;</span>; 
 </span></span></code></pre></div><p>大多数项目很少使用<code>never</code>类型，<code>never</code>偶尔会出现在代码中表示不可能的状态。但多数情况下，很可能是误用<code>Intersection</code>（交叉）类型产生的错误。</p>
 <h1 id="functions">Functions</h1>
-<p>前面介绍了如何使用类型标注来声明变量和常量的类型。现在，可以看看如何对函数的形参和返回值类型进行同样的标注。</p>
+<p>前面介绍了如何使用类型标注来声明变量和常量的类型。现在，可以看看如何对函数的形参类型和返回值类型进行同样的标注。</p>
 <h2 id="function-parameters">Function Parameters</h2>
-<p>下面定义了一个函数，入参只有一个<code>song</code>，在函数体中打印了这个参数的值。在声明该函数时形参并没有显式地标注类型，那么<code>TypeScript</code>会认为这个参数的类型是<code>any</code>：</p>
+<p>下面定义的函数入参只有一个<code>song</code>，并在函数体中打印了这个参数的值。但在声明该函数时形参并没有显式地标注类型，那么<code>TypeScript</code>会认为这个参数的类型是<code>any</code>：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span><span style="color:#66d9ef">function</span> <span style="color:#a6e22e">sing</span>(<span style="color:#a6e22e">song</span>) {
 </span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">console</span>.<span style="color:#a6e22e">log</span>(<span style="color:#e6db74">`Singing: </span><span style="color:#e6db74">${</span><span style="color:#a6e22e">song</span><span style="color:#e6db74">}</span><span style="color:#e6db74">!`</span>);
 </span></span><span style="display:flex;"><span>}
 </span></span><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span><span style="color:#75715e">// 编译错误
 </span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#a6e22e">Parameter</span> <span style="color:#e6db74">&#39;song&#39;</span> <span style="color:#a6e22e">implicitly</span> <span style="color:#a6e22e">has</span> <span style="color:#a6e22e">an</span> <span style="color:#e6db74">&#39;any&#39;</span> <span style="color:#66d9ef">type</span>.
-</span></span></code></pre></div><p>但如果编译选项设置的是严格模式，即在<code>tsconfig.json</code>文件中的<code>compilerOptions</code>下设置<code>&quot;strict&quot;: true</code>，上面代码会出现编译错误：<code>Parameter 'song' implicitly has an 'any' type</code>。与变量一样，允许使用类型标注函数形参的类型。例如，可以使用<code>: string</code>告诉编译器形参<code>song</code>的类型是字符串类型：</p>
+</span></span></code></pre></div><p>但如果编译选项设置的是严格模式（在<code>tsconfig.json</code>文件中的<code>compilerOptions</code>下设置<code>&quot;strict&quot;: true</code>），上面代码会出现编译错误：<code>Parameter 'song' implicitly has an 'any' type</code>。与变量的类型标注一样，允许使用类型标注函数形参的类型。例如，可以使用<code>: string</code>告诉编译器形参<code>song</code>的类型是字符串类型：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span><span style="color:#66d9ef">function</span> <span style="color:#a6e22e">sing</span>(<span style="color:#a6e22e">song</span>: <span style="color:#66d9ef">string</span>) {
 </span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">console</span>.<span style="color:#a6e22e">log</span>(<span style="color:#e6db74">`Singing: </span><span style="color:#e6db74">${</span><span style="color:#a6e22e">song</span><span style="color:#e6db74">}</span><span style="color:#e6db74">!`</span>);
 </span></span><span style="display:flex;"><span>}
 </span></span></code></pre></div><h3 id="required-parameters">Required Parameters</h3>
 <p><code>JavaScript</code>函数允许使用任意数量的实参(<code>arguments</code>)调用函数，而<code>TypeScript</code><span style="background:rgba(255, 183, 139, 0.55)">假定函数中声明的所有参数都是必需的</span>。如果使用错误数量或类型的实参数来调用函数，将会出现编译错误。</p>
-<p>如果函数调用的实参过少或过多，<code>TypeScript</code>的实参计数器就会发挥作用。下面函数<code>singTwo</code>要求有两个参数，因此传递<code>1</code>个或<code>3</code>个参数都是不允许的。实际上，<font color="#e36c09">强制要求向函数提供必需的参数</font>，有助于执行类型安全。如果不能确保这些参数值都存在，可能会导致代码出现意外行为。</p>
+<p>如果函数调用的实参过少或过多，<code>TypeScript</code>的实参计数器就会发挥作用。下面函数<code>singTwo</code>声明时有两个参数，因此传递<code>1</code>个或<code>3</code>个参数都是不允许的。实际上，<font color="#e36c09">强制要求向函数提供必需的参数</font>，有助于执行类型安全。如果不能确保这些参数值都存在，可能会导致代码出现意外行为。</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span><span style="color:#66d9ef">function</span> <span style="color:#a6e22e">singTwo</span>(<span style="color:#a6e22e">first</span>: <span style="color:#66d9ef">string</span>, <span style="color:#a6e22e">second</span>: <span style="color:#66d9ef">string</span>) {
 </span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">console</span>.<span style="color:#a6e22e">log</span>(<span style="color:#e6db74">`</span><span style="color:#e6db74">${</span><span style="color:#a6e22e">first</span><span style="color:#e6db74">}</span><span style="color:#e6db74"> / </span><span style="color:#e6db74">${</span><span style="color:#a6e22e">second</span><span style="color:#e6db74">}</span><span style="color:#e6db74">`</span>);
 </span></span><span style="display:flex;"><span>}
 </span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span><span style="color:#75715e">// Expected 2 arguments, but got 1.
+</span></span><span style="display:flex;"><span><span style="color:#75715e">// 编译错误：Expected 2 arguments, but got 1.
 </span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#a6e22e">singTwo</span>(<span style="color:#e6db74">&#34;Ball and Chain&#34;</span>)
 </span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span><span style="color:#75715e">// Expected 2 arguments, but got 3.
+</span></span><span style="display:flex;"><span><span style="color:#75715e">// 编译错误：Expected 2 arguments, but got 3.
 </span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#a6e22e">singTwo</span>(<span style="color:#e6db74">&#34;Go Your Own Way&#34;</span>, <span style="color:#e6db74">&#34;The Chain&#34;</span>, <span style="color:#e6db74">&#34;Dreams&#34;</span>);
-</span></span></code></pre></div><p>形参（<code>parameter</code>）是指函数声明的预期参数。实参（<code>arguments</code>）是指函数调用时提供给形参的值。上面示例代码中，<code>first</code>和<code>second</code>是形参，而<code>&quot;Dream&quot;</code>等字符串是实参。</p>
+</span></span></code></pre></div><p>形参（<code>parameter</code>）是指函数声明的预期参数。实参（<code>arguments</code>）是指函数调用时提供给形参的值。上面示例代码中，<code>first</code>和<code>second</code>是形参，而<code>&quot;Ball and Chain&quot;</code>等字符串是实参。</p>
 <h3 id="optional-parameters">Optional Parameters</h3>
 <p><code>TypeScript</code>允许将形参标注为可选参数，即在其类型标注的<code>:</code>前添加<code>?</code>（类似于对象类型的可选属性）。<font color=red>函数调用不需要向可选参数提供实参，因为它们的类型总是以<code>| undefined</code>作为联合类型</font>。</p>
 <p>下面<code>announceSong</code>函数中，<code>singer</code>形参被标记为可选参数，它的类型是<code>string | undefined</code>。对于可选参数，函数的调用者可以不提供实参（此时其值为<code>undefined</code>）。如果主动提供了<code>singer</code>对应的实参，<font color="#de7802">它的值可能是一个字符串或<code>undefined</code></font>：</p>
