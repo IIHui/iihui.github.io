@@ -241,13 +241,13 @@ code.has-jax {
     <i class="fa fa-file-word-o"></i>
 </span>
 <span class="post-meta-item-text">字数: </span>
-<span class="leancloud-visitors-count">3908</span>
+<span class="leancloud-visitors-count">4097</span>
 &nbsp; | &nbsp;
 <span class="post-meta-item-icon">
     <i class="fa fa-coffee"></i>
 </span>
 <span class="post-meta-item-text">阅读: </span>
-<span class="leancloud-visitors-count">8 分钟</span>
+<span class="leancloud-visitors-count">9 分钟</span>
 </span>
       </div>
     </header>
@@ -475,6 +475,34 @@ code.has-jax {
 </span></span><span style="display:flex;"><span>    window.<span style="color:#a6e22e">app</span>.<span style="color:#a6e22e">quit</span>(); <span style="color:#75715e">// 直接调用 Obsidian 的退出方法  
 </span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>  }, <span style="color:#ae81ff">100</span>); <span style="color:#75715e">// 短暂延迟确保保存任务已启动  
 </span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>};
+</span></span></code></pre></div><p>或者按下面方式优化异步流程（兼容性更强）：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-js" data-lang="js"><span style="display:flex;"><span><span style="color:#66d9ef">this</span>.<span style="color:#a6e22e">onAppQuit</span> <span style="color:#f92672">=</span> (<span style="color:#a6e22e">tasks</span>) =&gt; {
+</span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">const</span> <span style="color:#a6e22e">_this</span> <span style="color:#f92672">=</span> <span style="color:#66d9ef">this</span>;
+</span></span><span style="display:flex;"><span>  
+</span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">try</span> {
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">// 同步保存（无异步等待）
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#a6e22e">_this</span>.<span style="color:#a6e22e">rememberAllOpenedFileStatesSync</span>(); <span style="color:#75715e">// 假设存在同步方法
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#a6e22e">_this</span>.<span style="color:#a6e22e">writeStateDatabaseSync</span>(<span style="color:#a6e22e">STATE_DB_PATH</span>); 
+</span></span><span style="display:flex;"><span>  } <span style="color:#66d9ef">catch</span> (<span style="color:#a6e22e">err</span>) {
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">console</span>.<span style="color:#a6e22e">error</span>(<span style="color:#e6db74">&#34;同步保存失败:&#34;</span>, <span style="color:#a6e22e">err</span>);
+</span></span><span style="display:flex;"><span>  }
+</span></span><span style="display:flex;"><span>  
+</span></span><span style="display:flex;"><span>  window.<span style="color:#a6e22e">app</span>.<span style="color:#a6e22e">quit</span>();
+</span></span><span style="display:flex;"><span>};
+</span></span></code></pre></div><p>若支持同步方法，可以或者降级为同步保存：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-js" data-lang="js"><span style="display:flex;"><span><span style="color:#66d9ef">this</span>.<span style="color:#a6e22e">onAppQuit</span> <span style="color:#f92672">=</span> (<span style="color:#a6e22e">tasks</span>) =&gt; {
+</span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">const</span> <span style="color:#a6e22e">_this</span> <span style="color:#f92672">=</span> <span style="color:#66d9ef">this</span>;
+</span></span><span style="display:flex;"><span>  
+</span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">try</span> {
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">// 同步保存（无异步等待）
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#a6e22e">_this</span>.<span style="color:#a6e22e">rememberAllOpenedFileStatesSync</span>(); <span style="color:#75715e">// 假设存在同步方法
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#a6e22e">_this</span>.<span style="color:#a6e22e">writeStateDatabaseSync</span>(<span style="color:#a6e22e">STATE_DB_PATH</span>); 
+</span></span><span style="display:flex;"><span>  } <span style="color:#66d9ef">catch</span> (<span style="color:#a6e22e">err</span>) {
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">console</span>.<span style="color:#a6e22e">error</span>(<span style="color:#e6db74">&#34;同步保存失败:&#34;</span>, <span style="color:#a6e22e">err</span>);
+</span></span><span style="display:flex;"><span>  }
+</span></span><span style="display:flex;"><span>  
+</span></span><span style="display:flex;"><span>  window.<span style="color:#a6e22e">app</span>.<span style="color:#a6e22e">quit</span>();
+</span></span><span style="display:flex;"><span>};
 </span></span></code></pre></div>
     </div>
     <footer class="post-footer">
