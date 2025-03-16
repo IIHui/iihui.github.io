@@ -1996,7 +1996,7 @@ code.has-jax {
 </span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#a6e22e">hasCallCount</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">doesNotHaveCount</span>;
 </span></span></code></pre></div><h3 id="index-signatures">Index Signatures</h3>
 <p>有些<code>JavaScript</code>项目创建的对象可以使用任意字符串<code>key</code>存储值。对于这种「容器」对象来说，为接口的每一个可能的<code>key</code>声明一个属性是不切实际的。</p>
-<p><code>TypeScript</code>提供了一种称为<code>index signature</code>的语法，允许接口接收任意的<code>key</code>，并返回该<code>key</code>下的值的类型。常见的是<code>string keys</code>，这是因为<code>JavaScript</code>对象查找属性时会将<code>key</code><font color="#de7802">隐式地转换为字符串</font>。<font color="#de7802">索引签名看起来像普通的属性定义，只是在键后面加上了类型，并用数组括号将其括起来</font>：</p>
+<p><code>TypeScript</code>提供了一种称为<code>index signature</code>的语法，允许接口接收任意的<code>key</code>，并返回该<code>key</code>对应值的类型。常见的是<code>string keys</code>，这是因为<code>JavaScript</code>对象查找属性时会将<code>key</code><font color="#de7802">隐式地转换为字符串</font>。<font color="#de7802">索引签名看起来像普通的属性定义，只是在键后面加上了类型，并用数组括号将其括起来</font>：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span><span style="color:#66d9ef">interface</span> <span style="color:#a6e22e">WordCounts</span> {
 </span></span><span style="display:flex;"><span>    [<span style="color:#a6e22e">i</span>: <span style="color:#66d9ef">string</span>]<span style="color:#f92672">:</span> <span style="color:#66d9ef">number</span>;
 </span></span><span style="display:flex;"><span>}
@@ -2005,7 +2005,7 @@ code.has-jax {
 </span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#a6e22e">counts</span>.<span style="color:#a6e22e">banana</span> <span style="color:#f92672">=</span> <span style="color:#ae81ff">1</span>; <span style="color:#75715e">// Ok
 </span></span></span><span style="display:flex;"><span><span style="color:#75715e">// 编译错误：Type &#39;boolean&#39; is not assignable to type &#39;number&#39;.
 </span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#a6e22e">counts</span>.<span style="color:#a6e22e">cherry</span> <span style="color:#f92672">=</span> <span style="color:#66d9ef">false</span>;
-</span></span></code></pre></div><p>虽然<span style="background:rgba(255, 183, 139, 0.55)">索引签名便于将值赋值给对象，但并非完全类型安全</span>。因为索引签名表示，<font color="#de7802">无论访问的是什么属性，对象都应该返回一个值</font>，这一点和数组的索引相似。</p>
+</span></span></code></pre></div><p>虽然<span style="background:#ffb78b8c">索引签名便于将值赋值给对象，但并非完全类型安全</span>。因为索引签名表示，<font color="#de7802">无论访问的是什么属性，对象都应该返回一个值</font>，这一点和数组的索引相似。</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span><span style="color:#66d9ef">interface</span> <span style="color:#a6e22e">DatesByName</span> {
 </span></span><span style="display:flex;"><span>    [<span style="color:#a6e22e">i</span>: <span style="color:#66d9ef">string</span>]<span style="color:#f92672">:</span> Date;
 </span></span><span style="display:flex;"><span>}
@@ -2037,19 +2037,20 @@ code.has-jax {
 </span></span><span style="display:flex;"><span>}
 </span></span><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span><span style="color:#66d9ef">const</span> <span style="color:#a6e22e">novels</span>: <span style="color:#66d9ef">HistoricalNovels</span> <span style="color:#f92672">=</span> {
-</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">Outlander</span>: <span style="color:#66d9ef">1991</span>,
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">Outlander</span>: <span style="color:#66d9ef">2001</span>,
 </span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">Oroonoko</span>: <span style="color:#66d9ef">1688</span>,
 </span></span><span style="display:flex;"><span>};
 </span></span><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span><span style="color:#75715e">// 编译错误：Property &#39;Oroonoko&#39; is missing in type &#39;{ Outlander: number; }&#39; but required in type &#39;HistoricalNovels&#39;
 </span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">const</span> <span style="color:#a6e22e">missingOroonoko</span>: <span style="color:#66d9ef">HistoricalNovels</span> <span style="color:#f92672">=</span> {
-</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">Outlander</span>: <span style="color:#66d9ef">1991</span>,
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">Outlander</span>: <span style="color:#66d9ef">2003</span>,
 </span></span><span style="display:flex;"><span>};
 </span></span></code></pre></div><p>使用属性和索引签名的混合的一个常用技巧是为命名属性使用比索引签名的基本类型更具体的字面量类型。只要命名属性的类型可以分配给索引签名的类型&ndash;这对于字面类型和基本类型都是正确。</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span><span style="color:#66d9ef">interface</span> <span style="color:#a6e22e">ChapterStarts</span> {
 </span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">preface</span>: <span style="color:#66d9ef">0</span>;
 </span></span><span style="display:flex;"><span>    [<span style="color:#a6e22e">i</span>: <span style="color:#66d9ef">string</span>]<span style="color:#f92672">:</span> <span style="color:#66d9ef">number</span>;
 </span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span><span style="color:#66d9ef">const</span> <span style="color:#a6e22e">correctPreface</span>: <span style="color:#66d9ef">ChapterStarts</span> <span style="color:#f92672">=</span> {
 </span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">preface</span>: <span style="color:#66d9ef">0</span>,
 </span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">night</span>: <span style="color:#66d9ef">1</span>,
@@ -2076,7 +2077,7 @@ code.has-jax {
 </span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    [<span style="color:#a6e22e">i</span>: <span style="color:#66d9ef">string</span>]<span style="color:#f92672">:</span> <span style="color:#66d9ef">string</span>;
 </span></span><span style="display:flex;"><span>}
 </span></span></code></pre></div><h3 id="nested-interfaces">Nested Interfaces</h3>
-<p>如同对象类型可以嵌套其他对象类型作为属性值的类型一样，接口类型也可以拥有本身就是接口类型（或对象类型）的属性。下面定义的接口<code>Novel</code>，它的属性<code>setting</code>的值类型是<code>Setting</code>：</p>
+<p>如同对象类型可以嵌套其他对象类型作为属性值的类型一样，<font color="#de7802">接口类型也可以拥有本身就是接口类型（或对象类型）的属性</font>。下面定义的接口<code>Novel</code>，它的属性<code>setting</code>的值类型是<code>Setting</code>：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span><span style="color:#66d9ef">interface</span> <span style="color:#a6e22e">Novel</span> {
 </span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">author</span><span style="color:#f92672">:</span> { <span style="color:#a6e22e">name</span>: <span style="color:#66d9ef">string</span>; };
 </span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">setting</span>: <span style="color:#66d9ef">Setting</span>;
@@ -2138,7 +2139,7 @@ code.has-jax {
 </span></span><span style="display:flex;"><span><span style="color:#75715e">// 这样赋值不会出现编译错误
 </span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#a6e22e">myNovella</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">extraProperty1</span>
 </span></span></code></pre></div><h3 id="overridden-properties">Overridden Properties</h3>
-<p>派生接口可以通过<font color="#de7802">再次声明同名的但类型不同的属性来覆盖或替换其基础接口的属性</font>。<span style="background:rgba(255, 183, 139, 0.55)">类型检查器会强制要求覆盖的属性必须可赋值给其基础接口对应的属性</span>，也就是说<code>override</code><strong><font color=red>属性的类型范围只能缩小不能扩大</font></strong>。目的是确保派生接口类型的实例始终可赋值给基础接口类型变量。</p>
+<p>派生接口可以通过<font color="#de7802">再次声明同名的但类型不同的属性来覆盖或替换其基础接口的属性</font>。<font color="#de7802">类型检查器会强制要求覆盖的属性必须可赋值给其基础接口对应的属性</span>，也就是说<code>override</code><strong><font color=red>属性的类型范围只能缩小不能扩大</font></strong>。目的是确保派生接口类型的实例始终可赋值给基础接口类型变量。</p>
 <p>实际上，<font color="#de7802">大多数派生接口在重新声明属性时，是为了使得这些属性成为一个联合类型的更具体的子类型</font>，也可能是为了使属性成为一个从基本接口类型扩展而来的类型（通常是扩展多个接口）。</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span><span style="color:#66d9ef">interface</span> <span style="color:#a6e22e">WithNullableName</span> {
 </span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">name</span>: <span style="color:#66d9ef">string</span> <span style="color:#f92672">|</span> <span style="color:#66d9ef">null</span>;
