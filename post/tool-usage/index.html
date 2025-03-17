@@ -241,7 +241,7 @@ code.has-jax {
     <i class="fa fa-file-word-o"></i>
 </span>
 <span class="post-meta-item-text">字数: </span>
-<span class="leancloud-visitors-count">4149</span>
+<span class="leancloud-visitors-count">4157</span>
 &nbsp; | &nbsp;
 <span class="post-meta-item-icon">
     <i class="fa fa-coffee"></i>
@@ -459,7 +459,7 @@ code.has-jax {
 </span></span><span style="display:flex;"><span>    }
 </span></span></code></pre></div><h1 id="obsidian">Obsidian</h1>
 <h2 id="remember-file-state无法退出应用">Remember File State无法退出应用</h2>
-<p>在mac上安装了<code>Obsidian</code>里的插件<code>Remember File State</code>后，发现按住<code>command+Q</code>无法直接退出应用，只是关闭页面，需要按两次<code>command+Q</code>才能完全关闭应用。看了插件的代码，发现其中的<code>main.js</code>中绑定了退出快捷键，但没有退出应用：</p>
+<p>在mac上安装了<code>Obsidian</code>中的插件<code>Remember File State</code>后，发现按住<code>command+Q</code>无法直接退出应用，只是关闭当前页面，需要再按一次<code>command+Q</code>才能完全关闭应用。看了插件的代码，发现在<code>main.js</code>中绑定了退出快捷键，但它没有退出应用：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-js" data-lang="js"><span style="display:flex;"><span><span style="color:#66d9ef">this</span>.<span style="color:#a6e22e">onAppQuit</span> <span style="color:#f92672">=</span> (<span style="color:#a6e22e">tasks</span>) =&gt; <span style="color:#a6e22e">__async</span>(<span style="color:#66d9ef">this</span>, <span style="color:#66d9ef">null</span>, <span style="color:#66d9ef">function</span><span style="color:#f92672">*</span> () {  
 </span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">const</span> <span style="color:#a6e22e">_this</span> <span style="color:#f92672">=</span> <span style="color:#66d9ef">this</span>;  
 </span></span><span style="display:flex;"><span>  <span style="color:#a6e22e">tasks</span>.<span style="color:#a6e22e">addPromise</span>(<span style="color:#a6e22e">_this</span>.<span style="color:#a6e22e">rememberAllOpenedFileStates</span>().<span style="color:#a6e22e">then</span>(() =&gt; <span style="color:#a6e22e">_this</span>.<span style="color:#a6e22e">writeStateDatabase</span>(<span style="color:#a6e22e">STATE_DB_PATH</span>)));  
@@ -490,7 +490,7 @@ code.has-jax {
 </span></span><span style="display:flex;"><span>  <span style="color:#75715e">// 2. 立即退出（不再等待其他任务）
 </span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>  window.<span style="color:#a6e22e">app</span>.<span style="color:#a6e22e">quit</span>();
 </span></span><span style="display:flex;"><span>});
-</span></span></code></pre></div><p>若能够将<code>rememberAllOpenedFileStates</code>和<code>writeStateDatabase</code>改造成同步方法，可以改造成如下方式：</p>
+</span></span></code></pre></div><p>若能够将<code>rememberAllOpenedFileStates</code>和<code>writeStateDatabase</code>改造成同步方法，就可以将代码改造成如下同步方式：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-js" data-lang="js"><span style="display:flex;"><span><span style="color:#66d9ef">this</span>.<span style="color:#a6e22e">onAppQuit</span> <span style="color:#f92672">=</span> (<span style="color:#a6e22e">tasks</span>) =&gt; {
 </span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">const</span> <span style="color:#a6e22e">_this</span> <span style="color:#f92672">=</span> <span style="color:#66d9ef">this</span>;
 </span></span><span style="display:flex;"><span>  
