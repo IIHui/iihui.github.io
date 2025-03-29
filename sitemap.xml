@@ -952,7 +952,9 @@ class PastGrades {  grades: number[] = []; }  class LabeledPastGrades extends Pa
 子类构造函数可以声明任何形参，而无需考虑父类的要求。因为TypeScript的类型检查器会确保对父类构造函数的调用使用了正确的参数。
 class GradeAnnouncer {  message: string;  constructor(grade: number) {  this.message = grade &amp;gt;= 65 ? &amp;#34;Maybe next time...&amp;#34; : &amp;#34;You pass!&amp;#34;;  } }  class PassingAnnouncer extends GradeAnnouncer {  constructor() {  // 子类中定义了构造函数，因此必须使用super调用父类的构造函数  super(100);  } } 根据JavaScript的规则，子类的构造器在使用this或super之前必须调用父类的构造器。若在调用父类的构造函数之前使用this或super会出现编译错误：
 class GradesTally {  grades: number[] = [];  addGrades(...grades: number[]) {  this.grades.push(...grades);  return this.grades.length;  } }  class ContinuedGradesTally extends GradesTally {  constructor(previousGrades: number[]) {  // 在使用this之前要调用父类的构造函数  this.grades = [...previousGrades];  } }  // 出现编译错误 Constructors for derived classes must contain a &amp;#39;super&amp;#39; call.  // 下面这样先调用基类的构造函数才不会出现编译错误 class ContinuedGradesTally extends GradesTally {  constructor(previousGrades: number[]) {  super();  // 展开操作符  this.grades = [...previousGrades];  console.log(&amp;#34;Starting with length&amp;#34;, this.grades.length);  } } Overridden Methods  TypeScript有一套基于结构类型的系统，判断类型兼容性时，会比较两个类型的结构。当涉及到函数时，函数参数是逆变的，而返回值是协变的。也就是说，如果函数A的参数类型比函数B的参数类型更宽泛，且函数A的返回值类型比函数B的返回值类型更窄，那么函数A的类型与函数B的类型是兼容的，可以将A赋值给B。
- 函数参数的类型是逆变的，如果A是B的子类型，则参数类型为B的函数是参数类型为A的函数的子类型。换句话说，函数参数的子类型关系是反向的。
+ TypeScript中的「协变」和「逆变」是描述父子类型在复杂类型（如函数、数组）中如何传递的规则。用生活中的例子比喻：
+ 协变：买了一个装苹果的箱子（Apple[]），可以当作装水果的箱子（Fruit[]）用，因为苹果是水果的子类型。 逆变：要求一个能处理所有水果的机器（参数是Fruit），可以替换成只能处理苹果的机器（参数是Apple），但反过来可能不安全。  通俗的理解，协变是子类型可以替代父类型，方向一致。逆变是，父类型可以替代子类型，方向相反。
+函数参数的类型是逆变的，如果A是B的子类型，则参数类型为B的函数是参数类型为A的函数的子类型。换句话说，函数参数的子类型关系是反向的。
 为什么需要逆变？是为了保证类型安全：
  如果一个函数期望接收一个更宽泛的类型（例如Animal），它可以安全地替换一个需要更具体类型（例如Cat）的函数。 反之则可能导致运行时错误。  函数返回值的类型是协变的。如果A是B的子类型，则返回值类型为A的函数是返回值类型为B的函数的子类型。类型关系保持一致。
 为什么需要协变？返回值的协变是安全的：
