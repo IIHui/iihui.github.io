@@ -241,7 +241,7 @@ code.has-jax {
     <i class="fa fa-file-word-o"></i>
 </span>
 <span class="post-meta-item-text">字数: </span>
-<span class="leancloud-visitors-count">60812</span>
+<span class="leancloud-visitors-count">60877</span>
 &nbsp; | &nbsp;
 <span class="post-meta-item-icon">
     <i class="fa fa-coffee"></i>
@@ -3305,12 +3305,12 @@ code.has-jax {
 </span></span></code></pre></div><p>但需要注意的是，在<code>.tsx</code>文件中泛型箭头语法有一些限制，因为它与<code>JSX</code>语法冲突。修改相关的配置可以支持<code>JSX</code>和<code>React</code>。</p>
 <h3 id="explicit-generic-call-types">Explicit Generic Call Types</h3>
 <p>多数情况下，在调用泛型函数时，能够根据函数的调用方式推断出类型实参。例如，在前面的<code>identity</code>函数中，类型检查器根据提供给它的实参来推断泛型函数的类型实参。</p>
-<p>不幸的是，与类成员和变量类型一样，有时函数调用时没有足够的信息来告知编译器类型参数应解析成什么类型。如果一个泛型构造器被提供给另一个泛型构造器，则可能会发生这种情况。<span style="background:#f8d9c3">对于无法推断的类型参数，则认为是<code>unknown</code>类型。</span></p>
+<p>不幸的是，与类成员和变量类型一样，有时函数调用时没有足够的信息来告知编译器类型参数应解析成什么类型。如果一个泛型构造器被提供给另一个泛型构造器，则可能会发生这种情况。<font color="#de7802">对于无法推断的类型参数，则认为是<code>unknown</code>类型。</font></p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span><span style="color:#66d9ef">function</span> <span style="color:#a6e22e">logWrapper</span>&lt;<span style="color:#f92672">Input</span>&gt;(<span style="color:#a6e22e">callback</span><span style="color:#f92672">:</span> (<span style="color:#a6e22e">input</span>: <span style="color:#66d9ef">Input</span>) <span style="color:#f92672">=&gt;</span> <span style="color:#66d9ef">void</span>) {  
 </span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">return</span> (<span style="color:#a6e22e">input</span>: <span style="color:#66d9ef">Input</span>) <span style="color:#f92672">=&gt;</span> {  
 </span></span><span style="display:flex;"><span>        <span style="color:#a6e22e">console</span>.<span style="color:#a6e22e">log</span>(<span style="color:#e6db74">&#34;Input:&#34;</span>, <span style="color:#a6e22e">input</span>);  
 </span></span><span style="display:flex;"><span>        <span style="color:#a6e22e">callback</span>(<span style="color:#a6e22e">input</span>);  
-</span></span><span style="display:flex;"><span>    };  
+</span></span><span style="display:flex;"><span>    }
 </span></span><span style="display:flex;"><span>}
 </span></span><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span><span style="color:#75715e">// 正常
@@ -3323,11 +3323,18 @@ code.has-jax {
 </span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#a6e22e">Input</span>: <span style="color:#66d9ef">1234</span>
 </span></span><span style="display:flex;"><span><span style="color:#ae81ff">4</span>
 </span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span><span style="color:#75715e">// 编译错误：&#39;input&#39; is of type &#39;unknown&#39;.
+</span></span><span style="display:flex;"><span><span style="color:#75715e">// 若未指明类型，编译器默认推断为unknown
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">// 出现编译错误：&#39;input&#39; is of type &#39;unknown&#39;.
 </span></span></span><span style="display:flex;"><span><span style="color:#75715e">// unkonwn不能直接访问属性，必须进行类型转换
-</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#a6e22e">logWrapper</span>((<span style="color:#a6e22e">input</span>) <span style="color:#f92672">=&gt;</span> {  
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">const</span> <span style="color:#a6e22e">log1</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">logWrapper</span>((<span style="color:#a6e22e">input</span>) <span style="color:#f92672">=&gt;</span> {  
 </span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">console</span>.<span style="color:#a6e22e">log</span>(<span style="color:#a6e22e">input</span>.<span style="color:#a6e22e">length</span>);  
 </span></span><span style="display:flex;"><span>})
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">// 下面代码不会出现编译错误
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">const</span> <span style="color:#a6e22e">log1</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">logWrapper</span>((<span style="color:#a6e22e">input</span>: <span style="color:#66d9ef">number</span>) <span style="color:#f92672">=&gt;</span> {
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">console</span>.<span style="color:#a6e22e">log</span>(<span style="color:#a6e22e">input</span>.<span style="color:#a6e22e">toFixed</span>());
+</span></span><span style="display:flex;"><span>})
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">log1</span>(<span style="color:#ae81ff">133.456</span>)
 </span></span></code></pre></div><p>为了避免使用默认的类型<code>unknown</code>，泛型函数调用时<font color="#de7802">可能需要显式标注泛型的类型实参</font>。编译器将对泛型函数调用执行类型检查，以确保显式标注的类型参数是正确的。</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span><span style="color:#66d9ef">function</span> <span style="color:#a6e22e">logWrapper</span>&lt;<span style="color:#f92672">Input</span>&gt;(<span style="color:#a6e22e">callback</span><span style="color:#f92672">:</span> (<span style="color:#a6e22e">input</span>: <span style="color:#66d9ef">Input</span>) <span style="color:#f92672">=&gt;</span> <span style="color:#66d9ef">void</span>) {  
 </span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">return</span> (<span style="color:#a6e22e">input</span>: <span style="color:#66d9ef">Input</span>) <span style="color:#f92672">=&gt;</span> {  
@@ -3342,9 +3349,15 @@ code.has-jax {
 </span></span><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span> <span style="color:#a6e22e">test</span>(<span style="color:#e6db74">&#34;Hello world&#34;</span>)
 </span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">const</span> <span style="color:#a6e22e">log1</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">logWrapper</span>&lt;<span style="color:#f92672">string</span>&gt;((<span style="color:#a6e22e">input</span>) <span style="color:#f92672">=&gt;</span> {
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">console</span>.<span style="color:#a6e22e">log</span>(<span style="color:#e6db74">&#34;input length:&#34;</span>, <span style="color:#a6e22e">input</span>.<span style="color:#a6e22e">length</span>);
+</span></span><span style="display:flex;"><span>})
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">log1</span>(<span style="color:#e6db74">&#34;133.456&#34;</span>)
+</span></span><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span><span style="color:#75715e">// 执行结果
 </span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#a6e22e">Input</span>: <span style="color:#66d9ef">Hello</span> <span style="color:#a6e22e">world</span>
 </span></span><span style="display:flex;"><span><span style="color:#a6e22e">study.ts</span>:<span style="color:#66d9ef">2311</span>
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">input</span> <span style="color:#a6e22e">length</span>: <span style="color:#66d9ef">7</span>
 </span></span></code></pre></div><h3 id="multiple-function-type-parameters">Multiple Function Type Parameters</h3>
 <p>泛型函数<font color="#de7802">可以定义任意数量的类型参数，类型参数之间用逗号隔开</font>。泛型函数每次调用时都可以为每个类型参数确定相应的实际类型。</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span><span style="color:#66d9ef">function</span> <span style="color:#a6e22e">makeTuple</span>&lt;<span style="color:#f92672">First</span><span style="color:#960050;background-color:#1e0010">,</span> <span style="color:#a6e22e">Second</span>&gt;(<span style="color:#a6e22e">first</span>: <span style="color:#66d9ef">First</span>, <span style="color:#a6e22e">second</span>: <span style="color:#66d9ef">Second</span>) {  
