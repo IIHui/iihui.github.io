@@ -1151,13 +1151,13 @@ namespace Utils {  export namespace Messaging {  export function log(msg: string
 namespace Animals {  export class Cat {} }  namespace Animals {   export interface Legged {  numberOfLegs: number;  }   export class Dog {} }  // 等同于 namespace Animals {   export interface Legged {  numberOfLegs: number;  }   export class Cat {}  export class Dog {} } 这样做的目的是，如果同名的命名空间分布在不同的文件中，TypeScript会将它们合并在一起，这样就比较方便扩展别人的代码。合并命名空间时，命名空间中的非export的成员不会被合并，它们只能在各自的命名空间中使用。
 namespace N {  const a = 0;   export function foo() {  console.log(a); // 正确  } }  namespace N {  export function bar() {  foo(); // 正确  console.log(a); // 报错  } }  // 出现编译报错 Cannot find name &amp;#39;a&amp;#39; 命名空间还可以跟同名函数合并，但要求同名函数必须在命名空间之前声明。这样做是为了确保先创建出一个函数对象，而同名的命名空间就相当于给这个函数对象添加额外的属性。
 function f() {  return f.version; }  namespace f {  export const version = &amp;#39;1.0&amp;#39;; }  f() // &amp;#39;1.0&amp;#39; f.version // &amp;#39;1.0&amp;#39; 命名空间也能与同名class合并，也要求class必须在命名空间之前声明，原因同上。
-class C {  foo = 1; }  namespace C {  export const bar = 2; }  C.bar // 2 命名空间还能与同名枚举合并，此时不要求枚举在命名空间之前声明：
-namespace E {  export function foo() {  console.log(E.C);  } }  enum E {  A,  B,  C, }  E.foo() // 2 需要注意的是，枚举成员与命名空间export成员不允许同名：
+class C {  foo = 1; }  namespace C {  export const bar = 2; }  C.bar // 2 命名空间还能与同名枚举合并，但此时不要求枚举在命名空间之前声明：
+namespace E {  export function foo() {  console.log(E.C);  } }  enum E {  A,  B,  C, }  E.foo() // 2 但需要注意的是，枚举成员与命名空间export成员不允许同名：
 enum E {  A,  B, }  namespace E {  export function A() {} } // 编译错误：Duplicate identifier &amp;#39;A&amp;#39;.  参考资料2
 WK中使用sock5代理
 openAdapter
-Module 若文件中包含import或export语句，就是一个模块，反之则是一个全局的脚本文件。模块本身就是一个作用域，但它不是全局作用域，其内部的代码默认仅在内部可见。若想暴露module中的代码给外部使用，需使用export声明，其它文件若想使用module内export的项，必须使用import进行导入。
-如果一个文件不包含export语句，但是希望把它当作一个模块（即让内部代码对外不可见），可以在文件头部添加export {};。这条语句会让当前文件被当作模块处理，即文件内的代码变成了仅内部可见。
+Module 若文件中包含import或export语句，就是一个模块，反之则是一个全局的脚本文件。模块本身就是一个作用域，但它不是全局作用域，其内部的代码默认仅在内部可见。若想暴露module中的代码给外部使用，需使用export声明，其它文件若想使用module内定义的export项，必须使用import进行导入。
+如果一个文件不包含export语句，但是希望把它当作一个模块（即让内部代码对外不可见），可以在文件头部添加export {};。这条语句会让当前文件被当作模块处理，即文件内的所有代码变成了仅内部可见。
 export {}; TypeScript模块除了支持所有ES模块的语法，特别之处在于允许export和import类型。下面示例代码中，当前文件导出一个类型别名Bool。既可以把类型定义和导出写在一行，也可以写成两行。
 export type Bool = true | false;  // 一行拆成两行，先定义类型别名，再导出类型 type Bool = true | false; export { Bool }; export default export 在一个模块（.ts文件）中只能有一个默认导出，语法为export default expression;。其中expression可以是一个类、函数、对象等。下面示例代码，默认导出一个函数。如果同一个文件中默认导出了多个项，则会出现编译错误：
 // mathUtils.ts export default function add(a: number, b: number): number {  return a &#43; b; }  // 如果有两个默认导出，则会出现编译错误 // Cannot redeclare exported variable &amp;#39;default&amp;#39;. export default function add1(a: number, b: number): number {  return a &#43; b; } named export 可以在一个模块中导出多个具名的变量、函数、类等。具名导出(named export)的语法是export const/function/class/interface name = value;，即在定义的最前面加上export关键词。
