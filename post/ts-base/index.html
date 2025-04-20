@@ -241,7 +241,7 @@ code.has-jax {
     <i class="fa fa-file-word-o"></i>
 </span>
 <span class="post-meta-item-text">字数: </span>
-<span class="leancloud-visitors-count">61739</span>
+<span class="leancloud-visitors-count">61958</span>
 &nbsp; | &nbsp;
 <span class="post-meta-item-icon">
     <i class="fa fa-coffee"></i>
@@ -2178,8 +2178,8 @@ code.has-jax {
 </span></span><span style="display:flex;"><span><span style="color:#75715e">// 这样赋值不会出现编译错误
 </span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#a6e22e">myNovella</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">extraProperty1</span>
 </span></span></code></pre></div><h3 id="overridden-properties">Overridden Properties</h3>
-<p>派生接口可以通过<font color="#de7802">再次声明同名的但类型不同的属性来覆盖或替换其基础接口的属性</font>。<span style="background:#ffb78b8c">类型检查器会强制要求覆盖的属性必须可赋值给其基础接口对应的属性</span>，也就是说<code>override</code><strong><font color=red>属性的类型范围只能缩小不能扩大</font></strong>。目的是确保派生接口类型的实例始终可赋值给基础接口类型变量。</p>
-<p>实际上，<font color="#de7802">大多数派生接口在重新声明属性时，是为了使得这些属性成为一个联合类型的更具体的子类型</font>，也可能是为了使属性成为一个从基本接口类型扩展而来的类型（通常是扩展多个接口）。</p>
+<p>派生接口可以通过<font color="#de7802">再次声明类型不同但同名的属性来覆盖或替换其基础接口的属性</font>。<span style="background:#ffb78b8c">类型检查器会强制要求覆盖的属性必须可赋值给其基接口对应的属性</span>，也就是说<code>override</code><strong><font color=red>属性的类型范围只能缩小不能扩大</font></strong>。目的是确保派生接口类型的实例始终可赋值给基接口类型的变量。</p>
+<p>实际上，<font color="#de7802">大多数派生接口在重新声明属性时，是为了使得这些属性成为一个联合类型的更具体的子类型</font>，也可能是为了使属性的类型成为一个从基接口类型扩展而来的类型。</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span><span style="color:#66d9ef">interface</span> <span style="color:#a6e22e">WithNullableName</span> {
 </span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">name</span>: <span style="color:#66d9ef">string</span> <span style="color:#f92672">|</span> <span style="color:#66d9ef">null</span>;
 </span></span><span style="display:flex;"><span>}
@@ -2215,7 +2215,7 @@ code.has-jax {
 </span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>}
 </span></span></code></pre></div><p>将一个接口标注为扩展多个其它接口，既可以减少代码重复，又可以使对象更容易跨越不同的代码区域重复使用。</p>
 <h2 id="interface-merging">Interface Merging</h2>
-<p>接口的一个重要特性是可以合并。接口合并意味着，如果<font color="#de7802">在同一作用域中声明了两个名称相同的接口，它们就会合并成一个更大的接口</font>，并在该名称下包含所有声明的字段。</p>
+<p>接口的一个重要特性是可以合并。接口合并意味着，如果<font color="#de7802">在同一作用域中声明了两个名称相同的接口，它们就会合并成一个更大的接口</font>，合并后的接口包含同名接口所有声明的字段。</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span><span style="color:#66d9ef">interface</span> <span style="color:#a6e22e">Merged</span> {
 </span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">fromFirst</span>: <span style="color:#66d9ef">string</span>;
 </span></span><span style="display:flex;"><span>}
@@ -2223,7 +2223,7 @@ code.has-jax {
 </span></span><span style="display:flex;"><span><span style="color:#66d9ef">interface</span> <span style="color:#a6e22e">Merged</span> {
 </span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">fromSecond</span>: <span style="color:#66d9ef">number</span>;
 </span></span><span style="display:flex;"><span>}
-</span></span></code></pre></div><p>接口<code>merge</code>在日常开发中并不经常使用，<font color="#de7802">建议尽量避免使用该功能</font>。因为，如果在多个地方声明同一个接口，会使得代码比较难理解和混乱。</p>
+</span></span></code></pre></div><p>接口<code>merge</code>在<font color="#de7802">日常开发中并不经常使用，建议尽量避免使用该功能</font>。因为，如果在多个地方声明同一个接口，会使得代码比较难理解和混乱。</p>
 <p>但是，<font color="#de7802">接口合并对于增强来自外部包或内置的全局接口（如<code>Window</code>）特别有用</font>。例如，当使用默认的编译器选项时，在一个文件中声明带有<code>myEnvironmentVariable</code>属性的<code>Window</code>接口，就可以使用<code>window.myEnvironmentVariable</code>：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span><span style="color:#66d9ef">interface</span> <span style="color:#a6e22e">Window</span> {
 </span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">myEnvironmentVariable</span>: <span style="color:#66d9ef">string</span>;
@@ -2231,7 +2231,7 @@ code.has-jax {
 </span></span><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span>window.<span style="color:#a6e22e">myEnvironmentVariable</span>;
 </span></span></code></pre></div><h3 id="member-naming-conflicts">Member Naming Conflicts</h3>
-<p>请注意，<font color=red>合并后的接口不能以不同类型多次声明同名的属性</font>。<font color="#548dd4">如果一个接口中已经声明了一个属性，那么以后合并的接口中必须使用相同的类型</font>。但是，<span style="background:#ffb78b8c">合并后的接口可以定义一个名称相同但签名不同的方法</span>，这样做会为该方法创建一个重载。</p>
+<p>请注意，<font color=red>合并后的接口不能以不同类型多次声明同名的属性</font>。<font color="#548dd4">如果一个接口中已经声明了一个属性，那么以后合并的接口中必须使用相同的类型</font>。但是，<strong><span style="background:#ffb78b8c">合并后的接口可以定义一个名称相同但签名不同的方法</span></strong>，这样做会为该方法创建一个重载。</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span><span style="color:#66d9ef">interface</span> <span style="color:#a6e22e">MergedMethods</span> {
 </span></span><span style="display:flex;"><span>    <span style="color:#75715e">// 名称相同的方法
 </span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#a6e22e">different</span>(<span style="color:#a6e22e">input</span>: <span style="color:#66d9ef">string</span>)<span style="color:#f92672">:</span> <span style="color:#66d9ef">string</span>;
@@ -2242,7 +2242,7 @@ code.has-jax {
 </span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#a6e22e">different</span>(<span style="color:#a6e22e">input</span>: <span style="color:#66d9ef">number</span>)<span style="color:#f92672">:</span> <span style="color:#66d9ef">string</span>; <span style="color:#75715e">// Ok 
 </span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>}
 </span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span><span style="color:#75715e">// 因为类型相同，下面代码不会出现编译错误
+</span></span><span style="display:flex;"><span><span style="color:#75715e">// 因为属性的类型相同，下面代码不会出现编译错误
 </span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">interface</span> <span style="color:#a6e22e">Page</span> {
 </span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">readonly</span> <span style="color:#a6e22e">text</span>: <span style="color:#66d9ef">string</span>
 </span></span><span style="display:flex;"><span>}
@@ -2260,7 +2260,7 @@ code.has-jax {
 </span></span><span style="display:flex;"><span>}
 </span></span></code></pre></div><h1 id="classes">Classes</h1>
 <h2 id="class-methods">Class Methods</h2>
-<p><code>TypeScript</code>对类中方法的理解与对独立函数的理解相同。<font color="#de7802">除非显式地标注类型或给出默认值，否则方法形参的类型被推断为</font><code>any</code>。如果编译设置的是严格模式，形参不允许省略类型标注。</p>
+<p><code>TypeScript</code>对类中方法的理解与对独立函数的理解相同。<font color="#de7802">除非显式地标注类型或给出默认值，否则方法形参的类型被推断为</font><code>any</code>。若<font color=red>编译选项设置的是严格模式，形参不允许省略类型标注</font>。</p>
 <p>调用类中方法时<font color="#0070c0">需要给出正确的实参数量和正确的类型</font>，否则会出现编译错误。如果函数不是递归的，返回类型通常可以被编译器推断出来。</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span><span style="color:#66d9ef">class</span> <span style="color:#a6e22e">Greeter</span> {
 </span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">greet</span>(<span style="color:#a6e22e">name</span>: <span style="color:#66d9ef">string</span>) {
@@ -2280,7 +2280,7 @@ code.has-jax {
 </span></span><span style="display:flex;"><span><span style="color:#75715e">// 执行结果
 </span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#a6e22e">As</span> <span style="color:#a6e22e">I</span> <span style="color:#a6e22e">always</span> <span style="color:#a6e22e">say</span>: <span style="color:#66d9ef">take</span> <span style="color:#a6e22e">chances</span>, <span style="color:#a6e22e">make</span> <span style="color:#a6e22e">mistakes</span>, <span style="color:#66d9ef">get</span> <span style="color:#a6e22e">messy</span><span style="color:#f92672">!</span>
 </span></span></code></pre></div><h2 id="class-properties">Class Properties</h2>
-<p>在<code>TypeScript</code>中，若要读取或写入类的属性，必须在类中明确声明。类属性声明语法与接口相同，名称后跟一个类型标注。不同于<code>JavaScrpit</code>，<code>TypeScript</code><font color="#de7802">不会试图通过构造函数中的赋值来推断类中可能存在的成员</font>。</p>
+<p>在<code>TypeScript</code>中，若要读取或写入类的属性，必须在类中明确声明。类属性声明语法与接口相同，名称后跟一个类型标注。不同于<code>JavaScrpit</code>，<code>TypeScript</code><font color="#de7802">不会试图通过构造函数中的赋值来推断类中可能存在的成员</font>，也就是说类中的属性均必须事先声明才能使用：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span><span style="color:#66d9ef">class</span> <span style="color:#a6e22e">FieldTrip</span> {
 </span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">destination</span>: <span style="color:#66d9ef">string</span>;
 </span></span><span style="display:flex;"><span>    
@@ -2320,8 +2320,18 @@ code.has-jax {
 </span></span><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span><span style="color:#75715e">// 执行结果
 </span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">true</span>
+</span></span></code></pre></div><p>若在类中，使用函数形式定义的方法属性不能先声明，然后再在构造方法中赋予初值。下面示例代码中，因为<code>method</code>没有在声明的时候给出实现，会出现编译错误：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span><span style="color:#66d9ef">class</span> <span style="color:#a6e22e">TestClass</span> {
+</span></span><span style="display:flex;"><span>   <span style="color:#75715e">// Function implementation is missing or not immediately following the declaration.
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#a6e22e">method</span>()<span style="color:#f92672">:</span> <span style="color:#66d9ef">string</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">constructor</span>() {
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">this</span>.<span style="color:#a6e22e">method</span> <span style="color:#f92672">=</span> () <span style="color:#f92672">=&gt;</span> {
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">return</span> <span style="color:#e6db74">&#34;method&#34;</span>
+</span></span><span style="display:flex;"><span>        }
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>}
 </span></span></code></pre></div><p>另一种定义方法的语法是声明一个属性，其值恰好是一个函数。<span style="background:#ffb78b8c">这种方式将会为类的每个实例创建一个新函数</span>，这对于箭头函数可能很有用，因为箭头函数的<code>this</code>作用域应始终指向类的当前实例。</p>
-<p>下面<code>WithProperty</code>类定义了单个属性<code>myProperty</code>，它的类型为<code>() =&gt; void</code>。<font color="#de7802">每个类的实例都会创建一个新副本</font>，两个不同实例比较该属性时总是返回<code>false</code>：</p>
+<p>下面<code>WithProperty</code>类定义了属性<code>myProperty</code>，它的类型为<code>() =&gt; void</code>。<font color="#de7802">每个类的实例都会创建一个新副本</font>，两个不同实例比较该属性时总是返回<code>false</code>：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span><span style="color:#66d9ef">class</span> <span style="color:#a6e22e">WithProperty</span> {
 </span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">myProperty</span><span style="color:#f92672">:</span> () <span style="color:#f92672">=&gt;</span> <span style="color:#66d9ef">void</span>
 </span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">constructor</span>() {
@@ -2361,9 +2371,9 @@ code.has-jax {
 </span></span><span style="display:flex;"><span>}
 </span></span><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span><span style="color:#75715e">// 编译错误: Property &#39;unused&#39; has no initializer and is not definitely assigned in the constructor.
-</span></span></span></code></pre></div><p>对于<font color=red>类中属性的值类型包含了<code>undefined</code>类型来说，与对象类型以及接口类型有很大区别，在构造函数中可以初始化该属性，也可以不初始化</font>。若没有严格的初始化检查，类实例可能会被允许访问一个可能为<code>undefined</code>的值，即使类型系统规定不能这样做。</p>
+</span></span></span></code></pre></div><p>对于**<font color=red>类中属性的值类型包含了<code>undefined</code>类型来说，与对象类型以及接口类型有很大区别，在构造函数中可以初始化该属性，也可以不初始化</font>**。若没有严格的初始化检查，类实例可能会被允许访问一个可能为<code>undefined</code>的值，即使类型系统规定不能这样做。</p>
 <h4 id="definitely-assigned-properties">Definitely assigned properties</h4>
-<p>尽管严格的初始检查在多数情况下很有用。但在某些情况下，可能会遇到故意在类构造函数之后取消检查类的某个属性的情况。如果<font color="#de7802">绝对确定某个属性不需要应用严格初始化检查</font>，可以在其名称后添加一个<code>!</code>来禁用属性检查。这样做可以向编译器申明，该属性将在首次使用前一定会被赋值，不会是<code>undefined</code>值。</p>
+<p>尽管严格的初始检查在多数情况下很有用。但在某些情况下，可能会遇到故意在类构造函数之后取消检查类的某个属性的情况。如果<font color="#de7802">绝对确定某个属性不需要应用严格初始化检查</font>，可以在其名称后添加一个<code>!</code>来禁用属性检查。这样做可以向编译器申明，该属性将在首次使用前一定会被赋值，不会是<code>undefined</code>。</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span><span style="color:#66d9ef">class</span> <span style="color:#a6e22e">ActivitiesQueue</span> {
 </span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">pending</span><span style="color:#f92672">!:</span> <span style="color:#66d9ef">string</span>[]; <span style="color:#75715e">// Ok
 </span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>  
@@ -2413,7 +2423,20 @@ code.has-jax {
 </span></span><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span><span style="color:#75715e">// 只读属性不能重新被赋值
 </span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#a6e22e">quote</span>.<span style="color:#a6e22e">text</span> <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;Hello world&#34;</span>;
-</span></span></code></pre></div><p>与其它属性相比，<font color=red>声明为只读且同时初始化为基础类型字面量的属性有一个特性：它们会被推断为其值的字面量类型，而不是对应基本类型</font>，<mark style="background:#ffb78b8c">这样的属性在类构造函数中也不能重新赋值</mark>，这与<code>const</code>断言相似。</p>
+</span></span></code></pre></div><p>类中非字面量类型的只读属性，即使在声明的时候也初始化了，在构造函数中也可以再初始化一次，不会出现编译错误：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span><span style="color:#66d9ef">class</span> <span style="color:#a6e22e">Quote</span> {
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">readonly</span> <span style="color:#a6e22e">text</span>: <span style="color:#66d9ef">string</span> <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;123&#34;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">constructor</span>(<span style="color:#a6e22e">text</span>: <span style="color:#66d9ef">string</span>) {
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">this</span>.<span style="color:#a6e22e">text</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">text</span>
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">const</span> <span style="color:#a6e22e">quote</span> <span style="color:#f92672">=</span> <span style="color:#66d9ef">new</span> <span style="color:#a6e22e">Quote</span>(<span style="color:#e6db74">&#34;quote&#34;</span>)
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">console</span>.<span style="color:#a6e22e">log</span>(<span style="color:#a6e22e">quote</span>.<span style="color:#a6e22e">text</span>)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">// 执行结果
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#a6e22e">quote</span>
+</span></span></code></pre></div><p>与其它属性相比，<font color=red>声明为只读且同时初始化为基础类型字面量的属性有一个特性：它们会被推断为其值的字面量类型，而不是对应基本类型</font>，<mark style="background:#ffb78b8c">这样的属性在类构造函数中也不能重新赋值</mark>（真正意义的只能赋值一次），这与<code>const</code>断言相似。</p>
 <p><code>TypeScript</code>对于这种激进的字面量初始类型窄化感觉良好，因为知道其值以后不会改变。类似于使用<code>const</code>断言定义变量会比<code>let</code>变量使用更窄的类型。下面代码中，在构造函数中变量<code>explicit</code>可以再次被赋值（在其它函数中不能赋值），但<code>implicit</code>不能再次被赋值。</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span><span style="color:#66d9ef">class</span> <span style="color:#a6e22e">RandomQuote</span> {
 </span></span><span style="display:flex;"><span>    <span style="color:#75715e">// 显式声明为string类型，在初始化器中可以被修改
@@ -2448,7 +2471,7 @@ code.has-jax {
 </span></span><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span><span style="color:#75715e">// 编译错误：Type &#39;string&#39; is not assignable to type &#39;Teacher&#39;.
 </span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#a6e22e">tearcher</span> <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;Wahoo!&#34;</span>
-</span></span></code></pre></div><p>有趣的是，<code>TypeScript</code>会<font color="#de7802">将任何恰好包含当前类中所有相同成员的对象类型视为可赋值给当前类</font>。这是因为<code>TypeScript</code>中的<code>structural typing</code><span style="background:#ffb78b8c">只关心对象的形状，而不关心它们是如何声明的</span>。</p>
+</span></span></code></pre></div><p>有趣的是，<code>TypeScript</code>会<font color="#de7802">将任何恰好包含当前类中所有相同成员的对象类型视为可赋值给当前类</font>。这是因为<code>TypeScript</code>是<code>structural typing</code>的，因此<span style="background:#ffb78b8c">只关心对象的形状，而不关心它们是如何声明的</span>。</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span><span style="color:#66d9ef">class</span> <span style="color:#a6e22e">SchoolBus</span> {
 </span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">getAbilities() {</span>
 </span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">return</span> [<span style="color:#e6db74">&#34;magic&#34;</span>, <span style="color:#e6db74">&#34;shapeshifting&#34;</span>];
@@ -2466,7 +2489,7 @@ code.has-jax {
 </span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">getAbilities</span><span style="color:#f92672">:</span> () <span style="color:#f92672">=&gt;</span> [<span style="color:#e6db74">&#34;transmogrification&#34;</span>]
 </span></span><span style="display:flex;"><span>})
 </span></span></code></pre></div><h2 id="classes-and-interfaces">Classes and Interfaces</h2>
-<p><code>TypeScript</code>允许在定义类时的名字后添加<code>implements</code>关键字和接口名称，从而声明当前类遵循某个<code>interface</code>。这样声明是向编译器申明，<span style="background:#ffb78b8c">类的实例可以赋值给这些接口中的任何一个</span>。</p>
+<p><code>TypeScript</code>允许在定义类时在类名后添加<code>implements</code>关键字和接口名称，从而声明当前类遵循某个<code>interface</code>。这样声明是向编译器申明，<span style="background:#ffb78b8c">类的实例可以赋值给这些接口中的任何一个</span>。</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span><span style="color:#66d9ef">interface</span> <span style="color:#a6e22e">Learner</span> {
 </span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">name</span>: <span style="color:#66d9ef">string</span>;
 </span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">study</span>(<span style="color:#a6e22e">hours</span>: <span style="color:#66d9ef">number</span>)<span style="color:#f92672">:</span> <span style="color:#66d9ef">void</span>;
