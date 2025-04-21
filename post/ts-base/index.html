@@ -241,7 +241,7 @@ code.has-jax {
     <i class="fa fa-file-word-o"></i>
 </span>
 <span class="post-meta-item-text">字数: </span>
-<span class="leancloud-visitors-count">61957</span>
+<span class="leancloud-visitors-count">61974</span>
 &nbsp; | &nbsp;
 <span class="post-meta-item-icon">
     <i class="fa fa-coffee"></i>
@@ -2404,7 +2404,7 @@ code.has-jax {
 <p>与接口类型，类定义时也可以在属性前面添加<code>readonly</code>关键词。关键词<code>readonly</code>仅存在于类型系统，当编译为<code>JavaScript</code>文件后，关键字<code>readonly</code><font color="#de7802">会被移除</font>。</p>
 <p>需要注意的是，<font color=red>声明为只读的属性只能在声明处或构造函数中赋初始值</font>。任何其它位置（包括类本身的其它方法）只能读取属性，不能修改属性（修改属性时会出现编译错误）。</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span><span style="color:#66d9ef">class</span> <span style="color:#a6e22e">Quote</span> {
-</span></span><span style="display:flex;"><span>    <span style="color:#75715e">// 只读属性只能在声明处或构造函数中分配初始值
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">// 只读属性只能在声明处或构造函数中赋初始值
 </span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#66d9ef">readonly</span> <span style="color:#a6e22e">text</span>: <span style="color:#66d9ef">string</span>;
 </span></span><span style="display:flex;"><span>    
 </span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">constructor</span>(<span style="color:#a6e22e">text</span>: <span style="color:#66d9ef">string</span>) {
@@ -2423,19 +2423,23 @@ code.has-jax {
 </span></span><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span><span style="color:#75715e">// 只读属性不能重新被赋值
 </span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#a6e22e">quote</span>.<span style="color:#a6e22e">text</span> <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;Hello world&#34;</span>;
-</span></span></code></pre></div><p>类中非字面量类型的只读属性，即使在声明的时候也初始化了，在构造函数中也可以再初始化一次，不会出现编译错误：</p>
+</span></span></code></pre></div><p>类中定义的**<font color="#de7802">非字面量类型的只读属性</font>**，即使在声明的时候也初始化了，在构造函数中还可以再初始化一次，不会出现编译错误：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span><span style="color:#66d9ef">class</span> <span style="color:#a6e22e">Quote</span> {
 </span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">readonly</span> <span style="color:#a6e22e">text</span>: <span style="color:#66d9ef">string</span> <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;123&#34;</span>
-</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">constructor</span>(<span style="color:#a6e22e">text</span>: <span style="color:#66d9ef">string</span>) {
-</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">this</span>.<span style="color:#a6e22e">text</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">text</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">constructor</span>(<span style="color:#a6e22e">text?</span>: <span style="color:#66d9ef">string</span>) {
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">if</span> (<span style="color:#a6e22e">text</span>) {
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">this</span>.<span style="color:#a6e22e">text</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">text</span>
+</span></span><span style="display:flex;"><span>        }
 </span></span><span style="display:flex;"><span>    }
 </span></span><span style="display:flex;"><span>}
-</span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span><span style="color:#66d9ef">const</span> <span style="color:#a6e22e">quote</span> <span style="color:#f92672">=</span> <span style="color:#66d9ef">new</span> <span style="color:#a6e22e">Quote</span>(<span style="color:#e6db74">&#34;quote&#34;</span>)
-</span></span><span style="display:flex;"><span><span style="color:#a6e22e">console</span>.<span style="color:#a6e22e">log</span>(<span style="color:#a6e22e">quote</span>.<span style="color:#a6e22e">text</span>)
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">const</span> <span style="color:#a6e22e">quote1</span> <span style="color:#f92672">=</span> <span style="color:#66d9ef">new</span> <span style="color:#a6e22e">Quote</span>(<span style="color:#e6db74">&#34;quote&#34;</span>)
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">const</span> <span style="color:#a6e22e">quote2</span> <span style="color:#f92672">=</span> <span style="color:#66d9ef">new</span> <span style="color:#a6e22e">Quote</span>()
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">console</span>.<span style="color:#a6e22e">log</span>(<span style="color:#a6e22e">quote1</span>.<span style="color:#a6e22e">text</span>)
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">console</span>.<span style="color:#a6e22e">log</span>(<span style="color:#a6e22e">quote2</span>.<span style="color:#a6e22e">text</span>)
 </span></span><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span><span style="color:#75715e">// 执行结果
 </span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#a6e22e">quote</span>
+</span></span><span style="display:flex;"><span><span style="color:#ae81ff">123</span>
 </span></span></code></pre></div><p>与其它属性相比，<font color=red>声明为只读且同时初始化为基础类型字面量的属性有一个特性：它们会被推断为其值的字面量类型，而不是对应基本类型</font>，<mark style="background:#ffb78b8c">这样的属性在类构造函数中也不能重新赋值</mark>（真正意义的只能赋值一次），这与<code>const</code>断言相似。</p>
 <p><code>TypeScript</code>对于这种激进的字面量初始类型窄化感觉良好，因为知道其值以后不会改变。类似于使用<code>const</code>断言定义变量会比<code>let</code>变量使用更窄的类型。下面代码中，在构造函数中变量<code>explicit</code>可以再次被赋值（在其它函数中不能赋值），但<code>implicit</code>不能再次被赋值。</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span><span style="color:#66d9ef">class</span> <span style="color:#a6e22e">RandomQuote</span> {
