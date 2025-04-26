@@ -241,7 +241,7 @@ code.has-jax {
     <i class="fa fa-file-word-o"></i>
 </span>
 <span class="post-meta-item-text">字数: </span>
-<span class="leancloud-visitors-count">61994</span>
+<span class="leancloud-visitors-count">62063</span>
 &nbsp; | &nbsp;
 <span class="post-meta-item-icon">
     <i class="fa fa-coffee"></i>
@@ -2661,7 +2661,7 @@ code.has-jax {
 <li><strong>逆变</strong>：要求一个能处理所有水果的机器（参数是<code>Fruit</code>），可以替换成只能处理苹果的机器（参数是<code>Apple</code>），但反过来可能不安全。</li>
 </ul>
 <p>通俗的理解，协变是子类型可以替代父类型，方向一致，<font color="#de7802">常见场景是函数返回值、数组、对象属性</font>。<font color=red>函数返回值类型是协变的</font>。如果<code>B</code>是<code>A</code>的子类型，则返回值类型为<code>B</code>的函数可以赋值给返回值类型为<code>A</code>的函数变量。换句话说，函数的返回类型关系保持一致。</p>
-<p>为什么需要协变？返回值类型的协变是安全的。如果<font color="#de7802">函数返回一个更具体的子类型</font>，它可以安全替代返回<strong>更宽泛父类型</strong>的函数。</p>
+<p>为什么需要协变？返回值类型的协变是安全的。如果<font color="#de7802">函数返回一个更具体的子类型</font>，<em>它可以安全替代返回更宽泛父类型的函数</em>，因为子类型拥有父类型的所有成员。</p>
 <p>下面示例代码中，因为<code>Dog</code>是<code>Animal</code>的子类型，返回<code>Dog</code>的函数可以替代返回<code>Animal</code>的函数。调用函数<code>getAnimal()</code>时，实际得到的是<code>Dog</code>，但使用者只关心父接口<code>Animal</code>的属性和方法，因此是安全的。</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span><span style="color:#66d9ef">interface</span> <span style="color:#a6e22e">Animal</span> {  
 </span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">name</span>: <span style="color:#66d9ef">string</span>  
@@ -2684,8 +2684,8 @@ code.has-jax {
 </span></span><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span><span style="color:#75715e">// 执行结果
 </span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#960050;background-color:#1e0010">旺财</span>
-</span></span></code></pre></div><p>逆变是父类型可以替代子类型，方向相反，常见场景是函数参数。如果<code>B</code>是<code>A</code>的子类型，则参数类型为<code>A</code>的函数是参数类型为<code>B</code>的函数的子类型。换句话说，<font color="#de7802">函数参数的子类型关系是反向的</font>。</p>
-<p>为什么需要逆变？同样是为了保证类型安全。如果一个函数期望接收一个<strong>更宽泛的类型</strong>（例如<code>Animal</code>），它可以安全地替换一个需要<strong>更具体类型</strong>（例如<code>Dog</code>）的函数。</p>
+</span></span></code></pre></div><p>逆变是指父类型可以替代子类型（方向相反），常见场景是函数参数。如果<code>B</code>是<code>A</code>的子类型，<font color=red>则参数类型为<code>A</code>的函数是参数类型为<code>B</code>的函数的子类型</font>。换句话说，<font color="#de7802">函数参数的子类型关系是反向的</font>。</p>
+<p>为什么需要逆变？同样是为了保证类型安全。如果一个函数期望接收一个更宽泛的类型（例如<code>Animal</code>），它可以安全地替换一个需要更具体类型（例如<code>Dog</code>）的函数。</p>
 <p>下面示例代码中，当<code>FeedAnimal</code>（参数为父类型）赋值给<code>FeedDog</code>（参数为子类型）时，实际调用<code>feedDog(new Dog())</code>时，函数内部会以<code>Animal</code>类型处理参数。由于<code>Dog</code>具备<code>Animal</code>的所有属性，所以是安全的。反之，在函数中可能访问子类型的独有属性（如<code>bark</code>），导致运行时错误（实际类型是父类型的实例）。</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span><span style="color:#66d9ef">type</span> <span style="color:#a6e22e">FeedAnimal</span> <span style="color:#f92672">=</span> (<span style="color:#a6e22e">animal</span>: <span style="color:#66d9ef">Animal</span>) <span style="color:#f92672">=&gt;</span> <span style="color:#66d9ef">void</span>;  
 </span></span><span style="display:flex;"><span><span style="color:#66d9ef">type</span> <span style="color:#a6e22e">FeedDog</span> <span style="color:#f92672">=</span> (<span style="color:#a6e22e">dog</span>: <span style="color:#66d9ef">Dog</span>) <span style="color:#f92672">=&gt;</span> <span style="color:#66d9ef">void</span>;  
@@ -2705,7 +2705,8 @@ code.has-jax {
 </span></span><span style="display:flex;"><span><span style="color:#75715e">// 下面方式使用会出现编译错误
 </span></span></span><span style="display:flex;"><span><span style="color:#75715e">// feedDog({name: &#34;1233&#34;});
 </span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>
-</span></span><span style="display:flex;"><span><span style="color:#75715e">// 这样调用才可以
+</span></span><span style="display:flex;"><span><span style="color:#75715e">// 这样调用才可以，因为声明时形参是Dog类型
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">// feeDog指向的feedAnimal，执行的是feeAnimal方法
 </span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#a6e22e">feedDog</span>({  
 </span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">name</span><span style="color:#f92672">:</span> <span style="color:#e6db74">&#34;1233&#34;</span>,  
 </span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">bark</span><span style="color:#f92672">:</span> () <span style="color:#f92672">=&gt;</span> <span style="color:#a6e22e">console</span>.<span style="color:#a6e22e">log</span>(<span style="color:#e6db74">&#34;汪汪！&#34;</span>)  
@@ -2713,7 +2714,7 @@ code.has-jax {
 </span></span><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span><span style="color:#75715e">// 执行结果，实际调用的是feedAnimal
 </span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#960050;background-color:#1e0010">喂养</span> <span style="color:#ae81ff">1233</span>
-</span></span></code></pre></div><p>子类<font color="#de7802">可以重新声明与父类同名的新方法，只要子类上的方法可以赋值给父类对应的方法即可</font>，即只要满足子类中同名的新方法中的参数类型是父类型，或者返回类型是子类型。</p>
+</span></span></code></pre></div><p><strong><font color="#de7802">子类可以重新声明与父类同名的新方法，只要子类上的方法可以赋值给父类对应的方法即可</font></strong>，即只要满足子类中同名的新方法中的参数类型是父类型，或者返回类型是子类型。</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span><span style="color:#66d9ef">class</span> <span style="color:#a6e22e">GradeCounter</span> {
 </span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">countGrades</span>(<span style="color:#a6e22e">grades</span>: <span style="color:#66d9ef">string</span>[], <span style="color:#a6e22e">letter</span>: <span style="color:#66d9ef">string</span>) {
 </span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">return</span> <span style="color:#a6e22e">grades</span>.<span style="color:#a6e22e">filter</span>(<span style="color:#a6e22e">grade</span> <span style="color:#f92672">=&gt;</span> <span style="color:#a6e22e">grade</span> <span style="color:#f92672">===</span> <span style="color:#a6e22e">letter</span>).<span style="color:#a6e22e">length</span>;
@@ -2737,13 +2738,13 @@ code.has-jax {
 </span></span><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span><span style="color:#75715e">// 编译错误
 </span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#a6e22e">Property</span> <span style="color:#e6db74">&#39;countGrades&#39;</span> <span style="color:#66d9ef">in</span> <span style="color:#66d9ef">type</span> <span style="color:#e6db74">&#39;AnyFailureChecker&#39;</span> <span style="color:#66d9ef">is</span> <span style="color:#a6e22e">not</span> <span style="color:#a6e22e">assignable</span> <span style="color:#a6e22e">to</span> <span style="color:#a6e22e">the</span> <span style="color:#a6e22e">same</span> <span style="color:#a6e22e">property</span> <span style="color:#66d9ef">in</span> <span style="color:#a6e22e">base</span> <span style="color:#66d9ef">type</span> <span style="color:#e6db74">&#39;GradeCounter&#39;</span>. 
-</span></span></code></pre></div><p>因为<font color="#de7802">较少参数的函数类型是可以赋值给多参数的同类型函数</font>。<strong>参数少的函数可以赋值给参数多的函数类型</strong>（即参数多的兼容参数少的），是因为：</p>
+</span></span></code></pre></div><p>因为<font color="#de7802">较少参数的函数类型是可以赋值给多参数的同类型函数</font>。<strong><font color=red>参数少的函数可以赋值给参数多的函数类型</font></strong>（即参数多的兼容参数少的），这是因为：</p>
 <ol>
 <li>
 <p><strong>调用时的参数冗余不会导致错误</strong>，当一个函数（参数少）被赋值给另一个参数更多的函数类型时，实际调用时多余的参数会被忽略。例如，参数多的函数可能接受3个参数，但实际调用的函数（参数少）只用到了前2个，此时不会引发运行时错误。</p>
 </li>
 <li>
-<p><strong>适配JavaScript常见模式</strong>，在<code>JavaScript</code>中，开发者经常忽略不用的参数（例如<font color="#de7802">回调函数仅使用部分参数</font>），<code>TypeScript</code>的设计需要兼容这种习惯。</p>
+<p><strong>适配JavaScript常见模式</strong>，在<code>JavaScript</code>中，开发者经常忽略不用的参数（例如<font color="#de7802">回调函数仅使用部分参数</font>），<code>TypeScript</code>需要兼容这种习惯。</p>
 </li>
 </ol>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span><span style="color:#75715e">// 基础参数数量兼容
@@ -2763,10 +2764,10 @@ code.has-jax {
 </span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#a6e22e">arr</span>.<span style="color:#a6e22e">forEach</span>((<span style="color:#a6e22e">value</span>) <span style="color:#f92672">=&gt;</span> <span style="color:#a6e22e">console</span>.<span style="color:#a6e22e">log</span>(<span style="color:#a6e22e">value</span>)); <span style="color:#75715e">// ✅ 忽略 index 和 array 参数
 </span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>
 </span></span><span style="display:flex;"><span><span style="color:#75715e">// 这里，参数少的回调函数（只接受`value`）可以赋值给参数多的函数类型，因为多余的参数（`index`和`array`）不会被使用
-</span></span></span></code></pre></div><p>这种设计有助于实现多态，<font color=red>子类减少不必要的参数，往往意味着它简化或者特化了父类的逻辑</font>，这在很多场景下是合理的编程需求。比如，父类的某个方法为了通用性设计了很多配置相关的参数，子类在特定场景下复用该方法时，一些参数固定不变，所以子类就省略了这些固定不变的参数，让代码更加简洁，同时又能融入基于父类构建的多态调用体系。</p>
+</span></span></span></code></pre></div><p>这种设计有助于实现多态，<font color=red>子类减少不必要的参数，往往意味着它简化或者特化了父类的逻辑</font>，这在很多场景下是合理的需求。比如，父类的某个方法为了通用性设计了很多配置相关的参数，子类在特定场景下复用该方法时，一些参数固定不变，所以子类就省略了这些固定不变的参数，让代码更加简洁，同时又能融入基于父类构建的多态调用体系。</p>
 <h3 id="overridden-properties-1">Overridden Properties</h3>
 <p>子类也可能显式地重新声明父类的同名属性，<font color="#de7802">只要子类同名属性的类型可以赋值给父类上的类型即可（类似于协变）</font>。与重载方法一样，<font color=red>子类必须在结构上与父类相匹配</font>。</p>
-<p>大多数重新声明属性的子类，要么是为了使这些属性成为联合类型更具体的子类型（通常是联合类型的子类型），要么是为了<font color="#de7802">使这些属性成为一种从基类属性类型扩展而来的类型</font>（添加自定义属性）。</p>
+<p>大多数重新声明属性的子类，要么是为了使这些属性成为联合类型更具体的子类型（通常是联合类型的某个子类型），要么是为了<font color="#de7802">使这些属性成为一种从基类属性类型扩展而来的类型</font>，或添加非继承的其它属性。</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span><span style="color:#66d9ef">class</span> <span style="color:#a6e22e">Assignment</span> {
 </span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">grade?</span>: <span style="color:#66d9ef">number</span>;
 </span></span><span style="display:flex;"><span>}
