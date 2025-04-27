@@ -1115,9 +1115,9 @@ declaration TypeScript提供了一个declaration选项，可为输入文件创�
 // index.ts export const greet = (text: string) =&amp;gt; {  console.log(`Hello, ${text}!`); }； 使用declaration，es2015的某个module，以及es2015的target，下面输出将会产生：
 // index.d.ts export declare const greet: (text: string) =&amp;gt; void;  // index.js export const greet = (text) =&amp;gt; {  console.log(`Hello, ${text}!`); } 自动生成的.d.ts文件是项目创建供用户使用的类型定义的最佳方式。一般建议，大多数使用TypeScript编写的软件包在生成.js文件输出时，也应将.d.ts与这些文件捆绑在一起。
 Dependency Package Types TypeScript能够检测并利用捆绑在项目的node_modules依赖项中的.d.ts文件。这些文件将告知类型系统该包导出的类型形状，就像它们是在同一项目中编写或用declare模块块声明的一样。一个典型的npm模块如果自带.d.ts声明文件，其文件结构可能类似于这样：
-lib/  index.js  index.d.ts package.json Enum 因为enum编译后是一个对象，所以*不能有与它同名的变量，对象，函数和类等*。如果在相同作用域内存在与枚举同名的变量、对象、函数或类，将会出现编译错误。
+lib/  index.js  index.d.ts package.json Enum 因为enum编译后是一个对象，所以*不能有与它同名的变量，对象，函数和类等*。若在相同作用域内存在与枚举同名的变量、对象、函数或类，将会出现编译错误。
 // 下面代码因为枚举和变量名重复了，会出现编译错误 // Enum declarations can only merge with namespace or other enum declarations. enum Test1 {  Local = &amp;#39;local&amp;#39;,  Remote = &amp;#39;remote&amp;#39; }  // 因为有和枚举同名的常量，会出现编译错误 // Enum declarations can only merge with namespace or other enum declarations const Test1 = &amp;#39;890&amp;#39;  // 编译错误，因为枚举和类名重复，会出现编译错误 // Enum declarations can only merge with namespace or other enum declarations. enum Test2 {  A,  B }  class Test2 {  // 类的定义部分 } property 枚举的成员不要求强制赋初始值，若没有初始值，默认从0开始逐一增1，按顺序为每个成员赋值。下面第一个示例中，枚举成员对应值分别为0，1，2。第二段示例代码中，枚举成员对应值为0,4,5:
-enum Foo {  A,  B,  C, }  console.log(Foo.A, Foo.B, Foo.C) // 0 1 2 enum Foo {  A,  B = 4,  C, } console.log(Foo.A, Foo.B, Foo.C) // 0 4 5 与其它语言不同的是，enum中属性的值可以是小数。若某个成员没有初始值，则其后的值也依次在上一个值的基础上&#43;1。下面示例代码，属性的值依次是0.12,1.12,2.12:
+enum Foo {  A,  B,  C, }  console.log(Foo.A, Foo.B, Foo.C) // 0 1 2 enum Foo {  A,  B = 4,  C, } console.log(Foo.A, Foo.B, Foo.C) // 0 4 5 与其它语言不同的是，enum中属性的值可以是小数。若枚举中某个成员（属性）没有初始值，则其后属性的值也依次在上一个值的基础上&#43;1。下面示例代码，属性的值依次是0.12,1.12,2.12:
 enum Foo {  A = 0.12,  B,  C }  console.log(Foo.A, Foo.B, Foo.C) // 0.12 1.12 2.12 但enum属性（成员）的值不能是BigInt类型，否则会出现编译错误：
 // 编译错误：Type &amp;#39;bigint&amp;#39; is not assignable to type &amp;#39;number&amp;#39; as required for computed enum member values. enum Foo {  A = 1n, } 不同于Swift，在TypeScript中enum不同属性（成员）对应的值可以相同，但属性名一定不能相同。
 enum Foo {  A = 0.12,  B = 0.1,  C = 0.12 } 如果只设置第一个属性的值，后面成员的值就会从这个值开始依次递增（在上一个值的基础上自动&#43;1）。
