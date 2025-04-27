@@ -1120,7 +1120,7 @@ lib/  index.js  index.d.ts package.json Enum 因为enum编译后是一个对象�
 enum Foo {  A,  B,  C, }  console.log(Foo.A, Foo.B, Foo.C) // 0 1 2 enum Foo {  A,  B = 4,  C, } console.log(Foo.A, Foo.B, Foo.C) // 0 4 5 与其它语言不同的是，enum中属性的值可以是小数。若枚举中某个成员（属性）没有初始值，则其后属性的值也依次在上一个值的基础上&#43;1。下面示例代码，属性的值依次是0.12,1.12,2.12:
 enum Foo {  A = 0.12,  B,  C }  console.log(Foo.A, Foo.B, Foo.C) // 0.12 1.12 2.12 但enum属性（成员）的值不能是BigInt类型，否则会出现编译错误：
 // 编译错误：Type &amp;#39;bigint&amp;#39; is not assignable to type &amp;#39;number&amp;#39; as required for computed enum member values. enum Foo {  A = 1n, } 不同于Swift，在TypeScript中enum不同属性（成员）对应的值可以相同，但属性名一定不能相同。
-enum Foo {  A = 0.12,  B = 0.1,  C = 0.12 } 如果只设置第一个属性的值，后面成员的值就会从这个值开始依次递增（在上一个值的基础上自动&#43;1）。
+enum Foo {  A = 0.12,  B = 0.5,  C = 0.12,  D = 12,  R = 0.12 }  console.log(Foo.R, Foo.C, Foo.B)  // 执行结果 0.12 0.12 0.5 如果只设置第一个属性的值，后面成员的值就会从这个值开始依次递增（在上一个值的基础上自动&#43;1）。
 enum Color {  Red = 7,  Green, // 8  Blue, // 9 }  console.log(Color.Blue) // 执行结果 9  // 或者 enum Color {  Red, // 0  Green = 7,  Blue, // 8 }  console.log(Color.Blue, Color.Red);  // 执行结果 8 0 enum所有属性对应的值都是只读的，不能重新被赋值。下面实例代码中，因为重新赋值枚举中的属性Red，会出现编译错误：
 enum Color {  Red,  Green,  Blue, }  // 编译报错:Cannot assign to &amp;#39;Blue&amp;#39; because it is a read-only property. Color.Red = 4; 为了强调这一点，通常定义枚举时在enum关键字前面加上const修饰，表示该枚举是常量，不能再次被赋值。加上const还有一个好处，编译为JavaScript代码后，枚举的成员会被替换成对应的值，可以提升性能。
 const enum Color {  Red,  Green,  Blue, } 实际上，普通枚举会被编译成JavaScript对象，而const enum在编译时会被完全内联（inline），不会生成任何JavaScript代码。减少生成的代码体积，能够提升运行时性能。此外，因为普通枚举在运行时生成一个全局对象，可能与其它代码产生命名冲突，const enum不会生成任何运行时标识符，完全通过内联值工作。
