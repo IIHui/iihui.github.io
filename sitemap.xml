@@ -777,10 +777,9 @@ Type Aliases Are Not JavaScript 类型别名与类型标注一样，编译后不
 type RawData = boolean | number | string | null | undefined;  // 编译错误：&amp;#39;RawData&amp;#39; only refers to a type, but is being used as a value here. // RawData仅表示类型，但在此处却作为值使用 console.log(RawData)  // 直接使用基本类型也是报错的 // &amp;#39;string&amp;#39; only refers to a type, but is being used as a value here. console.log(string);  let rawData: RawData = false console.log(rawData) console.log(typeof rawData)  // 执行结果 false boolean Combining Type Aliases 在定义某个类型别名时也可以引用其它的类型别名，使得新的类型别名更简洁。类型别名相互引用有时很有用，当一个类型别名是一个联合类型时，它可能包含另一个类型别名。
 type Id = number | string type IdMaybe = Id | undefined | null 需要注意的是，类型别名在定义时不必按使用顺序声明。可以让在文件中较前定义的类型别名引用在文件中较后定义的别名。上面代码可以重写，将IdMaybe放在Id之前声明，也不会出现编译错误：
 // 别名Id的定义在后，使用在前 type IdMaybe = Id | undefined | null // 别名Id的定义在后，使用在前 type Id = number | string  let id: IdMaybe console.log(id) // undefined Objects Object Types 使用{}创建对象字面量时，TypeScript会根据其属性将其视为新的对象类型。新对象类型具有与对象字面量相同的属性名和对应值类型。访问对象属性的值时可以使用value.member或等同的value[&#39;member&#39;]。
-下面代码中，TypeScript认为常量poet的类型是一个对象，该对象具有born和name两个属性，属性born的值类型为number，name属性的值类型为string。访问这两个属性是允许的，但试图访问任何其它不存在的属性都会出现编译错误：
+下面代码中，TypeScript认为常量poet的类型是一个对象，该对象有born和name两个属性，属性born的值类型为number，name属性的值类型为string。访问这两个属性是允许的，但试图访问任何其它不存在的属性都会出现编译错误：
 const poet = {  born: 1935,  name: &amp;#34;Mary Oliver&amp;#34;, };  console.log(poet.born, poet.name, poet[&amp;#39;born&amp;#39;], poet[&amp;#39;name&amp;#39;])  // 访问不存在的属性会出现编译错误，这与联合类型只能访问子类型的共有属性或方法是一样的 // Property &amp;#39;end&amp;#39; does not exist on type &amp;#39;{ born: number; name: string; }&amp;#39; poet.end; 对象类型是TypeScript理解JavaScript代码的核心概念。除null和undefined之外的每个对象值都有一组成员，必须了解对象类型中的每个值，才能对其进行类型检查。
-Declaring Object Types 从现有的对象中直接推断出类型固然是好的，但有些场景需要显式标注变量为对象类型。此时，需要一种方式描述对象类型，将其与满足对象类型的值区分开来。
-对象类型使用与对象字面量相似的语法来描述，但与属性名对应的是其值的类型而不是相应的值。若对象类型变量出现赋值相关的编译错误时，显示的是声明对象类型时的语法，清晰易读。
+Declaring Object Types 从现有的对象中直接推断出类型固然是好的，但有些场景需要显式标注变量为对象类型。此时，需要一种方式描述对象类型，将其与满足对象类型的值区分开来。对象类型使用与对象字面量相似的语法来描述，但与属性名对应的是其值的类型而不是相应的值。若对象类型变量出现赋值相关的编译错误时，显示的是声明对象类型时的语法，清晰易读。
 // 先声明，声明时未被初始化 // 定义时最后一个分号是可以省略 let poetLater: {  born: number;  name: string; };  poetLater = {born: 123, name: &amp;#39;678&amp;#39;} console.log(poetLater) // { born: 123, name: &amp;#39;678&amp;#39; }  // 编译错误：Type &amp;#39;number&amp;#39; is not assignable to type &amp;#39;{ born: number; name: string; }&amp;#39;. poetLater = 123  // 定义时属性之间也可以使用逗号分隔 // 定义时最后一个逗号也是可以去掉的 let poetLater: {  born: number,  name: string, };  // 定义时属性之间也可以用换行符分隔，不需要分号或逗号 let poetLater: {  born: number  name: string }  // 需要注意的是字面量属性之间必须使用逗号分隔！！！ poetLater = {born: 123, name: &amp;#39;678&amp;#39;} console.log(poetLater.born, poetLater.name) // 123 678 Aliased Object Types 重复写类似{ born: number; name: string; }这样的对象类型很快就会觉得厌烦，也容易出错。常见的做法是使用type创建类型别名，为对象类型赋予一个新名字。
 // 使用type创建类型别名 type Poet = {  born: number;  name: string; };  /* // 属性之间也使用逗号分隔，使用换行也可以 type Poet = { born: number, name: string, }; type Poet = { born: number name: string }; const poet: Poet = {born: 123, name: &amp;#34;werr&amp;#34;} console.log(poet) */  let poetLater: Poet; poetLater = {  born: 1935,  name: &amp;#34;Sara Teasdale&amp;#34;, };  // 编译错误：Type &amp;#39;string&amp;#39; is not assignable to type &amp;#39;Poet&amp;#39;. poetLater = &amp;#34;Emily Dickinson&amp;#34;; Structural Typing TypeScript的类型系统是structural typed的，这意味着任何满足类型的值都可以用作该类型的值。换句话说，当标注一个参数或变量是一个特定对象类型时，就是在声明无论使用什么对象值，它们都需要具有这些属性。
 下面WithFirstName和WithLastName别名对象类型都只声明了一个字符串类型的成员。常量hasBoth同时有这两种成员，因此可以赋值给这两种别名对象类型中的任何一种变量：
@@ -4443,7 +4442,7 @@ extension UIColor {   convenience init(hex: String) {  var cString: String = hex
         <tags>
           <tag>tool</tag>
         </tags>
-        <content type="html">  Keyboard Maestro是一款神奇的软件，在我心里它与Alfred同样重要，也是装机必备软件。使用它可以省去安装很多软件，这篇文章记录平常工作中使用它的一些特性或技巧，以便后续查阅。
+        <content type="html">  Keyboard Maestro是一款神奇的软件，在我心里它与Alfred同样重要，也是我的装机必备软件。使用它可以省去安装很多软件，这篇文章记录平常工作中使用它的一些特性或技巧，以便后续查阅。
  快捷输入 粘贴方式输入 模拟键盘输入 打开应用 可以设置全局快捷键打开某个应用程序，下面设置了快捷键control&#43;s打开Safari：
 开启和关闭wifi 如果想要开启和关闭wifi，可以使用如下的方式：
 窗口管理 左半屏 右半屏 最大化 全屏 去格式粘贴 复制当前行 焦点 切换到屏幕一 切换到屏幕二 Execute a Script in Terminal 如果想要在系统的Terminal中运行脚本可以在这里下载压缩文件，然后把压缩文件代表的Action整体拖动到Keyboard Maestro中。
