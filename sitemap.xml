@@ -335,7 +335,7 @@ No Symbolic Information Found 一开始怀疑是dsym和崩溃日志的uuid不同
 atos -o ST/dsymDir/xxx1.dSYM/Contents/Resources/DWARF/xxx2 -l 0x1c6573000 0x00000001c6a0da80 在问题排查过程中意外发现使用symbolicatecrash命令时，若按照atos命令那样指定dysm目录下的target是可以符号化成功的：
 symbolicatecrash xxx.crash ST/dsymDir/xxx1.dSYM/Contents/Resources/DWARF/xxx2 -o xxx.log 此外，排查过程中发现使用symbolicatecrash命令时若添加-d选项（明确指定dsym文件是路径）也是能够正常符号化的:
 symbolicatecrash xxx.crash -d ST/dsymDir/xxxdSYM -o xxx.log 根据添加-d选项的输出，使用mdfind查找对应uuid对应dsym文件，发现无任何输出：
-mdfind &amp;#34;com_apple_xcode_dsym_uuids == A7C6DA83-B3C1-3E0C-9734-0C59CD5032C8&amp;#34; 这是因为Spotlight索引未包含文件元数据，可以通过如下方式解决：
+mdfind &amp;#34;com_apple_xcode_dsym_uuids == A7C6DA83-B3C1-3E0C-9734-0C59CD5032C8&amp;#34; 这是因为Spotlight索引未包含文件元数据，可以通过如下方式解决。经过验证，第一次添加元数据标签后，后续添加dsym文件不再需要执行如下操作：
 # 替换为你的实际 UUID 和文件路径 UUID=&amp;#34;A7C6DA83-B3C1-3E0C-9734-0C59CD5032C8&amp;#34; DSYM_PATH=&amp;#34;/path/to/xxx.dSYM&amp;#34; # 需要使用绝对路径  # 添加元数据标签 xattr -w com.apple.metadata:com_apple_xcode_dsym_uuids &amp;#34;$UUID&amp;#34; &amp;#34;$DSYM_PATH&amp;#34;  # 验证是否添加成功 mdls -name com_apple_xcode_dsym_uuids &amp;#34;$DSYM_PATH&amp;#34; 添加元数据后，再刷新索引：
 # 刷新特定文件 mdimport &amp;#34;$DSYM_PATH&amp;#34;  # 或刷新整个目录 mdimport ~/Library/Developer/Xcode/Archives # 假设 dSYM 在此目录  # 重建整个索引（耗时较长） sudo mdutil -E / </content>
     </entry>
