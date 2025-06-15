@@ -241,7 +241,7 @@ code.has-jax {
     <i class="fa fa-file-word-o"></i>
 </span>
 <span class="post-meta-item-text">字数: </span>
-<span class="leancloud-visitors-count">532</span>
+<span class="leancloud-visitors-count">548</span>
 &nbsp; | &nbsp;
 <span class="post-meta-item-icon">
     <i class="fa fa-coffee"></i>
@@ -253,9 +253,9 @@ code.has-jax {
     </header>
     <div class="post-body" itemprop="articleBody">
     <h2 id="no-symbolic-information-found">No Symbolic Information Found</h2>
-<p>在一台非打包<code>mac</code>上使用命令<code>symbolicatecrash xxx.crash ST/dsymDir/xxxdSYM -o xxx.txt</code>对崩溃日志进行符号化，执行后得到的提示为：</p>
+<p>在一台非打包<code>iMac</code>上使用命令<code>symbolicatecrash xxx.crash ST/dsymDir/xxxdSYM -o xxx.log</code>对崩溃日志进行符号化，命令执行后得到了错误的提示：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>No Symbolic Information Found
-</span></span></code></pre></div><p>一开始怀疑是<code>uuid</code>不同导致的，但使用<code>dwarfdump --uuid xxx.dSYM</code>命令得到<code>dsym</code>文件的<code>uuid</code>和崩溃日志中的<code>uuid</code>是相同的，排除了因<code>uuid</code>不一致而出现上面的错误。但使用<code>atos</code>命令和相应的<code>dsym</code>文件进行符号化，得到的结果却是正常的：</p>
+</span></span></code></pre></div><p>一开始怀疑是<code>dsym</code>和崩溃日志的<code>uuid</code>不同导致的，但使用<code>dwarfdump --uuid xxx.dSYM</code>命令得到<code>dsym</code>文件的<code>uuid</code>和崩溃日志中的<code>uuid</code>是相同的，排除了因<code>uuid</code>不一致而出现上面的错误。同时，使用<code>atos</code>命令并指定<code>dsym</code>文件进行符号化，得到的结果却是正常的：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>atos -o ST/dsymDir/xxx1.dSYM/Contents/Resources/DWARF/xxx2 -l 0x1c6573000 0x00000001c6a0da80
 </span></span></code></pre></div><p>排查过程中意外发现使用<code>symbolicatecrash</code>命令时，若依照<code>atos</code>命令那样指定<code>dysm</code>路径下的<code>target</code>可以符号化成功：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>symbolicatecrash xxx.crash ST/dsymDir/xxx1.dSYM/Contents/Resources/DWARF/xxx2  -o xxx.txt
