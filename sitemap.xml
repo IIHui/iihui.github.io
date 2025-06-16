@@ -330,12 +330,12 @@ ipa中描述文件过期时间查看
         <tags>
           <tag>iOS</tag>
         </tags>
-        <content type="html"> No Symbolic Information Found 在一台非打包iMac上使用命令symbolicatecrash xxx.crash ST/dsymDir/xxxdSYM -o xxx.log对崩溃日志进行符号化，命令执行后得到了错误的提示：
-No Symbolic Information Found 一开始怀疑是dsym和崩溃日志的uuid不同导致的，但使用dwarfdump --uuid xxx.dSYM命令得到dsym文件的uuid和崩溃日志中的uuid是相同的，排除了因uuid不一致而出现上面的错误。同时，使用atos命令并指定dsym文件进行符号化，得到的结果却是正常的：
-atos -o ST/dsymDir/xxx1.dSYM/Contents/Resources/DWARF/xxx2 -l 0x1c6573000 0x00000001c6a0da80 在问题排查过程中意外发现使用symbolicatecrash命令时，若按照atos命令那样指定dysm目录下的target是可以符号化成功的：
-symbolicatecrash xxx.crash ST/dsymDir/xxx1.dSYM/Contents/Resources/DWARF/xxx2 -o xxx.log 此外，排查过程中发现使用symbolicatecrash命令时若添加-d选项（明确指定dsym文件是路径）也是能够正常符号化的:
-symbolicatecrash xxx.crash -d ST/dsymDir/xxxdSYM -o xxx.log 根据添加-d选项的输出，使用mdfind查找对应uuid对应dsym文件，发现无任何输出：
-mdfind &amp;#34;com_apple_xcode_dsym_uuids == A7C6DA83-B3C1-3E0C-9734-0C59CD5032C8&amp;#34; 这是因为Spotlight索引未包含文件元数据，可以通过如下方式解决。经过验证，第一次添加元数据标签后，后续添加dsym文件不再需要执行如下操作：
+        <content type="html"> No Symbolic Information Found 在一台非打包的iMac上使用命令symbolicatecrash xxx1.crash ST/dsymDir/xxx2.dSYM -o xxx1.log对崩溃日志进行符号化，执行完成后出现了如下错误信息：
+No Symbolic Information Found 最初怀疑是dsym文件和崩溃日志的uuid不同造成的。但使用dwarfdump --uuid xxx.dSYM命令得到dsym文件的uuid和崩溃日志中的uuid是相同的，也就排除了uuid不一致这个原因。同时，发现使用atos命令并指定dsym目录下的target进行符号化，得到的结果是正常的：
+atos -o ST/dsymDir/xxx1.dSYM/Contents/Resources/DWARF/targetxxx -l 0x1c6573000 0x00000001c6a0da80 在问题排查过程中意外发现，在使用symbolicatecrash命令时若按照atos命令那样指定dysm目录下的target也是可以符号化成功的，具体方式如下：
+symbolicatecrash xxx.crash ST/dsymDir/xxx1.dSYM/Contents/Resources/DWARF/xxx2 -o xxx.log 此外，排查过程中发现使用symbolicatecrash命令进行符号化时若添加-d选项（明确指定dsym文件是路径）也是能够正常符号化的:
+symbolicatecrash xxx.crash -d ST/dsymDir/xxxdSYM -o xxx.log 根据添加-d选项后终端的输出日志，使用mdfind查找对应uuid对应的dsym文件，发现无任何输出：
+mdfind &amp;#34;com_apple_xcode_dsym_uuids == A7C6DA83-B3C1-3E0C-9734-0C59CD5032C8&amp;#34; 这是因为Spotlight索引未包含文件元数据，可以通过如下方式解决。经过验证，第一次添加元数据标签成功后，后续添加dsym文件不再需要重复添加（使用mfind可以查到到相应的dsym文件）：
 # 替换为你的实际 UUID 和文件路径 UUID=&amp;#34;A7C6DA83-B3C1-3E0C-9734-0C59CD5032C8&amp;#34; DSYM_PATH=&amp;#34;/path/to/xxx.dSYM&amp;#34; # 需要使用绝对路径  # 添加元数据标签 xattr -w com.apple.metadata:com_apple_xcode_dsym_uuids &amp;#34;$UUID&amp;#34; &amp;#34;$DSYM_PATH&amp;#34;  # 验证是否添加成功 mdls -name com_apple_xcode_dsym_uuids &amp;#34;$DSYM_PATH&amp;#34; 添加元数据后，再刷新索引：
 # 刷新特定文件 mdimport &amp;#34;$DSYM_PATH&amp;#34;  # 或刷新整个目录 mdimport ~/Library/Developer/Xcode/Archives # 假设 dSYM 在此目录  # 重建整个索引（耗时较长） sudo mdutil -E / </content>
     </entry>
