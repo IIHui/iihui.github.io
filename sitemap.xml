@@ -337,7 +337,13 @@ symbolicatecrash xxx.crash ST/dsymDir/xxx1.dSYM/Contents/Resources/DWARF/xxx2 -o
 symbolicatecrash xxx.crash -d ST/dsymDir/xxxdSYM -o xxx.log 根据添加-d选项后终端的输出日志，使用mdfind查找对应uuid对应的dsym文件，发现无任何输出：
 mdfind &amp;#34;com_apple_xcode_dsym_uuids == A7C6DA83-B3C1-3E0C-9734-0C59CD5032C8&amp;#34; 这是因为Spotlight索引未包含文件元数据，可以通过如下方式解决。经过验证，第一次添加元数据标签成功后，后续添加dsym文件不再需要重复添加（使用mfind可以查到到相应的dsym文件）：
 # 替换为你的实际 UUID 和文件路径 UUID=&amp;#34;A7C6DA83-B3C1-3E0C-9734-0C59CD5032C8&amp;#34; DSYM_PATH=&amp;#34;/path/to/xxx.dSYM&amp;#34; # 需要使用绝对路径  # 添加元数据标签 xattr -w com.apple.metadata:com_apple_xcode_dsym_uuids &amp;#34;$UUID&amp;#34; &amp;#34;$DSYM_PATH&amp;#34;  # 验证是否添加成功 mdls -name com_apple_xcode_dsym_uuids &amp;#34;$DSYM_PATH&amp;#34; 添加元数据后，再刷新索引：
-# 刷新特定文件 mdimport &amp;#34;$DSYM_PATH&amp;#34;  # 或刷新整个目录 mdimport ~/Library/Developer/Xcode/Archives # 假设 dSYM 在此目录  # 重建整个索引（耗时较长） sudo mdutil -E / </content>
+# 刷新特定文件 mdimport &amp;#34;$DSYM_PATH&amp;#34;  # 或刷新整个目录 mdimport ~/Library/Developer/Xcode/Archives # 假设 dSYM 在此目录  # 重建整个索引（耗时较长） sudo mdutil -E / Xcode 16 编译问题 升级至Xcode 16后编译原工程出现如下错误：
+#include &amp;lt;sys/_types/_u_char.h&amp;gt;&amp;#39;; &amp;#39;u_char&amp;#39; must be declared before it is used 这是因为Xcode 16引入了一个变化，要求所有的类型如u_int32_t，u_char等需要从适当的系统模块导入。意味着现在需要显式地导入包含这些类型定义的头文件，即添加如下头文件：
+#include &amp;lt;sys/types.h&amp;gt;  解决了上面的错误，又出现了如下错误：
+Declaration of &amp;#39;sa_family_t&amp;#39; must be imported from module &amp;#39;Darwin.POSIX.sys.types._sa_family_t&amp;#39; before it is required 同样地，需要显示导入如下头文件：
+#include &amp;lt;sys/socket.h&amp;gt; 升级到Xcode 16.4后，发现不能调试iOS 13的真机，出现如下错误：
+Could not locate device support files。You may be able to resolve the issue by installing the latest version of Xcode from the Mac App Store or developer.apple.com. 是因为Xcode 16将支持的最低系统版本限制到iOS 15了。以前，当真机连上Xcode，Xcode会检测本地是否有对应系统的支持文件，若没有会自动下载。由于Xcode 16不再支持iOS 15以下设备了，所以现在不会自动下载iOS 15以下的支持文件了。此时，需要手动下载低版本系统的支持文件，参考解决方案到这里下载对应版本的DeviceSupport文件，然后解压并移动到/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/DeviceSupport/下，再重启Xcode，就可以正常调试低版本的真机了。
+</content>
     </entry>
     
      <entry>
@@ -4760,7 +4766,8 @@ this.onAppQuit = (tasks) =&amp;gt; {  const _this = this;   // 1. 立即执行�
 this.onAppQuit = (tasks) =&amp;gt; __async(this, null, function* () {  const _this = this;   // 1. 同步执行保存操作  yield _this.rememberAllOpenedFileStates()  .then(() =&amp;gt; _this.writeStateDatabase(STATE_DB_PATH))  .catch(err =&amp;gt; console.error(err));   // 2. 立即退出（不再等待其他任务）  window.app.quit(); }); 若能够将rememberAllOpenedFileStates和writeStateDatabase改造成同步方法，就可以将代码改造成如下同步方式：
 this.onAppQuit = (tasks) =&amp;gt; {  const _this = this;   try {  // 同步保存（无异步等待）  _this.rememberAllOpenedFileStatesSync(); // 假设存在同步方法  _this.writeStateDatabaseSync(STATE_DB_PATH);  } catch (err) {  console.error(&amp;#34;同步保存失败:&amp;#34;, err);  }   window.app.quit(); }; WebStorm 升级WebStorm到2025.1.1版本后发现内置的Full Line complete失效，看日志发现Full Line complete未启动，但发现有报错:New quota refill state is: Error(exception=java.lang.IllegalStateException: Returned result does not match the condition.。
 此时，可以将JetBrains AI Assistant插件禁用掉，再看日志发现有Full line native server is started和Full line native server address is localhost:56286，表示Full Line complete已经生效。
-</content>
+Ghostty Ghostty默认未开启选择即复制到粘贴板，添加如下配置项即可开启：
+copy-on-select = clipboard </content>
     </entry>
     
      <entry>
