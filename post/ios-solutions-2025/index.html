@@ -241,7 +241,7 @@ code.has-jax {
     <i class="fa fa-file-word-o"></i>
 </span>
 <span class="post-meta-item-text">字数: </span>
-<span class="leancloud-visitors-count">1191</span>
+<span class="leancloud-visitors-count">1219</span>
 &nbsp; | &nbsp;
 <span class="post-meta-item-icon">
     <i class="fa fa-coffee"></i>
@@ -283,17 +283,17 @@ code.has-jax {
 </span></span><span style="display:flex;"><span><span style="color:#75715e"># 重建整个索引（耗时较长）</span>
 </span></span><span style="display:flex;"><span>sudo mdutil -E /
 </span></span></code></pre></div><h2 id="xcode-16-编译问题">Xcode 16 编译问题</h2>
-<p>升级至<code>Xcode 16</code>后编译原工程出现如下错误：</p>
+<p>升级至<code>Xcode 16</code>后编译原工程出现了如下所示的第一个错误：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span><span style="color:#75715e">#include &lt;sys/_types/_u_char.h&gt;&#39;; &#39;u_char&#39; must be declared before it is used</span>
-</span></span></code></pre></div><p>这是因为<code>Xcode 16</code>引入了一个变化，要求所有的类型如<code>u_int32_t，u_char</code>等需要从适当的系统模块导入。意味着现在需要显式地导入包含这些类型定义的头文件，即添加如下头文件：</p>
+</span></span></code></pre></div><p>这是因为苹果在<code>iOS 17/macOS 14 SDK</code>中，移除了<a href="https://developer.apple.com/documentation/xcode-release-notes/xcode-16-release-notes">隐式类型声明</a>，要求所有的类型如<code>u_int32_t，u_char</code>等需要从适当的系统模块导入。意味着现在需要显式地导入包含这些类型定义的头文件，即添加如下头文件：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span><span style="color:#75715e">#include &lt;sys/types.h&gt;  </span>
-</span></span></code></pre></div><p>解决了上面的错误，又出现了如下错误：</p>
+</span></span></code></pre></div><p>解决了上面的错误，又出现了第二个报错信息：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>Declaration of <span style="color:#e6db74">&#39;sa_family_t&#39;</span> must be imported from module <span style="color:#e6db74">&#39;Darwin.POSIX.sys.types._sa_family_t&#39;</span> before it is required
-</span></span></code></pre></div><p>同样地，需要显示导入如下头文件：</p>
+</span></span></code></pre></div><p>同样地，也需要显式导入如下头文件：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span><span style="color:#75715e">#include &lt;sys/socket.h&gt;</span>
-</span></span></code></pre></div><p>升级到<code>Xcode 16.4</code>后，发现不能调试<code>iOS 13</code>的真机，出现如下错误：</p>
+</span></span></code></pre></div><p>升级到<code>Xcode 16.4</code>后，发现不能调试<code>iOS 13</code>真机，连上手机并信任后出现如下错误：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>Could not locate device support files。You may be able to resolve the issue by installing the latest version of Xcode from the Mac App Store or developer.apple.com.
-</span></span></code></pre></div><p>是因为<code>Xcode 16</code>将支持的最低系统版本限制到<code>iOS 15</code>了。以前，当真机连上Xcode，Xcode会检测本地是否有对应系统的支持文件，若没有会自动下载。由于<code>Xcode 16</code>不再支持<code>iOS 15</code>以下设备了，所以现在不会自动下载<code>iOS 15</code>以下的支持文件了。此时，需要手动下载低版本系统的支持文件，<a href="https://juejin.cn/post/7478182398409703476">参考解决方案</a>到<a href="https://github.com/filsv/iOSDeviceSupport?tab=readme-ov-file">这里</a>下载对应版本的<code>DeviceSupport</code>文件，然后解压并移动到<code>/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/DeviceSupport/</code>下，再重启Xcode，就可以正常调试低版本的真机了。</p>
+</span></span></code></pre></div><p>是因为<code>Xcode 16</code>将支持的最低系统版本限制到<code>iOS 15</code>了。以前，当真机连上Xcode，Xcode会检测本地是否有相应系统的支持文件，若没有会自动下载。由于<code>Xcode 16</code>不再支持<code>iOS 15</code>以下设备了，所以现在不会自动下载<code>iOS 15</code>以下的设备支持文件了。此时，需要手动下载低版本系统的支持文件，<a href="https://juejin.cn/post/7478182398409703476">参考解决方案</a>到<a href="https://github.com/filsv/iOSDeviceSupport?tab=readme-ov-file">这里</a>下载对应版本的<code>DeviceSupport</code>文件，然后解压并移动到<code>/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/DeviceSupport/</code>下，再重启Xcode，就可以正常调试低版本的真机了。</p>
 
     </div>
     <footer class="post-footer">
