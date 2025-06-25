@@ -241,13 +241,13 @@ code.has-jax {
     <i class="fa fa-file-word-o"></i>
 </span>
 <span class="post-meta-item-text">字数: </span>
-<span class="leancloud-visitors-count">1219</span>
+<span class="leancloud-visitors-count">1539</span>
 &nbsp; | &nbsp;
 <span class="post-meta-item-icon">
     <i class="fa fa-coffee"></i>
 </span>
 <span class="post-meta-item-text">阅读: </span>
-<span class="leancloud-visitors-count">3 分钟</span>
+<span class="leancloud-visitors-count">4 分钟</span>
 </span>
       </div>
     </header>
@@ -294,7 +294,24 @@ code.has-jax {
 </span></span></code></pre></div><p>升级到<code>Xcode 16.4</code>后，发现不能调试<code>iOS 13</code>真机，连上手机并信任后出现如下错误：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>Could not locate device support files。You may be able to resolve the issue by installing the latest version of Xcode from the Mac App Store or developer.apple.com.
 </span></span></code></pre></div><p>是因为<code>Xcode 16</code>将支持的最低系统版本限制到<code>iOS 15</code>了。以前，当真机连上Xcode，Xcode会检测本地是否有相应系统的支持文件，若没有会自动下载。由于<code>Xcode 16</code>不再支持<code>iOS 15</code>以下设备了，所以现在不会自动下载<code>iOS 15</code>以下的设备支持文件了。此时，需要手动下载低版本系统的支持文件，<a href="https://juejin.cn/post/7478182398409703476">参考解决方案</a>到<a href="https://github.com/filsv/iOSDeviceSupport?tab=readme-ov-file">这里</a>下载对应版本的<code>DeviceSupport</code>文件，然后解压并移动到<code>/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/DeviceSupport/</code>下，再重启Xcode，就可以正常调试低版本的真机了。</p>
-
+<h2 id="覆盖安装xcode">覆盖安装Xcode</h2>
+<p>从苹果官网下载新版Xcode 16覆盖之前从<code>App Store</code>上安装的低版本Xcode时，出现如下报错：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>The operation can’t be completed because some items had to be skipped. For each item, choose File &gt; Get Info, make sure “Locked” is deselected, and <span style="color:#66d9ef">then</span> check the Sharing &amp; Permissions section. When you are sure the items are unlocked and not designated as Read Only or No Access, try again.
+</span></span></code></pre></div><p>可以通过如下方式解决：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span><span style="color:#75715e"># 解锁所有文件（移除用户不可更改标志）</span>
+</span></span><span style="display:flex;"><span>sudo chflags -R nouchg /Applications/Xcode.app
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 将所有权赋予当前用户（替换 YOUR_USERNAME 为你的用户名）</span>
+</span></span><span style="display:flex;"><span>sudo chown -R YOUR_USERNAME:staff /Applications/Xcode.app
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 授予用户完全读写权限</span>
+</span></span><span style="display:flex;"><span>sudo chmod -R u+rw /Applications/Xcode.app
+</span></span></code></pre></div><p>示例：如果用户名为 <code>john</code>，则命令为 <code>sudo chown -R john:staff /Applications/Xcode.app</code>。</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>Expected dequeued view to be returned to the collection view in preparation <span style="color:#66d9ef">for</span> display. When the collection view<span style="color:#960050;background-color:#1e0010">&#39;</span>s data source is asked to provide a view <span style="color:#66d9ef">for</span> a given index path, ensure that a single view is dequeued and returned to the collection view. Avoid dequeuing views without a request from the collection view. For retrieving an existing view in the collection view, use -<span style="color:#f92672">[</span>UICollectionView cellForItemAtIndexPath:<span style="color:#f92672">]</span> or -<span style="color:#f92672">[</span>UICollectionView supplementaryViewForElementKind:atIndexPath:<span style="color:#f92672">]</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>https://www.jianshu.com/p/1fc532f2aff4
+</span></span></code></pre></div><div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>collectionView.cellForItem<span style="color:#f92672">(</span>at: index<span style="color:#f92672">)</span> as? DemoCCell
+</span></span></code></pre></div>
     </div>
     <footer class="post-footer">
         
@@ -454,6 +471,7 @@ code.has-jax {
       <ul>
         <li><a href="#no-symbolic-information-found">No Symbolic Information Found</a></li>
         <li><a href="#xcode-16-编译问题">Xcode 16 编译问题</a></li>
+        <li><a href="#覆盖安装xcode">覆盖安装Xcode</a></li>
       </ul>
     </li>
   </ul>

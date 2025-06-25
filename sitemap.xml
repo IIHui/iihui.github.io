@@ -343,7 +343,10 @@ mdfind &amp;#34;com_apple_xcode_dsym_uuids == A7C6DA83-B3C1-3E0C-9734-0C59CD5032
 Declaration of &amp;#39;sa_family_t&amp;#39; must be imported from module &amp;#39;Darwin.POSIX.sys.types._sa_family_t&amp;#39; before it is required 同样地，也需要显式导入如下头文件：
 #include &amp;lt;sys/socket.h&amp;gt; 升级到Xcode 16.4后，发现不能调试iOS 13真机，连上手机并信任后出现如下错误：
 Could not locate device support files。You may be able to resolve the issue by installing the latest version of Xcode from the Mac App Store or developer.apple.com. 是因为Xcode 16将支持的最低系统版本限制到iOS 15了。以前，当真机连上Xcode，Xcode会检测本地是否有相应系统的支持文件，若没有会自动下载。由于Xcode 16不再支持iOS 15以下设备了，所以现在不会自动下载iOS 15以下的设备支持文件了。此时，需要手动下载低版本系统的支持文件，参考解决方案到这里下载对应版本的DeviceSupport文件，然后解压并移动到/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/DeviceSupport/下，再重启Xcode，就可以正常调试低版本的真机了。
-</content>
+覆盖安装Xcode 从苹果官网下载新版Xcode 16覆盖之前从App Store上安装的低版本Xcode时，出现如下报错：
+The operation can’t be completed because some items had to be skipped. For each item, choose File &amp;gt; Get Info, make sure “Locked” is deselected, and then check the Sharing &amp;amp; Permissions section. When you are sure the items are unlocked and not designated as Read Only or No Access, try again. 可以通过如下方式解决：
+# 解锁所有文件（移除用户不可更改标志） sudo chflags -R nouchg /Applications/Xcode.app  # 将所有权赋予当前用户（替换 YOUR_USERNAME 为你的用户名） sudo chown -R YOUR_USERNAME:staff /Applications/Xcode.app  # 授予用户完全读写权限 sudo chmod -R u&#43;rw /Applications/Xcode.app 示例：如果用户名为 john，则命令为 sudo chown -R john:staff /Applications/Xcode.app。
+Expected dequeued view to be returned to the collection view in preparation for display. When the collection view&amp;#39;s data source is asked to provide a view for a given index path, ensure that a single view is dequeued and returned to the collection view. Avoid dequeuing views without a request from the collection view. For retrieving an existing view in the collection view, use -[UICollectionView cellForItemAtIndexPath:] or -[UICollectionView supplementaryViewForElementKind:atIndexPath:]  https://www.jianshu.com/p/1fc532f2aff4 collectionView.cellForItem(at: index) as? DemoCCell </content>
     </entry>
     
      <entry>
