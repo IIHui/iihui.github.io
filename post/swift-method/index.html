@@ -241,13 +241,13 @@ code.has-jax {
     <i class="fa fa-file-word-o"></i>
 </span>
 <span class="post-meta-item-text">字数: </span>
-<span class="leancloud-visitors-count">765</span>
+<span class="leancloud-visitors-count">1112</span>
 &nbsp; | &nbsp;
 <span class="post-meta-item-icon">
     <i class="fa fa-coffee"></i>
 </span>
 <span class="post-meta-item-text">阅读: </span>
-<span class="leancloud-visitors-count">2 分钟</span>
+<span class="leancloud-visitors-count">3 分钟</span>
 </span>
       </div>
     </header>
@@ -312,8 +312,22 @@ code.has-jax {
 </span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">return</span> <span style="color:#66d9ef">self</span>.x <span style="color:#f92672">&gt;</span> x
 </span></span><span style="display:flex;"><span>    }
 </span></span><span style="display:flex;"><span>}
-</span></span></code></pre></div><hr>
-
+</span></span></code></pre></div><h1 id="asyncawait">async/await</h1>
+<p>若一个函数未标记为<code>async</code>的，则它不能直接调用<code>async</code>函数，下面代码会出现编译错误：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">authenticateAndFetchProfile</span>() { 
+</span></span><span style="display:flex;"><span>  <span style="color:#75715e">//...</span>
+</span></span><span style="display:flex;"><span>	<span style="color:#66d9ef">let</span> userProfile = <span style="color:#66d9ef">try</span> await fetchUserInfo() <span style="color:#75715e">//...</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p>但是，如果我们没有并发上下文会怎样呢？在调用层次结构的某处，发现自己根本没有并发上下文来运行代码。幸运的是，另一种创建异步上下文的方法可以帮助我们解决这个问题。</p>
+<p>创建一个Task对象。Task是一个功能非常强大的对象，可以用它来进行多线程处理。我们还能对它们进行一些控制，比如取消它们。现在，我们只使用Task来创建并发上下文。Task有一个带有闭包的初始化器，而<font color="#de7802">闭包本身就是一个并发上下文</font>。</p>
+<p>在下面示例代码中，虽然authenticateAndFetchProfile没有被标记为async，但因为它创建了一个Task任务，所以可以调用async方法：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">authenticateAndFetchProfile</span>() {
+</span></span><span style="display:flex;"><span>    Task { <span style="color:#75715e">//...</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">let</span> userProfile = <span style="color:#66d9ef">try</span> await fetchUserInfo() <span style="color:#75715e">//...</span>
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div>
     </div>
     <footer class="post-footer">
         
@@ -476,6 +490,7 @@ code.has-jax {
       </ul>
     </li>
     <li><a href="#类型方法">类型方法</a></li>
+    <li><a href="#asyncawait">async/await</a></li>
   </ul>
 </nav></div>
     </div>

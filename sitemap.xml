@@ -6236,7 +6236,11 @@ let fixedPoint = Point(x: 3.0, y: 3.0) fixedPoint.moveBy(x: 2.0, y: 3.0) //编�
 struct Point {  var x = 0.0, y = 0.0  func isToTheRightOf(x: Double) -&amp;gt; Bool {  return self.x &amp;gt; x //形参的优先级别高于实例属性  } } 枚举的异变方法可以设置隐含的self属性为相同枚举里的不同成员。也就是在枚举类型中其异变的方法中，self也是可以变换的：
 enum TriStateSwitch {  case off, low, high  mutating func next() {  switch self {  case .off:  self = .low  case .low:  self = .high  case .high:  self = .off  }  } } 类型方法 类型方法是用来定义类型本身调用的方法，通过在func关键字前加static来实现。类还可以用关键字class来允许子类重写父类的方法实现。
 在类方法中，隐含的self指向的是类本身而不是类的实例。同样在类型方法中，有self访问的属性与同名的形参相比，优先级低一些：
-struct Point{  static var x = 12  static func test(x:Int)-&amp;gt;Bool{  return self.x &amp;gt; x  } }  </content>
+struct Point{  static var x = 12  static func test(x:Int)-&amp;gt;Bool{  return self.x &amp;gt; x  } } async/await 若一个函数未标记为async的，则它不能直接调用async函数，下面代码会出现编译错误：
+func authenticateAndFetchProfile() {  //... 	let userProfile = try await fetchUserInfo() //...  } 但是，如果我们没有并发上下文会怎样呢？在调用层次结构的某处，发现自己根本没有并发上下文来运行代码。幸运的是，另一种创建异步上下文的方法可以帮助我们解决这个问题。
+创建一个Task对象。Task是一个功能非常强大的对象，可以用它来进行多线程处理。我们还能对它们进行一些控制，比如取消它们。现在，我们只使用Task来创建并发上下文。Task有一个带有闭包的初始化器，而闭包本身就是一个并发上下文。
+在下面示例代码中，虽然authenticateAndFetchProfile没有被标记为async，但因为它创建了一个Task任务，所以可以调用async方法：
+func authenticateAndFetchProfile() {  Task { //...  let userProfile = try await fetchUserInfo() //...  } } </content>
     </entry>
     
      <entry>
