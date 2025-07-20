@@ -6240,7 +6240,8 @@ struct Point{  static var x = 12  static func test(x:Int)-&amp;gt;Bool{  return 
 func authenticateAndFetchProfile() {  //... 	let userProfile = try await fetchUserInfo() //...  } 但是，如果我们没有并发上下文会怎样呢？在调用层次结构的某处，发现自己根本没有并发上下文来运行代码。幸运的是，另一种创建异步上下文的方法可以帮助我们解决这个问题。
 创建一个Task对象。Task是一个功能非常强大的对象，可以用它来进行多线程处理。我们还能对它们进行一些控制，比如取消它们。现在，我们只使用Task来创建并发上下文。Task有一个带有闭包的初始化器，而闭包本身就是一个并发上下文。
 在下面示例代码中，虽然authenticateAndFetchProfile没有被标记为async，但因为它创建了一个Task任务，所以可以调用async方法：
-func authenticateAndFetchProfile() {  Task { //...  let userProfile = try await fetchUserInfo() //...  } } func fetchUserInfo() async throws -&amp;gt; UserInfo {  let url = URL(string: &amp;#34;https://www.andyibanez.com/ fairesepages.github.io/books/async-await/user_ profile.json&amp;#34;)!  let session = URLSession.shared  let (userInfoData, response) = try await session.data(from: url)  let userInfo = try JSONDecoder().decode(UserInfo.self, from: userInfoData) return userInfo } </content>
+func authenticateAndFetchProfile() {  Task { //...  let userProfile = try await fetchUserInfo() //...  } } func fetchUserInfo() async throws -&amp;gt; UserInfo {  let url = URL(string: &amp;#34;https://www.andyibanez.com/ fairesepages.github.io/books/async-await/user_ profile.json&amp;#34;)!  let session = URLSession.shared  let (userInfoData, response) = try await session.data(from: url)  let userInfo = try JSONDecoder().decode(UserInfo.self, from: userInfoData) return userInfo } async get properties async/await并不局限于函数调用。还可以在只读计算属性中使用它，下面示例代码展示了如何做到这一点：
+var userInfo: UserInfo {  get async throws {  let url = URL(string: &amp;#34;https://www.andyibanez.com/ fairesepages.github.io/books/async-await/user_ profile.json&amp;#34;)!  let session = URLSession.shared  let (userInfoData, _) = try await session.data(from: url)  let userInfo = try JSONDecoder().decode(UserInfo.self, from: userInfoData)  return userInfo  } } </content>
     </entry>
     
      <entry>
