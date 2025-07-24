@@ -241,13 +241,13 @@ code.has-jax {
     <i class="fa fa-file-word-o"></i>
 </span>
 <span class="post-meta-item-text">字数: </span>
-<span class="leancloud-visitors-count">1934</span>
+<span class="leancloud-visitors-count">2632</span>
 &nbsp; | &nbsp;
 <span class="post-meta-item-icon">
     <i class="fa fa-coffee"></i>
 </span>
 <span class="post-meta-item-text">阅读: </span>
-<span class="leancloud-visitors-count">4 分钟</span>
+<span class="leancloud-visitors-count">6 分钟</span>
 </span>
       </div>
     </header>
@@ -362,9 +362,51 @@ code.has-jax {
 </span></span><span style="display:flex;"><span>    }
 </span></span><span style="display:flex;"><span>}
 </span></span></code></pre></div><h2 id="安装描述文件失败">安装描述文件失败</h2>
-<p>安装新的调试描述文件时出现如下错误：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>Please ensure the provisioning profile is configured <span style="color:#66d9ef">for</span> this device. If not, please try to generate a new profile.
-</span></span></code></pre></div><p>若确定描述文件和证书没问题，可以尝试拔掉调试手机，再重新安装即可。</p>
+</span></span></code></pre></div><p>若确定描述文件没问题，可以尝试拔掉手机，再重新安装即可。</p>
+<h2 id="biocpromisc-operation-not-supported">BIOCPROMISC: Operation not supported</h2>
+<p>为iOS设备创建虚拟接口：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>rvictl -s xxx  <span style="color:#75715e"># 其中xxx表示设备id</span>
+</span></span></code></pre></div><p>关闭虚拟接口：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>rvictl -x xxx <span style="color:#75715e"># 其中xxx表示设备id</span>
+</span></span></code></pre></div><p>将设备连接到mac上后可以使用如下命令查看设备id：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>idevice_id -l
+</span></span></code></pre></div><p>在macOS上使用<code>rvictl -s</code>为iOS设备创建虚拟接口(如 <code>rvi0</code>)后，Wireshark抓包时出现<code>BIOCPROMISC: Operation not supported on socket</code>错误，是因为Wireshark默认尝试启用混杂模式（Promiscuous Mode），但<code>rvi0</code>虚拟接口不支持此模式。以下是解决方案：</p>
+<h3 id="方法-1在-wireshark中禁用混杂模式推荐">方法 1：在 Wireshark中禁用混杂模式（推荐）</h3>
+<ol>
+<li>打开Wireshark，点击菜单栏的设置按钮，然后找到<code>rvi0</code>接口，取消勾选Promiscuous Mode即可。</li>
+</ol>
+<h3 id="方法-2通过命令行工具捕获避免-wireshark-gui">方法 2：通过命令行工具捕获（避免 Wireshark GUI）</h3>
+<p>使用 <code>tshark</code>（Wireshark的命令行工具）并显式禁用混杂模式：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>sudo tshark -i rvi0 -p -w output.pcap
+</span></span></code></pre></div><ul>
+<li><code>-p</code>：禁用混杂模式。</li>
+<li><code>-w output.pcap</code>：将捕获结果保存到文件，之后可在Wireshark中分析。</li>
+</ul>
+<h3 id="方法-3使用tcpdump捕获后导入-wireshark">方法 3：使用<code>tcpdump</code>捕获后导入 Wireshark</h3>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>sudo tcpdump -i rvi0 -s0 -w capture.pcap
+</span></span></code></pre></div><ul>
+<li>按 <code>Ctrl+C</code> 停止捕获后，用 Wireshark打开 <code>capture.pcap</code> 文件分析。</li>
+</ul>
+<h3 id="方法-4修改wireshark全局设置备用">方法 4：修改Wireshark全局设置（备用）</h3>
+<p>编辑Wireshark配置文件：</p>
+<p>1、关闭Wireshark。</p>
+<p>2、创建或修改配置文件：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>nano ~/.config/wireshark/preferences
+</span></span></code></pre></div><p>3、添加以下行：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>capture.disable_promiscuous_mode: TRUE
+</span></span></code></pre></div><p>4、保存后重启Wireshark。</p>
+<h3 id="原因说明">原因说明</h3>
+<ul>
+<li><code>rvictl</code>创建的<code>rvi0</code>接口<font color=red>本身已完整捕获 iOS 设备的流量，无需混杂模式</font>。</li>
+<li>Wireshark默认启用混杂模式，但macOS的BPF系统对虚拟接口支持有限，导致BIOCPROMISC错误。</li>
+</ul>
+<p>通过上述任一方法禁用混杂模式即可解决该错误，正常捕获iOS设备流量。推荐优先使用方法 1或方法 2。</p>
+<p><a href="https://www.jianshu.com/p/67be96d313df">https://www.jianshu.com/p/67be96d313df</a></p>
+<p><a href="https://developer.baidu.com/article/details/3306592">https://developer.baidu.com/article/details/3306592</a></p>
+<p><a href="https://www.lvtao.net/tool/macos-wireshark.html">https://www.lvtao.net/tool/macos-wireshark.html</a></p>
+<h3 id="参数介绍">参数介绍</h3>
+<p><a href="https://blog.csdn.net/weixin_45565886/article/details/134064883">过滤参数介绍</a></p>
 
     </div>
     <footer class="post-footer">
@@ -532,6 +574,16 @@ code.has-jax {
           </ul>
         </li>
         <li><a href="#安装描述文件失败">安装描述文件失败</a></li>
+        <li><a href="#biocpromisc-operation-not-supported">BIOCPROMISC: Operation not supported</a>
+          <ul>
+            <li><a href="#方法-1在-wireshark中禁用混杂模式推荐">方法 1：在 Wireshark中禁用混杂模式（推荐）</a></li>
+            <li><a href="#方法-2通过命令行工具捕获避免-wireshark-gui">方法 2：通过命令行工具捕获（避免 Wireshark GUI）</a></li>
+            <li><a href="#方法-3使用tcpdump捕获后导入-wireshark">方法 3：使用<code>tcpdump</code>捕获后导入 Wireshark</a></li>
+            <li><a href="#方法-4修改wireshark全局设置备用">方法 4：修改Wireshark全局设置（备用）</a></li>
+            <li><a href="#原因说明">原因说明</a></li>
+            <li><a href="#参数介绍">参数介绍</a></li>
+          </ul>
+        </li>
       </ul>
     </li>
   </ul>
