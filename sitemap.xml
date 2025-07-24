@@ -6255,7 +6255,14 @@ func authenticateAndFetchProfile() {  //... 	let userProfile = try await fetchUs
 创建一个Task对象。Task是一个功能非常强大的对象，可以用它来进行多线程处理。我们还能对它们进行一些控制，比如取消它们。现在，我们只使用Task来创建并发上下文。Task有一个带有闭包的初始化器，而闭包本身就是一个并发上下文。
 在下面示例代码中，虽然authenticateAndFetchProfile没有被标记为async，但因为它创建了一个Task任务，所以可以调用async方法：
 func authenticateAndFetchProfile() {  Task { //...  let userProfile = try await fetchUserInfo() //...  } } func fetchUserInfo() async throws -&amp;gt; UserInfo {  let url = URL(string: &amp;#34;https://www.andyibanez.com/ fairesepages.github.io/books/async-await/user_ profile.json&amp;#34;)!  let session = URLSession.shared  let (userInfoData, response) = try await session.data(from: url)  let userInfo = try JSONDecoder().decode(UserInfo.self, from: userInfoData) return userInfo } async get properties async/await并不局限于函数调用。还可以在只读计算属性中使用它，下面示例代码展示了如何做到这一点：
-var userInfo: UserInfo {  get async throws {  let url = URL(string: &amp;#34;https://www.andyibanez.com/ fairesepages.github.io/books/async-await/user_ profile.json&amp;#34;)!  let session = URLSession.shared  let (userInfoData, _) = try await session.data(from: url)  let userInfo = try JSONDecoder().decode(UserInfo.self, from: userInfoData)  return userInfo  } } Continuations Continuations很有用，因为不仅你能够提供基于闭包的代码的async/await版本，还包括第三方库和框架。这将帮助你创建一个一致的代码库，在有必要时只使用async/await而不是基于闭包的调用。
+var userInfo: UserInfo {  get async throws {  let url = URL(string: &amp;#34;https://www.andyibanez.com/ fairesepages.github.io/books/async-await/user_ profile.json&amp;#34;)!  let session = URLSession.shared  let (userInfoData, _) = try await session.data(from: url)  let userInfo = try JSONDecoder().decode(UserInfo.self, from: userInfoData)  return userInfo  } } Continuations Continuations很有用，因为利用他不仅能够提供基于闭包的代码的async/await版本，还包括第三方库和框架。这将帮助我们创建一个一致的代码库，在有必要时只使用async/await而不是基于闭包的调用。
+并非所有基于闭包的代码都是因为处理并发或多线程。Swift和苹果的SDKs中都有多个调用闭包的方法，这与并发无关。例如，集合的流行方法filter、map和reduce，使用闭包来操作它们的元素。请记住这一点，因为很难有完全不使用任何类型闭包的项目，这是可以的。async/await旨在仅消除与并发相关任务基于闭包的调用。
+有4种形式的continuations：
+  withCheckedThrowingContinuation
+  withCheckedContinuation
+  withUnsafeThrowingContinuation
+  withUnsafeContinuation
+  当原始的闭包代码根本不返回任何错误时，使用withCheckedContinuation。不安全的变体，withUnsafeThrowingContinuation和 withUnsafeContinuation - 与它们的Checked对应项类似。主要区别在于，当使用Checked Continuations时，Swift会在遇到任何违规情况（如多次调用continuations或完全忘记调用它们）时通过记录错误来帮助保护你。不安全continuations没有这些功能，但它们可能稍微快一点。总的来说，不建议使用不安全continuations，但请注意，在大多数情况下，可以互换使用它们。
 </content>
     </entry>
     
