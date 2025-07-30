@@ -241,13 +241,13 @@ code.has-jax {
     <i class="fa fa-file-word-o"></i>
 </span>
 <span class="post-meta-item-text">字数: </span>
-<span class="leancloud-visitors-count">1921</span>
+<span class="leancloud-visitors-count">2056</span>
 &nbsp; | &nbsp;
 <span class="post-meta-item-icon">
     <i class="fa fa-coffee"></i>
 </span>
 <span class="post-meta-item-text">阅读: </span>
-<span class="leancloud-visitors-count">4 分钟</span>
+<span class="leancloud-visitors-count">5 分钟</span>
 </span>
       </div>
     </header>
@@ -374,6 +374,41 @@ code.has-jax {
 </span></span><span style="display:flex;"><span>    async <span style="color:#66d9ef">let</span> userInfo = fetchUserInfo()
 </span></span><span style="display:flex;"><span>    async <span style="color:#66d9ef">let</span> followers = fetchFellows()
 </span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">return</span> <span style="color:#66d9ef">try</span> await(userInfo, followers)
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span><span style="color:#66d9ef">struct</span> <span style="color:#a6e22e">ServerImage</span>: Codable {
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">let</span> imageName: String
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">let</span> url: URL
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">download</span>(serverImages: [ServerImage]) async <span style="color:#66d9ef">throws</span> -&gt; [URL] {
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">var</span> urls: [URL] = []
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">try</span> await withThrowingTaskGroup(of: URL.<span style="color:#66d9ef">self</span>) { group <span style="color:#66d9ef">in</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">for</span> image <span style="color:#66d9ef">in</span> serverImages {
+</span></span><span style="display:flex;"><span>            group.addTask(priority: .userInitiated) {
+</span></span><span style="display:flex;"><span>                <span style="color:#66d9ef">let</span> imageUrl = <span style="color:#66d9ef">try</span> await <span style="color:#66d9ef">self</span>.download(image)
+</span></span><span style="display:flex;"><span>                <span style="color:#66d9ef">return</span> imageUrl
+</span></span><span style="display:flex;"><span>            }
+</span></span><span style="display:flex;"><span>        }
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">for</span> <span style="color:#66d9ef">try</span> await imageUrl <span style="color:#66d9ef">in</span> group { urls.append(imageUrl) }
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">return</span> urls
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">fetchImageList</span>() async <span style="color:#66d9ef">throws</span> -&gt; [ServerImage] {
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">let</span> (data, <span style="color:#66d9ef">_</span>) = <span style="color:#66d9ef">try</span> await URLSession.shared.data(from: imageListURL)
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">let</span> urls = <span style="color:#66d9ef">try</span> jsonDecoder.decode([ServerImage].<span style="color:#66d9ef">self</span>, from: data)
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">return</span> urls
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">download</span>(<span style="color:#66d9ef">_</span> serverImage: ServerImage) async <span style="color:#66d9ef">throws</span> -&gt; URL {
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">let</span> fileManager = FileManager.<span style="color:#66d9ef">default</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">let</span> tmpDir = fileManager.temporaryDirectory
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">let</span> (downloadedImageUrl, <span style="color:#66d9ef">_</span>) = <span style="color:#66d9ef">try</span> await URLSession.shared.download(from: serverImage.url)
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">let</span> destinationUrl = tmpDir.appendingPathComponent(serverImage.imageName) <span style="color:#75715e">// If the destination already exists, remove it.</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">try</span>? fileManager.removeItem(at: destinationUrl)
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">try</span> fileManager.moveItem(at: downloadedImageUrl, to: destinationUrl)
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">return</span> destinationUrl
 </span></span><span style="display:flex;"><span>}
 </span></span></code></pre></div>
     </div>
