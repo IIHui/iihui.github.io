@@ -241,7 +241,7 @@ code.has-jax {
     <i class="fa fa-file-word-o"></i>
 </span>
 <span class="post-meta-item-text">字数: </span>
-<span class="leancloud-visitors-count">1896</span>
+<span class="leancloud-visitors-count">1921</span>
 &nbsp; | &nbsp;
 <span class="post-meta-item-icon">
     <i class="fa fa-coffee"></i>
@@ -350,25 +350,30 @@ code.has-jax {
 <p>有4种形式的continuations：</p>
 <ul>
 <li>
-<p>withCheckedThrowingContinuation</p>
+<p><code>withCheckedThrowingContinuation</code></p>
 </li>
 <li>
-<p>withCheckedContinuation</p>
+<p><code>withCheckedContinuation</code></p>
 </li>
 <li>
-<p>withUnsafeThrowingContinuation</p>
+<p><code>withUnsafeThrowingContinuation</code></p>
 </li>
 <li>
-<p>withUnsafeContinuation</p>
+<p><code>withUnsafeContinuation</code></p>
 </li>
 </ul>
-<p>当原始的闭包代码根本不返回任何错误时，使用<code>withCheckedContinuation</code>。不安全的变体，<code>withUnsafeThrowingContinuation</code>和 <code>withUnsafeContinuation</code> -与它们的Checked对应项类似。主要区别在于，当使用Checked Continuations时，Swift会在遇到任何违规情况（如多次调用continuations或完全忘记调用它们）时通过记录错误来帮助保护你。不安全continuations没有这些功能，但它们可能稍微快一点。总的来说，不建议使用不安全continuations，但请注意，在大多数情况下，可以互换使用它们。</p>
+<p>当原始的闭包代码根本不返回任何错误时，使用<code>withCheckedContinuation</code>。不安全的变体，<code>withUnsafeThrowingContinuation</code>和 <code>withUnsafeContinuation</code> -与它们的Checked对应项类似。主要区别在于，当使用Checked Continuations时，Swift会在遇到任何违规情况（如多次调用<code>continuations</code>或完全忘记调用它们）时通过记录错误来帮助保护你。不安全continuations没有这些功能，但它们可能稍微快一点。总的来说，不建议使用不安全continuations，但请注意，在大多数情况下，可以互换使用它们。</p>
 <h2 id="structured-concurrency">Structured Concurrency</h2>
 <p>在结构化并发中，<font color="#de7802">可以同时运行多个代码路径，并得到可预测的结果</font>，而无需思考那些跳转多个基于闭包调用的代码迷宫。</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">fetchData</span>() async <span style="color:#66d9ef">throws</span> -&gt; (userInfo: UserInfo, followers: UserInfo) {
 </span></span><span style="display:flex;"><span>    async <span style="color:#66d9ef">let</span> userInfo = fetchUserInfo()
 </span></span><span style="display:flex;"><span>    async <span style="color:#66d9ef">let</span> followers = fetchFellows()
 </span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">return</span> (<span style="color:#66d9ef">try</span> await userInfo, <span style="color:#66d9ef">try</span> await followers)
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">fetchData</span>() async <span style="color:#66d9ef">throws</span> -&gt; (userInfo: UserInfo, followers: UserInfo) {
+</span></span><span style="display:flex;"><span>    async <span style="color:#66d9ef">let</span> userInfo = fetchUserInfo()
+</span></span><span style="display:flex;"><span>    async <span style="color:#66d9ef">let</span> followers = fetchFellows()
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">return</span> <span style="color:#66d9ef">try</span> await(userInfo, followers)
 </span></span><span style="display:flex;"><span>}
 </span></span></code></pre></div>
     </div>
