@@ -330,14 +330,14 @@ ipa中描述文件过期时间查看
         <tags>
           <tag>iOS</tag>
         </tags>
-        <content type="html"> No Symbolic Information Found 在一台非打包的iMac上使用命令symbolicatecrash xxx1.crash ST/dsymDir/xxx2.dSYM -o xxx1.log对崩溃日志进行符号化，执行完成后出现了如下错误信息：
-No Symbolic Information Found 最初怀疑是dsym文件和崩溃日志的uuid不同造成的。但使用dwarfdump --uuid xxx.dSYM命令得到dsym文件的uuid和崩溃日志中的uuid是相同的，也就排除了uuid不一致这个原因。同时，发现使用atos命令并指定dsym目录下的target进行符号化，得到的结果是正常的：
-atos -o ST/dsymDir/xxx1.dSYM/Contents/Resources/DWARF/targetxxx -l 0x1c6573000 0x00000001c6a0da80 在问题排查过程中意外发现，在使用symbolicatecrash命令时若按照atos命令那样指定dysm目录下的target也是可以符号化成功的，具体方式如下：
-symbolicatecrash xxx.crash ST/dsymDir/xxx1.dSYM/Contents/Resources/DWARF/xxx2 -o xxx.log 此外，排查过程中发现使用symbolicatecrash命令进行符号化时若添加-d选项（明确指定dsym文件是路径）也是能够正常符号化的:
-symbolicatecrash xxx.crash -d ST/dsymDir/xxxdSYM -o xxx.log 根据添加-d选项后终端的输出日志，使用mdfind查找对应uuid对应的dsym文件，发现无任何输出：
-mdfind &amp;#34;com_apple_xcode_dsym_uuids == A7C6DA83-B3C1-3E0C-9734-0C59CD5032C8&amp;#34; 这是因为Spotlight索引未包含文件元数据，可以通过如下方式解决。经过验证，第一次添加元数据标签成功后，后续添加dsym文件不再需要重复添加（使用mfind可以查到到相应的dsym文件）：
+        <content type="html"> No Symbolic Information Found 在一台非打包的iMac上使用命令symbolicatecrash xxx1.crash ST/dsymDir/xxx2.dSYM -o xxx1.log对崩溃日志进行符号化，执行完后出现了如下错误：
+No Symbolic Information Found 最初怀疑是dsym文件和崩溃日志的uuid不同造成的。但使用命令dwarfdump --uuid xxx.dSYM得到dsym文件的uuid和崩溃日志中的uuid是相同的，也就排除了uuid不一致这个原因。同时，发现若使用atos命令时指定dsym目录下的target进行符号化，得到的结果却是正常的：
+atos -o ST/dsymDir/xxx1.dSYM/Contents/Resources/DWARF/targetxxx -l 0x1c6573000 0x00000001c6a0da80 在问题排查过程中意外发现，使用symbolicatecrash命令时若按照atos命令那样指定dysm目录下的target也是可以符号化成功的，具体命令如下（xxx1表示崩溃日志名，xxx2表示target名）：
+symbolicatecrash xxx1.crash ST/dsymDir/xxx1.dSYM/Contents/Resources/DWARF/xxx2 -o xxx1.log 此外，排查问题过程中又发现使用symbolicatecrash命令进行符号化时若添加-d选项（明确指定dsym文件是路径）也是能够正常符号化崩溃日志:
+symbolicatecrash xxx.crash -d ST/dsymDir/xxxdSYM -o xxx.log 根据添加-d选项后终端的输出日志，发现若使用mdfind查找uuid对应的dsym文件时无任何输出，也就说找不到uuid对应的dsym文件：
+mdfind &amp;#34;com_apple_xcode_dsym_uuids == A7C6DA83-B3C1-3E0C-9734-0C59CD5032C8&amp;#34; 这是因为Spotlight索引未包含文件元数据，可以通过如下方案解决。经过验证，第一次添加元数据标签成功后，后续添加dsym文件不再需要重复添加元数据标签（使用mfind可以查到到相应的dsym文件）：
 # 替换为你的实际 UUID 和文件路径 UUID=&amp;#34;A7C6DA83-B3C1-3E0C-9734-0C59CD5032C8&amp;#34; DSYM_PATH=&amp;#34;/path/to/xxx.dSYM&amp;#34; # 需要使用绝对路径  # 添加元数据标签 xattr -w com.apple.metadata:com_apple_xcode_dsym_uuids &amp;#34;$UUID&amp;#34; &amp;#34;$DSYM_PATH&amp;#34;  # 验证是否添加成功 mdls -name com_apple_xcode_dsym_uuids &amp;#34;$DSYM_PATH&amp;#34; 添加元数据后，再刷新索引：
-# 刷新特定文件 mdimport &amp;#34;$DSYM_PATH&amp;#34;  # 或刷新整个目录 mdimport ~/Library/Developer/Xcode/Archives # 假设 dSYM 在此目录  # 重建整个索引（耗时较长） sudo mdutil -E / Xcode 16 编译问题 升级至Xcode 16后编译原工程出现了如下所示的第一个错误：
+# 刷新特定文件 mdimport &amp;#34;$DSYM_PATH&amp;#34;  # 或刷新整个目录 mdimport ~/Library/Developer/Xcode/Archives # 假设dSYM在此目录  # 重建整个索引（耗时较长） sudo mdutil -E / Xcode 16 编译问题 升级至Xcode 16后编译原工程出现了如下所示的第一个错误：
 #include &amp;lt;sys/_types/_u_char.h&amp;gt;&amp;#39;; &amp;#39;u_char&amp;#39; must be declared before it is used 这是因为苹果在iOS 17/macOS 14 SDK中，移除了隐式类型声明，要求所有的类型如u_int32_t，u_char等需要从适当的系统模块导入。意味着现在需要显式地导入包含这些类型定义的头文件，即添加如下头文件：
 #include &amp;lt;sys/types.h&amp;gt;  解决了上面的错误，又出现了第二个报错信息：
 Declaration of &amp;#39;sa_family_t&amp;#39; must be imported from module &amp;#39;Darwin.POSIX.sys.types._sa_family_t&amp;#39; before it is required 同样地，也需要显式导入如下头文件：
@@ -355,12 +355,12 @@ rvictl -s xxx # 其中xxx表示设备id 关闭虚拟接口：
 rvictl -x xxx # 其中xxx表示设备id 将设备连接到mac上后可以使用如下命令查看设备id：
 idevice_id -l 在macOS上使用rvictl -s为iOS设备创建虚拟接口(如 rvi0)后，Wireshark抓包时出现BIOCPROMISC: Operation not supported on socket错误，是因为Wireshark默认尝试启用混杂模式（Promiscuous Mode），但rvi0虚拟接口不支持此模式。以下是解决方案：
 方法 1：在 Wireshark中禁用混杂模式（推荐）  打开Wireshark，点击菜单栏的设置按钮，然后找到rvi0接口，取消勾选Promiscuous Mode即可。  方法 2：通过命令行工具捕获（避免 Wireshark GUI） 使用 tshark（Wireshark的命令行工具）并显式禁用混杂模式：
-sudo tshark -i rvi0 -p -w output.pcap  -p：禁用混杂模式。 -w output.pcap：将捕获结果保存到文件，之后可在Wireshark中分析。  方法 3：使用tcpdump捕获后导入 Wireshark sudo tcpdump -i rvi0 -s0 -w capture.pcap  按 Ctrl&#43;C 停止捕获后，用 Wireshark打开 capture.pcap 文件分析。  方法 4：修改Wireshark全局设置（备用） 编辑Wireshark配置文件：
+sudo tshark -i rvi0 -p -w output.pcap  -p：禁用混杂模式。 -w output.pcap：将捕获结果保存到文件，之后可在Wireshark中分析。  方法 3：使用tcpdump捕获后导入 Wireshark sudo tcpdump -i rvi0 -s0 -w capture.pcap  按 Ctrl&#43;C 停止捕获后，用Wireshark打开 capture.pcap 文件分析。  方法 4：修改Wireshark全局设置（备用） 编辑Wireshark配置文件：
 1、关闭Wireshark。
 2、创建或修改配置文件：
 nano ~/.config/wireshark/preferences 3、添加以下行：
 capture.disable_promiscuous_mode: TRUE 4、保存后重启Wireshark。
-原因说明  rvictl创建的rvi0接口本身已完整捕获 iOS 设备的流量，无需混杂模式。 Wireshark默认启用混杂模式，但macOS的BPF系统对虚拟接口支持有限，导致BIOCPROMISC错误。  通过上述任一方法禁用混杂模式即可解决该错误，正常捕获iOS设备流量。推荐优先使用方法 1或方法 2。
+原因说明  rvictl创建的rvi0接口本身已完整捕获 iOS 设备的流量，无需混杂模式。 Wireshark默认启用混杂模式，但macOS的BPF系统对虚拟接口支持有限，导致BIOCPROMISC错误。  通过上述任一方法禁用混杂模式即可解决该错误，正常捕获iOS设备流量。推荐优先使用方法1或方法 2。
 https://www.jianshu.com/p/67be96d313df
 https://developer.baidu.com/article/details/3306592
 https://www.lvtao.net/tool/macos-wireshark.html
