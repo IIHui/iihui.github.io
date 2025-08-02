@@ -241,13 +241,13 @@ code.has-jax {
     <i class="fa fa-file-word-o"></i>
 </span>
 <span class="post-meta-item-text">字数: </span>
-<span class="leancloud-visitors-count">2158</span>
+<span class="leancloud-visitors-count">3086</span>
 &nbsp; | &nbsp;
 <span class="post-meta-item-icon">
     <i class="fa fa-coffee"></i>
 </span>
 <span class="post-meta-item-text">阅读: </span>
-<span class="leancloud-visitors-count">5 分钟</span>
+<span class="leancloud-visitors-count">7 分钟</span>
 </span>
       </div>
     </header>
@@ -412,7 +412,63 @@ code.has-jax {
 </span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">return</span> destinationUrl
 </span></span><span style="display:flex;"><span>}
 </span></span></code></pre></div><h2 id="unstructured-concurrency">Unstructured Concurrency</h2>
-<p>非结构化并发在牺牲略微可用性的同时提供了更多的灵活性。在处理无结构并发时，你的代码<font color="#de7802">不一定遵循我们所喜爱的自上而下的结构</font>。幸运的是，处理无结构并发仍然非常容易，这种灵活性不会显著增加你程序的复杂性。</p>
+<p>非结构化并发在牺牲较少可用性的同时提供了更多的灵活性。在处理无结构并发时，代码<font color="#de7802">不一定遵循我们所喜爱的自上而下的结构</font>。幸运的是，处理无结构并发仍然非常容易，这种灵活性不会显著增加程序的复杂性。</p>
+<p>对于无结构的并发，依然是使用<code>Task</code>对象。<code>Task</code>是一个很重要的对象，它允许我们做两件非常重要的事情：</p>
+<ul>
+<li>使用初始化器创建<code>Task</code>后，它就会<font color="#de7802">异步启动闭包中的代码</font>。</li>
+<li>它创建了一个并发上下文，使我们<font color="#de7802">能够以调用异步方法的方式使用并发功能</font>。</li>
+</ul>
+<p>下面示例代码是使用<code>Task</code>调用<code>async</code>方法：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">authenticateAndFetchProfile</span>() {
+</span></span><span style="display:flex;"><span>    Task {
+</span></span><span style="display:flex;"><span>        <span style="color:#75715e">// ...</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">let</span> userProfile = <span style="color:#66d9ef">try</span> await fetchUserInfo()
+</span></span><span style="display:flex;"><span>        <span style="color:#75715e">// ...</span>
+</span></span><span style="display:flex;"><span>        debugPrint(userProfile)
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">fetchUserInfo</span>() async -&gt; String {
+</span></span><span style="display:flex;"><span>    debugPrint(<span style="color:#e6db74">&#34;fetchUserInfo&#34;</span>)
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">return</span> <span style="color:#e6db74">&#34;Return Test&#34;</span>
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p>当我们想使用<code>Task</code>做并发时，首先要灵活指定优先级，优先级是<code>Task.Priority</code>（与处理任务组时使用的优先级相同）。下面是可使用的优先级列表：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span><span style="color:#66d9ef">static</span> <span style="color:#66d9ef">let</span> background: TaskPriority
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">static</span> <span style="color:#66d9ef">let</span> high: TaskPriority
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">static</span> <span style="color:#66d9ef">let</span> low: TaskPriority
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">static</span> <span style="color:#66d9ef">var</span> medium: TaskPriority
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">static</span> <span style="color:#66d9ef">let</span> userInitiated: TaskPriority
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">static</span> <span style="color:#66d9ef">let</span> utility: TaskPriority
+</span></span></code></pre></div><p><code>Task</code>是一个对象，你可以使用变量存储它，这就是被称为非机构并发的部分原因。我们可以有多个Task，存储在多个变量中（甚至存储在一个collections中）。在非机构化并发中，可以取消Task，但在结构化的Task无法做到：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">authenticate</span>() {
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">let</span> authenticationTask = Task&lt;Bool, Error&gt; {
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">let</span> context = LAContext()
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">let</span> policy = LAPolicy.deviceOwnerAuthenticationWithBiometrics
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">return</span> <span style="color:#66d9ef">try</span> await context.evaluatePolicy(
+</span></span><span style="display:flex;"><span>            policy, localizedReason: <span style="color:#e6db74">&#34;To log in&#34;</span>)
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">// 取消Task</span>
+</span></span><span style="display:flex;"><span>    authenticationTask.cancel()
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p>在上面示例代码中，我们定义变量的类型为<code>Task&lt;Bool, Error&gt;</code>，这是因为<code>context.evaluatePolicy</code>返回一个<code>Bool</code>值，也可能抛出一个<code>Error</code>。</p>
+<p>我们可以await某个Task的值。在下面示例代码中，我们需要使用try await，这是因为我们定义的authenticationTask可能返回一个Bool值，也可能抛出一个错误。</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">authenticate</span>() {
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">let</span> authenticationTask = Task&lt;Bool, Error&gt; {
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">let</span> context = LAContext()
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">let</span> policy = LAPolicy.deviceOwnerAuthenticationWithBiometrics
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">return</span> <span style="color:#66d9ef">try</span> await context.evaluatePolicy(
+</span></span><span style="display:flex;"><span>            policy, localizedReason: <span style="color:#e6db74">&#34;To log in&#34;</span>)
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>  
+</span></span><span style="display:flex;"><span>    Task {
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">let</span> status = <span style="color:#66d9ef">try</span> await authenticationTask.value
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">if</span> status {
+</span></span><span style="display:flex;"><span>            debugPrint(<span style="color:#e6db74">&#34;sucess&#34;</span>)
+</span></span><span style="display:flex;"><span>        }
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p>在上面示例代码创建Task时，我们没有使用do-catch语句体。上面代码隐式地创建了一个<code>Task&lt;(), Error&gt;</code>类型的任务，因为它不返回任何值，但他会抛出异常。Task不需要显式的do-catch语句体，因为闭包会自动捕获Error。</p>
+<p>当在代码中使用<code>Task {}</code>创建一个新任务时，它将继承产生这个任务的上下文信息。继承的信息包括任务运行的Actor（如果在@MainActor上运行的任务中产生了任务，那么该任务也将在@MainActor上运行）和优先级。如果新生成的任务是一个根任务（它创建了一个异步上下文，但其本身并不在其中运行），那么它将继承其所运行线程的<code>Actor</code>。</p>
 
     </div>
     <footer class="post-footer">
