@@ -241,13 +241,13 @@ code.has-jax {
     <i class="fa fa-file-word-o"></i>
 </span>
 <span class="post-meta-item-text">字数: </span>
-<span class="leancloud-visitors-count">5350</span>
+<span class="leancloud-visitors-count">5923</span>
 &nbsp; | &nbsp;
 <span class="post-meta-item-icon">
     <i class="fa fa-coffee"></i>
 </span>
 <span class="post-meta-item-text">阅读: </span>
-<span class="leancloud-visitors-count">11 分钟</span>
+<span class="leancloud-visitors-count">12 分钟</span>
 </span>
       </div>
     </header>
@@ -407,15 +407,32 @@ code.has-jax {
 <p>任何在await调用之后发生的事情被称为<code>continuation</code>，我们需要继续做在被挂起之前正在做的事情，这很重要。因为我们可能会在恢复控制权时，<font color=red>await下面的语句在不同的线程中运行</font>。这意味着上面的示例代码中，第一个打印语句可能在一个线程中运行，而第二个打印语句可能在一个完全不同的线程中运行。</p>
 <p>使用async/await并不能让我们免于在主线程上做UI工作，所以如果需要更新UI，需要将这项工作推迟到主线程上。在实践中，这是通过一个名为@MainActor的系统级全局actor来完成的。</p>
 <h3 id="using-asyncawait">Using async/await</h3>
-<p>苹果所有基于闭包的并发API都有一个async/await版本，可以在iOS 15及更高版本上使用。虽然使用Xcode 13.3可以在iOS 13及更高版本上使用async/await，但苹果原生支持async/await的API仅在iOS 15及以上版本中可用。</p>
+<p>苹果所有基于闭包的并发API都有一个<code>async/await</code>版本，可以在<code>iOS 15</code>及更高版本上使用。虽然使用Xcode 13.3可以在iOS 13及更高版本上使用async/await，但<font color="#de7802">苹果原生支持async/await的API仅在iOS 15及以上版本中可用</font>。</p>
 <p>async函数可以被标记为throws。一般来说，如果正在模拟可能抛出错误或返回有效值的代码，可以简单地标记方法为throws，然后将结果类型指定为如果调用成功会得到的对象。本质上，<font color="#de7802">原本的<code>completionHandler</code>闭包的内容已经在函数签名中进行了移动</font>。</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">fetchUserInfo</span>() async <span style="color:#66d9ef">throws</span> -&gt; UserInfo {
 </span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">let</span> url = URL(string: <span style="color:#e6db74">&#34;https://www.andyibanez.com/ fairesepages.github.io/books/async-await/user_ profile.json&#34;</span>)<span style="color:#f92672">!</span>
 </span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">let</span> session = URLSession.shared
 </span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">let</span> (userInfoData, response) = <span style="color:#66d9ef">try</span> await session.data(from: url)
-</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">let</span> userInfo = <span style="color:#66d9ef">try</span> JSONDecoder().decode(UserInfo.<span style="color:#66d9ef">self</span>, from: userInfoData) <span style="color:#66d9ef">return</span> userInfo
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">let</span> userInfo = <span style="color:#66d9ef">try</span> JSONDecoder().decode(UserInfo.<span style="color:#66d9ef">self</span>, from: userInfoData) 
+</span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">return</span> userInfo
 </span></span><span style="display:flex;"><span>}
-</span></span></code></pre></div><p>一开始就能看出，async/await能帮我们写出更语义化的代码。在Swift中，我们可以从函数中抛出错误，但令人惊讶的是，很多开发者并不这样写。这是因为大多数非平凡的应用本质上是并发的（例如，处理网络请求），而且我们无法以一种符合Swift风格的方式处理闭包中的错误，因此我们只能将错误作为闭包的一部分返回。使用 async/await，我们的函数签名更易读，因此也更<code>self-documented</code>（自文档化）。</p>
+</span></span></code></pre></div><p>一开始就能看出，<code>async/await</code>能帮我们写出更语义化的代码。在Swift中，可以从函数中抛出错误，但令人惊讶的是，很多开发者并不这样写。这是因为大多数非平凡的应用本质上是并发的（例如，处理网络请求），而且我们无法以一种符合Swift风格的方式处理闭包中的错误，因此我们只能将错误作为闭包的一部分返回。使用 <code>async/await</code>，我们的函数签名更易读，因此也更具<code>self-documented</code>（自文档化）。</p>
+<p>我们利用苹果在iOS 15中提供的第一个<code>async/await</code>API。所有返回数据的URLSession方法都有async/await变体。到目前为止一切顺利，但下面这段代码还不能编译，因为我们没有返回任何内容。</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">fetchUserInfo</span>() async <span style="color:#66d9ef">throws</span> -&gt; UserInfo {
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">let</span> url = URL(string: <span style="color:#e6db74">&#34;https://www.andyibanez.com/ fairesepages.github.io/books/async-await/user_ profile.json&#34;</span>)<span style="color:#f92672">!</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">let</span> session = URLSession.shared
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">let</span> (userInfoData, response) = <span style="color:#66d9ef">try</span> await session.data(from: url)
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p>我们需要理解这样一个事实：对<code>session.data(from:)</code>的调用不接受闭包，也不再需要调用<code>resume()</code>了，只要调用<code>data(from:)</code>的<code>async</code>版本，任务就会开始。现在需要将JSON解析成API消费者可以使用的对象并返回一个值。</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">fetchUserInfo</span>() async <span style="color:#66d9ef">throws</span> -&gt; UserInfo {
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">let</span> url = URL(string: <span style="color:#e6db74">&#34;https://www.andyibanez.com/fairesepages.github.io/books/async-await/user_ profile.json&#34;</span>)<span style="color:#f92672">!</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">let</span> session = URLSession.shared
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">let</span> (userInfoData, response) = <span style="color:#66d9ef">try</span> await session.data(from: url)
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">let</span> userInfo = <span style="color:#66d9ef">try</span> JSONDecoder().decode(UserInfo.<span style="color:#66d9ef">self</span>, from: userInfoData)
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">return</span> userInfo
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p>由于Swift支持方法重载，<code>fetchUserInfo()</code>和<code>fetchUserInfo(completionHandler:)</code>可以并存。通过将函数标记为async，我们创建了一个并发上下文，在其中我们可以调用其它async函数，并且fetchUserInfo的调用者本身需要在并发上下文中（要么它自己需要标记为async，要么在Task {}中调用）。</p>
+<p>上面示例代码中，当代码执行到<code>let (userInfoData, response) = try await session.data(from: url)</code>时，我们的代码会挂起，执行它的线程可以去做其它工作——可能与我们应用程序无关。由于这种挂起，紧接着的那行将数据转换为对象的代码将不会执行，因为它依赖于上面那行的数据。</p>
 <h2 id="async-get-properties">async get properties</h2>
 <p><code>async/await</code>并不局限于函数调用。还可以在只读计算属性中使用它，下面示例代码展示了如何做到这一点：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span><span style="color:#66d9ef">var</span> userInfo: UserInfo {
