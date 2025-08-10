@@ -6353,8 +6353,8 @@ Actors 运行一些任务时，经常看到将结果传递到主线程，但有�
 如果多段代码可以同时写入一个文件，就会导致数据损坏。如果多个任务从该资源中读取数据，它们都会得到垃圾数据，这些数据甚至可能与它们试图读取的数据不同。最糟糕的是，如果你在底层编写并发代码，引入数据竞争非常容易，而且调试起来也非常困难。
 因此，如果使用的是值语义（结构体或枚举），就不会遇到这个问题。值语义是只读的，如果它们发生变异，就会创建一个副本，所有的变异都只作用于该变量。每个任务都会操作不同的数据副本，尽管这可能不是你想要的结果。
 Introducing Actors Actor是Swift中引入的一种新的引用类型，由新的并发模型支持。Actor会将自身的状态与程序的其余部分隔离，并对外部访问可变状态提供同步保护。简单来说，如果一个Actor包含一个可被多个任务读写的基本变量，那么 Actor会确保同一时间只有一个任务能够执行该操作，从而保证对特定资源的互斥访问。
-每一次访问可变状态都必须通过actor来完成。声明一个Actor非常简单，只需使用actor 关键字并为其命名，这与声明结构体（struct）或类（class）非常相似。作为引用类型，actor具备许多与类相似的功能：它们可以遵循协议（protocol），也能通过扩展（extension）获得更多功能。与类的主要区别在于，actor会隔离自身状态。一个actor可能会挂起零次或多次（即在其方法内部包含其它await调用），因此可以轻松将Actor与Swift的其它新并发系统组件集成。
-}  func countGames(by company: String) -&amp;gt; Int { let games = fetchGames(by: company) return games.count }  func add(games: [Videogame]) { self.videogames.append(contentsOf: games) }  func fetchGames(by year: Int) -&amp;gt; [Videogame] { let games = videogames.filter { $0.releaseYear == year } return games }  } </content>
+每一次访问可变状态都必须通过actor来完成。声明一个Actor非常简单，只需使用actor 关键字，然后为其命名，这与声明结构体（struct）或类（class）非常相似。作为引用类型，actor有许多与类相似的功能：它们可以遵循协议（protocol），也能通过扩展（extension）获得更多功能。与类的主要区别在于，actor会隔离自身状态。一个actor可能会挂起零次或多次（即在其方法内部包含其它await调用），因此可以轻松地将Actor与Swift的其它新并发系统组件集成。
+actor VideogameLibrary {  var videogames: [Videogame] = []   func countGames(by company: String) -&amp;gt; Int {  let games = fetchGames(by: company)  return games.count  }   func add(games: [Videogame]) {  self.videogames.append(contentsOf: games)  }   func fetchGames(by year: Int) -&amp;gt; [Videogame] {  let games = videogames.filter { $0.releaseYear == year }  return games  } } </content>
     </entry>
     
      <entry>
