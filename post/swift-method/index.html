@@ -241,13 +241,13 @@ code.has-jax {
     <i class="fa fa-file-word-o"></i>
 </span>
 <span class="post-meta-item-text">字数: </span>
-<span class="leancloud-visitors-count">18496</span>
+<span class="leancloud-visitors-count">18854</span>
 &nbsp; | &nbsp;
 <span class="post-meta-item-icon">
     <i class="fa fa-coffee"></i>
 </span>
 <span class="post-meta-item-text">阅读: </span>
-<span class="leancloud-visitors-count">37 分钟</span>
+<span class="leancloud-visitors-count">38 分钟</span>
 </span>
       </div>
     </header>
@@ -1048,21 +1048,50 @@ code.has-jax {
 <h3 id="the-sendable-protocol">The Sendable Protocol</h3>
 <p>在Swift中，除了值类型和actor之外的可发送类型需要遵守<code>Sendable</code>协议。通过简单地遵守此协议，编译器会检查你对可发送类型的使用，以确保你不会以可能导致数据竞争的方式使用它们。</p>
 <h3 id="analyzing-sendable-types">Analyzing Sendable Types</h3>
-<p>为了更好地理解可sendable types的行为，我们将分析它们以了解其特点和特殊注意事项。多数情况下，struct是开箱即用的可发送类型，但也有例外的情形。假设一个结构体有一个类属性：</p>
+<p>为了更好地理解可<code>sendable types</code>的行为，我们将通过分析它们以了解其特点和注意事项。多数情况下，<code>struct</code>是开箱即用的可发送类型，但也有例外情形。假设一个结构体有一个类属性：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span><span style="color:#66d9ef">class</span> <span style="color:#a6e22e">TVShow</span> {
 </span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">let</span> title: String 
 </span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">var</span> rating: Int
 </span></span><span style="display:flex;"><span>  
 </span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">init</span>(title: String, rating: Int) { 
-</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">self</span>.title = title <span style="color:#66d9ef">self</span>.rating = rating 
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">self</span>.title = title 
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">self</span>.rating = rating 
 </span></span><span style="display:flex;"><span>  }
-</span></span><span style="display:flex;"><span>  
 </span></span><span style="display:flex;"><span>}
 </span></span><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span><span style="color:#66d9ef">struct</span> <span style="color:#a6e22e">TVShowLibrary</span> { 
 </span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">var</span> shows: [TVShow] = [] 
 </span></span><span style="display:flex;"><span>}
-</span></span></code></pre></div><p>如果你试图用这个结构体跨越隔离边界（例如在非隔离上下文中声明一个<code>TVShowLibrary</code>并捕获它到<code>Task.detached {}</code>中），编译器会阻止你，即使它是一个结构体。普通的Task {}捕获不会受到影响，因为它们会继承自顶层上下文的<code>actor</code>，而在这个例子中顶层上下文是<code>@MainActor</code>。下面示例代码，我们声明了一个<code>TVShowLibrary</code>实例，然后将其捕获到两个<code>Tasks</code>中。</p>
+</span></span></code></pre></div><p>如果试图用这个结构体跨越隔离边界（例如在非隔离上下文中声明一个<code>TVShowLibrary</code>并在<code>Task.detached {}</code>中捕获它），编译器会阻止你，即使它是一个结构体。在普通的<code>Task {}</code>捕获不会受到影响，因为它们会继承顶层上下文的<code>actor</code>，而在下面这个例子中顶层上下文是<code>@MainActor</code>。下面示例代码，我们声明了一个<code>TVShowLibrary</code>实例，然后将其捕获到两个<code>Tasks</code>中。</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span><span style="color:#66d9ef">var</span> tvShowLibrary = TVShowLibrary() 
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">let</span> show = TVShow(name: <span style="color:#e6db74">&#34;Card Captor Sakura&#34;</span>) 
+</span></span><span style="display:flex;"><span>tvShowLibrary.shows <span style="color:#f92672">+=</span> [show] 
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>Task {
+</span></span><span style="display:flex;"><span>  tvShowLibrary.shows.first?.rating = <span style="color:#ae81ff">20</span>
+</span></span><span style="display:flex;"><span>  print(<span style="color:#e6db74">&#34;Current score Task 1: </span><span style="color:#e6db74">\(</span>tvShowLibrary.shows.first!.rating<span style="color:#e6db74">)</span><span style="color:#e6db74">&#34;</span>) 
+</span></span><span style="display:flex;"><span>} 
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>Task {
+</span></span><span style="display:flex;"><span>  tvShowLibrary.shows.first?.rating = <span style="color:#ae81ff">30</span>
+</span></span><span style="display:flex;"><span>  print(<span style="color:#e6db74">&#34;Current score Task 2: </span><span style="color:#e6db74">\(</span>tvShowLibrary.shows.first!.rating<span style="color:#e6db74">)</span><span style="color:#e6db74">&#34;</span>) 
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p>直觉上，你可能会认为编译器应该阻止你这样做。毕竟，你是在两个任务中同时捕获并修改一个可变值！但这样做是完全可接受的，因为这两个Task调用的 actor 都是启动它们的actor。如果你是从非异步上下文中启动任务的，它们将继承主线程actor。</p>
+<p>结构体默认可以发送，除非它们的属性本身也不可发送。上面的TVShowLibrary是不可发送的，因为它有一个TVShow数组，而TVShow是一个类，默认情况它是不可发送的。</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span><span style="color:#66d9ef">var</span> tvShowLibrary = TVShowLibrary() 
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">let</span> show = TVShow(name: <span style="color:#e6db74">&#34;Card Captor Sakura&#34;</span>) 
+</span></span><span style="display:flex;"><span>tvShowLibrary.shows <span style="color:#f92672">+=</span> [show] 
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>Task.detached {
+</span></span><span style="display:flex;"><span>  tvShowLibrary.shows.first?.rating = <span style="color:#ae81ff">20</span>
+</span></span><span style="display:flex;"><span>  print(<span style="color:#e6db74">&#34;Current score Task 1: </span><span style="color:#e6db74">\(</span>tvShowLibrary.shows.first!.rating<span style="color:#e6db74">)</span><span style="color:#e6db74">&#34;</span>) 
+</span></span><span style="display:flex;"><span>} 
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>Task.detached {
+</span></span><span style="display:flex;"><span>  tvShowLibrary.shows.first?.rating = <span style="color:#ae81ff">30</span>
+</span></span><span style="display:flex;"><span>  print(<span style="color:#e6db74">&#34;Current score Task 2: </span><span style="color:#e6db74">\(</span>tvShowLibrary.shows.first!.rating<span style="color:#e6db74">)</span><span style="color:#e6db74">&#34;</span>) 
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p>因为Task.detached没有从顶层上下文中继承actor，上面两个Task完全是相互独立的，这就会导致数据竞争。Swift为了避免出现这种错误，会出现编译错误。</p>
 
     </div>
     <footer class="post-footer">
