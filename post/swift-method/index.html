@@ -241,13 +241,13 @@ code.has-jax {
     <i class="fa fa-file-word-o"></i>
 </span>
 <span class="post-meta-item-text">字数: </span>
-<span class="leancloud-visitors-count">13751</span>
+<span class="leancloud-visitors-count">17919</span>
 &nbsp; | &nbsp;
 <span class="post-meta-item-icon">
     <i class="fa fa-coffee"></i>
 </span>
 <span class="post-meta-item-text">阅读: </span>
-<span class="leancloud-visitors-count">28 分钟</span>
+<span class="leancloud-visitors-count">36 分钟</span>
 </span>
       </div>
     </header>
@@ -805,13 +805,13 @@ code.has-jax {
 </span></span><span style="display:flex;"><span>}
 </span></span></code></pre></div><p>上面创建了一个分离任务，从语法上看，和标准任务之间没有太大区别，但<font color="#de7802">在使用它们时要注意任务树和继承属性</font>。指定优先级是可选的，就像在使用普通任务时一样。</p>
 <h2 id="actors">Actors</h2>
-<p>运行一些任务时，经常看到将结果传递到主线程，但有一些情况，需要在程序中使用共享的可变状态——一个可以被代码读取和写入的公共可变资源。这个资源可以是一个简单的变量，也可以是一个文件，或者任何其它类型的资源，这些资源在并发访问时是危险的，但又需要在多个任务之间同时可用。</p>
-<p>如果你有多段代码能访问一个只读资源，程序不会出现问题，此时也不必担心数据损坏。但如果你有多个任务，并且其中至少一个可以向共享资源写入数据，那就可能出现问题，这种情况被称为数据竞争。数据竞争是十分危险的。</p>
-<p>如果多段代码可以同时写入一个文件，就会导致数据损坏。如果多个任务从该资源中读取数据，它们都会得到垃圾数据，这些数据甚至可能与它们试图读取的数据不同。最糟糕的是，如果你在底层编写并发代码，引入数据竞争非常容易，而且调试起来也非常困难。</p>
-<p>因此，如果使用的是值语义（结构体或枚举），就不会遇到这个问题。值语义是只读的，如果它们发生变异，就会创建一个副本，所有的变异都只作用于该变量。每个任务都会操作不同的数据副本，尽管这可能不是你想要的结果。</p>
+<p>运行一些任务时，经常需要将结果传递到主线程。但也有一些情况，需要在程序中使用共享的可变状态，即一个可以被代码读取和写入的公共可变资源。这个资源可以是一个简单的变量，也可以是一个文件，或者任何其它在并发访问时危险的资源（但这些资源又需要在多个任务之间同时可用）。</p>
+<p>如果有多段代码访问一个<font color="#de7802">只读资源</font>，程序不会出现问题，不必担心数据损坏。但如果有多个任务，并且至少一个可以向共享资源写入数据，那很可能会出现问题。这种情况称为数据竞争（<code>data race or race condition</code>)，数据竞争是十分危险的。</p>
+<p>如果多段代码可以同时写入一个文件，将会导致数据损坏。如果多个任务从该资源中读取数据，它们可能会得到垃圾数据，这些数据可能与它们试图读取的数据不一致。最糟糕的是，如果在底层编写并发代码，很容易引入数据竞争，而且调试起来也非常困难。</p>
+<p>因此，如果使用的是值语义（如结构体或枚举），就不会遇到这个问题。值语义是只读的，如果值发生变化，会创建一个副本，且所有的修改都局限于该变量。每个任务都会操作数据的不同副本，尽管这可能并非你所期望的。</p>
 <h3 id="introducing-actors">Introducing Actors</h3>
-<p>Actor是Swift中引入的一种新的引用类型，由新的并发模型支持。<font color="#de7802">Actor会将自身的状态与程序的其余部分隔离，并对外部访问可变状态提供同步保护</font>。简单来说，如果一个Actor包含一个可被多个任务读写的基本变量，那么 Actor会确保同一时间只有一个任务能够执行该操作，从而保证对特定资源的互斥访问。</p>
-<p>每一次访问可变状态都必须通过actor来完成。声明一个Actor非常简单，只需使用<code>actor</code> 关键字，然后为其命名，这与声明结构体（<code>struct</code>）或类（<code>class</code>）非常相似。作为引用类型，<code>actor</code>有许多与类相似的功能：它们可以遵循协议（<code>protocol</code>），也能通过扩展（<code>extension</code>）获得更多功能。与类的主要区别在于，<code>actor</code>会隔离自身状态。一个<code>actor</code>可能会挂起零次或多次（即在其方法内部包含其它<code>await</code>调用），因此可以轻松地将Actor与Swift的其它新并发系统组件集成。</p>
+<p>Actor是Swift中引入的一种新引用类型，由新的并发模型支持。<font color="#de7802">Actor自身的状态与程序的其余部分隔离，并对外部访问可变状态提供同步保护</font>。简单来说，如果一个Actor包含一个可被多个任务读写的基本变量，那么Actor会确保同一时间只有一个任务能够执行操作，从而保证对资源的互斥访问。</p>
+<p>每次访问可变状态都必须通过Actor来完成。声明一个Actor非常简单，只需使用<code>actor</code> 关键字，然后为其命名，这与声明结构体（<code>struct</code>）或类（<code>class</code>）非常相似。作为引用类型，<code>actor</code>与类有许多相似的功能：它们可以遵循协议（<code>protocol</code>），也能通过扩展（<code>extension</code>）获得更多功能。与类的主要区别在于，<code>actor</code>会隔离自身状态。一个<code>actor</code>可能会挂起零次或多次（即在其方法内部包含其它<code>await</code>调用），因此可以轻松地将<code>Actor</code>与<code>Swift</code>的其它新并发系统组件集成。</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span>actor VideogameLibrary { 
 </span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">var</span> videogames: [Videogame] = []
 </span></span><span style="display:flex;"><span>  
@@ -835,10 +835,10 @@ code.has-jax {
 </span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">let</span> releaseYear: Int 
 </span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">let</span> company: String 
 </span></span><span style="display:flex;"><span>}
-</span></span></code></pre></div><p>从上面定义可以看出，actor的声明看起来和类十分相似，它也是一种引用类型，可以预期它与类的行为类似。你可能会想知道为什么actor是引用类型而不是值类型。原因很简单：actor封装了可变的共享状态。它是一种期望被多个代码路径修改的类型。如果它是一个struct，调用者修改它时会得到自己的副本。</p>
+</span></span></code></pre></div><p>从上面定义可以看出，<code>actor</code>的声明看起来和类的声明十分相似，它<font color="#de7802">也是一种引用类型，可以预期它与类的行为类似</font>。你可能会问为什么actor是引用类型而不是值类型。原因很简单：actor封装了可变的共享状态。它是一种期望被多个代码片段修改的类型。如果它是一个<code>struct</code>，调用者修改它时得到的是副本。</p>
 <h4 id="interacting-with-an-actor">Interacting with an Actor</h4>
-<p>调用一个actor必须是异步的，因此需要await关键字，这是actor用来同步其状态并防止修改的机制。因为可以等待actor的调用，所以其它调用者会被挂起，等待轮到他们访问actor。</p>
-<p>在actor内部，不需要异步调用自身的方法和属性。因为actor是隔离的，其内部任何调用都按顺序执行，直到操作完成。</p>
+<p>需要特别注意，<font color="#de7802">所有的actor调用必须是异步的，因此需要await关键字，这就是actor用来同步其状态并防止修改的机制</font>。因为可以等待actor的调用，所以其它调用者会被挂起，等待轮到他们访问<code>actor</code>。</p>
+<p>而在Actor内部，不需要异步调用自身的方法和属性。因为<code>actor</code>是被隔离的，其内部任何调用都按顺序执行，直到操作完成。</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span><span style="color:#66d9ef">let</span> library = VideogameLibrary()
 </span></span><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">addGames</span>(to library: VideogameLibrary) {
@@ -851,7 +851,200 @@ code.has-jax {
 </span></span><span style="display:flex;"><span>  
 </span></span><span style="display:flex;"><span>  library.add(games: games)
 </span></span><span style="display:flex;"><span>}
-</span></span></code></pre></div>
+</span></span></code></pre></div><p>上面方法<code>addGames</code>是一个简单的函数，仅用于添加一些<code>Videogame</code>，如果尝试编译这段代码，会出现错误：<code>Actor-isolated instance method ‘add(games:)’ can not be referenced from a non-isolated context</code>。</p>
+<p>尽管<code>VideogameLibrary</code>中的<code>add(games:)</code>方法本身没有被标记为<code>async</code>，但暴露给我们的API确实是异步的，这是由actor提供的保护机制。编译器在帮助我们错误地使用<code>actor</code>，避免引入数据竞争。</p>
+<p>这意味着，actor只能在异步上下文中运行，要让代码编译通过，我们需要在 add(games:) 方法中添加await关键字，并将其包裹在 Task（或 Task.detached）中。</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span><span style="color:#66d9ef">let</span> library = VideogameLibrary()
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">addGames</span>(to library: VideogameLibrary) {
+</span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">let</span> zelda5 = Videogame(title: <span style="color:#e6db74">&#34;The Legend of Zelda: Ocarina of Time&#34;</span>, releaseYear: <span style="color:#ae81ff">1998</span>, company: <span style="color:#e6db74">&#34;Nintendo&#34;</span>) 
+</span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">let</span> zelda6 = Videogame(title: <span style="color:#e6db74">&#34;The Legend of Zelda: Majora&#39;s Mask&#34;</span>, releaseYear: <span style="color:#ae81ff">2020</span>, company: <span style="color:#e6db74">&#34;Nintendo&#34;</span>) 
+</span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">let</span> tales1 = Videogame(title: <span style="color:#e6db74">&#34;Tales of Symphonia&#34;</span>, releaseYear: <span style="color:#ae81ff">2004</span>, company: <span style="color:#e6db74">&#34;Namco&#34;</span>) 
+</span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">let</span> tales2 = Videogame(title: <span style="color:#e6db74">&#34;Tales of the Abyss&#34;</span>, releaseYear: <span style="color:#ae81ff">2005</span>, company: <span style="color:#e6db74">&#34;Namco&#34;</span>) 
+</span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">let</span> eternalSonata = Videogame(title: <span style="color:#e6db74">&#34;Eternal Sonata&#34;</span>, releaseYear: <span style="color:#ae81ff">2008</span>, company: <span style="color:#e6db74">&#34;tri-Crescendo&#34;</span>)
+</span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">let</span> games = [zelda5, zelda6, tales1, tales2, eternalSonata]
+</span></span><span style="display:flex;"><span>  
+</span></span><span style="display:flex;"><span>  Task{
+</span></span><span style="display:flex;"><span>    await library.add(games: games)
+</span></span><span style="display:flex;"><span>  }
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p>当多次调用<code>add(games:)</code>方法时，<code>actor</code>一次只会执行其中一个调用。在下面示例代码中，我们创建了一个新方法，用于向库中添加更多的<code>Videogame</code>。</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">addNewGames</span>(to library: VideogameLibrary) {
+</span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">let</span> pokemon1 = Videogame(title: <span style="color:#e6db74">&#34;Pokémon Yellow&#34;</span>, releaseYear: <span style="color:#ae81ff">1998</span>, company: <span style="color:#e6db74">&#34;Game Freak&#34;</span>) 
+</span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">let</span> pokemon2 = Videogame(title: <span style="color:#e6db74">&#34;Pokémon Gold&#34;</span>, releaseYear: <span style="color:#ae81ff">1999</span>, company: <span style="color:#e6db74">&#34;Game Freak&#34;</span>) 
+</span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">let</span> pokemon3 = Videogame(title: <span style="color:#e6db74">&#34;Pokémon Ruby&#34;</span>, releaseYear: <span style="color:#ae81ff">2002</span>, company: <span style="color:#e6db74">&#34;Game Freak&#34;</span>) 
+</span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">let</span> games = [pokemon1, pokemon2, pokemon3]
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>	Task { 
+</span></span><span style="display:flex;"><span>  	await library.add(games: games) 
+</span></span><span style="display:flex;"><span> }
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p>现在有两个添加Videogame的方法了，下面是两个调用actor的方法调用：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span>addGames(to: library) 
+</span></span><span style="display:flex;"><span>addNewGames(to: library)
+</span></span></code></pre></div><p>现在有趣的事情发生了，我们不知道是addGames先添加成功还是addNewGames先添加成功。但可以保证的是，无论哪一个先执行，actor都会确保在另一个执行之前，其中一个函数中的所有Videogame都已经添加到数组中。因此，数组要么包含addGames中按添加顺序排列的所有game，然后是addNewGames中按添加顺序排列的game，要么包含addNewGames中按添加顺序排列的所有game，然后是addGames中按正确顺序排列的game。永远不会以交错顺序或任何其他错乱的的方式添加game。</p>
+<p>此外，对整个<code>actor</code>的访问时同步的。如果同一时间有人向<code>library</code>中添加<code>game</code>，有人在<code>library</code>中查询<code>game</code>，<code>actor</code>将只执行其中一个调用，直到完成后才会执行下一个。</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span>Task { 
+</span></span><span style="display:flex;"><span>  addGames(to: library)
+</span></span><span style="display:flex;"><span>} 
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>Task {
+</span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">let</span> games1998 = await library.fetchGames(by: <span style="color:#ae81ff">1998</span>)
+</span></span><span style="display:flex;"><span>  print(<span style="color:#e6db74">&#34;</span><span style="color:#e6db74">\(</span>games1998.count<span style="color:#e6db74">)</span><span style="color:#e6db74"> games&#34;</span>) 
+</span></span><span style="display:flex;"><span>} 
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>Task {
+</span></span><span style="display:flex;"><span>  addNewGames(to: library) 
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p>理想情况下，上面的代码会打印<code>2 games</code>，但由于任务试图并发地访问actor，只有三个任务中的一个能够首先执行其内容。上面代码执行时，多数情况会打印 <code>0 gmaes</code>，也可能打印<code>1 games</code>。互斥访问意味着只有一个人可以进入<code>actor</code>并执行其工作，不管调用的是<code>actor</code>的哪种方法。对<code>actor</code>的任何调用都会阻塞它，直到它完成工作。</p>
+<p>这也是一个很好的机会用来展示任务优先级是如何工作的。可以通过为添加游戏的任务分配更高的优先级，告诉编译器你希望先添加game。下面示例代码更改了任务的优先级。其中<code>.utility</code>是最低优先级，因此在这种情况下，它大部分时间会最后执行，打印出<code>2 games</code>。</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span>Task(priority: .high) {
+</span></span><span style="display:flex;"><span>  addGames(to: library)
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>Task(priority: .utility) {
+</span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">let</span> games1998 = await library.fetchGames(by: <span style="color:#ae81ff">1998</span>)
+</span></span><span style="display:flex;"><span>  print(<span style="color:#e6db74">&#34;</span><span style="color:#e6db74">\(</span>games1998.count<span style="color:#e6db74">)</span><span style="color:#e6db74"> games&#34;</span>)
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>Task(priority: .high) {
+</span></span><span style="display:flex;"><span>  addNewGames(to: library)
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><h4 id="nonisolated-access-to-an-actor">Nonisolated Access to an Actor</h4>
+<p>有些时候，你可能已经知道访问一个<code>actor</code>不会导致数据竞争。对于这些情况，可以将<code>actor</code>中的某些方法标记为<code>nonisolated</code>。为了阐明如何使用<code>nonisolated</code>，我们添加一个新类型：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span><span style="color:#66d9ef">struct</span> <span style="color:#a6e22e">Owner</span> {
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">let</span> name: String
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">let</span> favoriteGenre: String
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p>并将owner添加到VideogameLibrary中：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span>actor VideogameLibrary {
+</span></span><span style="display:flex;"><span>    
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">var</span> videogames: [Videogame] = []
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">let</span> owner: Owner
+</span></span><span style="display:flex;"><span>    
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">init</span>(ower: Owner) {
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">self</span>.owner = ower
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>    
+</span></span><span style="display:flex;"><span>    nonisolated <span style="color:#66d9ef">func</span> <span style="color:#a6e22e">fetchOwnerInfo</span>() -&gt; String {
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">return</span> <span style="color:#e6db74">&#34;</span><span style="color:#e6db74">\(</span>owner.name<span style="color:#e6db74">)</span><span style="color:#e6db74"> (</span><span style="color:#e6db74">\(</span>owner.favoriteGenre<span style="color:#e6db74">)</span><span style="color:#e6db74">)&#34;</span>
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>    
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">func</span> <span style="color:#a6e22e">fetchGames</span>(by company: String) -&gt; [Videogame] {
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">let</span> games = videogames.filter { $0.title.caseInsensitiveCompare(company) == .orderedSame }
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">return</span> games
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>    
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">func</span> <span style="color:#a6e22e">countGames</span>(by company: String) -&gt; Int {
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">let</span> games = fetchGames(by: company)
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">return</span> games.count
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>    
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">func</span> <span style="color:#a6e22e">add</span>(games: [Videogame]) {
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">self</span>.videogames.append(contentsOf: games)
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>    
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">func</span> <span style="color:#a6e22e">fetchGames</span>(by year: Int) -&gt; [Videogame] {
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">let</span> games = videogames.filter { $0.releaseYear == year }
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">return</span> games
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>    
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p>调用actor中的<code>nonisolated</code>方法时，不需要异步调用，下面代码不会出现编译错误：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">printOwnerInfo</span>(of library: VideogameLibrary) {
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">let</span> ownerInfo = library.fetchOwnerInfo()
+</span></span><span style="display:flex;"><span>    print(ownerInfo)
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><h3 id="actors-and-protocol-conformance">Actors and Protocol Conformance</h3>
+<p>如果计划actor遵循协议，或者甚至通过extension来扩展acotr，需要注意一个重要事项：当actor打算遵循一个协议时，如果该协议有可变的要求，将会在遵循协议的过程中遇到问题。</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span>actor Game {
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">let</span> name: String
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">let</span> year: Int
+</span></span><span style="display:flex;"><span>    
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">init</span>(name: String, year: Int) {
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">self</span>.name = name
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">self</span>.year = year
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">extension</span> <span style="color:#a6e22e">Game</span>: Equatable {
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">static</span> <span style="color:#66d9ef">func</span> == (lhs: Game, rhs: Game) -&gt; Bool {
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">return</span> lhs.name == rhs.name
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p>上面代码不会出现编译错误，但继续使用下面代码扩展<code>actor</code>时，会出现编译错误：<code>Actor-isolated instance method 'hash(into:)' cannot be used to satisfy nonisolated protocol requirement</code>。</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span><span style="color:#66d9ef">extension</span> <span style="color:#a6e22e">Game</span>: Hashable {
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">func</span> <span style="color:#a6e22e">hash</span>(into hasher: <span style="color:#66d9ef">inout</span> Hasher) {
+</span></span><span style="display:flex;"><span>        
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p>解决这个编译错误的方案很简单，添加nonisolated即可：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span><span style="color:#66d9ef">extension</span> <span style="color:#a6e22e">Game</span>: Hashable {
+</span></span><span style="display:flex;"><span>    nonisolated <span style="color:#66d9ef">func</span> <span style="color:#a6e22e">hash</span>(into hasher: <span style="color:#66d9ef">inout</span> Hasher) {
+</span></span><span style="display:flex;"><span>        
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p>这能够有效地满足编译器的要求，但我们必须思考这是否合理。<code>hash(into:)</code>方法是否依赖于这些隔离的属性？如果依赖，你尝试实现该方法的任何努力都可能失败。你可能会发现，在某些情况下，要符合那些期望其方法为同步的协议确实并不容易。</p>
+<h3 id="actor-reentrancy">Actor Reentrancy</h3>
+<p>当我们进入一个actor，如果它有很多调用其他异步方法的事情要做，那么它可能会被挂起。这可能导致一个常见的问题，称为<code>Actor Reentrancy</code>问题。</p>
+<p><code>Actor Reentrancy</code>问题发生在你假设程序的整体状态在到达<code>await</code>调用之前。让我们用一个例子来解释这个问题。我们将向现有的VideogameLibrary添加一个新方法。</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">addGamesAndPrintResults</span>(<span style="color:#66d9ef">_</span> games: [Videogame]) async <span style="color:#66d9ef">throws</span> {
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">let</span> existingGameCount = videogames.count
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">// Imagine a long-running operation is taking place here.</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">try</span> await Task.sleep(nanoseconds: <span style="color:#ae81ff">1_000_000_000</span>)
+</span></span><span style="display:flex;"><span>    add(games: games)
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">let</span> newGameCount = existingGameCount <span style="color:#f92672">+</span> games.count
+</span></span><span style="display:flex;"><span>    print(<span style="color:#e6db74">&#34;Games before: </span><span style="color:#e6db74">\(</span>existingGameCount<span style="color:#e6db74">)</span><span style="color:#e6db74">&#34;</span>)
+</span></span><span style="display:flex;"><span>    print(<span style="color:#e6db74">&#34;Games now: </span><span style="color:#e6db74">\(</span>newGameCount<span style="color:#e6db74">)</span><span style="color:#e6db74">&#34;</span>)
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p><code>Actor Reentrancy</code>问题发生在多个任务进入这个方法时，当一个任务进入时，它会记录videogames的数量，然后遇到一个长时间的await调用。在此期间第二个任务可能访问此方法，并记录<code>videogames</code>的数量。如果第一个任务在第二个任务离开await之前完成，那么第二个任务中的existingGameCount变量将包含错误的数据。</p>
+<p>这里的问题是我们假设在进入<code>await</code>调用之前有多少个游戏。在离开一个挂起点后，程序的状态可能并不如之前那样。我们在await调用之前检查我们的假设，不幸的是actor无法在这种情况下保护我们。但一个经验法则是，在一个await调用之后，应该检查你的假设。在这种情况下，我们的假设是视频游戏库中的游戏数量。</p>
+<p>如果我们是在从暂停返回后计算这个数值，那就更有意义了。通过简单地将existingGameCount变量移动到合适的位置，程序就会被修复。下面将existingGameCount变量放在了一个更合理的位置。</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">addGamesAndPrintResults</span>(<span style="color:#66d9ef">_</span> games: [Videogame]) async <span style="color:#66d9ef">throws</span> {
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">// Imagine a long-running operation is taking place here.</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">try</span> await Task.sleep(nanoseconds: <span style="color:#ae81ff">1_000_000_000</span>)
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">let</span> existingGameCount = videogames.count
+</span></span><span style="display:flex;"><span>    add(games: games)
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">let</span> newGameCount = existingGameCount <span style="color:#f92672">+</span> games.count
+</span></span><span style="display:flex;"><span>    print(<span style="color:#e6db74">&#34;Games before: </span><span style="color:#e6db74">\(</span>existingGameCount<span style="color:#e6db74">)</span><span style="color:#e6db74">&#34;</span>)
+</span></span><span style="display:flex;"><span>    print(<span style="color:#e6db74">&#34;Games now: </span><span style="color:#e6db74">\(</span>newGameCount<span style="color:#e6db74">)</span><span style="color:#e6db74">&#34;</span>)
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><h3 id="actors-and-detached-tasks">Actors and Detached Tasks</h3>
+<p>detached任务不会继承父任务的任何东西，这包括父任务可能正在运行的actor：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">playRandomGame</span>() {
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">guard</span> <span style="color:#66d9ef">let</span> game = videogames.randomElement() <span style="color:#66d9ef">else</span> { <span style="color:#66d9ef">return</span> }
+</span></span><span style="display:flex;"><span>    print(<span style="color:#e6db74">&#34;Playing </span><span style="color:#e6db74">\(</span>game.title<span style="color:#e6db74">)</span><span style="color:#e6db74">&#34;</span>)
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">playRandomGameLater</span>() {
+</span></span><span style="display:flex;"><span>    Task.detached {
+</span></span><span style="display:flex;"><span>        await <span style="color:#66d9ef">self</span>.playRandomGame()
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p>方法playRandomGame是隔离在actor中的。但请注意，playRandomGameLater要求我们使用await调用self.playRandomGame。这是因为一旦我们启动了分离任务，就跳转到了另一个actor。处于不同的actor中将迫使我们使用await调用该actor的方法。</p>
+<h3 id="general-tips-for-working-with-actors">General Tips for Working with Actors</h3>
+<p>当我们有共享可变变量时，actor是非常有用的，它使得访问可变数据变得容易，当绝不是万能的解决方案。为了有效的使用actor，下面是一些建议：</p>
+<ul>
+<li>actor越简单越好。虽然actor会通过Swift编译器保护你免受很多误用，但它们无法保护免受actor重入等问题的影响。保持actor小巧有助于更有效地使用它们。</li>
+<li>保证actor的操作是原子的。原子操作被视为一个单一单元。方法简短将有助于此。一般来说，原子性意味着你可以一次性完成所有工作，或者如果单个操作失败，整个操作将被丢弃。尽可能避免在actor中调用await将有助于原子性。</li>
+<li>对所需状态的所有假设应该放在await调用之后，当它们被用在actor的方法中时。如果你的方法中只有一个await调用，这很容易做到，但如果有多个，就很难推理你的程序状态。</li>
+<li>不要将一个<code>actor</code>作为<code>ObservableObject</code>在SwiftUI中使用。编译器不会阻止你这样做，但 <code>ObservableObject</code>会期望它始终在主线程上运行。如果 actor中包含耗时操作，会导致你的SwiftUI应用出现明显的卡顿。</li>
+</ul>
+<h2 id="sendable-types">Sendable Types</h2>
+<p>最简单的并发程序通常是相对隔离的，即使它们涉及并发操作。但在复杂程序中，需要在隔离边界之间传递数据，从一个异步任务到另一个，从一个actor到acotr。这些数据必须是线程安全的。正如我们在actor模型中学习到的，在异步域之间共享可变数据可能会导致数据竞争，从而导致数据损坏。</p>
+<p>Swift需要一种安全的方式来在隔离边界之间共享数据。Swift Evolution团队提出了一个非常优雅的解决方案，并引入了<code>sendable types</code>。</p>
+<h3 id="understanding-sendable-types">Understanding Sendable Types</h3>
+<p>一个<code>sendable type</code>可以跨异步任务和actor之间共享。按照定义，一个<code>sendable type</code>需要能够防止数据竞争，这种类型应该无法被多个操作同时修改，只能提供同步访问。</p>
+<p>开箱即用，Swift有一些可以安全地在并发环境中使用的<code>sendable</code>类型，包括：</p>
+<ul>
+<li>值类型。包括枚举和结构体，只要它不包含任何不可发送类型的属性。值类型是不可变的。如果尝试修改一个值类型，就会创建一个包含数据的新副本。这使得结构体和枚举能够与新的并发系统开箱即用。可能会创建多个副本，但一个现有的副本会一直保持原样，直到被删除。</li>
+<li>Actors。acotr被设计为可以共享可变数据，因此他们存在的目的就是为了在新的并发模型中被使用。你可以无任何限制地在隔离边界之间共享actor，但要注意他们可能具有非隔离功能。actor始终是可发送的。</li>
+<li>类。这些可以被标记为可发送的，但需要满足某些限制。请记住，类是引用类型，对类的实例进行修改实际上是修改了真实的数据。不像结构体，不会创建副本。如果一个被标记为final的类拥有只读属性，那么它非常容易被标记为可发送的。另一种方式是，如果类拥有可变属性且没有被标记为private，可以通过在类内部实现自己的同步机制来使其可发送。这听起来很难做——而且确实如此。</li>
+<li>方法和闭包可以被标记为可发送，但需要显式地进行。</li>
+</ul>
+<p>在许多情况下，Swift可以推断类型的发送性。结构体和<code>actor</code>是其中一个例子。但是如果你做了工作使一个类线程安全，Swift就无法做到这一点，并且会阻止你在编译器认为危险的方式上使用它。</p>
+<p>The Sendable Protocol</p>
+
     </div>
     <footer class="post-footer">
         
@@ -1060,8 +1253,18 @@ code.has-jax {
             <li><a href="#introducing-actors">Introducing Actors</a>
               <ul>
                 <li><a href="#interacting-with-an-actor">Interacting with an Actor</a></li>
+                <li><a href="#nonisolated-access-to-an-actor">Nonisolated Access to an Actor</a></li>
               </ul>
             </li>
+            <li><a href="#actors-and-protocol-conformance">Actors and Protocol Conformance</a></li>
+            <li><a href="#actor-reentrancy">Actor Reentrancy</a></li>
+            <li><a href="#actors-and-detached-tasks">Actors and Detached Tasks</a></li>
+            <li><a href="#general-tips-for-working-with-actors">General Tips for Working with Actors</a></li>
+          </ul>
+        </li>
+        <li><a href="#sendable-types">Sendable Types</a>
+          <ul>
+            <li><a href="#understanding-sendable-types">Understanding Sendable Types</a></li>
           </ul>
         </li>
       </ul>
