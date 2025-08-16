@@ -241,7 +241,7 @@ code.has-jax {
     <i class="fa fa-file-word-o"></i>
 </span>
 <span class="post-meta-item-text">字数: </span>
-<span class="leancloud-visitors-count">18071</span>
+<span class="leancloud-visitors-count">18496</span>
 &nbsp; | &nbsp;
 <span class="post-meta-item-icon">
     <i class="fa fa-coffee"></i>
@@ -1012,7 +1012,7 @@ code.has-jax {
 </span></span><span style="display:flex;"><span>    print(<span style="color:#e6db74">&#34;Games now: </span><span style="color:#e6db74">\(</span>newGameCount<span style="color:#e6db74">)</span><span style="color:#e6db74">&#34;</span>)
 </span></span><span style="display:flex;"><span>}
 </span></span></code></pre></div><h3 id="actors-and-detached-tasks">Actors and Detached Tasks</h3>
-<p>detached任务不会继承父任务的任何东西，这包括父任务可能正在运行的actor：</p>
+<p>会议一些，<code>detached</code>任务不会继承父任务的任何东西，包括父任务可能正在运行的<code>actor</code>：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">playRandomGame</span>() {
 </span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">guard</span> <span style="color:#66d9ef">let</span> game = videogames.randomElement() <span style="color:#66d9ef">else</span> { <span style="color:#66d9ef">return</span> }
 </span></span><span style="display:flex;"><span>    print(<span style="color:#e6db74">&#34;Playing </span><span style="color:#e6db74">\(</span>game.title<span style="color:#e6db74">)</span><span style="color:#e6db74">&#34;</span>)
@@ -1023,13 +1023,13 @@ code.has-jax {
 </span></span><span style="display:flex;"><span>        await <span style="color:#66d9ef">self</span>.playRandomGame()
 </span></span><span style="display:flex;"><span>    }
 </span></span><span style="display:flex;"><span>}
-</span></span></code></pre></div><p>方法playRandomGame是隔离在actor中的。但请注意，playRandomGameLater要求我们使用await调用self.playRandomGame。这是因为一旦我们启动了分离任务，就跳转到了另一个actor。处于不同的actor中将迫使我们使用await调用该actor的方法。</p>
+</span></span></code></pre></div><p>方法<code>playRandomGame</code>是隔离在<code>actor</code>中的。但需要注意的是，<code>playRandomGameLater</code>要求我们使用<code>await</code>调用<code>self.playRandomGame</code>。这是因为一旦我们启动了分离任务，就跳转到了另一个<code>actor</code>。处于不同的<code>actor</code>中将迫使我们使用<code>await</code>调用该<code>actor</code>的方法。</p>
 <h3 id="general-tips-for-working-with-actors">General Tips for Working with Actors</h3>
-<p>当我们有共享可变变量时，actor是非常有用的，它使得访问可变数据变得容易，当绝不是万能的解决方案。为了有效的使用actor，下面是一些建议：</p>
+<p>当我们有共享可变变量时，actor是非常有用的，它使得访问可变数据变得容易，但它绝不是万能的解决方案。为了有效的使用actor，下面有一些建议：</p>
 <ul>
-<li>actor越简单越好。虽然actor会通过Swift编译器保护你免受很多误用，但它们无法保护免受actor重入等问题的影响。保持actor小巧有助于更有效地使用它们。</li>
-<li>保证actor的操作是原子的。原子操作被视为一个单一单元。方法简短将有助于此。一般来说，原子性意味着你可以一次性完成所有工作，或者如果单个操作失败，整个操作将被丢弃。尽可能避免在actor中调用await将有助于原子性。</li>
-<li>对所需状态的所有假设应该放在await调用之后，当它们被用在actor的方法中时。如果你的方法中只有一个await调用，这很容易做到，但如果有多个，就很难推理你的程序状态。</li>
+<li>actor越简单越好。虽然actor会通过Swift编译器保护在多数情形下免受误用，但它们无法保护免受<code>actor</code>重入等问题的影响。保持actor小巧有助于更有效地使用它们。</li>
+<li>保证actor的操作是原子的。原子操作被视为一个单一单元。方法简短将有助于此。一般来说，原子性意味着可以一次性完成所有工作，或者如果单个操作失败，则整个操作将被丢弃。尽可能避免在<code>actor</code>中调用<code>await</code>将有助于原子性。</li>
+<li>对所需状态的所有假设应该放在<code>await</code>调用之后，当它们被用在actor的方法中时。如果你的方法中只有一个await调用，这很容易做到，但如果有多个，就很难推断你的程序状态。</li>
 <li>不要将一个<code>actor</code>作为<code>ObservableObject</code>在SwiftUI中使用。编译器不会阻止你这样做，但 <code>ObservableObject</code>会期望它始终在主线程上运行。如果 actor中包含耗时操作，会导致你的SwiftUI应用出现明显的卡顿。</li>
 </ul>
 <h2 id="sendable-types">Sendable Types</h2>
@@ -1041,11 +1041,28 @@ code.has-jax {
 <ul>
 <li>值类型。包括枚举和结构体，只要它不包含任何不可发送类型的属性。值类型是不可变的。如果尝试修改一个值类型，就会创建一个包含数据的新副本。这使得结构体和枚举能够与新的并发系统开箱即用。可能会创建多个副本，但一个现有的副本会一直保持原样，直到被删除。</li>
 <li>Actors。acotr被设计为可以共享可变数据，因此他们存在的目的就是为了在新的并发模型中被使用。你可以无任何限制地在隔离边界之间共享actor，但要注意他们可能具有非隔离功能。actor始终是可发送的。</li>
-<li>类。这些可以被标记为可发送的，但需要满足某些限制。请记住，类是引用类型，对类的实例进行修改实际上是修改了真实的数据。不像结构体，不会创建副本。如果一个被标记为final的类拥有只读属性，那么它非常容易被标记为可发送的。另一种方式是，如果类拥有可变属性且没有被标记为private，可以通过在类内部实现自己的同步机制来使其可发送。这听起来很难做——而且确实如此。</li>
+<li>类。这些可以被标记为可发送的，但需要满足某些限制。请记住，类是引用类型，对类的实例进行修改实际上是修改了真实的数据。不像结构体，类不会创建副本。如果一个被标记为<code>final</code>的类拥有只读属性，那么它非常容易被标记为可发送的。另一种方式是，如果类拥有可变属性且没有被标记为<code>private</code>，可以通过在类内部实现自己的同步机制来使其可发送。这听起来很难做，但确实如此。</li>
 <li>方法和闭包可以被标记为可发送，但需要显式地进行。</li>
 </ul>
-<p>在许多情况下，Swift可以推断类型的发送性。结构体和<code>actor</code>是其中一个例子。但是如果你做了工作使一个类线程安全，Swift就无法做到这一点，并且会阻止你在编译器认为危险的方式上使用它。</p>
-<p>The Sendable Protocol</p>
+<p>在许多情况下，<code>Swift</code>可以推断类型的可发送性。结构体和<code>actor</code>就是例子。但是如果你做了一些工作使得一个类线程安全，Swift就无法做到这一点，并且会阻止你在编译器认为危险的方式上使用它。</p>
+<h3 id="the-sendable-protocol">The Sendable Protocol</h3>
+<p>在Swift中，除了值类型和actor之外的可发送类型需要遵守<code>Sendable</code>协议。通过简单地遵守此协议，编译器会检查你对可发送类型的使用，以确保你不会以可能导致数据竞争的方式使用它们。</p>
+<h3 id="analyzing-sendable-types">Analyzing Sendable Types</h3>
+<p>为了更好地理解可sendable types的行为，我们将分析它们以了解其特点和特殊注意事项。多数情况下，struct是开箱即用的可发送类型，但也有例外的情形。假设一个结构体有一个类属性：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span><span style="color:#66d9ef">class</span> <span style="color:#a6e22e">TVShow</span> {
+</span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">let</span> title: String 
+</span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">var</span> rating: Int
+</span></span><span style="display:flex;"><span>  
+</span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">init</span>(title: String, rating: Int) { 
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">self</span>.title = title <span style="color:#66d9ef">self</span>.rating = rating 
+</span></span><span style="display:flex;"><span>  }
+</span></span><span style="display:flex;"><span>  
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">struct</span> <span style="color:#a6e22e">TVShowLibrary</span> { 
+</span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">var</span> shows: [TVShow] = [] 
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p>如果你试图用这个结构体跨越隔离边界（例如在非隔离上下文中声明一个<code>TVShowLibrary</code>并捕获它到<code>Task.detached {}</code>中），编译器会阻止你，即使它是一个结构体。普通的Task {}捕获不会受到影响，因为它们会继承自顶层上下文的<code>actor</code>，而在这个例子中顶层上下文是<code>@MainActor</code>。下面示例代码，我们声明了一个<code>TVShowLibrary</code>实例，然后将其捕获到两个<code>Tasks</code>中。</p>
 
     </div>
     <footer class="post-footer">
@@ -1267,6 +1284,8 @@ code.has-jax {
         <li><a href="#sendable-types">Sendable Types</a>
           <ul>
             <li><a href="#understanding-sendable-types">Understanding Sendable Types</a></li>
+            <li><a href="#the-sendable-protocol">The Sendable Protocol</a></li>
+            <li><a href="#analyzing-sendable-types">Analyzing Sendable Types</a></li>
           </ul>
         </li>
       </ul>
