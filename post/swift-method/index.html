@@ -241,13 +241,13 @@ code.has-jax {
     <i class="fa fa-file-word-o"></i>
 </span>
 <span class="post-meta-item-text">字数: </span>
-<span class="leancloud-visitors-count">18854</span>
+<span class="leancloud-visitors-count">21288</span>
 &nbsp; | &nbsp;
 <span class="post-meta-item-icon">
     <i class="fa fa-coffee"></i>
 </span>
 <span class="post-meta-item-text">阅读: </span>
-<span class="leancloud-visitors-count">38 分钟</span>
+<span class="leancloud-visitors-count">43 分钟</span>
 </span>
       </div>
     </header>
@@ -1033,22 +1033,23 @@ code.has-jax {
 <li>不要将一个<code>actor</code>作为<code>ObservableObject</code>在SwiftUI中使用。编译器不会阻止你这样做，但 <code>ObservableObject</code>会期望它始终在主线程上运行。如果 actor中包含耗时操作，会导致你的SwiftUI应用出现明显的卡顿。</li>
 </ul>
 <h2 id="sendable-types">Sendable Types</h2>
-<p>最简单的并发程序通常是相对隔离的，即使它们涉及并发操作。但在复杂程序中，需要在隔离边界之间传递数据，从一个异步任务到另一个，从一个actor到acotr。这些数据必须是线程安全的。正如我们在actor模型中学习到的，在异步域之间共享可变数据可能会导致数据竞争，从而导致数据损坏。</p>
-<p>Swift需要一种安全的方式来在隔离边界之间共享数据。Swift Evolution团队提出了一个非常优雅的解决方案，并引入了<code>sendable types</code>。</p>
+<p>最简单的并发程序涉及并发操作时通常是相对隔离的。但在复杂程序中，需要在隔离边界之间传递数据，从一个异步任务到另一个，从一个<code>actor</code>到<code>acotr</code>。这些数据必须是线程安全的。正如我们在actor中学到的，在异步域之间共享可变数据可能会导致数据竞争，从而导致数据损坏。</p>
+<p>Swift需要一种安全的方式在隔离边界之间共享数据。<code>Swift Evolution</code>团队提出了一个非常优雅的解决方案，并引入了<code>sendable types</code>。</p>
 <h3 id="understanding-sendable-types">Understanding Sendable Types</h3>
-<p>一个<code>sendable type</code>可以跨异步任务和actor之间共享。按照定义，一个<code>sendable type</code>需要能够防止数据竞争，这种类型应该无法被多个操作同时修改，只能提供同步访问。</p>
-<p>开箱即用，Swift有一些可以安全地在并发环境中使用的<code>sendable</code>类型，包括：</p>
+<p>一个<code>sendable type</code>可以跨异步task和actor之间共享。按照定义，一个<code>sendable type</code>需要能够防止数据竞争，这种类型应该无法被多个操作同时修改，只能提供同步访问。</p>
+<p>Swift有一些可以安全地在并发环境中使用的，开箱即用的<code>sendable</code>类型：</p>
 <ul>
-<li>值类型。包括枚举和结构体，只要它不包含任何不可发送类型的属性。值类型是不可变的。如果尝试修改一个值类型，就会创建一个包含数据的新副本。这使得结构体和枚举能够与新的并发系统开箱即用。可能会创建多个副本，但一个现有的副本会一直保持原样，直到被删除。</li>
-<li>Actors。acotr被设计为可以共享可变数据，因此他们存在的目的就是为了在新的并发模型中被使用。你可以无任何限制地在隔离边界之间共享actor，但要注意他们可能具有非隔离功能。actor始终是可发送的。</li>
-<li>类。这些可以被标记为可发送的，但需要满足某些限制。请记住，类是引用类型，对类的实例进行修改实际上是修改了真实的数据。不像结构体，类不会创建副本。如果一个被标记为<code>final</code>的类拥有只读属性，那么它非常容易被标记为可发送的。另一种方式是，如果类拥有可变属性且没有被标记为<code>private</code>，可以通过在类内部实现自己的同步机制来使其可发送。这听起来很难做，但确实如此。</li>
-<li>方法和闭包可以被标记为可发送，但需要显式地进行。</li>
+<li>值类型。包括枚举和结构体，只要它们不包含任何不可发送类型的属性，值类型就是<code>sendable</code>的。如果尝试修改一个值类型，就会创建一个包含原数据的新副本。这使得结构体和枚举能够在新的并发系统能够开箱即用。值类型可能会创建多个副本，但已有的副本会一直保持原样，直到被删除。</li>
+<li>Actors。acotr被设计为可以共享可变数据，因此他们存在的目的是在新并发模型中被使用。你可以无限制地在隔离边界之间共享actor，但要注意actor中可能有nonisolated的功能。actor始终是可发送的。</li>
+<li>类。类可以是可发送的，但需要满足某些条件。类是引用类型，对类的实例进行修改实际上是修改了真实的数据。不像结构体，对类实例的修改不会创建原数据的副本。若一个被标记为<code>final</code>的类拥有只读属性，那么它非常容易使其成为可发送的。另一种方式是，如果类拥有可变属性且没有被标记为<code>private</code>，可以通过在类内部实现自己的同步机制来使其可发送。这听起来很难做，实际上也确实如此。</li>
+<li>方法和闭包也可是可发送的，但需要显式地进行。</li>
 </ul>
-<p>在许多情况下，<code>Swift</code>可以推断类型的可发送性。结构体和<code>actor</code>就是例子。但是如果你做了一些工作使得一个类线程安全，Swift就无法做到这一点，并且会阻止你在编译器认为危险的方式上使用它。</p>
+<p>在许多情形下，<code>Swift</code>可以推断类型的可发送性。结构体和<code>actor</code>就是例子。但是如果你做了一些工作使得一个类是线程安全的，当Swift编译器是无法推断出来的，并且会阻止你在编译器认为危险的方式上使用它。</p>
 <h3 id="the-sendable-protocol">The Sendable Protocol</h3>
-<p>在Swift中，除了值类型和actor之外的可发送类型需要遵守<code>Sendable</code>协议。通过简单地遵守此协议，编译器会检查你对可发送类型的使用，以确保你不会以可能导致数据竞争的方式使用它们。</p>
+<p>在Swift中，除了值类型和actor之外的可发送类型需要遵守<code>Sendable</code>协议。通过简单地遵守<code>Sendable</code>协议，编译器会检查你对可发送类型的使用，以确保不会以可能导致数据竞争的方式使用它们。</p>
 <h3 id="analyzing-sendable-types">Analyzing Sendable Types</h3>
-<p>为了更好地理解可<code>sendable types</code>的行为，我们将通过分析它们以了解其特点和注意事项。多数情况下，<code>struct</code>是开箱即用的可发送类型，但也有例外情形。假设一个结构体有一个类属性：</p>
+<h4 id="structs">Structs</h4>
+<p>为了更好地理解<code>sendable types</code>的行为，通过分析以了解其特点和注意事项。多数情况下，<code>struct</code>是开箱即用的可发送类型，但也有例外情况使得某个struct是不可发送的类型。假设一个结构体有一个类属性：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span><span style="color:#66d9ef">class</span> <span style="color:#a6e22e">TVShow</span> {
 </span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">let</span> title: String 
 </span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">var</span> rating: Int
@@ -1057,12 +1058,13 @@ code.has-jax {
 </span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">self</span>.title = title 
 </span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">self</span>.rating = rating 
 </span></span><span style="display:flex;"><span>  }
+</span></span><span style="display:flex;"><span>  
 </span></span><span style="display:flex;"><span>}
 </span></span><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span><span style="color:#66d9ef">struct</span> <span style="color:#a6e22e">TVShowLibrary</span> { 
 </span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">var</span> shows: [TVShow] = [] 
 </span></span><span style="display:flex;"><span>}
-</span></span></code></pre></div><p>如果试图用这个结构体跨越隔离边界（例如在非隔离上下文中声明一个<code>TVShowLibrary</code>并在<code>Task.detached {}</code>中捕获它），编译器会阻止你，即使它是一个结构体。在普通的<code>Task {}</code>捕获不会受到影响，因为它们会继承顶层上下文的<code>actor</code>，而在下面这个例子中顶层上下文是<code>@MainActor</code>。下面示例代码，我们声明了一个<code>TVShowLibrary</code>实例，然后将其捕获到两个<code>Tasks</code>中。</p>
+</span></span></code></pre></div><p>如果试图用这个结构体跨越隔离边界（例如在非隔离上下文中声明一个<code>TVShowLibrary</code>并在<code>Task.detached {}</code>中捕获它），即使<code>TVShowLibrary</code>是一个结构体，编译器也会阻止你。在普通的<code>Task {}</code>捕获不会受到影响，因为它们会继承顶层上下文的<code>actor</code>，下面代码中顶层上下文的<code>actor</code>是<code>@MainActor</code>。下面示例代码中，我们声明了一个<code>TVShowLibrary</code>实例，然后两个<code>Tasks</code>中都捕获它了。</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span><span style="color:#66d9ef">var</span> tvShowLibrary = TVShowLibrary() 
 </span></span><span style="display:flex;"><span><span style="color:#66d9ef">let</span> show = TVShow(name: <span style="color:#e6db74">&#34;Card Captor Sakura&#34;</span>) 
 </span></span><span style="display:flex;"><span>tvShowLibrary.shows <span style="color:#f92672">+=</span> [show] 
@@ -1076,8 +1078,8 @@ code.has-jax {
 </span></span><span style="display:flex;"><span>  tvShowLibrary.shows.first?.rating = <span style="color:#ae81ff">30</span>
 </span></span><span style="display:flex;"><span>  print(<span style="color:#e6db74">&#34;Current score Task 2: </span><span style="color:#e6db74">\(</span>tvShowLibrary.shows.first!.rating<span style="color:#e6db74">)</span><span style="color:#e6db74">&#34;</span>) 
 </span></span><span style="display:flex;"><span>}
-</span></span></code></pre></div><p>直觉上，你可能会认为编译器应该阻止你这样做。毕竟，你是在两个任务中同时捕获并修改一个可变值！但这样做是完全可接受的，因为这两个Task调用的 actor 都是启动它们的actor。如果你是从非异步上下文中启动任务的，它们将继承主线程actor。</p>
-<p>结构体默认可以发送，除非它们的属性本身也不可发送。上面的TVShowLibrary是不可发送的，因为它有一个TVShow数组，而TVShow是一个类，默认情况它是不可发送的。</p>
+</span></span></code></pre></div><p>直觉上，我们可能会认为编译器会阻止这样做。毕竟我们是在两个任务中同时捕获并修改一个可变值。但这样做是完全可接受的，因为这两个Task的调用对应同一个actor（启动它们的actor）。如果是从非异步上下文中启动任务的，它们将继承主线程actor。</p>
+<p>结构体默认是可发送的，除非它里面的属性是不可发送。上面的<code>TVShowLibrary</code>是不可发送的，因为它有一个数组属性，而数组中的元素<code>TVShow</code>是一个类，因此整个<code>TVShowLibrary</code>是不可发送的。</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span><span style="color:#66d9ef">var</span> tvShowLibrary = TVShowLibrary() 
 </span></span><span style="display:flex;"><span><span style="color:#66d9ef">let</span> show = TVShow(name: <span style="color:#e6db74">&#34;Card Captor Sakura&#34;</span>) 
 </span></span><span style="display:flex;"><span>tvShowLibrary.shows <span style="color:#f92672">+=</span> [show] 
@@ -1091,7 +1093,111 @@ code.has-jax {
 </span></span><span style="display:flex;"><span>  tvShowLibrary.shows.first?.rating = <span style="color:#ae81ff">30</span>
 </span></span><span style="display:flex;"><span>  print(<span style="color:#e6db74">&#34;Current score Task 2: </span><span style="color:#e6db74">\(</span>tvShowLibrary.shows.first!.rating<span style="color:#e6db74">)</span><span style="color:#e6db74">&#34;</span>) 
 </span></span><span style="display:flex;"><span>}
-</span></span></code></pre></div><p>因为Task.detached没有从顶层上下文中继承actor，上面两个Task完全是相互独立的，这就会导致数据竞争。Swift为了避免出现这种错误，会出现编译错误。</p>
+</span></span></code></pre></div><p>因为<code>Task.detached</code>没有从顶层上下文中继承<code>actor</code>，即上面两个Task变成了是完全相互独立的，这会导致数据竞争。Swift为了避免出现这种错误，编译器时会出现错误或提示（根据Xcode版本不同而不同）。</p>
+<p>对于上面这种情况，最合理的解决方案是将<code>TVShowLibrary</code>改为一个<code>actor</code>而不是一个<code>struct</code>。这是因为多个任务都对修改它感兴趣，这正是<code>actor</code>的完美用法。</p>
+<h4 id="classes">Classes</h4>
+<p>class默认是不可发送的。但是，当class被标记为final并且具有只读属性时，可以使它们遵循Sendable协议。即可以将TVShow标记为遵循Sendable，这样你的代码将能够编译，不会有任何警告。下面代码展示了们尝试这样做时会得到的警告。</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span><span style="color:#66d9ef">class</span> <span style="color:#a6e22e">TVShow</span>:Sendable {
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">let</span> name: String
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">var</span> rating:Int = <span style="color:#ae81ff">0</span>
+</span></span><span style="display:flex;"><span>    
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">init</span>(name: String) {
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">self</span>.name = name
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">// 出现的警告</span>
+</span></span><span style="display:flex;"><span>Non<span style="color:#f92672">-</span><span style="color:#66d9ef">final</span> <span style="color:#66d9ef">class</span> <span style="color:#960050;background-color:#1e0010">&#39;</span>TVShow<span style="color:#960050;background-color:#1e0010">&#39;</span> cannot conform to <span style="color:#960050;background-color:#1e0010">&#39;</span>Sendable<span style="color:#960050;background-color:#1e0010">&#39;</span>; use <span style="color:#960050;background-color:#1e0010">&#39;</span>@unchecked Sendable<span style="color:#960050;background-color:#1e0010">&#39;</span>; this <span style="color:#66d9ef">is</span> an error <span style="color:#66d9ef">in</span> the Swift <span style="color:#ae81ff">6</span> language mode
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>Stored property <span style="color:#960050;background-color:#1e0010">&#39;</span>rating<span style="color:#960050;background-color:#1e0010">&#39;</span> of <span style="color:#960050;background-color:#1e0010">&#39;</span>Sendable<span style="color:#960050;background-color:#1e0010">&#39;</span><span style="color:#f92672">-</span>conforming <span style="color:#66d9ef">class</span> <span style="color:#960050;background-color:#1e0010">&#39;</span>TVShow<span style="color:#960050;background-color:#1e0010">&#39;</span> <span style="color:#66d9ef">is</span> mutable; this <span style="color:#66d9ef">is</span> an error <span style="color:#66d9ef">in</span> the Swift <span style="color:#ae81ff">6</span> language mode
+</span></span></code></pre></div><p>将TVShow标记为final时可以消除第一个警告，将rating改为let声明时才能消除第二个警告，当这样做之后我们后续也不能修改rating的值了。</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span><span style="color:#66d9ef">final</span> <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">TVShow</span>:Sendable {
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">let</span> name: String
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">let</span> rating:Int = <span style="color:#ae81ff">0</span>
+</span></span><span style="display:flex;"><span>    
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">init</span>(name: String) {
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">self</span>.name = name
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p>一般来说，如果你需要使得定义的类变成<code>Sendable</code>的，将其标记为<code>final</code>并使所有属性变成只读的是最佳做法，但在这里是不可能的，情况就是这样。</p>
+<p>我们唯一能修复这个类的方法是选择退出编译器的安全检查。要做到这一点，需要在<code>Sendable</code>协议前添加<code>@unchecked</code>关键字。下面是不会产生任何警告的TVShow类。</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span><span style="color:#66d9ef">class</span> <span style="color:#a6e22e">TVShow</span>: @unchecked Sendable {
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">let</span> name: String
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">var</span> rating:Int = <span style="color:#ae81ff">0</span>
+</span></span><span style="display:flex;"><span>    
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">init</span>(name: String) {
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">self</span>.name = name
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p>但需要注意的是，使用<code>@unchecked</code>只是临时规避编译器检查。因为这个类本身没有同步保护机制，当多个任务或<code>actor</code>同时修改它时会导致数据竞争。可以通过使用类似使用NSLock等机制来添加同步保护。下面代码展示了一个简单实现的例子。</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span><span style="color:#66d9ef">class</span> <span style="color:#a6e22e">TVShow</span>: @unchecked Sendable {
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">let</span> mutex = NSLock()
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">let</span> name: String
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">var</span> rating: Int = <span style="color:#ae81ff">0</span> {
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">willSet</span> { 
+</span></span><span style="display:flex;"><span>          mutex.lock() 
+</span></span><span style="display:flex;"><span>        }
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">didSet</span> { 
+</span></span><span style="display:flex;"><span>          mutex.unlock() 
+</span></span><span style="display:flex;"><span>        }
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>    
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">init</span>(name: String) {
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">self</span>.name = name
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p>不建议在生产环境中使用此代码，除非你真正理解锁等<code>concurrency primitives</code>的工作原理。新的并发系统旨在帮助开发者无需关注这些细节。</p>
+<h4 id="closures">Closures</h4>
+<p>在Swift闭包是一等公民，可以将闭包和函数引用传递给代码的其它部分，以便随时调用它们。在使用Swift中集合的<code>filter、map</code>和<code>reduce</code>方法时可能已经见过这一点。</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span>library.shows.filter { $0.rating <span style="color:#f92672">&gt;=</span> <span style="color:#ae81ff">10</span> <span style="color:#f92672">&amp;&amp;</span> $0.rating <span style="color:#f92672">&lt;=</span> <span style="color:#ae81ff">30</span> }
+</span></span></code></pre></div><p>因为可以将函数和闭包传递给代码中的其它部分，所以可以确信它们也应该是可发送的。因为函数或闭包不能遵循协议，但我们可以使用<code>@Sendable</code>属性来替代。当使用<code>@Sendable</code>属性时，编译器会认为它不需要对任何内容进行同步，因为<code>@Sendable</code>函数的主体是可发送的，而可发送的闭包只能捕获可发送的类型。</p>
+<p>查看<code>Task</code>的定义，可以发现泛型<code>Success</code>遵循了<code>Sendable</code>协议。因此，<code>task</code>可以操作<code>Sendable</code>类型。</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span>@frozen <span style="color:#66d9ef">struct</span> <span style="color:#a6e22e">Task</span>&lt;Success, Failure&gt; <span style="color:#66d9ef">where</span> Success : Sendable, Failure : Error
+</span></span></code></pre></div><p>接着查看<code>Task</code>的初始化器以及<code>detached</code>静态方法：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span>@discardableResult <span style="color:#66d9ef">init</span>( priority: TaskPriority? = <span style="color:#66d9ef">nil</span>, operation: @escaping () async -&gt; Success )
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">//...</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>@discardableResult <span style="color:#66d9ef">static</span> <span style="color:#66d9ef">func</span> <span style="color:#a6e22e">detached</span>( priority: TaskPriority? = <span style="color:#66d9ef">nil</span>, operation: @escaping () async <span style="color:#66d9ef">throws</span> -&gt; Success ) -&gt; Task&lt;Success, Failure&gt;
+</span></span></code></pre></div><p>我们已经确认<code>Success</code>是遵循<code>Sendable</code>协议的，这是<code>Swift</code>通过其机制确保非<code>Sendable</code>类型不能被传递到其他并发区域的方式。初始化器接受一个返回<code>Sendable</code>类型的闭包，而<code>detached</code>方法返回一个具有相同要求的<code>Task</code>。</p>
+<p>我们可以参照这种方式创建自己的<code>Sendable</code>函数，下面代码声明了一个使用<code>@Sendable</code>标记的闭包，这个方法会在执行方法之前打印一些内容，在执行之后也会打印一些内容。可以使用这样的函数来对你的方法进行基准测试。</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">logBeginningAndEnd</span>(operation: @Sendable () -&gt; Void) { 
+</span></span><span style="display:flex;"><span>  print(<span style="color:#e6db74">&#34;Calling Closure&#34;</span>) 
+</span></span><span style="display:flex;"><span>  operation() 
+</span></span><span style="display:flex;"><span>  print(<span style="color:#e6db74">&#34;Closure finished&#34;</span>) 
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p>我们尝试着调用这个方法，传递一个非<code>sendable</code>的东西：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span><span style="color:#66d9ef">var</span> tvShowLibrary = TVShowLibrary() 
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>logBeginningAndEnd {
+</span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">let</span> showsCount = tvShowLibrary.shows.count
+</span></span><span style="display:flex;"><span>  print(<span style="color:#e6db74">&#34;</span><span style="color:#e6db74">\(</span>showsCount<span style="color:#e6db74">)</span><span style="color:#e6db74"> Shows&#34;</span>) 
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p>函数<code>logBeginningAndEnd</code>要求闭包参数要求是<code>sendable</code>的，但传递的实参却是非<code>sendable</code>的，此时编译器会给出警告：<code>Converting non-sendable function value to ‘@Sendable () -&gt; Void</code>。</p>
+<p>所以，如果确定你的函数可以在不同的线程间共享，请不要忘记将它们标标记为<code>@Sendable</code>，这样系统就不会发出任何不必要的警告。</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span>@Sendable <span style="color:#66d9ef">func</span> <span style="color:#a6e22e">doSomething</span>() {
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p>当然，不要对每一个函数或方法都标记为<code>@Sendable</code>。只有在你确定这些函数可以在不同的并发域中安全使用，并且有意这样使用时，才这么做。</p>
+<p>最后，如果有一个可以存储闭包的变量，也可以将其限制为<code>@Sendable</code>闭包。下面代码声明了一个类，该类有一个可以存储<code>@Sendable</code>闭包的属性。</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span><span style="color:#66d9ef">class</span> <span style="color:#a6e22e">MyClass</span> { 
+</span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">var</span> aClosure: @Sendable () -&gt; Void
+</span></span><span style="display:flex;"><span>  
+</span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">init</span>(aClosure: @escaping @Sendable () -&gt; Void) { 
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">self</span>.aClosure = aClosure 
+</span></span><span style="display:flex;"><span>  }
+</span></span><span style="display:flex;"><span>  
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">let</span> myObject = MyClass { @Sendable <span style="color:#66d9ef">in</span>
+</span></span><span style="display:flex;"><span>   <span style="color:#66d9ef">let</span> a = <span style="color:#ae81ff">3</span>
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><h2 id="the-main-actor--final-actors">The Main Actor &amp; Final Actors</h2>
+<p>Actors是引用类型，它同步自身的内部状态，可以从不同线程安全地修改它们。这是通过保证同一时间只有一个任务或线程可以修改<code>actor</code>的状态来实现的。<code>actor</code>是可发送的类型，意味着它可用于并发环境。<code>actor</code>是可以实例化的，并在大部分情况下，像普通class一样的类型。</p>
+<p>但是，有时我们遇到需要总是保证在同一个线程上运行，但可能被分散到各处，甚至跨不同文件时的场景，又该如何处理呢？</p>
+<h3 id="the-main-thread">The Main Thread</h3>
+<p>主线程的唯一职责是运行UI相关代码。如果想更新一个标签、给视图添加颜色或切换一个开关，需要在主线程上执行这些操作。不允许在主线程之外更新UI，若这样做最好的情况下是编译器给出警告，最坏的情况下会导致运行时崩溃。如果正在运行异步任务——无论是使用新的并发系统还是旧工具如GCD——并且你希望在UI中显示返回的数据，需要在主线程上执行这一操作。</p>
+<p>因为主线程负责更新UI，如果在主线程执行任何耗时操作，会使你的应用挂起几秒钟，或者导致UI出现明显的卡顿和画面掉帧。如果你的应用长时间挂起，系统会采取措施终止它。这就是为什么很多API，默认在后台线程运行，无论你使用这些方法的<code>async/await</code>变体还是传统的闭包方式。可以强制让<code>URLSession</code>和其他异步API在主线程运行，但你绝对不应该这么做，而且我怀疑你永远也找不到一个合理的理由。</p>
 
     </div>
     <footer class="post-footer">
@@ -1314,7 +1420,18 @@ code.has-jax {
           <ul>
             <li><a href="#understanding-sendable-types">Understanding Sendable Types</a></li>
             <li><a href="#the-sendable-protocol">The Sendable Protocol</a></li>
-            <li><a href="#analyzing-sendable-types">Analyzing Sendable Types</a></li>
+            <li><a href="#analyzing-sendable-types">Analyzing Sendable Types</a>
+              <ul>
+                <li><a href="#structs">Structs</a></li>
+                <li><a href="#classes">Classes</a></li>
+                <li><a href="#closures">Closures</a></li>
+              </ul>
+            </li>
+          </ul>
+        </li>
+        <li><a href="#the-main-actor--final-actors">The Main Actor &amp; Final Actors</a>
+          <ul>
+            <li><a href="#the-main-thread">The Main Thread</a></li>
           </ul>
         </li>
       </ul>
