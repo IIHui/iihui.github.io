@@ -241,13 +241,13 @@ code.has-jax {
     <i class="fa fa-file-word-o"></i>
 </span>
 <span class="post-meta-item-text">字数: </span>
-<span class="leancloud-visitors-count">21288</span>
+<span class="leancloud-visitors-count">23581</span>
 &nbsp; | &nbsp;
 <span class="post-meta-item-icon">
     <i class="fa fa-coffee"></i>
 </span>
 <span class="post-meta-item-text">阅读: </span>
-<span class="leancloud-visitors-count">43 分钟</span>
+<span class="leancloud-visitors-count">48 分钟</span>
 </span>
       </div>
     </header>
@@ -1196,8 +1196,55 @@ code.has-jax {
 <p>Actors是引用类型，它同步自身的内部状态，可以从不同线程安全地修改它们。这是通过保证同一时间只有一个任务或线程可以修改<code>actor</code>的状态来实现的。<code>actor</code>是可发送的类型，意味着它可用于并发环境。<code>actor</code>是可以实例化的，并在大部分情况下，像普通class一样的类型。</p>
 <p>但是，有时我们遇到需要总是保证在同一个线程上运行，但可能被分散到各处，甚至跨不同文件时的场景，又该如何处理呢？</p>
 <h3 id="the-main-thread">The Main Thread</h3>
-<p>主线程的唯一职责是运行UI相关代码。如果想更新一个标签、给视图添加颜色或切换一个开关，需要在主线程上执行这些操作。不允许在主线程之外更新UI，若这样做最好的情况下是编译器给出警告，最坏的情况下会导致运行时崩溃。如果正在运行异步任务——无论是使用新的并发系统还是旧工具如GCD——并且你希望在UI中显示返回的数据，需要在主线程上执行这一操作。</p>
-<p>因为主线程负责更新UI，如果在主线程执行任何耗时操作，会使你的应用挂起几秒钟，或者导致UI出现明显的卡顿和画面掉帧。如果你的应用长时间挂起，系统会采取措施终止它。这就是为什么很多API，默认在后台线程运行，无论你使用这些方法的<code>async/await</code>变体还是传统的闭包方式。可以强制让<code>URLSession</code>和其他异步API在主线程运行，但你绝对不应该这么做，而且我怀疑你永远也找不到一个合理的理由。</p>
+<p>主线程唯一职责是运行UI相关代码。如果想更新一个标签、给视图添加颜色或切换一个开关，需要在主线程上执行这些操作。不允许在主线程之外更新UI，若在主线程外更新UI，轻则编译器给出警告，重则会导致运行时崩溃。如果正在运行异步任务—无论是使用新的并发系统还是旧工具如GCD，并且希望在UI中显示返回的数据，都在主线程上执行这一操作。</p>
+<p>因为主线程负责更新UI，如果在主线程执行任何耗时操作，会使应用挂起几秒钟，或导致UI出现明显卡顿和画面掉帧。如果应用长时间挂起，系统会采取措施终止它。这就是为什么很多API，包括<code>URLSession</code>中的所有网络调用，默认在单独的线程中运行的原因，无论使用这些方法的<code>async/await</code>版本还是传统的基于闭包方式的方法。可以强制让<code>URLSession</code>和其他异步API在主线程运行，但建议千万不要这么做。</p>
+<p>简而言之，使用<code>UIKit</code>（以及由此延伸的<code>SwiftUI</code>）进行的任何操作都需要在主线程上执行，并且需要避免在主线程上执行耗时的工作。传统上，我们会将数据传递到主线程，调用类似<code>DispatchQueue.main.async</code>的方法。这种方法接受一个在主线程执行的闭包，因此非常适合在主线程中操作你的UI。<code>DispatchQueue</code>是GCD中的一个对象，而<code>main</code>静态属性指的是主线程队列，它始终在主线程运行。这是一种快速且无痛的方法，可以回到主线程，安全，但如果你大量使用它，也会产生相当多的<code>pyramids of doom</code>。在iOS中，任何以UI前缀开头的对象（如<code>UIButton</code>、<code>UISwitch</code>）或在macOS中的任何AppKit对象都只能在主线程中进行修改。</p>
+<p>从<code>Xcode 14</code>及其所有配套的OS发布版本开始，<code>UIImage</code>和<code>UIColor</code>是“所有UI前缀的对象都应从主线程进行修改”这一规则的例外。从这个Xcode版本开始，<code>UIImage</code>和<code>UIColor</code>遵循<code>Sendable</code>协议，因此可以安全地在不同的并发域之间传递。</p>
+<p>在现代的并发系统中，系统会决定是否将你的任务在不同的线程中启动。请记住我们之前学过的，当任务遇到 <code>await</code>关键字时会暂停，而系统会决定在另一个线程中启动该调用。如果发生暂停，你并不知道代码会在哪里执行，甚至不知道使用哪个线程来交付结果。那么在使用新的并发系统时，我们如何将结果传递给主线程，以便在完成耗时任务后更新我们的UI呢？嗯，很高兴你问到了！</p>
+<h3 id="the-main-actor">The Main Actor</h3>
+<p>终于可以解释一下一直在使用的东西，但很难找到一个合适的时机来解释它。是的，就是<code>main actor</code>，它在代码中显示为<code>@MainActor</code>。</p>
+<p><code>UIKit</code>和<code>SwiftUI</code>都是大型的<code>frameworks</code>，它们由成百上千个类组成，很可能分散在框架的不同文件中，它们都有一个要求，即任何UI更新都应在主线程进行。将声明标记为<code>@MainActor</code>意味着该特定功能将在主线程上运行。<code>@MainActor</code>本质上被视为一个属性。在<code>iOS 15、macOS 12、watchOS 8</code>和<code>tvOS 16</code>中，这些框架中的大多数类都标记为<code>@MainActor</code>。在使用<code>SwiftUI</code>时，创建<code>ObservableObjects</code>应手动标记为<code>@MainActor</code>，因为该协议本身并不包含这一功能。将<code>UIKit、SwiftUI</code>和<code>AppKit</code>中的所有对象标记为<code>@MainActor</code>是一种非常优雅的解决方案，以确保它们都在主线程上运行。</p>
+<h4 id="using-the-mainactor">Using the @MainActor</h4>
+<p>如同<code>@Sendable</code>属性，也可以在许多不同地方使用<code>@MainActor</code>属性。可以在类型声明中使用它，比如结构体或类。下面声明了一个结构体和一个类，其中类是用<code>@MainActor</code>标记的：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span><span style="color:#66d9ef">struct</span> <span style="color:#a6e22e">MusicAlbum</span> { 
+</span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">let</span> name: String 
+</span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">let</span> artist: String 
+</span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">let</span> releaseYear: Int 
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>@MainActor <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">MusicLibrary</span> {
+</span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">var</span> name: String 
+</span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">var</span> albums: [MusicAlbum] = []
+</span></span><span style="display:flex;"><span>  
+</span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">init</span>(name: String) { 
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">self</span>.name = name 
+</span></span><span style="display:flex;"><span>  }
+</span></span><span style="display:flex;"><span>  
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p>因为这个原因，想要在类<code>MusicLibrary</code>实例上执行的每一个操作都需要在<code>main actor</code>上运行。<code>MusicLibrary</code>中的每一个属性和方法也会在<code>main actor</code>上运行。想象一下有一个函数<code>createLibraryAndAddAlbum</code>，它是在 <code>MusicLibrary</code>对象本身的上下文之外创建的。你可能试图在这个新函数中对<code>MusicLibrary</code>进行操作。下面示例代码，尝试在一个不在<code>@MainActor</code>上运行的上下文中使用这个类型。</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">createLibraryAndAddAlbum</span>() { 
+</span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">let</span> library = MusicLibrary(name: <span style="color:#e6db74">&#34;Andy&#39;s Library&#34;</span>) 
+</span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">let</span> album = MusicAlbum(name: <span style="color:#e6db74">&#34;Imaginareum&#34;</span>, artist: <span style="color:#e6db74">&#34;Nightwish&#34;</span>, releaseYear: <span style="color:#ae81ff">2011</span>)
+</span></span><span style="display:flex;"><span>  library.shows <span style="color:#f92672">+=</span> [album] 
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p>如果尝试编译上面代码，会得到与在不同并发域之间传递非可发送类型时类似的错误：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span>Call to main actor<span style="color:#f92672">-</span>isolated initializer <span style="color:#960050;background-color:#1e0010">&#39;</span><span style="color:#66d9ef">init</span>(name:)<span style="color:#960050;background-color:#1e0010">&#39;</span> <span style="color:#66d9ef">in</span> a synchronous nonisolated context
+</span></span><span style="display:flex;"><span>...
+</span></span><span style="display:flex;"><span>Property <span style="color:#960050;background-color:#1e0010">&#39;</span>albums<span style="color:#960050;background-color:#1e0010">&#39;</span> isolated to global actor <span style="color:#960050;background-color:#1e0010">&#39;</span>MainActor<span style="color:#960050;background-color:#1e0010">&#39;</span> can not be mutated from this context
+</span></span></code></pre></div><p>若在<code>createLibraryAndAddAlbum</code>前加上<code>@MainActor</code>，那么函数也会在<code>main actor</code>中运行。<code>MusicLibrary</code>和<code>createLibraryAndAddAlbum</code>函数将会在相同的actor（同一线程）中运行。无论这两个是否在同一个文件中，甚至跨不同的框架也没关系。这就是为什么<code>main actor</code>被称为全局<code>actor</code>的原因。</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span>@MainActor
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">createLibraryAndAddAlbum</span>() { 
+</span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">let</span> library = MusicLibrary(name: <span style="color:#e6db74">&#34;Andy&#39;s Library&#34;</span>) 
+</span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">let</span> album = MusicAlbum(name: <span style="color:#e6db74">&#34;Imaginareum&#34;</span>, artist: <span style="color:#e6db74">&#34;Nightwish&#34;</span>, releaseYear: <span style="color:#ae81ff">2011</span>)
+</span></span><span style="display:flex;"><span>  library.shows <span style="color:#f92672">+=</span> [album] 
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p>如果在不同的<code>actor</code>中，可以调用标记为<code>@MainActor</code>的方法，但这样做需要异步进行（使用await或async let），因为<code>@MainActor</code>会在所有使用它的声明中同步其自身的内部状态。</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span>@MainActor <span style="color:#66d9ef">func</span> <span style="color:#a6e22e">populateFromWebService</span>() async {
+</span></span><span style="display:flex;"><span>  albums = []
+</span></span><span style="display:flex;"><span>  albums = <span style="color:#66d9ef">try</span> await WebService.shared.albumsFromService() 
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p>假设<code>populateFromWebService</code>方法是一个长时间运行的会被挂起的操作，这个<code>actor</code>将会在哪运行？长时间运行的操作（<code>populateFromWebService</code>函数本身）仍然会在不同的线程上运行。你不知道它会在哪里运行，只知道<code>main actor</code>的方法会挂起，而该线程会在返回之前执行其他工作。</p>
+<p>在主actor自身上执行的是对albums方法的赋值。仅仅是赋值。populateFromWebService会在其他地方运行，但将它返回的数据赋值给self.albums则会在<code>main actor</code>上执行。很多人误以为<code>populateFromWebService</code>本身会在<code>main actor</code>上执行。也就是说，如果这个方法是从一个慢服务下载一些JSON数据并解析或者做任何可能需要比毫秒更长时间的操作，它会在主线程上运行。这是不正确的，幸运的是全局演员系统比这更聪明。如果你在@ MainActor上运行某些操作，始终要明白所有语句都会在主演员上执行，但如果它发现一个挂起调用，触发挂起的执行将会在其他地方进行，而数据将返回（并赋值）在主线程上。await的“左边”部分会在主线程上执行，而await关键字的“右边”部分则会在其他地方执行，可以说。</p>
 
     </div>
     <footer class="post-footer">
@@ -1432,6 +1479,11 @@ code.has-jax {
         <li><a href="#the-main-actor--final-actors">The Main Actor &amp; Final Actors</a>
           <ul>
             <li><a href="#the-main-thread">The Main Thread</a></li>
+            <li><a href="#the-main-actor">The Main Actor</a>
+              <ul>
+                <li><a href="#using-the-mainactor">Using the @MainActor</a></li>
+              </ul>
+            </li>
           </ul>
         </li>
       </ul>
