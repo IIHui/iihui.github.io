@@ -983,7 +983,7 @@ code.has-jax {
 </span></span></code></pre></div><p>规避这个编译错误的方案很简单，添加<code>nonisolated</code>关键字即可：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span><span style="color:#66d9ef">extension</span> <span style="color:#a6e22e">Game</span>: Hashable {
 </span></span><span style="display:flex;"><span>    nonisolated <span style="color:#66d9ef">func</span> <span style="color:#a6e22e">hash</span>(into hasher: <span style="color:#66d9ef">inout</span> Hasher) {
-</span></span><span style="display:flex;"><span>        
+</span></span><span style="display:flex;"><span>        <span style="color:#75715e">//</span>
 </span></span><span style="display:flex;"><span>    }
 </span></span><span style="display:flex;"><span>}
 </span></span></code></pre></div><p>这能够满足编译器的要求，但我们必须思考在这里使用<code>nonisolated</code>否合理。方法<code>hash(into:)</code>是否依赖于隔离的属性？如果依赖，你尝试实现该方法的任何努力都可能失败。你可能会遇到一些情形，确实很难符合那些期望其方法为同步的协议。</p>
@@ -1040,16 +1040,16 @@ code.has-jax {
 <p>Swift有一些可以安全地在并发环境中使用的，开箱即用的<code>sendable</code>类型：</p>
 <ul>
 <li>值类型。包括枚举和结构体，只要它们不包含任何不可发送类型的属性，值类型就是<code>sendable</code>的。如果尝试修改一个值类型，就会创建一个包含原数据的新副本。这使得结构体和枚举能够在新的并发系统能够开箱即用。值类型可能会创建多个副本，但已有的副本会一直保持原样，直到被删除。</li>
-<li>Actors。acotr被设计为可以共享可变数据，因此他们存在的目的是在新并发模型中被使用。你可以无限制地在隔离边界之间共享actor，但要注意actor中可能有nonisolated的功能。actor始终是可发送的。</li>
+<li><code>Actors</code>。<code>acotr</code>被设计为可以共享可变数据，因此他们存在的目的是在新并发模型中被使用。你可以无限制地在隔离边界之间共享<code>actor</code>，但要注意actor中可能有<code>nonisolated</code>的功能。<code>actor</code>始终是可发送的。</li>
 <li>类。类可以是可发送的，但需要满足某些条件。类是引用类型，对类的实例进行修改实际上是修改了真实的数据。不像结构体，对类实例的修改不会创建原数据的副本。若一个被标记为<code>final</code>的类拥有只读属性，那么它非常容易使其成为可发送的。另一种方式是，如果类拥有可变属性且没有被标记为<code>private</code>，可以通过在类内部实现自己的同步机制来使其可发送。这听起来很难做，实际上也确实如此。</li>
 <li>方法和闭包也可是可发送的，但需要显式地进行。</li>
 </ul>
 <p>在许多情形下，<code>Swift</code>可以推断类型的可发送性。结构体和<code>actor</code>就是例子。但是如果你做了一些工作使得一个类是线程安全的，当Swift编译器是无法推断出来的，并且会阻止你在编译器认为危险的方式上使用它。</p>
 <h3 id="the-sendable-protocol">The Sendable Protocol</h3>
-<p>在Swift中，除了值类型和actor之外的可发送类型需要遵守<code>Sendable</code>协议。通过简单地遵守<code>Sendable</code>协议，编译器会检查你对可发送类型的使用，以确保不会以可能导致数据竞争的方式使用它们。</p>
+<p>在Swift中，除了值类型和<code>actor</code>之外的可发送类型需要遵守<code>Sendable</code>协议。通过简单地遵守<code>Sendable</code>协议，编译器会检查你对可发送类型的使用，以确保不会以可能导致数据竞争的方式使用它们。</p>
 <h3 id="analyzing-sendable-types">Analyzing Sendable Types</h3>
 <h4 id="structs">Structs</h4>
-<p>为了更好地理解<code>sendable types</code>的行为，通过分析以了解其特点和注意事项。多数情况下，<code>struct</code>是开箱即用的可发送类型，但也有例外情况使得某个struct是不可发送的类型。假设一个结构体有一个类属性：</p>
+<p>为了更好地理解<code>sendable types</code>的行为，通过分析以了解其特点和注意事项。多数情况下，<code>struct</code>是开箱即用的可发送类型，但也有例外情况使得某个<code>struct</code>是不可发送的类型。假设一个结构体有一个类属性：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span><span style="color:#66d9ef">class</span> <span style="color:#a6e22e">TVShow</span> {
 </span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">let</span> title: String 
 </span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">var</span> rating: Int
@@ -1078,7 +1078,7 @@ code.has-jax {
 </span></span><span style="display:flex;"><span>  tvShowLibrary.shows.first?.rating = <span style="color:#ae81ff">30</span>
 </span></span><span style="display:flex;"><span>  print(<span style="color:#e6db74">&#34;Current score Task 2: </span><span style="color:#e6db74">\(</span>tvShowLibrary.shows.first!.rating<span style="color:#e6db74">)</span><span style="color:#e6db74">&#34;</span>) 
 </span></span><span style="display:flex;"><span>}
-</span></span></code></pre></div><p>直觉上，我们可能会认为编译器会阻止这样做。毕竟我们是在两个任务中同时捕获并修改一个可变值。但这样做是完全可接受的，因为这两个Task的调用对应同一个actor（启动它们的actor）。如果是从非异步上下文中启动任务的，它们将继承主线程actor。</p>
+</span></span></code></pre></div><p>直觉上，我们可能会认为编译器会阻止这样做。毕竟我们是在两个任务中同时捕获并修改一个可变值。但这样做是完全可接受的，因为这两个<code>Task</code>的调用对应同一个<code>actor</code>（启动它们的<code>actor</code>）。如果是从非异步上下文中启动任务的，它们将继承主线程<code>actor</code>。</p>
 <p>结构体默认是可发送的，除非它里面的属性是不可发送。上面的<code>TVShowLibrary</code>是不可发送的，因为它有一个数组属性，而数组中的元素<code>TVShow</code>是一个类，因此整个<code>TVShowLibrary</code>是不可发送的。</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span><span style="color:#66d9ef">var</span> tvShowLibrary = TVShowLibrary() 
 </span></span><span style="display:flex;"><span><span style="color:#66d9ef">let</span> show = TVShow(name: <span style="color:#e6db74">&#34;Card Captor Sakura&#34;</span>) 
@@ -1193,7 +1193,7 @@ code.has-jax {
 </span></span><span style="display:flex;"><span>   <span style="color:#66d9ef">let</span> a = <span style="color:#ae81ff">3</span>
 </span></span><span style="display:flex;"><span>}
 </span></span></code></pre></div><h2 id="the-main-actor--final-actors">The Main Actor &amp; Final Actors</h2>
-<p>Actors是引用类型，它同步自身的内部状态，可以从不同线程安全地修改它们。这是通过保证同一时间只有一个任务或线程可以修改<code>actor</code>的状态来实现的。<code>actor</code>是可发送的类型，意味着它可用于并发环境。<code>actor</code>是可以实例化的，并在大部分情况下，像普通class一样的类型。</p>
+<p>Actors是引用类型，它同步自身的内部状态，可以从不同线程安全地修改它们。这是通过保证同一时间只有一个任务或线程可以修改<code>actor</code>的状态来实现的。<code>actor</code>是可发送的类型，意味着它可用于并发环境。<code>actor</code>是可以实例化的，并在大部分情况下，像普通<code>class</code>一样的类型。</p>
 <p>但是，有时我们遇到需要总是保证在同一个线程上运行，但可能被分散到各处，甚至跨不同文件时的场景，又该如何处理呢？</p>
 <h3 id="the-main-thread">The Main Thread</h3>
 <p>主线程唯一职责是运行UI相关代码。如果想更新一个标签、给视图添加颜色或切换一个开关，需要在主线程上执行这些操作。不允许在主线程之外更新UI，若在主线程外更新UI，轻则编译器给出警告，重则会导致运行时崩溃。如果正在运行异步任务—无论是使用新的并发系统还是旧工具如GCD，并且希望在UI中显示返回的数据，都在主线程上执行这一操作。</p>
@@ -1231,7 +1231,7 @@ code.has-jax {
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span>Call to main actor<span style="color:#f92672">-</span>isolated initializer <span style="color:#960050;background-color:#1e0010">&#39;</span><span style="color:#66d9ef">init</span>(name:)<span style="color:#960050;background-color:#1e0010">&#39;</span> <span style="color:#66d9ef">in</span> a synchronous nonisolated context
 </span></span><span style="display:flex;"><span>...
 </span></span><span style="display:flex;"><span>Property <span style="color:#960050;background-color:#1e0010">&#39;</span>albums<span style="color:#960050;background-color:#1e0010">&#39;</span> isolated to global actor <span style="color:#960050;background-color:#1e0010">&#39;</span>MainActor<span style="color:#960050;background-color:#1e0010">&#39;</span> can not be mutated from this context
-</span></span></code></pre></div><p>若在<code>createLibraryAndAddAlbum</code>前加上<code>@MainActor</code>，那么函数也会在<code>main actor</code>中运行。<code>MusicLibrary</code>和<code>createLibraryAndAddAlbum</code>函数将会在相同的actor（同一线程）中运行。无论这两个是否在同一个文件中，甚至跨不同的框架也没关系。这就是为什么<code>main actor</code>被称为全局<code>actor</code>的原因。</p>
+</span></span></code></pre></div><p>若在<code>createLibraryAndAddAlbum</code>前加上<code>@MainActor</code>，那么函数也会在<code>main actor</code>中运行。<code>MusicLibrary</code>和<code>createLibraryAndAddAlbum</code>函数将会在相同的<code>actor</code>（同一线程）中运行。无论这两个是否在同一个文件中，甚至跨不同的框架也没关系。这就是为什么<code>main actor</code>被称为全局<code>actor</code>的原因。</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span>@MainActor
 </span></span><span style="display:flex;"><span><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">createLibraryAndAddAlbum</span>() { 
 </span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">let</span> library = MusicLibrary(name: <span style="color:#e6db74">&#34;Andy&#39;s Library&#34;</span>) 
@@ -1244,7 +1244,7 @@ code.has-jax {
 </span></span><span style="display:flex;"><span>  albums = <span style="color:#66d9ef">try</span> await WebService.shared.albumsFromService() 
 </span></span><span style="display:flex;"><span>}
 </span></span></code></pre></div><p>假设<code>populateFromWebService</code>方法是一个长时间运行的会被挂起的操作，这个<code>actor</code>将会在哪运行？长时间运行的操作（<code>populateFromWebService</code>函数本身）仍然会在不同的线程上运行。你不知道它会在哪里运行，只知道<code>main actor</code>的方法会挂起，而该线程会在返回之前执行其他工作。</p>
-<p>在主actor自身上执行的是对albums方法的赋值。仅仅是赋值。populateFromWebService会在其他地方运行，但将它返回的数据赋值给self.albums则会在<code>main actor</code>上执行。很多人误以为<code>populateFromWebService</code>本身会在<code>main actor</code>上执行。也就是说，如果这个方法是从一个慢服务下载一些JSON数据并解析或者做任何可能需要比毫秒更长时间的操作，它会在主线程上运行。这是不正确的，幸运的是全局演员系统比这更聪明。如果你在@ MainActor上运行某些操作，始终要明白所有语句都会在主演员上执行，但如果它发现一个挂起调用，触发挂起的执行将会在其他地方进行，而数据将返回（并赋值）在主线程上。await的“左边”部分会在主线程上执行，而await关键字的“右边”部分则会在其他地方执行，可以说。</p>
+<p>在主actor自身上执行的是对<code>albums</code>方法的赋值。仅仅是赋值。<code>populateFromWebService</code>会在其他地方运行，但将它返回的数据赋值给<code>self.albums</code>则会在<code>main actor</code>上执行。很多人误以为<code>populateFromWebService</code>本身会在<code>main actor</code>上执行。也就是说，如果这个方法是从一个慢服务下载一些JSON数据并解析或者做任何可能需要比毫秒更长时间的操作，它会在主线程上运行。这是不正确的，幸运的是全局演员系统比这更聪明。如果在<code>@MainActor</code>上运行某些操作，始终要明白所有语句都会在主演员上执行，但如果它发现一个挂起调用，触发挂起的执行将会在其他地方进行，而数据将返回（并赋值）在主线程上。<code>await</code>的“左边”部分会在主线程上执行，而<code>await</code>关键字的“右边”部分则会在其他地方执行，可以说。</p>
 
     </div>
     <footer class="post-footer">
