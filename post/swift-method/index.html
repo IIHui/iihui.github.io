@@ -1027,8 +1027,8 @@ code.has-jax {
 <h3 id="general-tips-for-working-with-actors">General Tips for Working with Actors</h3>
 <p>当我们有共享可变变量时，actor是非常有用的，它使得访问可变数据变得容易，但它绝不是万能的解决方案。为了有效的使用actor，下面有一些建议：</p>
 <ul>
-<li>actor越简单越好。虽然actor会通过Swift编译器保护在多数情形下免受误用，但它们无法保护免受<code>actor</code>重入等问题的影响。保持actor小巧有助于更有效地使用它们。</li>
-<li>保证actor的操作是原子的。原子操作被视为一个单一单元。方法简短将有助于此。一般来说，原子性意味着可以一次性完成所有工作，或者如果单个操作失败，则整个操作将被丢弃。尽可能避免在<code>actor</code>中调用<code>await</code>将有助于原子性。</li>
+<li><code>actor</code>越简单越好。虽然<code>actor</code>会通过Swift编译器保护在多数情形下免受误用，但它们无法保护免受<code>actor</code>重入等问题的影响。保持<code>actor</code>小巧有助于更有效地使用它们。</li>
+<li>保证<code>actor</code>的操作是原子的。原子操作被视为一个单一单元。方法简短将有助于此。一般来说，原子性意味着可以一次性完成所有工作，或者如果单个操作失败，则整个操作将被丢弃。尽可能避免在<code>actor</code>中调用<code>await</code>将有助于原子性。</li>
 <li>对所需状态的所有假设应该放在<code>await</code>调用之后，当它们被用在actor的方法中时。如果你的方法中只有一个await调用，这很容易做到，但如果有多个，就很难推断你的程序状态。</li>
 <li>不要将一个<code>actor</code>作为<code>ObservableObject</code>在SwiftUI中使用。编译器不会阻止你这样做，但 <code>ObservableObject</code>会期望它始终在主线程上运行。如果 actor中包含耗时操作，会导致你的SwiftUI应用出现明显的卡顿。</li>
 </ul>
@@ -1037,14 +1037,14 @@ code.has-jax {
 <p>Swift需要一种安全的方式在隔离边界之间共享数据。<code>Swift Evolution</code>团队提出了一个非常优雅的解决方案，并引入了<code>sendable types</code>。</p>
 <h3 id="understanding-sendable-types">Understanding Sendable Types</h3>
 <p>一个<code>sendable type</code>可以跨异步task和actor之间共享。按照定义，一个<code>sendable type</code>需要能够防止数据竞争，这种类型应该无法被多个操作同时修改，只能提供同步访问。</p>
-<p>Swift有一些可以安全地在并发环境中使用的，开箱即用的<code>sendable</code>类型：</p>
+<p><code>Swift</code>有一些可以安全地在并发环境中使用的，开箱即用的<code>sendable</code>类型：</p>
 <ul>
 <li>值类型。包括枚举和结构体，只要它们不包含任何不可发送类型的属性，值类型就是<code>sendable</code>的。如果尝试修改一个值类型，就会创建一个包含原数据的新副本。这使得结构体和枚举能够在新的并发系统能够开箱即用。值类型可能会创建多个副本，但已有的副本会一直保持原样，直到被删除。</li>
-<li><code>Actors</code>。<code>acotr</code>被设计为可以共享可变数据，因此他们存在的目的是在新并发模型中被使用。你可以无限制地在隔离边界之间共享<code>actor</code>，但要注意actor中可能有<code>nonisolated</code>的功能。<code>actor</code>始终是可发送的。</li>
+<li><code>Actors</code>。<code>acotr</code>被设计为可以共享可变数据，因此他们存在的目的是在新并发模型中被使用。你可以无限制地在隔离边界之间共享<code>actor</code>，但要注意<code>actor</code>中可能有<code>nonisolated</code>的功能。<code>actor</code>始终是可发送的。</li>
 <li>类。类可以是可发送的，但需要满足某些条件。类是引用类型，对类的实例进行修改实际上是修改了真实的数据。不像结构体，对类实例的修改不会创建原数据的副本。若一个被标记为<code>final</code>的类拥有只读属性，那么它非常容易使其成为可发送的。另一种方式是，如果类拥有可变属性且没有被标记为<code>private</code>，可以通过在类内部实现自己的同步机制来使其可发送。这听起来很难做，实际上也确实如此。</li>
 <li>方法和闭包也可是可发送的，但需要显式地进行。</li>
 </ul>
-<p>在许多情形下，<code>Swift</code>可以推断类型的可发送性。结构体和<code>actor</code>就是例子。但是如果你做了一些工作使得一个类是线程安全的，当Swift编译器是无法推断出来的，并且会阻止你在编译器认为危险的方式上使用它。</p>
+<p>在许多情形下，<code>Swift</code>可以推断类型的可发送性。结构体和<code>actor</code>就是例子。但是如果你做了一些工作使得一个类是线程安全的，当<code>Swift</code>编译器是无法推断出来的，并且会阻止你在编译器认为危险的方式上使用它。</p>
 <h3 id="the-sendable-protocol">The Sendable Protocol</h3>
 <p>在Swift中，除了值类型和<code>actor</code>之外的可发送类型需要遵守<code>Sendable</code>协议。通过简单地遵守<code>Sendable</code>协议，编译器会检查你对可发送类型的使用，以确保不会以可能导致数据竞争的方式使用它们。</p>
 <h3 id="analyzing-sendable-types">Analyzing Sendable Types</h3>
@@ -1096,7 +1096,7 @@ code.has-jax {
 </span></span></code></pre></div><p>因为<code>Task.detached</code>没有从顶层上下文中继承<code>actor</code>，即上面两个Task变成了是完全相互独立的，这会导致数据竞争。Swift为了避免出现这种错误，编译器时会出现错误或提示（根据Xcode版本不同而不同）。</p>
 <p>对于上面这种情况，最合理的解决方案是将<code>TVShowLibrary</code>改为一个<code>actor</code>而不是一个<code>struct</code>。这是因为多个任务都对修改它感兴趣，这正是<code>actor</code>的完美用法。</p>
 <h4 id="classes">Classes</h4>
-<p>class默认是不可发送的。但是，当class被标记为final并且具有只读属性时，可以使它们遵循Sendable协议。即可以将TVShow标记为遵循Sendable，这样你的代码将能够编译，不会有任何警告。下面代码展示了们尝试这样做时会得到的警告。</p>
+<p>class默认是不可发送的。但是，当class被标记为final并且具有只读属性时，可以使它们遵循<code>Sendable</code>协议。即可以将<code>TVShow</code>标记为遵循<code>Sendable</code>，这样你的代码将能够编译，不会有任何警告。下面代码展示了们尝试这样做时会得到的警告。</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span><span style="color:#66d9ef">class</span> <span style="color:#a6e22e">TVShow</span>:Sendable {
 </span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">let</span> name: String
 </span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">var</span> rating:Int = <span style="color:#ae81ff">0</span>
@@ -1110,7 +1110,7 @@ code.has-jax {
 </span></span><span style="display:flex;"><span>Non<span style="color:#f92672">-</span><span style="color:#66d9ef">final</span> <span style="color:#66d9ef">class</span> <span style="color:#960050;background-color:#1e0010">&#39;</span>TVShow<span style="color:#960050;background-color:#1e0010">&#39;</span> cannot conform to <span style="color:#960050;background-color:#1e0010">&#39;</span>Sendable<span style="color:#960050;background-color:#1e0010">&#39;</span>; use <span style="color:#960050;background-color:#1e0010">&#39;</span>@unchecked Sendable<span style="color:#960050;background-color:#1e0010">&#39;</span>; this <span style="color:#66d9ef">is</span> an error <span style="color:#66d9ef">in</span> the Swift <span style="color:#ae81ff">6</span> language mode
 </span></span><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span>Stored property <span style="color:#960050;background-color:#1e0010">&#39;</span>rating<span style="color:#960050;background-color:#1e0010">&#39;</span> of <span style="color:#960050;background-color:#1e0010">&#39;</span>Sendable<span style="color:#960050;background-color:#1e0010">&#39;</span><span style="color:#f92672">-</span>conforming <span style="color:#66d9ef">class</span> <span style="color:#960050;background-color:#1e0010">&#39;</span>TVShow<span style="color:#960050;background-color:#1e0010">&#39;</span> <span style="color:#66d9ef">is</span> mutable; this <span style="color:#66d9ef">is</span> an error <span style="color:#66d9ef">in</span> the Swift <span style="color:#ae81ff">6</span> language mode
-</span></span></code></pre></div><p>将TVShow标记为final时可以消除第一个警告，将rating改为let声明时才能消除第二个警告，当这样做之后我们后续也不能修改rating的值了。</p>
+</span></span></code></pre></div><p>将<code>TVShow</code>标记为<code>final</code>时可以消除第一个警告，将<code>rating</code>改为let声明时才能消除第二个警告，当这样做之后我们后续也不能修改<code>rating</code>的值了。</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span><span style="color:#66d9ef">final</span> <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">TVShow</span>:Sendable {
 </span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">let</span> name: String
 </span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">let</span> rating:Int = <span style="color:#ae81ff">0</span>
