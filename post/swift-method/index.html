@@ -808,8 +808,8 @@ code.has-jax {
 <p>如果多段代码可以同时写入一个文件，将会导致数据损坏。如果多个任务从该资源中读取数据，它们可能会得到垃圾数据，这些数据可能与它们试图读取的数据不一致。最糟糕的是，如果在底层编写并发代码，很容易引入数据竞争，而且调试起来也非常困难。</p>
 <p>因此，如果使用的是值语义（如结构体或枚举），就不会遇到这个问题。值语义是只读的，如果值发生变化，会创建一个副本，且所有的修改都局限于该变量。每个任务都会操作数据的不同副本，尽管这可能并非你所期望的。</p>
 <h3 id="introducing-actors">Introducing Actors</h3>
-<p>Actor是Swift中引入的一种新引用类型，由新的并发模型支持。<font color="#de7802">Actor自身的状态与程序的其余部分隔离，并对外部访问可变状态提供同步保护</font>。简单来说，如果一个Actor包含一个可被多个任务读写的基本变量，那么Actor会确保同一时间只有一个任务能够执行操作，从而保证对资源的互斥访问。</p>
-<p>每次访问可变状态都必须通过Actor来完成。声明一个Actor非常简单，只需使用<code>actor</code> 关键字，然后为其命名，这与声明结构体（<code>struct</code>）或类（<code>class</code>）非常相似。作为引用类型，<code>actor</code>与类有许多相似的功能：它们可以遵循协议（<code>protocol</code>），也能通过扩展（<code>extension</code>）获得更多功能。与类的主要区别在于，<code>actor</code>会隔离自身状态。一个<code>actor</code>可能会挂起零次或多次（即在其方法内部包含其它<code>await</code>调用），因此可以轻松地将<code>Actor</code>与<code>Swift</code>的其它新并发系统组件集成。</p>
+<p>Actor是Swift中引入的一种新引用类型，由新的并发模型支持。<font color="#de7802">Actor自身的状态与程序的其余部分隔离，并对外部访问可变状态提供同步保护</font>。简单来说，如果一个Actor包含一个可被多个任务读写的基本变量，那么<code>Actor</code>会确保同一时间只有一个任务能够执行操作，从而保证对资源的互斥访问。</p>
+<p>每次访问可变状态都必须通过Actor来完成。声明一个<code>Actor</code>非常简单，只需使用<code>actor</code> 关键字，然后为其命名，这与声明结构体（<code>struct</code>）或类（<code>class</code>）非常相似。作为引用类型，<code>actor</code>与类有许多相似的功能：它们可以遵循协议（<code>protocol</code>），也能通过扩展（<code>extension</code>）获得更多功能。与类的主要区别在于，<code>actor</code>会隔离自身状态。一个<code>actor</code>可能会挂起零次或多次（即在其方法内部包含其它<code>await</code>调用），因此可以轻松地将<code>Actor</code>与<code>Swift</code>的其它新并发系统组件集成。</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span>actor VideogameLibrary { 
 </span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">var</span> videogames: [Videogame] = []
 </span></span><span style="display:flex;"><span>  
@@ -833,7 +833,7 @@ code.has-jax {
 </span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">let</span> releaseYear: Int 
 </span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">let</span> company: String 
 </span></span><span style="display:flex;"><span>}
-</span></span></code></pre></div><p>从上面定义可以看出，<code>actor</code>的声明看起来和类的声明十分相似，它<font color="#de7802">也是一种引用类型，可以预期它与类的行为类似</font>。你可能会问为什么actor是引用类型而不是值类型。原因很简单：actor封装了可变的共享状态。它是一种期望被多个代码片段修改的类型。如果它是一个<code>struct</code>，调用者修改它时得到的是副本。</p>
+</span></span></code></pre></div><p>从上面定义可以看出，<code>actor</code>的声明看起来和类的声明十分相似，它<font color="#de7802">也是一种引用类型，可以预期它与类的行为类似</font>。你可能会问为什么<code>actor</code>是引用类型而不是值类型。原因很简单：<code>actor</code>封装了可变的共享状态。它是一种期望被多个代码片段修改的类型。如果它是一个<code>struct</code>，调用者修改它时得到的是副本。</p>
 <h4 id="interacting-with-an-actor">Interacting with an Actor</h4>
 <p>需要特别注意，<font color="#de7802">所有的<code>actor</code>调用必须是异步的，因此需要<code>await</code>关键字，这就是<code>actor</code>用来同步状态并防止并发修改的机制</font>。因为<code>actor</code>的调用可以<code>awaited</code>，所以其它调用者会被挂起，等待轮到它们访问<code>actor</code>。</p>
 <p>而在<code>actor</code>内部，不需要异步调用自身的方法和属性。因为<code>actor</code>是被隔离的，其内部任何调用都按顺序执行，直到内部操作完成。</p>
@@ -1023,7 +1023,7 @@ code.has-jax {
 </span></span><span style="display:flex;"><span>}
 </span></span></code></pre></div><p>方法<code>playRandomGame</code>是隔离在<code>actor</code>中的。但需要注意的是，<code>playRandomGameLater</code>要求我们使用<code>await</code>调用<code>self.playRandomGame</code>。这是因为一旦我们启动了分离任务，就跳转到了另一个<code>actor</code>。处于不同的<code>actor</code>中将迫使我们使用<code>await</code>调用该<code>actor</code>的方法。</p>
 <h3 id="general-tips-for-working-with-actors">General Tips for Working with Actors</h3>
-<p>当我们有共享可变变量时，actor是非常有用的，它使得访问可变数据变得容易，但它绝不是万能的解决方案。为了有效的使用actor，下面有一些建议：</p>
+<p>当我们有共享可变变量时，<code>actor</code>是非常有用的，它使得访问可变数据变得容易，但它绝不是万能的解决方案。为了有效的使用<code>actor</code>，下面有一些建议：</p>
 <ul>
 <li><code>actor</code>越简单越好。虽然<code>actor</code>会通过Swift编译器保护在多数情形下免受误用，但它们无法保护免受<code>actor</code>重入等问题的影响。保持<code>actor</code>小巧有助于更有效地使用它们。</li>
 <li>保证<code>actor</code>的操作是原子的。原子操作被视为一个单一单元。方法简短将有助于此。一般来说，原子性意味着可以一次性完成所有工作，或者如果单个操作失败，则整个操作将被丢弃。尽可能避免在<code>actor</code>中调用<code>await</code>将有助于原子性。</li>
@@ -1034,7 +1034,7 @@ code.has-jax {
 <p>最简单的并发程序涉及并发操作时通常是相对隔离的。但在复杂程序中，需要在隔离边界之间传递数据，从一个异步任务到另一个，从一个<code>actor</code>到<code>acotr</code>。这些数据必须是线程安全的。正如我们在actor中学到的，在异步域之间共享可变数据可能会导致数据竞争，从而导致数据损坏。</p>
 <p>Swift需要一种安全的方式在隔离边界之间共享数据。<code>Swift Evolution</code>团队提出了一个非常优雅的解决方案，并引入了<code>sendable types</code>。</p>
 <h3 id="understanding-sendable-types">Understanding Sendable Types</h3>
-<p>一个<code>sendable type</code>可以跨异步task和actor之间共享。按照定义，一个<code>sendable type</code>需要能够防止数据竞争，这种类型应该无法被多个操作同时修改，只能提供同步访问。</p>
+<p>一个<code>sendable type</code>可以跨异步<code>task</code>和<code>actor</code>之间共享。按照定义，一个<code>sendable type</code>需要能够防止数据竞争，这种类型应该无法被多个操作同时修改，只能提供同步访问。</p>
 <p><code>Swift</code>有一些可以安全地在并发环境中使用的，开箱即用的<code>sendable</code>类型：</p>
 <ul>
 <li>值类型。包括枚举和结构体，只要它们不包含任何不可发送类型的属性，值类型就是<code>sendable</code>的。如果尝试修改一个值类型，就会创建一个包含原数据的新副本。这使得结构体和枚举能够在新的并发系统能够开箱即用。值类型可能会创建多个副本，但已有的副本会一直保持原样，直到被删除。</li>
