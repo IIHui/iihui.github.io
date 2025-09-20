@@ -241,7 +241,7 @@ code.has-jax {
     <i class="fa fa-file-word-o"></i>
 </span>
 <span class="post-meta-item-text">字数: </span>
-<span class="leancloud-visitors-count">23565</span>
+<span class="leancloud-visitors-count">23571</span>
 &nbsp; | &nbsp;
 <span class="post-meta-item-icon">
     <i class="fa fa-coffee"></i>
@@ -356,17 +356,17 @@ code.has-jax {
 </span></span><span style="display:flex;"><span>        debugPrint(error?.localizedDescription ?? <span style="color:#e6db74">&#34;无错误信息&#34;</span>)
 </span></span><span style="display:flex;"><span>    }
 </span></span><span style="display:flex;"><span>}
-</span></span></code></pre></div><p>上面代码对于新学者来说，看起来可能有些吃力，但有经验的开发者，一看就知道这个方法是在做什么，即发送请求获取用户相关信息。</p>
+</span></span></code></pre></div><p>上面代码对于新学者来说，看起来可能有些吃力，但对于有经验的开发者来说，一看就知道这个方法是在做什么，即发送请求获取用户相关信息。</p>
 <h2 id="introducing-asyncawait">Introducing async/await</h2>
-<p>在过程式编程中，代码是按顺序从上往下执行。上面代码若能通过函数的返回语句来传递数据，而不是通过闭包传递数据，岂不是更好？这正是新系统允许我们做到的。如果去掉闭包，可以编写更自然的代码，从而更容易地表达我们的意图，让后来接手的开发人员更清楚地掌握代码是做什么的。</p>
+<p>在过程式编程中，代码是按顺序从上往下执行。上面代码若能通过函数的返回语句来传递数据，而不是通过闭包传递数据，岂不是更好？这正是新系统允许我们做到的。如果去掉闭包，可以编写更自然的代码，从而更容易地表达我们的意图，能够接手的开发人员更清楚地掌握代码是做什么的。</p>
 <h3 id="the-async-keyword">The async keyword</h3>
-<p>新系统的关键是使用<code>async</code>和<code>await</code>关键字，了解如何使用这两个关键词对于使用整个系统至关重要。可以异步运行的函数（异步函数）或可以与其它函数同时运行的函数（同步函数），在这些函数的返回类型前添加<code>async</code>关键字，就是告诉编译器，这个函数是异步的。</p>
+<p>新系统的核心是<code>async</code>和<code>await</code>关键字，理解如何使用这两个关键词对于使用整个系统的其余部分至关重要。可以异步运行的函数（异步函数）或可以与其它函数同时运行的函数（同步函数），在这些函数的返回类型前添加<code>async</code>关键字，就是告诉编译器，这个函数是异步的。</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">fetchUserInfo</span>() async <span style="color:#66d9ef">throws</span> -&gt; UserInfo {
 </span></span><span style="display:flex;"><span>   <span style="color:#75715e">/*...*/</span>
 </span></span><span style="display:flex;"><span>   <span style="color:#66d9ef">return</span> UserInfo(username: <span style="color:#e6db74">&#34;Test&#34;</span>, avatar_url: <span style="color:#e6db74">&#34;test&#34;</span>)
 </span></span><span style="display:flex;"><span>}
 </span></span></code></pre></div><p>上面声明中可以看到<code>completionHandler</code>已经消失了，如同在回调<code>completionHandler</code>中返回<code>Error</code>一样，上面定义的函数也可能抛出<code>Error</code>。将<code>fetchUserInfo</code>标记为抛出错误，即在<code>async</code>后面添加关键字<code>throws</code>，可以使得错误处理更自然。函数的返回值类型标记为非可选的<code>UserInfo</code>，也可以省去解包的步骤。</p>
-<p>为了能够调用使用<code>async</code>关键字标记的函数，我们需要一个<code>concurrent context</code>（并发上下文），有几种方式创建这种并发上下文：</p>
+<p>为了能够调用<code>async</code>关键字标记的函数，我们需要一个<code>concurrent context</code>（并发上下文），有几种方式创建这种并发上下文：</p>
 <ul>
 <li>
 <p>标记为<code>async</code>的函数体是一个<code>concurrent context</code>。若一个函数未使用<code>async</code>标记，则它<font color="#de7802">不能直接调用<code>async</code>函数</font>，下面代码会出现编译错误：</p>
@@ -386,9 +386,9 @@ code.has-jax {
 </span></span><span style="display:flex;"><span>}
 </span></span></code></pre></div><p>上面示例代码中，虽然函数<code>authenticateAndFetchProfile</code>没有被标记为<code>async</code>，但因为在函数体内创建了一个<code>Task</code>，所以在创建<code>Task</code>的闭包中可以调用<code>async</code>方法。</p>
 <h3 id="the-await-keyword">The await keyword</h3>
-<p>每一次<code>async</code>函数的调用都必须在某个点有与之对应的<code>await</code>关键字。<code>await</code>本身具有特殊的语义，它不仅仅是调用<code>async</code>函数的语法。</p>
-<p>如果在代码中遇到<code>await</code>关键字，我们的程序可能选择挂起当前正在执行的函数。因为这个原因，<font color="#de7802"><code>await</code>关键字通常也被称为挂起点</font>。这是系统可能会做出的决定，我们无法主动进行控制。</p>
-<p><font color="#de7802">当我们说可能会挂起时，意思是当前的执行将被暂停</font>，而正在调用的<code>async</code>函数会在其它地方继续执行。如果当前函数被挂起，其中的代码将暂停执行（从调用<code>async</code>函数开始，之后的所有代码均不会执行），直到调用的<code>async</code>函数执行完成后才会恢复。</p>
+<p>每一次<code>async</code>函数的调用都必须在某个点有与之对应的<code>await</code>关键字。<code>await</code>本身具有特殊的语义，它不仅仅是用来调用<code>async</code>函数的语法。</p>
+<p>如果在代码中遇到<code>await</code>关键字，我们的程序可能选择挂起当前正在执行的函数。因为这个原因，<font color="#de7802"><code>await</code>关键字通常也被称为挂起点</font>。<font color=red>这是系统可能会做出的决定，我们无法主动进行控制</font>。</p>
+<p>当<font color="#de7802">我们说可能会挂起时，意思是当前的执行将被暂停</font>，而正在调用的<code>async</code>函数会在其它地方继续执行。如果当前函数被挂起，其中的代码将暂停执行（从调用<code>async</code>函数开始，之后的所有代码均不会执行），直到调用的<code>async</code>函数执行完成后才会恢复。</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">authenticateAndFetchProfile</span>() async {
 </span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">do</span> {
 </span></span><span style="display:flex;"><span>        <span style="color:#75715e">//...</span>
