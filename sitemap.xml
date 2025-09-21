@@ -6269,13 +6269,13 @@ func authenticateAndFetchProfile() {  Task { //...  let userProfile = try await 
 The await keyword 每一次async函数的调用都必须在某个点有与之对应的await关键字。需要注意的是，await本身具有特殊的语义，它不仅仅是用来调用async函数的语法。
 如果在代码执行过程中遇到await关键字，我们的程序可能选择挂起当前正在执行的函数。因为这个原因，await关键字通常也被称为挂起点。但请注意，这是系统可能会做出的决定，我们无法主动进行控制。
 当我们说可能会挂起时，意思是当前的执行将被暂停，而调用的async函数将会在其它地方继续执行。如果当前函数被挂起，其后的代码将暂停执行（从调用async函数开始，之后的所有代码均不会执行），直到调用的async函数执行完成后才会恢复。
-func authenticateAndFetchProfile() async {  do {  //...  print(&amp;#34;Fetching user info&amp;#34;)  let userProfile = try await fetchUserInfo()  print(&amp;#34;User info fetched&amp;#34;) //...  } catch {  debugPrint(error.localizedDescription)  } } 上面代码执行后，首先会打印字符串Fetching user info，过一小会儿才打印User info fetched，这正是我们编写代码语句的顺序。而且，我们成功地删除了闭包且不需要任何其它额外的东西来实现按顺序输出。
-在await调用挂起期间发生的事情是，我们正在将控制权交还给系统。因此，我们无法控制何时能够再次获得控制权。调用fetchUserInfo()的线程将被释放去做其它工作，具体做什么工作无需我们关心，因为这些由系统调度处理。其它工作可能是我们应用内的另一个任务，或者是系统外部的任务。在我们获得控制权之前，无法继续执行代码中的任何语句。
-因此，上面示例代码将按照书写顺序打印语句，但打印User info fetched可能需要一点时间，因为我们已经将调用线程交给了系统，获取用户信息是一个耗时任务。当用户信息获取完成时，fetchUserInfo函数调用将到达其函数体中的return语句，这个return语句将控制权返回给我们。但请注意，系统将决定何时将控制权交还给我们，这并不是在return语句后立即发生。系统可能正在执行其它并发任务，它需要处理高其它优先级的问题，然后才会交换控制权给我们。
+func authenticateAndFetchProfile() async {  do {  //...  print(&amp;#34;Fetching user info&amp;#34;)  let userProfile = try await fetchUserInfo()  print(&amp;#34;User info fetched&amp;#34;) //...  } catch {  debugPrint(error.localizedDescription)  } } 上面代码执行后，首先会打印字符串Fetching user info，过一小会儿才打印User info fetched，则正是代码语句的书写顺序。而且，我们成功地删除了闭包且不需要任何其它额外的操作就实现按顺序输出。
+在await调用挂起期间发生的事情是：我们将控制权交还给系统，因此我们无法控制何时能够再次获得控制权。调用fetchUserInfo()的同一个线程将被释放去做其它工作，具体做什么工作无需我们关心，因为这些是由系统调度处理的。其它工作可能是我们应用内的另一个任务，或者是系统外部的任务。在我们获得控制权之前，无法继续执行代码中的任何语句。
+因此，上面示例代码将按照书写顺序执行打印语句，但打印User info fetched可能需要一点时间，因为我们已经将调用线程交给了系统，获取用户信息是一个耗时任务。当用户信息获取完成时，fetchUserInfo函数调用将到达其函数体中的return语句，这个return语句将控制权返回给我们。但请注意，系统将决定何时将控制权交还给我们，但这并不是在遇到return语句后立即发生。系统可能正在执行其它并发任务，它需要处理高其它优先级的问题，然后才会交还控制权给我们。
 总之，在遇到一个挂起点（await关键字）后，如果系统选择挂起，那么它下面的内容将不会执行，直至控制权重新交还给我们。在挂起期间，系统会利用该线程做其它工作。
-任何在await调用之后发生的事情被称为continuation，我们需要继续做在被挂起之前正在做的事情，这很重要。因为我们可能在不同线程重新拿到控制权，即await下面的语句可能在不同的线程中运行。这意味着在上面示例代码中，第一个打印语句可能在一个线程中运行，而第二个打印语句可能在一个完全不同的线程中运行。
+任何在await调用之后发生的事情被称为continuation，控制权恢复后，我们需要继续做这些事情，这很重要。因为我们可能在不同线程重新拿到控制权，即await下面的语句可能在不同的线程中运行。这意味着在上面示例代码中，第一个打印语句可能在一个线程中运行，而第二个打印语句可能在一个完全不同的线程中运行。
 使用async/await并不能让我们免于在主线程上做UI工作，所以如果需要更新UI，需要将这项工作推迟到主线程上。在实践中，这是通过一个名为@MainActor的系统级全局actor来完成的。
-Using async/await 苹果所有基于闭包的并发API都有一个async/await版本，可以在iOS 15及更高版本上使用。虽然使用Xcode 13.3可以在iOS 13及更高版本上使用async/await，但苹果原生支持async/await的API仅在iOS 15及以上版本中可用。
+Using async/await 苹果所有基于闭包的并发API都有一个async/await版本，可以在iOS 15及更高版本上使用。虽然使用Xcode 13.3可以在iOS 13及更高版本上使用async/await，但苹果原生支持的async/await版本API仅在iOS 15及以上版本中可用。
 定义async函数时，可以使用throws标记。一般来说，如果正在模拟可能抛出错误或返回有效值的代码，可以简单地将函数标记为throws，然后将结果类型指定为调用成功后能得到的对象。本质上，开始的completionHandler闭包的内容已经在函数签名中进行了移动。
 func fetchUserInfo() async throws -&amp;gt; UserInfo {  // } 一开始就能看出，async/await能帮我们写出更语义化的代码。在Swift中，可以在函数中抛出错误，但令人惊讶的是，很多开发者并不这样写。这是因为大多数应用本质上是并发的（例如，处理网络请求），而且我们无法以一种符合Swift风格的方式处理闭包中的错误，因此只能将错误作为闭包的一部分返回。使用async/await后，函数签名更易读，也更具self-documented（自文档化）。
 我们利用苹果在iOS 15中提供的第一个async/awaitAPI。所有返回数据的URLSession方法都有async/await变体。到目前为止一切顺利，但下面这段代码还不能编译，因为在函数体中没有返回任何内容。

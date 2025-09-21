@@ -241,7 +241,7 @@ code.has-jax {
     <i class="fa fa-file-word-o"></i>
 </span>
 <span class="post-meta-item-text">字数: </span>
-<span class="leancloud-visitors-count">23562</span>
+<span class="leancloud-visitors-count">23568</span>
 &nbsp; | &nbsp;
 <span class="post-meta-item-icon">
     <i class="fa fa-coffee"></i>
@@ -399,14 +399,14 @@ code.has-jax {
 </span></span><span style="display:flex;"><span>        debugPrint(error.localizedDescription)
 </span></span><span style="display:flex;"><span>    }
 </span></span><span style="display:flex;"><span>}
-</span></span></code></pre></div><p>上面代码执行后，首先会打印字符串<code>Fetching user info</code>，过一小会儿才打印<code>User info fetched</code>，这正是我们编写代码语句的顺序。而且，我们成功地删除了闭包且不需要任何其它额外的东西来实现按顺序输出。</p>
-<p>在<code>await</code>调用挂起期间发生的事情是，我们正在将控制权交还给系统。因此，我们无法控制何时能够再次获得控制权。<font color="#de7802">调用<code>fetchUserInfo()</code>的线程将被释放去做其它工作，具体做什么工作无需我们关心，因为这些由系统调度处理</font>。其它工作可能是我们应用内的另一个任务，或者是系统外部的任务。在我们获得控制权之前，无法继续执行代码中的任何语句。</p>
-<p>因此，上面示例代码将按照书写顺序打印语句，但打印<code>User info fetched</code>可能需要一点时间，因为我们已经将调用线程交给了系统，获取用户信息是一个耗时任务。当用户信息获取完成时，<code>fetchUserInfo</code>函数调用将到达其函数体中的<code>return</code>语句，这个<code>return</code>语句将控制权返回给我们。但请注意，<font color="#de7802">系统将决定何时将控制权交还给我们，这并不是在<code>return</code>语句后立即发生</font>。系统可能正在执行其它并发任务，它需要处理高其它优先级的问题，然后才会交换控制权给我们。</p>
+</span></span></code></pre></div><p>上面代码执行后，首先会打印字符串<code>Fetching user info</code>，过一小会儿才打印<code>User info fetched</code>，则正是代码语句的书写顺序。而且，我们成功地删除了闭包且不需要任何其它额外的操作就实现按顺序输出。</p>
+<p>在<code>await</code>调用挂起期间发生的事情是：我们将控制权交还给系统，因此我们无法控制何时能够再次获得控制权。<font color="#de7802">调用<code>fetchUserInfo()</code>的同一个线程将被释放去做其它工作，具体做什么工作无需我们关心，因为这些是由系统调度处理的</font>。其它工作可能是我们应用内的另一个任务，或者是系统外部的任务。在我们获得控制权之前，无法继续执行代码中的任何语句。</p>
+<p>因此，上面示例代码将按照书写顺序执行打印语句，但打印<code>User info fetched</code>可能需要一点时间，因为我们已经将调用线程交给了系统，获取用户信息是一个耗时任务。当用户信息获取完成时，<code>fetchUserInfo</code>函数调用将到达其函数体中的<code>return</code>语句，这个<code>return</code>语句将控制权返回给我们。但请注意，<font color="#de7802">系统将决定何时将控制权交还给我们，但这并不是在遇到<code>return</code>语句后立即发生</font>。系统可能正在执行其它并发任务，它需要处理高其它优先级的问题，然后才会交还控制权给我们。</p>
 <p>总之，在遇到一个挂起点（<code>await</code>关键字）后，<font color="#de7802">如果系统选择挂起，那么它下面的内容将不会执行，直至控制权重新交还给我们</font>。在挂起期间，系统会利用该线程做其它工作。</p>
-<p>任何在<code>await</code>调用之后发生的事情被称为<code>continuation</code>，我们需要继续做在被挂起之前正在做的事情，这很重要。因为我们可能在不同线程重新拿到控制权，即<font color=red><code>await</code>下面的语句可能在不同的线程中运行</font>。这意味着在上面示例代码中，第一个打印语句可能在一个线程中运行，而第二个打印语句可能在一个完全不同的线程中运行。</p>
+<p>任何在<code>await</code>调用之后发生的事情被称为<code>continuation</code>，控制权恢复后，我们需要继续做这些事情，这很重要。因为我们可能在不同线程重新拿到控制权，<font color=red>即<code>await</code>下面的语句可能在不同的线程中运行</font>。这意味着在上面示例代码中，第一个打印语句可能在一个线程中运行，而第二个打印语句可能在一个完全不同的线程中运行。</p>
 <p>使用<code>async/await</code>并不能让我们免于在主线程上做<code>UI</code>工作，所以如果需要更新<code>UI</code>，需要将这项工作推迟到主线程上。在实践中，这是通过一个名为<code>@MainActor</code>的系统级全局<code>actor</code>来完成的。</p>
 <h3 id="using-asyncawait">Using async/await</h3>
-<p>苹果所有基于闭包的并发API都有一个<code>async/await</code>版本，可以在<code>iOS 15</code>及更高版本上使用。虽然使用<code>Xcode 13.3</code>可以在<code>iOS 13</code>及更高版本上使用<code>async/await</code>，但<font color="#de7802">苹果原生支持<code>async/await</code>的API仅在<code>iOS 15</code>及以上版本中可用</font>。</p>
+<p>苹果所有基于闭包的并发API都有一个<code>async/await</code>版本，可以在<code>iOS 15</code>及更高版本上使用。虽然使用<code>Xcode 13.3</code>可以在<code>iOS 13</code>及更高版本上使用<code>async/await</code>，但<font color="#de7802">苹果原生支持的<code>async/await</code>版本API仅在<code>iOS 15</code>及以上版本中可用</font>。</p>
 <p>定义<code>async</code>函数时，可以使用<code>throws</code>标记。一般来说，如果正在模拟可能抛出错误或返回有效值的代码，可以简单地将函数标记为<code>throws</code>，然后将结果类型指定为调用成功后能得到的对象。本质上，<font color="#de7802">开始的<code>completionHandler</code>闭包的内容已经在函数签名中进行了移动</font>。</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">fetchUserInfo</span>() async <span style="color:#66d9ef">throws</span> -&gt; UserInfo {
 </span></span><span style="display:flex;"><span>    <span style="color:#75715e">//</span>
