@@ -6288,9 +6288,9 @@ func fetchUserInfo() async throws -&amp;gt; UserInfo {  let url = URL(string: &a
 上面示例中session.data(from:)返回一个元组，因此我们可以将其解构为两个不同的变量。因为没有使用 response变量，可以用下划线来代替，但我在那里放上response是为了表明，如果API有其他要求（比如需要检查 headers，或者以不同的方式处理HTTP状态码），可以使用这个类型为URLResponse的变量。需要将其转换为HTTPURLResponse才能从中获取有意义的信息。
 async get properties 关键字async/await并不局限于函数调用，还可以在只读计算属性中使用它。下面示例代码展示了如何做到这一点的：
 var userInfo: UserInfo {  get async throws {  let url = URL(string: &amp;#34;https://www.andyibanez.com/ fairesepages.github.io/books/async-await/user_profile.json&amp;#34;)!  let session = URLSession.shared  let (userInfoData, _) = try await session.data(from: url)  let userInfo = try JSONDecoder().decode(UserInfo.self, from: userInfoData)  return userInfo  } } 在声明计算属性时可以同时使用async和throws标记。但一般不推荐这样使用，除非已实现了某种缓存机制。否则若频繁地访问该属性，因为存在异步调用会导致访问显著的延迟。可能在某些情况下避免缓存机制是有意义的，但必须逐个案例进行分析。
-async/await in iOS 13 and iOS 14 之前已经提到，虽然async/await在iOS 13和iOS 14上可以使用，但苹果并没有提供使用async/await的系统API。你可能会疑惑，如果苹果在这些版本中一开始就没有提供任何async/await的系统API，那为什么还要在这些版本中支持async/await呢？如果需要在iOS 13和iOS 14中支持，可以使用Continuations来实现系统方法的async/await变体。
-Continuations Continuations很有用，因为利用它不仅能够将我们自己写的基于闭包的代码改为async/await版本，还能将第三方库和框架的代码进行封装。它能够帮助我们创建一致的代码库，在必要时只使用async/await而不是基于闭包的调用。
-并非所有基于闭包的代码都是为了处理并发或多线程。Swift和苹果的SDK中都有多个使用闭包的方法，这与并发无关。例如，集合的常用方法filter、map和reduce，使用闭包来操作它们的元素。请记住，因为很难有完全不使用闭包的项目，使用闭包是可以的。async/await旨在仅消除与并发相关的基于闭包的调用。
+async/await in iOS 13 and iOS 14 之前已经提到，虽然async/await在iOS 13和iOS 14上可以使用，但在这两个版本上苹果并没有提供使用async/await的系统API。你可能会疑惑，如果苹果在这些版本中一开始就没有提供任何async/await的系统API，那为什么还要在这些版本中支持async/await呢？如果需要在iOS 13和iOS 14中支持async/await版本的系统API，可以使用Continuations来实现系统方法的async/await变体。
+Continuations Continuations很有用，因为利用它不仅能够将自己写的基于闭包的代码改为async/await版本，还能将第三方库和框架的代码进行封装。使用Continuations能够帮助我们创建一致的代码库，在必要时只使用async/await而不是使用基于闭包的调用。
+并非所有基于闭包的代码都是为了处理并发或多线程。Swift和苹果的SDK中都有多个使用闭包的方法，但这些方法与并发无关。例如，集合常用方法filter、map和reduce，使用闭包来操作它们的元素。请记住，因为很难有完全不使用闭包的项目，使用闭包是可以的。async/await旨在消除与并发相关的基于闭包的调用。
 Understanding Continuations 简而言之，Continuations是指异步调用完成后发生的一切。当我们使用async/await时，一个continuation就是简单地指await调用下面的所有内容。
 如果使用的是基于闭包的代码，continuation指的在回调completion handlers中编写的代码。而如果使用的是基于delegate的代码，continuation就是在某个操作完成后的的某个方法调用。新的并发系统允许我们将基于闭包的代码或基于delegate的代码转换为async/await版本。
 Converting closure-based calls into async/await 下面是基于闭包的函数定义：
