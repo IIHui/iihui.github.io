@@ -241,7 +241,7 @@ code.has-jax {
     <i class="fa fa-file-word-o"></i>
 </span>
 <span class="post-meta-item-text">字数: </span>
-<span class="leancloud-visitors-count">24103</span>
+<span class="leancloud-visitors-count">24115</span>
 &nbsp; | &nbsp;
 <span class="post-meta-item-icon">
     <i class="fa fa-coffee"></i>
@@ -494,8 +494,8 @@ code.has-jax {
 </span></span><span style="display:flex;"><span>}
 </span></span></code></pre></div><p><code>withCheckedThrowingContinuation</code>是一种提供带参闭包的方法，闭包中的这个参数实际上就是<code>continuation</code>，当使用闭包的异步调用完成后，我们需要使用<code>continuation</code>来<code>resume</code>它。<code>continuation</code>的类型是<code>CheckedContinuation&lt;T, any Error&gt;</code>，这意味着我们可以使用一个对象或<code>Error</code>来<code>resume</code>它。这种设计完全合理，因为涉及网络调用的操作始终存在失败的可能性。</p>
 <p>在上面示例代码中<code>withCheckedThrowingContinuation</code>是一个可能抛出错误的<code>async</code>函数，因此我们在调用它的时候使用了<code>try await</code>。当<code>fetchUserInfo</code>成功获取到<code>userInfo</code>时，我们调用<code>continuation.resume(returning: user)</code>来唤起<code>continuation</code>，当<code>fetchUserInfo</code>调用发生错误时，我们使用<code>continuation.resume(throwing: err)</code>抛出异常。</p>
-<p>当调用<code>continuation.resume(returning: user)</code>时，会使得<code>async</code>版本的<code>fetchUserInfo()</code>调用者返回结果对象；而调用<code>continuation.resume(throwing:)</code>则会使得其抛出异常。请注意，使用<code>continuation</code>时必须在某个时刻精确调用一次<code>continuation</code>。<font color="#de7802">既不能忘记调用，也不能调用多次</font>。若忘记调用，程序将陷入死锁状态。</p>
-<p>除了使用<code>withCheckedThrowingContinuation</code>创建<code>continuation</code>，还有其它三种方式创建<code>continuation</code>，即共有4种方法来创建的<code>continuations</code>：</p>
+<p>当调用<code>continuation.resume(returning: user)</code>时，会使得<code>async</code>版本的<code>fetchUserInfo()</code>调用者返回结果对象；而调用<code>continuation.resume(throwing:)</code>则会使得其抛出异常。请注意，使用<code>continuation</code>时必须在某个时刻精确调用一次<code>continuation</code>（只能一次）。<font color="#de7802">既不能忘记调用，也不能调用多次</font>，若忘记调用，程序将陷入死锁状态。</p>
+<p>除了使用<code>withCheckedThrowingContinuation</code>创建<code>continuation</code>，还有其它三种方式创建<code>continuation</code>，即共有四种方法来创建<code>continuations</code>：</p>
 <ul>
 <li>
 <p><code>withCheckedThrowingContinuation</code></p>
@@ -510,11 +510,11 @@ code.has-jax {
 <p><code>withUnsafeContinuation</code></p>
 </li>
 </ul>
-<p>当原始的闭包代码根本不返回任何错误时，使用<code>withCheckedContinuation</code>。不安全的变体，<code>withUnsafeThrowingContinuation</code>和 <code>withUnsafeContinuation</code> ，与对应的Checked项类似。主要区别是，当使用<code>Checked Continuations</code>时，Swift会在遇到任何违规情况（如多次调用<code>continuations</code>或完全忘记调用<code>continuation</code>）时通过记录错误来帮助保护你。</p>
-<p>不安全<code>continuations</code>没有这些功能，但它们可能稍微快一点。总的来说，不建议使用不安全<code>continuations</code>，但也请注意，大多数情况下，可以互换使用它们。</p>
+<p>当原始的闭包代码不返回任何错误时，可以使用<code>withCheckedContinuation</code>。不安全的变体，<code>withUnsafeThrowingContinuation</code>和 <code>withUnsafeContinuation</code> ，与对应的<code>Checked</code>方式类似。主要区别在于，当使用<code>Checked Continuations</code>时，<code>Swift</code>会在遇到任何违规情况（如多次调用<code>continuations</code>或完全忘记调用<code>continuation</code>）时<font color=red>通过记录错误来保护你</font>。</p>
+<p>不安全<code>continuations</code>没有这些功能，但它们可能稍微快一点。总的来说，不建议使用不安全的<code>continuations</code>，但也请注意，在大多数情况下可以互换使用它们。</p>
 <h3 id="converting-delegate-based-code-into-asyncawait">Converting delegate-based code into async/await</h3>
-<p>将基于委托的代码转换为<code>async/await</code>是一个更复杂的过程，因为这些类型的API可能会根据发生的事件类型调用不同的<code>delegate</code>方法。基于代理的API可能非常混乱，尤其是当它们有大量可能的方法调用时。</p>
-<p>在下面示例中，我们可以为调用者创建一个更简洁的API，通过围绕<code>CNContactPickerViewControllerDelegate</code>及其方法创建一个包装对象来实现：</p>
+<p>将基于<code>delegate</code>的代码转换为<code>async/await</code>是一个更复杂的过程，因为这些类型的<code>API</code>可能会根据发生的不同事件调用不同的<code>delegate</code>方法。基于代理的<code>API</code>可能非常混乱，尤其是当它们有大量可能的方法调用时。</p>
+<p>在下面示例中，我们可以为调用者创建一个更简洁的<code>API</code>，通过围绕<code>CNContactPickerViewControllerDelegate</code>及其方法创建一个包装对象来实现：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span><span style="color:#75715e">// 原实现</span>
 </span></span><span style="display:flex;"><span><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">promptContact</span>() {
 </span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">let</span> picker = CNContactPickerViewController()
