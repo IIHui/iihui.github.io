@@ -241,13 +241,13 @@ code.has-jax {
     <i class="fa fa-file-word-o"></i>
 </span>
 <span class="post-meta-item-text">字数: </span>
-<span class="leancloud-visitors-count">23844</span>
+<span class="leancloud-visitors-count">24103</span>
 &nbsp; | &nbsp;
 <span class="post-meta-item-icon">
     <i class="fa fa-coffee"></i>
 </span>
 <span class="post-meta-item-text">阅读: </span>
-<span class="leancloud-visitors-count">48 分钟</span>
+<span class="leancloud-visitors-count">49 分钟</span>
 </span>
       </div>
     </header>
@@ -476,7 +476,7 @@ code.has-jax {
 </span></span><span style="display:flex;"><span>    }
 </span></span><span style="display:flex;"><span>    dataTask.resume()
 </span></span><span style="display:flex;"><span>}
-</span></span></code></pre></div><p>可以使用<code>withCheckedThrowingContinuation</code>将上面闭包式的函数转换为<code>async</code>版本（下面这种方式和<code>promiseKit</code>有些相似）。下面示例代码实际上是在<code>withCheckedThrowingContinuation</code>中封装了基于闭包的代码。</p>
+</span></span></code></pre></div><p>可以使用<code>withCheckedThrowingContinuation</code>将上面闭包式的函数转换为<code>async</code>版本（下面代码和使用<code>promiseKit</code>相似）。下面代码本质上是将基于闭包的代码封装在<code>withCheckedThrowingContinuation</code>（是一个方法，该方法提供带参闭包）中。</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">fetchUserInfo2</span>() async <span style="color:#66d9ef">throws</span> -&gt; UserInfo {
 </span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">try</span> await withCheckedThrowingContinuation { continuation <span style="color:#66d9ef">in</span>
 </span></span><span style="display:flex;"><span>        fetchUserInfo { userInfo, error <span style="color:#66d9ef">in</span>
@@ -486,14 +486,15 @@ code.has-jax {
 </span></span><span style="display:flex;"><span>                continuation.resume(throwing: err)
 </span></span><span style="display:flex;"><span>            } <span style="color:#66d9ef">else</span> {
 </span></span><span style="display:flex;"><span>                <span style="color:#75715e">// Throw a generic error.</span>
-</span></span><span style="display:flex;"><span>                <span style="color:#66d9ef">let</span> err = NSError(domain: <span style="color:#e6db74">&#34;com.socialmedia. app&#34;</span>, code: <span style="color:#ae81ff">400</span>)
+</span></span><span style="display:flex;"><span>                <span style="color:#66d9ef">let</span> err = NSError(domain: <span style="color:#e6db74">&#34;com.socialmedia.app&#34;</span>, code: <span style="color:#ae81ff">400</span>)
 </span></span><span style="display:flex;"><span>                continuation.resume(throwing: err)
 </span></span><span style="display:flex;"><span>            }
 </span></span><span style="display:flex;"><span>        }
 </span></span><span style="display:flex;"><span>    }
 </span></span><span style="display:flex;"><span>}
-</span></span></code></pre></div><p><code>withCheckedThrowingContinuation</code>是一种提供带参闭包的方法，这个参数实际上就是<code>continuation</code>，当带有闭包的异步调用完成后，我们需要<code>resume</code>它。<code>continuation</code>的类型是<code>CheckedContinuation&lt;T, any Error&gt;</code>，这意味着我们可以使用一个对象或<code>Error</code>来<code>resume</code>它，这是合理的，因为任何网络请求都可能失败。</p>
-<p>在上面示例代码中<code>withCheckedThrowingContinuation</code>是一个可能抛出错误的异步函数，因此我们在调用的时候使用了<code>try await</code>。当<code>fetchUserInfo</code>成功获取到<code>userInfo</code>时，我们调用<code>continuation.resume(returning: user)</code>来唤起<code>continuation</code>，当发生错误时使用<code>continuation.resume(throwing: err)</code>来抛出异常。</p>
+</span></span></code></pre></div><p><code>withCheckedThrowingContinuation</code>是一种提供带参闭包的方法，闭包中的这个参数实际上就是<code>continuation</code>，当使用闭包的异步调用完成后，我们需要使用<code>continuation</code>来<code>resume</code>它。<code>continuation</code>的类型是<code>CheckedContinuation&lt;T, any Error&gt;</code>，这意味着我们可以使用一个对象或<code>Error</code>来<code>resume</code>它。这种设计完全合理，因为涉及网络调用的操作始终存在失败的可能性。</p>
+<p>在上面示例代码中<code>withCheckedThrowingContinuation</code>是一个可能抛出错误的<code>async</code>函数，因此我们在调用它的时候使用了<code>try await</code>。当<code>fetchUserInfo</code>成功获取到<code>userInfo</code>时，我们调用<code>continuation.resume(returning: user)</code>来唤起<code>continuation</code>，当<code>fetchUserInfo</code>调用发生错误时，我们使用<code>continuation.resume(throwing: err)</code>抛出异常。</p>
+<p>当调用<code>continuation.resume(returning: user)</code>时，会使得<code>async</code>版本的<code>fetchUserInfo()</code>调用者返回结果对象；而调用<code>continuation.resume(throwing:)</code>则会使得其抛出异常。请注意，使用<code>continuation</code>时必须在某个时刻精确调用一次<code>continuation</code>。<font color="#de7802">既不能忘记调用，也不能调用多次</font>。若忘记调用，程序将陷入死锁状态。</p>
 <p>除了使用<code>withCheckedThrowingContinuation</code>创建<code>continuation</code>，还有其它三种方式创建<code>continuation</code>，即共有4种方法来创建的<code>continuations</code>：</p>
 <ul>
 <li>
