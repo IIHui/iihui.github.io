@@ -241,7 +241,7 @@ code.has-jax {
     <i class="fa fa-file-word-o"></i>
 </span>
 <span class="post-meta-item-text">字数: </span>
-<span class="leancloud-visitors-count">24115</span>
+<span class="leancloud-visitors-count">24112</span>
 &nbsp; | &nbsp;
 <span class="post-meta-item-icon">
     <i class="fa fa-coffee"></i>
@@ -451,7 +451,7 @@ code.has-jax {
 <p>并非所有基于闭包的代码都必然涉及并发和/或多线程处理。在<code>Swift</code>和苹果<code>SDK</code>中，存在大量接受闭包的调用，这些调用与并发毫无关联。例如，集合中广受欢迎的<code>filter</code>、<code>map</code>和<code>reduce</code>方法，正是通过闭包对元素进行操作的。请牢记一点，几乎不可能存在完全不使用闭包的项目，这完全正常。<code>async/await</code>的设计目标，<font color="#de7802">仅是消除并发相关任务中基于闭包的调用方式</font>。</p>
 <h3 id="understanding-continuations">Understanding Continuations</h3>
 <p>简而言之，<code>Continuations</code>是指<code>async</code>调用完成后发生的一切。当我们使用<code>async/await</code>时，<code>continuation</code>就是指<code>await</code>调用之后的所有内容。</p>
-<p>如果使用的是基于闭包的代码，<code>continuation</code>指的在回调<code>completion handlers</code>中编写的代码。而如果使用的是基于<code>delegate</code>的代码，<code>continuation</code>就是在某个操作完成后的的某个代理方法调用。新的并发系统允许我们将基于闭包式的或基于<code>delegate</code>式的<code>continuation</code>转换为<code>async/await</code>版本。</p>
+<p>如果使用的是基于闭包的代码，<code>continuation</code>指的是在回调<code>completion handlers</code>中的代码。而如果使用的是基于<code>delegate</code>的代码，<code>continuation</code>就是在某个操作完成后的代理方法调用。新的并发系统允许我们将基于闭包式的或基于<code>delegate</code>式的<code>continuation</code>转换为<code>async/await</code>版本。</p>
 <h3 id="converting-closure-based-calls-into-asyncawait">Converting closure-based calls into async/await</h3>
 <p>下面是基于闭包的函数定义：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">fetchUserInfo</span>(
@@ -492,9 +492,9 @@ code.has-jax {
 </span></span><span style="display:flex;"><span>        }
 </span></span><span style="display:flex;"><span>    }
 </span></span><span style="display:flex;"><span>}
-</span></span></code></pre></div><p><code>withCheckedThrowingContinuation</code>是一种提供带参闭包的方法，闭包中的这个参数实际上就是<code>continuation</code>，当使用闭包的异步调用完成后，我们需要使用<code>continuation</code>来<code>resume</code>它。<code>continuation</code>的类型是<code>CheckedContinuation&lt;T, any Error&gt;</code>，这意味着我们可以使用一个对象或<code>Error</code>来<code>resume</code>它。这种设计完全合理，因为涉及网络调用的操作始终存在失败的可能性。</p>
-<p>在上面示例代码中<code>withCheckedThrowingContinuation</code>是一个可能抛出错误的<code>async</code>函数，因此我们在调用它的时候使用了<code>try await</code>。当<code>fetchUserInfo</code>成功获取到<code>userInfo</code>时，我们调用<code>continuation.resume(returning: user)</code>来唤起<code>continuation</code>，当<code>fetchUserInfo</code>调用发生错误时，我们使用<code>continuation.resume(throwing: err)</code>抛出异常。</p>
-<p>当调用<code>continuation.resume(returning: user)</code>时，会使得<code>async</code>版本的<code>fetchUserInfo()</code>调用者返回结果对象；而调用<code>continuation.resume(throwing:)</code>则会使得其抛出异常。请注意，使用<code>continuation</code>时必须在某个时刻精确调用一次<code>continuation</code>（只能一次）。<font color="#de7802">既不能忘记调用，也不能调用多次</font>，若忘记调用，程序将陷入死锁状态。</p>
+</span></span></code></pre></div><p><code>withCheckedThrowingContinuation</code>是一种提供带参闭包的方法，闭包中的这个参数实际上就是<code>continuation</code>，当使用闭包的异步调用完成后，需要使用<code>continuation</code>来<code>resume</code>它。<code>continuation</code>的类型是<code>CheckedContinuation&lt;T, any Error&gt;</code>，这意味着我们可以使用一个对象或<code>Error</code>来<code>resume</code>它。这种设计完全合理，因为涉及网络调用的操作始终存在失败的可能性。</p>
+<p>在上面代码中<code>withCheckedThrowingContinuation</code>是一个<font color="#de7802">可能抛出错误的<code>async</code>函数</font>，因此我们在调用它的时候使用了<code>try await</code>。当函数<code>fetchUserInfo</code>成功获取到<code>userInfo</code>时，我们调用<code>continuation.resume(returning: user)</code>来<code>resume</code>对应的<code>continuation</code>，当<code>fetchUserInfo</code>调用发生错误时，我们使用<code>continuation.resume(throwing: err)</code>抛出异常。</p>
+<p>当调用<code>continuation.resume(returning:)</code>时，会使得<code>async</code>版本的<code>fetchUserInfo()</code>调用者返回结果对象；而调用<code>continuation.resume(throwing:)</code>则会使得其抛出错误。请注意，使用<code>continuation</code>时<font color=red>必须在某个时刻精确调用一次<code>continuation</code>（只能一次）</font>。<font color="#de7802">既不能忘记调用，也不能调用多次</font>，若忘记调用，程序将陷入死锁状态。</p>
 <p>除了使用<code>withCheckedThrowingContinuation</code>创建<code>continuation</code>，还有其它三种方式创建<code>continuation</code>，即共有四种方法来创建<code>continuations</code>：</p>
 <ul>
 <li>
