@@ -513,7 +513,7 @@ code.has-jax {
 <h3 id="converting-delegate-based-code-into-asyncawait">Converting delegate-based code into async/await</h3>
 <p>将基于<code>delegate</code>的代码转换为<code>async/await</code>是一个更复杂的过程，因为这类<code>API</code>可能会根据发生的不同类型事件调用不同<code>delegate</code>方法，这会形成跳跃式的代码结构。基于代理的<code>API</code>可能非常混乱，尤其是当它们有大量可能的方法调用时。</p>
 <p>尽管不同调用可能发生在同一线程中，但由于方法调用方式的特性，其行为往往难以预测。例如，<code>ContactsUI</code>框架提供的<code>CNContactPickerViewController</code>对象：当用户选择联系人时通过一个方法通知，而若用户取消选择，则会调用另一个方法通知。</p>
-<p>在下面示例中，我们可以为调用者创建一个更简洁的<code>API</code>，通过围绕<code>CNContactPickerViewControllerDelegate</code>及其方法创建一个包装对象来实现：</p>
+<p>在下面示例中，我们可以为调用者创建一个更简洁的<code>API</code>，围绕<code>CNContactPickerViewControllerDelegate</code>及其方法创建一个包装对象来实现：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span><span style="color:#75715e">// 原实现</span>
 </span></span><span style="display:flex;"><span><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">promptContact</span>() {
 </span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">let</span> picker = CNContactPickerViewController()
@@ -561,14 +561,14 @@ code.has-jax {
 </span></span><span style="display:flex;"><span>  }
 </span></span><span style="display:flex;"><span>  
 </span></span><span style="display:flex;"><span>  @MainActor 
-</span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">func</span> <span style="color:#a6e22e">contactPicker</span>(<span style="color:#66d9ef">_</span> picker: CNContactPickerViewController, didSelect contact: CNContact) {
+</span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">private</span> <span style="color:#66d9ef">func</span> <span style="color:#a6e22e">contactPicker</span>(<span style="color:#66d9ef">_</span> picker: CNContactPickerViewController, didSelect contact: CNContact) {
 </span></span><span style="display:flex;"><span>    contactContinuation?.resume(returning: contact)
 </span></span><span style="display:flex;"><span>    contactContinuation = <span style="color:#66d9ef">nil</span>
 </span></span><span style="display:flex;"><span>    picker.dismiss(animated: <span style="color:#66d9ef">true</span>, completion: <span style="color:#66d9ef">nil</span>) 
 </span></span><span style="display:flex;"><span>  }
 </span></span><span style="display:flex;"><span>  
 </span></span><span style="display:flex;"><span>  @MainActor 
-</span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">func</span> <span style="color:#a6e22e">contactPickerDidCancel</span>(<span style="color:#66d9ef">_</span> picker: CNContactPickerViewController) {
+</span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">private</span> <span style="color:#66d9ef">func</span> <span style="color:#a6e22e">contactPickerDidCancel</span>(<span style="color:#66d9ef">_</span> picker: CNContactPickerViewController) {
 </span></span><span style="display:flex;"><span>    contactContinuation?.resume(returning: <span style="color:#66d9ef">nil</span>)
 </span></span><span style="display:flex;"><span>    contactContinuation = <span style="color:#66d9ef">nil</span> 
 </span></span><span style="display:flex;"><span>  }
