@@ -241,13 +241,13 @@ code.has-jax {
     <i class="fa fa-file-word-o"></i>
 </span>
 <span class="post-meta-item-text">字数: </span>
-<span class="leancloud-visitors-count">24336</span>
+<span class="leancloud-visitors-count">24925</span>
 &nbsp; | &nbsp;
 <span class="post-meta-item-icon">
     <i class="fa fa-coffee"></i>
 </span>
 <span class="post-meta-item-text">阅读: </span>
-<span class="leancloud-visitors-count">49 分钟</span>
+<span class="leancloud-visitors-count">50 分钟</span>
 </span>
       </div>
     </header>
@@ -594,19 +594,37 @@ code.has-jax {
 </span></span><span style="display:flex;"><span>}
 </span></span></code></pre></div><p>经过<code>ContactPicker</code>封装后，原先的<code>ViewController</code>中的代码就减少了很多，类也变得小很多。虽然我们成功为基于代理的调用提供了<code>async/await</code>版本，这确实很棒，但应该考虑这样做是否真的有必要。有时，基于委托的调用（如<code>CoreBluetooth、CoreLocation</code>）的复杂性可能不值得为其提供<code>async/await</code>版本。</p>
 <h3 id="supporting-asyncawait-in-ios-13-and-14">Supporting async/await in iOS 13 and 14</h3>
-<p>之前有提到过，虽然在<code>Xcode 13.3</code>中就可以使用<code>async/await</code>，但当时苹果没有提供系统库的<code>async</code>版本，直到使用<code>iOS 15</code>才开始提供。因此，为了兼容<code>iOS 13</code>和<code>14</code>系统，建议扩展系统库方法：</p>
+<p>之前有提到过，但需要再强调一下，虽然在<code>Xcode 13.3</code>中就可以使用<code>async/await</code>，但在这两个版本的系统中苹果并没有提供系统库的<code>async</code>版本，直到<code>iOS 15</code>才开始提供系统库的<code>async</code>版本。因此，为了兼容<code>iOS 13</code>和<code>14</code>系统，建议扩展系统库方法并利用<code>available</code>检查器：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span><span style="color:#66d9ef">extension</span> <span style="color:#a6e22e">LAContext</span> {
 </span></span><span style="display:flex;"><span>    
 </span></span><span style="display:flex;"><span>    @available(iOS, introduced: <span style="color:#ae81ff">13</span>, deprecated: <span style="color:#ae81ff">15</span>, message: <span style="color:#e6db74">&#34;This method is no longer necessary. Use the API available in iOS 15.&#34;</span>)
 </span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">func</span> <span style="color:#a6e22e">evaluatePolicy</span>(<span style="color:#66d9ef">_</span> policy: LAPolicy, localizedReason: String) async <span style="color:#66d9ef">throws</span> -&gt; Bool {
 </span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">try</span> await withCheckedThrowingContinuation({ continuation <span style="color:#66d9ef">in</span>
 </span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">self</span>.evaluatePolicy(policy, localizedReason:localizedReason) { success, error <span style="color:#66d9ef">in</span>
-</span></span><span style="display:flex;"><span>                <span style="color:#66d9ef">if</span> <span style="color:#66d9ef">let</span> error = error {
-</span></span><span style="display:flex;"><span>                    continuation.resume(throwing: error)
+</span></span><span style="display:flex;"><span>                <span style="color:#66d9ef">if</span> <span style="color:#66d9ef">let</span> err = error {
+</span></span><span style="display:flex;"><span>                    continuation.resume(throwing: err)
 </span></span><span style="display:flex;"><span>                } <span style="color:#66d9ef">else</span> {
 </span></span><span style="display:flex;"><span>                    continuation.resume(returning: success)
 </span></span><span style="display:flex;"><span>                }
 </span></span><span style="display:flex;"><span>            }
+</span></span><span style="display:flex;"><span>        })
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p>在上面代码中，使用<code>@available</code>可以保证这段代码仅运行在<code>iOS 13</code>和<code>iOS 14</code>。老版本的<code>iOS</code>系统不支持<code>async/await</code>，因此可以把低于<code>iOS 12</code>及以下的系统排除在外。当上面方法运行在<code>iOS 15</code>以上的系统时，会得到的警告：<code>This method is no longer necessary Use the API available in iOS 15</code>。当target最低支持到<code>iOS 15</code>以后，上面扩展方法就可以删除了。</p>
+<p>上面的<code>continuation</code>允许我们平滑地将基于闭包的调用转换为<code>SDK</code>已经存在的<code>async/await</code>调用。但仅限于针对<code>iOS 15</code>及更高版本时。转换时已经不再返回错误，而是将该方法转换为抛出异常的类型。</p>
+<p>下面代码和上面代码没有太大的区别，最大的不同就是返回类型为<code>(Data, Response)</code>类型的元组，但总体而言，将此方法暴露给<code>iOS 14</code>和<code>13</code>系统并不复杂。需要注意的是，我们对返回的<code>data</code>和<code>response</code>进行了强制解包。这样做的原因是：若查看API的原始<code>async</code>签名，元组中的这些属性并未标记为可选类型，因此可安全地假设若未出现错误，这两个变量必为非空值。若对此存疑，可将元组元素标记为可选类型。</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span><span style="color:#66d9ef">extension</span> <span style="color:#a6e22e">URLSession</span> {
+</span></span><span style="display:flex;"><span>    
+</span></span><span style="display:flex;"><span>    @available(iOS, introduced: <span style="color:#ae81ff">13</span>, deprecated: <span style="color:#ae81ff">15</span>, message: <span style="color:#e6db74">&#34;This method is no longer necessary. Use the API available in iOS 15.&#34;</span>)
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">func</span> <span style="color:#a6e22e">data</span>(from url: URL) async <span style="color:#66d9ef">throws</span> -&gt; (Data, URLResponse) {
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">try</span> await withCheckedThrowingContinuation({ continuation <span style="color:#66d9ef">in</span>
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">self</span>.dataTask(with: url) { data, response, error <span style="color:#66d9ef">in</span>
+</span></span><span style="display:flex;"><span>                <span style="color:#66d9ef">if</span> <span style="color:#66d9ef">let</span> error = error {
+</span></span><span style="display:flex;"><span>                    continuation.resume(throwing: error) }
+</span></span><span style="display:flex;"><span>                <span style="color:#66d9ef">else</span> {
+</span></span><span style="display:flex;"><span>                    continuation.resume(returning: (data!, response!))
+</span></span><span style="display:flex;"><span>                }
+</span></span><span style="display:flex;"><span>            }.resume()
 </span></span><span style="display:flex;"><span>        })
 </span></span><span style="display:flex;"><span>    }
 </span></span><span style="display:flex;"><span>}
@@ -636,7 +654,7 @@ code.has-jax {
 </span></span><span style="display:flex;"><span>    }
 </span></span><span style="display:flex;"><span>}
 </span></span></code></pre></div><h2 id="structured-concurrency">Structured Concurrency</h2>
-<p>截至目前，我们已经讨论了<code>async/await</code>是什么以及它是如何工作的。也已经看到这种新工具如何帮助我们编写结构化代码，使其类似于过程式编程。使用它能够摆脱那些破坏代码线性可读性的其它类型的回调，例如闭包和委托。但我们也已经看到，所有这些代码实际上并不是同时运行、并发或多线程执行的。</p>
+<p>截至目前，我们已经讨论了<code>async/await</code>是什么以及它是如何工作的。也已经看到这种新工具如何帮助我们编写结构化代码，使代码结构类似于过程式编程。使用<code>async/await</code>能够摆脱那些破坏代码线性可读性的其它类型的回调，例如闭包和委托。但我们也已经看到，所有这些代码实际上并不是同时运行、并发或多线程执行的。</p>
 <p>我们定义并发为：一个线程（或你的程序）同时处理多件事情的能力。这个定义并不严格意味着同时做多件事，通常人们谈到并发时，实际上指的是多线程或并行。为了与社区对这个词的定义保持一致，当我们谈到并发时，指的是同时执行多个任务。</p>
 <h3 id="understanding-structured-concurrency">Understanding Structured Concurrency</h3>
 <p>结构化并发遵循结构化编程的相同理念。即<font color="#de7802">按照我们预期的顺序编写代码，并看到可预测（或至少半可预测）的结果</font>。与基于闭包的代码不同，变量具有明确定义的作用域，可以预期代码不会跳转到破坏代码阅读流程的其它地方。这使得我们无需关心诸如内存管理等其它细节（块中捕获的变量会怎样？闭包能否被保留？<code>“weak self”</code>等）。</p>
