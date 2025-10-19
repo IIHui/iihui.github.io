@@ -241,7 +241,7 @@ code.has-jax {
     <i class="fa fa-file-word-o"></i>
 </span>
 <span class="post-meta-item-text">字数: </span>
-<span class="leancloud-visitors-count">25277</span>
+<span class="leancloud-visitors-count">25276</span>
 &nbsp; | &nbsp;
 <span class="post-meta-item-icon">
     <i class="fa fa-coffee"></i>
@@ -676,12 +676,12 @@ code.has-jax {
 </span></span></code></pre></div><p>要并发运行代码，只需在<code>let</code>声明前添加<code>async</code>关键字，声明的其余部分看起来像正常的<code>Swift</code>变量初始化。需要注意的是，要执行<code>async let</code>操作，必须处于异步上下文中，既可以处于一个<code>Task</code>中，还是处于一个标记为<code>async</code>的函数中。</p>
 <p>当代码执行到<code>async let</code>声明时，赋值语句之后的所有操作都将在其它位置执行（被调用的函数和方法可能在不同线程中运行），各项任务将并行执行。<code>async let</code>任务作为创建它们的任务的子任务被创建。</p>
 <p>如果在<code>async let</code>调用之间添加<code>print</code>语句，将会看到它们会被立即调用。<code>userInfo</code> 和<code>followers</code>将同时运行，但代码会在即将返回时暂停。需要注意的是，<code>await</code>关键字是一个挂起点，这意味着<code>fetchUserInfo</code>和<code>fetchFellows</code><font color="#de7802">都返回或其中一个抛出一个错误之前，函数都是被挂起的</font>。</p>
-<p>之前有说过，每一次<code>async</code>调用必须有与之对应的<code>await</code>，但并不要求<code>async</code>和<code>await</code>必须在同一行。<font color=red>使用<code>async let</code>时，当需要使用对应变量的值时，才需要使用<code>await</code>关键字</font>。因此，如果<code>async let</code>调用返回一个其它函数依赖的值，就在调用处使用<code>await</code>。如果需要在函数内部并发获取多个值，可以在返回语句处直接使用<code>await</code>，这并为违反async<code>调用必须与</code>await`关键字配对的规则。</p>
+<p>之前有说过，每一次<code>async</code>调用必须有与之对应的<code>await</code>，但并不要求<code>async</code>和<code>await</code>必须在同一行。<font color=red>使用<code>async let</code>时，当需要使用对应变量的值时，才需要使用<code>await</code>关键字</font>。因此，如果<code>async let</code>调用返回一个其它函数依赖的值，就在调用处使用<code>await</code>。如果需要在函数内部并发获取多个值，可以在返回语句处直接使用<code>await</code>，这并未违反<code>async</code>调用必须与<code>await</code>关键字配对的原则。</p>
 <p>使用<code>aync let</code>是非常有用的，可以在任何地方使用<code>await</code>关键字，如单个变量声明，或在等待数组元素时，或者像上面示例在返回元组之前等场景。</p>
 <p>需要特别注意的是，虽然我们使用<code>async let</code>构造来明确表达同时运行任务的意图，但依然由<font color="#de7802">系统决定是否真的并行运行你的代码，或是否为多个调用复用另一个线程</font>。也就是说，系统可能会决定在不同的但共享的线程中运行<code>fetchUserInfo</code>和<code>fetchFollowingAndFollowers</code>，实际上是以串行方式运行，远离主线程。</p>
 <h3 id="task-groups">Task Groups</h3>
 <p>若预先知道有多个并发量，使用<code>async let</code>来构建是非常理想的选择。但有时我们事先并不知道完成某个任务有多少个并发量。为了应对这种场景，<code>async/await</code>系统提供了<code>task groups</code>。</p>
-<p>任务组是一种结构化的并发工具，允许我们同时运行未知数量的（可能）并发任务，但要求这些任务是相关的。如果有太多任务，Swift不会一次性运行所有任务，它会对任务进行优先级排序，尽可能多地并发运行。</p>
+<p>任务组是一种结构化的并发工具，允许我们同时运行未知数量的（可能）并发任务，但要求这些任务是相关的。如果有太多任务，<code>Swift</code>不会一次性运行所有任务，它会对任务进行优先级排序，尽可能多地并发运行。</p>
 <h4 id="task-groups-in-action">Task Groups in Action</h4>
 <p>为了创建任务组，可以使用<code>withTaskGroup</code>和<code>withThrowingTaskGroup</code>函数。如同创建<code>continuations</code>一样，创建任务组也有区分是否抛出异常。</p>
 <p>需要注意的是，一个计算机系统并没有无限数量的线程。即在下面示例代码中，任务组会尽最大努力并行下载所有图片，但会先进行优化和优先级排序。如果一次处理大量并发任务，任务组可能会将任务排队以待稍后执行，并不一定会同时执行所有任务。</p>
@@ -722,7 +722,7 @@ code.has-jax {
 </span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">try</span> fileManager.moveItem(at: downloadedImageUrl, to: destinationUrl)
 </span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">return</span> destinationUrl
 </span></span><span style="display:flex;"><span>}
-</span></span></code></pre></div><p>不管是使用withTaskGroup还是withThrowingTaskGroup创建任务组，都需要指定该任务组产生的数据类型。在上面示例中，任务组产生的是URL数组。在withTaskGroup和withThrowingTaskGroup的闭包中，参数group就是任务组本身。往任务组添加任务使用addTask方法，任务提交后立即开始执行。</p>
+</span></span></code></pre></div><p>不管是使用<code>withTaskGroup</code>还是<code>withThrowingTaskGroup</code>创建任务组，都需要指定该任务组产生的数据类型。在上面示例中，任务组产生的是<code>URL</code>数组。在<code>withTaskGroup</code>和<code>withThrowingTaskGroup</code>的闭包中，参数<code>group</code>就是任务组本身。往任务组添加任务使用<code>addTask</code>方法，任务提交后立即开始执行。</p>
 <p>需要特别注意的是，<font color="#de7802">添加到组中的任务可能不会按照提交顺序执行</font>。如果想使用任务组，重要的是要以使顺序无关的方式设计你的代码。</p>
 <p><code>group</code>本身是一个集合，因此不仅可以使用<code>for-in</code>遍历它，还可以使用<code>filter、map、reduce</code>这样的高阶函数来处理结果。而且，<code>for</code>循环中也可以使用<code>await</code>关键字来处理随时间发出值的代码。</p>
 <p>还需要注意的是，只要任务组中的一个任务出现错误，这个任务组就会抛出异常。请记住这一点，因为它可能导致意想不到的行为，如果你认为你的图片下载会失败，那么在这个特定项目中为下载任务提供一个默认图片可能是个好主意。</p>
@@ -768,7 +768,7 @@ code.has-jax {
 </span></span><span style="display:flex;"><span>    authenticationTask.cancel()
 </span></span><span style="display:flex;"><span>}
 </span></span></code></pre></div><p>在上面示例代码中，我们定义变量的类型为<code>Task&lt;Bool, Error&gt;</code>，这是因为<code>context.evaluatePolicy</code>返回一个<code>Bool</code>值，也可能抛出一个<code>Error</code>。</p>
-<p>我们可以await某个Task的值。在下面示例代码中，需要使用<code>try await</code>，这是因为我们定义的authenticationTask可能返回一个Bool值，也可能抛出一个错误。</p>
+<p>我们可以<code>await</code>某个<code>Task</code>的值。在下面示例代码中，需要使用<code>try await</code>，这是因为我们定义的<code>authenticationTask</code>可能返回一个<code>Bool</code>值，也可能抛出一个错误。</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">authenticate</span>() {
 </span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">let</span> authenticationTask = Task&lt;Bool, Error&gt; {
 </span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">let</span> context = LAContext()
@@ -784,10 +784,10 @@ code.has-jax {
 </span></span><span style="display:flex;"><span>        }
 </span></span><span style="display:flex;"><span>    }
 </span></span><span style="display:flex;"><span>}
-</span></span></code></pre></div><p>需要注意的是，上面示例代码创建Task时，并没有使用<code>do-catch</code>语句体。上面代码隐式地创建了一个<code>Task&lt;(), Error&gt;</code>类型的任务，因为Task中不返回任何值，但会抛出异常。<font color="#de7802">Task不需要显式的do-catch语句体，因为闭包会自动捕获Error</font>。</p>
+</span></span></code></pre></div><p>需要注意的是，上面示例代码创建<code>Task</code>时，并没有使用<code>do-catch</code>语句体。上面代码隐式地创建了一个<code>Task&lt;(), Error&gt;</code>类型的任务，因为<code>Task</code>中不返回任何值，但会抛出异常。<font color="#de7802"><code>Task</code>不需要显式的<code>do-catch</code>语句体，因为闭包会自动捕获<code>Error</code></font>。</p>
 <p>当在代码中使用<code>Task {}</code>创建一个新任务时，它将继承产生这个任务的上下文信息。继承的信息包括任务运行的<code>Actor</code>（如果在<code>@MainActor</code>上运行的任务中产生了任务，那么该任务也将在<code>@MainActor</code>上运行）和优先级。如果新生成的任务是一个根任务（它创建了一个异步上下文，但其本身并不在其中运行），那么它将继承其所运行线程的<code>Actor</code>。</p>
 <h3 id="the-task-tree">The Task Tree</h3>
-<p>Swift中的新并发系统由一种称为任务树的基础结构驱动。正如名称所示，任务树为我们提供了一种并发在后台如何运作的思维模型。任务树决定了任务如何与其它任务关联运行。它还控制数据如何传递给子任务。之前我们提到过，<font color="#de7802">一个任务会从启动它的任务那里继承<code>actor</code>、优先级和任务局部变量</font>。这要归功于任务树。任务会生成子任务，而这些子任务会从父任务那里继承所有这些属性。</p>
+<p><code>Swift</code>中的新并发系统由一种称为任务树的基础结构驱动。正如名称所示，任务树为我们提供了一种并发在后台如何运作的思维模型。任务树决定了任务如何与其它任务关联运行。它还控制数据如何传递给子任务。之前我们提到过，<font color="#de7802">一个任务会从启动它的任务那里继承<code>actor</code>、优先级和任务局部变量</font>。这要归功于任务树。任务会生成子任务，而这些子任务会从父任务那里继承所有这些属性。</p>
 <p>下面代码中，直觉上我们会认为每个<code>async let</code>调用会隐式地启动一个新任务，但事实并非如此。每个<code>async let</code>调用会启动一个新的子任务。这个区别很重要，<strong><font color="#de7802">因为<code>Task</code>只能显式创建</font></strong>。</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">fetchData</span>() async <span style="color:#66d9ef">throws</span> -&gt; (userInfo: UserInfo, followers: UserInfo) {
 </span></span><span style="display:flex;"><span>    async <span style="color:#66d9ef">let</span> userInfo = fetchUserInfo()
