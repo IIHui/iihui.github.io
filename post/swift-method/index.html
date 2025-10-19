@@ -241,7 +241,7 @@ code.has-jax {
     <i class="fa fa-file-word-o"></i>
 </span>
 <span class="post-meta-item-text">字数: </span>
-<span class="leancloud-visitors-count">25216</span>
+<span class="leancloud-visitors-count">25277</span>
 &nbsp; | &nbsp;
 <span class="post-meta-item-icon">
     <i class="fa fa-coffee"></i>
@@ -675,8 +675,8 @@ code.has-jax {
 </span></span><span style="display:flex;"><span>}
 </span></span></code></pre></div><p>要并发运行代码，只需在<code>let</code>声明前添加<code>async</code>关键字，声明的其余部分看起来像正常的<code>Swift</code>变量初始化。需要注意的是，要执行<code>async let</code>操作，必须处于异步上下文中，既可以处于一个<code>Task</code>中，还是处于一个标记为<code>async</code>的函数中。</p>
 <p>当代码执行到<code>async let</code>声明时，赋值语句之后的所有操作都将在其它位置执行（被调用的函数和方法可能在不同线程中运行），各项任务将并行执行。<code>async let</code>任务作为创建它们的任务的子任务被创建。</p>
-<p>需要注意的是，<code>await</code>关键字是一个挂起点，这意味着<code>fetchUserInfo</code>和<code>fetchFellows</code><font color="#de7802">都返回或其中一个抛出一个错误之前，函数都是被挂起的</font>。</p>
-<p>之前有说过，每一次<code>async</code>调用必须有与之对应的<code>await</code>，但并不要求<code>async</code>和<code>await</code>必须在同一行。<font color="#de7802">使用<code>async let</code>时，当需要使用在<code>async let</code>中赋值的变量的值时，才需要使用<code>await</code>关键字</font>。因此，如果你的<code>async let</code>调用返回一个其它函数依赖的值，就在调用处使用<code>await</code>。如果需要在函数内部并发获取多个值，可以在返回语句处直接使用<code>await</code>。规定<code>async</code>调用必须与<code>await</code>关键字配对的规则并未被违反。</p>
+<p>如果在<code>async let</code>调用之间添加<code>print</code>语句，将会看到它们会被立即调用。<code>userInfo</code> 和<code>followers</code>将同时运行，但代码会在即将返回时暂停。需要注意的是，<code>await</code>关键字是一个挂起点，这意味着<code>fetchUserInfo</code>和<code>fetchFellows</code><font color="#de7802">都返回或其中一个抛出一个错误之前，函数都是被挂起的</font>。</p>
+<p>之前有说过，每一次<code>async</code>调用必须有与之对应的<code>await</code>，但并不要求<code>async</code>和<code>await</code>必须在同一行。<font color=red>使用<code>async let</code>时，当需要使用对应变量的值时，才需要使用<code>await</code>关键字</font>。因此，如果<code>async let</code>调用返回一个其它函数依赖的值，就在调用处使用<code>await</code>。如果需要在函数内部并发获取多个值，可以在返回语句处直接使用<code>await</code>，这并为违反async<code>调用必须与</code>await`关键字配对的规则。</p>
 <p>使用<code>aync let</code>是非常有用的，可以在任何地方使用<code>await</code>关键字，如单个变量声明，或在等待数组元素时，或者像上面示例在返回元组之前等场景。</p>
 <p>需要特别注意的是，虽然我们使用<code>async let</code>构造来明确表达同时运行任务的意图，但依然由<font color="#de7802">系统决定是否真的并行运行你的代码，或是否为多个调用复用另一个线程</font>。也就是说，系统可能会决定在不同的但共享的线程中运行<code>fetchUserInfo</code>和<code>fetchFollowingAndFollowers</code>，实际上是以串行方式运行，远离主线程。</p>
 <h3 id="task-groups">Task Groups</h3>
