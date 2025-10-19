@@ -6321,8 +6321,9 @@ actor SharedAsyncNetworkManager {  static let shared = SharedAsyncNetworkManager
 Understanding Structured Concurrency 结构化并发遵循结构化编程的相同思路。即按照预期的顺序编写代码，并看到可预测（或至少半可预测）的结果。与基于闭包的代码不同，结构化并发中定义的变量具有明确的作用域，因此可以预期代码不会跳转到破坏代码阅读流程的其它地方。这使得我们无需关心如内存管理等其他细节（例如，块中捕获的变量会怎样？闭包能否被保留？weak self等）。
 而且，这仅适用于只考虑非并发的基于闭包的调用。你能想象一下代码中有多个基于闭包的并发调用，很多独立的代码同时运行的情况吗？
 在结构化并发中，可以同时运行多个代码路径，并得到可预测的结果，而无需思考那些跳转多个基于闭包调用的代码迷宫。在新的async/await系统，提供了两种方式构建结构化并发：async let构造和task groups。
-The async let construct 结构化并发的async let构造也被称为async let绑定。下面代码都是使用async let构建结构化并发，仅在return这一行有区别，但它们的效果是一样的，且第二种方式更简洁：
-func fetchData1() async throws -&amp;gt; (userInfo: UserInfo, followers: UserInfo) {  async let userInfo = fetchUserInfo()  async let followers = fetchFellows()  return (try await userInfo, try await followers) }  func fetchData2() async throws -&amp;gt; (userInfo: UserInfo, followers: UserInfo) {  async let userInfo = fetchUserInfo()  async let followers = fetchFellows()  return try await(userInfo, followers) } 需要注意的是，await关键字是一个挂起点，这意味着fetchUserInfo和fetchFellows都返回或其中一个抛出一个错误之前，函数都是被挂起的。
+The async let construct 结构化并发的async let构造也被称为async let绑定。下面两段代码都是使用async let构建结构化并发，仅在return这一行有区别，但它们的效果是一样的，且第二种方式更简洁：
+func fetchData1() async throws -&amp;gt; (userInfo: UserInfo, followers: UserInfo) {  async let userInfo = fetchUserInfo()  async let followers = fetchFellows()  return (try await userInfo, try await followers) }  func fetchData2() async throws -&amp;gt; (userInfo: UserInfo, followers: UserInfo) {  async let userInfo = fetchUserInfo()  async let followers = fetchFellows()  return try await(userInfo, followers) } 要并发运行代码，只需在let声明前添加async关键字，声明的其余部分看起来像正常的Swift变量初始化。需要注意的是，要执行此操作，必须处于异步上下文中 – 无论是处于一个Task中，还是处于一个标记为async的函数中。
+需要注意的是，await关键字是一个挂起点，这意味着fetchUserInfo和fetchFellows都返回或其中一个抛出一个错误之前，函数都是被挂起的。
 之前有说过，每一次async调用必须有与之对应的await，但并不要求async和await必须在同一行。使用async let时，当需要使用在async let中赋值的变量的值时，才需要使用await关键字。因此，如果你的async let调用返回一个其它函数依赖的值，就在调用处使用await。如果需要在函数内部并发获取多个值，可以在返回语句处直接使用await。规定async调用必须与await关键字配对的规则并未被违反。
 使用aync let是非常有用的，可以在任何地方使用await关键字，如单个变量声明，或在等待数组元素时，或者像上面示例在返回元组之前等场景。
 需要特别注意的是，虽然我们使用async let构造来明确表达同时运行任务的意图，但依然由系统决定是否真的并行运行你的代码，或是否为多个调用复用另一个线程。也就是说，系统可能会决定在不同的但共享的线程中运行fetchUserInfo和fetchFollowingAndFollowers，实际上是以串行方式运行，远离主线程。
