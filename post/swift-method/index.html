@@ -241,7 +241,7 @@ code.has-jax {
     <i class="fa fa-file-word-o"></i>
 </span>
 <span class="post-meta-item-text">字数: </span>
-<span class="leancloud-visitors-count">25305</span>
+<span class="leancloud-visitors-count">25309</span>
 &nbsp; | &nbsp;
 <span class="post-meta-item-icon">
     <i class="fa fa-coffee"></i>
@@ -681,10 +681,10 @@ code.has-jax {
 <p>需要特别注意的是，虽然我们使用<code>async let</code>构造来明确表达并行执行任务的意图，但依然由<font color="#de7802">系统决定是否真的并行运行你的代码，或是否为多个调用复用同一个线程</font>。换言之，系统可能会选择在不同的但共享的线程中运行<code>fetchUserInfo</code>和<code>fetchFollowingAndFollowers</code>，实质上是在主线程之外串行执行这两项任务。</p>
 <h3 id="task-groups">Task Groups</h3>
 <p>若预先知道有多个并发量，使用<code>async let</code>来构建是理想选择。但有时我们事先并不知道完成某个任务有多少个并发量。为了应对这种场景，<code>async/await</code>提供了任务组（<code>task groups</code>）的解决方案。</p>
-<p>任务组是一种结构化的并发工具，允许我们同时运行未知数量的（可能）并发任务，但要求这些任务是相关的。如果有太多任务，<code>Swift</code>不会一次性运行所有任务，它会对任务进行优先级排序，尽可能多地并发运行。</p>
+<p>任务组是一种结构化的并发工具，允许我们同时运行未知数量的（可能）并发任务，前提是这些任务是相关的。当任务过多时，<code>Swift</code>不会一次运行所有任务，它会对任务进行优先级排序，并尽可能多地并行执行。</p>
 <h4 id="task-groups-in-action">Task Groups in Action</h4>
-<p>为了创建任务组，可以使用<code>withTaskGroup</code>和<code>withThrowingTaskGroup</code>函数。如同创建<code>continuations</code>一样，创建任务组也有区分是否抛出异常。</p>
-<p>需要注意的是，一个计算机系统并没有无限数量的线程。即在下面示例代码中，任务组会尽最大努力并行下载所有图片，但会先进行优化和优先级排序。如果一次处理大量并发任务，任务组可能会将任务排队以待稍后执行，并不一定会同时执行所有任务。</p>
+<p>为了创建任务组，可以使用<code>withTaskGroup</code>和<code>withThrowingTaskGroup</code>函数。如同创建<code>continuations</code>一样，创建任务组也区分是否抛出异常。</p>
+<p>需要注意的是，计算机系统并不具备无限数量的线程。下面示例代码中，任务组会尽最大努力并行下载所有图片，但会对任务进行优化和优先级排序。若需同时处理大量并发任务，请注意任务组可能会将部分任务排入队列以备后续执行，且并非所有任务都会同时运行。</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span><span style="color:#66d9ef">struct</span> <span style="color:#a6e22e">ServerImage</span>: Codable {
 </span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">let</span> imageName: String
 </span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">let</span> url: URL
