@@ -241,7 +241,7 @@ code.has-jax {
     <i class="fa fa-file-word-o"></i>
 </span>
 <span class="post-meta-item-text">字数: </span>
-<span class="leancloud-visitors-count">25279</span>
+<span class="leancloud-visitors-count">25305</span>
 &nbsp; | &nbsp;
 <span class="post-meta-item-icon">
     <i class="fa fa-coffee"></i>
@@ -675,12 +675,12 @@ code.has-jax {
 </span></span><span style="display:flex;"><span>}
 </span></span></code></pre></div><p>要并发运行代码，只需在<code>let</code>声明前添加<code>async</code>关键字，声明的其余部分看起来像是正常的<code>Swift</code>变量初始化。但仍需要注意的是，若要执行<code>async let</code>操作，必须处于异步上下文中，既可以处于一个<code>Task</code>中，也可以处于一个标记为<code>async</code>的函数中。</p>
 <p>当代码执行到<code>async let</code>声明时，赋值语句之后的所有操作都将在其它位置执行（被调用的函数和方法可能在不同线程中运行），各项任务将并行执行。<code>async let</code>任务作为创建它们的任务的子任务被创建。</p>
-<p>如果在<code>async let</code>调用之间添加<code>print</code>语句，将会看到它们会被立即调用。<code>userInfo</code> 和<code>followers</code>将同时运行，但代码会在即将返回时暂停。需要注意的是，<code>await</code>关键字是一个挂起点，这意味着<code>fetchUserInfo</code>和<code>fetchFellows</code><font color="#de7802">都返回或其中一个抛出错误之前，函数都是被挂起的</font>。</p>
-<p>之前有说过，每一次<code>async</code>调用必须有与之对应的<code>await</code>，但并不要求<code>async</code>和<code>await</code>必须在同一行。<font color=red>使用<code>async let</code>时，当需要使用对应变量的值时，才需要使用<code>await</code>关键字</font>。因此，如果<code>async let</code>调用返回一个其它函数依赖的值，就在调用处使用<code>await</code>。如果需要在函数内部并发获取多个值，可以在返回语句处直接使用<code>await</code>，这并未违反<code>async</code>调用必须与<code>await</code>关键字配对的原则。</p>
-<p>使用<code>aync let</code>是非常有用的，可以在任何地方使用<code>await</code>关键字，如单个变量声明，或在等待数组元素时，或者像上面示例在返回元组之前等场景。</p>
-<p>需要特别注意的是，虽然我们使用<code>async let</code>构造来明确表达同时运行任务的意图，但依然由<font color="#de7802">系统决定是否真的并行运行你的代码，或是否为多个调用复用另一个线程</font>。也就是说，系统可能会决定在不同的但共享的线程中运行<code>fetchUserInfo</code>和<code>fetchFollowingAndFollowers</code>，实际上是以串行方式运行，远离主线程。</p>
+<p>如果在<code>async let</code>调用之间添加<code>print</code>语句，将会看到它们会被立即调用。<code>userInfo</code> 和<code>followers</code>将同时运行，但代码会在即将返回时暂停。需要注意的是，<code>await</code>关键字是一个挂起点，这意味着<code>fetchUserInfo</code>和<code>fetchFellows</code><font color="#de7802">都返回或其中某一个抛出错误之前，函数都是被挂起的</font>。</p>
+<p>之前有说过，每一次<code>async</code>调用必须有与之对应的<code>await</code>，但并不要求<code>async</code>和<code>await</code>必须在同一行。如上面实示例代码，在<font color=red>使用<code>async let</code>时，当真正需要使用对应变量的值时，才需要使用<code>await</code>关键字</font>。因此，如果<code>async let</code>调用返回一个其它函数依赖的值，就在调用处使用<code>await</code>。如果需要在函数内部并发获取多个值，可以在返回语句处直接使用<code>await</code>，这并未违反<code>async</code>调用必须与<code>await</code>关键字配对的原则。</p>
+<p>使用<code>aync let</code>是非常有用的，并且与之相应的可以在任何地方使用<code>await</code>关键字，如单个变量声明，或在等待数组元素时，或者像上面示例在返回元组之前等场景。</p>
+<p>需要特别注意的是，虽然我们使用<code>async let</code>构造来明确表达并行执行任务的意图，但依然由<font color="#de7802">系统决定是否真的并行运行你的代码，或是否为多个调用复用同一个线程</font>。换言之，系统可能会选择在不同的但共享的线程中运行<code>fetchUserInfo</code>和<code>fetchFollowingAndFollowers</code>，实质上是在主线程之外串行执行这两项任务。</p>
 <h3 id="task-groups">Task Groups</h3>
-<p>若预先知道有多个并发量，使用<code>async let</code>来构建是非常理想的选择。但有时我们事先并不知道完成某个任务有多少个并发量。为了应对这种场景，<code>async/await</code>系统提供了<code>task groups</code>。</p>
+<p>若预先知道有多个并发量，使用<code>async let</code>来构建是理想选择。但有时我们事先并不知道完成某个任务有多少个并发量。为了应对这种场景，<code>async/await</code>提供了任务组（<code>task groups</code>）的解决方案。</p>
 <p>任务组是一种结构化的并发工具，允许我们同时运行未知数量的（可能）并发任务，但要求这些任务是相关的。如果有太多任务，<code>Swift</code>不会一次性运行所有任务，它会对任务进行优先级排序，尽可能多地并发运行。</p>
 <h4 id="task-groups-in-action">Task Groups in Action</h4>
 <p>为了创建任务组，可以使用<code>withTaskGroup</code>和<code>withThrowingTaskGroup</code>函数。如同创建<code>continuations</code>一样，创建任务组也有区分是否抛出异常。</p>

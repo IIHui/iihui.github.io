@@ -6324,11 +6324,11 @@ Understanding Structured Concurrency 结构化并发遵循结构化编程的相�
 The async let construct 结构化并发的async let构造也被称为async let绑定。下面两段代码都是使用async let构建结构化并发，仅在return这一行有区别，但它们的效果是一样的，且第二种方式更简洁：
 func fetchData1() async throws -&amp;gt; (userInfo: UserInfo, followers: UserInfo) {  async let userInfo = fetchUserInfo()  async let followers = fetchFellows()  return (try await userInfo, try await followers) }  func fetchData2() async throws -&amp;gt; (userInfo: UserInfo, followers: UserInfo) {  async let userInfo = fetchUserInfo()  async let followers = fetchFellows()  return try await(userInfo, followers) } 要并发运行代码，只需在let声明前添加async关键字，声明的其余部分看起来像是正常的Swift变量初始化。但仍需要注意的是，若要执行async let操作，必须处于异步上下文中，既可以处于一个Task中，也可以处于一个标记为async的函数中。
 当代码执行到async let声明时，赋值语句之后的所有操作都将在其它位置执行（被调用的函数和方法可能在不同线程中运行），各项任务将并行执行。async let任务作为创建它们的任务的子任务被创建。
-如果在async let调用之间添加print语句，将会看到它们会被立即调用。userInfo 和followers将同时运行，但代码会在即将返回时暂停。需要注意的是，await关键字是一个挂起点，这意味着fetchUserInfo和fetchFellows都返回或其中一个抛出错误之前，函数都是被挂起的。
-之前有说过，每一次async调用必须有与之对应的await，但并不要求async和await必须在同一行。使用async let时，当需要使用对应变量的值时，才需要使用await关键字。因此，如果async let调用返回一个其它函数依赖的值，就在调用处使用await。如果需要在函数内部并发获取多个值，可以在返回语句处直接使用await，这并未违反async调用必须与await关键字配对的原则。
-使用aync let是非常有用的，可以在任何地方使用await关键字，如单个变量声明，或在等待数组元素时，或者像上面示例在返回元组之前等场景。
-需要特别注意的是，虽然我们使用async let构造来明确表达同时运行任务的意图，但依然由系统决定是否真的并行运行你的代码，或是否为多个调用复用另一个线程。也就是说，系统可能会决定在不同的但共享的线程中运行fetchUserInfo和fetchFollowingAndFollowers，实际上是以串行方式运行，远离主线程。
-Task Groups 若预先知道有多个并发量，使用async let来构建是非常理想的选择。但有时我们事先并不知道完成某个任务有多少个并发量。为了应对这种场景，async/await系统提供了task groups。
+如果在async let调用之间添加print语句，将会看到它们会被立即调用。userInfo 和followers将同时运行，但代码会在即将返回时暂停。需要注意的是，await关键字是一个挂起点，这意味着fetchUserInfo和fetchFellows都返回或其中某一个抛出错误之前，函数都是被挂起的。
+之前有说过，每一次async调用必须有与之对应的await，但并不要求async和await必须在同一行。如上面实示例代码，在使用async let时，当真正需要使用对应变量的值时，才需要使用await关键字。因此，如果async let调用返回一个其它函数依赖的值，就在调用处使用await。如果需要在函数内部并发获取多个值，可以在返回语句处直接使用await，这并未违反async调用必须与await关键字配对的原则。
+使用aync let是非常有用的，并且与之相应的可以在任何地方使用await关键字，如单个变量声明，或在等待数组元素时，或者像上面示例在返回元组之前等场景。
+需要特别注意的是，虽然我们使用async let构造来明确表达并行执行任务的意图，但依然由系统决定是否真的并行运行你的代码，或是否为多个调用复用同一个线程。换言之，系统可能会选择在不同的但共享的线程中运行fetchUserInfo和fetchFollowingAndFollowers，实质上是在主线程之外串行执行这两项任务。
+Task Groups 若预先知道有多个并发量，使用async let来构建是理想选择。但有时我们事先并不知道完成某个任务有多少个并发量。为了应对这种场景，async/await提供了任务组（task groups）的解决方案。
 任务组是一种结构化的并发工具，允许我们同时运行未知数量的（可能）并发任务，但要求这些任务是相关的。如果有太多任务，Swift不会一次性运行所有任务，它会对任务进行优先级排序，尽可能多地并发运行。
 Task Groups in Action 为了创建任务组，可以使用withTaskGroup和withThrowingTaskGroup函数。如同创建continuations一样，创建任务组也有区分是否抛出异常。
 需要注意的是，一个计算机系统并没有无限数量的线程。即在下面示例代码中，任务组会尽最大努力并行下载所有图片，但会先进行优化和优先级排序。如果一次处理大量并发任务，任务组可能会将任务排队以待稍后执行，并不一定会同时执行所有任务。
