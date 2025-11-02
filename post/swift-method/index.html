@@ -241,7 +241,7 @@ code.has-jax {
     <i class="fa fa-file-word-o"></i>
 </span>
 <span class="post-meta-item-text">字数: </span>
-<span class="leancloud-visitors-count">25634</span>
+<span class="leancloud-visitors-count">25696</span>
 &nbsp; | &nbsp;
 <span class="post-meta-item-icon">
     <i class="fa fa-coffee"></i>
@@ -725,8 +725,8 @@ code.has-jax {
 </span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">try</span> fileManager.moveItem(at: downloadedImageUrl, to: destinationUrl)
 </span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">return</span> destinationUrl
 </span></span><span style="display:flex;"><span>}
-</span></span></code></pre></div><p>从高层次来看，上面的函数<code>download</code>首先声明一个<code>URL</code>数组变量。然后我们将把所有下载图片的本地URL存储在此变量中。随后创建一个任务组——该任务组本身即为可等待的操作——最后返回图片。由此再次体现了<code>async/await</code>机制带来的线性执行特性。</p>
-<p>不管是使用<code>withTaskGroup</code>还是使用<code>withThrowingTaskGroup</code>创建任务组，都<font color="#de7802">需要指定该任务组产生的数据类型</font>。上面示例中，任务组产生的是<code>URL</code>数组。在<code>withTaskGroup</code>和<code>withThrowingTaskGroup</code>的闭包中，参数<code>group</code>就是任务组本身。往任务组添加任务使用<code>addTask</code>方法，任务提交后立即开始执行。</p>
+</span></span></code></pre></div><p>从高层次来看，上面函数<code>download(serverImages:)</code> 首先声明一个<code>URL</code>数组变量。然后我们将把所有下载图片的本地URL存储在此变量中。随后创建一个任务组——该任务组本身即为可等待的操作——最后返回图片。由此再次体现了<code>async/await</code>机制带来的线性执行特性。</p>
+<p>不管是使用<code>withTaskGroup</code>还是使用<code>withThrowingTaskGroup</code>创建任务组，都<font color="#de7802">需要指定该任务组产生的数据类型</font>。上面示例中，任务组产生的是<code>URL</code>数组，因为<code>download(serverImages:)</code>方法将返回<code>URL</code>。在<code>withTaskGroup</code>和<code>withThrowingTaskGroup</code>的<font color="#de7802">闭包都会返回任务组本身</font>，在上面示例中参数<code>group</code>就是任务组本身。往任务组添加任务使用<code>addTask</code>方法，任务提交后立即开始执行。</p>
 <p>在最佳情况下，任务组能同时执行所有任务。与<code>async/await</code>系统中的其它工具类似，系统会对任务进行优先级排序。若资源充足，它将尝试并行执行所有任务。但若任务组未能同时执行每个任务（尤其当提交大量任务时），请勿感到意外。我们可选择性指定优先级。上面采用<code>.userInitiated</code>优先级，这是当前可用的最高优先级。</p>
 <p>需要特别注意的是，<font color="#de7802">添加到组中的任务可能不会按照提交顺序执行</font>。如果想使用任务组，重要的是要以使顺序无关的方式设计你的代码。</p>
 <p><code>group</code>本身是一个集合，因此不仅可以使用<code>for-in</code>遍历它，还可以使用<code>filter、map、reduce</code>这样的高阶函数来处理结果。而且，<code>for</code>循环中也可以使用<code>await</code>关键字来处理随时间发出值的代码。</p>
