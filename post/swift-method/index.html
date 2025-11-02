@@ -241,7 +241,7 @@ code.has-jax {
     <i class="fa fa-file-word-o"></i>
 </span>
 <span class="post-meta-item-text">字数: </span>
-<span class="leancloud-visitors-count">25884</span>
+<span class="leancloud-visitors-count">25910</span>
 &nbsp; | &nbsp;
 <span class="post-meta-item-icon">
     <i class="fa fa-coffee"></i>
@@ -740,7 +740,7 @@ code.has-jax {
 <li>它创建了一个并发上下文，使我们能够通过调用异步方法的方式实现并发操作。</li>
 </ul>
 <h3 id="creating-tasks">Creating Tasks</h3>
-<p><code>Task</code>是一个对象，它可以存储值、错误、两者兼有或两者皆无。要创建一个异步、非结构的任务，我们调用<code>Task</code>并使用一个闭包初始化它，这个闭包是我们希望异步执行的代码。下面示例代码是使用<code>Task</code>调用<code>async</code>方法：</p>
+<p><code>Task</code>是一个对象，<font color="#de7802">它可以存储值、错误、两者兼有或两者皆无</font>。要创建一个异步、非结构的任务，我们调用<code>Task</code>并使用一个闭包初始化它，这个闭包是我们希望异步执行的代码。下面示例代码是使用<code>Task</code>调用<code>async</code>方法：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">authenticateAndFetchProfile</span>() {
 </span></span><span style="display:flex;"><span>    Task {
 </span></span><span style="display:flex;"><span>        <span style="color:#75715e">// ...</span>
@@ -754,32 +754,30 @@ code.has-jax {
 </span></span><span style="display:flex;"><span>    debugPrint(<span style="color:#e6db74">&#34;fetchUserInfo&#34;</span>)
 </span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">return</span> <span style="color:#e6db74">&#34;Return Test&#34;</span>
 </span></span><span style="display:flex;"><span>}
-</span></span></code></pre></div><p>当我们需要使用<code>Task</code>做并发时，先可灵活配置的参数便是优先级。优先级是<code>Task.Priority</code>类型（与处理任务组时使用的优先级相同）。下面是可使用的优先级列表：</p>
+</span></span></code></pre></div><p>当需要使用<code>Task</code>做并发时，先可灵活配置的参数便是优先级。优先级是<code>Task.Priority</code>类型（与处理任务组时使用的优先级相同）。下面是可使用的优先级列表：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span><span style="color:#66d9ef">static</span> <span style="color:#66d9ef">let</span> background: TaskPriority
 </span></span><span style="display:flex;"><span><span style="color:#66d9ef">static</span> <span style="color:#66d9ef">let</span> high: TaskPriority
 </span></span><span style="display:flex;"><span><span style="color:#66d9ef">static</span> <span style="color:#66d9ef">let</span> low: TaskPriority
 </span></span><span style="display:flex;"><span><span style="color:#66d9ef">static</span> <span style="color:#66d9ef">var</span> medium: TaskPriority
 </span></span><span style="display:flex;"><span><span style="color:#66d9ef">static</span> <span style="color:#66d9ef">let</span> userInitiated: TaskPriority
 </span></span><span style="display:flex;"><span><span style="color:#66d9ef">static</span> <span style="color:#66d9ef">let</span> utility: TaskPriority
-</span></span></code></pre></div><p><code>Task</code>是一个对象，你可以使用变量存储它，这就是被称为非机构并发的部分原因。我们可以有多个Task，存储在多个变量中（甚至存储在一个<code>collections</code>中）。在非机构化并发中，可以取消Task，但在结构化的Task无法做到这一点：</p>
+</span></span></code></pre></div><p><code>Task</code>是一个对象，可以使用变量存储它，这正是其被称为非结构并发的部分原因。可以创建多个<code>Task</code>对象，将其存储在变量中，甚至存储在<code>collections</code>中。非结构化并发相较于结构化并发的一个独特优势在于支持任务取消。通过调用<code>cancel()</code>方法即可取消任务。在结构化的<code>Task</code>无法做到这一点：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">authenticate</span>() {
 </span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">let</span> authenticationTask = Task&lt;Bool, Error&gt; {
 </span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">let</span> context = LAContext()
 </span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">let</span> policy = LAPolicy.deviceOwnerAuthenticationWithBiometrics
-</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">return</span> <span style="color:#66d9ef">try</span> await context.evaluatePolicy(
-</span></span><span style="display:flex;"><span>            policy, localizedReason: <span style="color:#e6db74">&#34;To log in&#34;</span>)
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">return</span> <span style="color:#66d9ef">try</span> await context.evaluatePolicy(policy, localizedReason: <span style="color:#e6db74">&#34;To log in&#34;</span>)
 </span></span><span style="display:flex;"><span>    }
 </span></span><span style="display:flex;"><span>    <span style="color:#75715e">// 取消Task</span>
 </span></span><span style="display:flex;"><span>    authenticationTask.cancel()
 </span></span><span style="display:flex;"><span>}
-</span></span></code></pre></div><p>在上面示例代码中，我们定义变量的类型为<code>Task&lt;Bool, Error&gt;</code>，这是因为<code>context.evaluatePolicy</code>返回一个<code>Bool</code>值，也可能抛出一个<code>Error</code>。</p>
+</span></span></code></pre></div><p>在上面示例代码中，创建了一个类型为<code>Task&lt;Bool, Error&gt;</code>的变量，这是因为<code>context.evaluatePolicy</code>返回一个<code>Bool</code>值且可能抛出一个<code>Error</code>。</p>
 <p>我们可以<code>await</code>某个<code>Task</code>的值。在下面示例代码中，需要使用<code>try await</code>，这是因为我们定义的<code>authenticationTask</code>可能返回一个<code>Bool</code>值，也可能抛出一个错误。</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">authenticate</span>() {
 </span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">let</span> authenticationTask = Task&lt;Bool, Error&gt; {
 </span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">let</span> context = LAContext()
 </span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">let</span> policy = LAPolicy.deviceOwnerAuthenticationWithBiometrics
-</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">return</span> <span style="color:#66d9ef">try</span> await context.evaluatePolicy(
-</span></span><span style="display:flex;"><span>            policy, localizedReason: <span style="color:#e6db74">&#34;To log in&#34;</span>)
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">return</span> <span style="color:#66d9ef">try</span> await context.evaluatePolicy(policy, localizedReason: <span style="color:#e6db74">&#34;To log in&#34;</span>)
 </span></span><span style="display:flex;"><span>    }
 </span></span><span style="display:flex;"><span>  
 </span></span><span style="display:flex;"><span>    Task {
