@@ -241,7 +241,7 @@ code.has-jax {
     <i class="fa fa-file-word-o"></i>
 </span>
 <span class="post-meta-item-text">字数: </span>
-<span class="leancloud-visitors-count">25910</span>
+<span class="leancloud-visitors-count">26001</span>
 &nbsp; | &nbsp;
 <span class="post-meta-item-icon">
     <i class="fa fa-coffee"></i>
@@ -772,7 +772,7 @@ code.has-jax {
 </span></span><span style="display:flex;"><span>    authenticationTask.cancel()
 </span></span><span style="display:flex;"><span>}
 </span></span></code></pre></div><p>在上面示例代码中，创建了一个类型为<code>Task&lt;Bool, Error&gt;</code>的变量，这是因为<code>context.evaluatePolicy</code>返回一个<code>Bool</code>值且可能抛出一个<code>Error</code>。</p>
-<p>我们可以<code>await</code>某个<code>Task</code>的值。在下面示例代码中，需要使用<code>try await</code>，这是因为我们定义的<code>authenticationTask</code>可能返回一个<code>Bool</code>值，也可能抛出一个错误。</p>
+<p>我们可以<code>await</code>某个<code>Task</code>的值。下面示例代码中，需要使用<code>try await</code>，这是因为我们定义的<code>authenticationTask</code>可能返回一个<code>Bool</code>值，也可能抛出错误。</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">authenticate</span>() {
 </span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">let</span> authenticationTask = Task&lt;Bool, Error&gt; {
 </span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">let</span> context = LAContext()
@@ -787,9 +787,21 @@ code.has-jax {
 </span></span><span style="display:flex;"><span>        }
 </span></span><span style="display:flex;"><span>    }
 </span></span><span style="display:flex;"><span>}
-</span></span></code></pre></div><p>需要注意的是，上面示例代码创建<code>Task</code>时，并没有使用<code>do-catch</code>语句体。上面代码隐式地创建了一个<code>Task&lt;(), Error&gt;</code>类型的任务，因为<code>Task</code>中不返回任何值，但会抛出异常。<font color="#de7802"><code>Task</code>不需要显式的<code>do-catch</code>语句体，因为闭包会自动捕获<code>Error</code></font>。</p>
-<p>当在代码中使用<code>Task {}</code>创建一个新任务时，它将继承产生这个任务的上下文信息。继承的信息包括任务运行的<code>Actor</code>（如果在<code>@MainActor</code>上运行的任务中产生了任务，那么该任务也将在<code>@MainActor</code>上运行）和优先级。如果新生成的任务是一个根任务（它创建了一个异步上下文，但其本身并不在其中运行），那么它将继承其所运行线程的<code>Actor</code>。</p>
-<h3 id="the-task-tree">The Task Tree</h3>
+</span></span></code></pre></div><p>需要注意的是，上面代码创建<code>Task</code>时，并没有使用<code>do-catch</code>语句。上面代码隐式地创建了一个<code>Task&lt;(), Error&gt;</code>类型的任务，因为<code>Task</code>中不返回任何值，但会抛出异常。<font color="#de7802"><code>Task</code>不需要显式的<code>do-catch</code>语句体，因为错误会被闭包本身捕获。</font></p>
+<p>当在代码中使用<code>Task {}</code>创建一个新任务时，它将继承产生这个任务的上下文信息。继承的信息包括任务运行的<code>Actor</code>（如果在<code>@MainActor</code>上运行的任务中产生了任务，那么该任务也将在<code>@MainActor</code>上运行）和优先级。如果新生成的任务是一个根任务（即创建异步上下文但自身未在该上下文中运行），那么它将继承其所运行线程的<code>Actor</code>。</p>
+<h3 id="unstructured-concurrency-in-action">Unstructured Concurrency in Action</h3>
+<p>既然你已经更清楚地理解了什么是非结构化并发，并且终于明白了<code>Task</code>对象是什么，我们就可以开始编写一些示例代码，以便更好地理解其工作原理。</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span><span style="color:#66d9ef">enum</span> <span style="color:#a6e22e">ImageDownloadStatus</span> { 
+</span></span><span style="display:flex;"><span>	<span style="color:#66d9ef">case</span> downloading(<span style="color:#66d9ef">_</span> task: Task&lt;Void, Never&gt;) 
+</span></span><span style="display:flex;"><span>	<span style="color:#66d9ef">case</span> error(<span style="color:#66d9ef">_</span> error: Error) 
+</span></span><span style="display:flex;"><span>	<span style="color:#66d9ef">case</span> downloaded(<span style="color:#66d9ef">_</span> localImageURL: URL) 
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">struct</span> <span style="color:#a6e22e">ImageDownload</span>: Identifiable { 
+</span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">let</span> id: UUID = UUID() 
+</span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">let</span> status: ImageDownloadStatus 
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><h3 id="the-task-tree">The Task Tree</h3>
 <p><code>Swift</code>中的新并发系统由一种称为任务树的基础结构驱动。正如名称所示，任务树为我们提供了一种并发在后台如何运作的思维模型。任务树决定了任务如何与其它任务关联运行。它还控制数据如何传递给子任务。之前我们提到过，<font color="#de7802">一个任务会从启动它的任务那里继承<code>actor</code>、优先级和任务局部变量</font>。这要归功于任务树。任务会生成子任务，而这些子任务会从父任务那里继承所有这些属性。</p>
 <p>下面代码中，直觉上我们会认为每个<code>async let</code>调用会隐式地启动一个新任务，但事实并非如此。每个<code>async let</code>调用会启动一个新的子任务。这个区别很重要，<strong><font color="#de7802">因为<code>Task</code>只能显式创建</font></strong>。</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">fetchData</span>() async <span style="color:#66d9ef">throws</span> -&gt; (userInfo: UserInfo, followers: UserInfo) {
@@ -1470,6 +1482,7 @@ code.has-jax {
           <ul>
             <li><a href="#tasks-in-depth">Tasks in Depth</a></li>
             <li><a href="#creating-tasks">Creating Tasks</a></li>
+            <li><a href="#unstructured-concurrency-in-action">Unstructured Concurrency in Action</a></li>
             <li><a href="#the-task-tree">The Task Tree</a></li>
             <li><a href="#error-propagation">Error Propagation</a></li>
             <li><a href="#task-cancellation">Task Cancellation</a></li>
