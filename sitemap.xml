@@ -6338,9 +6338,9 @@ import Foundation  struct ServerImage: Codable {  let imageName: String  let url
 需要特别注意的是，添加到组中的任务可能不会按照提交顺序执行。要使用任务组，关键是要设计出与执行顺序无关的代码。
 最后，在withThrowingTaskGroup内部，还有另一个循环——一个await的for循环。该循环将接收所有下载完成的URL。它会逐个接收每个URL，因此我们不能让URLs变量处于无效状态。再次强调，不要期望URLs会按特定顺序获取。group本身是一个集合，因此不仅可以使用for-in遍历它，还可以使用filter、map、reduce这样的高阶函数来处理结果。而且，for循环中也可以使用await关键字来处理随时间发出值的代码。
 还需要注意的是，只要任务组中的一个任务出现错误，整个任务组就会抛出异常。请记住这一点，因为它可能导致意想不到的行为，如果图片下载可能会失败，那么在这个特定项目中为下载任务提供一个默认图片可能是个好主意。
-Unstructured Concurrency 非结构化并发提供了更大的灵活性，但代价是可用性略有降低。在处理非结构并发时，代码未必遵循我们所喜爱的自上而下的结构。幸运的是，处理非结构并发仍然非常简单，这种灵活性不会显著增加程序的复杂性。
-Tasks in Depth 对于无结构的并发，依然是使用Task对象。Task是一个很重要的对象，它允许我们做两件非常重要的事情：
- 创建Task后，它就会异步启动闭包中的代码。 它创建了一个并发上下文，使我们能够通过调用异步方法的方式实现并发操作。  Creating Tasks Task是一个对象，它可以存储值、错误、两者兼有或两者皆无。要创建一个异步、非结构的任务，我们调用Task并使用一个闭包初始化它，这个闭包是我们希望异步执行的代码。下面示例代码是使用Task调用async方法：
+Unstructured Concurrency 结构化并发遵循与结构化编程相同的理念，结构化并发的自然对应概念是非结构并发。非结构化并发提供了更大的灵活性，但代价是可用性略有降低。在处理非结构并发时，代码未必遵循我们所喜爱的自上而下的结构。幸运的是，处理非结构并发仍然非常简单，这种灵活性不会显著增加程序的复杂性。
+Tasks in Depth 对于非结构的并发，依然是使用Task对象。Task是一个很重要的对象，它允许我们做两件非常重要的事情：
+ 通过初始化创建Task后，就会立即异步启动闭包中的代码。 Task创建了一个并发上下文，使我们能够通过调用async方法的方式实现并发操作。  Creating Tasks Task是一个对象，它可以存储值、错误、两者兼有或两者皆无。要创建一个异步、非结构的任务，我们调用Task并使用一个闭包初始化它，这个闭包是我们希望异步执行的代码。下面示例代码是使用Task调用async方法：
 func authenticateAndFetchProfile() {  Task {  // ...  let userProfile = try await fetchUserInfo()  // ...  debugPrint(userProfile)  } }  func fetchUserInfo() async -&amp;gt; String {  debugPrint(&amp;#34;fetchUserInfo&amp;#34;)  return &amp;#34;Return Test&amp;#34; } 当需要使用Task做并发时，先可灵活配置的参数便是优先级。优先级是Task.Priority类型（与处理任务组时使用的优先级相同）。下面是可使用的优先级列表：
 static let background: TaskPriority static let high: TaskPriority static let low: TaskPriority static var medium: TaskPriority static let userInitiated: TaskPriority static let utility: TaskPriority Task是一个对象，可以使用变量存储它，这正是其被称为非结构并发的部分原因。可以创建多个Task对象，将其存储在变量中，甚至存储在collections中。非结构化并发相较于结构化并发的一个独特优势在于支持任务取消。调用cancel()方法即可取消任务，在结构化的Task无法做到这一点：
 func authenticate() {  let authenticationTask = Task&amp;lt;Bool, Error&amp;gt; {  let context = LAContext()  let policy = LAPolicy.deviceOwnerAuthenticationWithBiometrics  return try await context.evaluatePolicy(policy, localizedReason: &amp;#34;To log in&amp;#34;)  }  // 取消Task  authenticationTask.cancel() } 在上面示例代码中，创建了一个类型为Task&amp;lt;Bool, Error&amp;gt;的变量，这是因为context.evaluatePolicy返回一个Bool值且可能抛出一个Error。
