@@ -241,7 +241,7 @@ code.has-jax {
     <i class="fa fa-file-word-o"></i>
 </span>
 <span class="post-meta-item-text">字数: </span>
-<span class="leancloud-visitors-count">3387</span>
+<span class="leancloud-visitors-count">3497</span>
 &nbsp; | &nbsp;
 <span class="post-meta-item-icon">
     <i class="fa fa-coffee"></i>
@@ -427,9 +427,9 @@ code.has-jax {
 </span></span><span style="display:flex;"><span>    <span style="color:#f92672">&lt;string&gt;</span>_printer._tcp<span style="color:#f92672">&lt;/string&gt;</span>
 </span></span><span style="display:flex;"><span><span style="color:#f92672">&lt;/array&gt;</span>
 </span></span></code></pre></div><h2 id="task冲突">Task冲突</h2>
-<p>在某个Swfit文件开头<code>import PromiseKit</code>，然后使用新并发模型中的<code>Task{ }</code>时，出现如下错误：</p>
+<p>在某个Swift文件开头引入了<code>PomiseKit</code>，即<code>import PromiseKit</code>，然后使用新并发模型中的<code>Task{ }</code>时，出现如下编译错误：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">&#39;</span>Task<span style="color:#960050;background-color:#1e0010">&#39;</span> cannot be constructed because it has no accessible initializers
-</span></span></code></pre></div><p>这是因为PromiseKit中也定义了一个Task，优先使用了这个Task，解决方案是加并发模型的内部命名空间<code>_Concurrency</code>：</p>
+</span></span></code></pre></div><p>这是因为在<code>PromiseKit</code>组件中也定义了一个<code>Task</code>，会优先使用了这个<code>Task</code>，而不是标准库中的<code>Task</code>，解决方案是加并发模型的内部命名空间<code>_Concurrency</code>：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span>_Concurrency.Task {
 </span></span><span style="display:flex;"><span>   <span style="color:#75715e">//</span>
 </span></span><span style="display:flex;"><span>}
@@ -447,6 +447,27 @@ code.has-jax {
 </span></span><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span><span style="color:#75715e"># 3. 重新安装</span>
 </span></span><span style="display:flex;"><span>pod install
+</span></span></code></pre></div><h2 id="修改组件最低支持版本">修改组件最低支持版本</h2>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ruby" data-lang="ruby"><span style="display:flex;"><span><span style="color:#75715e"># Podfile</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>platform <span style="color:#e6db74">:ios</span>, <span style="color:#e6db74">&#39;13.0&#39;</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>target <span style="color:#e6db74">&#39;YourApp&#39;</span> <span style="color:#66d9ef">do</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>  <span style="color:#75715e"># 批量修改所有 pods 的 deployment_target</span>
+</span></span><span style="display:flex;"><span>  post_install <span style="color:#66d9ef">do</span> <span style="color:#f92672">|</span>installer<span style="color:#f92672">|</span>
+</span></span><span style="display:flex;"><span>    installer<span style="color:#f92672">.</span>pods_project<span style="color:#f92672">.</span>targets<span style="color:#f92672">.</span>each <span style="color:#66d9ef">do</span> <span style="color:#f92672">|</span>target<span style="color:#f92672">|</span>
+</span></span><span style="display:flex;"><span>      target<span style="color:#f92672">.</span>build_configurations<span style="color:#f92672">.</span>each <span style="color:#66d9ef">do</span> <span style="color:#f92672">|</span>config<span style="color:#f92672">|</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#75715e"># 设置 iOS deployment target</span>
+</span></span><span style="display:flex;"><span>        config<span style="color:#f92672">.</span>build_settings<span style="color:#f92672">[</span><span style="color:#e6db74">&#39;IPHONEOS_DEPLOYMENT_TARGET&#39;</span><span style="color:#f92672">]</span> <span style="color:#f92672">=</span> <span style="color:#e6db74">&#39;13.0&#39;</span> 
+</span></span><span style="display:flex;"><span>        <span style="color:#75715e"># 可选：同时设置其他平台的 deployment target</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#75715e"># config.build_settings[&#39;MACOSX_DEPLOYMENT_TARGET&#39;] = &#39;11.0&#39;</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#75715e"># config.build_settings[&#39;TVOS_DEPLOYMENT_TARGET&#39;] = &#39;14.0&#39;</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#75715e"># config.build_settings[&#39;WATCHOS_DEPLOYMENT_TARGET&#39;] = &#39;7.0&#39;</span>
+</span></span><span style="display:flex;"><span>      <span style="color:#66d9ef">end</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">end</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">end</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">end</span>
 </span></span></code></pre></div>
     </div>
     <footer class="post-footer">
@@ -628,6 +649,7 @@ code.has-jax {
         <li><a href="#task冲突">Task冲突</a></li>
         <li><a href="#查看targert设置">查看targert设置</a></li>
         <li><a href="#编译时删除built_products_dirxxxxxxframework">编译时删除${BUILT_PRODUCTS_DIR}/xxx/xxx.framework</a></li>
+        <li><a href="#修改组件最低支持版本">修改组件最低支持版本</a></li>
       </ul>
     </li>
   </ul>
