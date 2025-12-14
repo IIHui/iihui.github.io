@@ -241,13 +241,13 @@ code.has-jax {
     <i class="fa fa-file-word-o"></i>
 </span>
 <span class="post-meta-item-text">字数: </span>
-<span class="leancloud-visitors-count">63108</span>
+<span class="leancloud-visitors-count">63774</span>
 &nbsp; | &nbsp;
 <span class="post-meta-item-icon">
     <i class="fa fa-coffee"></i>
 </span>
 <span class="post-meta-item-text">阅读: </span>
-<span class="leancloud-visitors-count">126 分钟</span>
+<span class="leancloud-visitors-count">128 分钟</span>
 </span>
       </div>
     </header>
@@ -713,7 +713,40 @@ code.has-jax {
 </span></span><span style="display:flex;"><span><span style="color:#66d9ef">let</span> <span style="color:#a6e22e">id</span>: <span style="color:#66d9ef">IdMaybe</span>
 </span></span><span style="display:flex;"><span><span style="color:#a6e22e">console</span>.<span style="color:#a6e22e">log</span>(<span style="color:#a6e22e">id</span>) <span style="color:#75715e">// undefined
 </span></span></span></code></pre></div><h1 id="objects">Objects</h1>
-<h2 id="object-types">Object Types</h2>
+<p><code>TypeScript</code>将类型分为两类。第一类是基本类型，包括<code>number、boolean、string、symbol、bigint</code>及其子类型。第二类是复合类型，涵盖所有对象的子类型，由其它复合类型或基本类型构成。</p>
+<p><img src="https://s2.loli.net/2025/12/14/Lj32xlT9ZpXHFz1.png" alt="cc"></p>
+<p>在某些情况下，需要操作复合类型的值，可能是为了修改特定属性，也可能是为了确保不会传递任何基本类型值。例如，<code>Object.create</code>方法会创建一个新对象，并将它的原型作为第一个参数。该参数必须是复合类型，否则运行时的<code>JavaScript</code>代码会崩溃：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span><span style="color:#75715e">// Argument of type &#39;number&#39; is not assignable to parameter of type &#39;object&#39;
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>Object.<span style="color:#a6e22e">create</span>(<span style="color:#ae81ff">2</span>);
+</span></span></code></pre></div><p>在 TypeScript中，有三种类型看似功能相同：空对象类型 <code>{}</code>、大写O开头的<code>Object</code>表示的对象接口，以及小写o 开头的<code>object</code>表示的对象类型。那么复合类型该使用哪一种呢？</p>
+<p><code>{}</code>和<code>Object</code>允许的值大致相同，即除<code>null</code>或<code>undefined</code>之外的所有值（前提是严格模式或<code>strictNullChecks</code>已启用）：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span><span style="color:#66d9ef">let</span> <span style="color:#a6e22e">obj</span><span style="color:#f92672">:</span> {}; <span style="color:#75715e">// Similar to Object
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#a6e22e">obj</span> <span style="color:#f92672">=</span> <span style="color:#ae81ff">32</span>;
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">obj</span> <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;Hello&#34;</span>;
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">obj</span> <span style="color:#f92672">=</span> <span style="color:#66d9ef">true</span>;
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">obj</span> <span style="color:#f92672">=</span> () <span style="color:#f92672">=&gt;</span> {
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">console</span>.<span style="color:#a6e22e">log</span>(<span style="color:#e6db74">&#34;Hello&#34;</span>)
+</span></span><span style="display:flex;"><span>};
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">obj</span> <span style="color:#f92672">=</span> <span style="color:#66d9ef">undefined</span>; <span style="color:#75715e">// Error
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#a6e22e">obj</span> <span style="color:#f92672">=</span> <span style="color:#66d9ef">null</span>; <span style="color:#75715e">// Error
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#a6e22e">obj</span> <span style="color:#f92672">=</span> {<span style="color:#a6e22e">name</span><span style="color:#f92672">:</span> <span style="color:#e6db74">&#34;Stefan&#34;</span>, <span style="color:#a6e22e">age</span>: <span style="color:#66d9ef">40</span>};
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">obj</span> <span style="color:#f92672">=</span> [];
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">obj</span> <span style="color:#f92672">=</span> <span style="color:#e6db74">/.*/</span>;
+</span></span></code></pre></div><p><code>Object</code>接口兼容所有具有<code>Object prototype</code>的值，即来自所有基本类型和复合类型的所有值。但是，<code>Object</code>是 <code>TypeScript</code>中定义的接口，它对某些函数有特定要求。例如<code>toString</code>方法（即 <code>toString() =&gt; string</code>），作为任何非空值的组成部分，属于<code>Object</code>原型的一部分。若赋值时使用了不同的<code>toString</code>方法，<code>TypeScript</code>将报错：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span><span style="color:#66d9ef">let</span> <span style="color:#a6e22e">okObj</span><span style="color:#f92672">:</span> {} <span style="color:#f92672">=</span> {
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">toString() {</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">return</span> <span style="color:#66d9ef">false</span>;
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>};
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">// 出现编译错误
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">// Type &#39;() =&gt; boolean&#39; is not assignable to type &#39;() =&gt; string&#39;
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">let</span> <span style="color:#a6e22e">obj</span>: <span style="color:#66d9ef">Object</span> <span style="color:#f92672">=</span> {
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">toString() {</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">return</span> <span style="color:#66d9ef">false</span>;
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><h2 id="object-types">Object Types</h2>
 <p>使用<code>{}</code>创建对象字面量时，<code>TypeScript</code>会<font color="#de7802">根据其属性将其视为新的对象类型</font>。新对象类型具有与对象字面量相同的属性名和对应值类型。访问对象属性的值时可以使用<code>value.member</code>或等同的<code>value['member']</code>。</p>
 <p>下面代码中，<code>TypeScript</code>认为常量<code>poet</code>的类型是一个对象，该对象有<code>born</code>和<code>name</code>两个属性，属性<code>born</code>的值类型为<code>number</code>，<code>name</code>属性的值类型为<code>string</code>。访问这两个属性是允许的，但<font color="#de7802">试图访问任何其它不存在的属性都会出现编译错误</font>：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span><span style="color:#75715e">// const poet: { born: number, name: string }
