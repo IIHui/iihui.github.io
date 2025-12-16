@@ -241,7 +241,7 @@ code.has-jax {
     <i class="fa fa-file-word-o"></i>
 </span>
 <span class="post-meta-item-text">字数: </span>
-<span class="leancloud-visitors-count">3757</span>
+<span class="leancloud-visitors-count">3918</span>
 &nbsp; | &nbsp;
 <span class="post-meta-item-icon">
     <i class="fa fa-coffee"></i>
@@ -469,18 +469,19 @@ code.has-jax {
 </span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">end</span>
 </span></span><span style="display:flex;"><span><span style="color:#66d9ef">end</span>
 </span></span></code></pre></div><h2 id="pbxfilesystemsynchronizedrootgroup">PBXFileSystemSynchronizedRootGroup</h2>
-<p>在Xcode16执行pod update时出现如下错误：</p>
+<p>接手别人的项目后使用<code>pod update</code>命令更新依赖，出现如下错误：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>RuntimeError - <span style="color:#e6db74">`</span>PBXGroup<span style="color:#e6db74">`</span> attempted to initialize an object with unknown ISA <span style="color:#e6db74">`</span>PBXFileSystemSynchronizedRootGroup<span style="color:#e6db74">`</span> from attributes: <span style="color:#e6db74">`</span><span style="color:#f92672">{</span><span style="color:#e6db74">&#34;isa&#34;</span><span style="color:#f92672">=</span>&gt;<span style="color:#e6db74">&#34;PBXFileSystemSynchronizedRootGroup&#34;</span>, <span style="color:#e6db74">&#34;exceptions&#34;</span><span style="color:#f92672">=</span>&gt;<span style="color:#f92672">[</span><span style="color:#e6db74">&#34;416D36782ECD6C14005419D5&#34;</span><span style="color:#f92672">]</span>, <span style="color:#e6db74">&#34;path&#34;</span><span style="color:#f92672">=</span>&gt;<span style="color:#e6db74">&#34;demo&#34;</span>, <span style="color:#e6db74">&#34;sourceTree&#34;</span><span style="color:#f92672">=</span>&gt;<span style="color:#e6db74">&#34;&lt;group&gt;&#34;</span><span style="color:#f92672">}</span><span style="color:#e6db74">`</span>
-</span></span></code></pre></div><p>原因是cocoapods版本太低，无法识别在高版本Xcode上创建的<a href="https://github.com/CocoaPods/Xcodeproj">Xcodeproj</a>，因此需要在将在高版本Xcode上创建的工程的根目录由folder转为Group。</p>
-<p>修改后执行pod update后还是报错:</p>
+</span></span></code></pre></div><p>是因为<code>cocoapods</code>版本太低（实际是<code>cocoapods</code>的<code>Xcodeproj</code>版本太低），无法识别在高版本Xcode上创建的项目。需要在高版本Xcode上已创建工程的根目录由Folder转为Group（打开项目在根目录上右键会出现相应选项）。按上面方法修改后执行pod update后还是报错:</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span><span style="color:#f92672">[</span>!<span style="color:#f92672">]</span> <span style="color:#f92672">[</span>!<span style="color:#f92672">]</span> Xcodeproj doesn<span style="color:#e6db74">&#39;t know about the following attributes {&#34;minimizedProjectReferenceProxies&#34;=&gt;&#34;1&#34;, &#34;preferredProjectObjectVersion&#34;=&gt;&#34;77&#34;} for the &#39;</span>PBXProject<span style="color:#960050;background-color:#1e0010">&#39;</span> isa.
-</span></span></code></pre></div><p>则需要将project.pbxproj中的下面内容删除：</p>
+</span></span></code></pre></div><p>这是因为低版本的<code>Xcodeproj</code>无法识别上面两个属性，此时需要将<code>project.pbxproj</code>（在<code>finder</code>中右键<code>xxx.xcodeproj</code>，显示包内容，打开<code>project.pbxproj</code>）中的内容删除：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-fallback" data-lang="fallback"><span style="display:flex;"><span>minimizedProjectReferenceProxies = 1;
 </span></span><span style="display:flex;"><span>preferredProjectObjectVersion = 77;
-</span></span></code></pre></div><p>若出现如下报错，则需要修改project.pbxproj文件中的objectVersion为支持的版本：</p>
+</span></span></code></pre></div><p>若按上面方式删除上面两个字段，若出现如下报错，则需要修改project.pbxproj文件中的objectVersion为支持的版本：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>/Library/Ruby/Gems/2.6.0/gems/xcodeproj-1.21.0/lib/xcodeproj/project.rb:228:in <span style="color:#e6db74">`</span>initialize_from_file<span style="color:#960050;background-color:#1e0010">&#39;</span>: <span style="color:#f92672">[</span>Xcodeproj<span style="color:#f92672">]</span> Unknown object version <span style="color:#f92672">(</span>56<span style="color:#f92672">)</span>. <span style="color:#f92672">(</span>RuntimeError<span style="color:#f92672">)</span>
-</span></span></code></pre></div><p><a href="https://blog.devzeng.com/blog/xcode16-with-cocoapods.html">https://blog.devzeng.com/blog/xcode16-with-cocoapods.html</a></p>
-
+</span></span></code></pre></div><p><a href="https://blog.devzeng.com/blog/xcode16-with-cocoapods.html">参考文档</a></p>
+<p>指定发布版本和编译版本</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>xcodebuild -quiet -workspace demo.xcworkspace -scheme <span style="color:#e6db74">&#34;</span><span style="color:#e6db74">${</span>targetName<span style="color:#e6db74">}</span><span style="color:#e6db74">&#34;</span> MARKETING_VERSION<span style="color:#f92672">=</span><span style="color:#e6db74">${</span>bundleShortVersion<span style="color:#e6db74">}</span> CURRENT_PROJECT_VERSION<span style="color:#f92672">=</span><span style="color:#e6db74">${</span>bundleVersion<span style="color:#e6db74">}</span>
+</span></span></code></pre></div>
     </div>
     <footer class="post-footer">
         
