@@ -379,8 +379,10 @@ RuntimeError - `PBXGroup` attempted to initialize an object with unknown ISA `PB
 [!] [!] Xcodeproj doesn&amp;#39;t know about the following attributes {&amp;#34;minimizedProjectReferenceProxies&amp;#34;=&amp;gt;&amp;#34;1&amp;#34;, &amp;#34;preferredProjectObjectVersion&amp;#34;=&amp;gt;&amp;#34;77&amp;#34;} for the &amp;#39;PBXProject&amp;#39; isa. 这是因为低版本的Xcodeproj无法识别上面两个属性，此时需要将project.pbxproj（在finder中右键xxx.xcodeproj，显示包内容，打开project.pbxproj）中的内容删除：
 minimizedProjectReferenceProxies = 1; preferredProjectObjectVersion = 77; 若按上面方式删除上面两个字段，若出现如下报错，则需要修改project.pbxproj文件中的objectVersion为支持的版本：
 /Library/Ruby/Gems/2.6.0/gems/xcodeproj-1.21.0/lib/xcodeproj/project.rb:228:in `initialize_from_file&amp;#39;: [Xcodeproj] Unknown object version (56). (RuntimeError) 参考文档
-指定发布版本和编译版本
-xcodebuild -quiet -workspace demo.xcworkspace -scheme &amp;#34;${targetName}&amp;#34; MARKETING_VERSION=${bundleShortVersion} CURRENT_PROJECT_VERSION=${bundleVersion} </content>
+指定发布版本和编译版本 使用xcodebuild命令进行打包时，可以指定编译版本和发布版本，命令如下：
+xcodebuild -quiet -workspace demo.xcworkspace -scheme &amp;#34;${targetName}&amp;#34; MARKETING_VERSION=${bundleShortVersion} CURRENT_PROJECT_VERSION=${bundleVersion} 若需要在某个目录下删除非ipa和dSYM文件，可以使用如下命令：
+# 删除非.ipa和非.dSYM文件 find &amp;#34;$build_path&amp;#34; -type f ! -name &amp;#34;*.ipa&amp;#34; ! -name &amp;#34;*.dSYM&amp;#34; -depth 1 -delete 取两个环境变量的值，若$2为空，则取$demo:
+bundleShortVersion=&amp;#34;${2:-$demo}&amp;#34; </content>
     </entry>
     
      <entry>

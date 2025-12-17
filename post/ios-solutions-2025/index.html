@@ -241,13 +241,13 @@ code.has-jax {
     <i class="fa fa-file-word-o"></i>
 </span>
 <span class="post-meta-item-text">字数: </span>
-<span class="leancloud-visitors-count">3918</span>
+<span class="leancloud-visitors-count">4044</span>
 &nbsp; | &nbsp;
 <span class="post-meta-item-icon">
     <i class="fa fa-coffee"></i>
 </span>
 <span class="post-meta-item-text">阅读: </span>
-<span class="leancloud-visitors-count">8 分钟</span>
+<span class="leancloud-visitors-count">9 分钟</span>
 </span>
       </div>
     </header>
@@ -479,8 +479,14 @@ code.has-jax {
 </span></span></code></pre></div><p>若按上面方式删除上面两个字段，若出现如下报错，则需要修改project.pbxproj文件中的objectVersion为支持的版本：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>/Library/Ruby/Gems/2.6.0/gems/xcodeproj-1.21.0/lib/xcodeproj/project.rb:228:in <span style="color:#e6db74">`</span>initialize_from_file<span style="color:#960050;background-color:#1e0010">&#39;</span>: <span style="color:#f92672">[</span>Xcodeproj<span style="color:#f92672">]</span> Unknown object version <span style="color:#f92672">(</span>56<span style="color:#f92672">)</span>. <span style="color:#f92672">(</span>RuntimeError<span style="color:#f92672">)</span>
 </span></span></code></pre></div><p><a href="https://blog.devzeng.com/blog/xcode16-with-cocoapods.html">参考文档</a></p>
-<p>指定发布版本和编译版本</p>
+<h2 id="指定发布版本和编译版本">指定发布版本和编译版本</h2>
+<p>使用<code>xcodebuild</code>命令进行打包时，可以指定编译版本和发布版本，命令如下：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>xcodebuild -quiet -workspace demo.xcworkspace -scheme <span style="color:#e6db74">&#34;</span><span style="color:#e6db74">${</span>targetName<span style="color:#e6db74">}</span><span style="color:#e6db74">&#34;</span> MARKETING_VERSION<span style="color:#f92672">=</span><span style="color:#e6db74">${</span>bundleShortVersion<span style="color:#e6db74">}</span> CURRENT_PROJECT_VERSION<span style="color:#f92672">=</span><span style="color:#e6db74">${</span>bundleVersion<span style="color:#e6db74">}</span>
+</span></span></code></pre></div><p>若需要在某个目录下删除非ipa和dSYM文件，可以使用如下命令：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span><span style="color:#75715e"># 删除非.ipa和非.dSYM文件</span>
+</span></span><span style="display:flex;"><span>find <span style="color:#e6db74">&#34;</span>$build_path<span style="color:#e6db74">&#34;</span> -type f ! -name <span style="color:#e6db74">&#34;*.ipa&#34;</span> ! -name <span style="color:#e6db74">&#34;*.dSYM&#34;</span> -depth <span style="color:#ae81ff">1</span> -delete
+</span></span></code></pre></div><p>取两个环境变量的值，若<code>$2</code>为空，则取<code>$demo</code>:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>bundleShortVersion<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;</span><span style="color:#e6db74">${</span>2<span style="color:#66d9ef">:-</span>$demo<span style="color:#e6db74">}</span><span style="color:#e6db74">&#34;</span>
 </span></span></code></pre></div>
     </div>
     <footer class="post-footer">
@@ -664,6 +670,7 @@ code.has-jax {
         <li><a href="#编译时删除built_products_dirxxxxxxframework">编译时删除${BUILT_PRODUCTS_DIR}/xxx/xxx.framework</a></li>
         <li><a href="#修改组件最低支持版本">修改组件最低支持版本</a></li>
         <li><a href="#pbxfilesystemsynchronizedrootgroup">PBXFileSystemSynchronizedRootGroup</a></li>
+        <li><a href="#指定发布版本和编译版本">指定发布版本和编译版本</a></li>
       </ul>
     </li>
   </ul>
