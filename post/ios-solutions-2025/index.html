@@ -241,7 +241,7 @@ code.has-jax {
     <i class="fa fa-file-word-o"></i>
 </span>
 <span class="post-meta-item-text">字数: </span>
-<span class="leancloud-visitors-count">4044</span>
+<span class="leancloud-visitors-count">4057</span>
 &nbsp; | &nbsp;
 <span class="post-meta-item-icon">
     <i class="fa fa-coffee"></i>
@@ -471,21 +471,21 @@ code.has-jax {
 </span></span></code></pre></div><h2 id="pbxfilesystemsynchronizedrootgroup">PBXFileSystemSynchronizedRootGroup</h2>
 <p>接手别人的项目后使用<code>pod update</code>命令更新依赖，出现如下错误：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>RuntimeError - <span style="color:#e6db74">`</span>PBXGroup<span style="color:#e6db74">`</span> attempted to initialize an object with unknown ISA <span style="color:#e6db74">`</span>PBXFileSystemSynchronizedRootGroup<span style="color:#e6db74">`</span> from attributes: <span style="color:#e6db74">`</span><span style="color:#f92672">{</span><span style="color:#e6db74">&#34;isa&#34;</span><span style="color:#f92672">=</span>&gt;<span style="color:#e6db74">&#34;PBXFileSystemSynchronizedRootGroup&#34;</span>, <span style="color:#e6db74">&#34;exceptions&#34;</span><span style="color:#f92672">=</span>&gt;<span style="color:#f92672">[</span><span style="color:#e6db74">&#34;416D36782ECD6C14005419D5&#34;</span><span style="color:#f92672">]</span>, <span style="color:#e6db74">&#34;path&#34;</span><span style="color:#f92672">=</span>&gt;<span style="color:#e6db74">&#34;demo&#34;</span>, <span style="color:#e6db74">&#34;sourceTree&#34;</span><span style="color:#f92672">=</span>&gt;<span style="color:#e6db74">&#34;&lt;group&gt;&#34;</span><span style="color:#f92672">}</span><span style="color:#e6db74">`</span>
-</span></span></code></pre></div><p>是因为<code>cocoapods</code>版本太低（实际是<code>cocoapods</code>的<code>Xcodeproj</code>版本太低），无法识别在高版本Xcode上创建的项目。需要在高版本Xcode上已创建工程的根目录由Folder转为Group（打开项目在根目录上右键会出现相应选项）。按上面方法修改后执行pod update后还是报错:</p>
+</span></span></code></pre></div><p>是因为<code>cocoapods</code>版本太低（实际是<code>cocoapods</code>的<code>Xcodeproj</code>版本太低），无法识别在高版本Xcode上创建的项目。需要在高版本Xcode上已创建工程的根目录由Folder转为<code>Group</code>（打开项目在根目录上右键会出现相应选项）。按上面方法修改后执行<code>pod update</code>后还是报错:</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span><span style="color:#f92672">[</span>!<span style="color:#f92672">]</span> <span style="color:#f92672">[</span>!<span style="color:#f92672">]</span> Xcodeproj doesn<span style="color:#e6db74">&#39;t know about the following attributes {&#34;minimizedProjectReferenceProxies&#34;=&gt;&#34;1&#34;, &#34;preferredProjectObjectVersion&#34;=&gt;&#34;77&#34;} for the &#39;</span>PBXProject<span style="color:#960050;background-color:#1e0010">&#39;</span> isa.
 </span></span></code></pre></div><p>这是因为低版本的<code>Xcodeproj</code>无法识别上面两个属性，此时需要将<code>project.pbxproj</code>（在<code>finder</code>中右键<code>xxx.xcodeproj</code>，显示包内容，打开<code>project.pbxproj</code>）中的内容删除：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-fallback" data-lang="fallback"><span style="display:flex;"><span>minimizedProjectReferenceProxies = 1;
 </span></span><span style="display:flex;"><span>preferredProjectObjectVersion = 77;
-</span></span></code></pre></div><p>若按上面方式删除上面两个字段，若出现如下报错，则需要修改project.pbxproj文件中的objectVersion为支持的版本：</p>
+</span></span></code></pre></div><p>若按上面方式删除上面两个字段，若出现如下报错，则需要修改<code>project.pbxproj</code>文件中的<code>objectVersion</code>为支持的版本：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>/Library/Ruby/Gems/2.6.0/gems/xcodeproj-1.21.0/lib/xcodeproj/project.rb:228:in <span style="color:#e6db74">`</span>initialize_from_file<span style="color:#960050;background-color:#1e0010">&#39;</span>: <span style="color:#f92672">[</span>Xcodeproj<span style="color:#f92672">]</span> Unknown object version <span style="color:#f92672">(</span>56<span style="color:#f92672">)</span>. <span style="color:#f92672">(</span>RuntimeError<span style="color:#f92672">)</span>
 </span></span></code></pre></div><p><a href="https://blog.devzeng.com/blog/xcode16-with-cocoapods.html">参考文档</a></p>
 <h2 id="指定发布版本和编译版本">指定发布版本和编译版本</h2>
 <p>使用<code>xcodebuild</code>命令进行打包时，可以指定编译版本和发布版本，命令如下：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>xcodebuild -quiet -workspace demo.xcworkspace -scheme <span style="color:#e6db74">&#34;</span><span style="color:#e6db74">${</span>targetName<span style="color:#e6db74">}</span><span style="color:#e6db74">&#34;</span> MARKETING_VERSION<span style="color:#f92672">=</span><span style="color:#e6db74">${</span>bundleShortVersion<span style="color:#e6db74">}</span> CURRENT_PROJECT_VERSION<span style="color:#f92672">=</span><span style="color:#e6db74">${</span>bundleVersion<span style="color:#e6db74">}</span>
-</span></span></code></pre></div><p>若需要在某个目录下删除非ipa和dSYM文件，可以使用如下命令：</p>
+</span></span></code></pre></div><p>若需要在某个目录下删除非<code>ipa</code>和<code>dSYM</code>的所有文件，可以使用如下命令：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span><span style="color:#75715e"># 删除非.ipa和非.dSYM文件</span>
 </span></span><span style="display:flex;"><span>find <span style="color:#e6db74">&#34;</span>$build_path<span style="color:#e6db74">&#34;</span> -type f ! -name <span style="color:#e6db74">&#34;*.ipa&#34;</span> ! -name <span style="color:#e6db74">&#34;*.dSYM&#34;</span> -depth <span style="color:#ae81ff">1</span> -delete
-</span></span></code></pre></div><p>取两个环境变量的值，若<code>$2</code>为空，则取<code>$demo</code>:</p>
+</span></span></code></pre></div><p>某个变量取两个环境变量的值，下面的变量是若<code>$2</code>为空，则取<code>$demo</code>:</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>bundleShortVersion<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;</span><span style="color:#e6db74">${</span>2<span style="color:#66d9ef">:-</span>$demo<span style="color:#e6db74">}</span><span style="color:#e6db74">&#34;</span>
 </span></span></code></pre></div>
     </div>
