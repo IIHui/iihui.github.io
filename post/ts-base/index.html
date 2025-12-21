@@ -241,7 +241,7 @@ code.has-jax {
     <i class="fa fa-file-word-o"></i>
 </span>
 <span class="post-meta-item-text">字数: </span>
-<span class="leancloud-visitors-count">64302</span>
+<span class="leancloud-visitors-count">64336</span>
 &nbsp; | &nbsp;
 <span class="post-meta-item-icon">
     <i class="fa fa-coffee"></i>
@@ -3011,15 +3011,19 @@ code.has-jax {
 </span></span></code></pre></div><h1 id="type-modifiers">Type Modifiers</h1>
 <p>现在，已经了解<code>TypeScript</code>类型系统如何与现有<code>JavaScript</code>结构（如数组、类和对象）协同工作，接下来将进一步介绍类型系统本身。</p>
 <h2 id="top-types">Top Types</h2>
-<p>在<code>TypeScript</code>中<font color=red>顶层类型或通用类型是一种可以代表类型系统中任何可能值的类型</font>。所有类型的值都可以赋值给顶层类型的变量或常量，但相反时不一定正确，因为顶层类型区分<code>any</code>和<code>unknwon</code>。如果需要完全禁用声明类型，可以使用<code>any</code>，如果需要更谨慎处理，可以使用<code>unknown</code>。</p>
+<p>在在<code>TypeScript</code>中，有两种顶层类型，<code>any</code>和<code>unknown</code>。在<code>TypeScript</code>中<font color=red>顶层类型（通用类型）是一种可以代表类型系统中任何可能值的类型</font>。所有类型的值都可以赋值给顶层类型的变量或常量，但相反时不一定正确。如果想完全不使用类型声明，可以使用<code>any</code>，如果需要更谨慎处理，可以使用<code>unknown</code>。</p>
 <h3 id="any">any</h3>
-<p><code>any</code>类型可以作为顶层类型，<font color="#de7802">表示没有任何限制，该类型的变量可以被赋予任意类型的值</font>。类型<code>any</code>可用于允许接受任何类型的地方，例如作为<code>console.log</code>的参数:</p>
+<p>类型<code>any</code>是顶层类型中的一种，<font color="#de7802">表示没有任何限制，该类型的变量可以被赋予任意类型的值</font>。类型<code>any</code>可用于允许接受任何类型的地方，例如作为<code>console.log</code>的参数:</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span><span style="color:#66d9ef">let</span> <span style="color:#a6e22e">anyValue</span>: <span style="color:#66d9ef">any</span>;  
 </span></span><span style="display:flex;"><span><span style="color:#a6e22e">anyValue</span> <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;Lucille Ball&#34;</span>; <span style="color:#75715e">// Ok  
 </span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#a6e22e">anyValue</span> <span style="color:#f92672">=</span> <span style="color:#ae81ff">123</span>; <span style="color:#75715e">// Ok  
 </span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#a6e22e">console</span>.<span style="color:#a6e22e">log</span>(<span style="color:#a6e22e">anyValue</span>); <span style="color:#75715e">// Ok
 </span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#a6e22e">console</span>.<span style="color:#a6e22e">log</span>(<span style="color:#66d9ef">typeof</span> <span style="color:#a6e22e">anyValue</span>); <span style="color:#75715e">// number
-</span></span></span></code></pre></div><p>使用<code>any</code>就是<font color="#de7802">明确告诉编译器不需要执行类型检查</font>。这种类型检查的缺失有时会有用，但有时也会触发异常。下面代码不会出现编译错误，但运行时会报错：</p>
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">const</span> <span style="color:#a6e22e">name</span>: <span style="color:#66d9ef">any</span> <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;Stefan&#34;</span>;
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">const</span> <span style="color:#a6e22e">person</span>: <span style="color:#66d9ef">any</span> <span style="color:#f92672">=</span> {<span style="color:#a6e22e">name</span><span style="color:#f92672">:</span> <span style="color:#e6db74">&#34;Stefan&#34;</span>, <span style="color:#a6e22e">age</span>: <span style="color:#66d9ef">40</span>};
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">const</span> <span style="color:#a6e22e">notAvailable</span>: <span style="color:#66d9ef">any</span> <span style="color:#f92672">=</span> <span style="color:#66d9ef">undefined</span>;
+</span></span></code></pre></div><p>使用<code>any</code>就是<font color="#de7802">明确告诉编译器不需要执行类型检查</font>。这种类型检查的缺失有时会有用，但有时也会触发异常。下面代码不会出现编译错误，但运行时会报错：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span><span style="color:#66d9ef">function</span> <span style="color:#a6e22e">greetComedian</span>(<span style="color:#a6e22e">name</span>: <span style="color:#66d9ef">any</span>) {
 </span></span><span style="display:flex;"><span>    <span style="color:#75715e">// 此时无编译错误，但传入不能调用toUpperCase方法的实参时会出现运行时错误
 </span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#a6e22e">console</span>.<span style="color:#a6e22e">log</span>(<span style="color:#e6db74">`Announcing </span><span style="color:#e6db74">${</span><span style="color:#a6e22e">name</span>.<span style="color:#a6e22e">toUpperCase</span>()<span style="color:#e6db74">}</span><span style="color:#e6db74">!`</span>);
