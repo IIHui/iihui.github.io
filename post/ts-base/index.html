@@ -241,13 +241,13 @@ code.has-jax {
     <i class="fa fa-file-word-o"></i>
 </span>
 <span class="post-meta-item-text">字数: </span>
-<span class="leancloud-visitors-count">65540</span>
+<span class="leancloud-visitors-count">66245</span>
 &nbsp; | &nbsp;
 <span class="post-meta-item-icon">
     <i class="fa fa-coffee"></i>
 </span>
 <span class="post-meta-item-text">阅读: </span>
-<span class="leancloud-visitors-count">131 分钟</span>
+<span class="leancloud-visitors-count">133 分钟</span>
 </span>
       </div>
     </header>
@@ -2051,7 +2051,8 @@ code.has-jax {
 <p>接口是声明具有相关名称对象的另一种方法。<font color="#de7802">接口在许多方面与别名对象类型相似，但由于其错误信息更易读、编译器性能更快以及与类的互操作性更好，通常更受青睐。</font>编译器对接口的可赋值性检查和错误信息的展示与对象类型大致相同。</p>
 </blockquote>
 <h2 id="type-aliases-versus-interfaces">Type Aliases Versus Interfaces</h2>
-<p>下面是定义类型别名描述对象的语法，属性之间既可以使用<code>;</code>也可以使用逗号<code>,</code>还可以使用换行符来分隔：</p>
+<p>TypeScript通过两种方式声明对象类型：接口和类型别名。那应该怎么判断使用哪一种？在项目内使用类型别名来处理内部类型，而将接口用于需要由外部系统使用的契约定义。</p>
+<p>实际上类型别名与接口之间已几乎无区别，所有差异都已逐步趋同。从语法层面看，接口与类型别名之间的差异细微而微妙。下面是定义类型别名描述对象的语法，属性之间既可以使用<code>;</code>也可以使用逗号<code>,</code>还可以使用换行符来分隔：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span><span style="color:#66d9ef">type</span> <span style="color:#a6e22e">Poet</span> <span style="color:#f92672">=</span> {
 </span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">born</span>: <span style="color:#66d9ef">number</span>;
 </span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">name</span>: <span style="color:#66d9ef">string</span>;
@@ -2074,13 +2075,35 @@ code.has-jax {
 </span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">born</span>: <span style="color:#66d9ef">number</span>
 </span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">name</span>: <span style="color:#66d9ef">string</span>
 </span></span><span style="display:flex;"><span>}
-</span></span></code></pre></div><p>上面三种语法基本一致。喜欢使用分号的开发人员<font color="#de7802">通常会将分号放在类型别名定义的右大括号之后，而接口定义之后的右大括号通常不加分号</font>。这种偏好反映了使用<code>;</code>声明变量，不使用<code>;</code>声明类或函数。尽管接口和类型别名相似，但类型别名<code>type</code>和<code>interface</code>有一些关键区别：</p>
+</span></span></code></pre></div><p>上面三种语法基本一致。喜欢使用分号的开发人员<font color="#de7802">通常会将分号放在类型别名定义的右大括号之后，而接口定义之后的右大括号通常不加分号</font>。这种偏好反映了使用<code>;</code>声明变量，不使用<code>;</code>声明类或函数。</p>
+<p>在相同场景下，可以使用接口和类型别名实现相同的功能：</p>
+<ul>
+<li>类的实现声明。</li>
+<li>作为对象字面量的类型注解。</li>
+<li>用于递归类型结构。</li>
+</ul>
+<p>尽管接口和类型别名相似，但类型别名<code>type</code>和<code>interface</code>有一些关键区别：</p>
 <ul>
 <li><code>interface</code>可以<code>merge</code>在一起增强，这一特性在使用第三方代码时尤其有用。</li>
 <li><font color="#de7802">接口可以用来对<code>class</code>的结构进行类型检查，而类型别名则不能</font>。</li>
 <li>对于类型检查程序来说，<span style="background:#ffb78b8c">接口的工作速度通常更快</span>。因为它们声明了一个<code>named</code>类型，可以更容易在内部缓存，而<font color="#de7802">不是像类型别名那样动态复制粘贴一个新的对象字面量。</font></li>
 <li>因为<font color="#de7802">接口被认为是<code>named</code>的对象</font>，不是<code>unnamed</code>对象字面量的别名，所以它们的错误信息在某些情况下更具可读性。</li>
 </ul>
+<p>TypeScript常在<code>lib.d.ts</code>文件中运用接口的<code>merge</code>增强技术，使得仅需添加基于ECMAScript版本的新JavaScript API即可。若需扩展Window等对象，此功能极为便利，但在其它场景下可能适得其反，例如：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span><span style="color:#66d9ef">interface</span> <span style="color:#a6e22e">FormData</span> {
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">name</span>: <span style="color:#66d9ef">string</span>;
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">age</span>: <span style="color:#66d9ef">number</span>;
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">address</span>: <span style="color:#66d9ef">string</span>[];
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">function</span> <span style="color:#a6e22e">send</span>(<span style="color:#a6e22e">data</span>: <span style="color:#66d9ef">FormData</span>) {
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">// 能通过编译，但会出现运行时异常
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#a6e22e">console</span>.<span style="color:#a6e22e">log</span>(<span style="color:#a6e22e">data</span>.<span style="color:#a6e22e">entries</span>()) 
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">// but crashes horrendously in runtime
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>}
+</span></span></code></pre></div><p>那么，entries()方法是从何而来的呢？它来自 DOM API！FormData是浏览器API提供的众多接口之一。这类接口全局的，任何开发者都能自由扩展它们——而扩展行为不会触发任何通知机制。</p>
+<p>你可以争论命名规范问题，但所有全局可用的接口都存在同样的隐患——甚至某些依赖库在你不知情的情况下，就可能向全局空间添加新接口。如果将上面接口改成type就能立即发现这个问题。</p>
+<p>声明合并是一项绝佳的功能，尤其当创建的库会被项目中其它部分使用时——甚至可能被其他团队完全独立开发的项目所调用。它允许定义描述应用程序的接口，同时让用户能够根据实际需求进行适配。想象一个插件系统：加载新模块即可增强功能——声明合并正是你不可或缺的核心特性。但在模块内部，使用类型别名可避免意外复用或扩展现有声明类型。当不期望他人使用时，请采用类型别名方案。</p>
 <h2 id="types-of-properties">Types of Properties</h2>
 <h3 id="optional-properties-1">Optional Properties</h3>
 <p>与对象类型一样，接口中的属性不一定都是对象的必需属性。可以在接口定义时，在属性类型标注的<code>:</code>前加上<code>?</code>以表示该属性是可选的。</p>
