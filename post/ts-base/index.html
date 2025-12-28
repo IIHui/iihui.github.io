@@ -241,13 +241,13 @@ code.has-jax {
     <i class="fa fa-file-word-o"></i>
 </span>
 <span class="post-meta-item-text">字数: </span>
-<span class="leancloud-visitors-count">66549</span>
+<span class="leancloud-visitors-count">66851</span>
 &nbsp; | &nbsp;
 <span class="post-meta-item-icon">
     <i class="fa fa-coffee"></i>
 </span>
 <span class="post-meta-item-text">阅读: </span>
-<span class="leancloud-visitors-count">133 分钟</span>
+<span class="leancloud-visitors-count">134 分钟</span>
 </span>
       </div>
     </header>
@@ -2104,10 +2104,12 @@ code.has-jax {
 </span></span></code></pre></div><p>那么，<code>entries()</code>方法从何而来呢？它是一个<code>DOM API</code>，<code>FormData</code>是浏览器API提供的众多接口之一。这类接口是全局的，任何开发者都能自由扩展它们——而这种扩展行为不会触发任何通知机制。</p>
 <p>所有全局可用的接口都存在同样的隐患——甚至某些依赖库在你不知情的情况下，就可能向全局空间添加新接口。如果将上面<code>interface</code>定义改成<code>type</code>就能立即注意到这个问题。</p>
 <p>声明合并是一项非常棒的功能，尤其当创建的库会被项目中其它部分使用，甚至可能被其他团队的项目所使用。它允许定义一个描述我们应用程序的<code>interface</code>，同时允许你的用户能够根据实际情况进行调整。想象一个插件系统：加载新模块即可增强功能——声明合并正是不可或缺的核心特性。但在模块内，使用类型别名可以防止无意中重复使用或扩展已经声明的类型。当不期望其他人使用这些类型时，就可以使用类型别名规避。</p>
-<p>使用类型别名代替接口引发了某些讨论，在性能评估时，通常接口被认为比类型别名更高效，甚至在TypeScript官方维基上出现了该性能建议。这个建议应该谨慎对待。简单的类型别名可能比接口运行得更快，因为接口永远不会被关闭，因为它可能会与其他声明合并。但在其他情况下，接口可能表现得更快，因为它们事先就知道是对象类型。TypeScript团队的Ryan Canavaugh预计，只有声明了大量接口或类型别名时，性能差异才可能被测量出来：据这条推文，大约是五千个。如果你的TypeScript代码性能不佳，并不是因为声明了过多的类型别名而没有使用接口，或者相反。</p>
+<p>使用类型别名代替接口引发了某些讨论，在性能评估时，通常接口被认为比类型别名更高效，甚至在TypeScript官方维基上出现了该性能建议。这个建议应该谨慎对待。简单的类型别名可能比接口运行得更快，因为接口永远不会被关闭，因为它可能会与其他声明合并。但在其他情况下，接口可能表现得更快，因为它们事先就知道是对象类型。</p>
+<p><code>TypeScript</code>团队的<code>Ryan Canavaugh</code>预计，只有声明了大量接口或类型别名时，性能差异才可能体现出来：大约是五千个。如果你的TypeScript代码性能不佳，可能并不是因为声明了过多的类型别名而没有使用接口，或者相反。</p>
 <h2 id="types-of-properties">Types of Properties</h2>
+<p><code>JavaScript</code>在实际使用中可能表现得非常奇特，包括有<code>getter</code>和<code>setter</code>、某些时候才存在的属性，或者接受任意的属性名称。<code>TypeScript</code>为<code>interface</code>提供了一套类型系统工具，帮助我们模拟这些特性。</p>
 <h3 id="optional-properties-1">Optional Properties</h3>
-<p>与对象类型一样，接口中的属性不一定都是对象的必需属性。可以在接口定义时，在属性类型标注的<code>:</code>前加上<code>?</code>以表示该属性是可选的。</p>
+<p>与对象类型一样，接口中的属性不一定都是对象的必需属性。可以在接口定义时，在属性类型标注的<code>:</code>前加上<code>?</code>以表示该属性是可选的。下面定义的Book接口仅有一个必需属性，并有一个可选属性。遵循该接口的对象可提供可选属性或省略该属性，只要提供了必需属性即可：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span><span style="color:#66d9ef">interface</span> <span style="color:#a6e22e">Book</span> {
 </span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">author?</span>: <span style="color:#66d9ef">string</span>;
 </span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">pages</span>: <span style="color:#66d9ef">number</span>;
@@ -2124,15 +2126,15 @@ code.has-jax {
 </span></span></code></pre></div><p>和对象类型以及别名类型定义类似，<strong><font color="#de7802">若接口中属性值的类型是包含了<code>undefined</code>的联合类型，如果在初始化的时候没有为该属性提供初始值，也会出现编译错误</font></strong>：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span><span style="color:#66d9ef">interface</span> <span style="color:#a6e22e">Book</span> {
 </span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">author?</span>: <span style="color:#66d9ef">string</span>;
-</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">pages</span>: <span style="color:#66d9ef">number</span> <span style="color:#f92672">|</span> <span style="color:#66d9ef">undefined</span>;
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">// 包含了undefined联合类型，一定需要初始化
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#a6e22e">pages</span>: <span style="color:#66d9ef">number</span> <span style="color:#f92672">|</span> <span style="color:#66d9ef">undefined</span>;
 </span></span><span style="display:flex;"><span>};
 </span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span><span style="color:#66d9ef">const</span> <span style="color:#a6e22e">book</span>: <span style="color:#66d9ef">Book</span> <span style="color:#f92672">=</span> {
+</span></span><span style="display:flex;"><span><span style="color:#75715e">// 编译错误，Book接口必需要pages，即使它包含undefined
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">// Property &#39;pages&#39; is missing in type &#39;{ author: string; }&#39; but required in type &#39;Book&#39;.
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">const</span> <span style="color:#a6e22e">book</span>: <span style="color:#66d9ef">Book</span> <span style="color:#f92672">=</span> {
 </span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">author</span><span style="color:#f92672">:</span> <span style="color:#e6db74">&#34;Jose&#34;</span>,
 </span></span><span style="display:flex;"><span>}
-</span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span><span style="color:#75715e">// 编译错误
-</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#a6e22e">Property</span> <span style="color:#e6db74">&#39;pages&#39;</span> <span style="color:#66d9ef">is</span> <span style="color:#a6e22e">missing</span> <span style="color:#66d9ef">in</span> <span style="color:#66d9ef">type</span> <span style="color:#e6db74">&#39;{ author: string; }&#39;</span> <span style="color:#a6e22e">but</span> <span style="color:#a6e22e">required</span> <span style="color:#66d9ef">in</span> <span style="color:#66d9ef">type</span> <span style="color:#e6db74">&#39;Book&#39;</span>. 
 </span></span></code></pre></div><h3 id="read-only-properties">Read-Only Properties</h3>
 <p>有时，希望禁止重新赋值接口的某个属性值。允许在接口属性名称前添加一个<code>readonly</code>修饰符，表示该属性一旦设置，就不能再被修改。也就是说<code>readonly</code>属性可以正常读取，但不能被重新赋值。</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span><span style="color:#66d9ef">interface</span> <span style="color:#a6e22e">Page</span> {
@@ -2147,12 +2149,12 @@ code.has-jax {
 </span></span><span style="display:flex;"><span>}
 </span></span></code></pre></div><p>需要注意的是，修饰符<code>readonly</code><font color=red>只存在于类型系统</font>，编译成<code>JavaScript</code>后，该修饰符会被删除。属性添加<code>readonly</code>修饰符后，<span style="background:#ffb78b8c">依靠的是类型检查器，只能防止在开发过程中属性被修改，不能防止在运行过程中被修改</span>。</p>
 <h3 id="functions-and-methods">Functions and Methods</h3>
-<p>在<code>JavaScript</code>中对象成员为函数比较常见。因此，允许将<code>interface</code>的成员声明为函数类型。<code>TypeScript</code>提供了两种将接口成员声明为函数的方法：</p>
+<p>在<code>JavaScript</code>中对象成员为函数比较常见。因此，<code>TypeScript</code>允许将<code>interface</code>的成员声明为函数类型。<code>TypeScript</code>提供了两种将接口成员声明为函数的方法：</p>
 <ul>
-<li>方法语法：声明接口成员是一个打算作为对象成员调用的函数，如<code>member(): void</code>。</li>
-<li>属性语法：声明接口成员等同于独立函数，如<code>member: () =&gt; void</code>。</li>
+<li>方法语法(Method syntax)：声明接口的某个成员是函数，该函数作为对象的成员被调用。如，<code>member(): void</code>。</li>
+<li>属性语法(Property syntax)：声明接口成员等同于独立函数，如<code>member: () =&gt; void</code>。</li>
 </ul>
-<p>下面接口<code>HasBothFunctionTypes</code>中声明的<code>method</code>和<code>property</code>都是函数，可以不带实参调用，并返回一个字符串：</p>
+<p>这两种声明形式对应着两种声明<code>JavaScript</code>对象具有函数的方式。下面接口<code>HasBothFunctionTypes</code>中声明的<code>method</code>和<code>property</code>都是函数，可以不带实参调用，并返回一个字符串：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span><span style="color:#66d9ef">interface</span> <span style="color:#a6e22e">HasBothFunctionTypes</span> {
 </span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">method</span>()<span style="color:#f92672">:</span> <span style="color:#66d9ef">string</span>;  <span style="color:#75715e">// 方法语法，类似使用function声明函数（去掉关键字function）
 </span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#a6e22e">property</span><span style="color:#f92672">:</span> () <span style="color:#f92672">=&gt;</span> <span style="color:#66d9ef">string</span>; <span style="color:#75715e">// 属性语法，箭头函数声明方式
@@ -2161,12 +2163,12 @@ code.has-jax {
 </span></span><span style="display:flex;"><span><span style="color:#66d9ef">const</span> <span style="color:#a6e22e">hasBoth</span>: <span style="color:#66d9ef">HasBothFunctionTypes</span> <span style="color:#f92672">=</span> {
 </span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">property</span><span style="color:#f92672">:</span> () <span style="color:#f92672">=&gt;</span> <span style="color:#e6db74">&#34;&#34;</span>,
 </span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">method() {</span>
-</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">return</span> <span style="color:#e6db74">&#34;&#34;</span>;
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">return</span> <span style="color:#e6db74">&#34;&#34;</span>
 </span></span><span style="display:flex;"><span>    }
 </span></span><span style="display:flex;"><span>};
 </span></span><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span><span style="color:#a6e22e">hasBoth</span>.<span style="color:#a6e22e">property</span>();
-</span></span><span style="display:flex;"><span><span style="color:#a6e22e">hasBoth</span>.<span style="color:#a6e22e">method</span>()
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">hasBoth</span>.<span style="color:#a6e22e">method</span>();
 </span></span></code></pre></div><p>上面两种方式声明的函数都支持可选修饰器<code>?</code>，表明它们对于当前定义的接口来说不是必需的成员：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span><span style="color:#66d9ef">interface</span> <span style="color:#a6e22e">OptionalFunctions</span> {
 </span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">optionalProperty</span><span style="color:#f92672">?:</span> () <span style="color:#f92672">=&gt;</span> <span style="color:#66d9ef">string</span>;
