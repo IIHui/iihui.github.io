@@ -241,7 +241,7 @@ code.has-jax {
     <i class="fa fa-file-word-o"></i>
 </span>
 <span class="post-meta-item-text">字数: </span>
-<span class="leancloud-visitors-count">68901</span>
+<span class="leancloud-visitors-count">68928</span>
 &nbsp; | &nbsp;
 <span class="post-meta-item-icon">
     <i class="fa fa-coffee"></i>
@@ -2271,9 +2271,9 @@ code.has-jax {
 </span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#a6e22e">console</span>.<span style="color:#a6e22e">log</span>(<span style="color:#a6e22e">data</span>.<span style="color:#a6e22e">entries</span>()) 
 </span></span><span style="display:flex;"><span>}
 </span></span></code></pre></div><p>那么，<code>entries()</code>方法从何而来呢？它是一个<code>DOM API</code>，<code>FormData</code>是浏览器<code>Api</code>提供的众多接口之一。这类接口是全局的，任何开发者都能自由扩展它们，而这种扩展行为不会触发任何通知机制。</p>
-<p>所有全局可用的接口都存在同样的隐患——甚至某些依赖库在你不知情的情况下，就可能向全局空间添加新接口。如果将上面<code>interface</code>定义改成<code>type</code>就能立即注意到这个问题。</p>
-<p>声明合并是一项非常棒的功能，尤其当创建的库会被项目中其它部分使用，甚至可能被其他团队的项目所使用。它允许定义一个描述我们应用程序的<code>interface</code>，同时允许你的用户能够根据实际情况进行调整。想象一个插件系统：加载新模块即可增强功能——声明合并正是不可或缺的核心特性。但在模块内，使用类型别名可以防止无意中重复使用或扩展已经声明的类型。当不期望其他人使用这些类型时，就可以使用类型别名规避。</p>
-<p>使用类型别名代替接口引发了某些讨论，在性能评估时，通常接口被认为比类型别名更高效，甚至在<code>TypeScript</code>官方维基上出现了该性能建议。这个建议应该谨慎对待。简单的类型别名可能比接口运行得更快，因为接口永远不会被关闭，因为它可能会与其他声明合并。但在其他情况下，接口可能表现得更快，因为它们事先就知道是对象类型。</p>
+<p>所有全局可用的接口都存在同样的隐患——甚至某些依赖库在你不知情的情况下，就可能向全局空间添加新接口。但如果将上面<code>interface</code>定义改成使用<code>type</code>定义就能立即注意到这个问题。</p>
+<p>声明合并是一项非常棒的功能，尤其当创建的库会被项目中其它部分使用，甚至可能被其他团队的项目所使用。它允许定义一个描述我们应用程序的<code>interface</code>，同时允许用户能够根据实际情况进行调整。想象一个插件系统：加载新模块即可增强功能——声明合并正是不可或缺的核心特性。但在模块内，使用类型别名可以防止无意中重复使用或扩展已经声明的类型。当不期望其他人使用这些类型时，就可以使用类型别名规避。</p>
+<p>使用类型别名代替接口引发了某些讨论，在性能评估时，通常<code>interface</code>接口被认为比<code>type</code>类型别名更高效，甚至在<code>TypeScript</code>官方<code>wiki</code>上出现了该性能建议。这个建议应该谨慎对待。简单的类型别名可能比接口运行得更快，因为接口永远不会被关闭，因为它可能会与其他声明合并。但在其他情况下，接口可能表现得更快，因为它们事先就知道是对象类型。</p>
 <p><code>TypeScript</code>团队的<code>Ryan Canavaugh</code>预计，只有声明了大量接口或类型别名时，性能差异才可能体现出来：<font color=red>大约是五千个</font>。如果你的<code>TypeScript</code>代码性能不佳，可能并不是因为声明了过多的类型别名而没有使用接口，或者相反。</p>
 <h2 id="types-of-properties">Types of Properties</h2>
 <p><code>JavaScript</code>在实际使用中可能表现得非常奇特，包括有<code>getter</code>和<code>setter</code>，某些时候才存在的属性，或者接受任意的属性名称。<code>TypeScript</code>为<code>interface</code>提供了一套类型系统工具，帮助我们模拟这些特性。</p>
@@ -2322,15 +2322,18 @@ code.has-jax {
 <p>在<code>JavaScript</code>中对象成员为函数比较常见。因此，<code>TypeScript</code>允许将<code>interface</code>的成员声明为函数类型。<code>TypeScript</code>提供了两种将接口成员声明为函数的方法：</p>
 <ul>
 <li>方法语法(<code>Method syntax</code>)：声明接口的某个成员是函数，该函数作为对象的成员被调用。如，<code>member(): void</code>。</li>
-<li>属性语法(<code>Property syntax</code>)：声明接口成员等同于独立函数，如<code>member: () =&gt; void</code>。</li>
+<li>属性语法(<code>Property syntax</code>)：声明接口成员<font color="#de7802">等同于独立函数</font>，如<code>member: () =&gt; void</code>。</li>
 </ul>
 <p>这两种声明形式对应着两种<code>function</code>和箭头函数声明的方式。下面接口<code>HasBothFunctionTypes</code>中声明的<code>method</code>和<code>property</code>都是函数，可以不带实参调用，并返回一个字符串：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span><span style="color:#66d9ef">interface</span> <span style="color:#a6e22e">HasBothFunctionTypes</span> {
-</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">method</span>()<span style="color:#f92672">:</span> <span style="color:#66d9ef">string</span>;  <span style="color:#75715e">// 方法语法，类似使用function声明函数（去掉关键字function）
-</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#a6e22e">property</span><span style="color:#f92672">:</span> () <span style="color:#f92672">=&gt;</span> <span style="color:#66d9ef">string</span>; <span style="color:#75715e">// 属性语法，箭头函数声明方式
-</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>}
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">// 方法语法，类似使用function声明函数（去掉关键字function）
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#a6e22e">method</span>()<span style="color:#f92672">:</span> <span style="color:#66d9ef">string</span>;  
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">// 属性语法，箭头函数声明方式
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#a6e22e">property</span><span style="color:#f92672">:</span> () <span style="color:#f92672">=&gt;</span> <span style="color:#66d9ef">string</span>; 
+</span></span><span style="display:flex;"><span>}
 </span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span><span style="color:#66d9ef">const</span> <span style="color:#a6e22e">hasBoth</span>: <span style="color:#66d9ef">HasBothFunctionTypes</span> <span style="color:#f92672">=</span> {
+</span></span><span style="display:flex;"><span><span style="color:#75715e">// 实现
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">const</span> <span style="color:#a6e22e">hasBoth</span>: <span style="color:#66d9ef">HasBothFunctionTypes</span> <span style="color:#f92672">=</span> {
 </span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">property</span><span style="color:#f92672">:</span> () <span style="color:#f92672">=&gt;</span> <span style="color:#e6db74">&#34;&#34;</span>,
 </span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">method() {</span>
 </span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">return</span> <span style="color:#e6db74">&#34;&#34;</span>
@@ -2366,7 +2369,7 @@ code.has-jax {
 <li>其它情况则建议使用属性。</li>
 </ul>
 <h3 id="call-signatures">Call Signatures</h3>
-<p>接口和对象类型均可以声明<code>call signatures</code>，调用签名是<font color="#de7802">类型系统对值如何像函数一样被调用的描述</font>。只有按照<code>call signatures</code>声明的方式调用的值才可以赋值给<code>interface</code>，即具有可赋值参数和返回类型的函数。</p>
+<p>接口和对象类型均可以声明<code>call signatures</code>（调用签名），调用签名是<font color="#de7802">类型系统对值如何像函数一样被调用的描述</font>。只有按照<code>call signatures</code>声明的方式调用的值才可以赋值给<code>interface</code>，即具有可赋值参数和返回类型的函数。</p>
 <p>声明<code>call signatures</code>看起来和声明函数类型相似，可以理解为使用<code>function</code>声明函数时去掉<code>function</code>和函数名。下面代码中，变量<code>typedFunctionAlias</code>和<code>typedCallSignature</code>的类型描述了相同的函数参数和返回类型：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span><span style="color:#66d9ef">interface</span> <span style="color:#a6e22e">CallSignature</span> {
 </span></span><span style="display:flex;"><span>    <span style="color:#75715e">// 调用签名，相当于接口中函数语法去掉函数名
