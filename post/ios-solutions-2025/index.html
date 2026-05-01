@@ -241,7 +241,7 @@ code.has-jax {
     <i class="fa fa-file-word-o"></i>
 </span>
 <span class="post-meta-item-text">字数: </span>
-<span class="leancloud-visitors-count">4902</span>
+<span class="leancloud-visitors-count">4891</span>
 &nbsp; | &nbsp;
 <span class="post-meta-item-icon">
     <i class="fa fa-coffee"></i>
@@ -496,14 +496,14 @@ code.has-jax {
 <p>使用<code>Xcode</code>调试小组件时，出现如下错误：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sh" data-lang="sh"><span style="display:flex;"><span>SendProcessControlEvent:toPid: encountered an error: Error Domain<span style="color:#f92672">=</span>com.apple.dt.deviceprocesscontrolservice Code<span style="color:#f92672">=</span><span style="color:#ae81ff">8</span> <span style="color:#e6db74">&#34;Failed to show Widget &#39;xxx.Widget&#39; error: Error Domain=FBSOpenApplicationServiceErrorDomain Code=1 &#34;</span>The request to open <span style="color:#e6db74">&#34;com.apple.springboard&#34;</span> failed.<span style="color:#e6db74">&#34;
 </span></span></span></code></pre></div><h2 id="codesign-error">CodeSign Error</h2>
-<p>本地打包没有出现报错，流水线出现如下编译错误。接着在流水线的<code>Xcode</code>中使用顶部菜单栏的<code>Product--&gt;Archive</code>时，一直弹出输入登录用户名和密码访问钥匙串的提示框。最后发现，是因为打包证书对应私钥没有设置<code>codesign</code>的访问权限：</p>
+<p>本地打包没有出现报错，流水线出现如下编译错误。接着在流水线的<code>Xcode</code>中使用顶部菜单栏的<code>Product--&gt;Archive</code>时，一直弹出输入登录用户名和密码访问钥匙串的提示框。最后发现，是因为打包证书对应的私钥没有设置<code>codesign</code>的访问权限：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>The following build commands failed:
 </span></span><span style="display:flex;"><span> 	CodeSign /Users/cmo/Library/Developer/Xcode/DerivedData/xxx-fyjunjdgwijqqsamhglwtnuxfcil/Build/Products/Release-iphoneos/ddd/ddd.framework <span style="color:#f92672">(</span>in target <span style="color:#e6db74">&#39;ddd&#39;</span> from project <span style="color:#e6db74">&#39;Pods&#39;</span><span style="color:#f92672">)</span>
 </span></span><span style="display:flex;"><span> 	Building workspace xxx with scheme xxx and configuration Release
 </span></span></code></pre></div><p>解决方案是在钥匙串中选择对应的发布证书，点击最前面的右箭头展开私钥，然后双击展开后的私钥，在弹出来的页面，再选择右侧的<code>Access Control</code>，最后将<code>codesign</code>添加到访问白名单上（即放到<code>Always allow access by these applications</code>下）或者开启所有应用访问<code>Allow all applications to access this item</code>。</p>
 <p>添加<code>codesign</code>时可以使用<code>which codesign</code>命令查到对应路径为<code>/usr/bin/codesign</code>，即在一个隐藏路径下。此时需要使用<code>shift+command+.</code>显示隐藏路径，然后找到<code>/usr/bin/</code>下的<code>codesign</code>，将其添加到里面。</p>
 <h2 id="ipad-tabbar显示">iPad tabbar显示</h2>
-<p>在<code>iOS 18</code>的iPad 上，发现<code>UITabBarController</code>的<code>TabBar</code>显示到了顶部，而不是底部。可以通过修改<code>UITabBarController</code>中的<code>traitOverrides</code>属性为<code>compact</code>解决：</p>
+<p>在<code>iOS 18</code>的<code>iPad</code>上，用户反馈<code>TabBar</code>到了顶部，而不像手机那样显示在底部。可以通过修改<code>UITabBarController</code>中的<code>traitOverrides</code>属性为<code>compact</code>解决：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span><span style="color:#75715e">// 兼容iOS 18以上系统，将tabbar显示在底部</span>
 </span></span><span style="display:flex;"><span><span style="color:#66d9ef">if</span> UIDevice.current.userInterfaceIdiom == .pad {
 </span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">if</span> <span style="color:#75715e">#available</span>(<span style="color:#75715e">iOS</span> <span style="color:#ae81ff">18.0</span>, <span style="color:#f92672">*</span>) {

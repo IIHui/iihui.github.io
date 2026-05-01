@@ -386,10 +386,10 @@ bundleShortVersion=&amp;#34;${2:-$demo}&amp;#34; cannot be found -Xlinker 修改
 Build input file cannot be found: &amp;#39;/xxx/-Xlinker&amp;#39;. Did you forget to declare this file as an output of a script phase or custom build rule which produces it? 这是因为-all_load或-force_load标志的作用都是加载静态库中所有文件，但-all_load作用于所有的库，而-force_load后面必须要指定具体的文件，现在删除了其后的文件，编译就出现了错误。
 参考链接
 FBSOpenApplicationServiceErrorDomain 使用Xcode调试小组件时，出现如下错误：
-SendProcessControlEvent:toPid: encountered an error: Error Domain=com.apple.dt.deviceprocesscontrolservice Code=8 &amp;#34;Failed to show Widget &amp;#39;xxx.Widget&amp;#39; error: Error Domain=FBSOpenApplicationServiceErrorDomain Code=1 &amp;#34;The request to open &amp;#34;com.apple.springboard&amp;#34; failed.&amp;#34; CodeSign Error 本地打包没有出现报错，流水线出现如下编译错误。接着在流水线的Xcode中使用顶部菜单栏的Product--&amp;gt;Archive时，一直弹出输入登录用户名和密码访问钥匙串的提示框。最后发现，是因为打包证书对应私钥没有设置codesign的访问权限：
+SendProcessControlEvent:toPid: encountered an error: Error Domain=com.apple.dt.deviceprocesscontrolservice Code=8 &amp;#34;Failed to show Widget &amp;#39;xxx.Widget&amp;#39; error: Error Domain=FBSOpenApplicationServiceErrorDomain Code=1 &amp;#34;The request to open &amp;#34;com.apple.springboard&amp;#34; failed.&amp;#34; CodeSign Error 本地打包没有出现报错，流水线出现如下编译错误。接着在流水线的Xcode中使用顶部菜单栏的Product--&amp;gt;Archive时，一直弹出输入登录用户名和密码访问钥匙串的提示框。最后发现，是因为打包证书对应的私钥没有设置codesign的访问权限：
 The following build commands failed:  CodeSign /Users/cmo/Library/Developer/Xcode/DerivedData/xxx-fyjunjdgwijqqsamhglwtnuxfcil/Build/Products/Release-iphoneos/ddd/ddd.framework (in target &amp;#39;ddd&amp;#39; from project &amp;#39;Pods&amp;#39;)  Building workspace xxx with scheme xxx and configuration Release 解决方案是在钥匙串中选择对应的发布证书，点击最前面的右箭头展开私钥，然后双击展开后的私钥，在弹出来的页面，再选择右侧的Access Control，最后将codesign添加到访问白名单上（即放到Always allow access by these applications下）或者开启所有应用访问Allow all applications to access this item。
 添加codesign时可以使用which codesign命令查到对应路径为/usr/bin/codesign，即在一个隐藏路径下。此时需要使用shift&#43;command&#43;.显示隐藏路径，然后找到/usr/bin/下的codesign，将其添加到里面。
-iPad tabbar显示 在iOS 18的iPad 上，发现UITabBarController的TabBar显示到了顶部，而不是底部。可以通过修改UITabBarController中的traitOverrides属性为compact解决：
+iPad tabbar显示 在iOS 18的iPad上，用户反馈TabBar到了顶部，而不像手机那样显示在底部。可以通过修改UITabBarController中的traitOverrides属性为compact解决：
 // 兼容iOS 18以上系统，将tabbar显示在底部 if UIDevice.current.userInterfaceIdiom == .pad {  if #available(iOS 18.0, *) {  traitOverrides.horizontalSizeClass = .compact  } } 参考资料
 参考资料
 </content>
