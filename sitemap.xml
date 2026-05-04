@@ -331,12 +331,12 @@ ipa中描述文件过期时间查看
           <tag>iOS</tag>
         </tags>
         <content type="html"> No Symbolic Information Found 在一台非打包的iMac上使用命令symbolicatecrash xxx1.crash ST/dsymDir/xxx2.dSYM -o xxx1.log对崩溃日志进行符号化，执行完后出现了如下错误：
-No Symbolic Information Found 最开始怀疑是dsym文件和崩溃日志的uuid不同造成的。但使用命令dwarfdump --uuid xxx.dSYM得到dsym文件的uuid和崩溃日志中的uuid是相同的，也就排除了是uuid不一致导致的报错。同时，发现若使用atos命令时指定dsym目录下的target进行符号化，得到的结果却是正常的：
-atos -o ST/dsymDir/xxx1.dSYM/Contents/Resources/DWARF/targetxxx -l 0x1c6573000 0x00000001c6a0da80 在问题排查过程中意外发现，使用symbolicatecrash命令时若按照atos命令那样指定dysm目录下的target也是可以符号化成功的，具体命令如下（其中xxx表示dsym文件名，xxx1表示崩溃日志文件名，xxx2表示target名）：
-symbolicatecrash xxx1.crash ST/dsymDir/xxx.dSYM/Contents/Resources/DWARF/xxx2 -o xxx1.log 此外，进一步排查又发现使用symbolicatecrash命令进行符号化时若添加-d选项（明确指定添加额外的dsym文件，当uuid匹配时查询）也是能够正常符号化崩溃日志:
-symbolicatecrash xxx.crash -d ST/dsymDir/xxxdSYM -o xxx.log 根据添加-d选项后终端的输出日志，发现若使用mdfind查找uuid对应的dsym文件时无任何输出，也就说找不到uuid对应的dsym文件：
-mdfind &amp;#34;com_apple_xcode_dsym_uuids == A7C6DA83-B3C1-3E0C-9734-0C59CD5032C8&amp;#34; 这是因为Spotlight索引未包含文件元数据，可以通过如下方案解决。经过验证，第一次添加元数据标签成功后，后续添加dsym文件时不再需要重复添加元数据标签（直接使用mfind可以查到到相应的dsym文件）：
-# 替换为你的实际 UUID 和文件路径 UUID=&amp;#34;A7C6DA83-B3C1-3E0C-9734-0C59CD5032C8&amp;#34; DSYM_PATH=&amp;#34;/path/to/xxx.dSYM&amp;#34; # 需要使用绝对路径  # 添加元数据标签 xattr -w com.apple.metadata:com_apple_xcode_dsym_uuids &amp;#34;$UUID&amp;#34; &amp;#34;$DSYM_PATH&amp;#34;  # 验证是否添加成功 mdls -name com_apple_xcode_dsym_uuids &amp;#34;$DSYM_PATH&amp;#34; 添加元数据后，再刷新索引：
+No Symbolic Information Found 最开始怀疑是dsym文件和崩溃日志的uuid不同造成的。但使用命令dwarfdump --uuid xxx.dSYM得到dsym文件的uuid和崩溃日志中的uuid是相同的，这也就排除了是因uuid不一致而导致的报错。排查过程中又发现，若使用atos命令且同时指定dsym目录下的target进行符号化，得到的结果却是正常的：
+atos -o ST/dsymDir/xxx1.dSYM/Contents/Resources/DWARF/targetxxx -l 0x1c6573000 0x00000001c6a0da80 在排查问题的过程中又意外发现，使用symbolicatecrash时若按照atos命令那样指定dysm目录下的target也是可以符号化成功的，具体命令如下（其中xxx表示dsym文件名，xxx1表示崩溃日志文件名，xxx2表示target名）：
+symbolicatecrash xxx1.crash ST/dsymDir/xxx.dSYM/Contents/Resources/DWARF/xxx2 -o xxx1.log 此外，进一步排查又发现使用symbolicatecrash命令进行符号化时若添加-d选项（明确指定添加额外的dsym文件，当uuid匹配时用到）也是能够正常符号化崩溃日志：
+symbolicatecrash xxx.crash -d ST/dsymDir/xxx.dSYM -o xxx.log 根据添加-d选项后终端的输出日志，发现若使用mdfind查找uuid对应的dsym文件时无任何输出，也就说找不到uuid对应的dsym文件：
+mdfind &amp;#34;com_apple_xcode_dsym_uuids == A7C6DA83-B3C1-3E0C-9734-0C59CD5032C8&amp;#34; 这是因为Spotlight索引未包含dsym文件的元数据，可以通过如下方案解决。经过验证，第一次添加元数据标签成功后，后续添加dsym文件时不再需要重复添加元数据标签（直接使用mfind可以查到到相应的dsym文件）：
+# 替换为你的实际 UUID 和文件路径 UUID=&amp;#34;A7C6DA83-B3C1-3E0C-9734-0C59CD5032C8&amp;#34; DSYM_PATH=&amp;#34;/path/to/xxx.dSYM&amp;#34; # 需要使用绝对路径  # 添加元数据标签 xattr -w com.apple.metadata:com_apple_xcode_dsym_uuids &amp;#34;$UUID&amp;#34; &amp;#34;$DSYM_PATH&amp;#34;  # 验证是否添加成功 mdls -name com_apple_xcode_dsym_uuids &amp;#34;$DSYM_PATH&amp;#34; 添加元数据后，再刷新索引即可：
 # 刷新特定文件 mdimport &amp;#34;$DSYM_PATH&amp;#34;  # 或刷新整个目录 mdimport ~/Library/Developer/Xcode/Archives # 假设dSYM在此目录  # 重建整个索引（耗时较长） sudo mdutil -E / Xcode 16 编译问题 升级至Xcode 16后编译原工程出现了如下错误：
 #include &amp;lt;sys/_types/_u_char.h&amp;gt;&amp;#39;; &amp;#39;u_char&amp;#39; must be declared before it is used 这是因为苹果在iOS 17/macOS 14 SDK中，移除了隐式类型声明，要求所有的类型如u_int32_t，u_char等需要从适当的系统模块导入。这也意味着现在需要显式地导入包含这些类型定义的头文件，即添加如下头文件：
 #include &amp;lt;sys/types.h&amp;gt;  解决了上面错误，又出现了第二个报错：

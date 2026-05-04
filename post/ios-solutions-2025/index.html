@@ -241,7 +241,7 @@ code.has-jax {
     <i class="fa fa-file-word-o"></i>
 </span>
 <span class="post-meta-item-text">字数: </span>
-<span class="leancloud-visitors-count">4891</span>
+<span class="leancloud-visitors-count">4907</span>
 &nbsp; | &nbsp;
 <span class="post-meta-item-icon">
     <i class="fa fa-coffee"></i>
@@ -255,15 +255,15 @@ code.has-jax {
     <h2 id="no-symbolic-information-found">No Symbolic Information Found</h2>
 <p>在一台非打包的<code>iMac</code>上使用命令<code>symbolicatecrash xxx1.crash ST/dsymDir/xxx2.dSYM -o xxx1.log</code>对崩溃日志进行符号化，执行完后出现了如下错误：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>No Symbolic Information Found
-</span></span></code></pre></div><p>最开始怀疑是<code>dsym</code>文件和崩溃日志的<code>uuid</code>不同造成的。但使用命令<code>dwarfdump --uuid xxx.dSYM</code>得到<code>dsym</code>文件的<code>uuid</code>和崩溃日志中的<code>uuid</code>是相同的，也就排除了是<code>uuid</code>不一致导致的报错。同时，发现若使用<code>atos</code>命令时指定<code>dsym</code>目录下的<code>target</code>进行符号化，得到的结果却是正常的：</p>
+</span></span></code></pre></div><p>最开始怀疑是<code>dsym</code>文件和崩溃日志的<code>uuid</code>不同造成的。但使用命令<code>dwarfdump --uuid xxx.dSYM</code>得到<code>dsym</code>文件的<code>uuid</code>和崩溃日志中的<code>uuid</code>是相同的，这也就排除了是因<code>uuid</code>不一致而导致的报错。排查过程中又发现，若使用<code>atos</code>命令且同时指定<code>dsym</code>目录下的<code>target</code>进行符号化，得到的结果却是正常的：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>atos -o ST/dsymDir/xxx1.dSYM/Contents/Resources/DWARF/targetxxx -l 0x1c6573000 0x00000001c6a0da80
-</span></span></code></pre></div><p>在问题排查过程中意外发现，使用<code>symbolicatecrash</code>命令时若按照<code>atos</code>命令那样指定<code>dysm</code>目录下的<code>target</code>也是可以符号化成功的，具体命令如下（其中<code>xxx</code>表示<code>dsym</code>文件名，<code>xxx1</code>表示崩溃日志文件名，<code>xxx2</code>表示<code>target</code>名）：</p>
+</span></span></code></pre></div><p>在排查问题的过程中又意外发现，使用<code>symbolicatecrash</code>时若按照<code>atos</code>命令那样指定<code>dysm</code>目录下的<code>target</code>也是可以符号化成功的，具体命令如下（其中<code>xxx</code>表示<code>dsym</code>文件名，<code>xxx1</code>表示崩溃日志文件名，<code>xxx2</code>表示<code>target</code>名）：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>symbolicatecrash xxx1.crash ST/dsymDir/xxx.dSYM/Contents/Resources/DWARF/xxx2  -o xxx1.log
-</span></span></code></pre></div><p>此外，进一步排查又发现使用<code>symbolicatecrash</code>命令进行符号化时若添加<code>-d</code>选项（明确指定添加额外的<code>dsym</code>文件，当uuid匹配时查询）也是能够正常符号化崩溃日志:</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>symbolicatecrash xxx.crash -d ST/dsymDir/xxxdSYM -o xxx.log
+</span></span></code></pre></div><p>此外，进一步排查又发现使用<code>symbolicatecrash</code>命令进行符号化时若添加<code>-d</code>选项（明确指定添加额外的<code>dsym</code>文件，当<code>uuid</code>匹配时用到）也是能够正常符号化崩溃日志：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>symbolicatecrash xxx.crash -d ST/dsymDir/xxx.dSYM -o xxx.log
 </span></span></code></pre></div><p>根据添加<code>-d</code>选项后终端的输出日志，发现若使用<code>mdfind</code>查找<code>uuid</code>对应的<code>dsym</code>文件时无任何输出，也就说找不到<code>uuid</code>对应的<code>dsym</code>文件：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>mdfind <span style="color:#e6db74">&#34;com_apple_xcode_dsym_uuids == A7C6DA83-B3C1-3E0C-9734-0C59CD5032C8&#34;</span>
-</span></span></code></pre></div><p>这是因为<font color="#de7802"><code>Spotlight</code>索引未包含文件元数据</font>，可以通过如下方案解决。经过验证，第一次添加元数据标签成功后，后续添加<code>dsym</code>文件时不再需要重复添加元数据标签（直接使用<code>mfind</code>可以查到到相应的<code>dsym</code>文件）：</p>
+</span></span></code></pre></div><p>这是因为<font color="#de7802"><code>Spotlight</code>索引未包含<code>dsym</code>文件的元数据</font>，可以通过如下方案解决。经过验证，第一次添加元数据标签成功后，后续添加<code>dsym</code>文件时不再需要重复添加元数据标签（直接使用<code>mfind</code>可以查到到相应的<code>dsym</code>文件）：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span><span style="color:#75715e"># 替换为你的实际 UUID 和文件路径</span>
 </span></span><span style="display:flex;"><span>UUID<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;A7C6DA83-B3C1-3E0C-9734-0C59CD5032C8&#34;</span>
 </span></span><span style="display:flex;"><span>DSYM_PATH<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;/path/to/xxx.dSYM&#34;</span> <span style="color:#75715e"># 需要使用绝对路径</span>
@@ -273,7 +273,7 @@ code.has-jax {
 </span></span><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span><span style="color:#75715e"># 验证是否添加成功</span>
 </span></span><span style="display:flex;"><span>mdls -name com_apple_xcode_dsym_uuids <span style="color:#e6db74">&#34;</span>$DSYM_PATH<span style="color:#e6db74">&#34;</span>
-</span></span></code></pre></div><p>添加元数据后，再刷新索引：</p>
+</span></span></code></pre></div><p>添加元数据后，再刷新索引即可：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span><span style="color:#75715e"># 刷新特定文件</span>
 </span></span><span style="display:flex;"><span>mdimport <span style="color:#e6db74">&#34;</span>$DSYM_PATH<span style="color:#e6db74">&#34;</span>
 </span></span><span style="display:flex;"><span>
