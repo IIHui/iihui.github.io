@@ -355,9 +355,12 @@ UINavigationController中查找特定View extension UINavigationController {  //
 BIOCPROMISC: Operation not supported 为iOS设备创建虚拟接口：
 rvictl -s xxx # 其中xxx表示设备id 关闭虚拟接口：
 rvictl -x xxx # 其中xxx表示设备id 将设备连接到mac上后可以使用如下命令查看设备id：
-idevice_id -l 在macOS上使用rvictl -s为iOS设备创建虚拟接口(如 rvi0)后，Wireshark抓包时出现BIOCPROMISC: Operation not supported on socket错误，是因为Wireshark默认尝试启用混杂模式（Promiscuous Mode），但rvi0虚拟接口不支持此模式。以下是解决方案：
-方法 1：在 Wireshark中禁用混杂模式（推荐）  打开Wireshark，点击菜单栏的设置按钮，然后找到rvi0接口，取消勾选Promiscuous Mode即可。  方法 2：通过命令行工具捕获（避免 Wireshark GUI） 使用 tshark（Wireshark的命令行工具）并显式禁用混杂模式：
-sudo tshark -i rvi0 -p -w output.pcap  -p：禁用混杂模式。 -w output.pcap：将捕获结果保存到文件，之后可在Wireshark中分析。  方法 3：使用tcpdump捕获后导入 Wireshark sudo tcpdump -i rvi0 -s0 -w capture.pcap  按 Ctrl&#43;C 停止捕获后，用Wireshark打开 capture.pcap 文件分析。  方法 4：修改Wireshark全局设置（备用） 编辑Wireshark配置文件：
+idevice_id -l 在macOS上使用rvictl -s为iOS设备创建虚拟接口(如 rvi0)后，Wireshark抓包时出现BIOCPROMISC: Operation not supported on socket错误，是因为Wireshark默认尝试启用混杂模式（Promiscuous Mode），但rvi0虚拟接口不支持此模式。以下是几个解决方案：
+禁用混杂模式（推荐） 打开Wireshark，点击菜单栏的设置按钮，然后找到rvi0接口，取消勾选Promiscuous Mode即可，这是最简单的解决方案。
+通过命令行工具捕获（避免 Wireshark GUI） 使用tshark（Wireshark的命令行工具）并显式禁用混杂模式：
+sudo tshark -i rvi0 -p -w output.pcap 其中-p表示禁用混杂模式。-w output.pcap表示将捕获结果保存到文件，之后可在Wireshark中分析。
+使用tcpdump捕获后导入Wireshark sudo tcpdump -i rvi0 -s0 -w capture.pcap 按 Ctrl&#43;C 停止捕获后，用Wireshark打开 capture.pcap 文件分析。
+修改Wireshark全局设置 编辑Wireshark配置文件：
 1、关闭Wireshark。
 2、创建或修改配置文件：
 nano ~/.config/wireshark/preferences 3、添加以下行：
@@ -1236,7 +1239,7 @@ Dependency Package Types TypeScript能够检测并利用捆绑在项目的node_m
 lib/  index.js  index.d.ts package.json Enum 因为enum编译后是一个对象，所以**不能有与它同名的变量，对象，函数和类等**。若在相同作用域内存在与枚举同名的变量、对象、函数或类会出现编译错误。
 // 下面代码因为枚举和变量名重复了，会出现编译错误 // Enum declarations can only merge with namespace or other enum declarations. enum Test1 {  Local = &amp;#39;local&amp;#39;,  Remote = &amp;#39;remote&amp;#39; }  // 因为有和枚举同名的常量，会出现编译错误 // Enum declarations can only merge with namespace or other enum declarations const Test1 = &amp;#39;890&amp;#39;  // 编译错误，因为枚举和类名重复，会出现编译错误 // Enum declarations can only merge with namespace or other enum declarations. enum Test2 {  A,  B }  class Test2 {  // 类的定义部分 } property 枚举的成员不要求强制赋初始值，若没有初始值，默认从0开始逐次增1，按顺序为每个成员赋值。下面第一段代码中，枚举成员（属性）对应值分别为0，1，2。第二段代码中，枚举成员（属性）对应值为0, 4, 5:
 enum Foo {  A,  B,  C, }  console.log(Foo.A, Foo.B, Foo.C) // 0 1 2 enum Foo {  A,  B = 4,  C, } console.log(Foo.A, Foo.B, Foo.C) // 0 4 5 与其它语言不同，enum中属性的值可以是小数。若枚举中某个成员（属性）没有初始值，则其后属性的值也依次在上一个值的基础上&#43;1。下面示例代码，属性的值依次是0.12, 1.12, 2.12:
-enum Foo {  A = 0.12,  B,  C }  console.log(Foo.A, Foo.B, Foo.C) // 0.12 1.12 2.12 但enum属性（成员）的值不能是BigInt类型，否则会出现编译错误：
+enum Foo {  A = 0.12,  B,  C }  console.log(Foo.A, Foo.B, Foo.C) // 0.12 1.12 2.12 但enum属性（成员）的值不能是BigInt类型，否则会出现编译错误。也就是说属性成员类型只能是number或string类型：
 // 编译错误：Type &amp;#39;bigint&amp;#39; is not assignable to type &amp;#39;number&amp;#39; as required for computed enum member values. enum Foo {  A = 1n, } 不同于Swift，在TypeScript中enum不同属性（成员）对应的值可以相同，但属性名一定不能相同，属性名用于唯一标识不同case。
 enum Foo {  A = 0.12,  B = 0.5,  C = 0.12,  D = 12,  R = 0.12 }  console.log(Foo.R, Foo.C, Foo.B)  // 执行结果 0.12 0.12 0.5 如果枚举中只设置第一个属性的值，后面成员的值就会从这个值开始依次递增（在上一个属性值的基础上自动&#43;1）。
 enum Color {  Red = 7,  Green, // 8  Blue, // 9 }  console.log(Color.Blue) // 执行结果 9  // 或者 enum Color {  Red, // 0  Green = 7,  Blue, // 8 }  console.log(Color.Blue, Color.Red);  // 执行结果 8 0 enum所有属性对应的值都是只读的，不能重新被赋值。下面示例代码中，因尝试重新赋值枚举中的属性Red，会出现编译错误：

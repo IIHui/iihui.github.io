@@ -241,7 +241,7 @@ code.has-jax {
     <i class="fa fa-file-word-o"></i>
 </span>
 <span class="post-meta-item-text">字数: </span>
-<span class="leancloud-visitors-count">5060</span>
+<span class="leancloud-visitors-count">5055</span>
 &nbsp; | &nbsp;
 <span class="post-meta-item-icon">
     <i class="fa fa-coffee"></i>
@@ -371,24 +371,17 @@ code.has-jax {
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>rvictl -x xxx <span style="color:#75715e"># 其中xxx表示设备id</span>
 </span></span></code></pre></div><p>将设备连接到mac上后可以使用如下命令查看设备id：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>idevice_id -l
-</span></span></code></pre></div><p>在<code>macOS</code>上使用<code>rvictl -s</code>为<code>iOS</code>设备创建虚拟接口(如 <code>rvi0</code>)后，<code>Wireshark</code>抓包时出现<code>BIOCPROMISC: Operation not supported on socket</code>错误，是因为<code>Wireshark</code>默认尝试启用混杂模式（<code>Promiscuous Mode</code>），但<code>rvi0</code>虚拟接口不支持此模式。以下是解决方案：</p>
-<h3 id="方法-1在-wireshark中禁用混杂模式推荐">方法 1：在 Wireshark中禁用混杂模式（推荐）</h3>
-<ol>
-<li>打开<code>Wireshark</code>，点击菜单栏的设置按钮，然后找到<code>rvi0</code>接口，取消勾选<code>Promiscuous Mode</code>即可。</li>
-</ol>
-<h3 id="方法-2通过命令行工具捕获避免-wireshark-gui">方法 2：通过命令行工具捕获（避免 Wireshark GUI）</h3>
-<p>使用 <code>tshark</code>（<code>Wireshark</code>的命令行工具）并显式禁用混杂模式：</p>
+</span></span></code></pre></div><p>在<code>macOS</code>上使用<code>rvictl -s</code>为<code>iOS</code>设备创建虚拟接口(如 <code>rvi0</code>)后，<code>Wireshark</code>抓包时出现<code>BIOCPROMISC: Operation not supported on socket</code>错误，是因为<code>Wireshark</code>默认尝试启用混杂模式（<code>Promiscuous Mode</code>），但<code>rvi0</code>虚拟接口不支持此模式。以下是几个解决方案：</p>
+<h3 id="禁用混杂模式推荐">禁用混杂模式（推荐）</h3>
+<p>打开<code>Wireshark</code>，点击菜单栏的设置按钮，然后找到<code>rvi0</code>接口，取消勾选<code>Promiscuous Mode</code>即可，这是最简单的解决方案。</p>
+<h3 id="通过命令行工具捕获避免-wireshark-gui">通过命令行工具捕获（避免 Wireshark GUI）</h3>
+<p>使用<code>tshark</code>（<code>Wireshark</code>的命令行工具）并显式禁用混杂模式：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>sudo tshark -i rvi0 -p -w output.pcap
-</span></span></code></pre></div><ul>
-<li><code>-p</code>：禁用混杂模式。</li>
-<li><code>-w output.pcap</code>：将捕获结果保存到文件，之后可在Wireshark中分析。</li>
-</ul>
-<h3 id="方法-3使用tcpdump捕获后导入-wireshark">方法 3：使用<code>tcpdump</code>捕获后导入 Wireshark</h3>
+</span></span></code></pre></div><p>其中<code>-p</code>表示禁用混杂模式。<code>-w output.pcap</code>表示将捕获结果保存到文件，之后可在<code>Wireshark</code>中分析。</p>
+<h3 id="使用tcpdump捕获后导入wireshark">使用tcpdump捕获后导入Wireshark</h3>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>sudo tcpdump -i rvi0 -s0 -w capture.pcap
-</span></span></code></pre></div><ul>
-<li>按 <code>Ctrl+C</code> 停止捕获后，用<code>Wireshark</code>打开 <code>capture.pcap</code> 文件分析。</li>
-</ul>
-<h3 id="方法-4修改wireshark全局设置备用">方法 4：修改Wireshark全局设置（备用）</h3>
+</span></span></code></pre></div><p>按 <code>Ctrl+C</code> 停止捕获后，用<code>Wireshark</code>打开 <code>capture.pcap</code> 文件分析。</p>
+<h3 id="修改wireshark全局设置">修改Wireshark全局设置</h3>
 <p>编辑<code>Wireshark</code>配置文件：</p>
 <p>1、关闭<code>Wireshark</code>。</p>
 <p>2、创建或修改配置文件：</p>
@@ -410,13 +403,13 @@ code.has-jax {
 <h2 id="ios-18-unsatisfied-local-network-prohibited">iOS 18 unsatisfied (Local network prohibited)</h2>
 <p>使用<code>Xcode 16</code>编译App，使用某个上传功能时出现如下错误：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>NSURLErrorNWPathKey<span style="color:#f92672">=</span>unsatisfied <span style="color:#f92672">(</span>Local network prohibited<span style="color:#f92672">)</span>
-</span></span></code></pre></div><p>这个错误表明应用被系统阻止访问本地网络，这是因为iOS 18有一些新变化：</p>
+</span></span></code></pre></div><p>这个错误表明应用被系统阻止访问本地网络，这是因为<code>iOS 18</code>有一些新变化：</p>
 <ul>
 <li>进一步加强了网络隔离策略</li>
 <li>强化了本地网络访问的权限控制</li>
 <li>对<code>mDNS/Bonjour</code>服务发现更严格限制</li>
 </ul>
-<p>解决方案是要在工程的info.plist添加如下内容：</p>
+<p>解决方案是要在工程的<code>info.plist</code>添加如下内容：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-xml" data-lang="xml"><span style="display:flex;"><span><span style="color:#f92672">&lt;key&gt;</span>NSLocalNetworkUsageDescription<span style="color:#f92672">&lt;/key&gt;</span>
 </span></span><span style="display:flex;"><span><span style="color:#f92672">&lt;string&gt;</span>APP_NAME需要访问本地网络以发现附近的智能设备<span style="color:#f92672">&lt;/string&gt;</span>
 </span></span><span style="display:flex;"><span>
@@ -680,10 +673,10 @@ code.has-jax {
         <li><a href="#安装描述文件失败">安装描述文件失败</a></li>
         <li><a href="#biocpromisc-operation-not-supported">BIOCPROMISC: Operation not supported</a>
           <ul>
-            <li><a href="#方法-1在-wireshark中禁用混杂模式推荐">方法 1：在 Wireshark中禁用混杂模式（推荐）</a></li>
-            <li><a href="#方法-2通过命令行工具捕获避免-wireshark-gui">方法 2：通过命令行工具捕获（避免 Wireshark GUI）</a></li>
-            <li><a href="#方法-3使用tcpdump捕获后导入-wireshark">方法 3：使用<code>tcpdump</code>捕获后导入 Wireshark</a></li>
-            <li><a href="#方法-4修改wireshark全局设置备用">方法 4：修改Wireshark全局设置（备用）</a></li>
+            <li><a href="#禁用混杂模式推荐">禁用混杂模式（推荐）</a></li>
+            <li><a href="#通过命令行工具捕获避免-wireshark-gui">通过命令行工具捕获（避免 Wireshark GUI）</a></li>
+            <li><a href="#使用tcpdump捕获后导入wireshark">使用tcpdump捕获后导入Wireshark</a></li>
+            <li><a href="#修改wireshark全局设置">修改Wireshark全局设置</a></li>
             <li><a href="#原因说明">原因说明</a></li>
             <li><a href="#参数介绍">参数介绍</a></li>
           </ul>
