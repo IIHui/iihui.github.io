@@ -241,7 +241,7 @@ code.has-jax {
     <i class="fa fa-file-word-o"></i>
 </span>
 <span class="post-meta-item-text">字数: </span>
-<span class="leancloud-visitors-count">4907</span>
+<span class="leancloud-visitors-count">4918</span>
 &nbsp; | &nbsp;
 <span class="post-meta-item-icon">
     <i class="fa fa-coffee"></i>
@@ -285,7 +285,7 @@ code.has-jax {
 </span></span></code></pre></div><h2 id="xcode-16-编译问题">Xcode 16 编译问题</h2>
 <p>升级至<code>Xcode 16</code>后编译原工程出现了如下错误：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span><span style="color:#75715e">#include &lt;sys/_types/_u_char.h&gt;&#39;; &#39;u_char&#39; must be declared before it is used</span>
-</span></span></code></pre></div><p>这是因为苹果在<code>iOS 17/macOS 14 SDK</code>中，移除了<a href="https://developer.apple.com/documentation/xcode-release-notes/xcode-16-release-notes">隐式类型声明</a>，要求所有的类型如<code>u_int32_t，u_char</code>等需要从适当的系统模块导入。这也意味着现在需要显式地导入包含这些类型定义的头文件，即添加如下头文件：</p>
+</span></span></code></pre></div><p>这是因为苹果在<code>iOS 17/macOS 14 SDK</code>中，移除了<a href="https://developer.apple.com/documentation/xcode-release-notes/xcode-16-release-notes">隐式类型声明</a>，要求所有的类型如<code>u_int32_t，u_char</code>等需要从适当的系统模块导入。这也意味着现在需要显式地导入包含这些类型定义的头文件，即添加：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span><span style="color:#75715e">#include &lt;sys/types.h&gt;  </span>
 </span></span></code></pre></div><p>解决了上面错误，又出现了第二个报错：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>Declaration of <span style="color:#e6db74">&#39;sa_family_t&#39;</span> must be imported from module <span style="color:#e6db74">&#39;Darwin.POSIX.sys.types._sa_family_t&#39;</span> before it is required
@@ -293,10 +293,10 @@ code.has-jax {
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span><span style="color:#75715e">#include &lt;sys/socket.h&gt;</span>
 </span></span></code></pre></div><p>升级到<code>Xcode 16.4</code>后，发现不能调试<code>iOS 13</code>真机，连上手机并手动信任后出现如下错误：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>Could not locate device support files。You may be able to resolve the issue by installing the latest version of Xcode from the Mac App Store or developer.apple.com.
-</span></span></code></pre></div><p>这是因为<code>Xcode 16</code>将支持的最低iOS系统版本限制到15了。以前，当真机连上Xcode，Xcode会检测本地是否有相应系统的支持文件，若没有会自动下载。由于<code>Xcode 16</code>不再支持<code>iOS 15</code>以下设备了，所以现在不会自动下载<code>iOS 15</code>以下的设备支持文件了。</p>
-<p>此时，需要手动下载低版本系统的支持文件，<a href="https://juejin.cn/post/7478182398409703476">参考解决方案</a>是到<a href="https://github.com/filsv/iOSDeviceSupport?tab=readme-ov-file">这里</a>下载对应iOS版本的<code>DeviceSupport</code>文件，然后解压并移动到<code>/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/DeviceSupport/</code>下，再重启Xcode，就可以正常调试低版本的真机了。</p>
+</span></span></code></pre></div><p>这是因为<code>Xcode 16</code>将支持的最低系统版本限制到15了。而在以前，当真机连上<code>Xcode</code>后，<code>Xcode</code>会检测本地是否有相应系统的支持文件，若没有会自动下载对应支持文件。由于<code>Xcode 16</code>不再支持<code>iOS 15</code>以下设备了，所以现在不会自动下载<code>iOS 15</code>以下的设备支持文件了。</p>
+<p>此时，需要手动下载低版本系统的支持文件，当前的<a href="https://juejin.cn/post/7478182398409703476">解决方案</a>是到<a href="https://github.com/filsv/iOSDeviceSupport?tab=readme-ov-file">这里</a>下载对应iOS版本的<code>DeviceSupport</code>文件，然后解压并移动到<code>/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/DeviceSupport/</code>目录下，接着再重启<code>Xcode</code>，就可以正常调试低版本的真机了。</p>
 <h2 id="覆盖安装xcode">覆盖安装Xcode</h2>
-<p>从苹果官网下载新版Xcode 16覆盖之前从<code>App Store</code>上安装的低版本Xcode时，出现如下报错：</p>
+<p>从苹果官网下载新版<code>Xcode 16</code>覆盖之前从<code>App Store</code>上安装的低版本<code>Xcode</code>时，出现如下报错：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>The operation can’t be completed because some items had to be skipped. For each item, choose File &gt; Get Info, make sure “Locked” is deselected, and <span style="color:#66d9ef">then</span> check the Sharing &amp; Permissions section. When you are sure the items are unlocked and not designated as Read Only or No Access, try again.
 </span></span></code></pre></div><p>可以通过如下方式解决：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span><span style="color:#75715e"># 解锁所有文件（移除用户不可更改标志）</span>
@@ -307,19 +307,18 @@ code.has-jax {
 </span></span><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span><span style="color:#75715e"># 授予用户完全读写权限</span>
 </span></span><span style="display:flex;"><span>sudo chmod -R u+rw /Applications/Xcode.app
-</span></span></code></pre></div><p>示例：如果用户名为 <code>john</code>，则命令为 <code>sudo chown -R john:staff /Applications/Xcode.app</code>。</p>
+</span></span></code></pre></div><p>示例：如果用户名为 <code>john</code>，则上面命令为 <code>sudo chown -R john:staff /Applications/Xcode.app</code>。</p>
 <h2 id="uicollectionview">UICollectionView</h2>
 <p>使用<code>Xcode 16</code>编译后，出现如下报错：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>Expected dequeued view to be returned to the collection view in preparation <span style="color:#66d9ef">for</span> display. When the collection view<span style="color:#960050;background-color:#1e0010">&#39;</span>s data source is asked to provide a view <span style="color:#66d9ef">for</span> a given index path, ensure that a single view is dequeued and returned to the collection view. Avoid dequeuing views without a request from the collection view. For retrieving an existing view in the collection view, use -<span style="color:#f92672">[</span>UICollectionView cellForItemAtIndexPath:<span style="color:#f92672">]</span> or -<span style="color:#f92672">[</span>UICollectionView supplementaryViewForElementKind:atIndexPath:<span style="color:#f92672">]</span>
-</span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span>https://www.jianshu.com/p/1fc532f2aff4
-</span></span></code></pre></div><p>排查发现是因为在非cellForItemAt方法中使用了如下代码：</p>
+</span></span></code></pre></div><p>排查发现是因为在非<code>cellForItemAt</code>方法中使用了如下代码：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span><span style="color:#66d9ef">if</span> <span style="color:#66d9ef">let</span> indexPath = indexPath, <span style="color:#66d9ef">let</span> cell = collectionView.dequeueReusableCell(withReuseIdentifier: xxxIdentifier, <span style="color:#66d9ef">for</span>: indexPath) <span style="color:#66d9ef">as</span>? TestCell {
 </span></span><span style="display:flex;"><span>   <span style="color:#75715e">//</span>
 </span></span><span style="display:flex;"><span>}
 </span></span></code></pre></div><p>应该改成如下方式：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span>collectionView.cellForItem(at: index) <span style="color:#66d9ef">as</span>? TestCell
-</span></span></code></pre></div><h3 id="uinavigationcontroller中查找特定view">UINavigationController中查找特定View</h3>
+</span></span></code></pre></div><p><a href="https://www.jianshu.com/p/1fc532f2aff4">参考资料</a></p>
+<h3 id="uinavigationcontroller中查找特定view">UINavigationController中查找特定View</h3>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span><span style="color:#66d9ef">extension</span> <span style="color:#a6e22e">UINavigationController</span> {
 </span></span><span style="display:flex;"><span>    <span style="color:#75715e">/// 获取导航控制器的 UIViewControllerWrapperView（仅用于调试）</span>
 </span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">func</span> <span style="color:#a6e22e">debugFindWrapperView</span>() -&gt; UIView? {
@@ -427,7 +426,7 @@ code.has-jax {
 </span></span><span style="display:flex;"><span>    <span style="color:#f92672">&lt;string&gt;</span>_printer._tcp<span style="color:#f92672">&lt;/string&gt;</span>
 </span></span><span style="display:flex;"><span><span style="color:#f92672">&lt;/array&gt;</span>
 </span></span></code></pre></div><h2 id="task冲突">Task冲突</h2>
-<p>在某个Swift文件开头引入了<code>PomiseKit</code>，即<code>import PromiseKit</code>，然后使用新并发模型中的<code>Task{ }</code>时，出现如下编译错误：</p>
+<p>在某个<code>Swift</code>文件开头引入了<code>PomiseKit</code>，即<code>import PromiseKit</code>，然后使用新并发模型中的<code>Task{ }</code>时，出现如下编译错误：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">&#39;</span>Task<span style="color:#960050;background-color:#1e0010">&#39;</span> cannot be constructed because it has no accessible initializers
 </span></span></code></pre></div><p>这是因为在<code>PromiseKit</code>组件中也定义了一个<code>Task</code>，会优先使用了这个<code>Task</code>，而不是标准库中的<code>Task</code>，解决方案是加并发模型的内部命名空间<code>_Concurrency</code>：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span>_Concurrency.Task {
