@@ -241,13 +241,13 @@ code.has-jax {
     <i class="fa fa-file-word-o"></i>
 </span>
 <span class="post-meta-item-text">字数: </span>
-<span class="leancloud-visitors-count">4918</span>
+<span class="leancloud-visitors-count">5028</span>
 &nbsp; | &nbsp;
 <span class="post-meta-item-icon">
     <i class="fa fa-coffee"></i>
 </span>
 <span class="post-meta-item-text">阅读: </span>
-<span class="leancloud-visitors-count">10 分钟</span>
+<span class="leancloud-visitors-count">11 分钟</span>
 </span>
       </div>
     </header>
@@ -426,16 +426,16 @@ code.has-jax {
 </span></span><span style="display:flex;"><span>    <span style="color:#f92672">&lt;string&gt;</span>_printer._tcp<span style="color:#f92672">&lt;/string&gt;</span>
 </span></span><span style="display:flex;"><span><span style="color:#f92672">&lt;/array&gt;</span>
 </span></span></code></pre></div><h2 id="task冲突">Task冲突</h2>
-<p>在某个<code>Swift</code>文件开头引入了<code>PomiseKit</code>，即<code>import PromiseKit</code>，然后使用新并发模型中的<code>Task{ }</code>时，出现如下编译错误：</p>
+<p>在某个<code>Swift</code>文件开头引入了<code>PomiseKit</code>，即<code>import PromiseKit</code>。然后，使用新并发模型中的<code>Task{ }</code>时，却出现如下编译错误：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">&#39;</span>Task<span style="color:#960050;background-color:#1e0010">&#39;</span> cannot be constructed because it has no accessible initializers
-</span></span></code></pre></div><p>这是因为在<code>PromiseKit</code>组件中也定义了一个<code>Task</code>，会优先使用了这个<code>Task</code>，而不是标准库中的<code>Task</code>，解决方案是加并发模型的内部命名空间<code>_Concurrency</code>：</p>
+</span></span></code></pre></div><p>这是因为在<code>PromiseKit</code>中也定义了一个<code>Task</code>，所以会优先使用<code>PromiseKit</code>里的这个<code>Task</code>，而不是Swift标准库中的<code>Task</code>。解决方案是使用并发模型的内部命名空间，即<code>_Concurrency</code>：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span>_Concurrency.Task {
 </span></span><span style="display:flex;"><span>   <span style="color:#75715e">//</span>
 </span></span><span style="display:flex;"><span>}
 </span></span></code></pre></div><h2 id="查看targert设置">查看targert设置</h2>
 <p>升级了<code>Xcode 16</code>之后发现同一个工程的不同<code>target</code>有一个编译成功，另一个编译失败。根据现象，显然是因为不同<code>target</code>的编译设置不一样导致的，为了查看不同的<code>target</code>的编译设置，可以使用如下命令：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>xcodebuild -workspace xxx.xcworkspace -scheme <span style="color:#e6db74">&#34;xxxST&#34;</span> -configuration Debug -showBuildSettings &gt; ~/Downloads/st_build_settings.txt
-</span></span></code></pre></div><p>然后使用文本对比工具对比不同<code>target</code>的编译设置。</p>
+</span></span></code></pre></div><p>然后使用文本对比工具比对不同<code>target</code>的编译设置，根据对比结果找出不同的设置项。</p>
 <h2 id="编译时删除built_products_dirxxxxxxframework">编译时删除${BUILT_PRODUCTS_DIR}/xxx/xxx.framework</h2>
 <p>执行<code>pod update</code>后发现<code>pbxproj</code>中的<code>&quot;${BUILT_PRODUCTS_DIR}/xxx/xxx.framework&quot;</code>被删了，使用如下命令可以恢复：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span><span style="color:#75715e"># 1. 完全清除现有 Pods 集成</span>
@@ -478,8 +478,8 @@ code.has-jax {
 </span></span></code></pre></div><p>若按上面方式删除上面两个字段，若出现如下报错，则需要修改<code>project.pbxproj</code>文件中的<code>objectVersion</code>为支持的版本：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>/Library/Ruby/Gems/2.6.0/gems/xcodeproj-1.21.0/lib/xcodeproj/project.rb:228:in <span style="color:#e6db74">`</span>initialize_from_file<span style="color:#960050;background-color:#1e0010">&#39;</span>: <span style="color:#f92672">[</span>Xcodeproj<span style="color:#f92672">]</span> Unknown object version <span style="color:#f92672">(</span>56<span style="color:#f92672">)</span>. <span style="color:#f92672">(</span>RuntimeError<span style="color:#f92672">)</span>
 </span></span></code></pre></div><p><a href="https://blog.devzeng.com/blog/xcode16-with-cocoapods.html">参考文档</a></p>
-<h2 id="指定发布版本和编译版本">指定发布版本和编译版本</h2>
-<p>使用<code>xcodebuild</code>命令进行打包时，可以指定编译版本和发布版本，命令如下：</p>
+<h2 id="发布和编译版本">发布和编译版本</h2>
+<p>使用<code>xcodebuild</code>命令进行打包时，可以指定编译版本和发布版本。具体命令如下，其中的变量<code>targetName</code>表示<code>target</code>，而<code>bundleShortVersion</code>表示发布版本，<code>bundleVersion</code>表示编译版本：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>xcodebuild -quiet -workspace demo.xcworkspace -scheme <span style="color:#e6db74">&#34;</span><span style="color:#e6db74">${</span>targetName<span style="color:#e6db74">}</span><span style="color:#e6db74">&#34;</span> MARKETING_VERSION<span style="color:#f92672">=</span><span style="color:#e6db74">${</span>bundleShortVersion<span style="color:#e6db74">}</span> CURRENT_PROJECT_VERSION<span style="color:#f92672">=</span><span style="color:#e6db74">${</span>bundleVersion<span style="color:#e6db74">}</span>
 </span></span></code></pre></div><p>若需要在某个目录下删除非<code>ipa</code>和<code>dSYM</code>的所有文件，可以使用如下命令：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span><span style="color:#75715e"># 删除非.ipa和非.dSYM文件</span>
@@ -487,20 +487,20 @@ code.has-jax {
 </span></span></code></pre></div><p>某个变量取两个环境变量的值，下面的变量是若<code>$2</code>为空，则取<code>$demo</code>:</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>bundleShortVersion<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;</span><span style="color:#e6db74">${</span>2<span style="color:#66d9ef">:-</span>$demo<span style="color:#e6db74">}</span><span style="color:#e6db74">&#34;</span>
 </span></span></code></pre></div><h2 id="cannot-be-found--xlinker">cannot be found -Xlinker</h2>
-<p>修改工程设置<code>Build Settings</code>中的<code>Other Linker Flags</code>值，去除了<code>-force_load</code>下面的一行，重新编译时出现如下错误：</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sh" data-lang="sh"><span style="display:flex;"><span>Build input file cannot be found: <span style="color:#e6db74">&#39;/xxx/-Xlinker&#39;</span>. Did you forget to declare this file as an output of a script phase or custom build rule which produces it?
+<p>修改工程<code>Build Settings</code>中的<code>Other Linker Flags</code>值，去除了<code>-force_load</code>下面的一行，重新编译时出现如下错误：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>Build input file cannot be found: <span style="color:#e6db74">&#39;/xxx/-Xlinker&#39;</span>. Did you forget to declare this file as an output of a script phase or custom build rule which produces it?
 </span></span></code></pre></div><p>这是因为<code>-all_load</code>或<code>-force_load</code>标志的作用都是加载静态库中所有文件，但<code>-all_load</code>作用于所有的库，而<code>-force_load</code>后面必须要指定具体的文件，现在删除了其后的文件，编译就出现了错误。</p>
-<p><a href="https://www.cnblogs.com/imock/p/7337773.html">参考链接</a></p>
+<p><a href="https://www.cnblogs.com/imock/p/7337773.html">参考资料</a></p>
 <h2 id="fbsopenapplicationserviceerrordomain">FBSOpenApplicationServiceErrorDomain</h2>
 <p>使用<code>Xcode</code>调试小组件时，出现如下错误：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sh" data-lang="sh"><span style="display:flex;"><span>SendProcessControlEvent:toPid: encountered an error: Error Domain<span style="color:#f92672">=</span>com.apple.dt.deviceprocesscontrolservice Code<span style="color:#f92672">=</span><span style="color:#ae81ff">8</span> <span style="color:#e6db74">&#34;Failed to show Widget &#39;xxx.Widget&#39; error: Error Domain=FBSOpenApplicationServiceErrorDomain Code=1 &#34;</span>The request to open <span style="color:#e6db74">&#34;com.apple.springboard&#34;</span> failed.<span style="color:#e6db74">&#34;
 </span></span></span></code></pre></div><h2 id="codesign-error">CodeSign Error</h2>
-<p>本地打包没有出现报错，流水线出现如下编译错误。接着在流水线的<code>Xcode</code>中使用顶部菜单栏的<code>Product--&gt;Archive</code>时，一直弹出输入登录用户名和密码访问钥匙串的提示框。最后发现，是因为打包证书对应的私钥没有设置<code>codesign</code>的访问权限：</p>
+<p>本地打包没有出现报错，但在流水线出现如下编译错误。然后尝试在流水线的<code>Xcode</code>中使用顶部菜单栏的<code>Product--&gt;Archive</code>时，一直弹出输入登录用户名和密码访问钥匙串的提示框。最后发现，是因为打包证书对应的私钥没有设置<code>codesign</code>的访问权限：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>The following build commands failed:
 </span></span><span style="display:flex;"><span> 	CodeSign /Users/cmo/Library/Developer/Xcode/DerivedData/xxx-fyjunjdgwijqqsamhglwtnuxfcil/Build/Products/Release-iphoneos/ddd/ddd.framework <span style="color:#f92672">(</span>in target <span style="color:#e6db74">&#39;ddd&#39;</span> from project <span style="color:#e6db74">&#39;Pods&#39;</span><span style="color:#f92672">)</span>
 </span></span><span style="display:flex;"><span> 	Building workspace xxx with scheme xxx and configuration Release
 </span></span></code></pre></div><p>解决方案是在钥匙串中选择对应的发布证书，点击最前面的右箭头展开私钥，然后双击展开后的私钥，在弹出来的页面，再选择右侧的<code>Access Control</code>，最后将<code>codesign</code>添加到访问白名单上（即放到<code>Always allow access by these applications</code>下）或者开启所有应用访问<code>Allow all applications to access this item</code>。</p>
-<p>添加<code>codesign</code>时可以使用<code>which codesign</code>命令查到对应路径为<code>/usr/bin/codesign</code>，即在一个隐藏路径下。此时需要使用<code>shift+command+.</code>显示隐藏路径，然后找到<code>/usr/bin/</code>下的<code>codesign</code>，将其添加到里面。</p>
+<p>添加<code>codesign</code>时可以使用<code>which codesign</code>命令查到对应路径为<code>/usr/bin/codesign</code>，即在一个隐藏路径下。此时需要使用<code>shift+command+.</code>显示隐藏路径，然后找到<code>/usr/bin/</code>下的<code>codesign</code>，将其添加到访问白名单里。</p>
 <h2 id="ipad-tabbar显示">iPad tabbar显示</h2>
 <p>在<code>iOS 18</code>的<code>iPad</code>上，用户反馈<code>TabBar</code>到了顶部，而不像手机那样显示在底部。可以通过修改<code>UITabBarController</code>中的<code>traitOverrides</code>属性为<code>compact</code>解决：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span><span style="color:#75715e">// 兼容iOS 18以上系统，将tabbar显示在底部</span>
@@ -694,7 +694,7 @@ code.has-jax {
         <li><a href="#编译时删除built_products_dirxxxxxxframework">编译时删除${BUILT_PRODUCTS_DIR}/xxx/xxx.framework</a></li>
         <li><a href="#修改组件最低支持版本">修改组件最低支持版本</a></li>
         <li><a href="#pbxfilesystemsynchronizedrootgroup">PBXFileSystemSynchronizedRootGroup</a></li>
-        <li><a href="#指定发布版本和编译版本">指定发布版本和编译版本</a></li>
+        <li><a href="#发布和编译版本">发布和编译版本</a></li>
         <li><a href="#cannot-be-found--xlinker">cannot be found -Xlinker</a></li>
         <li><a href="#fbsopenapplicationserviceerrordomain">FBSOpenApplicationServiceErrorDomain</a></li>
         <li><a href="#codesign-error">CodeSign Error</a></li>
