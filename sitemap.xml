@@ -312,13 +312,18 @@ $(SRCROOT)/Pods/ddd/xxx.framework/xxx </content>
         <tags>
           <tag>iOS</tag>
         </tags>
-        <content type="html"> 开启高版本调试 在macOS中调试使用WKWebView加载的网页，发现即使在真机上的Safari浏览器上开启了网页检测器（设置&amp;ndash;&amp;gt;高级&amp;ndash;&amp;gt;网页检测器）也无法调试，需要开启iOS 16.4及以上系统WKWebView新增的isInspectable开关：
+        <content type="html"> 开启高版本调试 在macOS中调试使用WKWebView加载的网页，发现即使在真机上的Safari浏览器上开启了网页检测器（设置&amp;ndash;&amp;gt;高级&amp;ndash;&amp;gt;网页检测器）也无法调试。这是因为需要开启iOS 16.4及以上系统WKWebView新增的isInspectable开关（默认的是关闭的）：
 // 高版本调试需要开启该属性，默认关闭 if #available(iOS 16.4, *) {  webView.isInspectable = true } 在macOS开启网页服务 最近在优化WKWebView弹框相关代码，需要编写相关网页进行测试。因为macOS自带Apatch服务，只需要开启并将网页放进去即可，参考如下方式。
 &amp;lt;!DOCTYPE html&amp;gt; &amp;lt;html lang=&amp;#34;zh-CN&amp;#34;&amp;gt; &amp;lt;head&amp;gt;  &amp;lt;meta charset=&amp;#34;UTF-8&amp;#34;&amp;gt;  &amp;lt;meta name=&amp;#34;viewport&amp;#34; content=&amp;#34;width=device-width, initial-scale=1.0&amp;#34;&amp;gt;  &amp;lt;title&amp;gt;确认框和输入提示示例&amp;lt;/title&amp;gt;  &amp;lt;script&amp;gt;  // 确保在页面加载完成后执行  window.onload = function() {  // 使用 window.confirm 弹出确认框  var result = window.confirm(&amp;#34;您确定要继续吗？&amp;#34;);  if (result) {  // 用户点击了确定，弹出输入提示框  var userInput = window.prompt(&amp;#34;请输入您的名字：&amp;#34;);  if (userInput !== null &amp;amp;&amp;amp; userInput !== &amp;#34;&amp;#34;) {  alert(&amp;#34;您好，&amp;#34; &#43; userInput &#43; &amp;#34;！感谢您的输入。&amp;#34;);  } else {  alert(&amp;#34;您没有输入任何内容。&amp;#34;);  }  } else {  alert(&amp;#34;您点击了取消。&amp;#34;);  }  };  &amp;lt;/script&amp;gt; &amp;lt;/head&amp;gt; &amp;lt;body&amp;gt;  &amp;lt;h1&amp;gt;欢迎来到确认框和输入提示示例页面&amp;lt;/h1&amp;gt; &amp;lt;/body&amp;gt; &amp;lt;/html&amp;gt; WKWebView弹框
 开启Apatch服务
 /Users/hui/Downloads/CMBMobile/CMBMobile/View/Note/TitleView.xib UISearchDisplayController is unavailable when deploying to iOS 13.0 or later 尝试直接在Storyboard中删除UISearchDisplayController即可。
-ipa中描述文件过期时间查看
- 只能在苹果电脑查看 原先这个包叫xxxx.ipa,要先将后缀改成zip 双击这个文件，会生成一个文件夹 点击Payload进去，右键显示包内容 找到embedded...bileprovision这个文件，如果不存在这个文件，一定要重新打包 Expiration Date就是描述文件的过期时间  </content>
+ipa中描述文件过期时间查看 只能在苹果电脑查看，按如下步骤：
+1、原先这个包叫xxx.ipa，要先将后缀改成zip。
+2、双击这个文件，会生成一个文件夹。
+3、点击Payload进去，右键显示包内容。
+4、找到embedded...bileprovision这个文件，如果不存在这个文件，一定要重新打包。
+5、其中Expiration Date就是描述文件的过期时间。
+</content>
     </entry>
     
      <entry>
@@ -387,8 +392,8 @@ minimizedProjectReferenceProxies = 1; preferredProjectObjectVersion = 77; 如果
 /Library/Ruby/Gems/2.6.0/gems/xcodeproj-1.21.0/lib/xcodeproj/project.rb:228:in `initialize_from_file&amp;#39;: [Xcodeproj] Unknown object version (56). (RuntimeError) 则需要修改project.pbxproj文件中的objectVersion为支持的版本（查看历史支持的版本），才能编译正常。
 参考文档
 发布和编译版本 使用xcodebuild命令进行打包时，可以指定编译版本和发布版本。具体命令如下，其中的变量targetName表示target，而bundleShortVersion表示发布版本，bundleVersion表示编译版本：
-xcodebuild -quiet -workspace demo.xcworkspace -scheme &amp;#34;${targetName}&amp;#34; MARKETING_VERSION=${bundleShortVersion} CURRENT_PROJECT_VERSION=${bundleVersion} 若需要在某个目录下删除非ipa和dSYM的所有文件，可以使用如下命令：
-# 删除非.ipa和非.dSYM文件 find &amp;#34;$build_path&amp;#34; -type f ! -name &amp;#34;*.ipa&amp;#34; ! -name &amp;#34;*.dSYM&amp;#34; -depth 1 -delete 某个变量取两个环境变量的值，下面的变量是若$2为空，则取$demo:
+xcodebuild -quiet -workspace demo.xcworkspace -scheme &amp;#34;${targetName}&amp;#34; MARKETING_VERSION=${bundleShortVersion} CURRENT_PROJECT_VERSION=${bundleVersion} 若需要在某个目录下删除非ipa和非dSYM的其它所有文件，可以使用如下命令：
+# 删除非.ipa和非.dSYM文件 find &amp;#34;$build_path&amp;#34; -type f ! -name &amp;#34;*.ipa&amp;#34; ! -name &amp;#34;*.dSYM&amp;#34; -depth 1 -delete 某个变量取两个环境变量的值，下面的变量是若$2为空，则取$demo的值：
 bundleShortVersion=&amp;#34;${2:-$demo}&amp;#34; cannot be found -Xlinker 修改工程Build Settings中的Other Linker Flags值，去除了-force_load紧接着的下一行，接着重新编译时出现如下错误：
 Build input file cannot be found: &amp;#39;/xxx/-Xlinker&amp;#39;. Did you forget to declare this file as an output of a script phase or custom build rule which produces it? 这是因为-all_load或-force_load标志的作用都是加载静态库中所有文件，但-all_load作用于所有的库，而-force_load后面必须要指定具体的文件，现在删除了其后的文件，编译就出现了错误。
 参考资料
