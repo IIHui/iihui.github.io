@@ -241,7 +241,7 @@ code.has-jax {
     <i class="fa fa-file-word-o"></i>
 </span>
 <span class="post-meta-item-text">字数: </span>
-<span class="leancloud-visitors-count">8626</span>
+<span class="leancloud-visitors-count">8962</span>
 &nbsp; | &nbsp;
 <span class="post-meta-item-icon">
     <i class="fa fa-coffee"></i>
@@ -271,7 +271,19 @@ code.has-jax {
 </span></span><span style="display:flex;"><span>unset https_proxy
 </span></span><span style="display:flex;"><span><span style="color:#75715e"># 取消全部代理</span>
 </span></span><span style="display:flex;"><span>unset ALL_PROXY
-</span></span></code></pre></div><h1 id="ios-16-scanning-barcode">iOS 16 Scanning barcode</h1>
+</span></span></code></pre></div><p>使用Xcode 26编译uPic，上传使用PixPin截图的文件到smms图床时，首先需要按照这个<a href="https://github.com/gee1k/uPic/pull/262/changes">pr</a>修改下原代码。修改后发现一直上传报错，调试后发现走到下面的else，即urlStr为nil</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span>} <span style="color:#66d9ef">else</span> {
+</span></span><span style="display:flex;"><span>    Logger.shared.info(<span style="color:#e6db74">&#34;剪切板上传其他格式&#34;</span>)
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">if</span> <span style="color:#66d9ef">let</span> urlStr = NSPasteboard.general.string(forType: NSPasteboard.PasteboardType.string) {
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">if</span> <span style="color:#66d9ef">let</span> url = URL(string: urlStr.urlEncoded()), <span style="color:#66d9ef">let</span> data = <span style="color:#66d9ef">try</span>? Data(contentsOf: url)  {
+</span></span><span style="display:flex;"><span>            Logger.shared.info(<span style="color:#e6db74">&#34;剪切板上传其他格式，获取到 Data&#34;</span>)
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">self</span>.uploadFiles([data])
+</span></span><span style="display:flex;"><span>        }
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p>后来发现是<code>NSPasteboard.general.types?.first.rawValue</code>的值为<code>com.trolltech.anymime.PixPinData</code>，即不是标准格式。这个格式是可以设置的，只需要在PixPin配置中的剪切板改为png或jpg即可，如下图所示：</p>
+<img src="https://files.seeusercontent.com/2026/05/24/w6Pz/2026-05-24_21-51-10.png" alt="2026-05-24_21-51-10" style="zoom:80%;" />
+<h1 id="ios-16-scanning-barcode">iOS 16 Scanning barcode</h1>
 <p>原来的条形码识别功能正常，但用户反馈系统升级到<code>iOS 16</code>后发现<font color=red>扫描条形码很久都没反应</font>。查<a href="https://developer.apple.com/forums/thread/714341">资料</a>后发现有其他开发者也遇到相同的问题。</p>
 <p>测试后发现在<code>iOS 16</code>上<font color=red>条形码和二维码不能同时识别</font>，目前该问题似乎已经在<code>iOS 16.3</code>修复了。在修复之前，发现<font color=red>将条形码竖着放</font>就能正常识别。</p>
 <h1 id="depreciation-of-uiremotekeyboardwindow">depreciation of UIremotekeyboardwindow</h1>
