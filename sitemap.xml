@@ -204,9 +204,10 @@ error build: &amp;#39;/Users/xxx/Library/Developer/Xcode/DerivedData/xxx-fjdqujf
 但是，开启全局代理模式后，在浏览器中直接访问github速度很快，说明在全局模式下访问是没问题。根据这个解决方案，需要先完全关闭Xcode，然后在终端设置临时代理：
 # 设置临时代理 export all_proxy=http://127.0.0.1:31181 最后进入工程目录执行下面命令拉取依赖：
 # 拉取依赖 xcodebuild -resolvePackageDependencies -scmProvider system 如果要取消临时代理，可以参考这篇文章，使用下面命令：
-# 取消http代理 unset http_proxy # 取消https代理 unset https_proxy # 取消全部代理 unset ALL_PROXY 使用Xcode 26编译uPic，上传使用PixPin截图的文件到smms图床时，首先需要按照这个pr修改下原代码。修改后发现一直上传报错，调试后发现走到下面的else，即urlStr为nil
-} else {  Logger.shared.info(&amp;#34;剪切板上传其他格式&amp;#34;)  if let urlStr = NSPasteboard.general.string(forType: NSPasteboard.PasteboardType.string) {  if let url = URL(string: urlStr.urlEncoded()), let data = try? Data(contentsOf: url) {  Logger.shared.info(&amp;#34;剪切板上传其他格式，获取到 Data&amp;#34;)  self.uploadFiles([data])  }  } } 后来发现是NSPasteboard.general.types?.first.rawValue的值为com.trolltech.anymime.PixPinData，即不是标准格式。这个格式是可以设置的，只需要在PixPin配置中的剪切板改为png或jpg即可，如下图所示：
-iOS 16 Scanning barcode 原来的条形码识别功能正常，但用户反馈系统升级到iOS 16后发现扫描条形码很久都没反应。查资料后发现有其他开发者也遇到相同的问题。
+# 取消http代理 unset http_proxy # 取消https代理 unset https_proxy # 取消全部代理 unset ALL_PROXY 使用Xcode 26编译uPic，上传使用PixPin截图的文件到sm.ms图床时，总是失败。首先，sm.ms已经迁移到s.ee了，需要按照这个PR修改下原代码。修改后发现一直上传报错，调试后发现走到下面的else，即urlStr为nil
+} else {  Logger.shared.info(&amp;#34;剪切板上传其他格式&amp;#34;)  if let urlStr = NSPasteboard.general.string(forType: NSPasteboard.PasteboardType.string) {  if let url = URL(string: urlStr.urlEncoded()), let data = try? Data(contentsOf: url) {  Logger.shared.info(&amp;#34;剪切板上传其他格式，获取到 Data&amp;#34;)  self.uploadFiles([data])  }  } } 后来发现是NSPasteboard.general.types?.first.rawValue的值为com.trolltech.anymime.PixPinData，即不是代码里面支持的格式。但这个格式在PixPin中是可以设置的，只需要在PixPin的配置中剪切板改为复制为PNG或复制为JPG即可，如下图所示：
+修改后上传的图片虽然在s.ee上能够看到，但在uPic的历史记录上还是看不到已经上传的图片。断点调试后发现上面那个PR在判断成功时有误，需要把code的判断改为200:
+let code = json[&amp;#34;code&amp;#34;].intValue if code == 200 {  // Success - S.EE API uses code: 0 for success  let data = json[&amp;#34;data&amp;#34;]  let url = data[&amp;#34;url&amp;#34;].stringValue  super.completed(url: url, retData, fileUrl, nil) } else {  // Error - handle both old SM.MS format and new S.EE format  let msg = json[&amp;#34;message&amp;#34;].stringValue  super.faild(responseData: response.data, errorMsg: msg) } iOS 16 Scanning barcode 原来的条形码识别功能正常，但用户反馈系统升级到iOS 16后发现扫描条形码很久都没反应。查资料后发现有其他开发者也遇到相同的问题。
 测试后发现在iOS 16上条形码和二维码不能同时识别，目前该问题似乎已经在iOS 16.3修复了。在修复之前，发现将条形码竖着放就能正常识别。
 depreciation of UIremotekeyboardwindow 原生的笔记功能是通过WebView来实现的，一些自定义功能是通过监听键盘的弹出事件，然后隐藏键盘相关的Window并显示自定义view来实现的。但这种实现方式借助了私有类UIremotekeyboardwindow。
 升级到iOS 16后发现自定义的view已不能覆盖键盘视图。查资料发现UIremotekeyboardwindow在iOS 16上已被移除，当前的解决方案是在系统键盘上方增加View来显示原有功能，而不是用自定义view覆盖系统键盘所在位置。
