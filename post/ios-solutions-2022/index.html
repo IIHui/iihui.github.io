@@ -241,7 +241,7 @@ code.has-jax {
     <i class="fa fa-file-word-o"></i>
 </span>
 <span class="post-meta-item-text">字数: </span>
-<span class="leancloud-visitors-count">9145</span>
+<span class="leancloud-visitors-count">9328</span>
 &nbsp; | &nbsp;
 <span class="post-meta-item-icon">
     <i class="fa fa-coffee"></i>
@@ -271,8 +271,22 @@ code.has-jax {
 </span></span><span style="display:flex;"><span>unset https_proxy
 </span></span><span style="display:flex;"><span><span style="color:#75715e"># 取消全部代理</span>
 </span></span><span style="display:flex;"><span>unset ALL_PROXY
-</span></span></code></pre></div><p>使用Xcode 26编译uPic，上传使用PixPin截图的文件到<code>sm.ms</code>图床时，总是失败。首先，<code>sm.ms</code>已经迁移到<code>s.ee</code>了，需要按照这个<a href="https://github.com/gee1k/uPic/pull/262/changes">PR</a>修改下原代码。修改后发现一直上传报错，调试后发现走到下面的else，即urlStr为nil</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span>} <span style="color:#66d9ef">else</span> {
+</span></span></code></pre></div><p>使用<code>Xcode 26</code>编译<code>uPic 1.4.8</code>，上传使用PixPin截图的文件到<code>sm.ms</code>图床时，总是失败。首先，<code>sm.ms</code>已经迁移到<code>s.ee</code>了，需要按照这个<a href="https://github.com/gee1k/uPic/pull/262/changes">PR</a>修改下原代码。修改后发现一直上传报错，调试后发现<code>AppDelegate.swift</code>中<code>uploadByPasteboard</code>方法的代码走到下面的<code>else</code>，即<code>urlStr</code>为<code>nil</code>：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span>} <span style="color:#66d9ef">else</span> <span style="color:#66d9ef">if</span> (NSPasteboard.general.types?.first == NSPasteboard.PasteboardType.png) {
+</span></span><span style="display:flex;"><span>    Logger.shared.info(<span style="color:#e6db74">&#34;剪切板上传 PNG&#34;</span>)
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">let</span> imgData = NSPasteboard.general.data(forType: NSPasteboard.PasteboardType.png)
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">self</span>.uploadFiles([imgData!])
+</span></span><span style="display:flex;"><span>} <span style="color:#66d9ef">else</span> <span style="color:#66d9ef">if</span> (NSPasteboard.general.types?.first == NSPasteboard.PasteboardType.jpeg) {
+</span></span><span style="display:flex;"><span>    Logger.shared.info(<span style="color:#e6db74">&#34;剪切板上传 JPEG&#34;</span>)
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">let</span> imgData = NSPasteboard.general.data(forType: NSPasteboard.PasteboardType.jpeg)
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">self</span>.uploadFiles([imgData!])
+</span></span><span style="display:flex;"><span>} <span style="color:#66d9ef">else</span> <span style="color:#66d9ef">if</span> (NSPasteboard.general.types?.first == NSPasteboard.PasteboardType.tiff) {
+</span></span><span style="display:flex;"><span>    Logger.shared.info(<span style="color:#e6db74">&#34;剪切板上传 TIFF&#34;</span>)
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">let</span> imgData = NSPasteboard.general.data(forType: NSPasteboard.PasteboardType.tiff)
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">if</span> <span style="color:#66d9ef">let</span> jpg = imgData?.convertImageData(.jpeg) {
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">self</span>.uploadFiles([jpg])
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>} <span style="color:#66d9ef">else</span> {
 </span></span><span style="display:flex;"><span>    Logger.shared.info(<span style="color:#e6db74">&#34;剪切板上传其他格式&#34;</span>)
 </span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">if</span> <span style="color:#66d9ef">let</span> urlStr = NSPasteboard.general.string(forType: NSPasteboard.PasteboardType.string) {
 </span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">if</span> <span style="color:#66d9ef">let</span> url = URL(string: urlStr.urlEncoded()), <span style="color:#66d9ef">let</span> data = <span style="color:#66d9ef">try</span>? Data(contentsOf: url)  {
