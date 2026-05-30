@@ -241,13 +241,13 @@ code.has-jax {
     <i class="fa fa-file-word-o"></i>
 </span>
 <span class="post-meta-item-text">字数: </span>
-<span class="leancloud-visitors-count">9328</span>
+<span class="leancloud-visitors-count">9539</span>
 &nbsp; | &nbsp;
 <span class="post-meta-item-icon">
     <i class="fa fa-coffee"></i>
 </span>
 <span class="post-meta-item-text">阅读: </span>
-<span class="leancloud-visitors-count">19 分钟</span>
+<span class="leancloud-visitors-count">20 分钟</span>
 </span>
       </div>
     </header>
@@ -271,7 +271,7 @@ code.has-jax {
 </span></span><span style="display:flex;"><span>unset https_proxy
 </span></span><span style="display:flex;"><span><span style="color:#75715e"># 取消全部代理</span>
 </span></span><span style="display:flex;"><span>unset ALL_PROXY
-</span></span></code></pre></div><p>使用<code>Xcode 26</code>编译<code>uPic 1.4.8</code>，上传使用PixPin截图的文件到<code>sm.ms</code>图床时，总是失败。首先，<code>sm.ms</code>已经迁移到<code>s.ee</code>了，需要按照这个<a href="https://github.com/gee1k/uPic/pull/262/changes">PR</a>修改下原代码。修改后发现一直上传报错，调试后发现<code>AppDelegate.swift</code>中<code>uploadByPasteboard</code>方法的代码走到下面的<code>else</code>，即<code>urlStr</code>为<code>nil</code>：</p>
+</span></span></code></pre></div><p>使用<code>Xcode 26</code>编译<code>uPic 1.4.8</code>，上传使用<code>PixPin</code>截图到<code>sm.ms</code>图床时总是失败。首先，<code>sm.ms</code>已经迁移到<code>s.ee</code>了，需要按照这个<a href="https://github.com/gee1k/uPic/pull/262/changes">PR</a>修改下原代码。修改后发现一直上传报错，调试后发现<code>AppDelegate.swift</code>中<code>uploadByPasteboard</code>方法的代码走到下面的<code>else</code>，即<code>urlStr</code>为<code>nil</code>：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span>} <span style="color:#66d9ef">else</span> <span style="color:#66d9ef">if</span> (NSPasteboard.general.types?.first == NSPasteboard.PasteboardType.png) {
 </span></span><span style="display:flex;"><span>    Logger.shared.info(<span style="color:#e6db74">&#34;剪切板上传 PNG&#34;</span>)
 </span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">let</span> imgData = NSPasteboard.general.data(forType: NSPasteboard.PasteboardType.png)
@@ -295,7 +295,7 @@ code.has-jax {
 </span></span><span style="display:flex;"><span>        }
 </span></span><span style="display:flex;"><span>    }
 </span></span><span style="display:flex;"><span>}
-</span></span></code></pre></div><p>后来发现是<code>NSPasteboard.general.types?.first.rawValue</code>的值为<code>com.trolltech.anymime.PixPinData</code>，即不是代码里面支持的格式。但这个格式在PixPin中是可以设置的，只需要在PixPin的配置中剪切板改为复制为PNG或复制为JPG即可，如下图所示：</p>
+</span></span></code></pre></div><p>后来发现是<code>NSPasteboard.general.types?.first.rawValue</code>的值为<code>com.trolltech.anymime.PixPinData</code>，即不是代码里面支持的格式。发现这是因为PixPin中的<code>配置--&gt;系统--&gt;剪切板</code>中设置的是「禁用」，只需要将剪切板改的设置为非禁用即可，如下图所示：</p>
 <img src="https://files.seeusercontent.com/2026/05/24/w6Pz/2026-05-24_21-51-10.png" alt="2026-05-24_21-51-10" style="zoom:80%;" />
 <p>修改后上传的图片虽然在<code>s.ee</code>上能够看到，但在<code>uPic</code>的历史记录上还是看不到已经上传的图片。断点调试后发现上面那个PR在判断成功时有误，需要把<code>code</code>的判断改为<code>200</code>:</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span><span style="color:#66d9ef">let</span> code = json[<span style="color:#e6db74">&#34;code&#34;</span>].intValue
@@ -309,7 +309,26 @@ code.has-jax {
 </span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">let</span> msg = json[<span style="color:#e6db74">&#34;message&#34;</span>].stringValue
 </span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">super</span>.faild(responseData: response.data, errorMsg: msg)
 </span></span><span style="display:flex;"><span>}
-</span></span></code></pre></div><h1 id="ios-16-scanning-barcode">iOS 16 Scanning barcode</h1>
+</span></span></code></pre></div><p>如果要在兼容禁用模式，可以在<code>AppDelegate.swift</code>中的<code>uploadByPasteboard</code>方法else中加入如下代码，即可完成图片上传：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span><span style="color:#75715e">// 兼容PixPin的禁用模式</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">let</span> preferredTypes: [NSPasteboard.PasteboardType] = [
+</span></span><span style="display:flex;"><span>    .png, <span style="color:#75715e">// public.png - 标准 PNG 格式</span>
+</span></span><span style="display:flex;"><span>    .tiff, <span style="color:#75715e">// public.tiff - TIFF 格式</span>
+</span></span><span style="display:flex;"><span>    NSPasteboard.PasteboardType(<span style="color:#e6db74">&#34;com.trolltech.anymime.PixPinData&#34;</span>) <span style="color:#75715e">// 最后才考虑私有格式</span>
+</span></span><span style="display:flex;"><span>]
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">for</span> type <span style="color:#66d9ef">in</span> preferredTypes {
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">if</span> <span style="color:#66d9ef">let</span> data = NSPasteboard.general.data(forType: type) {
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">if</span> NSImage(data: data) <span style="color:#f92672">!=</span> <span style="color:#66d9ef">nil</span> {
+</span></span><span style="display:flex;"><span>            <span style="color:#75715e">// 成功获取图片，直接使用</span>
+</span></span><span style="display:flex;"><span>            debugPrint(<span style="color:#e6db74">&#34;成功从类型 </span><span style="color:#e6db74">\(</span>type.rawValue<span style="color:#e6db74">)</span><span style="color:#e6db74"> 读取图片&#34;</span>)
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">if</span> <span style="color:#66d9ef">let</span> jpg = data.convertImageData(.jpeg) {
+</span></span><span style="display:flex;"><span>                <span style="color:#66d9ef">self</span>.uploadFiles([jpg])
+</span></span><span style="display:flex;"><span>            }
+</span></span><span style="display:flex;"><span>        }
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><img src="https://files.seeusercontent.com/2026/05/30/4frS/cKoF1K.jpg" alt="cKoF1K" style="zoom:67%;" />
+<h1 id="ios-16-scanning-barcode">iOS 16 Scanning barcode</h1>
 <p>原来的条形码识别功能正常，但用户反馈系统升级到<code>iOS 16</code>后发现<font color=red>扫描条形码很久都没反应</font>。查<a href="https://developer.apple.com/forums/thread/714341">资料</a>后发现有其他开发者也遇到相同的问题。</p>
 <p>测试后发现在<code>iOS 16</code>上<font color=red>条形码和二维码不能同时识别</font>，目前该问题似乎已经在<code>iOS 16.3</code>修复了。在修复之前，发现<font color=red>将条形码竖着放</font>就能正常识别。</p>
 <h1 id="depreciation-of-uiremotekeyboardwindow">depreciation of UIremotekeyboardwindow</h1>
