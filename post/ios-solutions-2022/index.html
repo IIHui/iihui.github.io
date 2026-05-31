@@ -255,7 +255,7 @@ code.has-jax {
     <h1 id="missing-package-product">Missing Package Product</h1>
 <p>在<code>github</code>上拉取了<a href="https://github.com/gee1k/uPic">uPic</a>工程源代码，编译时出现了包缺失的错误(<code>Missing Package Product</code>)，具体报错信息如下图所示：</p>
 <img src="https://s2.loli.net/2022/10/22/AJfTuwQxRCSd4YP.png" alt="AJfTuwQxRCSd4YP" style="zoom:50%;" />
-<p>参考<a href="https://developer.apple.com/forums/thread/687275">这个解决方案</a>，首先打开工程，然后在菜单栏的<code>File--&gt;Packages--&gt;Reset PackageCaches</code>点击一下，等待<code>Xcode</code>重置缓存完成后，发现还是不能拉取依赖包：</p>
+<p>参考<a href="https://developer.apple.com/forums/thread/687275">这个解决方案</a>，首先打开工程，接着在菜单栏的<code>File--&gt;Packages--&gt;Reset PackageCaches</code>点击一下，等待<code>Xcode</code>重置缓存完成后，发现还是不能拉取依赖包：</p>
 <img src="https://s2.loli.net/2022/10/22/dzZuYit3Wqgwy2E.png" alt="dzZuYit3Wqgwy2E" style="zoom:50%;" />
 <p>查找资料发现<code>Xcode</code>中拉取<code>Swift Package</code>是不走系统代理的，也就是说即使打开全局代理模式，依然也不能解决<code>SPM</code>的拉取问题。</p>
 <p>但是，开启全局代理模式后，在浏览器中直接访问<code>github</code>速度很快，说明在全局模式下访问是没问题。根据这个<a href="https://juejin.cn/post/6946451335948697636">解决方案</a>，需要先完全关闭<code>Xcode</code>，然后在终端设置临时代理：</p>
@@ -274,14 +274,11 @@ code.has-jax {
 </span></span></code></pre></div><p>使用<code>Xcode 26</code>编译<code>uPic 1.4.8</code>版本，上传使用<code>PixPin</code>截的图到<code>sm.ms</code>图床时总是失败。排查发现，<code>sm.ms</code>已经迁移到<code>s.ee</code>了，需要按照这个<a href="https://github.com/gee1k/uPic/pull/262/changes">PR</a>修改代码。第一步是在<code>uPic/Models/Smms/SmmsUploader.swift</code>文件中修改部分内容，即替换链接和表单的<code>withName</code>及上传成功的判断代码：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span><span style="color:#66d9ef">let</span> url = <span style="color:#e6db74">&#34;https://s.ee/api/v1/file/upload&#34;</span>
 </span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span>headers.add(name: <span style="color:#e6db74">&#34;referer&#34;</span>, value: <span style="color:#e6db74">&#34;https://s.ee/&#34;</span>)
 </span></span><span style="display:flex;"><span>headers.add(name: <span style="color:#e6db74">&#34;origin&#34;</span>, value: <span style="color:#e6db74">&#34;https://s.ee&#34;</span>)
 </span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span>multipartFormData.append(retData!, withName: <span style="color:#e6db74">&#34;file&#34;</span>, fileName: fileName, mimeType: mimeType)
 </span></span><span style="display:flex;"><span>multipartFormData.append(fileUrl!, withName: <span style="color:#e6db74">&#34;file&#34;</span>, fileName: fileName, mimeType: mimeType)
-</span></span><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span><span style="color:#66d9ef">let</span> code = json[<span style="color:#e6db74">&#34;code&#34;</span>].intValue
 </span></span><span style="display:flex;"><span><span style="color:#66d9ef">if</span> <span style="color:#ae81ff">0</span> == code {
@@ -297,7 +294,7 @@ code.has-jax {
 </span></span></code></pre></div><p>第二步到<code>uPic/Views/PreferencesWindow/ConfigView/Views/SmmsConfigView.swift</code>中的<code>getApiToken</code>方法中设置相关的链接为：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span><span style="color:#66d9ef">guard</span> <span style="color:#66d9ef">let</span> url = URL(string: <span style="color:#e6db74">&#34;https://s.ee/user/settings&#34;</span>) 
 </span></span></code></pre></div><img src="https://files.seeusercontent.com/2026/05/30/weR8/bMDAUQ.jpg" alt="bMDAUQ" style="zoom:50%;" />
-<p>按上面修改后发现使用PixPin截的图从粘贴板上传一直没成功，调试后发现<code>AppDelegate.swift</code>中<code>uploadByPasteboard</code>方法的代码走到最下面的<code>else</code>，即<code>urlStr</code>为<code>nil</code>：</p>
+<p>按上面修改后发现使用<code>PixPin</code>截的图从粘贴板上传一直没成功，调试后发现<code>AppDelegate.swift</code>中<code>uploadByPasteboard</code>方法的代码走到最下面的<code>else</code>，即<code>urlStr</code>为<code>nil</code>：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span>} <span style="color:#66d9ef">else</span> <span style="color:#66d9ef">if</span> (NSPasteboard.general.types?.first == NSPasteboard.PasteboardType.png) {
 </span></span><span style="display:flex;"><span>    Logger.shared.info(<span style="color:#e6db74">&#34;剪切板上传 PNG&#34;</span>)
 </span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">let</span> imgData = NSPasteboard.general.data(forType: NSPasteboard.PasteboardType.png)
@@ -321,7 +318,7 @@ code.has-jax {
 </span></span><span style="display:flex;"><span>        }
 </span></span><span style="display:flex;"><span>    }
 </span></span><span style="display:flex;"><span>}
-</span></span></code></pre></div><p>后来发现是<code>NSPasteboard.general.types?.first.rawValue</code>的值为<code>com.trolltech.anymime.PixPinData</code>，即不是代码里面支持的格式。这是因为PixPin中的<code>配置--&gt;系统--&gt;剪贴板</code>中设置的是「禁用」，只需要将剪贴板的设置改为非禁用状态即可：</p>
+</span></span></code></pre></div><p>后来发现是<code>NSPasteboard.general.types?.first.rawValue</code>的值为<code>com.trolltech.anymime.PixPinData</code>，即不是代码里面支持的格式。这是因为<code>PixPin</code>中的<code>配置--&gt;系统--&gt;剪贴板</code>中设置的是「禁用」，只需要将剪贴板的设置改为非禁用状态即可：</p>
 <img src="https://files.seeusercontent.com/2026/05/24/w6Pz/2026-05-24_21-51-10.png" alt="2026-05-24_21-51-10" style="zoom:80%;" />
 <p>修改后上传的图片虽然在<code>s.ee</code>上能够看到，但在<code>uPic</code>的历史记录上还是看不到已经上传的图片。断点调试后发现上面那个PR在判断图片上传成功时有误，需要把<code>code</code>的判断改为<code>200</code>:</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span><span style="color:#66d9ef">let</span> code = json[<span style="color:#e6db74">&#34;code&#34;</span>].intValue
@@ -335,7 +332,7 @@ code.has-jax {
 </span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">let</span> msg = json[<span style="color:#e6db74">&#34;message&#34;</span>].stringValue
 </span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">super</span>.faild(responseData: response.data, errorMsg: msg)
 </span></span><span style="display:flex;"><span>}
-</span></span></code></pre></div><p>如果非要为PixPin的禁用模式做兼容，可以在<code>AppDelegate.swift</code>中的<code>uploadByPasteboard</code>方法的else中加入如下代码，即可完成图片上传：</p>
+</span></span></code></pre></div><p>如果想要为<code>PixPin</code>的禁用模式做兼容，可以在<code>AppDelegate.swift</code>中的<code>uploadByPasteboard</code>方法的<code>else</code>中加入如下代码，即可完成图片上传：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span><span style="color:#75715e">// 兼容PixPin的禁用模式</span>
 </span></span><span style="display:flex;"><span><span style="color:#66d9ef">let</span> preferredTypes: [NSPasteboard.PasteboardType] = [
 </span></span><span style="display:flex;"><span>    .png, <span style="color:#75715e">// public.png - 标准 PNG 格式</span>
