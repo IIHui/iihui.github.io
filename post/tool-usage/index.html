@@ -241,7 +241,7 @@ code.has-jax {
     <i class="fa fa-file-word-o"></i>
 </span>
 <span class="post-meta-item-text">字数: </span>
-<span class="leancloud-visitors-count">8070</span>
+<span class="leancloud-visitors-count">8241</span>
 &nbsp; | &nbsp;
 <span class="post-meta-item-icon">
     <i class="fa fa-coffee"></i>
@@ -615,10 +615,6 @@ code.has-jax {
 </span></span><span style="display:flex;"><span> &gt; Incorrect keystore password, please input the correct plaintext password.
 </span></span><span style="display:flex;"><span> &gt; The keystore was created by a newer JDK version, please use the same JDK version
 </span></span><span style="display:flex;"><span>	 Detail: Please check the message from tools.
-</span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span>* Try:
-</span></span><span style="display:flex;"><span>&gt; Run with --stacktrace option to get the stack trace.
-</span></span><span style="display:flex;"><span>&gt; Run with --debug option to get more log output.
 </span></span></code></pre></div><h2 id="command-not-found">command not found</h2>
 <p>执行<code>ohpm</code>命令时报错<code>/bin/sh: ohpm: command not found</code>，此时需要将ohpm脚本路径加到环境变量中即可。在<code>DevEco</code>中<code>ohpm</code>命令的路径为<code>/Applications/DevEco-Studio.app/Contents/tools/ohpm/bin</code>，只要将它加到<code>PATH</code>环境变量中：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sh" data-lang="sh"><span style="display:flex;"><span>export PATH<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;/Applications/DevEco-Studio.app/Contents/tools/ohpm/bin:</span>$PATH<span style="color:#e6db74">&#34;</span>
@@ -631,14 +627,15 @@ code.has-jax {
 </span></span><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span>* Try the following:
 </span></span><span style="display:flex;"><span>  &gt; Correct the value, run hvigorw --stop-daemon to stop the daemon process, and <span style="color:#66d9ef">then</span> try again.
-</span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span>* Try:
-</span></span><span style="display:flex;"><span>&gt; Run with --stacktrace option to get the stack trace.
-</span></span><span style="display:flex;"><span>&gt; Run with --debug option to get more log output.
 </span></span></code></pre></div><p>此时需要将<code>DevEco</code>中存储sdk的路径为<code>DEVECO_SDK_HOME</code>环境变量的值：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sh" data-lang="sh"><span style="display:flex;"><span>/Applications/DevEco-Studio.app/Contents/sdk
-</span></span></code></pre></div><div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sh" data-lang="sh"><span style="display:flex;"><span>hvigor ERROR: Initiated Worker with invalid execArgv flags: --max-old-space-size<span style="color:#f92672">=</span>8192, --max-semi-space-size<span style="color:#f92672">=</span>16, --expose-gc
+</span></span></code></pre></div><h2 id="invalid-execargv-flags">invalid execArgv flags</h2>
+<p>在非<code>DevEco</code>自带的终端执行下面命令打包时出现了报错：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-fallback" data-lang="fallback"><span style="display:flex;"><span>hvigorw --mode module -p product=default -p module=entry@default -p buildMode=release  assembleHap assembleHsp --analyze=normal --parallel --incremental --daemon
+</span></span></code></pre></div><p>具体报错信息为：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sh" data-lang="sh"><span style="display:flex;"><span>hvigor ERROR: Initiated Worker with invalid execArgv flags: --max-old-space-size<span style="color:#f92672">=</span>8192, --max-semi-space-size<span style="color:#f92672">=</span>16, --expose-gc
+</span></span></code></pre></div><p>根本原因是<code>hvigor</code>守护进程在启动<code>Worker</code>线程时，会将<code>--max-semi-space-size</code>和<code>--expose-gc</code>等参数注入到<code>NODE_OPTIONS</code>中，这些参数不在<code>Node.js</code>的<code>Worker</code>线程的<code>execArgv</code>白名单中。查了很久发现也没有设置<code>NODE_OPTIONS</code>变量：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sh" data-lang="sh"><span style="display:flex;"><span>Applications/DevEco-Studio.app/Contents/tools/node/bin/node /Applications/DevEco-Studio.app/Contents/tools/hvigor/hvigor/bin/hvigor.js --mode module -p product<span style="color:#f92672">=</span>default -p module<span style="color:#f92672">=</span>entry@default -p buildMode<span style="color:#f92672">=</span>release  assembleHap assembleHsp --analyze<span style="color:#f92672">=</span>normal --parallel --incremental --daemon
 </span></span></code></pre></div><h1 id="oh-my-zsh">Oh My Zsh</h1>
 <h2 id="no-alternative-certificate-subject-name">no alternative certificate subject name</h2>
 <p>更新<code>oh My zsh</code>时突然出现如下错误，是因为在<code>hosts</code>文件中配置了<code>github.com</code>相关的条目，但对应的ip已经失效了，只需关掉映射条目即可：</p>
@@ -906,6 +903,7 @@ code.has-jax {
         <li><a href="#证书过期">证书过期</a></li>
         <li><a href="#command-not-found">command not found</a></li>
         <li><a href="#deveco_sdk_home">DEVECO_SDK_HOME</a></li>
+        <li><a href="#invalid-execargv-flags">invalid execArgv flags</a></li>
       </ul>
     </li>
     <li><a href="#oh-my-zsh">Oh My Zsh</a>
