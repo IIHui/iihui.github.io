@@ -241,7 +241,7 @@ code.has-jax {
     <i class="fa fa-file-word-o"></i>
 </span>
 <span class="post-meta-item-text">字数: </span>
-<span class="leancloud-visitors-count">8241</span>
+<span class="leancloud-visitors-count">8394</span>
 &nbsp; | &nbsp;
 <span class="post-meta-item-icon">
     <i class="fa fa-coffee"></i>
@@ -634,9 +634,15 @@ code.has-jax {
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-fallback" data-lang="fallback"><span style="display:flex;"><span>hvigorw --mode module -p product=default -p module=entry@default -p buildMode=release  assembleHap assembleHsp --analyze=normal --parallel --incremental --daemon
 </span></span></code></pre></div><p>具体报错信息为：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sh" data-lang="sh"><span style="display:flex;"><span>hvigor ERROR: Initiated Worker with invalid execArgv flags: --max-old-space-size<span style="color:#f92672">=</span>8192, --max-semi-space-size<span style="color:#f92672">=</span>16, --expose-gc
-</span></span></code></pre></div><p>根本原因是<code>hvigor</code>守护进程在启动<code>Worker</code>线程时，会将<code>--max-semi-space-size</code>和<code>--expose-gc</code>等参数注入到<code>NODE_OPTIONS</code>中，这些参数不在<code>Node.js</code>的<code>Worker</code>线程的<code>execArgv</code>白名单中。查了很久发现也没有设置<code>NODE_OPTIONS</code>变量：</p>
+</span></span></code></pre></div><p>根本原因是<code>hvigor</code>守护进程在启动<code>Worker</code>线程时，会将<code>--max-semi-space-size</code>和<code>--expose-gc</code>等参数注入到<code>NODE_OPTIONS</code>中，这些参数不在<code>Node.js</code>的<code>Worker</code>线程的<code>execArgv</code>白名单中。查了很久发现也没有设置<code>NODE_OPTIONS</code>变量，可以按下面方式执行:</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sh" data-lang="sh"><span style="display:flex;"><span>Applications/DevEco-Studio.app/Contents/tools/node/bin/node /Applications/DevEco-Studio.app/Contents/tools/hvigor/hvigor/bin/hvigor.js --mode module -p product<span style="color:#f92672">=</span>default -p module<span style="color:#f92672">=</span>entry@default -p buildMode<span style="color:#f92672">=</span>release  assembleHap assembleHsp --analyze<span style="color:#f92672">=</span>normal --parallel --incremental --daemon
-</span></span></code></pre></div><h1 id="oh-my-zsh">Oh My Zsh</h1>
+</span></span></code></pre></div><p>或者在<code>.zshrc</code>中设置<code>NODE_HOME</code>变量为<code>DevEco</code>自带的<code>Node</code>：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sh" data-lang="sh"><span style="display:flex;"><span>export NODE_HOME<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;/Applications/DevEco-Studio.app/Contents/tools/node&#34;</span>
+</span></span></code></pre></div><p>如果使用的是<code>PyCharm</code>调试，可以先将<code>DevEco</code>自带的<code>node</code>加到PATH变量中，然后把<code>PyCharm</code>中的<code>Node Runtime</code>改为<code>DevEco</code>自带的<code>Node</code>:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sh" data-lang="sh"><span style="display:flex;"><span><span style="color:#75715e"># 处理错误hvigor ERROR: Initiated Worker with invalid execArgv flags: --max-old-space-size=8192, --max-semi-space-size=16, --expose-gc</span>
+</span></span><span style="display:flex;"><span>export PATH<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;/Applications/DevEco-Studio.app/Contents/tools/node/bin:</span>$PATH<span style="color:#e6db74">&#34;</span>
+</span></span></code></pre></div><img src="https://files.seeusercontent.com/2026/06/06/Eh6z/1LYCYp.jpg" alt="1LYCYp" style="zoom:80%;" />
+<h1 id="oh-my-zsh">Oh My Zsh</h1>
 <h2 id="no-alternative-certificate-subject-name">no alternative certificate subject name</h2>
 <p>更新<code>oh My zsh</code>时突然出现如下错误，是因为在<code>hosts</code>文件中配置了<code>github.com</code>相关的条目，但对应的ip已经失效了，只需关掉映射条目即可：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sh" data-lang="sh"><span style="display:flex;"><span>Updating Oh My Zsh
@@ -644,8 +650,7 @@ code.has-jax {
 </span></span></code></pre></div><p>使用<code>source ~/.zshrc</code>总是有下面提示信息：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sh" data-lang="sh"><span style="display:flex;"><span>compinit:527: no such file or directory: /usr/local/share/zsh/site-functions/_brew_services
 </span></span></code></pre></div><p>按下面命令执行后，报错会消失：</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sh" data-lang="sh"><span style="display:flex;"><span>source ~/.zshrc
-</span></span><span style="display:flex;"><span><span style="color:#75715e"># 删除有问题的链接文件</span>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sh" data-lang="sh"><span style="display:flex;"><span><span style="color:#75715e"># 删除有问题的链接文件</span>
 </span></span><span style="display:flex;"><span>rm -f /usr/local/share/zsh/site-functions/_brew
 </span></span><span style="display:flex;"><span>rm -f /usr/local/share/zsh/site-functions/_brew_services
 </span></span></code></pre></div>

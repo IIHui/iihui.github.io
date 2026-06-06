@@ -4921,11 +4921,13 @@ export PATH=&amp;#34;/Applications/DevEco-Studio.app/Contents/tools/hvigor/bin:$
 &amp;gt; hvigor ERROR: 00303217 Configuration Error Error Message: Invalid value of &amp;#39;DEVECO_SDK_HOME&amp;#39; in the system environment path.  * Try the following:  &amp;gt; Correct the value, run hvigorw --stop-daemon to stop the daemon process, and then try again. 此时需要将DevEco中存储sdk的路径为DEVECO_SDK_HOME环境变量的值：
 /Applications/DevEco-Studio.app/Contents/sdk invalid execArgv flags 在非DevEco自带的终端执行下面命令打包时出现了报错：
 hvigorw --mode module -p product=default -p module=entry@default -p buildMode=release assembleHap assembleHsp --analyze=normal --parallel --incremental --daemon 具体报错信息为：
-hvigor ERROR: Initiated Worker with invalid execArgv flags: --max-old-space-size=8192, --max-semi-space-size=16, --expose-gc 根本原因是hvigor守护进程在启动Worker线程时，会将--max-semi-space-size和--expose-gc等参数注入到NODE_OPTIONS中，这些参数不在Node.js的Worker线程的execArgv白名单中。查了很久发现也没有设置NODE_OPTIONS变量：
-Applications/DevEco-Studio.app/Contents/tools/node/bin/node /Applications/DevEco-Studio.app/Contents/tools/hvigor/hvigor/bin/hvigor.js --mode module -p product=default -p module=entry@default -p buildMode=release assembleHap assembleHsp --analyze=normal --parallel --incremental --daemon Oh My Zsh no alternative certificate subject name 更新oh My zsh时突然出现如下错误，是因为在hosts文件中配置了github.com相关的条目，但对应的ip已经失效了，只需关掉映射条目即可：
+hvigor ERROR: Initiated Worker with invalid execArgv flags: --max-old-space-size=8192, --max-semi-space-size=16, --expose-gc 根本原因是hvigor守护进程在启动Worker线程时，会将--max-semi-space-size和--expose-gc等参数注入到NODE_OPTIONS中，这些参数不在Node.js的Worker线程的execArgv白名单中。查了很久发现也没有设置NODE_OPTIONS变量，可以按下面方式执行:
+Applications/DevEco-Studio.app/Contents/tools/node/bin/node /Applications/DevEco-Studio.app/Contents/tools/hvigor/hvigor/bin/hvigor.js --mode module -p product=default -p module=entry@default -p buildMode=release assembleHap assembleHsp --analyze=normal --parallel --incremental --daemon 或者在.zshrc中设置NODE_HOME变量为DevEco自带的Node：
+export NODE_HOME=&amp;#34;/Applications/DevEco-Studio.app/Contents/tools/node&amp;#34; 如果使用的是PyCharm调试，可以先将DevEco自带的node加到PATH变量中，然后把PyCharm中的Node Runtime改为DevEco自带的Node:
+# 处理错误hvigor ERROR: Initiated Worker with invalid execArgv flags: --max-old-space-size=8192, --max-semi-space-size=16, --expose-gc export PATH=&amp;#34;/Applications/DevEco-Studio.app/Contents/tools/node/bin:$PATH&amp;#34; Oh My Zsh no alternative certificate subject name 更新oh My zsh时突然出现如下错误，是因为在hosts文件中配置了github.com相关的条目，但对应的ip已经失效了，只需关掉映射条目即可：
 Updating Oh My Zsh fatal: unable to access &amp;#39;https://github.com/ohmyzsh/ohmyzsh.git/&amp;#39;: SSL: no alternative certificate subject name matches target host name &amp;#39;github.com&amp;#39; 使用source ~/.zshrc总是有下面提示信息：
 compinit:527: no such file or directory: /usr/local/share/zsh/site-functions/_brew_services 按下面命令执行后，报错会消失：
-source ~/.zshrc # 删除有问题的链接文件 rm -f /usr/local/share/zsh/site-functions/_brew rm -f /usr/local/share/zsh/site-functions/_brew_services </content>
+# 删除有问题的链接文件 rm -f /usr/local/share/zsh/site-functions/_brew rm -f /usr/local/share/zsh/site-functions/_brew_services </content>
     </entry>
     
      <entry>
