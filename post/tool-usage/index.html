@@ -241,13 +241,13 @@ code.has-jax {
     <i class="fa fa-file-word-o"></i>
 </span>
 <span class="post-meta-item-text">字数: </span>
-<span class="leancloud-visitors-count">9326</span>
+<span class="leancloud-visitors-count">9556</span>
 &nbsp; | &nbsp;
 <span class="post-meta-item-icon">
     <i class="fa fa-coffee"></i>
 </span>
 <span class="post-meta-item-text">阅读: </span>
-<span class="leancloud-visitors-count">19 分钟</span>
+<span class="leancloud-visitors-count">20 分钟</span>
 </span>
       </div>
     </header>
@@ -651,15 +651,19 @@ code.has-jax {
 </span></span><span style="display:flex;"><span>* Try the following:
 </span></span><span style="display:flex;"><span>  &gt; Open File &gt; Project Structure &gt; Signing Configs and click Fix, or manually fix SigningConfigs in project-level build-profile.json5 file.
 </span></span><span style="display:flex;"><span>  &gt; Go to the app.json5 file and change the bundleName value there.
-</span></span></code></pre></div><p>不同的product的bundleName不同，却使用了相同signingConfig。而signingConfig中的bundleName和product中的bundleName不同，所以编译时报错。按提示到<code>Open File &gt; Project Structure &gt; Signing Configs</code>中添加不同环境的signingConfig可解决。</p>
+</span></span></code></pre></div><p>不同的product的bundleName不同，却使用了相同signingConfig。而signingConfig中的bundleName和product中的bundleName不同，所以编译时报错。按提示到菜单栏<code>File &gt; Project Structure &gt; Signing Configs</code>中添加不同环境的signingConfig可解决。</p>
 <h2 id="product中配置的label不生效">product中配置的label不生效</h2>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sh" data-lang="sh"><span style="display:flex;"><span><span style="color:#e6db74">&#34;label&#34;</span>: <span style="color:#e6db74">&#34;</span>$string<span style="color:#e6db74">:app_name_uat&#34;</span>,
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-json" data-lang="json"><span style="display:flex;"><span><span style="color:#e6db74">&#34;label&#34;</span><span style="color:#960050;background-color:#1e0010">:</span> <span style="color:#e6db74">&#34;$string:app_name_uat&#34;</span><span style="color:#960050;background-color:#1e0010">,</span>
 </span></span></code></pre></div><p>这是因为在<code>HarmonyOS</code>中，<code>icon</code>和<code>label</code>存在于多个配置文件中，它们的生效范围和优先级不同：</p>
 <ol>
 <li>工程级<code>build-profile.json5</code>的<code>product</code>中的<code>label</code>：在编译时会替换<code>app.json5</code>中的<code>label</code>字段，影响的是&quot;系统设置 &gt; 应用管理&quot;中显示的应用名称和图标。</li>
 <li><code>module.json5</code>中<code>abilities</code>标签下的<code>label</code>：决定桌面图标下方显示的应用名称。当<code>module.json5</code>中入口<code>UIAbility</code>的<code>abilities</code>配置了<code>label</code>，且该<code>ability</code>的<code>skills</code>中包含<code>entity.system.home</code>和 <code>ohos.want.action.home</code>时，<code>module.json5</code>中的<code>label</code>优先级更高，会覆盖<code>app.json5</code>（包括<code>product</code>替换后的值）的<code>label</code>。</li>
 </ol>
 <p>因此，当<code>product</code>中设置的<code>label</code>确替换了<code>app.json5</code>中的<code>label</code>，但桌面显示的名称是由<code>module.json5</code>中入口<code>ability</code>的<code>label</code> 决定的，所以看起来<code>product</code>的<code>label</code>没有生效。</p>
+<h2 id="修改bundlename">修改bundleName</h2>
+<p>在某个项目的根目录下的<code>build-profile.json5</code>文件中的<code>products</code>下新增或修改<code>bundleName</code>后，需要到菜单栏<code>File--&gt;Project Structure--&gt;Project--&gt;Signing Configs</code>中，修改<font color="#de7802">所有的</font><code>SignConfig</code>的<code>BundleName</code>为<code>build-profile.json5</code>文件中正确的<code>BundleName</code>：</p>
+<img src="https://files.seeusercontent.com/2026/06/07/n2dI/O1lAo3.jpg" alt="O1lAo3" style="zoom:80%;" />
+<p>全部修改为正确后，然后再点一下<code>Automatically generate signature</code>，然后所有的签名都会更新。尤其需要注意的是，</p>
 <h1 id="oh-my-zsh">Oh My Zsh</h1>
 <h2 id="no-alternative-certificate-subject-name">no alternative certificate subject name</h2>
 <p>更新<code>oh My zsh</code>时突然出现如下错误，是因为在<code>hosts</code>文件中配置了<code>github.com</code>相关的条目，但配置的<code>ip</code>地址已经失效了，只需注释相关条目即可：</p>
@@ -929,6 +933,7 @@ code.has-jax {
         <li><a href="#invalid-execargv-flags">invalid execArgv flags</a></li>
         <li><a href="#not-match-the-bundlename">not match the bundleName</a></li>
         <li><a href="#product中配置的label不生效">product中配置的label不生效</a></li>
+        <li><a href="#修改bundlename">修改bundleName</a></li>
       </ul>
     </li>
     <li><a href="#oh-my-zsh">Oh My Zsh</a>
