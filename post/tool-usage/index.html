@@ -241,13 +241,13 @@ code.has-jax {
     <i class="fa fa-file-word-o"></i>
 </span>
 <span class="post-meta-item-text">字数: </span>
-<span class="leancloud-visitors-count">8493</span>
+<span class="leancloud-visitors-count">9326</span>
 &nbsp; | &nbsp;
 <span class="post-meta-item-icon">
     <i class="fa fa-coffee"></i>
 </span>
 <span class="post-meta-item-text">阅读: </span>
-<span class="leancloud-visitors-count">17 分钟</span>
+<span class="leancloud-visitors-count">19 分钟</span>
 </span>
       </div>
     </header>
@@ -599,8 +599,7 @@ code.has-jax {
 <h2 id="xcode-keymap">Xcode Keymap</h2>
 <p>使用DevEco时想使用Xcode快捷键，从<a href="https://plugins.jetbrains.com/plugin/13093-xcode-keymap/versions/stable">这里</a>下载了一个较新的插件压缩包，解压后从<code>Setting--&gt;Plugins--&gt;设置按钮--&gt;Install from Disk</code>安装后提示有兼容问题:</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sh" data-lang="sh"><span style="display:flex;"><span>Plugin <span style="color:#e6db74">&#39;Xcode Keymap&#39;</span> <span style="color:#f92672">(</span>version <span style="color:#e6db74">&#39;253.28294.218&#39;</span><span style="color:#f92672">)</span> is not compatible with the current version of the IDE, because it requires build 253.28294 or newer but the current build is IC-243.24978.46
-</span></span></code></pre></div><img src="https://files.seeusercontent.com/2026/06/06/du5A/TuRUDE.jpg" alt="TuRUDE" style="zoom:80%;" />
-<p>根据提示，我们需要找到与DevEco兼容的插件版本，即找243开头的插件版本。测试发现<a href="https://plugins.jetbrains.com/plugin/13093-xcode-keymap/versions/stable/630054">243.21565.122</a>版本是兼容的。</p>
+</span></span></code></pre></div><p>根据提示，我们需要找到与DevEco兼容的插件版本，即找243开头的插件版本。测试发现<a href="https://plugins.jetbrains.com/plugin/13093-xcode-keymap/versions/stable/630054">243.21565.122</a>版本是兼容的。</p>
 <h2 id="证书过期">证书过期</h2>
 <p>使用个人账号调试时出现如下证书过期的错误，需要更新证书。首先到顶部菜单栏<code>File--&gt;Project Structure--&gt;Project--&gt;Signing Configs</code>，然后勾选<code>Automatically generate signature</code>，接着登录账号，登录成功后点击Apply即可重新生成：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sh" data-lang="sh"><span style="display:flex;"><span>&gt; hvigor ERROR: Failed :entry:default@SignHap... 
@@ -643,6 +642,24 @@ code.has-jax {
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sh" data-lang="sh"><span style="display:flex;"><span><span style="color:#75715e"># 处理错误hvigor ERROR: Initiated Worker with invalid execArgv flags: --max-old-space-size=8192, --max-semi-space-size=16, --expose-gc</span>
 </span></span><span style="display:flex;"><span>export PATH<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;/Applications/DevEco-Studio.app/Contents/tools/node/bin:</span>$PATH<span style="color:#e6db74">&#34;</span>
 </span></span></code></pre></div><img src="https://files.seeusercontent.com/2026/06/06/Eh6z/1LYCYp.jpg" alt="1LYCYp" style="zoom:80%;" />
+<h2 id="not-match-the-bundlename">not match the bundleName</h2>
+<p>在工程根目录的<code>build-profile.json5</code>中构建了多个<code>product</code>，但每个<code>product</code>使用了相同的签名配置<code>&quot;signingConfig&quot;: &quot;default&quot;</code>，编译不同<code>product</code>时出现如下错误：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sh" data-lang="sh"><span style="display:flex;"><span>&gt; hvigor ERROR: Failed :entry:default@SignHap... 
+</span></span><span style="display:flex;"><span>&gt; hvigor ERROR: <span style="color:#ae81ff">00303074</span> Configuration Error
+</span></span><span style="display:flex;"><span>Error Message: The bundleName in app.json does not match the bundleName in the generated SigningConfigs. At file: /Users/hui/Documents/Code/HW/ConferenceMulti/build-profile.json5
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>* Try the following:
+</span></span><span style="display:flex;"><span>  &gt; Open File &gt; Project Structure &gt; Signing Configs and click Fix, or manually fix SigningConfigs in project-level build-profile.json5 file.
+</span></span><span style="display:flex;"><span>  &gt; Go to the app.json5 file and change the bundleName value there.
+</span></span></code></pre></div><p>不同的product的bundleName不同，却使用了相同signingConfig。而signingConfig中的bundleName和product中的bundleName不同，所以编译时报错。按提示到<code>Open File &gt; Project Structure &gt; Signing Configs</code>中添加不同环境的signingConfig可解决。</p>
+<h2 id="product中配置的label不生效">product中配置的label不生效</h2>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sh" data-lang="sh"><span style="display:flex;"><span><span style="color:#e6db74">&#34;label&#34;</span>: <span style="color:#e6db74">&#34;</span>$string<span style="color:#e6db74">:app_name_uat&#34;</span>,
+</span></span></code></pre></div><p>这是因为在<code>HarmonyOS</code>中，<code>icon</code>和<code>label</code>存在于多个配置文件中，它们的生效范围和优先级不同：</p>
+<ol>
+<li>工程级<code>build-profile.json5</code>的<code>product</code>中的<code>label</code>：在编译时会替换<code>app.json5</code>中的<code>label</code>字段，影响的是&quot;系统设置 &gt; 应用管理&quot;中显示的应用名称和图标。</li>
+<li><code>module.json5</code>中<code>abilities</code>标签下的<code>label</code>：决定桌面图标下方显示的应用名称。当<code>module.json5</code>中入口<code>UIAbility</code>的<code>abilities</code>配置了<code>label</code>，且该<code>ability</code>的<code>skills</code>中包含<code>entity.system.home</code>和 <code>ohos.want.action.home</code>时，<code>module.json5</code>中的<code>label</code>优先级更高，会覆盖<code>app.json5</code>（包括<code>product</code>替换后的值）的<code>label</code>。</li>
+</ol>
+<p>因此，当<code>product</code>中设置的<code>label</code>确替换了<code>app.json5</code>中的<code>label</code>，但桌面显示的名称是由<code>module.json5</code>中入口<code>ability</code>的<code>label</code> 决定的，所以看起来<code>product</code>的<code>label</code>没有生效。</p>
 <h1 id="oh-my-zsh">Oh My Zsh</h1>
 <h2 id="no-alternative-certificate-subject-name">no alternative certificate subject name</h2>
 <p>更新<code>oh My zsh</code>时突然出现如下错误，是因为在<code>hosts</code>文件中配置了<code>github.com</code>相关的条目，但配置的<code>ip</code>地址已经失效了，只需注释相关条目即可：</p>
@@ -910,6 +927,8 @@ code.has-jax {
         <li><a href="#command-not-found">command not found</a></li>
         <li><a href="#deveco_sdk_home">DEVECO_SDK_HOME</a></li>
         <li><a href="#invalid-execargv-flags">invalid execArgv flags</a></li>
+        <li><a href="#not-match-the-bundlename">not match the bundleName</a></li>
+        <li><a href="#product中配置的label不生效">product中配置的label不生效</a></li>
       </ul>
     </li>
     <li><a href="#oh-my-zsh">Oh My Zsh</a>
