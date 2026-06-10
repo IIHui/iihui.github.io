@@ -241,13 +241,13 @@ code.has-jax {
     <i class="fa fa-file-word-o"></i>
 </span>
 <span class="post-meta-item-text">字数: </span>
-<span class="leancloud-visitors-count">9909</span>
+<span class="leancloud-visitors-count">10266</span>
 &nbsp; | &nbsp;
 <span class="post-meta-item-icon">
     <i class="fa fa-coffee"></i>
 </span>
 <span class="post-meta-item-text">阅读: </span>
-<span class="leancloud-visitors-count">20 分钟</span>
+<span class="leancloud-visitors-count">21 分钟</span>
 </span>
       </div>
     </header>
@@ -672,6 +672,24 @@ code.has-jax {
 </span></span><span style="display:flex;"><span>export PATH<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;/Applications/DevEco-Studio.app/Contents/sdk/default/openharmony/toolchains:</span>$PATH<span style="color:#e6db74">&#34;</span>
 </span></span></code></pre></div><p>然后使用<code>hdc install</code>对应的<code>hap</code>文件即可：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sh" data-lang="sh"><span style="display:flex;"><span>hdc install ../buildRelease/entry-default-signed.hap
+</span></span></code></pre></div><h2 id="install-provision-type-not-same">install provision type not same</h2>
+<p>调试时出现如下报错信息，原因是待安装应用的签名证书类型（provision type）与设备上已安装应用的签名证书类型不一致，系统出于安全机制拒绝了覆盖安装。</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sh" data-lang="sh"><span style="display:flex;"><span>Install Failed: error: failed to install bundle.
+</span></span><span style="display:flex;"><span>code:9568286
+</span></span><span style="display:flex;"><span>error: install provision type not same.
+</span></span></code></pre></div><p>HarmonyOS应用的签名证书类型分为两种：</p>
+<ul>
+<li>Debug 类型：开发调试阶段使用，通常通过DevEco自动签名生成。</li>
+<li>Release 类型：测试分发或正式发布阶段使用，通过手动签名生成。</li>
+</ul>
+<p>这两种类型的包被视为&quot;不同身份&quot;的应用，系统不允许直接覆盖安装。最典型的场景是：设备上已安装了Debug签名的应用，现在尝试安装Release签名的包（或反过来），就会触发此错误。解决方案是先卸载再安装。</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sh" data-lang="sh"><span style="display:flex;"><span><span style="color:#75715e"># 卸载设备上已安装的应用</span>
+</span></span><span style="display:flex;"><span>hdc uninstall bundleName
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 安装新的HAP包</span>
+</span></span><span style="display:flex;"><span>hdc install hap文件路径
+</span></span></code></pre></div><p>可以通过以下命令查看设备上已安装应用的签名证书类型：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sh" data-lang="sh"><span style="display:flex;"><span>hdc shell bm dump -n bundleName | grep appProvisionType
 </span></span></code></pre></div><h1 id="oh-my-zsh">Oh My Zsh</h1>
 <h2 id="no-alternative-certificate-subject-name">no alternative certificate subject name</h2>
 <p>更新<code>oh My zsh</code>时突然出现如下错误，是因为在<code>hosts</code>文件中配置了<code>github.com</code>相关的条目，但配置的<code>ip</code>地址已经失效了，只需注释相关条目即可：</p>
@@ -943,6 +961,7 @@ code.has-jax {
         <li><a href="#product中配置的label不生效">product中配置的label不生效</a></li>
         <li><a href="#修改bundlename">修改bundleName</a></li>
         <li><a href="#hdc">hdc</a></li>
+        <li><a href="#install-provision-type-not-same">install provision type not same</a></li>
       </ul>
     </li>
     <li><a href="#oh-my-zsh">Oh My Zsh</a>

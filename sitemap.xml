@@ -4934,7 +4934,11 @@ product中配置的label不生效 &amp;#34;label&amp;#34;: &amp;#34;$string:app_
 这个现象的根本原因是：在Project Structure的Signing Configs界面中，BundleName字段是所有签名配置共享的（位于签名配置区域的顶部，不属于任何一个具体的Signing Config），修改它会同时影响所有签名配置。这个解释？？？
 hdc 如果需要使用hdc按照hap包，首先需要将/Applications/DevEco-Studio.app/Contents/sdk/default/openharmony/toolchains加到PATH变量，在.zshrc中添加如下即可：
 # hdc export PATH=&amp;#34;/Applications/DevEco-Studio.app/Contents/sdk/default/openharmony/toolchains:$PATH&amp;#34; 然后使用hdc install对应的hap文件即可：
-hdc install ../buildRelease/entry-default-signed.hap Oh My Zsh no alternative certificate subject name 更新oh My zsh时突然出现如下错误，是因为在hosts文件中配置了github.com相关的条目，但配置的ip地址已经失效了，只需注释相关条目即可：
+hdc install ../buildRelease/entry-default-signed.hap install provision type not same 调试时出现如下报错信息，原因是待安装应用的签名证书类型（provision type）与设备上已安装应用的签名证书类型不一致，系统出于安全机制拒绝了覆盖安装。
+Install Failed: error: failed to install bundle. code:9568286 error: install provision type not same. HarmonyOS应用的签名证书类型分为两种：
+ Debug 类型：开发调试阶段使用，通常通过DevEco自动签名生成。 Release 类型：测试分发或正式发布阶段使用，通过手动签名生成。  这两种类型的包被视为&amp;quot;不同身份&amp;quot;的应用，系统不允许直接覆盖安装。最典型的场景是：设备上已安装了Debug签名的应用，现在尝试安装Release签名的包（或反过来），就会触发此错误。解决方案是先卸载再安装。
+# 卸载设备上已安装的应用 hdc uninstall bundleName  # 安装新的HAP包 hdc install hap文件路径 可以通过以下命令查看设备上已安装应用的签名证书类型：
+hdc shell bm dump -n bundleName | grep appProvisionType Oh My Zsh no alternative certificate subject name 更新oh My zsh时突然出现如下错误，是因为在hosts文件中配置了github.com相关的条目，但配置的ip地址已经失效了，只需注释相关条目即可：
 Updating Oh My Zsh fatal: unable to access &amp;#39;https://github.com/ohmyzsh/ohmyzsh.git/&amp;#39;: SSL: no alternative certificate subject name matches target host name &amp;#39;github.com&amp;#39; 使用source ~/.zshrc总是出现下面提示：
 compinit:527: no such file or directory: /usr/local/share/zsh/site-functions/_brew_services 执行下面命令后，报错会消失：
 # 删除有问题的链接文件 rm -f /usr/local/share/zsh/site-functions/_brew rm -f /usr/local/share/zsh/site-functions/_brew_services </content>
