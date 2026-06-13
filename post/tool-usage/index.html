@@ -241,7 +241,7 @@ code.has-jax {
     <i class="fa fa-file-word-o"></i>
 </span>
 <span class="post-meta-item-text">字数: </span>
-<span class="leancloud-visitors-count">10300</span>
+<span class="leancloud-visitors-count">10307</span>
 &nbsp; | &nbsp;
 <span class="post-meta-item-icon">
     <i class="fa fa-coffee"></i>
@@ -620,7 +620,7 @@ code.has-jax {
 </span></span></code></pre></div><p>同样地，若使用<code>hvigorw</code>命令时出现报错<code>/bin/sh: hvigorw: command not found</code>时，也需要将<code>hvigorw</code>脚本路径加到<code>PATH</code>环境变量中：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sh" data-lang="sh"><span style="display:flex;"><span>export PATH<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;/Applications/DevEco-Studio.app/Contents/tools/hvigor/bin:</span>$PATH<span style="color:#e6db74">&#34;</span>
 </span></span></code></pre></div><h2 id="deveco_sdk_home">DEVECO_SDK_HOME</h2>
-<p>使用<code>hvigorw</code>打包，执行<code>hvigorw -p product=xxx clean</code>命令时出现如下错误信息。运行<code>echo $DEVECO_SDK_HOME</code>发现打印内容是空，即目前还未设置<code>DEVECO_SDK_HOME</code>：</p>
+<p>使用<code>hvigorw</code>打包，执行<code>hvigorw -p product=xxx clean</code>命令时出现如下错误信息。运行<code>echo $DEVECO_SDK_HOME</code>发现打印内容是空，即未设置<code>DEVECO_SDK_HOME</code>：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sh" data-lang="sh"><span style="display:flex;"><span>&gt; hvigor ERROR: <span style="color:#ae81ff">00303217</span> Configuration Error
 </span></span><span style="display:flex;"><span>Error Message: Invalid value of <span style="color:#e6db74">&#39;DEVECO_SDK_HOME&#39;</span> in the system environment path.
 </span></span><span style="display:flex;"><span>
@@ -634,7 +634,7 @@ code.has-jax {
 </span></span></code></pre></div><p>具体报错信息为：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sh" data-lang="sh"><span style="display:flex;"><span>hvigor ERROR: Initiated Worker with invalid execArgv flags: --max-old-space-size<span style="color:#f92672">=</span>8192, --max-semi-space-size<span style="color:#f92672">=</span>16, --expose-gc
 </span></span></code></pre></div><p>根本原因是<code>hvigor</code>守护进程在启动<code>Worker</code>线程时，会将<code>--max-semi-space-size</code>和<code>--expose-gc</code>等参数注入到<code>NODE_OPTIONS</code>中，这些参数不在<code>Node.js</code>的<code>Worker</code>线程的<code>execArgv</code>白名单中。</p>
-<p>查了很久发现也没有设置<code>NODE_OPTIONS</code>变量，可以通过指定<code>DevEco</code>的<code>Node</code>和<code>hvigor.js</code>来解决，即按下面方式执行:</p>
+<p>查了很久发现也没有设置<code>NODE_OPTIONS</code>变量，可以通过在执行<code>hvigor</code>时指定<code>DevEco</code>的<code>Node</code>和<code>hvigor.js</code>来解决，即按下面方式执行:</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sh" data-lang="sh"><span style="display:flex;"><span>Applications/DevEco-Studio.app/Contents/tools/node/bin/node /Applications/DevEco-Studio.app/Contents/tools/hvigor/hvigor/bin/hvigor.js --mode module -p product<span style="color:#f92672">=</span>default -p module<span style="color:#f92672">=</span>entry@default -p buildMode<span style="color:#f92672">=</span>release  assembleHap assembleHsp --analyze<span style="color:#f92672">=</span>normal --parallel --incremental --daemon
 </span></span></code></pre></div><p>或者在<code>.zshrc</code>中设置<code>NODE_HOME</code>变量为<code>DevEco</code>自带的<code>Node</code>：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sh" data-lang="sh"><span style="display:flex;"><span>export NODE_HOME<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;/Applications/DevEco-Studio.app/Contents/tools/node&#34;</span>
@@ -651,7 +651,7 @@ code.has-jax {
 </span></span><span style="display:flex;"><span>* Try the following:
 </span></span><span style="display:flex;"><span>  &gt; Open File &gt; Project Structure &gt; Signing Configs and click Fix, or manually fix SigningConfigs in project-level build-profile.json5 file.
 </span></span><span style="display:flex;"><span>  &gt; Go to the app.json5 file and change the bundleName value there.
-</span></span></code></pre></div><p>不同的product的bundleName不同，却使用了相同signingConfig。而signingConfig中的bundleName和product中的bundleName不同，所以编译时报错。按提示到菜单栏<code>File &gt; Project Structure &gt; Signing Configs</code>中添加不同环境的signingConfig可解决。</p>
+</span></span></code></pre></div><p>不同的<code>product</code>的<code>bundleName</code>不同，却使用了相同<code>signingConfig</code>。而<code>signingConfig</code>中的<code>bundleName</code>和<code>product</code>中的<code>bundleName</code>不同，所以编译时报错。按提示到菜单栏<code>File &gt; Project Structure &gt; Signing Configs</code>中添加不同环境的<code>signingConfig</code>可解决。</p>
 <h2 id="product中配置的label不生效">product中配置的label不生效</h2>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-json" data-lang="json"><span style="display:flex;"><span><span style="color:#e6db74">&#34;label&#34;</span><span style="color:#960050;background-color:#1e0010">:</span> <span style="color:#e6db74">&#34;$string:app_name_uat&#34;</span><span style="color:#960050;background-color:#1e0010">,</span>
 </span></span></code></pre></div><p>这是因为在<code>HarmonyOS</code>中，<code>icon</code>和<code>label</code>存在于多个配置文件中，它们的生效范围和优先级不同：</p>
