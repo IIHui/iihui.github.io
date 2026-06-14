@@ -241,7 +241,7 @@ code.has-jax {
     <i class="fa fa-file-word-o"></i>
 </span>
 <span class="post-meta-item-text">字数: </span>
-<span class="leancloud-visitors-count">10328</span>
+<span class="leancloud-visitors-count">10283</span>
 &nbsp; | &nbsp;
 <span class="post-meta-item-icon">
     <i class="fa fa-coffee"></i>
@@ -629,21 +629,21 @@ code.has-jax {
 </span></span></code></pre></div><p>此时需要将<code>DevEco</code>中存储<code>sdk</code>的路径设置为<code>DEVECO_SDK_HOME</code>变量的值，可以在<code>.zshrc</code>中添加一行：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sh" data-lang="sh"><span style="display:flex;"><span>export DEVECO_SDK_HOME<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;/Applications/DevEco-Studio.app/Contents/sdk&#34;</span>
 </span></span></code></pre></div><h2 id="invalid-execargv-flags">invalid execArgv flags</h2>
-<p>在非<code>DevEco</code>的终端中执行下面命令打包时出现了报错：</p>
+<p>在非<code>DevEco</code>的终端中执行下面命令进行打包时出现了错误：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sh" data-lang="sh"><span style="display:flex;"><span>hvigorw --mode module -p product<span style="color:#f92672">=</span>default -p module<span style="color:#f92672">=</span>entry@default -p buildMode<span style="color:#f92672">=</span>release  assembleHap assembleHsp --analyze<span style="color:#f92672">=</span>normal --parallel --incremental --daemon
 </span></span></code></pre></div><p>具体报错信息为：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sh" data-lang="sh"><span style="display:flex;"><span>hvigor ERROR: Initiated Worker with invalid execArgv flags: --max-old-space-size<span style="color:#f92672">=</span>8192, --max-semi-space-size<span style="color:#f92672">=</span>16, --expose-gc
-</span></span></code></pre></div><p>根本原因是<code>hvigor</code>守护进程在启动<code>Worker</code>线程时，会将<code>--max-semi-space-size</code>和<code>--expose-gc</code>等参数注入到<code>NODE_OPTIONS</code>中，这些参数不在<code>Node.js</code>的<code>Worker</code>线程的<code>execArgv</code>白名单中。</p>
+</span></span></code></pre></div><p>根本原因是<code>hvigor</code>守护进程在启动<code>Worker</code>线程时，会将<code>--max-semi-space-size</code>和<code>--expose-gc</code>等参数注入到<code>NODE_OPTIONS</code>中，但这些参数不在<code>Node.js</code>的<code>Worker</code>线程的<code>execArgv</code>白名单中。</p>
 <p>查了很久发现也没有设置<code>NODE_OPTIONS</code>变量，可以通过在执行<code>hvigor</code>时指定<code>DevEco</code>的<code>Node</code>和<code>hvigor.js</code>来解决，即按下面方式执行:</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sh" data-lang="sh"><span style="display:flex;"><span>Applications/DevEco-Studio.app/Contents/tools/node/bin/node /Applications/DevEco-Studio.app/Contents/tools/hvigor/hvigor/bin/hvigor.js --mode module -p product<span style="color:#f92672">=</span>default -p module<span style="color:#f92672">=</span>entry@default -p buildMode<span style="color:#f92672">=</span>release  assembleHap assembleHsp --analyze<span style="color:#f92672">=</span>normal --parallel --incremental --daemon
 </span></span></code></pre></div><p>或者在<code>.zshrc</code>中设置<code>NODE_HOME</code>变量为<code>DevEco</code>自带的<code>Node</code>：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sh" data-lang="sh"><span style="display:flex;"><span>export NODE_HOME<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;/Applications/DevEco-Studio.app/Contents/tools/node&#34;</span>
-</span></span></code></pre></div><p>如果使用的是<code>PyCharm</code>调试，可以不设置<code>NODE_HOME</code>，而是先将<code>DevEco</code>自带的<code>node</code>加到<code>PATH</code>变量中，然后把<code>PyCharm</code>中的<code>Node Runtime</code>改为<code>DevEco</code>自带的<code>Node</code>:</p>
+</span></span></code></pre></div><p>如果使用的是<code>PyCharm</code>调试，可以不设置<code>NODE_HOME</code>，而是先将<code>DevEco</code>自带的<code>node</code>加到<code>PATH</code>变量中，然后把<code>PyCharm</code>中的<code>Node Runtime</code>改为<code>DevEco</code>自带的<code>Node</code>也可以解决:</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sh" data-lang="sh"><span style="display:flex;"><span><span style="color:#75715e"># 处理错误hvigor ERROR: Initiated Worker with invalid execArgv flags: --max-old-space-size=8192, --max-semi-space-size=16, --expose-gc</span>
 </span></span><span style="display:flex;"><span>export PATH<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;/Applications/DevEco-Studio.app/Contents/tools/node/bin:</span>$PATH<span style="color:#e6db74">&#34;</span>
 </span></span></code></pre></div><img src="https://files.seeusercontent.com/2026/06/06/Eh6z/1LYCYp.jpg" alt="1LYCYp" style="zoom:80%;" />
 <h2 id="not-match-the-bundlename">not match the bundleName</h2>
-<p>在工程根目录的<code>build-profile.json5</code>中构建了多个<code>product</code>，但每个<code>product</code>使用了相同的签名配置<code>&quot;signingConfig&quot;: &quot;default&quot;</code>，编译不同<code>product</code>时出现如下错误：</p>
+<p>在工程根目录的<code>build-profile.json5</code>中添加了多个<code>product</code>，但每个<code>product</code>使用了相同的签名，即配置<code>&quot;signingConfig&quot;: &quot;default&quot;</code>，编译不同<code>product</code>时出现如下错误：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sh" data-lang="sh"><span style="display:flex;"><span>&gt; hvigor ERROR: Failed :entry:default@SignHap... 
 </span></span><span style="display:flex;"><span>&gt; hvigor ERROR: <span style="color:#ae81ff">00303074</span> Configuration Error
 </span></span><span style="display:flex;"><span>Error Message: The bundleName in app.json does not match the bundleName in the generated SigningConfigs. At file: /Users/hui/Documents/Code/HW/ConferenceMulti/build-profile.json5
@@ -651,38 +651,38 @@ code.has-jax {
 </span></span><span style="display:flex;"><span>* Try the following:
 </span></span><span style="display:flex;"><span>  &gt; Open File &gt; Project Structure &gt; Signing Configs and click Fix, or manually fix SigningConfigs in project-level build-profile.json5 file.
 </span></span><span style="display:flex;"><span>  &gt; Go to the app.json5 file and change the bundleName value there.
-</span></span></code></pre></div><p>不同的<code>product</code>的<code>bundleName</code>不同，却使用了相同<code>signingConfig</code>。而<code>signingConfig</code>中的<code>bundleName</code>和<code>product</code>中的<code>bundleName</code>不同，所以编译时报错。按提示到菜单栏<code>File &gt; Project Structure &gt; Signing Configs</code>中添加不同环境的<code>signingConfig</code>可解决。</p>
+</span></span></code></pre></div><p>不同的<code>product</code>的<code>bundleName</code>不同，却使用了相同<code>signingConfig</code>。导致了<code>signingConfig</code>中的<code>bundleName</code>和<code>product</code>中的<code>bundleName</code>不同，所以编译报错。按提示到菜单栏<code>File &gt; Project Structure &gt; Signing Configs</code>中添加不同<code>Product</code>的<code>signingConfig</code>可解决。</p>
 <h2 id="product中配置的label不生效">product中配置的label不生效</h2>
+<p>在<code>AppScope</code>目录下的<code>app.json5</code>文件中修改图标，即改成如下的形式，但编译后发现图标修改并未生效：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-json" data-lang="json"><span style="display:flex;"><span><span style="color:#e6db74">&#34;label&#34;</span><span style="color:#960050;background-color:#1e0010">:</span> <span style="color:#e6db74">&#34;$string:app_name_uat&#34;</span><span style="color:#960050;background-color:#1e0010">,</span>
 </span></span></code></pre></div><p>这是因为在<code>HarmonyOS</code>中，<code>icon</code>和<code>label</code>存在于多个配置文件中，它们的生效范围和优先级不同：</p>
 <ol>
-<li>工程级<code>build-profile.json5</code>的<code>product</code>中的<code>label</code>：在编译时会替换<code>app.json5</code>中的<code>label</code>字段，影响的是&quot;系统设置 &gt; 应用管理&quot;中显示的应用名称和图标。</li>
-<li><code>module.json5</code>中<code>abilities</code>标签下的<code>label</code>：决定桌面图标下方显示的应用名称。当<code>module.json5</code>中入口<code>UIAbility</code>的<code>abilities</code>配置了<code>label</code>，且该<code>ability</code>的<code>skills</code>中包含<code>entity.system.home</code>和 <code>ohos.want.action.home</code>时，<code>module.json5</code>中的<code>label</code>优先级更高，会覆盖<code>app.json5</code>（包括<code>product</code>替换后的值）的<code>label</code>。</li>
+<li>工程级<code>build-profile.json5</code>的<code>product</code>中的<code>label</code>：在编译时会替换<code>app.json5</code>中的<code>label</code>字段，影响的是「系统设置 &gt; 应用管理」中显示的应用名称和图标。</li>
+<li>而在<code>module.json5</code>中<code>abilities</code>标签下的<code>label</code>：决定桌面图标下方显示的应用名称。当<code>module.json5</code>中入口<code>UIAbility</code>的<code>abilities</code>配置了<code>label</code>，且该<code>ability</code>的<code>skills</code>中包含<code>entity.system.home</code>和 <code>ohos.want.action.home</code>时，<code>module.json5</code>中的<code>label</code>优先级更高，会覆盖<code>app.json5</code>（包括<code>product</code>替换后的值）的<code>label</code>。</li>
 </ol>
-<p>因此，当<code>product</code>中设置的<code>label</code>确替换了<code>app.json5</code>中的<code>label</code>，但桌面显示的名称是由<code>module.json5</code>中入口<code>ability</code>的<code>label</code> 决定的，所以看起来<code>product</code>的<code>label</code>没有生效。</p>
+<p>因此，当<code>product</code>中设置的<code>label</code>的确能替换<code>app.json5</code>中的<code>label</code>，但桌面显示的名称是由<code>module.json5</code>中入口<code>ability</code>的<code>label</code> 决定的（如果有配置的话），所以看起来<code>product</code>的<code>label</code>没有生效。</p>
 <h2 id="修改bundlename">修改bundleName</h2>
 <p>在某个项目的根目录下的<code>build-profile.json5</code>文件中的<code>products</code>下新增或修改<code>bundleName</code>后，需要到菜单栏<code>File--&gt;Project Structure--&gt;Project--&gt;Signing Configs</code>中，修改<font color="#de7802">所有的</font><code>SignConfig</code>的<code>BundleName</code>为<code>build-profile.json5</code>文件中正确的<code>BundleName</code>：</p>
 <img src="https://files.seeusercontent.com/2026/06/07/n2dI/O1lAo3.jpg" alt="O1lAo3" style="zoom:80%;" />
-<p>全部修改为正确后，然后再点一下<code>Automatically generate signature</code>，接着所有的签名都会更新。尤其需要注意的是，在页面上修改<code>Product</code>后，在<code>Project Structure</code>的<code>Signing Configs</code>界面中所有的<code>BundleName</code>都变成一样的了。</p>
+<p>全部修改为正确后，然后再点一下<code>Automatically generate signature</code>，接着所有的签名都会更新。尤其需要注意的是，在下面页面上选中不同<code>Product</code>后，在<code>Project Structure</code>的<code>Signing Configs</code>界面中所有的<code>BundleName</code>都变成一样的了（感觉这是个bug）。</p>
 <img src="https://files.seeusercontent.com/2026/06/07/1yeY/733D2w.jpg" alt="733D2w" style="zoom:80%;" />
-<p>这个现象的根本原因是：<code>在Project Structure</code>的<code>Signing Configs</code>界面中，<code>BundleName</code>字段是所有签名配置共享的（位于签名配置区域的顶部，不属于任何一个具体的<code>Signing Config</code>），修改它会同时影响所有签名配置。这个解释？？？</p>
 <h2 id="hdc">hdc</h2>
-<p>如果需要使用<code>hdc</code>按照<code>hap</code>包，首先需要将<code>/Applications/DevEco-Studio.app/Contents/sdk/default/openharmony/toolchains</code>加到<code>PATH</code>变量，在<code>.zshrc</code>中添加如下即可：</p>
+<p>如果需要使用<code>hdc</code>安装打好的<code>hap</code>调试包，首先需要将<code>/Applications/DevEco-Studio.app/Contents/sdk/default/openharmony/toolchains</code>加到<code>PATH</code>变量，在<code>.zshrc</code>中添加如下即可：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sh" data-lang="sh"><span style="display:flex;"><span><span style="color:#75715e"># hdc</span>
 </span></span><span style="display:flex;"><span>export PATH<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;/Applications/DevEco-Studio.app/Contents/sdk/default/openharmony/toolchains:</span>$PATH<span style="color:#e6db74">&#34;</span>
-</span></span></code></pre></div><p>然后使用<code>hdc install</code>对应的<code>hap</code>文件即可：</p>
+</span></span></code></pre></div><p>然后使用<code>hdc install</code>安装对应的<code>hap</code>文件：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sh" data-lang="sh"><span style="display:flex;"><span>hdc install ../buildRelease/entry-default-signed.hap
 </span></span></code></pre></div><h2 id="install-provision-type-not-same">install provision type not same</h2>
-<p>调试时出现如下报错信息，原因是待安装应用的签名证书类型（provision type）与设备上已安装应用的签名证书类型不一致，系统出于安全机制拒绝了覆盖安装。</p>
+<p>调试时出现如下报错信息，原因是待安装应用的签名证书类型（<code>provision type</code>）与设备上已安装应用的签名证书类型不一致，系统出于安全机制拒绝了覆盖安装。</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sh" data-lang="sh"><span style="display:flex;"><span>Install Failed: error: failed to install bundle.
 </span></span><span style="display:flex;"><span>code:9568286
 </span></span><span style="display:flex;"><span>error: install provision type not same.
-</span></span></code></pre></div><p>HarmonyOS应用的签名证书类型分为两种：</p>
+</span></span></code></pre></div><p>在原生<code>HarmonyOS</code>中，应用的签名证书类型分为两种：</p>
 <ul>
-<li>Debug 类型：开发调试阶段使用，通常通过DevEco自动签名生成。</li>
-<li>Release 类型：测试分发或正式发布阶段使用，通过手动签名生成。</li>
+<li><code>Debug</code> 类型：开发调试阶段使用，通常通过<code>DevEco</code>自动签名生成。</li>
+<li><code>Release</code> 类型：测试分发或正式发布阶段使用，通过手动签名生成。</li>
 </ul>
-<p>这两种类型的包被视为&quot;不同身份&quot;的应用，系统不允许直接覆盖安装。最典型的场景是：设备上已安装了Debug签名的应用，现在尝试安装Release签名的包（或反过来），就会触发此错误。解决方案是先卸载再安装。</p>
+<p>这两种类型的包被视为<font color="#de7802">不同身份的应用</font>，系统不允许直接覆盖安装。最典型的场景是：设备上已安装了<code>Debug</code>签名的应用，现在尝试安装<code>Release</code>签名的包（或反过来），就会触发此错误。解决方案是先卸载再安装。</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sh" data-lang="sh"><span style="display:flex;"><span><span style="color:#75715e"># 卸载设备上已安装的应用</span>
 </span></span><span style="display:flex;"><span>hdc uninstall bundleName
 </span></span><span style="display:flex;"><span>
