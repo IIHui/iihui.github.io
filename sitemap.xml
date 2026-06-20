@@ -763,10 +763,10 @@ public extension UIView {  func setScreenCaptureProtection() {  guard superview 
 然后依次选中Hardware--&amp;gt;CPU &amp;amp; Memory--&amp;gt;Advanced，再在弹出的设置框中将Hypevisor中的选项更改为Parallels，步骤如下图所示：
 虚拟网络 在Parallels的桥接模式下，虚拟机可以和宿主机通信，也可以与宿主机同一局域网下并处于同一网段的其它设备通信，多个虚拟机之间也可以相互通信，也可以连接互联网。也就是桥接模式相当于为虚拟机新分配了一个局域网地址。
 但这种桥接模式有一个问题，如果用的是笔记本电脑，一旦笔记本的网络发生变化（切换网络），虚拟机的ip地址也会随之变化。虽然可以为虚拟机设置固定ip，一旦宿主机网络发生改变，虚拟机固定的ip和当前宿主机的网络不在同一网段下的话，就无法再继续通信了。
-网段发生变更时，如果不固定虚拟机ip，即动态ip，每次开机都需要先查看虚拟机的ip地址，然后使用新ip地址才能远程连接，这样太麻烦。如果固定ip的话，因为宿主机的网段发生变化后，又无法实现通信。两种方式都都有缺点，当前的需求如下：
+网段发生变更时，如果不固定虚拟机ip，即动态ip，每次开机都需要先查看虚拟机的ip地址，然后使用新ip地址才能远程连接，这样太麻烦。如果固定ip，因为宿主机的网段发生变化后，又无法实现通信。两种方式都有缺点，当前的需求如下：
  宿主机和虚拟机之间可以正常通信。 多个虚拟机之间可以正常通信。 宿主机同一局域网下且网段相同的设备可以和虚拟机之间实现通信。 虚拟机可以正常连接互联网。  参考这篇文章的解决方案，首先在Parallels的Prefrences–-&amp;gt;Network中勾选Enable IPv4 DHCP，接着设置起始和结束地址以及子网掩码：
-刚刚的设置相当于在宿主机新加了一块虚拟网卡给虚拟机使用，宿主的网卡可以和同一局域网下同一网段的其它设备通信，同时宿主机的虚拟网卡也可以实现宿主机和虚拟机之间通讯。
-如下图所示，然后设置端口转发规则。这个设置是为了让宿主机处于同一局域网且同一网段的其他设备与虚拟机通信。
+上面的设置相当于在宿主机新加了一块虚拟网卡给虚拟机使用，宿主的网卡可以和同一局域网下同一网段的其它设备通信，同时宿主机的虚拟网卡也可以实现宿主机和虚拟机之间通讯。
+如下图所示，然后可以设置端口转发规则。这个设置是为了让宿主机处于同一局域网且同一网段的其他设备与虚拟机通信。
 设置完好之后，就可以使用ifconfig命令就可以查看虚拟机的ip地址:
 </content>
     </entry>
@@ -4942,8 +4942,8 @@ Install Failed: error: failed to install bundle. code:9568286 error: install pro
 hdc shell bm dump -n bundleName | grep appProvisionType Oh My Zsh no alternative certificate subject name 更新oh My zsh时突然出现如下错误，是因为在hosts文件中配置了github.com相关的条目，但配置的ip地址已经失效了，只需注释相关条目即可：
 Updating Oh My Zsh fatal: unable to access &amp;#39;https://github.com/ohmyzsh/ohmyzsh.git/&amp;#39;: SSL: no alternative certificate subject name matches target host name &amp;#39;github.com&amp;#39; 使用source ~/.zshrc总是出现下面提示：
 compinit:527: no such file or directory: /usr/local/share/zsh/site-functions/_brew_services 执行下面命令后，报错会消失：
-# 删除有问题的链接文件 rm -f /usr/local/share/zsh/site-functions/_brew rm -f /usr/local/share/zsh/site-functions/_brew_services Vim 配置文件 在vim使用时，它是从一个名为.vimrc（在类Unix系统中，以.开头的文件为隐藏文件，为了看到这些文件，可以运行ls -a命令行）的文件中读取配置信息。
-syntax on &amp;#34;支持语法高亮显示 filetype plugin indent on &amp;#34;启用根据文件类型缩进 set autoindent &amp;#34;开启新行时处理缩进 set expandtab &amp;#34;将制表符Tab展开为空格 set tabstop=4 &amp;#34;要计算的空格数 set shiftwidth=4 &amp;#34;用于自动缩进的空格数 set backspace=2 &amp;#34;在多终端上修正退格键backspace的行为 colorscheme murphy &amp;#34;修改配色 打开文件 使用vim test.txt命令时，会打开一个名为test.txt的文件。如果该文件存在，则会看到它的内容，如果文件不存在，则得到一个空白界面。
+# 删除有问题的链接文件 rm -f /usr/local/share/zsh/site-functions/_brew rm -f /usr/local/share/zsh/site-functions/_brew_services Vim 配置文件 在使用vim时，它从一个名为.vimrc（在类Unix系统中，以.开头的文件为隐藏文件，为了看到这些文件，可以运行ls -a命令行）的文件中读取配置信息。
+syntax on &amp;#34;支持语法高亮显示 filetype plugin indent on &amp;#34;启用根据文件类型缩进 set autoindent &amp;#34;开启新行时处理缩进 set expandtab &amp;#34;将制表符Tab展开为空格 set tabstop=4 &amp;#34;要计算的空格数 set shiftwidth=4 &amp;#34;用于自动缩进的空格数 set backspace=2 &amp;#34;在多终端上修正退格键backspace的行为 colorscheme murphy &amp;#34;修改配色 打开文件 使用vim test.txt命令时，会打开一个名为test.txt的文件。如果该文件存在，则会看到它的内容，如果文件不存在，则打开一个空白界面。
 清空内容 如果要清空文件的所有内容，首先进入到命令模式（非编辑模式），然后输入gg命令， 接着输入dG命令。
 无提示生成ssh-key ssh-keygen -q -t rsa -C &amp;#34;xxx.com&amp;#34; -N &amp;#34;&amp;#34; -f ~/.ssh/id_rsa_yst &amp;lt;&amp;lt;&amp;lt;y &amp;gt;/dev/null 2&amp;gt;&amp;amp;1 </content>
     </entry>
