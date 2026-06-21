@@ -2835,16 +2835,16 @@ extension ContactsRequestAPI: GB2312Convertor {  var responseDataIsGB2312Data: B
         <tags>
           <tag>iOS</tag>
         </tags>
-        <content type="html">  MDM是Moblie Device Management移动设备管理的简称，目的就是让企业能够方便的管理iPhone和Pad等移动设备。当企业大量的使用移动设备办公或涉及到一些安全限制时设备管理的作用就能明显的体现出来，通过MDM，IT人员能够在企业环境下安全地注册设备，无线配置和更新设置，监督公司政策的遵守情况，还能远程擦除或锁定被管理的设备。
+        <content type="html">  MDM是Moblie Device Management移动设备管理的简称，目的是让企业能够方便的管理iPhone和Pad等移动设备。当企业大量的使用移动设备办公或涉及到一些安全限制时设备管理的作用就能明显体现出来，通过MDM，IT人员能够在企业环境下安全地注册设备，无线配置和更新设置，监督公司政策的遵守情况，还能远程擦除或锁定被管理的设备。
  工作流程 从上图可以看出要实现MDM服务须涉及到，苹果推送服务器APNs、自己或者第三方提供的MDM服务器、受管理的设备。实际中三者之间通过HTTPS相互通信，所以推送和普通APP推送一样必须要有推送证书。没有操作的情况下，除了设备本身和APNs之间保持连接，其他都不在连接状态。各自在系统中的作用如下：
   MDM服务器：对于设备，通过它发送指令对设备进行管理，获取相关信息及操作，回应响应设备操作。对于APNs，向APNs发送一个命令，目的来唤醒设备去主动连接MDM服务器，报告其当前状态是否处于空闲（若设备空闲，MDM服务器会继续下一步操作比如开始发送指令）。
   APNs：可看作其他两者之间的信使，主要就是转发MDM服务器指令给设备，意思告诉设备开始去连接服务器啦。
   设备：首先通过Safari访问服务器安装一个配置描述文件（下文叙述）并登记注册使其成为受管理的设备，当收到APNs指令后，根据已安装的配置文件的url连接MDM服务器并报告其状态，然后接受下一步命令。比如命令DeviceInformation（查询设备信息如ModelName、BatteryLevel、WiFiMAC等），设备收到XML格式的指令后再向服务器传送其相关查询的信息，如果不需要继续发送指令，服务器关闭连接。
   另外设备和MDM服务器之间数据传输都是以XML格式形式，以PUT请求的方式进行的，所以发送指令时，服务器要把指令封装成一个XML的文件同时要实现PUT请求相关操作处理。APNs所发送的仅仅是一个与设备本身相关的标示符，没有其他命令，目的就是唤醒设备去连接MDM服务器。
 需要的操作 要实现一个完整的MDM服务，需要制作APNs推送证书、设备安装的配置文件、实现https通信、实现MDM相关协议、学习MDM协议相关命令及使用、一个MDM服务器（这里不作主要叙述，因为这些相关的都是有我们后台做的）。
-证书制作 这个证书就是MDM Server和APNs推送消息所需要的证书，当然和APP推送证书完全不同，虽然功能差不多。
+证书制作 这个证书就是MDM Server和APNs推送消息所需要的证书，当然和App推送证书完全不同，虽然功能差不多。
 发送指令 所以完成一次指令推送经历以下过程：
-1、server 与APNs建立连接，发送数据。 2、当设备收到APNs推送消息时，主动连接server报告本身的状态空闲 3、server收到设备发来的状态信息，发出操作命令 4、设备收到命令执行，并返回数据 5、server响应，此次查询完成，连接关闭。
+1、server与APNs建立连接，发送数据。 2、当设备收到APNs推送消息时，主动连接server报告本身的状态空闲。 3、server收到设备发来的状态信息，发出操作命令。 4、设备收到命令执行，并返回数据。 5、server响应，此次查询完成，连接关闭。
 参考资料 苹果官方
 </content>
     </entry>
@@ -3928,8 +3928,8 @@ static func testDemo(){  let group = DispatchGroup()  let models:[MoConfigItemMo
 命令语法结构 &amp;lt;command&amp;gt; [&amp;lt;subcommand&amp;gt; [&amp;lt;subcommand&amp;gt;...]] &amp;lt;action&amp;gt; [-options [option-value]] [argument [argument...]] 其中：
  command和subcommand为LLDB调试命令的名称，命令和子命令按照层级结构来排列：一个命令对象为跟随其的子命令对象创建一个上下文，子命令又为其子命令创建一个上下文，依此类推。 action  上面的这些元素之间通过空格来分割，如果某一元素自身含有空格，则可以使用双引用。而如果元素中又包含双引号，则可以使用反斜杠；或者元素使用单引号。如下所示：
 (lldb) command [subcommand] -option &amp;#34;some \&amp;#34;quoted\&amp;#34; string&amp;#34; (lldb) command [subcommand] -option &amp;#39;some &amp;#34;quoted&amp;#34; string&amp;#39; 获取变量值和状态 使用expression和e可以获取和改变变量的值
-获取整个APP的状态和指定语言的命令  bugreport:生成当前应用状态的完整报告 frame:获取当前线程的当前栈帧的概述  参考资料
-不能安装 无法安装 因为App是企业发布，偶尔有人反映安装不了，最近有人反映在iPhone8 Plus上遇到「无法安装XXX，请稍候再试」的情况，如下图所示： 这篇文章给出如下的建议：
+获取整个APP的状态和指定语言的命令  bugreport：生成当前应用状态的完整报告 frame：获取当前线程的当前栈帧的概述  参考资料
+安装问题 无法安装 因为App是企业发布，偶尔有人反映安装不了，最近有人反映在iPhone8 Plus上遇到「无法安装XXX，请稍候再试」的情况，如下图所示： 这篇文章给出如下的建议：
 安装到最后变灰了 安装到一半变灰了，可以先清除Safari浏览器，然后再重启，再通过ideviceinstaller -i命令安装：
 参考资料
 手机发烫 手机发烫，调试时看到总是看到字体日志和safe_M_setObjectforKeyedSubscript-------object is nil相关信息，如下图红色框所示：
