@@ -414,14 +414,16 @@ The following build commands failed:  CodeSign /Users/cmo/Library/Developer/Xcod
 iPad TabBar显示 在iOS 18的iPad上，用户反馈TabBar到了顶部，而不像手机那样显示在底部。可以通过修改UITabBarController中的traitOverrides属性为compact来解决：
 // 兼容iOS 18以上系统，将tabbar显示在底部 if UIDevice.current.userInterfaceIdiom == .pad {  if #available(iOS 18.0, *) {  traitOverrides.horizontalSizeClass = .compact  } } 参考资料
 参考资料
-百度地图sdk https://github.com/CocoaPods/Specs/tree/master/Specs/3/7/9/BaiduMapKit  // 更新日志 https://lbs.baidu.com/docs/ios?title=iossdk/theupdatelog libswiftUniformTypeIdentifiers 在Xcode 16上调试iOS 13时出现如下编译错误：
+百度地图sdk https://github.com/CocoaPods/Specs/tree/master/Specs/3/7/9/BaiduMapKit  // 更新日志 https://lbs.baidu.com/docs/ios?title=iossdk/theupdatelog libswiftUniformTypeIdentifiers 在Xcode 16上调试iOS 13时出现启动闪退，显示的错误信息如下：
 dyld: Library not loaded: /usr/lib/swift/libswiftUniformTypeIdentifiers.dylib  Referenced from: /private/var/containers/Bundle/Application/4C36D45A-4944-41F6-8184-29C495C593AE/xxx.app/xxx  Reason: image not found dyld: launch, loading dependent libraries DYLD_LIBRARY_PATH=/usr/lib/system/introspection DYLD_INSERT_LIBRARIES=/Developer/usr/lib/libBacktraceRecording.dylib:/Developer/usr/lib/libMainThreadChecker.dylib:/Developer/Library/PrivateFrameworks/DTDDISupport.framework/libViewDebuggerSupport.dylib:/usr/lib/libMTLCapture.dylib 出现上面错误是因为Xcode 16编译应用时链接了libswiftUniformTypeIdentifiers.dylib，该库是Swift对 UniformTypeIdentifiers框架的overlay，而这个框架仅在iOS 14&#43;系统里存在。在iOS 13设备上运行，dyld找不到该库，所以出现直接崩溃。即使没有显式import UniformTypeIdentifiers，只要代码中（包括依赖库）使用了UTType等 API，编译器就会自动链接这个库。
 第一种解决方案是条件化所有UniformTypeIdentifiers相关代码，即用#available把相关逻辑包裹起来，不要在文件顶部无条 import UniformTypeIdentifiers。
 // 正确做法：需要时才导入，并用available保护 if #available(iOS 14, *) {  import UniformTypeIdentifiers  // 使用 UTType 等 } 第二种解决方案是弱链接UniformTypeIdentifiers：
  打开Xcode项目，选择target。 进入General → Frameworks, Libraries, and Embedded Content。 点击 &#43;，搜索并添加 UniformTypeIdentifiers。 将该framework的Embed方式设为Do Not Embed。 把它右侧的链接选项改为Optional（而不是Required）。  即使做了上面操作，libswiftUniformTypeIdentifiers.dylib仍可能被标记为必需。需要手动在链接器参数中将它改为弱链接，进入Build Settings → 搜索Other Linker Flags，添加下面一行：
 -weak-lswiftUniformTypeIdentifiers # 或者 -Wl,-weak-lswiftUniformTypeIdentifiers 最后，使用如下命令检查ipa中确认libswiftUniformTypeIdentifiers.dylib旁边显示的是weak而不是常规引用：
 otool -L YourApp.app/YourApp | grep UniformTypeIdentifiers 参考资料
-</content>
+URLSessionConfiguration Swift中URLSessionConfiguration的default和ephemeral的区别：
+   特性 default ephemeral     缓存存储 磁盘 &#43; 内存 仅内存   Cookie 存储 持久化到磁盘 仅内存，会话结束即清除   认证凭证 持久化到钥匙串（磁盘） 仅内存，会话结束即清除   跨 App 重启保留数据 是 否   内存占用 相对较低（部分存在磁盘） 相对较高（全在内存）   典型用途 常规请求，需要缓存/登录态 隐私模式，临时会话    URLSession的invalidateAndCancel和finishTasksAndInvalidate的核心区别在于对当前正在执行的任务的处理方式**，以及**会话失效的时机。一个是「立即强制终止」，一个是「优雅地等待完成」。
+   特性 invalidateAndCancel finishTasksAndInvalidate     正在传输的任务 立即取消（中断连接） 继续执行，直到完成   队列中等待的任务 立即取消 立即取消（不会启动）   会话释放时机 立即释放资源 等待所有活动任务完成后才释放   任务回调错误 任务收到 cancelled 错误 正常收到 success 或服务器返回的错误   内存泄漏风险 较低（立即释放） 较高（如果任务长时间挂起，会话不会被释放）     内存泄漏警告：如果调用了finishTasksAndInvalidate()，但某个下载任务因为网络问题一直在重试或卡死，那么Session永远不会释放，从而导致内存泄漏。因此，通常建议在应用进入后台时使用finishTasksAndInvalidate()，同时设置合理的超时时间（timeoutIntervalForRequest）。 调用后禁止复用：无论调用哪个方法，该URLSession实例在失效后都不能再被复用。如果还需要发起请求，必须重新创建新的URLSession实例。  </content>
     </entry>
     
      <entry>
