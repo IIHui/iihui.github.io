@@ -241,7 +241,7 @@ code.has-jax {
     <i class="fa fa-file-word-o"></i>
 </span>
 <span class="post-meta-item-text">字数: </span>
-<span class="leancloud-visitors-count">6523</span>
+<span class="leancloud-visitors-count">6889</span>
 &nbsp; | &nbsp;
 <span class="post-meta-item-icon">
     <i class="fa fa-coffee"></i>
@@ -588,6 +588,8 @@ code.has-jax {
 </tbody>
 </table>
 <p><code>URLSession</code>的<code>invalidateAndCancel</code>和<code>finishTasksAndInvalidate</code>的核心区别在于<font color="#de7802">对当前正在执行的任务的处理方式**，以及**会话失效的时机</font>。一个是「立即强制终止」，一个是「优雅地等待完成」。</p>
+<p>当<code>invalidateAndCancel</code>调用后，会话会立即标记为无效，<font color="#de7802">所有未完成的任务（包括正在网络传输的和队列中等待的）都会被强制取消</font>。被取消的任务会收到 <code>URLError.cancelled</code> 错误，其<code>completionHandler</code>会立即被执行（或 <code>delegate</code> 方法会被触发）。一旦调用，该会话不能再创建新的请求，否则会崩溃或报错。</p>
+<p>当<code>finishTasksAndInvalidate</code>被调用后，会话会立即停止接收新的任务（之后调用<code>dataTask</code>会失败），但<font color="#de7802">允许当前已经在传输中的任务继续执行</font>，直到它们自然完成（成功或失败）。只有当所有现有的任务全部执行完毕（调用完各自的<code>completionHandler</code>）后，会话才会正式释放资源。如果队列中有尚未开始的任务（<code>resume()</code> 还没调用或处于等待状态），这些任务会被取消，但已经开始传输的任务会保持运行。</p>
 <table>
 <thead>
 <tr>
@@ -599,8 +601,8 @@ code.has-jax {
 <tbody>
 <tr>
 <td style="text-align:left">正在传输的任务</td>
-<td style="text-align:left"><strong>立即取消</strong>（中断连接）</td>
-<td style="text-align:left"><strong>继续执行</strong>，直到完成</td>
+<td style="text-align:left">立即取消（中断连接）</td>
+<td style="text-align:left">继续执行，直到完成</td>
 </tr>
 <tr>
 <td style="text-align:left">队列中等待的任务</td>
@@ -609,13 +611,13 @@ code.has-jax {
 </tr>
 <tr>
 <td style="text-align:left">会话释放时机</td>
-<td style="text-align:left"><strong>立即</strong>释放资源</td>
-<td style="text-align:left">等待<strong>所有活动任务完成</strong>后才释放</td>
+<td style="text-align:left">立即释放资源</td>
+<td style="text-align:left">等待所有活动任务完成后才释放</td>
 </tr>
 <tr>
 <td style="text-align:left">任务回调错误</td>
-<td style="text-align:left">任务收到 <code>cancelled</code> 错误</td>
-<td style="text-align:left">正常收到 <code>success</code> 或服务器返回的错误</td>
+<td style="text-align:left">任务收到cancelled 错误</td>
+<td style="text-align:left">正常收到success或服务器返回的错误</td>
 </tr>
 <tr>
 <td style="text-align:left">内存泄漏风险</td>
@@ -626,7 +628,7 @@ code.has-jax {
 </table>
 <ul>
 <li><strong>内存泄漏警告</strong>：如果调用了<code>finishTasksAndInvalidate()</code>，但某个下载任务因为网络问题一直在重试或卡死，那么<code>Session</code>永远不会释放，从而导致内存泄漏。因此，通常建议在应用进入后台时使用<code>finishTasksAndInvalidate()</code>，同时设置合理的超时时间（<code>timeoutIntervalForRequest</code>）。</li>
-<li><strong>调用后禁止复用</strong>：无论调用哪个方法，该<code>URLSession</code>实例在失效后都不能再被复用。如果还需要发起请求，必须重新创建新的<code>URLSession</code>实例。</li>
+<li><strong>调用后禁止复用</strong>：无论调用哪个方法，该<code>URLSession</code>实例在失效后都不能再被复用。如果还需要发起请求，必须重新创建<code>URLSession</code>实例。</li>
 </ul>
 
     </div>
