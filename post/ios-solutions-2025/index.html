@@ -241,13 +241,13 @@ code.has-jax {
     <i class="fa fa-file-word-o"></i>
 </span>
 <span class="post-meta-item-text">字数: </span>
-<span class="leancloud-visitors-count">7136</span>
+<span class="leancloud-visitors-count">7756</span>
 &nbsp; | &nbsp;
 <span class="post-meta-item-icon">
     <i class="fa fa-coffee"></i>
 </span>
 <span class="post-meta-item-text">阅读: </span>
-<span class="leancloud-visitors-count">15 分钟</span>
+<span class="leancloud-visitors-count">16 分钟</span>
 </span>
       </div>
     </header>
@@ -634,10 +634,68 @@ code.has-jax {
 <h2 id="zlib-ngh-file-not-found">zlib-ng.h file not found</h2>
 <p>依赖<code>SSZipArchive</code>时，出现编译错误：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sh" data-lang="sh"><span style="display:flex;"><span>mz_strm_zlib.c:16:12: error: <span style="color:#e6db74">&#39;zlib-ng.h&#39;</span> file not found
-</span></span></code></pre></div><p>是因为<code>SSZipArchive</code>依赖的<code>minizip-ng</code>库需要<code>zlib-ng</code>，编译时找不到<code>zlib-ng.h</code> 头文件。最后发现是<code>pod_target_xcconfig</code>设置有问题，漏了一部分，完整的设置应当如下：</p>
+</span></span></code></pre></div><p>是因为<code>SSZipArchive</code>依赖的<code>minizip-ng</code>库需要<code>zlib-ng</code>，编译时找不到<code>zlib-ng.h</code> 头文件。最后发现是<code>pod_target_xcconfig</code>设置有问题，完整设置如下：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ruby" data-lang="ruby"><span style="display:flex;"><span> s<span style="color:#f92672">.</span>pod_target_xcconfig <span style="color:#f92672">=</span> { <span style="color:#e6db74">&#39;DEFINES_MODULE&#39;</span> <span style="color:#f92672">=&gt;</span> <span style="color:#e6db74">&#39;YES&#39;</span>,
 </span></span><span style="display:flex;"><span>    <span style="color:#e6db74">&#39;GCC_PREPROCESSOR_DEFINITIONS&#39;</span> <span style="color:#f92672">=&gt;</span> <span style="color:#e6db74">&#39;HAVE_ARC4RANDOM_BUF HAVE_ICONV HAVE_INTTYPES_H HAVE_PKCRYPT HAVE_STDINT_H HAVE_WZAES HAVE_ZLIB ZLIB_COMPAT&#39;</span> }
-</span></span></code></pre></div>
+</span></span></code></pre></div><p>上面设置中<code>DEFINES_MODULE' =&gt; 'YES'</code>是告诉<code>Xcode</code>将这个<code>Pod</code>构建为模块（<code>module</code>），并生成 <code>.modulemap</code>，即：</p>
+<ul>
+<li>让Swift能通过 <code>import YourPod</code>引入这个库（即使是纯<code>C/ObjC</code>库也能生成<code>module map</code>）。</li>
+<li>开启<code>CLANG_ENABLE_MODULES</code>，允许库内用<code>@import</code> 语法。</li>
+<li>如果这个库原本不支持<code>module</code>，加上这行能避免Swift编译时出现无法导入的错误。</li>
+</ul>
+<p>而<code>'GCC_PREPROCESSOR_DEFINITIONS'</code>后面的一串内容，它相当于在所有源文件中执行了：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sh" data-lang="sh"><span style="display:flex;"><span><span style="color:#75715e">#define HAVE_ARC4RANDOM_BUF 1</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">#define HAVE_ICONV 1</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">#define HAVE_INTTYPES_H 1</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">#define HAVE_PKCRYPT 1</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">#define HAVE_STDINT_H 1</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">#define HAVE_WZAES 1</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">#define HAVE_ZLIB 1</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">#define ZLIB_COMPAT 1</span>
+</span></span></code></pre></div><p>这些宏通常用于<font color="#de7802">移植或编译开源C库时</font>（尤其是<code>OpenSSL、libz、libiconv</code>等）做特性检测。每一个鸿的定义解释如下：</p>
+<table>
+<thead>
+<tr>
+<th style="text-align:left">宏</th>
+<th style="text-align:left">含义</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left"><code>HAVE_ARC4RANDOM_BUF</code></td>
+<td style="text-align:left">平台提供<code>arc4random_buf</code>函数（iOS/macOS 都有），用于生成加密安全的随机数</td>
+</tr>
+<tr>
+<td style="text-align:left"><code>HAVE_ICONV</code></td>
+<td style="text-align:left">支持<code>iconv</code>字符编码转换（系统自带 libiconv）</td>
+</tr>
+<tr>
+<td style="text-align:left"><code>HAVE_INTTYPES_H</code></td>
+<td style="text-align:left">存在<code>&lt;inttypes.h&gt;</code>头文件，定义跨平台的固定宽度整数格式宏（C99 标准）</td>
+</tr>
+<tr>
+<td style="text-align:left"><code>HAVE_PKCRYPT</code></td>
+<td style="text-align:left">支持 PK 加密相关功能（多见于OpenSSL/libressl 等库的兼容检测）</td>
+</tr>
+<tr>
+<td style="text-align:left"><code>HAVE_STDINT_H</code></td>
+<td style="text-align:left">存在<code>&lt;stdint.h&gt;</code>头文件（C99），提供<code>int32_t</code>、<code>uint64_t</code>等类型</td>
+</tr>
+<tr>
+<td style="text-align:left"><code>HAVE_WZAES</code></td>
+<td style="text-align:left">可能表示使用 WZ（某定制版本？）的 AES 实现，或特定补丁</td>
+</tr>
+<tr>
+<td style="text-align:left"><code>HAVE_ZLIB</code></td>
+<td style="text-align:left">链接 zlib，支持数据压缩</td>
+</tr>
+<tr>
+<td style="text-align:left"><code>ZLIB_COMPAT</code></td>
+<td style="text-align:left">表示zlib接口与原版zlib兼容（常见于使用zlib-ng或兼容层时）</td>
+</tr>
+</tbody>
+</table>
+
     </div>
     <footer class="post-footer">
         
