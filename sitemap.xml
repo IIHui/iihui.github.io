@@ -414,7 +414,14 @@ The following build commands failed:  CodeSign /Users/cmo/Library/Developer/Xcod
 iPad TabBar显示 在iOS 18的iPad上，用户反馈TabBar到了顶部，而不像手机那样显示在底部。可以通过修改UITabBarController中的traitOverrides属性为compact来解决：
 // 兼容iOS 18以上系统，将tabbar显示在底部 if UIDevice.current.userInterfaceIdiom == .pad {  if #available(iOS 18.0, *) {  traitOverrides.horizontalSizeClass = .compact  } } 参考资料
 参考资料
-百度地图sdk https://github.com/CocoaPods/Specs/tree/master/Specs/3/7/9/BaiduMapKit  // 更新日志 https://lbs.baidu.com/docs/ios?title=iossdk/theupdatelog </content>
+百度地图sdk https://github.com/CocoaPods/Specs/tree/master/Specs/3/7/9/BaiduMapKit  // 更新日志 https://lbs.baidu.com/docs/ios?title=iossdk/theupdatelog libswiftUniformTypeIdentifiers 在Xcode 16上调试iOS 13时出现如下编译错误：
+dyld: Library not loaded: /usr/lib/swift/libswiftUniformTypeIdentifiers.dylib  Referenced from: /private/var/containers/Bundle/Application/4C36D45A-4944-41F6-8184-29C495C593AE/xxx.app/xxx  Reason: image not found dyld: launch, loading dependent libraries DYLD_LIBRARY_PATH=/usr/lib/system/introspection DYLD_INSERT_LIBRARIES=/Developer/usr/lib/libBacktraceRecording.dylib:/Developer/usr/lib/libMainThreadChecker.dylib:/Developer/Library/PrivateFrameworks/DTDDISupport.framework/libViewDebuggerSupport.dylib:/usr/lib/libMTLCapture.dylib 出现上面错误是因为Xcode 16编译应用时链接了libswiftUniformTypeIdentifiers.dylib，该库是Swift对 UniformTypeIdentifiers框架的overlay，而这个框架仅在iOS 14&#43;系统里存在。在iOS 13设备上运行，dyld找不到该库，所以出现直接崩溃。即使没有显式import UniformTypeIdentifiers，只要代码中（包括依赖库）使用了UTType等 API，编译器就会自动链接这个库。
+第一种解决方案是条件化所有UniformTypeIdentifiers相关代码，即用#available把相关逻辑包裹起来，不要在文件顶部无条 import UniformTypeIdentifiers。
+// 正确做法：需要时才导入，并用available保护 if #available(iOS 14, *) {  import UniformTypeIdentifiers  // 使用 UTType 等 } 第二种解决方案是弱链接UniformTypeIdentifiers：
+ 打开Xcode项目，选择target。 进入General → Frameworks, Libraries, and Embedded Content。 点击 &#43;，搜索并添加 UniformTypeIdentifiers。 将该framework的Embed方式设为Do Not Embed。 把它右侧的链接选项改为Optional（而不是Required）。  即使做了上面操作，libswiftUniformTypeIdentifiers.dylib仍可能被标记为必需。需要手动在链接器参数中将它改为弱链接，进入Build Settings → 搜索Other Linker Flags，添加下面一行：
+-weak-lswiftUniformTypeIdentifiers # 或者 -Wl,-weak-lswiftUniformTypeIdentifiers 最后，使用如下命令检查ipa中确认libswiftUniformTypeIdentifiers.dylib旁边显示的是weak而不是常规引用：
+otool -L YourApp.app/YourApp | grep UniformTypeIdentifiers 参考资料
+</content>
     </entry>
     
      <entry>

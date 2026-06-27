@@ -241,13 +241,13 @@ code.has-jax {
     <i class="fa fa-file-word-o"></i>
 </span>
 <span class="post-meta-item-text">字数: </span>
-<span class="leancloud-visitors-count">5073</span>
+<span class="leancloud-visitors-count">5840</span>
 &nbsp; | &nbsp;
 <span class="post-meta-item-icon">
     <i class="fa fa-coffee"></i>
 </span>
 <span class="post-meta-item-text">阅读: </span>
-<span class="leancloud-visitors-count">11 分钟</span>
+<span class="leancloud-visitors-count">12 分钟</span>
 </span>
       </div>
     </header>
@@ -514,7 +514,37 @@ code.has-jax {
 </span></span><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span><span style="color:#e6db74">//</span> <span style="color:#960050;background-color:#1e0010">更新日志</span>
 </span></span><span style="display:flex;"><span><span style="color:#e6db74">https</span>:<span style="color:#e6db74">//</span>lbs<span style="color:#f92672">.</span>baidu<span style="color:#f92672">.</span>com<span style="color:#f92672">/</span>docs<span style="color:#f92672">/</span>ios?title<span style="color:#f92672">=</span>iossdk<span style="color:#f92672">/</span>theupdatelog
-</span></span></code></pre></div>
+</span></span></code></pre></div><h2 id="libswiftuniformtypeidentifiers">libswiftUniformTypeIdentifiers</h2>
+<p>在<code>Xcode 16</code>上调试<code>iOS 13</code>时出现如下编译错误：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sh" data-lang="sh"><span style="display:flex;"><span>dyld: Library not loaded: /usr/lib/swift/libswiftUniformTypeIdentifiers.dylib
+</span></span><span style="display:flex;"><span>  Referenced from: /private/var/containers/Bundle/Application/4C36D45A-4944-41F6-8184-29C495C593AE/xxx.app/xxx
+</span></span><span style="display:flex;"><span>  Reason: image not found
+</span></span><span style="display:flex;"><span>dyld: launch, loading dependent libraries
+</span></span><span style="display:flex;"><span>DYLD_LIBRARY_PATH<span style="color:#f92672">=</span>/usr/lib/system/introspection
+</span></span><span style="display:flex;"><span>DYLD_INSERT_LIBRARIES<span style="color:#f92672">=</span>/Developer/usr/lib/libBacktraceRecording.dylib:/Developer/usr/lib/libMainThreadChecker.dylib:/Developer/Library/PrivateFrameworks/DTDDISupport.framework/libViewDebuggerSupport.dylib:/usr/lib/libMTLCapture.dylib
+</span></span></code></pre></div><p>出现上面错误是因为<code>Xcode 16</code>编译应用时链接了<code>libswiftUniformTypeIdentifiers.dylib</code>，该库是<code>Swift</code>对 <code>UniformTypeIdentifiers</code>框架的<code>overlay</code>，而这个框架仅在<code>iOS 14+</code>系统里存在。在<code>iOS 13</code>设备上运行，<code>dyld</code>找不到该库，所以出现直接崩溃。即使没有显式<code>import UniformTypeIdentifiers</code>，只要代码中（包括依赖库）使用了<code>UTType</code>等 <code>API</code>，编译器就会自动链接这个库。</p>
+<p>第一种解决方案是条件化所有<code>UniformTypeIdentifiers</code>相关代码，即用<code>#available</code>把相关逻辑包裹起来，不要在文件顶部无条 <code>import UniformTypeIdentifiers</code>。</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span><span style="color:#75715e">// 正确做法：需要时才导入，并用available保护</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">if</span> <span style="color:#75715e">#available</span>(<span style="color:#75715e">iOS</span> <span style="color:#ae81ff">14</span>, <span style="color:#f92672">*</span>) {
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">import</span> <span style="color:#a6e22e">UniformTypeIdentifiers</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">// 使用 UTType 等</span>
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p>第二种解决方案是弱链接<code>UniformTypeIdentifiers</code>：</p>
+<ul>
+<li>打开<code>Xcode</code>项目，选择<code>target</code>。</li>
+<li>进入<code>General → Frameworks, Libraries, and Embedded Content</code>。</li>
+<li>点击 <code>+</code>，搜索并添加 <code>UniformTypeIdentifiers</code>。</li>
+<li>将该<code>framework</code>的<code>Embed</code>方式设为<code>Do Not Embed</code>。</li>
+<li>把它右侧的链接选项改为<code>Optional</code>（而不是<code>Required</code>）。</li>
+</ul>
+<p>即使做了上面操作，<code>libswiftUniformTypeIdentifiers.dylib</code>仍可能被标记为必需。需要手动在链接器参数中将它改为弱链接，进入<code>Build Settings</code> → 搜索<code>Other Linker Flags</code>，添加下面一行：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sh" data-lang="sh"><span style="display:flex;"><span>-weak-lswiftUniformTypeIdentifiers
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 或者</span>
+</span></span><span style="display:flex;"><span>-Wl,-weak-lswiftUniformTypeIdentifiers
+</span></span></code></pre></div><p>最后，使用如下命令检查ipa中确认<code>libswiftUniformTypeIdentifiers.dylib</code>旁边显示的是<code>weak</code>而不是常规引用：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sh" data-lang="sh"><span style="display:flex;"><span>otool -L YourApp.app/YourApp | grep UniformTypeIdentifiers
+</span></span></code></pre></div><p><a href="https://chat.deepseek.com/a/chat/s/90d30f77-f388-44cf-a6f8-32007c8b6b48">参考资料</a></p>
+
     </div>
     <footer class="post-footer">
         
@@ -703,6 +733,7 @@ code.has-jax {
         <li><a href="#codesign-error">CodeSign Error</a></li>
         <li><a href="#ipad-tabbar显示">iPad TabBar显示</a></li>
         <li><a href="#百度地图sdk">百度地图sdk</a></li>
+        <li><a href="#libswiftuniformtypeidentifiers">libswiftUniformTypeIdentifiers</a></li>
       </ul>
     </li>
   </ul>
