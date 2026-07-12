@@ -241,7 +241,7 @@ code.has-jax {
     <i class="fa fa-file-word-o"></i>
 </span>
 <span class="post-meta-item-text">字数: </span>
-<span class="leancloud-visitors-count">11820</span>
+<span class="leancloud-visitors-count">12010</span>
 &nbsp; | &nbsp;
 <span class="post-meta-item-icon">
     <i class="fa fa-coffee"></i>
@@ -583,8 +583,9 @@ code.has-jax {
 </span></span><span style="display:flex;"><span><span style="color:#ae81ff">2026</span><span style="color:#f92672">-</span><span style="color:#ae81ff">03</span><span style="color:#f92672">-</span><span style="color:#ae81ff">13</span> <span style="color:#a6e22e">14</span>:<span style="color:#66d9ef">30</span><span style="color:#f92672">:</span><span style="color:#ae81ff">50.963755</span><span style="color:#f92672">+</span><span style="color:#ae81ff">0800</span> <span style="color:#a6e22e">xxx</span>[<span style="color:#a6e22e">593</span>:<span style="color:#66d9ef">62859</span>] <span style="color:#a6e22e">Connection</span> <span style="color:#a6e22e">27</span>: <span style="color:#66d9ef">unable</span> <span style="color:#a6e22e">to</span> <span style="color:#a6e22e">determine</span> <span style="color:#a6e22e">fallback</span> <span style="color:#a6e22e">status</span> <span style="color:#a6e22e">without</span> <span style="color:#a6e22e">a</span> <span style="color:#a6e22e">connection</span>
 </span></span><span style="display:flex;"><span><span style="color:#e6db74">&#34;未能完成操作。（kCFErrorDomainCFNetwork错误310。）&#34;</span>
 </span></span><span style="display:flex;"><span><span style="color:#e6db74">&#34;未能完成操作。（kCFErrorDomainCFNetwork错误310。）&#34;</span>
-</span></span></code></pre></div><h1 id="cant-be-opened">can’t be opened.</h1>
-<p>在<code>macOS</code>中打开某个用个人未付费账号打包的应用（在非打包机器上打开），提示<code>The application xxx can’t be opened</code>，尝试了以下几种方式均不行：</p>
+</span></span></code></pre></div><h1 id="software-install">Software Install</h1>
+<h2 id="cant-be-opened">can’t be opened</h2>
+<p>在<code>macOS</code>中（在非打包机器上）打开用个人未付费账号打包的应用，提示<code>The application xxx can’t be opened</code>，尝试了以下几种方式均不行：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sh" data-lang="sh"><span style="display:flex;"><span>sudo xattr -r -d com.apple.quarantine  /Applications/xxx.app 
 </span></span><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span><span style="color:#75715e"># 先临时开启任何来源</span>
@@ -593,12 +594,24 @@ code.has-jax {
 </span></span><span style="display:flex;"><span>sudo spctl --master-enable
 </span></span></code></pre></div><p>最后使用如下命令（给一个临时的本地签名）才能打开：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sh" data-lang="sh"><span style="display:flex;"><span>sudo codesign --force --deep --sign - /Applications/xxx.app
-</span></span></code></pre></div><p>上面命令的作用是<font color="#de7802">强制对指定的应用进行临时性（自签名）代码重签名</font>，通常用于绕过<code>macOS</code>的门禁（Gatekeeper）或损坏的签名校验。下面拆解每个参数的具体含义：</p>
+</span></span></code></pre></div><p>上面命令的作用是<font color="#de7802">强制对指定的应用进行临时性（自签名）代码重签名</font>，通常用于绕过门禁（<code>Gatekeeper</code>）或损坏的签名校验。下面解释每个参数的含义：</p>
 <ul>
 <li><code>codesign</code>：<code>macOS</code>的代码签名工具，用于给应用、动态库、命令行工具等打上数字签名。</li>
 <li><code>--force</code>或<code>-f</code>：强制覆盖该应用已有的任何现有签名，无论它之前是Apple官方签名还是其他开发者签名。</li>
 <li><code>--deep</code>：进行深度签名。它会递归地扫描应用包（<code>.app</code>文件夹）内的所有嵌套可执行文件（如动态库、插件、<code>Frameworks</code>）并逐一签名，而不仅仅签名主二进制文件。</li>
 <li><code>--sign -</code>：末尾的<code>-</code>（横杠）表示使用临时的自签名证书（即<code>Ad-Hoc</code>签名），而非指定某个具体的开发者证书。系统会自动生成一个本地有效的签名，但该签名无法通过<code>Apple</code>的公证验证。</li>
+</ul>
+<p>重签名后，有以下几个风险问题</p>
+<ul>
+<li>
+<p>macOS不再校验该应用是否来自App Store或已知开发者，<font color="#de7802">恶意代码可以借此机会加载运行</font>。</p>
+</li>
+<li>
+<p>Apple的公证（Notarization）要求应用经过恶意扫描。自签名直接跳过了这一层，如果该应用已被植入病毒，系统将不再阻拦。</p>
+</li>
+<li>
+<p>虽然SIP保护系统目录，但重签名会破坏应用内部的“强化运行时”（Hardened Runtime），导致<strong>内存攻击防护失效</strong>，黑客更容易通过该应用渗透系统。</p>
+</li>
 </ul>
 <h2 id="is-damaged-and-cant-be-opened">is damaged and can’t be opened</h2>
 <p>安装完某个应用，打开后出现了如下提示：</p>
@@ -1015,8 +1028,9 @@ code.has-jax {
         <li><a href="#unresolved-dependency">Unresolved dependency</a></li>
       </ul>
     </li>
-    <li><a href="#cant-be-opened">can’t be opened.</a>
+    <li><a href="#software-install">Software Install</a>
       <ul>
+        <li><a href="#cant-be-opened">can’t be opened</a></li>
         <li><a href="#is-damaged-and-cant-be-opened">is damaged and can’t be opened</a></li>
       </ul>
     </li>
