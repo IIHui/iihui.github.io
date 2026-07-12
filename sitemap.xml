@@ -4924,10 +4924,10 @@ copy-on-select = clipboard IntelliJ IDEA Unresolved dependency Unresolved depend
 2026-03-13 14:30:50.963357&#43;0800 xxx[593:62859] Connection 27: unable to determine interface type without an established connection 2026-03-13 14:30:50.963755&#43;0800 xxx[593:62859] Connection 27: unable to determine fallback status without a connection &amp;#34;未能完成操作。（kCFErrorDomainCFNetwork错误310。）&amp;#34; &amp;#34;未能完成操作。（kCFErrorDomainCFNetwork错误310。）&amp;#34; Software Install can’t be opened 在macOS中（在非打包机器上）打开用个人未付费账号打包的应用，提示The application xxx can’t be opened，尝试了以下几种方式均不行：
 sudo xattr -r -d com.apple.quarantine /Applications/xxx.app  # 先临时开启任何来源 sudo spctl --master-disable # 关闭任何来源 sudo spctl --master-enable 最后使用如下命令（给一个临时的本地签名）才能打开：
 sudo codesign --force --deep --sign - /Applications/xxx.app 上面命令的作用是强制对指定的应用进行临时性（自签名）代码重签名，通常用于绕过门禁（Gatekeeper）或损坏的签名校验。下面解释每个参数的含义：
- codesign：macOS的代码签名工具，用于给应用、动态库、命令行工具等打上数字签名。 --force或-f：强制覆盖该应用已有的任何现有签名，无论它之前是Apple官方签名还是其他开发者签名。 --deep：进行深度签名。它会递归地扫描应用包（.app文件夹）内的所有嵌套可执行文件（如动态库、插件、Frameworks）并逐一签名，而不仅仅签名主二进制文件。 --sign -：末尾的-（横杠）表示使用临时的自签名证书（即Ad-Hoc签名），而非指定某个具体的开发者证书。系统会自动生成一个本地有效的签名，但该签名无法通过Apple的公证验证。  重签名后，有以下几个风险问题
-  macOS不再校验该应用是否来自App Store或已知开发者，恶意代码可以借此机会加载运行。
-  Apple的公证（Notarization）要求应用经过恶意扫描。自签名直接跳过了这一层，如果该应用已被植入病毒，系统将不再阻拦。
-  虽然SIP保护系统目录，但重签名会破坏应用内部的“强化运行时”（Hardened Runtime），导致内存攻击防护失效，黑客更容易通过该应用渗透系统。
+ codesign：macOS的代码签名工具，用于给应用、动态库、命令行工具等打上数字签名。 --force或-f：强制覆盖该应用已有的任何现有签名，无论它之前是Apple官方签名还是其他开发者签名。 --deep：进行深度签名。它会递归地扫描应用包（.app文件夹）内的所有嵌套可执行文件（如动态库、插件、Frameworks）并逐一签名，而不仅仅签名主二进制文件。 --sign -：末尾的-（横杠）表示使用临时的自签名证书（即Ad-Hoc签名），而非指定某个具体的开发者证书。系统会自动生成一个本地有效的签名，但该签名无法通过Apple的公证验证。  按照重签名后，有以下几个风险问题需要注意：
+  绕过门禁：macOS不再校验该应用是否来自App Store或已知开发者，恶意代码可以借此机会加载运行。
+  失去「公证」检查：Apple的「公证」（Notarization）要求应用经过恶意扫描。自签名直接跳过了这一层，如果该应用已被植入病毒，系统将不再阻拦。
+  破坏系统完整性保护（SIP）相关机制：虽然SIP保护系统目录，但重签名会破坏应用内部的强化运行时（Hardened Runtime），导致内存攻击防护失效，黑客更容易通过该应用渗透系统。
   is damaged and can’t be opened 安装完某个应用，打开后出现了如下提示：
 xxx is damaged and can’t be opened.You should move it to the Bin. 上面提示是macOS的Gatekeeper安全机制起了作用，因为系统无法验证这个App的来源是否安全，所以阻止了它的运行。通常是因为App没有通过苹果的公证流程，或者其代码签名在下载或修改后失效了。有两个方法可以解决上面问题：
 第一种是通过右键出问题的App，移除隔离标识。这是最安全、最快的方法，能直接绕过这次拦截，而且不影响系统整体的安全设置：
