@@ -241,7 +241,7 @@ code.has-jax {
     <i class="fa fa-file-word-o"></i>
 </span>
 <span class="post-meta-item-text">字数: </span>
-<span class="leancloud-visitors-count">12289</span>
+<span class="leancloud-visitors-count">12290</span>
 &nbsp; | &nbsp;
 <span class="post-meta-item-icon">
     <i class="fa fa-coffee"></i>
@@ -610,7 +610,7 @@ code.has-jax {
 <p>失去「公证」检查：Apple的「公证」（<code>Notarization</code>）要求应用经过恶意扫描。自签名直接跳过了这一层，如果该应用已被植入病毒，系统将不再阻拦。</p>
 </li>
 <li>
-<p>破坏系统完整性保护（SIP）相关机制：虽然<code>SIP</code>保护系统目录，但重签名会破坏应用内部的强化运行时（Hardened Runtime），导致<strong>内存攻击防护失效</strong>，黑客更容易通过该应用渗透系统。</p>
+<p>破坏系统完整性保护（SIP）相关机制：虽然<code>SIP</code>保护系统目录，但重签名会破坏应用内部的强化运行时（<code>Hardened Runtime</code>），导致<strong>内存攻击防护失效</strong>，黑客更容易通过该应用渗透系统。</p>
 </li>
 </ul>
 <h2 id="is-damaged-and-cant-be-opened">is damaged and can’t be opened</h2>
@@ -618,19 +618,19 @@ code.has-jax {
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sh" data-lang="sh"><span style="display:flex;"><span>xxx is damaged and can’t be opened.You should move it to the Bin.
 </span></span></code></pre></div><p>上面的提示是<code>macOS</code>的<code>Gatekeeper</code>安全机制起了作用，因为系统无法验证这个<code>App</code>的来源是否安全，所以阻止了它的运行。出现上面现象的原因通常有两个，一个是因为<code>App</code>没有通过苹果的公证流程，或者其代码签名在下载或修改后失效了。有两个方法可以解决上面问题：</p>
 <p>第一种是通过右键出问题的<code>App</code>，移除隔离标识。这是最安全、最快的方法，能直接绕过这次拦截，而且不影响系统整体的安全设置：</p>
-<p>1、在访达中找到那个报错的<code>App</code>图标。</p>
-<p>2、按住键盘上的<code>Control</code>键，同时点击这个<code>App</code>图标。</p>
+<p>1、在访达中找到报错的<code>App</code>图标。</p>
+<p>2、按住键盘上的<code>Control</code>键，同时点击这个图标。</p>
 <p>3、在弹出菜单中，选择打开。</p>
-<p>4、系统会再次弹出一个对话框，但这次会多出一个打开按钮，点击它即可。</p>
+<p>4、系统会再次弹出一个对话框，这次会多出一个打开按钮，点击即可。</p>
 <p>第二种方法是通过终端命令，手动移除系统给这个<code>App</code>添加的隔离标记。具体命令如下，其中<code>xxx</code>表示应用名称：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sh" data-lang="sh"><span style="display:flex;"><span>sudo xattr -d com.apple.quarantine /Applications/xxx.app
-</span></span></code></pre></div><p>在执行上面命令时若加上<code>-r</code>选项：</p>
+</span></span></code></pre></div><p>执行上面命令时若加上<code>-r</code>选项：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sh" data-lang="sh"><span style="display:flex;"><span>sudo xattr -r -d com.apple.quarantine  /Applications/xxx.app 
-</span></span></code></pre></div><p><code>macOS</code>的<code>.app</code>其实是一个特殊文件夹（应用程序包），内部包含数十甚至上百个文件。当从网上下载一个<code>.app</code> 时，<code>macOS</code>的隔离机制会递归地给包内所有可执行文件都打上隔离标记，而不仅仅是顶层文件夹。</p>
+</span></span></code></pre></div><p>实际上，<code>macOS</code>的<code>App</code>其实是一个特殊文件夹（应用程序包），内部包含数十甚至上百个文件。当从网上下载一个<code>App</code>并保存到磁盘上时，<code>macOS</code>的隔离机制会<font color="#de7802">递归地给包内所有可执行文件都打上隔离标记</font>，而不仅仅是顶层文件夹。</p>
 <p>因此，移除隔离属性时也必须递归操作，否则：</p>
 <ul>
 <li>主程序<code>xxx</code>的隔离属性被清除了，但内部的动态库<code>libxxx.dylib</code>仍然带隔离标记。</li>
-<li>应用运行时加载该动态库，依然会触发macOS的隔离拦截，导致启动失败或闪退。</li>
+<li>应用运行时加载该动态库，依然会触发<code>macOS</code>的隔离拦截，导致启动失败或闪退。</li>
 </ul>
 <h1 id="网络连不上">网络连不上</h1>
 <p>在<code>macOS</code>的恢复模式下重新安装了系统，连上网线后，拿到的<code>ip</code>地址是对的，但一直连不上网络。最后找到的解决方案是到<code>System Settings--&gt;NetWork--&gt;Ethernet</code>，点击一下<code>Make Inactive</code>，然后再点一下<code>Make Active</code>即可恢复：</p>
