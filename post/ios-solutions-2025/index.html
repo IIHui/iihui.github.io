@@ -241,7 +241,7 @@ code.has-jax {
     <i class="fa fa-file-word-o"></i>
 </span>
 <span class="post-meta-item-text">字数: </span>
-<span class="leancloud-visitors-count">7974</span>
+<span class="leancloud-visitors-count">7985</span>
 &nbsp; | &nbsp;
 <span class="post-meta-item-icon">
     <i class="fa fa-coffee"></i>
@@ -522,8 +522,8 @@ code.has-jax {
 </span></span><span style="display:flex;"><span>dyld: launch, loading dependent libraries
 </span></span><span style="display:flex;"><span>DYLD_LIBRARY_PATH<span style="color:#f92672">=</span>/usr/lib/system/introspection
 </span></span><span style="display:flex;"><span>DYLD_INSERT_LIBRARIES<span style="color:#f92672">=</span>/Developer/usr/lib/libBacktraceRecording.dylib:/Developer/usr/lib/libMainThreadChecker.dylib:/Developer/Library/PrivateFrameworks/DTDDISupport.framework/libViewDebuggerSupport.dylib:/usr/lib/libMTLCapture.dylib
-</span></span></code></pre></div><p>出现上面错误是因为<code>Xcode 16</code>编译应用时链接了<code>libswiftUniformTypeIdentifiers.dylib</code>，该库是<code>Swift</code>对 <code>UniformTypeIdentifiers</code>框架的<code>overlay</code>，而这个框架仅在<code>iOS 14+</code>系统里存在。在<code>iOS 13</code>设备上运行，<code>dyld</code>找不到该库，所以出现直接崩溃。即使没有显式<code>import UniformTypeIdentifiers</code>，只要代码中（包括依赖库）使用了<code>UTType</code>等 <code>API</code>，编译器就会自动链接这个库。</p>
-<p>第一种解决方案是条件化所有<code>UniformTypeIdentifiers</code>相关代码，即用<code>#available</code>把相关逻辑包裹起来，不要在文件顶部无条 <code>import UniformTypeIdentifiers</code>。</p>
+</span></span></code></pre></div><p>出现上面错误是因为<code>Xcode 16</code>编译应用时链接了<code>libswiftUniformTypeIdentifiers.dylib</code>，该库是<code>Swift</code>对 <code>UniformTypeIdentifiers</code>框架的<code>overlay</code>，而这个框架仅在<code>iOS 14+</code>系统里存在。在<code>iOS 13</code>设备上运行，<code>dyld</code>找不到该库，所以出现直接崩溃。即使没有显式<code>import UniformTypeIdentifiers</code>，只要代码中（包括依赖库）使用了<code>UTType</code>等<code>API</code>，编译器就会自动链接这个库。</p>
+<p>第一种解决方案是条件化所有<code>UniformTypeIdentifiers</code>相关代码，即用<code>#available</code>把相关逻辑包裹起来，不要在文件顶部无条件<code>import UniformTypeIdentifiers</code>。</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span><span style="color:#75715e">// 正确做法：需要时才导入，并用available保护</span>
 </span></span><span style="display:flex;"><span><span style="color:#66d9ef">if</span> <span style="color:#75715e">#available</span>(<span style="color:#75715e">iOS</span> <span style="color:#ae81ff">14</span>, <span style="color:#f92672">*</span>) {
 </span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">import</span> <span style="color:#a6e22e">UniformTypeIdentifiers</span>
@@ -634,7 +634,7 @@ code.has-jax {
 <h2 id="zlib-ngh-file-not-found">zlib-ng.h file not found</h2>
 <p>依赖<code>SSZipArchive</code>时，出现编译错误：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sh" data-lang="sh"><span style="display:flex;"><span>mz_strm_zlib.c:16:12: error: <span style="color:#e6db74">&#39;zlib-ng.h&#39;</span> file not found
-</span></span></code></pre></div><p>是因为<code>SSZipArchive</code>依赖的<code>minizip-ng</code>库需要<code>zlib-ng</code>，编译时找不到<code>zlib-ng.h</code> 头文件。最后发现是<code>pod_target_xcconfig</code>设置有问题，完整设置如下：</p>
+</span></span></code></pre></div><p>是因为<code>SSZipArchive</code>依赖的<code>minizip-ng</code>库需要<code>zlib-ng</code>，编译时找不到<code>zlib-ng.h</code>头文件。最后发现是<code>pod_target_xcconfig</code>设置有问题，其完整设置如下：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ruby" data-lang="ruby"><span style="display:flex;"><span> s<span style="color:#f92672">.</span>pod_target_xcconfig <span style="color:#f92672">=</span> { <span style="color:#e6db74">&#39;DEFINES_MODULE&#39;</span> <span style="color:#f92672">=&gt;</span> <span style="color:#e6db74">&#39;YES&#39;</span>,
 </span></span><span style="display:flex;"><span>    <span style="color:#e6db74">&#39;GCC_PREPROCESSOR_DEFINITIONS&#39;</span> <span style="color:#f92672">=&gt;</span> <span style="color:#e6db74">&#39;HAVE_ARC4RANDOM_BUF HAVE_ICONV HAVE_INTTYPES_H HAVE_PKCRYPT HAVE_STDINT_H HAVE_WZAES HAVE_ZLIB ZLIB_COMPAT&#39;</span> }
 </span></span></code></pre></div><p>上面设置中的<code>DEFINES_MODULE' =&gt; 'YES'</code>是告诉<code>Xcode</code>将这个<code>Pod</code>构建为模块（<code>module</code>），并生成 <code>.modulemap</code>文件，即：</p>
@@ -695,7 +695,7 @@ code.has-jax {
 </tr>
 </tbody>
 </table>
-<p>上面的宏定义右侧没有等号，在<code>Xcode</code>中的默认值是<code>1</code>，若想自定义为其它值可以进行如下设置：</p>
+<p>上面的宏定义右侧没有等号，在<code>Xcode</code>中解析出来的默认值是<code>1</code>，若想自定义为其它值可以进行如下设置：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ruby" data-lang="ruby"><span style="display:flex;"><span><span style="color:#e6db74">&#39;GCC_PREPROCESSOR_DEFINITIONS&#39;</span> <span style="color:#f92672">=&gt;</span> <span style="color:#e6db74">&#39;HAVE_ARC4RANDOM_BUF=1 HAVE_ICONV=2 CUSTOM_VALUE=hello&#39;</span>
 </span></span></code></pre></div><p>为了避免字符串拼接出现错误，在<code>CocoaPods</code>中更推荐用数组：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ruby" data-lang="ruby"><span style="display:flex;"><span>s<span style="color:#f92672">.</span>pod_target_xcconfig <span style="color:#f92672">=</span> {
