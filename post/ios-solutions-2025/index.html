@@ -241,13 +241,13 @@ code.has-jax {
     <i class="fa fa-file-word-o"></i>
 </span>
 <span class="post-meta-item-text">字数: </span>
-<span class="leancloud-visitors-count">8878</span>
+<span class="leancloud-visitors-count">9149</span>
 &nbsp; | &nbsp;
 <span class="post-meta-item-icon">
     <i class="fa fa-coffee"></i>
 </span>
 <span class="post-meta-item-text">阅读: </span>
-<span class="leancloud-visitors-count">18 分钟</span>
+<span class="leancloud-visitors-count">19 分钟</span>
 </span>
       </div>
     </header>
@@ -723,11 +723,17 @@ code.has-jax {
 </span></span><span style="display:flex;"><span><span style="color:#75715e">// ... 设置 Content-Type, Content-Length ...</span>
 </span></span><span style="display:flex;"><span>headerFields[<span style="color:#e6db74">&#34;Access-Control-Allow-Origin&#34;</span>] = <span style="color:#e6db74">&#34;*&#34;</span> 
 </span></span><span style="display:flex;"><span><span style="color:#75715e">// 或者设置为你的主页面域名，如 &#34;https://example.com&#34;</span>
-</span></span></code></pre></div><p>此外，<code>WKURLSchemeTask</code>的生命周期需要精确管理。在<code>WebView</code>已经停止任务（调用<code>stopURLSchemeTask</code>）后，再调用<code>didReceive</code>或<code>didFinish</code>会导致崩溃。此外，如果在调用<code>didReceive(URLResponse)</code> 之前就发送了数据（<code>Data</code>），也会引发异常。解决方案如下：</p>
+</span></span></code></pre></div><p>此外，<code>WKURLSchemeTask</code>的生命周期需要精确管理。在<code>WebView</code>已经停止任务后（调用<code>stopURLSchemeTask</code>），再调用<code>didReceive</code>或<code>didFinish</code>会导致崩溃。此外，如果在调用<code>didReceive(URLResponse)</code> 之前就发送了数据（<code>Data</code>），也会引发崩溃。解决方案如下：</p>
 <ul>
-<li>确保调用顺序正确：必须严格按照<code>didReceive(response)</code>-&gt;<code>didReceive(data)</code> -&gt; <code>didFinish()</code>的顺序调用。</li>
-<li>处理任务停止情况：实现<code>webView(_:stop:)</code> 方法。当任务被停止时，应取消加载操作，并不再对该任务调用任何<code>WKURLSchemeTask</code>的方法。同时，确保所有对<code>WKURLSchemeTask</code>的调用都在主线程执行，以避免竞态条件。</li>
+<li>确保调用顺序正确：必须严格按照<code>didReceive(response)</code>-&gt;<code>didReceive(data)</code> -&gt; <code>didFinish</code>顺序调用。</li>
+<li>处理任务停止情况：当<code>webView(_:stop:)</code> 方法。当任务被停止时，应取消加载操作，并不再对该任务调用任何<code>WKURLSchemeTask</code>的方法。同时，确保所有对<code>WKURLSchemeTask</code>的调用都在主线程执行，以避免竞态条件。</li>
 </ul>
+<h2 id="taskdidreceivedata-has-already-been-called">taskDidReceiveData:] has already been called</h2>
+<p>若<code>URLSession</code>调用了<code>invalidateAndCancel</code>后，偶发出现崩溃<code>WKURLSchemeTask taskDidReceiveData:] has already been called for this task</code>。</p>
+<p>当在<code>start</code>方法里使用<code>URLSession</code>发起异步下载，并在某时刻调用了<code>invalidateAndCancel()</code>时，<code>URLSession</code> 的委托（<code>Delegate</code>）会在极短时间内收到两个回调：</p>
+<p>1、最后一个<code>didReceive data</code>回调（如果数据还在传输中）。</p>
+<p>2、<code>didCompleteWithError</code>回调（携带<code>NSURLErrorCancelled</code>错误）。</p>
+<p>如果代码不加严格保护，会出现致命时序问题：</p>
 
     </div>
     <footer class="post-footer">
@@ -925,6 +931,7 @@ code.has-jax {
         </li>
         <li><a href="#zlib-ngh-file-not-found">zlib-ng.h file not found</a></li>
         <li><a href="#帧框加载已失败">帧框加载已失败</a></li>
+        <li><a href="#taskdidreceivedata-has-already-been-called">taskDidReceiveData:] has already been called</a></li>
       </ul>
     </li>
   </ul>
