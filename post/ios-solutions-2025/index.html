@@ -241,7 +241,7 @@ code.has-jax {
     <i class="fa fa-file-word-o"></i>
 </span>
 <span class="post-meta-item-text">字数: </span>
-<span class="leancloud-visitors-count">9149</span>
+<span class="leancloud-visitors-count">9447</span>
 &nbsp; | &nbsp;
 <span class="post-meta-item-icon">
     <i class="fa fa-coffee"></i>
@@ -729,11 +729,15 @@ code.has-jax {
 <li>处理任务停止情况：当<code>webView(_:stop:)</code> 方法。当任务被停止时，应取消加载操作，并不再对该任务调用任何<code>WKURLSchemeTask</code>的方法。同时，确保所有对<code>WKURLSchemeTask</code>的调用都在主线程执行，以避免竞态条件。</li>
 </ul>
 <h2 id="taskdidreceivedata-has-already-been-called">taskDidReceiveData:] has already been called</h2>
-<p>若<code>URLSession</code>调用了<code>invalidateAndCancel</code>后，偶发出现崩溃<code>WKURLSchemeTask taskDidReceiveData:] has already been called for this task</code>。</p>
-<p>当在<code>start</code>方法里使用<code>URLSession</code>发起异步下载，并在某时刻调用了<code>invalidateAndCancel()</code>时，<code>URLSession</code> 的委托（<code>Delegate</code>）会在极短时间内收到两个回调：</p>
+<p>在使用<code>URLSession</code>调用了<code>invalidateAndCancel</code>后，偶发出现崩溃<code>WKURLSchemeTask taskDidReceiveData:] has already been called for this task</code>。</p>
+<p>当在<code>start</code>方法里使用<code>URLSession</code>发起异步任务，并在某时刻调用了<code>invalidateAndCancel()</code>，<code>URLSession</code>的委托（<code>Delegate</code>）会在极短时间内收到两个回调：</p>
 <p>1、最后一个<code>didReceive data</code>回调（如果数据还在传输中）。</p>
 <p>2、<code>didCompleteWithError</code>回调（携带<code>NSURLErrorCancelled</code>错误）。</p>
 <p>如果代码不加严格保护，会出现致命时序问题：</p>
+<ul>
+<li>时序 A（正常：数据回调到达 -&gt; 调用<code>didReceive(data)</code> -&gt; 完成回调到达 -&gt; 调用<code>didFinish</code>。</li>
+<li>时序 B（崩溃）：<code>invalidateAndCancel</code>触发，<code>stop</code>被调用，此时将<code>isTaskCompleted</code>置为<code>true</code>。但有可能后台线程的<code>didReceive data</code>回调已经处于<code>RunLoop</code>队列中等待执行。之后，这个过期的数据回调被执行，虽然<code>isTaskCompleted</code>已是<code>true</code>，但如果在数据回调里只检查了<code>!isTaskCompleted</code>就调用 <code>didReceive(data)</code>，那么它依然会调用。随后完成回调到达，再次调用<code>didFinish</code>，或重复调用数据接收，系统直接崩溃。</li>
+</ul>
 
     </div>
     <footer class="post-footer">

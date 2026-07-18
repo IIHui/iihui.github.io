@@ -437,12 +437,12 @@ s.pod_target_xcconfig = {  &amp;#39;DEFINES_MODULE&amp;#39; =&amp;gt; &amp;#39;Y
 最后发现是通过WKURLSchemeTask返回数据时，WebKit需要正确的HTTP响应头（Headers）来解析内容。如果信息不全，WebKit会认为响应无效并中断加载。首先不要使用URLResponse，因为它默认状态码为0，WebKit无法识别。必须创建HTTPURLResponse并明确设置200状态码，同时需要提供Content-Type和Content-Length这两个关键的Header，而此次出现错误是因为文件是html，但设置的Content-Type是错误的。
 如果通过WKURLSchemeTask拦截的是一个子资源请求（例如，主页面是https://example.com，但iframe或图片的请求被自定义scheme如myapp://拦截并返回了本地数据），会构成了跨域请求。此时，需要在返回的 HTTPURLResponse的 headerFields 中，明确添加允许跨域的头部：
 var headerFields = [String: String]() // ... 设置 Content-Type, Content-Length ... headerFields[&amp;#34;Access-Control-Allow-Origin&amp;#34;] = &amp;#34;*&amp;#34; // 或者设置为你的主页面域名，如 &amp;#34;https://example.com&amp;#34; 此外，WKURLSchemeTask的生命周期需要精确管理。在WebView已经停止任务后（调用stopURLSchemeTask），再调用didReceive或didFinish会导致崩溃。此外，如果在调用didReceive(URLResponse) 之前就发送了数据（Data），也会引发崩溃。解决方案如下：
- 确保调用顺序正确：必须严格按照didReceive(response)-&amp;gt;didReceive(data) -&amp;gt; didFinish顺序调用。 处理任务停止情况：当webView(_:stop:) 方法。当任务被停止时，应取消加载操作，并不再对该任务调用任何WKURLSchemeTask的方法。同时，确保所有对WKURLSchemeTask的调用都在主线程执行，以避免竞态条件。  taskDidReceiveData:] has already been called 若URLSession调用了invalidateAndCancel后，偶发出现崩溃WKURLSchemeTask taskDidReceiveData:] has already been called for this task。
-当在start方法里使用URLSession发起异步下载，并在某时刻调用了invalidateAndCancel()时，URLSession 的委托（Delegate）会在极短时间内收到两个回调：
+ 确保调用顺序正确：必须严格按照didReceive(response)-&amp;gt;didReceive(data) -&amp;gt; didFinish顺序调用。 处理任务停止情况：当webView(_:stop:) 方法。当任务被停止时，应取消加载操作，并不再对该任务调用任何WKURLSchemeTask的方法。同时，确保所有对WKURLSchemeTask的调用都在主线程执行，以避免竞态条件。  taskDidReceiveData:] has already been called 在使用URLSession调用了invalidateAndCancel后，偶发出现崩溃WKURLSchemeTask taskDidReceiveData:] has already been called for this task。
+当在start方法里使用URLSession发起异步任务，并在某时刻调用了invalidateAndCancel()，URLSession的委托（Delegate）会在极短时间内收到两个回调：
 1、最后一个didReceive data回调（如果数据还在传输中）。
 2、didCompleteWithError回调（携带NSURLErrorCancelled错误）。
 如果代码不加严格保护，会出现致命时序问题：
-</content>
+ 时序 A（正常：数据回调到达 -&amp;gt; 调用didReceive(data) -&amp;gt; 完成回调到达 -&amp;gt; 调用didFinish。 时序 B（崩溃）：invalidateAndCancel触发，stop被调用，此时将isTaskCompleted置为true。但有可能后台线程的didReceive data回调已经处于RunLoop队列中等待执行。之后，这个过期的数据回调被执行，虽然isTaskCompleted已是true，但如果在数据回调里只检查了!isTaskCompleted就调用 didReceive(data)，那么它依然会调用。随后完成回调到达，再次调用didFinish，或重复调用数据接收，系统直接崩溃。  </content>
     </entry>
     
      <entry>
