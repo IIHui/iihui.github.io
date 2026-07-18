@@ -241,7 +241,7 @@ code.has-jax {
     <i class="fa fa-file-word-o"></i>
 </span>
 <span class="post-meta-item-text">字数: </span>
-<span class="leancloud-visitors-count">8530</span>
+<span class="leancloud-visitors-count">8878</span>
 &nbsp; | &nbsp;
 <span class="post-meta-item-icon">
     <i class="fa fa-coffee"></i>
@@ -723,7 +723,12 @@ code.has-jax {
 </span></span><span style="display:flex;"><span><span style="color:#75715e">// ... 设置 Content-Type, Content-Length ...</span>
 </span></span><span style="display:flex;"><span>headerFields[<span style="color:#e6db74">&#34;Access-Control-Allow-Origin&#34;</span>] = <span style="color:#e6db74">&#34;*&#34;</span> 
 </span></span><span style="display:flex;"><span><span style="color:#75715e">// 或者设置为你的主页面域名，如 &#34;https://example.com&#34;</span>
-</span></span></code></pre></div>
+</span></span></code></pre></div><p>此外，<code>WKURLSchemeTask</code>的生命周期需要精确管理。在<code>WebView</code>已经停止任务（调用<code>stopURLSchemeTask</code>）后，再调用<code>didReceive</code>或<code>didFinish</code>会导致崩溃。此外，如果在调用<code>didReceive(URLResponse)</code> 之前就发送了数据（<code>Data</code>），也会引发异常。解决方案如下：</p>
+<ul>
+<li>确保调用顺序正确：必须严格按照<code>didReceive(response)</code>-&gt;<code>didReceive(data)</code> -&gt; <code>didFinish()</code>的顺序调用。</li>
+<li>处理任务停止情况：实现<code>webView(_:stop:)</code> 方法。当任务被停止时，应取消加载操作，并不再对该任务调用任何<code>WKURLSchemeTask</code>的方法。同时，确保所有对<code>WKURLSchemeTask</code>的调用都在主线程执行，以避免竞态条件。</li>
+</ul>
+
     </div>
     <footer class="post-footer">
         
