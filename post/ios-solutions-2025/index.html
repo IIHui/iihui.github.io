@@ -241,7 +241,7 @@ code.has-jax {
     <i class="fa fa-file-word-o"></i>
 </span>
 <span class="post-meta-item-text">字数: </span>
-<span class="leancloud-visitors-count">9447</span>
+<span class="leancloud-visitors-count">9458</span>
 &nbsp; | &nbsp;
 <span class="post-meta-item-icon">
     <i class="fa fa-coffee"></i>
@@ -716,17 +716,17 @@ code.has-jax {
 </span></span><span style="display:flex;"><span><span style="color:#75715e"># 或</span>
 </span></span><span style="display:flex;"><span><span style="color:#e6db74">&#34;VERSION_STRING=</span><span style="color:#ae81ff">\\\&#34;</span><span style="color:#e6db74">1.0</span><span style="color:#ae81ff">\\\&#34;</span><span style="color:#e6db74">&#34;</span> <span style="color:#75715e"># 双引号里双重转义</span>
 </span></span></code></pre></div><h2 id="帧框加载已失败">帧框加载已失败</h2>
-<p>今天在调试<code>WKWebView</code>时报错「帧框加载已失败」，同时看到的错误码为<code>WebKitErrorDomain code 102</code>。出问题的场景是在<code>WKWebView</code>中使用<code>WKURLSchemeTask</code>拦截网络请求，返回本地文件后遇到的错误。</p>
-<p>最后发现是通过<code>WKURLSchemeTask</code>返回数据时，<code>WebKit</code>需要正确的<code>HTTP</code>响应头（<code>Headers</code>）来解析内容。如果信息不全，<code>WebKit</code>会认为响应无效并中断加载。首先不要使用<code>URLResponse</code>，因为它默认状态码为<code>0</code>，<code>WebKit</code>无法识别。必须创建<code>HTTPURLResponse</code>并明确设置<code>200</code>状态码，同时需要提供<code>Content-Type</code>和<code>Content-Length</code>这两个关键的<code>Header</code>，而此次出现错误是因为文件是<code>html</code>，但设置的<code>Content-Type</code>是错误的。</p>
-<p>如果通过<code>WKURLSchemeTask</code>拦截的是一个子资源请求（例如，主页面是<code>https://example.com</code>，但<code>iframe</code>或图片的请求被自定义<code>scheme</code>如<code>myapp://</code>拦截并返回了本地数据），会构成了跨域请求。此时，需要在返回的 <code>HTTPURLResponse</code>的 <code>headerFields</code> 中，明确添加允许跨域的头部：</p>
+<p>调试<code>WKWebView</code>时报错信息为「帧框加载已失败」，同时看到错误码为<code>WebKitErrorDomain code 102</code>。出问题的场景是在<code>WKWebView</code>中使用<code>WKURLSchemeTask</code>拦截网络请求，返回本地文件时。</p>
+<p>最后调试发现是通过<code>WKURLSchemeTask</code>返回数据时，<code>WebKit</code>需要正确的<code>HTTP</code>响应头（<code>Headers</code>）来解析内容。如果信息不全，<code>WebKit</code>会认为响应无效并中断加载。首先不要使用<code>URLResponse</code>，因为它默认状态码为<code>0</code>，<code>WebKit</code>无法识别。必须创建<code>HTTPURLResponse</code>并明确设置<code>200</code>状态码，同时需要提供<code>Content-Type</code>和<code>Content-Length</code>这两个关键的<code>Header</code>，而此次出现错误是因为文件是<code>html</code>，但设置的<code>Content-Type</code>是错误的。</p>
+<p>如果通过<code>WKURLSchemeTask</code>拦截的是一个子资源请求（例如，主页面是<code>https://example.com</code>，但<code>iframe</code>或图片的请求被自定义<code>scheme</code>如<code>myapp://</code>拦截并返回了本地数据），会构成了跨域请求。此时，需要在返回的 <code>HTTPURLResponse</code>的<code>headerFields</code> 中，明确添加允许跨域的头部：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span><span style="color:#66d9ef">var</span> headerFields = [String: String]()
 </span></span><span style="display:flex;"><span><span style="color:#75715e">// ... 设置 Content-Type, Content-Length ...</span>
 </span></span><span style="display:flex;"><span>headerFields[<span style="color:#e6db74">&#34;Access-Control-Allow-Origin&#34;</span>] = <span style="color:#e6db74">&#34;*&#34;</span> 
 </span></span><span style="display:flex;"><span><span style="color:#75715e">// 或者设置为你的主页面域名，如 &#34;https://example.com&#34;</span>
-</span></span></code></pre></div><p>此外，<code>WKURLSchemeTask</code>的生命周期需要精确管理。在<code>WebView</code>已经停止任务后（调用<code>stopURLSchemeTask</code>），再调用<code>didReceive</code>或<code>didFinish</code>会导致崩溃。此外，如果在调用<code>didReceive(URLResponse)</code> 之前就发送了数据（<code>Data</code>），也会引发崩溃。解决方案如下：</p>
+</span></span></code></pre></div><p>此外，<code>WKURLSchemeTask</code>的生命周期需要精确管理。在<code>WebView</code>已经停止任务后（调用<code>stopURLSchemeTask</code>），再调用<code>didReceive</code>或<code>didFinish</code>会导致崩溃。另外，如果在调用<code>didReceive(URLResponse)</code> 之前就发送了数据（<code>Data</code>），也会引发崩溃。解决方案如下：</p>
 <ul>
 <li>确保调用顺序正确：必须严格按照<code>didReceive(response)</code>-&gt;<code>didReceive(data)</code> -&gt; <code>didFinish</code>顺序调用。</li>
-<li>处理任务停止情况：当<code>webView(_:stop:)</code> 方法。当任务被停止时，应取消加载操作，并不再对该任务调用任何<code>WKURLSchemeTask</code>的方法。同时，确保所有对<code>WKURLSchemeTask</code>的调用都在主线程执行，以避免竞态条件。</li>
+<li>处理任务停止情况：当<code>webView(_:stop:)</code> 方法被调用后。当任务被停止时，应取消加载操作，并不再对该任务调用任何<code>WKURLSchemeTask</code>的方法。同时，确保所有对<code>WKURLSchemeTask</code>的调用都在主线程执行，以避免竞态条件。</li>
 </ul>
 <h2 id="taskdidreceivedata-has-already-been-called">taskDidReceiveData:] has already been called</h2>
 <p>在使用<code>URLSession</code>调用了<code>invalidateAndCancel</code>后，偶发出现崩溃<code>WKURLSchemeTask taskDidReceiveData:] has already been called for this task</code>。</p>
