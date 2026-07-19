@@ -241,7 +241,7 @@ code.has-jax {
     <i class="fa fa-file-word-o"></i>
 </span>
 <span class="post-meta-item-text">字数: </span>
-<span class="leancloud-visitors-count">10320</span>
+<span class="leancloud-visitors-count">10376</span>
 &nbsp; | &nbsp;
 <span class="post-meta-item-icon">
     <i class="fa fa-coffee"></i>
@@ -252,7 +252,7 @@ code.has-jax {
       </div>
     </header>
     <div class="post-body" itemprop="articleBody">
-    <h1 id="upic">UPic</h1>
+    <h1 id="upic">uPic</h1>
 <h2 id="missing-package-product">Missing Package Product</h2>
 <p>在<code>github</code>上拉取了<a href="https://github.com/gee1k/uPic">uPic</a>工程源代码，编译时出现了包缺失的错误(<code>Missing Package Product</code>)，具体报错信息如下图所示：</p>
 <img src="https://s2.loli.net/2022/10/22/AJfTuwQxRCSd4YP.png" alt="AJfTuwQxRCSd4YP" style="zoom:50%;" />
@@ -321,7 +321,7 @@ code.has-jax {
 </span></span><span style="display:flex;"><span>        }
 </span></span><span style="display:flex;"><span>    }
 </span></span><span style="display:flex;"><span>}
-</span></span></code></pre></div><p>后来发现是<code>NSPasteboard.general.types?.first.rawValue</code>的值为<code>com.trolltech.anymime.PixPinData</code>，即不是代码里面支持的格式。这是因为<code>PixPin</code>中的<code>配置--&gt;系统--&gt;剪贴板</code>中设置的是「禁用」，只需要将剪贴板的设置改为非禁用状态即可：</p>
+</span></span></code></pre></div><p>后来发现是<code>NSPasteboard.general.types?.first.rawValue</code>的值为<code>com.trolltech.anymime.PixPinData</code>，即不是代码里面支持的格式。这是因为<code>PixPin</code>中的配置&ndash;&gt;系统&ndash;&gt;剪贴板的复制图像为文件设置的是「禁用」，只需要将剪贴板的设置改为非禁用状态即可：</p>
 <img src="https://files.seeusercontent.com/2026/05/24/w6Pz/2026-05-24_21-51-10.png" alt="2026-05-24_21-51-10" style="zoom:80%;" />
 <p>修改后上传的图片虽然在<code>s.ee</code>上能够看到，但在<code>uPic</code>的历史记录上还是看不到已经上传的图片。断点调试后发现上面那个PR在判断图片上传成功时有误，需要把<code>code</code>的判断改为<code>200</code>:</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span><span style="color:#66d9ef">let</span> code = json[<span style="color:#e6db74">&#34;code&#34;</span>].intValue
@@ -357,15 +357,15 @@ code.has-jax {
 <h2 id="is_integral-cannot-be-specialized">&lsquo;is_integral&rsquo; cannot be specialized</h2>
 <p>使用<code>Xcode 26.5</code>编译<code>uPic</code>工程时出现如下错误：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">&#39;</span>is_integral<span style="color:#960050;background-color:#1e0010">&#39;</span> cannot be specialized: Users are not allowed to specialize this standard library entity
-</span></span></code></pre></div><p>定位后发现该文件是属于<code>WCDBSwift</code>组件的，根据<a href="https://github.com/Tencent/wcdb/issues/1542">这里的资料</a>，是需要组件到2.1.16版本。即在工程设置里面切到<code>Package Dependencies</code>下修改版本：</p>
+</span></span></code></pre></div><p>定位后发现该文件是属于<code>WCDBSwift</code>组件的，根据<a href="https://github.com/Tencent/wcdb/issues/1542">这里的资料</a>，是需要组件到<code>2.1.16</code>版本。即在工程设置里切到<code>Package Dependencies</code>下修改版本，如下图所示：</p>
 <img src="https://files.seeusercontent.com/2026/07/19/r5Xj/2026-07-19_16-02-50.png" alt="2026-07-19_16-02-50" style="zoom:67%;" />
-<p>升级<code>WCDBSwift</code>组件到<code>2.1.16</code>版本后，编译后又出现如下错误：</p>
+<p>升级<code>WCDBSwift</code>组件到<code>2.1.16</code>版本后，编译时又出现如下错误：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sh" data-lang="sh"><span style="display:flex;"><span>Unable to resolve Swift module dependency to a compatible module: <span style="color:#e6db74">&#39;libminipng&#39;</span>
 </span></span><span style="display:flex;"><span>import libminipng
 </span></span><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span>Module compiled with Swift 6.2 cannot be imported by the Swift 6.3.2 compiler: /Users/xxx/Downloads/uPic-1.4.8/libs/libminipng.framework/Modules/libminipng.swiftmodule/x86_64-apple-macos.swiftmodule
-</span></span></code></pre></div><p>错误原因是本地依赖的<code>libminipng</code>组件是使用<code>Swift6.2</code>编译的，而当前<code>Xcode 26.5</code>使用的<code>Swift</code>版本是<code>6.3.2</code>。只能将<code>libminipng</code>使用<code>Xcode 26.5</code>重新编译。即到<a href="https://github.com/iChochy/libminipng">这里</a>下载<code>libminipng</code>，然后使用<code>Xcode 26.5</code>编译<code>framework</code>，最后到<code>upic 1.4.8</code>目录下替换libs目录下的<code>libminipng</code>即可。</p>
-<p>如果编译了<code>libminipng</code>工程后找不到产物，可以使用如下命令查找<code>libminipng.framework</code>所在目录，然后将<code>release</code>的<code>libminipng.framework</code>复制到uPic工程的libs目录下：</p>
+</span></span></code></pre></div><p>原因是依赖的<code>libminipng</code>是使用<code>Swift 6.2</code>编译的，而<code>Xcode 26.5</code>使用的<code>Swift</code>版本是<code>6.3.2</code>。解决方案只能将<code>libminipng</code>使用<code>Xcode 26.5</code>重新编译生成新的<code>framework</code>，然后进行替换。即到<a href="https://github.com/iChochy/libminipng">这里</a>下载<code>libminipng</code>源码，然后使用<code>Xcode 26.5</code>编译为<code>framework</code>，最后到<code>upic 1.4.8</code>目录下替换<code>libs</code>目录下的<code>libminipng.framework</code>即可。</p>
+<p>如果编译了<code>libminipng</code>源码工程后找不到产物，可以使用如下命令查找<code>libminipng.framework</code>所在目录。然后将<code>release</code>目录下的<code>libminipng.framework</code>复制到<code>uPic</code>工程的<code>libs</code>目录下：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sh" data-lang="sh"><span style="display:flex;"><span>find ~/Library/Developer/Xcode/DerivedData -name <span style="color:#e6db74">&#34;libminipng.framework&#34;</span> -type 
 </span></span></code></pre></div><h1 id="ios-16-scanning-barcode">iOS 16 Scanning barcode</h1>
 <p>原来的条形码识别功能正常，但用户反馈系统升级到<code>iOS 16</code>后发现<font color=red>扫描条形码很久都没反应</font>。查<a href="https://developer.apple.com/forums/thread/714341">资料</a>后发现有其他开发者也遇到相同的问题。</p>
@@ -1583,7 +1583,7 @@ code.has-jax {
     <div class="post-toc">
         <div class="post-toc-content"><nav id="TableOfContents">
   <ul>
-    <li><a href="#upic">UPic</a>
+    <li><a href="#upic">uPic</a>
       <ul>
         <li><a href="#missing-package-product">Missing Package Product</a></li>
         <li><a href="#smms">sm.ms</a></li>
