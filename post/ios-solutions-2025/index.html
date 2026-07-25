@@ -241,7 +241,7 @@ code.has-jax {
     <i class="fa fa-file-word-o"></i>
 </span>
 <span class="post-meta-item-text">字数: </span>
-<span class="leancloud-visitors-count">9458</span>
+<span class="leancloud-visitors-count">9469</span>
 &nbsp; | &nbsp;
 <span class="post-meta-item-icon">
     <i class="fa fa-coffee"></i>
@@ -634,7 +634,7 @@ code.has-jax {
 <h2 id="zlib-ngh-file-not-found">zlib-ng.h file not found</h2>
 <p>依赖<code>SSZipArchive</code>时，出现编译错误：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sh" data-lang="sh"><span style="display:flex;"><span>mz_strm_zlib.c:16:12: error: <span style="color:#e6db74">&#39;zlib-ng.h&#39;</span> file not found
-</span></span></code></pre></div><p>是因为<code>SSZipArchive</code>依赖的<code>minizip-ng</code>库需要<code>zlib-ng</code>，编译时找不到<code>zlib-ng.h</code>头文件。最后发现是<code>pod_target_xcconfig</code>设置有问题，其完整设置如下：</p>
+</span></span></code></pre></div><p>是因为<code>SSZipArchive</code>依赖的<code>minizip-ng</code>库需要<code>zlib-ng</code>，编译时找不到<code>zlib-ng.h</code>头文件。最后发现是在<code>podspec</code>文件中<code>pod_target_xcconfig</code>设置有问题，其完整设置如下：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ruby" data-lang="ruby"><span style="display:flex;"><span> s<span style="color:#f92672">.</span>pod_target_xcconfig <span style="color:#f92672">=</span> { <span style="color:#e6db74">&#39;DEFINES_MODULE&#39;</span> <span style="color:#f92672">=&gt;</span> <span style="color:#e6db74">&#39;YES&#39;</span>,
 </span></span><span style="display:flex;"><span>    <span style="color:#e6db74">&#39;GCC_PREPROCESSOR_DEFINITIONS&#39;</span> <span style="color:#f92672">=&gt;</span> <span style="color:#e6db74">&#39;HAVE_ARC4RANDOM_BUF HAVE_ICONV HAVE_INTTYPES_H HAVE_PKCRYPT HAVE_STDINT_H HAVE_WZAES HAVE_ZLIB ZLIB_COMPAT&#39;</span> }
 </span></span></code></pre></div><p>上面设置中的<code>DEFINES_MODULE' =&gt; 'YES'</code>是告诉<code>Xcode</code>将这个<code>Pod</code>构建为模块（<code>module</code>），并生成 <code>.modulemap</code>文件，即：</p>
