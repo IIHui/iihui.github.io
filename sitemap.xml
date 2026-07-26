@@ -450,8 +450,8 @@ var headerFields = [String: String]() // ... 设置 Content-Type, Content-Length
  时序 A（正常：数据回调到达 -&amp;gt; 调用didReceive(data) -&amp;gt; 完成回调到达 -&amp;gt; 调用didFinish。 时序 B（崩溃）：invalidateAndCancel触发，stop被调用，此时将isTaskCompleted置为true。但有可能后台线程的didReceive data回调已经处于RunLoop队列中等待执行。之后，这个过期的数据回调被执行，虽然isTaskCompleted已是true，但如果在数据回调里只检查了!isTaskCompleted就调用 didReceive(data)，那么它依然会调用。随后完成回调到达，再次调用didFinish，或重复调用数据接收，系统直接崩溃。  unable to type-check this expression in reasonable time 升级了Xcode版本后，原来可以编译的代码出现了错误：
 The compiler is unable to type-check this expression in reasonable time; try breaking up the expression into distinct sub-expressions Swift的类型检查器会尝试为一个表达式找出所有可能的类型组合。如果表达式过长或包含复杂操作，这个「搜索空间」会指数级增长，导致检查超时。
 在Xcode 26 (Swift 6) 中，这个问题可能因以下原因被触发或加剧：
- Swift 6更严格的类型推断：新版本可能在类型推断上更严格，导致一些原本勉强能通过检查的表达式变得超时。 新增的重载：Swift或依赖库中添加的新方法或运算符重载，也可能增加类型检查器的搜索负担。  解决方案是按照提示将复杂的表达式拆分为多个独立的子表达式。
-</content>
+ Swift 6更严格的类型推断：新版本可能在类型推断上更严格，导致一些原本勉强能通过检查的表达式变得超时。 新增的重载：Swift或依赖库中添加的新方法或运算符重载，也可能增加类型检查器的搜索负担。  解决方案是按照提示将复杂的表达式拆分为多个独立的子表达式，示例如下：
+// 可能导致超时的复杂表达式 let url = &amp;#34;http://&amp;#34; &#43; username &#43; &amp;#34;:&amp;#34; &#43; password &#43; &amp;#34;@&amp;#34; &#43; address &#43; &amp;#34;/api/&amp;#34; &#43; channel &#43; &amp;#34;/picture&amp;#34;  // 拆分后，更清晰的代码，也减轻了编译器负担 let credentials = username &#43; &amp;#34;:&amp;#34; &#43; password let channelString = String(channel) let url = &amp;#34;http://&amp;#34; &#43; credentials &#43; &amp;#34;@&amp;#34; &#43; address &#43; &amp;#34;/api/&amp;#34; &#43; channelString &#43; &amp;#34;/picture&amp;#34; </content>
     </entry>
     
      <entry>
