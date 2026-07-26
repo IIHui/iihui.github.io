@@ -241,13 +241,13 @@ code.has-jax {
     <i class="fa fa-file-word-o"></i>
 </span>
 <span class="post-meta-item-text">字数: </span>
-<span class="leancloud-visitors-count">9469</span>
+<span class="leancloud-visitors-count">9743</span>
 &nbsp; | &nbsp;
 <span class="post-meta-item-icon">
     <i class="fa fa-coffee"></i>
 </span>
 <span class="post-meta-item-text">阅读: </span>
-<span class="leancloud-visitors-count">19 分钟</span>
+<span class="leancloud-visitors-count">20 分钟</span>
 </span>
       </div>
     </header>
@@ -738,6 +738,16 @@ code.has-jax {
 <li>时序 A（正常：数据回调到达 -&gt; 调用<code>didReceive(data)</code> -&gt; 完成回调到达 -&gt; 调用<code>didFinish</code>。</li>
 <li>时序 B（崩溃）：<code>invalidateAndCancel</code>触发，<code>stop</code>被调用，此时将<code>isTaskCompleted</code>置为<code>true</code>。但有可能后台线程的<code>didReceive data</code>回调已经处于<code>RunLoop</code>队列中等待执行。之后，这个过期的数据回调被执行，虽然<code>isTaskCompleted</code>已是<code>true</code>，但如果在数据回调里只检查了<code>!isTaskCompleted</code>就调用 <code>didReceive(data)</code>，那么它依然会调用。随后完成回调到达，再次调用<code>didFinish</code>，或重复调用数据接收，系统直接崩溃。</li>
 </ul>
+<h1 id="unable-to-type-check-this-expression-in-reasonable-time">unable to type-check this expression in reasonable time</h1>
+<p>升级了<code>Xcode</code>版本后，原来可以编译的代码出现了错误：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span>The compiler <span style="color:#66d9ef">is</span> unable to type<span style="color:#f92672">-</span>check this expression <span style="color:#66d9ef">in</span> reasonable time; <span style="color:#66d9ef">try</span> breaking up the expression into distinct sub<span style="color:#f92672">-</span>expressions
+</span></span></code></pre></div><p><code>Swift</code>的类型检查器会尝试为一个表达式找出所有可能的类型组合。如果表达式过长或包含复杂操作，这个「搜索空间」会指数级增长，导致检查超时。</p>
+<p>在<code>Xcode 26 (Swift 6)</code> 中，这个问题可能因以下原因被触发或加剧：</p>
+<ul>
+<li><code>Swift 6</code>更严格的类型推断：新版本可能在类型推断上更严格，导致一些原本勉强能通过检查的表达式变得超时。</li>
+<li>新增的重载：<code>Swift</code>或依赖库中添加的新方法或运算符重载，也可能增加类型检查器的搜索负担。</li>
+</ul>
+<p>解决方案是按照提示<font color="#de7802">将复杂的表达式拆分为多个独立的子表达式</font>。</p>
 
     </div>
     <footer class="post-footer">
@@ -938,6 +948,7 @@ code.has-jax {
         <li><a href="#taskdidreceivedata-has-already-been-called">taskDidReceiveData:] has already been called</a></li>
       </ul>
     </li>
+    <li><a href="#unable-to-type-check-this-expression-in-reasonable-time">unable to type-check this expression in reasonable time</a></li>
   </ul>
 </nav></div>
     </div>
