@@ -241,7 +241,7 @@ code.has-jax {
     <i class="fa fa-file-word-o"></i>
 </span>
 <span class="post-meta-item-text">字数: </span>
-<span class="leancloud-visitors-count">10403</span>
+<span class="leancloud-visitors-count">10474</span>
 &nbsp; | &nbsp;
 <span class="post-meta-item-icon">
     <i class="fa fa-coffee"></i>
@@ -763,8 +763,8 @@ code.has-jax {
 </span></span><span style="display:flex;"><span>}
 </span></span></code></pre></div><p>上面代码出现如下崩溃：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span>erminating app due to uncaught exception <span style="color:#960050;background-color:#1e0010">&#39;</span>NSInternalInconsistencyException<span style="color:#960050;background-color:#1e0010">&#39;</span>, reason: <span style="color:#960050;background-color:#1e0010">&#39;</span>Invalid update: invalid number of sections. The number of sections contained <span style="color:#66d9ef">in</span> the table view after the update (<span style="color:#ae81ff">4</span>) must be equal to the number of sections contained <span style="color:#66d9ef">in</span> the table view before the update (<span style="color:#ae81ff">3</span>), plus or minus the number of sections inserted or deleted (<span style="color:#ae81ff">0</span> inserted, <span style="color:#ae81ff">0</span> deleted).
-</span></span></code></pre></div><p>根源问题是因为在刷新时数据源发生了变化，<code>tableView</code>要求数据源在更新前后<code>section</code>数量保持一致（除非在 <code>beginUpdates/endUpdates</code>中同时做了插入删除操作）。这里崩溃信息显示，在<code>reloadRows</code>期间，<code>tableView</code>发现<code>section</code>数量从3变成了4，但没有插入或删除<code>section</code>，导致不一致。</p>
-<p>为什么会发生？因为<code>reloadRows</code>会触发<code>numberOfSections(in:)</code>和<code>numberOfRows(inSection:)</code>等数据源方法重新查询。可能在<code>reloadRows</code>之前和之后，数据源返回的<code>section</code>数量发生了变化。即数据源在调用 <code>reloadRows</code>时，底层数据已经改变了，导致<code>section</code>数量改变了，但是只调用了<code>reloadRows</code>，没有调用插入/删除<code>section</code>的方法，因此导致崩溃。</p>
+</span></span></code></pre></div><p>根源问题是因为在刷新时数据源发生了变化，<code>tableView</code>要求数据源在更新前后<code>section</code>数量保持一致（除非在 <code>beginUpdates/endUpdates</code>中同时做了插入删除操作）。这里崩溃信息显示，在<code>reloadRows</code>期间，<code>tableView</code>发现<code>section</code>数量发生了变化，但没有插入或删除<code>section</code>。</p>
+<p>为什么会出现崩溃？因为<code>reloadRows</code>会触发<code>numberOfSections(in:)</code>和<code>numberOfRows(inSection:)</code>等数据源方法重新查询。可能在<code>reloadRows</code>之前前或之后，数据源返回的<code>section</code>数量发生了变化。即数据源在调用 <code>reloadRows</code>时，底层数据已经改变了，导致<code>section</code>数量改变了，但只调用了<code>reloadRows</code>，并没有调用插入/删除<code>section</code>的方法，因此导致崩溃。</p>
 <p>解决方案有两种，第一种是直接更新已存在的<code>cell</code>：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span><span style="color:#66d9ef">if</span> <span style="color:#66d9ef">let</span> cell = <span style="color:#66d9ef">self</span>.tableView.cellForRow(at: indexPath) {
 </span></span><span style="display:flex;"><span>    <span style="color:#75715e">// 根据你的数据直接更新cell的子视图</span>
@@ -772,7 +772,11 @@ code.has-jax {
 </span></span><span style="display:flex;"><span>    <span style="color:#75715e">// 或者调用cell的自定义刷新方法</span>
 </span></span><span style="display:flex;"><span>    <span style="color:#75715e">// cell.configure(with: data)</span>
 </span></span><span style="display:flex;"><span>}
-</span></span></code></pre></div><p>第二种是确保数据源更新和<code>reloadData()</code>都在主线程且没有时间差异。</p>
+</span></span></code></pre></div><p>如果不关心动画，并且数据变动可能涉及<code>section</code>增删，最简单的就是全量刷新，这样会重新加载所有数据，不会因为<code>section</code>数量变化而出现崩溃。</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span>UIView.performWithoutAnimation {
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">self</span>?.userInfoTableView.reloadData()
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p>另外，确保数据源更新和<code>reloadData()</code>都在主线程且没有时间差异。</p>
 
     </div>
     <footer class="post-footer">
