@@ -455,9 +455,14 @@ The compiler is unable to type-check this expression in reasonable time; try bre
 erminating app due to uncaught exception &amp;#39;NSInternalInconsistencyException&amp;#39;, reason: &amp;#39;Invalid update: invalid number of sections. The number of sections contained in the table view after the update (4) must be equal to the number of sections contained in the table view before the update (3), plus or minus the number of sections inserted or deleted (0 inserted, 0 deleted). 根源问题是因为在刷新时数据源发生了变化，tableView要求数据源在更新前后section数量保持一致（除非在 beginUpdates/endUpdates中同时做了插入删除操作）。这里崩溃信息显示，在reloadRows期间，tableView发现section数量发生了变化，但没有插入或删除section。
 为什么会出现崩溃？因为reloadRows会触发numberOfSections(in:)和numberOfRows(inSection:)等数据源方法重新查询。可能在reloadRows之前前或之后，数据源返回的section数量发生了变化。即数据源在调用 reloadRows时，底层数据已经改变了，导致section数量改变了，但只调用了reloadRows，并没有调用插入/删除section的方法，因此导致崩溃。
 解决方案有两种，第一种是直接更新已存在的cell：
-if let cell = self.tableView.cellForRow(at: indexPath) {  // 根据你的数据直接更新cell的子视图  cell.textLabel?.text = newValue // 举例  // 或者调用cell的自定义刷新方法  // cell.configure(with: data) } 如果不关心动画，并且数据变动可能涉及section增删，最简单的就是全量刷新，这样会重新加载所有数据，不会因为section数量变化而出现崩溃。
+if let cell = self.tableView.cellForRow(at: indexPath) {  // 直接更新cell的子视图  cell.textLabel?.text = newValue  // 或者调用cell的自定义刷新方法  // cell.configure(with: data) } 如果不关心动画，并且数据变动可能涉及section增删，最简单的就是全量刷新，这样会重新加载所有数据，不会因为section数量变化而出现崩溃。
 UIView.performWithoutAnimation {  self?.userInfoTableView.reloadData() } 另外，确保数据源更新和reloadData()都在主线程且没有时间差异。
-</content>
+afterScreenUpdates 在Swift中的调用了window.drawHierarchy(in: window.frame, afterScreenUpdates: false)。其中的afterScreenUpdates参数决定了截图时，最近对视图层次结构所做的更改是否被包含在内。
+ afterScreenUpdates: false：渲染当前视图层次结构的快照。意味着，最近对视图做出的、尚未反映在屏幕上的更改可能不会被包含在截图中。 afterScreenUpdates: true：在渲染快照前，会等待并应用所有待处理的视图更新。这样可以确保截图包含了所有最近的更改。  修改了视图（例如，更改了文本、颜色、添加了子视图等）之后，立即就需要截图时，必须使用 true。一个典型的场景是，用户截取修改后的界面：
+// 修改界面 myLabel.text = &amp;#34;新文本&amp;#34; myView.backgroundColor = .blue  // 立即截图。为了包含上面的改动，必须使用afterScreenUpdates: true let renderer = UIGraphicsImageRenderer(size: myView.bounds.size) let screenshot = renderer.image { _ in  myView.drawHierarchy(in: myView.bounds, afterScreenUpdates: true) } 当没有对视图进行任何待处理的更改，或者明确不想包含最近的更改时，可以使用false。它可能会有轻微的性能优势，因为它不需要强制完成布局或绘制周期。该方法返回一个布尔值，true表示截图成功，false表示截图可能缺少了某些视图的图像数据。
+这个方法本身不如snapshotView(afterScreenUpdates:)高效。对于UIView.snapshotView(afterScreenUpdates:)和UIView.drawHierarchy(in:afterScreenUpdates:)中的afterScreenUpdates这个布尔值都遵循同一条规则：
+   值 含义 包含内容     false 不等待更新完成，直接截取当前屏幕已经渲染出来的内容。 只包含上一帧已提交到渲染服务器的画面。最近修改的视图（如刚改的文字、颜色）可能不会被包含。   true 强制等待所有待处理的布局（layoutSubviews）、绘制（drawRect:）和隐式动画完成，然后再截取。 包含所有最近的修改，确保截图是最终状态的“完整快照”。    虽然参数含义相同，但它们的截图范围和性能开销完全不同。
+   维度 UIView.snapshotView(afterScreenUpdates:) UIView.drawHierarchy(in:afterScreenUpdates:)     返回值 返回一个UIView（轻量级快照容器）。 不直接返回视图，需要配合UIGraphicsImageRenderer等上下文，将内容绘制成图片。   底层实现 利用Core Animation的shouldRasterize机制，直接复制图层树的渲染缓存（backing store）。 强制触发CPU渲染管线，重新遍历视图层级并进行绘制（类似 drawRect）。   性能开销 极快，几乎无性能损耗（只是指针拷贝）。 较重，因为涉及CPU绘制和内存分配，频繁调用会卡顿。   是否包含子视图 包含所有子视图的快照。 包含所有子视图的绘制。   是否包含模糊/滤镜效果 完美保留（因为是GPU渲染缓存）。 不支持实时模糊（UIVisualEffectView），截出来可能是半透明毛玻璃的“静态图层”，效果异常。   是否可交互 返回的UIView不可交互（只是图片容器）。 绘制成UIImage后不可交互。   主要用途 做动画过渡（如UIViewController转场）、快速复制复杂视图的外观。 生成静态截图保存到相册、分享、或作为背景图。    </content>
     </entry>
     
      <entry>

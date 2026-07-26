@@ -241,13 +241,13 @@ code.has-jax {
     <i class="fa fa-file-word-o"></i>
 </span>
 <span class="post-meta-item-text">字数: </span>
-<span class="leancloud-visitors-count">10474</span>
+<span class="leancloud-visitors-count">11735</span>
 &nbsp; | &nbsp;
 <span class="post-meta-item-icon">
     <i class="fa fa-coffee"></i>
 </span>
 <span class="post-meta-item-text">阅读: </span>
-<span class="leancloud-visitors-count">21 分钟</span>
+<span class="leancloud-visitors-count">24 分钟</span>
 </span>
       </div>
     </header>
@@ -767,8 +767,8 @@ code.has-jax {
 <p>为什么会出现崩溃？因为<code>reloadRows</code>会触发<code>numberOfSections(in:)</code>和<code>numberOfRows(inSection:)</code>等数据源方法重新查询。可能在<code>reloadRows</code>之前前或之后，数据源返回的<code>section</code>数量发生了变化。即数据源在调用 <code>reloadRows</code>时，底层数据已经改变了，导致<code>section</code>数量改变了，但只调用了<code>reloadRows</code>，并没有调用插入/删除<code>section</code>的方法，因此导致崩溃。</p>
 <p>解决方案有两种，第一种是直接更新已存在的<code>cell</code>：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span><span style="color:#66d9ef">if</span> <span style="color:#66d9ef">let</span> cell = <span style="color:#66d9ef">self</span>.tableView.cellForRow(at: indexPath) {
-</span></span><span style="display:flex;"><span>    <span style="color:#75715e">// 根据你的数据直接更新cell的子视图</span>
-</span></span><span style="display:flex;"><span>    cell.textLabel?.text = newValue  <span style="color:#75715e">// 举例</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">// 直接更新cell的子视图</span>
+</span></span><span style="display:flex;"><span>    cell.textLabel?.text = newValue 
 </span></span><span style="display:flex;"><span>    <span style="color:#75715e">// 或者调用cell的自定义刷新方法</span>
 </span></span><span style="display:flex;"><span>    <span style="color:#75715e">// cell.configure(with: data)</span>
 </span></span><span style="display:flex;"><span>}
@@ -777,6 +777,92 @@ code.has-jax {
 </span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">self</span>?.userInfoTableView.reloadData()
 </span></span><span style="display:flex;"><span>}
 </span></span></code></pre></div><p>另外，确保数据源更新和<code>reloadData()</code>都在主线程且没有时间差异。</p>
+<h2 id="afterscreenupdates">afterScreenUpdates</h2>
+<p>在Swift中的调用了<code>window.drawHierarchy(in: window.frame, afterScreenUpdates: false)</code>。其中的<code>afterScreenUpdates</code>参数决定了截图时，最近对视图层次结构所做的更改是否被包含在内。</p>
+<ul>
+<li><code>afterScreenUpdates: false</code>：渲染当前视图层次结构的快照。意味着，最近对视图做出的、尚未反映在屏幕上的更改可能不会被包含在截图中。</li>
+<li><code>afterScreenUpdates: true</code>：在渲染快照前，会等待并应用所有待处理的视图更新。这样可以确保截图包含了所有最近的更改。</li>
+</ul>
+<p>修改了视图（例如，更改了文本、颜色、添加了子视图等）之后，立即就需要截图时，必须使用 <code>true</code>。一个典型的场景是，用户截取修改后的界面：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span><span style="color:#75715e">// 修改界面</span>
+</span></span><span style="display:flex;"><span>myLabel.text = <span style="color:#e6db74">&#34;新文本&#34;</span>
+</span></span><span style="display:flex;"><span>myView.backgroundColor = .blue
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">// 立即截图。为了包含上面的改动，必须使用afterScreenUpdates: true</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">let</span> renderer = UIGraphicsImageRenderer(size: myView.bounds.size)
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">let</span> screenshot = renderer.image { <span style="color:#66d9ef">_</span> <span style="color:#66d9ef">in</span>
+</span></span><span style="display:flex;"><span>    myView.drawHierarchy(<span style="color:#66d9ef">in</span>: myView.bounds, afterScreenUpdates: <span style="color:#66d9ef">true</span>)
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p>当没有对视图进行任何待处理的更改，或者明确不想包含最近的更改时，可以使用<code>false</code>。它可能会有轻微的性能优势，因为它不需要强制完成布局或绘制周期。该方法返回一个布尔值，<code>true</code>表示截图成功，<code>false</code>表示截图可能缺少了某些视图的图像数据。</p>
+<p>这个方法本身不如<code>snapshotView(afterScreenUpdates:)</code>高效。对于<code>UIView.snapshotView(afterScreenUpdates:)</code>和<code>UIView.drawHierarchy(in:afterScreenUpdates:)</code>中的<code>afterScreenUpdates</code>这个布尔值都遵循同一条规则：</p>
+<table>
+<thead>
+<tr>
+<th style="text-align:left">值</th>
+<th style="text-align:left">含义</th>
+<th style="text-align:left">包含内容</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left"><code>false</code></td>
+<td style="text-align:left">不等待更新完成，直接截取当前屏幕已经渲染出来的内容。</td>
+<td style="text-align:left">只包含上一帧已提交到渲染服务器的画面。最近修改的视图（如刚改的文字、颜色）可能不会被包含。</td>
+</tr>
+<tr>
+<td style="text-align:left"><code>true</code></td>
+<td style="text-align:left">强制等待所有待处理的布局（<code>layoutSubviews</code>）、绘制（<code>drawRect:</code>）和隐式动画完成，然后再截取。</td>
+<td style="text-align:left">包含所有最近的修改，确保截图是最终状态的“完整快照”。</td>
+</tr>
+</tbody>
+</table>
+<p>虽然参数含义相同，但它们的截图范围和性能开销完全不同。</p>
+<table>
+<thead>
+<tr>
+<th style="text-align:left">维度</th>
+<th style="text-align:left"><code>UIView.snapshotView(afterScreenUpdates:)</code></th>
+<th style="text-align:left"><code>UIView.drawHierarchy(in:afterScreenUpdates:)</code></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left"><strong>返回值</strong></td>
+<td style="text-align:left">返回一个<code>UIView</code>（轻量级快照容器）。</td>
+<td style="text-align:left">不直接返回视图，需要配合<code>UIGraphicsImageRenderer</code>等上下文，将内容绘制成图片。</td>
+</tr>
+<tr>
+<td style="text-align:left"><strong>底层实现</strong></td>
+<td style="text-align:left">利用<code>Core Animation</code>的<code>shouldRasterize</code>机制，直接复制图层树的渲染缓存（<code>backing store</code>）。</td>
+<td style="text-align:left">强制触发CPU渲染管线，重新遍历视图层级并进行绘制（类似 <code>drawRect</code>）。</td>
+</tr>
+<tr>
+<td style="text-align:left"><strong>性能开销</strong></td>
+<td style="text-align:left">极快，几乎无性能损耗（只是指针拷贝）。</td>
+<td style="text-align:left">较重，因为涉及CPU绘制和内存分配，频繁调用会卡顿。</td>
+</tr>
+<tr>
+<td style="text-align:left"><strong>是否包含子视图</strong></td>
+<td style="text-align:left">包含所有子视图的快照。</td>
+<td style="text-align:left">包含所有子视图的绘制。</td>
+</tr>
+<tr>
+<td style="text-align:left"><strong>是否包含模糊/滤镜效果</strong></td>
+<td style="text-align:left">完美保留（因为是GPU渲染缓存）。</td>
+<td style="text-align:left">不支持实时模糊（<code>UIVisualEffectView</code>），截出来可能是半透明毛玻璃的“静态图层”，效果异常。</td>
+</tr>
+<tr>
+<td style="text-align:left"><strong>是否可交互</strong></td>
+<td style="text-align:left">返回的<code>UIView</code>不可交互（只是图片容器）。</td>
+<td style="text-align:left">绘制成<code>UIImage</code>后不可交互。</td>
+</tr>
+<tr>
+<td style="text-align:left"><strong>主要用途</strong></td>
+<td style="text-align:left">做动画过渡（如<code>UIViewController</code>转场）、快速复制复杂视图的外观。</td>
+<td style="text-align:left">生成静态截图保存到相册、分享、或作为背景图。</td>
+</tr>
+</tbody>
+</table>
 
     </div>
     <footer class="post-footer">
@@ -978,7 +1064,11 @@ code.has-jax {
       </ul>
     </li>
     <li><a href="#unable-to-type-check-this-expression-in-reasonable-time">unable to type-check this expression in reasonable time</a></li>
-    <li><a href="#nvalid-number-of-sections">nvalid number of sections</a></li>
+    <li><a href="#nvalid-number-of-sections">nvalid number of sections</a>
+      <ul>
+        <li><a href="#afterscreenupdates">afterScreenUpdates</a></li>
+      </ul>
+    </li>
   </ul>
 </nav></div>
     </div>
