@@ -4963,11 +4963,11 @@ sudo codesign --force --deep --sign - /Applications/xxx.app 上面命令的作�
   失去「公证」检查：Apple的「公证」（Notarization）要求应用经过恶意扫描。自签名直接跳过了这一层，如果该应用已被植入病毒，系统将不再阻拦。
   破坏系统完整性保护（SIP）相关机制：虽然SIP保护系统目录，但重签名会破坏应用内部的强化运行时（Hardened Runtime），导致内存攻击防护失效，黑客更容易通过该应用渗透系统。
   damaged and can’t be opened 安装完某个应用，打开后出现了如下提示，如下图所示：
-xxx is damaged and can’t be opened.You should move it to the Bin. 出现上面提示说明macOS的Gatekeeper安全机制起了作用，因为系统无法验证这个App的来源是否安全，所以阻止了它的运行。出现上面问题的原因通常有两个，一个是因为App没有通过苹果的公证流程，第二个是其代码签名在下载或修改后失效了。有两个方法可以解决上面问题：
-第一种是在系统设置&amp;ndash;&amp;gt;隐私与安全性&amp;ndash;&amp;gt;安全，会看到xxx was blocked to protect your Mac，此时点击右侧的Open AnyWay，在弹出的二次确认页面，再次点击Open AnyWay，接着输入密码。这是最安全、最快的方法，能直接绕过这次拦截，而且不影响系统整体的安全设置。
-第二种方法是通过终端命令，手动移除系统给这个App添加的隔离标记。具体命令如下，其中xxx表示被阻断的应用名称：
+xxx is damaged and can’t be opened.You should move it to the Bin. 出现上面提示说明macOS的Gatekeeper安全机制起了作用，因为系统无法验证这个App的来源是否安全，所以阻止了它的运行。出现上面问题的原因通常有两个，一个是因为App没有通过苹果的公证流程，第二个是其代码签名在下载或修改后失效了。有两个方法可以解决上面出现的问题：
+第一种方法是到系统设置&amp;mdash;&amp;gt;隐私与安全性&amp;mdash;&amp;gt;安全，会看到xxx was blocked to protect your Mac，此时点击右侧的Open AnyWay，在弹出的二次确认页面，再次点击Open AnyWay，接着输入密码，后面就能正常打开。
+第二种方法是通过终端命令，手动移除系统给这个App添加的隔离标记。具体的移除命令如下，其中xxx表示被阻断的应用名称：
 sudo xattr -d com.apple.quarantine /Applications/xxx.app 执行上面命令时若加上-r选项：
-sudo xattr -r -d com.apple.quarantine /Applications/xxx.app 实际上，macOS的App是一个特殊文件夹（应用程序包），内部包含数十甚至上百个文件。当从互联网下载一个App并保存到磁盘上时，macOS的隔离机制会递归地给包内所有可执行文件都打上隔离标记，而不仅仅是顶层文件夹。
+sudo xattr -r -d com.apple.quarantine /Applications/xxx.app 实际上，macOS的App是一个特殊文件夹（应用程序包），内部包含数十甚至上百个文件。当从互联网下载一个App并保存到磁盘上时，macOS的隔离机制会生效，即会递归地给包内所有可执行文件都打上隔离标记，而不仅仅是顶层的文件夹。
 因此，移除隔离属性时也必须递归操作。否则，若主程序xxx的隔离属性被清除了，但内部的动态库libxxx.dylib仍然带隔离标记。当应用运行时加载该动态库，依然会触发macOS的隔离拦截，导致启动失败或闪退。
 Apple could not verify 打开从互联网下载的某个第三方应用（非AppleStore），出现如下提示：
 Apple could not verify “xxx” is free of malware that may harm your Mac or compromise your privacy 按照Apple的安全流程，第三方应用需要提交给Apple做安全检查（也就是「公证」），确认没病毒后，系统就会放行。看到这个提示，说明该软件没有通过公证流程，或者开发者签名未被Apple完全认可。
