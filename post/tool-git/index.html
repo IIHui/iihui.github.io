@@ -241,7 +241,7 @@ code.has-jax {
     <i class="fa fa-file-word-o"></i>
 </span>
 <span class="post-meta-item-text">字数: </span>
-<span class="leancloud-visitors-count">3542</span>
+<span class="leancloud-visitors-count">3783</span>
 &nbsp; | &nbsp;
 <span class="post-meta-item-icon">
     <i class="fa fa-coffee"></i>
@@ -357,6 +357,12 @@ code.has-jax {
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sh" data-lang="sh"><span style="display:flex;"><span>git pull --prune
 </span></span></code></pre></div><p>也可以设置自动清理，通过全局配置，让<code>git fetch</code>或<code>git pull</code>默认执行清理：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sh" data-lang="sh"><span style="display:flex;"><span>git config --global fetch.prune true
+</span></span></code></pre></div><p>上面几种方式只会删掉远程跟踪引用，不会影响本地开发分支。如果要删除本地这些「上游已不存在的分支」，需要手动或批量清理。首先可以运行以下命令，查看所有本地分支及其关联的远程分支状态：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sh" data-lang="sh"><span style="display:flex;"><span>git branch -vv
+</span></span></code></pre></div><p>接着运行以下命令一键删除所有标记为<code>gone</code>的本地分支：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sh" data-lang="sh"><span style="display:flex;"><span>git branch -vv | grep <span style="color:#e6db74">&#39;: gone]&#39;</span> | awk <span style="color:#e6db74">&#39;{print $1}&#39;</span> | xargs git branch -d
+</span></span></code></pre></div><p>上面的命令中的<code>-d</code>表示安全删除（仅删除已合并的分支），如果提示「未合并」但确定要强行删除，可将末尾的<code>-d</code>换成<code>-D</code>（强制删除）。如果不放心，可以先执行预览命令，只列出要删的分支，不实际删除：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sh" data-lang="sh"><span style="display:flex;"><span>git branch -vv | grep <span style="color:#e6db74">&#39;: gone]&#39;</span> | awk <span style="color:#e6db74">&#39;{print $1}&#39;</span>
 </span></span></code></pre></div><h1 id="curl-79-error-in-the-ssh-layer">curl: (79) Error in the SSH layer</h1>
 <p>使用<code>curl</code>的过程中遇到如下报错，查<a href="https://www.jscape.com/blog/setting-up-sftp-public-key-authentication-command-line#:~:text=Setting%20Up%20SFTP%20Public%20Key%20Authentication%20On%20The,5.%20Login%20SFTP%20SSH%20Key%20Based%20Authentication%20">资料</a>后发现是因为查看的是目录，而不是文件：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>curl: <span style="color:#f92672">(</span>79<span style="color:#f92672">)</span> Error in the SSH layer
