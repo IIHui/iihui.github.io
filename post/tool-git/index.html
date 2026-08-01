@@ -241,13 +241,13 @@ code.has-jax {
     <i class="fa fa-file-word-o"></i>
 </span>
 <span class="post-meta-item-text">字数: </span>
-<span class="leancloud-visitors-count">3354</span>
+<span class="leancloud-visitors-count">3542</span>
 &nbsp; | &nbsp;
 <span class="post-meta-item-icon">
     <i class="fa fa-coffee"></i>
 </span>
 <span class="post-meta-item-text">阅读: </span>
-<span class="leancloud-visitors-count">7 分钟</span>
+<span class="leancloud-visitors-count">8 分钟</span>
 </span>
       </div>
     </header>
@@ -276,7 +276,7 @@ code.has-jax {
 </span></span></code></pre></div><p>它的原理是先找到两个分支（即当前分支<code>experiment</code>和变基的目标分支<code>master</code>） 的最近共同祖先C2，然后对比当前分支相对于该祖先的历次提交，<font color=LightSeaGreen>提取相应的修改并存为临时文件</font>，然后将当前分支指向目标C3，最后<font color="#de7802">将之前另存为临时文件的修改依序应用</font>到C3上：</p>
 <img src="https://files.seeusercontent.com/2026/06/19/0Mrp/image-20220115120103912.png" alt="image-20220115120103912" style="zoom:67%;" />
 <p><a href="https://dotblogs.com.tw/kinanson/2018/01/20/134721">SourceTree中使用rebase</a></p>
-<h1 id="device-not-configured">Device not Configured</h1>
+<h1 id="device-not-configured">device not configured</h1>
 <p>修改了<code>git</code>密码后，在<code>PyCharm</code>中运行脚本拉取代码时报错：<code>could not find Username for ... Device not configured</code>。此时需要使用交互式命令行，重新输入用户名和新密码。例如，使用<code>git push</code>命令，就会在终端自动提示要输入用户名和密码：</p>
 <img src="https://files.seeusercontent.com/2026/06/19/xyK3/2026-06-19_17-35-36.png" alt="2026-06-19_17-35-36" style="zoom:67%;" />
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sh" data-lang="sh"><span style="display:flex;"><span><span style="color:#f92672">[</span>ruby-2.7.2<span style="color:#f92672">]</span>~/Documents/xxx:517 ✓ ➭ git push
@@ -347,8 +347,16 @@ code.has-jax {
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sh" data-lang="sh"><span style="display:flex;"><span>brew install icu4c
 </span></span><span style="display:flex;"><span>brew install libuv
 </span></span></code></pre></div><h1 id="同步远程已删除分支">同步远程已删除分支</h1>
-<p>最近发现本地存在很多在远程中已经删除的分支。为了同步服务端的分支，可以在终端跳转到仓库目录，然后执行下面命令：</p>
+<p>最近发现本地存在很多在远程中已经删除的分支。为了同步服务端的分支，有三种方式解决该问题。第一种可以在终端跳转到仓库目录，然后执行下面命令：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sh" data-lang="sh"><span style="display:flex;"><span>git remote prune origin
+</span></span></code></pre></div><p>上面命令会清理本地所有与远端已删除分支对应的「远程跟踪分支」。建议先加上<code>--dry-run</code>参数进行预览，确认无误后再执行正式命令。</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sh" data-lang="sh"><span style="display:flex;"><span>git remote prune origin --dry-run
+</span></span></code></pre></div><p>第二种方法是在<font color="#de7802">从远端获取最新代码的同时</font>进行清理：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sh" data-lang="sh"><span style="display:flex;"><span>git fetch --prune origin
+</span></span></code></pre></div><p>第三种方法是<font color="#de7802">在拉取代码并合并到当前分支的同时</font>进行清理：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sh" data-lang="sh"><span style="display:flex;"><span>git pull --prune
+</span></span></code></pre></div><p>也可以设置自动清理，通过全局配置，让<code>git fetch</code>或<code>git pull</code>默认执行清理：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sh" data-lang="sh"><span style="display:flex;"><span>git config --global fetch.prune true
 </span></span></code></pre></div><h1 id="curl-79-error-in-the-ssh-layer">curl: (79) Error in the SSH layer</h1>
 <p>使用<code>curl</code>的过程中遇到如下报错，查<a href="https://www.jscape.com/blog/setting-up-sftp-public-key-authentication-command-line#:~:text=Setting%20Up%20SFTP%20Public%20Key%20Authentication%20On%20The,5.%20Login%20SFTP%20SSH%20Key%20Based%20Authentication%20">资料</a>后发现是因为查看的是目录，而不是文件：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>curl: <span style="color:#f92672">(</span>79<span style="color:#f92672">)</span> Error in the SSH layer
@@ -535,7 +543,7 @@ code.has-jax {
     <li><a href="#大小写敏感">大小写敏感</a></li>
     <li><a href="#errno-54">errno 54</a></li>
     <li><a href="#rebase">rebase</a></li>
-    <li><a href="#device-not-configured">Device not Configured</a></li>
+    <li><a href="#device-not-configured">device not configured</a></li>
     <li><a href="#更改ssh方式">更改ssh方式</a></li>
     <li><a href="#修改commit时间">修改commit时间</a></li>
     <li><a href="#exited-with-128">exited with 128</a></li>

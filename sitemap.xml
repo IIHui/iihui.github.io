@@ -4656,7 +4656,7 @@ git config --global http.postBuffer 1048576000 git config --global https.postBuf
 还有一种方法：可以提取在C4中引入的修改，然后在C3上应用一次。 在Git中，这种操作就叫做「变基」（rebase）。 可以使用rebase命令将提交到某一分支上的所有修改都移至另一分支上。在上面例子中，可以先检出experiment分支，然后将它变基到master分支上：
 git checkout experiment git rebase master 它的原理是先找到两个分支（即当前分支experiment和变基的目标分支master） 的最近共同祖先C2，然后对比当前分支相对于该祖先的历次提交，提取相应的修改并存为临时文件，然后将当前分支指向目标C3，最后将之前另存为临时文件的修改依序应用到C3上：
 SourceTree中使用rebase
-Device not Configured 修改了git密码后，在PyCharm中运行脚本拉取代码时报错：could not find Username for ... Device not configured。此时需要使用交互式命令行，重新输入用户名和新密码。例如，使用git push命令，就会在终端自动提示要输入用户名和密码：
+device not configured 修改了git密码后，在PyCharm中运行脚本拉取代码时报错：could not find Username for ... Device not configured。此时需要使用交互式命令行，重新输入用户名和新密码。例如，使用git push命令，就会在终端自动提示要输入用户名和密码：
 [ruby-2.7.2]~/Documents/xxx:517 ✓ ➭ git push Username for &amp;#39;http://xxx&amp;#39;: Password for &amp;#39;http://xxx&amp;#39;: Everything up-to-date 更改ssh方式 最近往github推送代码时，出现了报错：Support for password authentication was removed on August 13。详细提示如下所示:
 nothing to commit, working tree clean remote: Support for password authentication was removed on August 13, 2021. Please use a personal access token instead. remote: Please see https://github.blog/2020-12-15-token-authentication-requirements-for-git-operations/ for more information. fatal: unable to access &amp;#39;https://github.com/xxx/xxx.git/&amp;#39;: The requested URL returned error: 403 于是按照官方文档添加SSH Key，并添加到github，再push代码的时候依然报错。切到工程目录，使用git remote -v命令，发现原仓库clone的时候是HTTPS方式。需要使用git remote set-url 命令切换到SSH方式：
 git remote -v git remote set-url origin git@github.com:username/xxx.git 修改commit时间 有时需要指定或修改commit时间。若想要指定本地待提交commit的时间，可以使用如下命令：
@@ -4676,8 +4676,12 @@ fatal: not in a git directory 使用Homebrew安装软件时，出现如下提示
 fatal: not in a git directory Error: Command failed with exit 128: git 可以参考这里，进行如下设置：
 git config --global --add safe.directory /usr/local/Homebrew git config --global --add safe.directory /usr/local/Homebrew/Library/Taps/homebrew/homebrew-cask git config --global --add safe.directory /usr/local/Homebrew/Library/Taps/homebrew/homebrew-core No such file or directory @ rb_sysopen 执行了上面命令后，还是出现Error: No such file or directory @ rb_sysopen，解决方案是单独使用brew命令安装依赖：
 ==&amp;gt; Installing dependencies for node: icu4c and libuv ==&amp;gt; Installing node dependency: icu4c ==&amp;gt; Pouring icu4c-70.1.monterey.bottle.tar.gz Error: No such file or directory @ rb_sysopen - /Users/xxx/Library/Caches/Homebrew/downloads/2d9f30e8aed78118c54346d53e7e5b9ed0e04385816d1cf0453f22b6644f14ad--icu4c-70.1.monterey.bottle.tar.gz 安装依赖的命令如下：
-brew install icu4c brew install libuv 同步远程已删除分支 最近发现本地存在很多在远程中已经删除的分支。为了同步服务端的分支，可以在终端跳转到仓库目录，然后执行下面命令：
-git remote prune origin curl: (79) Error in the SSH layer 使用curl的过程中遇到如下报错，查资料后发现是因为查看的是目录，而不是文件：
+brew install icu4c brew install libuv 同步远程已删除分支 最近发现本地存在很多在远程中已经删除的分支。为了同步服务端的分支，有三种方式解决该问题。第一种可以在终端跳转到仓库目录，然后执行下面命令：
+git remote prune origin 上面命令会清理本地所有与远端已删除分支对应的「远程跟踪分支」。建议先加上--dry-run参数进行预览，确认无误后再执行正式命令。
+git remote prune origin --dry-run 第二种方法是在从远端获取最新代码的同时进行清理：
+git fetch --prune origin 第三种方法是在拉取代码并合并到当前分支的同时进行清理：
+git pull --prune 也可以设置自动清理，通过全局配置，让git fetch或git pull默认执行清理：
+git config --global fetch.prune true curl: (79) Error in the SSH layer 使用curl的过程中遇到如下报错，查资料后发现是因为查看的是目录，而不是文件：
 curl: (79) Error in the SSH layer # 查看的是目录 curl -k --user xxx sftp://192.168.1.101/home 若使用curl时想使用sftp无密码方式上传文件到某个服务器，可以使用如下命令，即使用sftp将local-file传输到位于/path/to/file的远程服务器上，而无需密码。需要注意的是，这种方式不支持目录上传仅支持文件：
 curl --key ~/.ssh/id_rsa --pubkey ~/.ssh/id_rsa.pub sftp://user@remote-server/path/to/file -T local-file 如果已经将ssh-key公钥加入到远程主机authorized_keys，则可以去掉上面的--key和--pubkey。如果要使用curl设置SFTP免密码登录，可以按照如下步骤操作：
 1、使用ssh-keygen命令生成公钥/私钥对。这将在当前机器的主目录中创建一个公钥文件（通常为id_rsa.pub）和一个私钥文件（通常为id_rsa）。
