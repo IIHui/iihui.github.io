@@ -4680,12 +4680,13 @@ brew install icu4c brew install libuv 同步远程已删除分支 最近发现�
 git remote prune origin 要理解上面的prune，先要明白git维护的三类分支引用。第一类是本地分支，在工作区开发的分支，存储在.git/refs/heads/。第二类是远程跟踪分支，本地记录的「远端分支上次拉取时的状态」，只读缓存，存储在.git/refs/remotes/origin/。第三类是远程仓库实际分支，真正的远端分支，存储在托管平台服务器。
 当执行git remote prune origin时，git会做以下事情：
  git会向origin对应的远程服务器发起请求，获取该仓库当前所有分支的列表。 将服务器返回的实际分支列表，与本地.git/refs/remotes/origin/目录下存储的「远程跟踪分支」进行逐一比对。 对于每个本地存在的远程跟踪分支（如origin/old-feature），如果在远程服务器上已经找不到对应的分支，git就会删除本地的这个远程跟踪引用文件。  上面命令会清理本地存在的，但在远端已删除分支对应的「远程跟踪分支」。保险起见，建议先加上--dry-run参数进行预览，确认无误后再执行上面正式的删除命令。
-git remote prune origin --dry-run 第二种方法是在从远端获取最新代码的同时进行清理：
+git remote prune origin --dry-run 上面命令的--dry-run是模拟运行或演习模式。它的本质是执行完整的扫描和对比逻辑，输出最终结果报告，但跳过所有写入/删除操作。加上--dry-run后，上面的第三步只输出结果，但不删除。
+第二种方法是在从远端获取最新代码的同时进行清理：
 git fetch --prune origin 第三种方法是在拉取代码并合并到当前分支的同时进行清理：
 git pull --prune 也可以设置自动清理，通过全局配置，让git fetch或git pull默认执行清理：
-git config --global fetch.prune true 上面几种方式只会删掉远程跟踪引用，不会影响本地开发分支。如果要删除本地这些「上游已不存在的分支」，需要手动或批量清理。首先可以运行以下命令，查看所有本地分支及其关联的远程分支状态：
+git config --global fetch.prune true 上面几种方式只会删掉远程跟踪引用，不会影响本地开发分支。如果要删除本地这些「远端已不存在的分支」，需要手动或批量清理。首先可以运行以下命令，查看所有本地分支及其关联的远程分支状态：
 git branch -vv 接着运行以下命令一键删除所有标记为gone的本地分支：
-git branch -vv | grep &amp;#39;: gone]&amp;#39; | awk &amp;#39;{print $1}&amp;#39; | xargs git branch -d 上面的命令中的-d表示安全删除（仅删除已合并的分支），如果提示「未合并」但确定要强行删除，可将末尾的-d换成-D（强制删除）。如果不放心，可以先执行预览命令，只列出要删的分支，不实际删除：
+git branch -vv | grep &amp;#39;: gone]&amp;#39; | awk &amp;#39;{print $1}&amp;#39; | xargs git branch -d 上面命令中的-d表示安全删除（仅删除已合并的分支），如果提示「未合并」但确定要强行删除，可将末尾的-d换成-D（强制删除）。如果不放心，可以先执行预览命令，只列出要删的分支，不实际删除：
 git branch -vv | grep &amp;#39;: gone]&amp;#39; | awk &amp;#39;{print $1}&amp;#39; curl: (79) Error in the SSH layer 使用curl的过程中遇到如下报错，查资料后发现是因为查看的是目录，而不是文件：
 curl: (79) Error in the SSH layer # 查看的是目录 curl -k --user xxx sftp://192.168.1.101/home 若使用curl时想使用sftp无密码方式上传文件到某个服务器，可以使用如下命令，即使用sftp将local-file传输到位于/path/to/file的远程服务器上，而无需密码。需要注意的是，这种方式不支持目录上传仅支持文件：
 curl --key ~/.ssh/id_rsa --pubkey ~/.ssh/id_rsa.pub sftp://user@remote-server/path/to/file -T local-file 如果已经将ssh-key公钥加入到远程主机authorized_keys，则可以去掉上面的--key和--pubkey。如果要使用curl设置SFTP免密码登录，可以按照如下步骤操作：
