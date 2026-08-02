@@ -4677,8 +4677,9 @@ fatal: not in a git directory Error: Command failed with exit 128: git 可以参
 git config --global --add safe.directory /usr/local/Homebrew git config --global --add safe.directory /usr/local/Homebrew/Library/Taps/homebrew/homebrew-cask git config --global --add safe.directory /usr/local/Homebrew/Library/Taps/homebrew/homebrew-core No such file or directory @ rb_sysopen 执行了上面命令后，还是出现Error: No such file or directory @ rb_sysopen，解决方案是单独使用brew命令安装依赖：
 ==&amp;gt; Installing dependencies for node: icu4c and libuv ==&amp;gt; Installing node dependency: icu4c ==&amp;gt; Pouring icu4c-70.1.monterey.bottle.tar.gz Error: No such file or directory @ rb_sysopen - /Users/xxx/Library/Caches/Homebrew/downloads/2d9f30e8aed78118c54346d53e7e5b9ed0e04385816d1cf0453f22b6644f14ad--icu4c-70.1.monterey.bottle.tar.gz 安装依赖的命令如下：
 brew install icu4c brew install libuv 同步远程已删除分支 最近发现本地存在很多在远端已删除的分支。为了同步服务端的分支，有三种方法解决该问题。第一种方法是在终端跳转到仓库目录，然后执行下面命令：
-git remote prune origin 要理解上面的prune，先要明白git维护的三类分支引用。第一类是本地分支，在工作区开发的分支。第二类是远程跟踪分支，本地记录的「远端分支上次拉取时的状态」，只读缓存。第三类是远程仓库实际分支，真正的远端分支。
-上面命令会清理本地存在的，但所有在远端已删除分支对应的「远程跟踪分支」。保险起见，建议先加上--dry-run参数进行预览，确认无误后再执行上面正式的删除命令。
+git remote prune origin 要理解上面的prune，先要明白git维护的三类分支引用。第一类是本地分支，在工作区开发的分支，存储在.git/refs/heads/。第二类是远程跟踪分支，本地记录的「远端分支上次拉取时的状态」，只读缓存，存储在.git/refs/remotes/origin/。第三类是远程仓库实际分支，真正的远端分支，存储在托管平台服务器。
+当执行git remote prune origin时，git会做以下事情：
+ git会向origin对应的远程服务器发起请求，获取该仓库当前所有分支的列表。 将服务器返回的实际分支列表，与本地.git/refs/remotes/origin/目录下存储的「远程跟踪分支」进行逐一比对。 对于每个本地存在的远程跟踪分支（如origin/old-feature），如果在远程服务器上已经找不到对应的分支，git就会删除本地的这个远程跟踪引用文件。  上面命令会清理本地存在的，但在远端已删除分支对应的「远程跟踪分支」。保险起见，建议先加上--dry-run参数进行预览，确认无误后再执行上面正式的删除命令。
 git remote prune origin --dry-run 第二种方法是在从远端获取最新代码的同时进行清理：
 git fetch --prune origin 第三种方法是在拉取代码并合并到当前分支的同时进行清理：
 git pull --prune 也可以设置自动清理，通过全局配置，让git fetch或git pull默认执行清理：

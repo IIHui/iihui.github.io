@@ -241,13 +241,13 @@ code.has-jax {
     <i class="fa fa-file-word-o"></i>
 </span>
 <span class="post-meta-item-text">字数: </span>
-<span class="leancloud-visitors-count">3902</span>
+<span class="leancloud-visitors-count">4166</span>
 &nbsp; | &nbsp;
 <span class="post-meta-item-icon">
     <i class="fa fa-coffee"></i>
 </span>
 <span class="post-meta-item-text">阅读: </span>
-<span class="leancloud-visitors-count">8 分钟</span>
+<span class="leancloud-visitors-count">9 分钟</span>
 </span>
       </div>
     </header>
@@ -349,8 +349,14 @@ code.has-jax {
 </span></span></code></pre></div><h1 id="同步远程已删除分支">同步远程已删除分支</h1>
 <p>最近发现本地存在很多在远端已删除的分支。为了同步服务端的分支，有三种方法解决该问题。第一种方法是在终端跳转到仓库目录，然后执行下面命令：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sh" data-lang="sh"><span style="display:flex;"><span>git remote prune origin
-</span></span></code></pre></div><p>要理解上面的<code>prune</code>，先要明白git维护的三类分支引用。第一类是本地分支，在工作区开发的分支。第二类是远程跟踪分支，本地记录的「远端分支上次拉取时的状态」，只读缓存。第三类是远程仓库实际分支，真正的远端分支。</p>
-<p>上面命令会清理本地存在的，但所有在远端已删除分支对应的「远程跟踪分支」。保险起见，建议先加上<code>--dry-run</code>参数进行预览，确认无误后再执行上面正式的删除命令。</p>
+</span></span></code></pre></div><p>要理解上面的<code>prune</code>，先要明白git维护的三类分支引用。第一类是本地分支，在工作区开发的分支，存储在<code>.git/refs/heads/</code>。第二类是远程跟踪分支，本地记录的「远端分支上次拉取时的状态」，只读缓存，存储在<code>.git/refs/remotes/origin/</code>。第三类是远程仓库实际分支，真正的远端分支，存储在托管平台服务器。</p>
+<p>当执行<code>git remote prune origin</code>时，<code>git</code>会做以下事情：</p>
+<ol>
+<li><code>git</code>会向<code>origin</code>对应的远程服务器发起请求，获取该仓库当前所有分支的列表。</li>
+<li>将服务器返回的实际分支列表，与本地<code>.git/refs/remotes/origin/</code>目录下存储的「远程跟踪分支」进行逐一比对。</li>
+<li>对于每个本地存在的远程跟踪分支（如<code>origin/old-feature</code>），如果在远程服务器上已经找不到对应的分支，<code>git</code>就会删除本地的这个远程跟踪引用文件。</li>
+</ol>
+<p>上面命令会清理本地存在的，但在远端已删除分支对应的「远程跟踪分支」。保险起见，建议先加上<code>--dry-run</code>参数进行预览，确认无误后再执行上面正式的删除命令。</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sh" data-lang="sh"><span style="display:flex;"><span>git remote prune origin --dry-run
 </span></span></code></pre></div><p>第二种方法是在<font color="#de7802">从远端获取最新代码的同时</font>进行清理：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sh" data-lang="sh"><span style="display:flex;"><span>git fetch --prune origin
