@@ -475,9 +475,14 @@ import Lucid  provider.request(.yourEndpoint) { result in  switch result {  case
 struct NetworkErrorPlugin: PluginType {  func didReceive(_ result: Result&amp;lt;Response, MoyaError&amp;gt;, target: TargetType) {  switch result {  case .failure(let error):  if case let .underlying(underlyingError, _) = error,  let urlError = underlyingError as? URLError {  // 在这里统一处理URLError，例如记录日志或发送通知  debugPrint(&amp;#34;检测到网络错误: \(urlError.code)&amp;#34;)  }  default:  break  }  } } WKWebView错误 在WKWebView加载时，有如下两个代理方法：
 func webView(_ webView: WKWebView, didFailProvisionalNavigation navigation: WKNavigation!, withError error: Error)  func webView(_ webView: WKWebView, didFail navigation: WKNavigation!, withError error: Error) 这两个方法本质区别在于：页面在收到服务器响应头之前失败，还是之后失败。分界线就是didCommit（页面开始接收内容）是否已被调用。可以按下面方式理解：
  didFailProvisionalNavigation：「上路前就翻车」。即请求还没真正开始获取数据就失败了。 didFail：「已经上车，但中途抛锚」。已经和服务器建立连接并开始接收数据，但在渲染过程中失败了。  方法didFailProvisionalNavigation的调用时机是WebView发起了导航请求，但在成功收到服务器响应头之前就出错了。此时，WebView还是空白页，因为没拿到任何数据，系统也不会调用didCommit。常见的错误类型有：
- DNS解析失败。 网络不可用。 请求超时。 SSL证书校验失败。 服务器主动拒绝连接。  方法webView(_:didFail:withError:)的调用时机为：已经成功收到服务器响应头，即didCommit已被调用。WebView开始解析渲染HTML/CSS/JS等具体内容时，中途发生了错误。常见的错误类型：
+ DNS解析失败。 网络不可用。 请求超时。 SSL证书校验失败。 服务器主动拒绝连接。  方法webView(_:didFail:withError:)的调用时机为：已经成功收到服务器响应头，即didCommit已被调用。WebView开始解析渲染HTML/CSS/JS等具体内容时，中途发生了错误。此时WebView可能已经渲染了部分内容，比如HTML结构已加载，但里面的图片或CSS还没加载完就失败了。常见的错误类型：
  渲染引擎解析HTML内容时遇到致命错误（极少见）。 加载主资源（如HTML本身）时，数据流被系统中断（例如App被切到后台）。 内存占用过大，WebKit主动中止了加载。  服务器返回404或500状态码通常不会走到这里（因为那依然算「成功收到响应头」），大多数情况下WebView会正常加载服务器返回的错误页面，并最终调用didFinish。
-</content>
+如果在页面跳转或关闭时主动取消加载，例如调用stopLoading()，两个方法都可能被触发，且错误码通常是NSURLErrorCancelled（-999）。建议在错误回调中过滤掉这个错误码，避免干扰用户：
+if (error as NSError).code == NSURLErrorCancelled { return } 只会调用其中一个：对于同一次加载失败，系统只会根据失败发生的阶段，调用这两个方法中的其中一个，而不会两个都调用。
+子资源（图片/JS/CSS）加载失败：
+ 这两个方法只负责主框架（Main Frame）的导航失败。 如果主页面加载成功了，只是里面的某张图片加载失败，这两个方法都不会被调用。需要在 webView(_:didCreateWebView:)或通过WKWebView配置的代理中去监控子资源加载（通常使用 WKURLSchemeHandler或JavaScript注入来实现）。  服务器错误码（如500）：服务器返回错误码500时，只要它正确返回了HTTP响应头和错误信息体，就属于「成功收到响应」，所以不会触发这两个失败方法，而是会正常走didFinish加载完成（加载的是服务器的错误页面）。
+如果要处理WKWebView中的网络错误，可以按如下方式：
+if case let .underlying(underlyingError, _) = error,  let urlError = underlyingError as? URLError {  // 1.优先过滤掉用户主动取消，绝对不要提示用户  if urlError.code == .cancelled {  debugPrint(&amp;#34;用户主动取消请求，忽略&amp;#34;)  return  }   // 2.过滤掉代码层面的错误（如URL格式错误），这类通常应走开发期断言  if [.badURL, .unsupportedURL, .appTransportSecurityRequiresSecureConnection].contains(urlError.code) {  debugPrint(&amp;#34;代码或配置错误，请检查 URL 和 ATS 设置&amp;#34;)  // 开发期可以弹窗提醒，生产环境建议记录日志并静默处理  return  }   // 3.剩下的才是真正值得提示用户的“网络环境问题”（超时、断网、DNS失败、SSL失败等）  switch urlError.code {  case .notConnectedToInternet:  debugPrint(&amp;#34;无网络连接&amp;#34;)  case .timedOut:  debugPrint(&amp;#34;请求超时&amp;#34;)  case .cannotFindHost, .cannotConnectToHost:  debugPrint(&amp;#34;服务器不可达&amp;#34;)  case .secureConnectionFailed, .serverCertificateUntrusted:  debugPrint(&amp;#34;网络环境不安全（代理/证书问题）&amp;#34;)  default:  debugPrint(&amp;#34;网络波动，请稍后重试&amp;#34;)  }  // 在这里统一展示“加载失败，点击重试”的 UI } </content>
     </entry>
     
      <entry>

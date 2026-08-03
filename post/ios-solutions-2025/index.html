@@ -241,13 +241,13 @@ code.has-jax {
     <i class="fa fa-file-word-o"></i>
 </span>
 <span class="post-meta-item-text">字数: </span>
-<span class="leancloud-visitors-count">14277</span>
+<span class="leancloud-visitors-count">15234</span>
 &nbsp; | &nbsp;
 <span class="post-meta-item-icon">
     <i class="fa fa-coffee"></i>
 </span>
 <span class="post-meta-item-text">阅读: </span>
-<span class="leancloud-visitors-count">29 分钟</span>
+<span class="leancloud-visitors-count">31 分钟</span>
 </span>
       </div>
     </header>
@@ -997,14 +997,54 @@ code.has-jax {
 <li>SSL证书校验失败。</li>
 <li>服务器主动拒绝连接。</li>
 </ul>
-<p>方法<code>webView(_:didFail:withError:)</code>的调用时机为：已经成功收到服务器响应头，即<code>didCommit</code>已被调用。<code>WebView</code>开始解析渲染<code>HTML/CSS/JS</code>等具体内容时，中途发生了错误。常见的错误类型：</p>
+<p>方法<code>webView(_:didFail:withError:)</code>的调用时机为：已经成功收到服务器响应头，即<code>didCommit</code>已被调用。<code>WebView</code>开始解析渲染<code>HTML/CSS/JS</code>等具体内容时，中途发生了错误。此时<code>WebView</code>可能已经渲染了部分内容，比如<code>HTML</code>结构已加载，但里面的图片或<code>CSS</code>还没加载完就失败了。常见的错误类型：</p>
 <ul>
 <li>渲染引擎解析<code>HTML</code>内容时遇到致命错误（极少见）。</li>
 <li>加载主资源（如<code>HTML</code>本身）时，数据流被系统中断（例如App被切到后台）。</li>
 <li>内存占用过大，<code>WebKit</code>主动中止了加载。</li>
 </ul>
 <p>服务器返回404或500状态码通常不会走到这里（因为那依然算「成功收到响应头」），大多数情况下<code>WebView</code>会正常加载服务器返回的错误页面，并最终调用<code>didFinish</code>。</p>
-
+<p>如果在页面跳转或关闭时主动取消加载，例如调用<code>stopLoading()</code>，两个方法都可能被触发，且错误码通常是<code>NSURLErrorCancelled（-999）</code>。建议在错误回调中过滤掉这个错误码，避免干扰用户：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span><span style="color:#66d9ef">if</span> (error <span style="color:#66d9ef">as</span> NSError).code == NSURLErrorCancelled { <span style="color:#66d9ef">return</span> }
+</span></span></code></pre></div><p>只会调用其中一个：对于<font color=red>同一次加载失败，系统只会根据失败发生的阶段</font>，调用这两个方法中的其中一个，而不会两个都调用。</p>
+<p>子资源（图片/JS/CSS）加载失败：</p>
+<ul>
+<li>这两个方法只负责主框架（<code>Main Frame</code>）的导航失败。</li>
+<li>如果主页面加载成功了，只是里面的某张图片加载失败，这两个方法都不会被调用。需要在 <code>webView(_:didCreateWebView:)</code>或通过<code>WKWebView</code>配置的代理中去监控子资源加载（通常使用 <code>WKURLSchemeHandler</code>或<code>JavaScript</code>注入来实现）。</li>
+</ul>
+<p>服务器错误码（如500）：服务器返回错误码500时，只要<font color="#de7802">它正确返回了HTTP响应头和错误信息体，就属于「成功收到响应」</font>，所以不会触发这两个失败方法，而是会正常走<code>didFinish</code>加载完成（加载的是服务器的错误页面）。</p>
+<p>如果要处理<code>WKWebView</code>中的网络错误，可以按如下方式：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span><span style="color:#66d9ef">if</span> <span style="color:#66d9ef">case</span> <span style="color:#66d9ef">let</span> .underlying(underlyingError, <span style="color:#66d9ef">_</span>) = error,
+</span></span><span style="display:flex;"><span>   <span style="color:#66d9ef">let</span> urlError = underlyingError <span style="color:#66d9ef">as</span>? URLError {
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">// 1.优先过滤掉用户主动取消，绝对不要提示用户</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">if</span> urlError.code == .cancelled {
+</span></span><span style="display:flex;"><span>        debugPrint(<span style="color:#e6db74">&#34;用户主动取消请求，忽略&#34;</span>)
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">return</span>
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>    
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">// 2.过滤掉代码层面的错误（如URL格式错误），这类通常应走开发期断言</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">if</span> [.badURL, .unsupportedURL, .appTransportSecurityRequiresSecureConnection].contains(urlError.code) {
+</span></span><span style="display:flex;"><span>        debugPrint(<span style="color:#e6db74">&#34;代码或配置错误，请检查 URL 和 ATS 设置&#34;</span>)
+</span></span><span style="display:flex;"><span>        <span style="color:#75715e">// 开发期可以弹窗提醒，生产环境建议记录日志并静默处理</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">return</span>
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>    
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">// 3.剩下的才是真正值得提示用户的“网络环境问题”（超时、断网、DNS失败、SSL失败等）</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">switch</span> urlError.code {
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">case</span> .notConnectedToInternet:
+</span></span><span style="display:flex;"><span>        debugPrint(<span style="color:#e6db74">&#34;无网络连接&#34;</span>)
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">case</span> .timedOut:
+</span></span><span style="display:flex;"><span>        debugPrint(<span style="color:#e6db74">&#34;请求超时&#34;</span>)
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">case</span> .cannotFindHost, .cannotConnectToHost:
+</span></span><span style="display:flex;"><span>        debugPrint(<span style="color:#e6db74">&#34;服务器不可达&#34;</span>)
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">case</span> .secureConnectionFailed, .serverCertificateUntrusted:
+</span></span><span style="display:flex;"><span>        debugPrint(<span style="color:#e6db74">&#34;网络环境不安全（代理/证书问题）&#34;</span>)
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">default</span>:
+</span></span><span style="display:flex;"><span>        debugPrint(<span style="color:#e6db74">&#34;网络波动，请稍后重试&#34;</span>)
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">// 在这里统一展示“加载失败，点击重试”的 UI</span>
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div>
     </div>
     <footer class="post-footer">
         
