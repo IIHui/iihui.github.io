@@ -241,7 +241,7 @@ code.has-jax {
     <i class="fa fa-file-word-o"></i>
 </span>
 <span class="post-meta-item-text">字数: </span>
-<span class="leancloud-visitors-count">15534</span>
+<span class="leancloud-visitors-count">15713</span>
 &nbsp; | &nbsp;
 <span class="post-meta-item-icon">
     <i class="fa fa-coffee"></i>
@@ -1045,13 +1045,13 @@ code.has-jax {
 </span></span><span style="display:flex;"><span>    <span style="color:#75715e">// 在这里统一展示“加载失败，点击重试”的 UI</span>
 </span></span><span style="display:flex;"><span>}
 </span></span></code></pre></div><h1 id="no-type-or-protocol-named-nssecurecoding">no type or protocol named &lsquo;NSSecureCoding&rsquo;</h1>
-<p>某个<code>.h</code>头文件放在<code>Swift</code>工程的桥接文件中，但编译时出现了错误：<code>failed to emit precompiled header，... no type or protocol named 'NSSecureCoding'</code>。</p>
-<p>出现上面错误是因为编译器在处理放到桥文件中的头文件时，遇到了<code>NSSecureCoding</code>这个协议或类型，但因为找不到它的定义而导致预编译头文件生成失败报错。</p>
-<p>解决上面报错有几种方式，第一种是找到报错时指向的那个<code>Objective-C</code>头文件（错误信息通常会显示文件路径），在文件报错的文件最上方添加：</p>
+<p>某个<code>.h</code>头文件放在<code>Swift</code>工程的桥接头文件中，但编译时出现了错误：<code>failed to emit precompiled header，... no type or protocol named 'NSSecureCoding'</code>。</p>
+<p>出现了上面错误是因为编译器在处理放到桥接头文件中的头文件时，遇到了<code>NSSecureCoding</code>这个协议或类型，但因为找不到它的定义而导致预编译头文件生成失败报错。</p>
+<p><code>NSSecureCoding</code>是在<code>Foundation</code>框架中定义的一个协议。预编译头文件在生成阶段会把它包含的所有头文件平铺编译，如果此时找不到协议的定义，编译器就会抛出<code>no type or protocol named 'NSSecureCoding'</code>，进而中断预编译头的生成，导致<code>failed to emit precompiled header</code>。上面报错本质上就是<code>Foundation</code>没被正确<code>import</code>。解决上面编译错误有几种方式，第一种是找到报错时指向的那个<code>Objective-C</code>头文件（错误信息通常会显示文件路径），然后在报错的文件最上方添加：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-objc" data-lang="objc"><span style="display:flex;"><span><span style="color:#75715e">#import &lt;Foundation/Foundation.h&gt;
 </span></span></span></code></pre></div><p>第二种方式方式是直接在桥接文件中先导入<code>Foundation</code>：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-objc" data-lang="objc"><span style="display:flex;"><span><span style="color:#75715e">#import &lt;Foundation/Foundation.h&gt;
-</span></span></span></code></pre></div><p>第三种是调整桥接文件的导入顺序，将已导入<code>Foundation</code>的头文件先导入。</p>
+</span></span></span></code></pre></div><p>第三种是调整桥接文件的导入顺序，将后面已导入<code>Foundation</code>的头文件提到前面先导入。</p>
 
     </div>
     <footer class="post-footer">
