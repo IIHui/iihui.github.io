@@ -241,7 +241,7 @@ code.has-jax {
     <i class="fa fa-file-word-o"></i>
 </span>
 <span class="post-meta-item-text">字数: </span>
-<span class="leancloud-visitors-count">15690</span>
+<span class="leancloud-visitors-count">15719</span>
 &nbsp; | &nbsp;
 <span class="post-meta-item-icon">
     <i class="fa fa-coffee"></i>
@@ -738,16 +738,16 @@ code.has-jax {
 <li>时序 A（正常：数据回调到达 -&gt; 调用<code>didReceive(data)</code> -&gt; 完成回调到达 -&gt; 调用<code>didFinish</code>。</li>
 <li>时序 B（崩溃）：<code>invalidateAndCancel</code>触发，<code>stop</code>被调用，此时将<code>isTaskCompleted</code>置为<code>true</code>。但有可能后台线程的<code>didReceive data</code>回调已经处于<code>RunLoop</code>队列中等待执行。之后，这个过期的数据回调被执行，虽然<code>isTaskCompleted</code>已是<code>true</code>，但如果在数据回调里只检查了<code>!isTaskCompleted</code>就调用 <code>didReceive(data)</code>，那么它依然会调用。随后完成回调到达，再次调用<code>didFinish</code>，或重复调用数据接收，系统直接崩溃。</li>
 </ul>
-<h1 id="unable-to-type-check-this-expression-in-reasonable-time">unable to type-check this expression in reasonable time</h1>
-<p>升级了<code>Xcode</code>版本后，原来可以编译的代码出现了错误：</p>
+<h1 id="unable-to-type-check-this-expression">unable to type-check this expression</h1>
+<p>升级了<code>Xcode</code>版本后，原来的工程出现了编译错误：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span>The compiler <span style="color:#66d9ef">is</span> unable to type<span style="color:#f92672">-</span>check this expression <span style="color:#66d9ef">in</span> reasonable time; <span style="color:#66d9ef">try</span> breaking up the expression into distinct sub<span style="color:#f92672">-</span>expressions
 </span></span></code></pre></div><p><code>Swift</code>的类型检查器会尝试为一个表达式找出所有可能的类型组合。如果表达式过长或包含复杂操作，这个「搜索空间」会指数级增长，导致检查超时。</p>
-<p>在<code>Xcode 26 (Swift 6)</code> 中，这个问题可能因以下原因被触发或加剧：</p>
+<p>在<code>Xcode 26 (Swift 6)</code> 中，上面问题可能因以下原因被触发或加剧：</p>
 <ul>
 <li><code>Swift 6</code>更严格的类型推断：新版本可能在类型推断上更严格，导致一些原本勉强能通过检查的表达式变得超时。</li>
 <li>新增的重载：<code>Swift</code>或依赖库中添加的新方法或运算符重载，也可能增加类型检查器的搜索负担。</li>
 </ul>
-<p>解决方案是按照提示<font color="#de7802">将复杂的表达式拆分为多个独立的子表达式</font>，示例如下：</p>
+<p>解决方案是按照提示<font color="#de7802">将复杂的表达式拆分为多个独立的子表达式</font>，示例代码如下：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span><span style="color:#75715e">// 可能导致超时的复杂表达式</span>
 </span></span><span style="display:flex;"><span><span style="color:#66d9ef">let</span> url = <span style="color:#e6db74">&#34;http://&#34;</span> <span style="color:#f92672">+</span> username <span style="color:#f92672">+</span> <span style="color:#e6db74">&#34;:&#34;</span> <span style="color:#f92672">+</span> password <span style="color:#f92672">+</span> <span style="color:#e6db74">&#34;@&#34;</span> <span style="color:#f92672">+</span> address <span style="color:#f92672">+</span> <span style="color:#e6db74">&#34;/api/&#34;</span> <span style="color:#f92672">+</span> channel <span style="color:#f92672">+</span> <span style="color:#e6db74">&#34;/picture&#34;</span>
 </span></span><span style="display:flex;"><span>
@@ -761,11 +761,11 @@ code.has-jax {
 </span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">self</span>.tableView.reloadRows(at: [indexPath], with: .<span style="color:#66d9ef">none</span>)
 </span></span><span style="display:flex;"><span>    }
 </span></span><span style="display:flex;"><span>}
-</span></span></code></pre></div><p>上面代码出现如下崩溃：</p>
+</span></span></code></pre></div><p>上面代码出现如下偶发崩溃：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span>erminating app due to uncaught exception <span style="color:#960050;background-color:#1e0010">&#39;</span>NSInternalInconsistencyException<span style="color:#960050;background-color:#1e0010">&#39;</span>, reason: <span style="color:#960050;background-color:#1e0010">&#39;</span>Invalid update: invalid number of sections. The number of sections contained <span style="color:#66d9ef">in</span> the table view after the update (<span style="color:#ae81ff">4</span>) must be equal to the number of sections contained <span style="color:#66d9ef">in</span> the table view before the update (<span style="color:#ae81ff">3</span>), plus or minus the number of sections inserted or deleted (<span style="color:#ae81ff">0</span> inserted, <span style="color:#ae81ff">0</span> deleted).
-</span></span></code></pre></div><p>根源问题是因为在刷新时数据源发生了变化，<code>tableView</code>要求数据源在更新前后<code>section</code>数量保持一致（除非在 <code>beginUpdates/endUpdates</code>中同时做了插入删除操作）。这里崩溃信息显示，在<code>reloadRows</code>期间，<code>tableView</code>发现<code>section</code>数量发生了变化，但没有插入或删除<code>section</code>。</p>
-<p>为什么会出现崩溃？因为<code>reloadRows</code>会触发<code>numberOfSections(in:)</code>和<code>numberOfRows(inSection:)</code>等数据源方法重新查询。可能在<code>reloadRows</code>之前前或之后，数据源返回的<code>section</code>数量发生了变化。即数据源在调用 <code>reloadRows</code>时，底层数据已经改变了，导致<code>section</code>数量改变了，但只调用了<code>reloadRows</code>，并没有调用插入/删除<code>section</code>的方法，因此导致崩溃。</p>
-<p>解决方案有两种，第一种是直接更新已存在的<code>cell</code>：</p>
+</span></span></code></pre></div><p>根源是因为在刷新时数据源发生了变化，<code>tableView</code>要求数据源在更新前后<code>section</code>数量保持一致（除非在 <code>beginUpdates/endUpdates</code>中同时做了插入删除操作）。这里崩溃信息显示，在<code>reloadRows</code>期间，<code>tableView</code>发现<code>section</code>数量发生了变化，但没有插入或删除<code>section</code>。</p>
+<p>为什么会出现崩溃？因为<code>reloadRows</code>会触发<code>numberOfSections(in:)</code>和<code>numberOfRows(inSection:)</code>等数据源方法重新查询。可能在<code>reloadRows</code>之前或之后，数据源返回的<code>section</code>数量发生了变化。即数据源在调用 <code>reloadRows</code>时，底层数据已经改变了，导致<code>section</code>数量改变了，但只调用了<code>reloadRows</code>，并没有调用插入或删除<code>section</code>的方法，因此导致崩溃。</p>
+<p>解决方案有两种，第一种是直接更新已存在的<code>cell</code>，而不是<code>reloadRows</code>：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span><span style="color:#66d9ef">if</span> <span style="color:#66d9ef">let</span> cell = <span style="color:#66d9ef">self</span>.tableView.cellForRow(at: indexPath) {
 </span></span><span style="display:flex;"><span>    <span style="color:#75715e">// 直接更新cell的子视图</span>
 </span></span><span style="display:flex;"><span>    cell.textLabel?.text = newValue 
@@ -776,7 +776,7 @@ code.has-jax {
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span>UIView.performWithoutAnimation {
 </span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">self</span>?.userInfoTableView.reloadData()
 </span></span><span style="display:flex;"><span>}
-</span></span></code></pre></div><p>另外，确保数据源更新和<code>reloadData()</code>都在主线程且没有时间差异。</p>
+</span></span></code></pre></div><p>另外，最重要的是确保数据源更新和<code>reloadData()</code>都<font color="#de7802">在主线程且没有时间差异</font>。</p>
 <h2 id="afterscreenupdates">afterScreenUpdates</h2>
 <p>在<code>Swift</code>中调用了<code>window.drawHierarchy(in: window.frame, afterScreenUpdates: false)</code>生成截图图像。其中的参数<code>afterScreenUpdates</code>决定了截图时，最近对视图层次结构所做的更改是否被包含在内。</p>
 <ul>
@@ -887,7 +887,7 @@ code.has-jax {
 <p>在<code>Java</code>中，若<code>test</code>为<code>null</code>，<code>&quot;Y&quot;.equals(test)</code>的返回值为<code>false</code>，<font color=red>并且不会抛出空指针异常，是安全的写法</font>。字符串常量<code>&quot;Y&quot;</code>是一个确切的非空对象。在<code>String.equals()</code>源码中，第一步就是判断传入参数是否为 <code>null</code>，如果是<code>null</code>则直接返回<code>false</code>，不会继续执行。</p>
 <p>但若使用<code>test.equals(&quot;Y&quot;)</code>是不安全的。如<code>test</code>为<code>null</code>，会抛出<code>NullPointerException</code>，即导致程序崩溃。</p>
 <h1 id="moya判断是网络问题">Moya判断是网络问题</h1>
-<p>在<code>iOS</code>中使用<code>Moya</code>进行网络请求，有时需要判断是否网络问题。解决方案的核心思路是解析<code>Moya</code>返回的<code>MoyaError</code>枚举，特别是其中的<code>underlying</code>关联值，来获取底层的<code>URLError</code>。</p>
+<p>在<code>iOS</code>中使用<code>Moya</code>进行网络请求，有时需要判断是否为网络问题。解决方案的核心思路是解析<code>Moya</code>返回的<code>MoyaError</code>枚举，特别是其中的<code>underlying</code>关联值，来获取底层的<code>URLError</code>。</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span>provider.request(.yourEndpoint) { result <span style="color:#66d9ef">in</span>
 </span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">switch</span> result {
 </span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">case</span> <span style="color:#66d9ef">let</span> .success(response):
@@ -949,7 +949,7 @@ code.has-jax {
 </span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">return</span>
 </span></span><span style="display:flex;"><span>}
 </span></span><span style="display:flex;"><span><span style="color:#75715e">// 发起Moya请求...</span>
-</span></span></code></pre></div><p>如果希望更便捷地处理并向用户展示友好的错误信息，可以使用像<code>Lucid</code>这样的库。它能将<code>Moya</code>的错误直接转换为人类可读的文本：</p>
+</span></span></code></pre></div><p>如果希望更便捷地处理并向用户展示友好的错误信息，可以使用像<a href="https://github.com/levibostian/Lucid">Lucid</a>这样的库。它能将<code>Moya</code>的错误直接转换为人类可读的文本：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span><span style="color:#66d9ef">import</span> <span style="color:#a6e22e">Lucid</span>
 </span></span><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span>provider.request(.yourEndpoint) { result <span style="color:#66d9ef">in</span>
@@ -964,7 +964,7 @@ code.has-jax {
 </span></span><span style="display:flex;"><span>        debugPrint(userFriendlyMessage)
 </span></span><span style="display:flex;"><span>    }
 </span></span><span style="display:flex;"><span>}
-</span></span></code></pre></div><p>还可以创建一个自定义的<code>Moya Plugin</code>，在 <code>didReceive</code>方法中统一拦截并处理所有错误。这种方式可以让网络错误处理逻辑集中化，避免在每个请求回调中重复编写判断代码。</p>
+</span></span></code></pre></div><p>还可以创建一个自定义的Moya插件，在 <code>didReceive</code>方法中统一拦截并处理所有错误。这种方式可以让网络错误处理逻辑集中化，避免在每个请求回调中重复编写判断代码。</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span><span style="color:#66d9ef">struct</span> <span style="color:#a6e22e">NetworkErrorPlugin</span>: PluginType {
 </span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">func</span> <span style="color:#a6e22e">didReceive</span>(<span style="color:#66d9ef">_</span> result: Result&lt;Response, MoyaError&gt;, target: TargetType) {
 </span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">switch</span> result {
@@ -980,14 +980,14 @@ code.has-jax {
 </span></span><span style="display:flex;"><span>    }
 </span></span><span style="display:flex;"><span>}
 </span></span></code></pre></div><h1 id="wkwebview错误">WKWebView错误</h1>
-<p>在<code>WKWebView</code>加载时，有如下两个代理方法：</p>
+<p>在<code>WKWebView</code>加载时，有如下两个错误相关的代理方法：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">webView</span>(<span style="color:#66d9ef">_</span> webView: WKWebView, didFailProvisionalNavigation navigation: WKNavigation!, withError error: Error) 
 </span></span><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">webView</span>(<span style="color:#66d9ef">_</span> webView: WKWebView, didFail navigation: WKNavigation!, withError error: Error)
-</span></span></code></pre></div><p>这两个方法本质区别在于：<font color="#de7802">页面在收到服务器响应头之前失败，还是之后失败</font>。分界线就是<code>didCommit</code>（页面开始接收内容）是否已被调用。可以按下面方式理解：</p>
+</span></span></code></pre></div><p>这两个方法本质区别在于：<font color="#de7802">页面在收到服务器响应头之前失败，还是之后失败</font>。分界线就是回调<code>didCommit</code>（页面开始接收内容）是否已被调用。可以按下面方式理解：</p>
 <ul>
 <li><code>didFailProvisionalNavigation</code>：「上路前就翻车」。即请求还没真正开始获取数据就失败了。</li>
-<li><code>didFail</code>：「已经上车，但中途抛锚」。已经和服务器建立连接并开始接收数据，但在渲染过程中失败了。</li>
+<li><code>didFail</code>：「已经上车，但中途出现了抛锚」。已经和服务器建立连接并开始接收数据，但在渲染过程中失败了。</li>
 </ul>
 <p>方法<code>didFailProvisionalNavigation</code>的调用时机是<code>WebView</code>发起了导航请求，但在成功收到服务器响应头之前就出错了。此时，<code>WebView</code>还是空白页，因为没拿到任何数据，系统也不会调用<code>didCommit</code>。常见的错误类型有：</p>
 <ul>
@@ -997,7 +997,7 @@ code.has-jax {
 <li>SSL证书校验失败。</li>
 <li>服务器主动拒绝连接。</li>
 </ul>
-<p>方法<code>webView(_:didFail:withError:)</code>的调用时机为：已经成功收到服务器响应头，即<code>didCommit</code>已被调用。<code>WebView</code>开始解析渲染<code>HTML/CSS/JS</code>等具体内容时，中途发生了错误。此时<code>WebView</code>可能已经渲染了部分内容，比如<code>HTML</code>结构已加载，但里面的图片或<code>CSS</code>还没加载完就失败了。常见的错误类型：</p>
+<p>方法<code>webView(_:didFail:withError:)</code>的调用时机为：<font color="#de7802">已经成功收到服务器响应头</font>，即<code>didCommit</code>已被调用。<code>WebView</code>开始解析渲染<code>HTML/CSS/JS</code>等具体内容时，中途发生了错误。此时<code>WebView</code>可能已经渲染了部分内容，比如<code>HTML</code>结构已加载，但里面的图片或<code>CSS</code>还没加载完就失败了，常见的错误类型：</p>
 <ul>
 <li>渲染引擎解析<code>HTML</code>内容时遇到致命错误（极少见）。</li>
 <li>加载主资源（如<code>HTML</code>本身）时，数据流被系统中断（例如App被切到后台）。</li>
@@ -1006,23 +1006,23 @@ code.has-jax {
 <p>服务器返回404或500状态码通常不会走到这里（因为那依然算「成功收到响应头」），大多数情况下<code>WebView</code>会正常加载服务器返回的错误页面，并最终调用<code>didFinish</code>。</p>
 <p>如果在页面跳转或关闭时主动取消加载，例如调用<code>stopLoading()</code>，两个方法都可能被触发，且错误码通常是<code>NSURLErrorCancelled（-999）</code>。建议在错误回调中过滤掉这个错误码，避免干扰用户：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span><span style="color:#66d9ef">if</span> (error <span style="color:#66d9ef">as</span> NSError).code == NSURLErrorCancelled { <span style="color:#66d9ef">return</span> }
-</span></span></code></pre></div><p>只会调用其中一个：对于<font color=red>同一次加载失败，系统只会根据失败发生的阶段</font>，调用这两个方法中的其中一个，而不会两个都调用。</p>
-<p>子资源（图片/JS/CSS）加载失败：</p>
+</span></span></code></pre></div><p>两个错误回调只会调用其中一个。对于<font color=red>同一次加载失败，系统只会根据失败发生的阶段</font>，调用这两个方法中的其中一个，而不会两个都调用。</p>
+<p>子资源（如图片/JS/CSS）加载失败：</p>
 <ul>
-<li>这两个方法只负责主框架（<code>Main Frame</code>）的导航失败。</li>
+<li>这两个错误回调方法只负责主框架（<code>Main Frame</code>）的导航失败。</li>
 <li>如果主页面加载成功了，只是里面的某张图片加载失败，这两个方法都不会被调用。需要在 <code>webView(_:didCreateWebView:)</code>或通过<code>WKWebView</code>配置的代理中去监控子资源加载（通常使用 <code>WKURLSchemeHandler</code>或<code>JavaScript</code>注入来实现）。</li>
 </ul>
-<p>服务器错误码（如500）：服务器返回错误码500时，只要<font color="#de7802">它正确返回了HTTP响应头和错误信息体，就属于「成功收到响应」</font>，所以不会触发这两个失败方法，而是会正常走<code>didFinish</code>加载完成（加载的是服务器的错误页面）。</p>
+<p>服务器错误码（如<code>500</code>）：服务器返回错误码<code>500</code>时，只要<font color="#de7802">它正确返回了HTTP响应头和错误信息体，就属于「成功收到响应」</font>，所以不会触发这两个失败方法，而是会正常走<code>didFinish</code>加载完成（加载的是服务器的错误页面）。</p>
 <p>如果要处理<code>WKWebView</code>中的网络错误，可以按如下方式：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span><span style="color:#66d9ef">if</span> <span style="color:#66d9ef">case</span> <span style="color:#66d9ef">let</span> .underlying(underlyingError, <span style="color:#66d9ef">_</span>) = error,
 </span></span><span style="display:flex;"><span>   <span style="color:#66d9ef">let</span> urlError = underlyingError <span style="color:#66d9ef">as</span>? URLError {
-</span></span><span style="display:flex;"><span>    <span style="color:#75715e">// 1.优先过滤掉用户主动取消，绝对不要提示用户</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">// 优先过滤掉用户主动取消，绝对不要提示用户</span>
 </span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">if</span> urlError.code == .cancelled {
 </span></span><span style="display:flex;"><span>        debugPrint(<span style="color:#e6db74">&#34;用户主动取消请求，忽略&#34;</span>)
 </span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">return</span>
 </span></span><span style="display:flex;"><span>    }
 </span></span><span style="display:flex;"><span>    
-</span></span><span style="display:flex;"><span>    <span style="color:#75715e">// 2.过滤掉代码层面的错误（如URL格式错误），这类通常应走开发期断言</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">// 过滤掉代码层面的错误（如URL格式错误），这类通常应走开发期断言</span>
 </span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">if</span> [.badURL, .unsupportedURL, .appTransportSecurityRequiresSecureConnection].contains(urlError.code) {
 </span></span><span style="display:flex;"><span>        debugPrint(<span style="color:#e6db74">&#34;代码或配置错误，请检查 URL 和 ATS 设置&#34;</span>)
 </span></span><span style="display:flex;"><span>        <span style="color:#75715e">// 开发期可以弹窗提醒，生产环境建议记录日志并静默处理</span>
@@ -1252,7 +1252,7 @@ code.has-jax {
         <li><a href="#taskdidreceivedata-has-already-been-called">taskDidReceiveData:] has already been called</a></li>
       </ul>
     </li>
-    <li><a href="#unable-to-type-check-this-expression-in-reasonable-time">unable to type-check this expression in reasonable time</a></li>
+    <li><a href="#unable-to-type-check-this-expression">unable to type-check this expression</a></li>
     <li><a href="#nvalid-number-of-sections">nvalid number of sections</a>
       <ul>
         <li><a href="#afterscreenupdates">afterScreenUpdates</a></li>
