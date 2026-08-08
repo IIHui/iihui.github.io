@@ -241,7 +241,7 @@ code.has-jax {
     <i class="fa fa-file-word-o"></i>
 </span>
 <span class="post-meta-item-text">字数: </span>
-<span class="leancloud-visitors-count">15719</span>
+<span class="leancloud-visitors-count">15727</span>
 &nbsp; | &nbsp;
 <span class="post-meta-item-icon">
     <i class="fa fa-coffee"></i>
@@ -632,9 +632,9 @@ code.has-jax {
 <li>调用后禁止复用：无论调用哪个方法，该<code>URLSession</code>实例在失效后都不能再被复用。如果还需要发起请求，必须重新创建<code>URLSession</code>实例。</li>
 </ul>
 <h2 id="zlib-ngh-file-not-found">zlib-ng.h file not found</h2>
-<p>依赖<code>SSZipArchive</code>时，出现编译错误：</p>
+<p>工程中依赖<code>SSZipArchive</code>时，出现编译错误：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sh" data-lang="sh"><span style="display:flex;"><span>mz_strm_zlib.c:16:12: error: <span style="color:#e6db74">&#39;zlib-ng.h&#39;</span> file not found
-</span></span></code></pre></div><p>是因为<code>SSZipArchive</code>依赖的<code>minizip-ng</code>库需要<code>zlib-ng</code>，编译时找不到<code>zlib-ng.h</code>头文件。最后发现是在<code>podspec</code>文件中<code>pod_target_xcconfig</code>设置有问题，其完整设置如下：</p>
+</span></span></code></pre></div><p>原因是<code>SSZipArchive</code>依赖的<code>minizip-ng</code>库需要<code>zlib-ng</code>，但编译时找不到<code>zlib-ng.h</code>头文件。最后发现是<code>podspec</code>文件中<code>pod_target_xcconfig</code>的设置有问题，其完整设置如下：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ruby" data-lang="ruby"><span style="display:flex;"><span> s<span style="color:#f92672">.</span>pod_target_xcconfig <span style="color:#f92672">=</span> { <span style="color:#e6db74">&#39;DEFINES_MODULE&#39;</span> <span style="color:#f92672">=&gt;</span> <span style="color:#e6db74">&#39;YES&#39;</span>,
 </span></span><span style="display:flex;"><span>    <span style="color:#e6db74">&#39;GCC_PREPROCESSOR_DEFINITIONS&#39;</span> <span style="color:#f92672">=&gt;</span> <span style="color:#e6db74">&#39;HAVE_ARC4RANDOM_BUF HAVE_ICONV HAVE_INTTYPES_H HAVE_PKCRYPT HAVE_STDINT_H HAVE_WZAES HAVE_ZLIB ZLIB_COMPAT&#39;</span> }
 </span></span></code></pre></div><p>上面设置中的<code>DEFINES_MODULE' =&gt; 'YES'</code>是告诉<code>Xcode</code>将这个<code>Pod</code>构建为模块（<code>module</code>），并生成 <code>.modulemap</code>文件，即：</p>
@@ -662,35 +662,35 @@ code.has-jax {
 </thead>
 <tbody>
 <tr>
-<td style="text-align:left"><code>HAVE_ARC4RANDOM_BUF</code></td>
+<td style="text-align:left">HAVE_ARC4RANDOM_BUF</td>
 <td style="text-align:left">平台提供<code>arc4random_buf</code>函数（<code>iOS/macOS</code>都有），用于生成加密安全的随机数</td>
 </tr>
 <tr>
-<td style="text-align:left"><code>HAVE_ICONV</code></td>
+<td style="text-align:left">HAVE_ICONV</td>
 <td style="text-align:left">支持<code>iconv</code>字符编码转换（系统自带<code>libiconv</code>）</td>
 </tr>
 <tr>
-<td style="text-align:left"><code>HAVE_INTTYPES_H</code></td>
+<td style="text-align:left">HAVE_INTTYPES_H</td>
 <td style="text-align:left">存在<code>&lt;inttypes.h&gt;</code>头文件，定义跨平台的固定宽度整数格式宏（C99 标准）</td>
 </tr>
 <tr>
-<td style="text-align:left"><code>HAVE_PKCRYPT</code></td>
+<td style="text-align:left">HAVE_PKCRYPT</td>
 <td style="text-align:left">支持PK加密相关功能（多见于<code>OpenSSL/libressl</code>等库的兼容检测）</td>
 </tr>
 <tr>
-<td style="text-align:left"><code>HAVE_STDINT_H</code></td>
+<td style="text-align:left">HAVE_STDINT_H</td>
 <td style="text-align:left">存在<code>&lt;stdint.h&gt;</code>头文件（C99），提供<code>int32_t</code>、<code>uint64_t</code>等类型</td>
 </tr>
 <tr>
-<td style="text-align:left"><code>HAVE_WZAES</code></td>
+<td style="text-align:left">HAVE_WZAES</td>
 <td style="text-align:left">可能表示使用<code>WZ</code>（某定制版本？）的<code>AES</code>实现或特定补丁</td>
 </tr>
 <tr>
-<td style="text-align:left"><code>HAVE_ZLIB</code></td>
+<td style="text-align:left">HAVE_ZLIB</td>
 <td style="text-align:left">链接<code>zlib</code>，支持数据压缩</td>
 </tr>
 <tr>
-<td style="text-align:left"><code>ZLIB_COMPAT</code></td>
+<td style="text-align:left">ZLIB_COMPAT</td>
 <td style="text-align:left">表示<code>zlib</code>接口与原版<code>zlib</code>兼容（常见于使用<code>zlib-ng</code>或兼容层时）</td>
 </tr>
 </tbody>
@@ -716,8 +716,8 @@ code.has-jax {
 </span></span><span style="display:flex;"><span><span style="color:#75715e"># 或</span>
 </span></span><span style="display:flex;"><span><span style="color:#e6db74">&#34;VERSION_STRING=</span><span style="color:#ae81ff">\\\&#34;</span><span style="color:#e6db74">1.0</span><span style="color:#ae81ff">\\\&#34;</span><span style="color:#e6db74">&#34;</span> <span style="color:#75715e"># 双引号里双重转义</span>
 </span></span></code></pre></div><h2 id="帧框加载已失败">帧框加载已失败</h2>
-<p>调试<code>WKWebView</code>时报错信息为「帧框加载已失败」，同时看到错误码为<code>WebKitErrorDomain code 102</code>。出问题的场景是在<code>WKWebView</code>中使用<code>WKURLSchemeTask</code>拦截网络请求，返回本地文件时。</p>
-<p>最后调试发现是通过<code>WKURLSchemeTask</code>返回数据时，<code>WebKit</code>需要正确的<code>HTTP</code>响应头（<code>Headers</code>）来解析内容。如果信息不全，<code>WebKit</code>会认为响应无效并中断加载。首先不要使用<code>URLResponse</code>，因为它默认状态码为<code>0</code>，<code>WebKit</code>无法识别。必须创建<code>HTTPURLResponse</code>并明确设置<code>200</code>状态码，同时需要提供<code>Content-Type</code>和<code>Content-Length</code>这两个关键的<code>Header</code>，而此次出现错误是因为文件是<code>html</code>，但设置的<code>Content-Type</code>是错误的。</p>
+<p>调试<code>WKWebView</code>时报错信息为「帧框加载已失败」，同时看到错误码为<code>WebKitErrorDomain code 102</code>。出问题的场景是在<code>WKWebView</code>中使用<code>WKURLSchemeTask</code>拦截网络请求，返回本地文件数据时。</p>
+<p>最后调试发现是通过<code>WKURLSchemeTask</code>返回数据时，<code>WebKit</code>需要正确的<code>HTTP</code>响应头（<code>Headers</code>）来解析内容。如果信息不全，<code>WebKit</code>会<font color=red>认为响应无效并中断加载</font>。首先不要使用<code>URLResponse</code>，因为它默认状态码为<code>0</code>，<code>WebKit</code>无法识别。必须创建<code>HTTPURLResponse</code>并明确设置<code>200</code>状态码，同时需要提供<code>Content-Type</code>和<code>Content-Length</code>这两个关键的<code>Header</code>，而此次出现错误是因为文件是<code>html</code>，但设置的<code>Content-Type</code>类型是错误的。</p>
 <p>如果通过<code>WKURLSchemeTask</code>拦截的是一个子资源请求（例如，主页面是<code>https://example.com</code>，但<code>iframe</code>或图片的请求被自定义<code>scheme</code>如<code>myapp://</code>拦截并返回了本地数据），会构成了跨域请求。此时，需要在返回的 <code>HTTPURLResponse</code>的<code>headerFields</code> 中，明确添加允许跨域的头部：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span><span style="color:#66d9ef">var</span> headerFields = [String: String]()
 </span></span><span style="display:flex;"><span><span style="color:#75715e">// ... 设置 Content-Type, Content-Length ...</span>
@@ -728,7 +728,7 @@ code.has-jax {
 <li>确保调用顺序正确：必须严格按照<code>didReceive(response)</code>-&gt;<code>didReceive(data)</code> -&gt; <code>didFinish</code>顺序调用。</li>
 <li>处理任务停止情况：当<code>webView(_:stop:)</code> 方法被调用后。当任务被停止时，应取消加载操作，并不再对该任务调用任何<code>WKURLSchemeTask</code>的方法。同时，确保所有对<code>WKURLSchemeTask</code>的调用都在主线程执行，以避免竞态条件。</li>
 </ul>
-<h2 id="taskdidreceivedata-has-already-been-called">taskDidReceiveData:] has already been called</h2>
+<h2 id="taskdidreceivedata-has-already-been-called">taskDidReceiveData has already been called</h2>
 <p>在使用<code>URLSession</code>调用了<code>invalidateAndCancel</code>后，偶发出现崩溃<code>WKURLSchemeTask taskDidReceiveData:] has already been called for this task</code>。</p>
 <p>当在<code>start</code>方法里使用<code>URLSession</code>发起异步任务，并在某时刻调用了<code>invalidateAndCancel()</code>，<code>URLSession</code>的委托（<code>Delegate</code>）会在极短时间内收到两个回调：</p>
 <p>1、最后一个<code>didReceive data</code>回调（如果数据还在传输中）。</p>
@@ -755,7 +755,7 @@ code.has-jax {
 </span></span><span style="display:flex;"><span><span style="color:#66d9ef">let</span> credentials = username <span style="color:#f92672">+</span> <span style="color:#e6db74">&#34;:&#34;</span> <span style="color:#f92672">+</span> password
 </span></span><span style="display:flex;"><span><span style="color:#66d9ef">let</span> channelString = String(channel)
 </span></span><span style="display:flex;"><span><span style="color:#66d9ef">let</span> url = <span style="color:#e6db74">&#34;http://&#34;</span> <span style="color:#f92672">+</span> credentials <span style="color:#f92672">+</span> <span style="color:#e6db74">&#34;@&#34;</span> <span style="color:#f92672">+</span> address <span style="color:#f92672">+</span> <span style="color:#e6db74">&#34;/api/&#34;</span> <span style="color:#f92672">+</span> channelString <span style="color:#f92672">+</span> <span style="color:#e6db74">&#34;/picture&#34;</span>
-</span></span></code></pre></div><h1 id="nvalid-number-of-sections">nvalid number of sections</h1>
+</span></span></code></pre></div><h2 id="nvalid-number-of-sections">nvalid number of sections</h2>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span><span style="color:#66d9ef">if</span> <span style="color:#66d9ef">self</span>.tableView.cellForRow(at: indexPath) <span style="color:#f92672">!=</span> <span style="color:#66d9ef">nil</span> {
 </span></span><span style="display:flex;"><span>    UIView.performWithoutAnimation {
 </span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">self</span>.tableView.reloadRows(at: [indexPath], with: .<span style="color:#66d9ef">none</span>)
@@ -1249,12 +1249,12 @@ code.has-jax {
         </li>
         <li><a href="#zlib-ngh-file-not-found">zlib-ng.h file not found</a></li>
         <li><a href="#帧框加载已失败">帧框加载已失败</a></li>
-        <li><a href="#taskdidreceivedata-has-already-been-called">taskDidReceiveData:] has already been called</a></li>
+        <li><a href="#taskdidreceivedata-has-already-been-called">taskDidReceiveData has already been called</a></li>
       </ul>
     </li>
-    <li><a href="#unable-to-type-check-this-expression">unable to type-check this expression</a></li>
-    <li><a href="#nvalid-number-of-sections">nvalid number of sections</a>
+    <li><a href="#unable-to-type-check-this-expression">unable to type-check this expression</a>
       <ul>
+        <li><a href="#nvalid-number-of-sections">nvalid number of sections</a></li>
         <li><a href="#afterscreenupdates">afterScreenUpdates</a></li>
       </ul>
     </li>
