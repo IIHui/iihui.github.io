@@ -241,7 +241,7 @@ code.has-jax {
     <i class="fa fa-file-word-o"></i>
 </span>
 <span class="post-meta-item-text">字数: </span>
-<span class="leancloud-visitors-count">15748</span>
+<span class="leancloud-visitors-count">15762</span>
 &nbsp; | &nbsp;
 <span class="post-meta-item-icon">
     <i class="fa fa-coffee"></i>
@@ -562,7 +562,7 @@ code.has-jax {
 <td style="text-align:left">仅内存</td>
 </tr>
 <tr>
-<td style="text-align:left">Cookie 存储</td>
+<td style="text-align:left">cookie 存储</td>
 <td style="text-align:left">持久化到磁盘</td>
 <td style="text-align:left">仅内存，会话结束即清除</td>
 </tr>
@@ -572,7 +572,7 @@ code.has-jax {
 <td style="text-align:left">仅内存，会话结束即清除</td>
 </tr>
 <tr>
-<td style="text-align:left">跨 App 重启保留数据</td>
+<td style="text-align:left">跨App重启保留数据</td>
 <td style="text-align:left">是</td>
 <td style="text-align:left">否</td>
 </tr>
@@ -590,8 +590,8 @@ code.has-jax {
 </table>
 <h3 id="invalidateandcancel和finishtasksandinvalidate">invalidateAndCancel和finishTasksAndInvalidate</h3>
 <p>若要终止<code>URLSession</code>任务，有<code>invalidateAndCancel</code>和<code>finishTasksAndInvalidate</code>两个方法，核心区别在于<font color="#de7802">对当前正在执行的任务的处理方式，以及会话失效的时机</font>，一个是「立即强制终止」，一个是「优雅地等待完成」。</p>
-<p>当<code>invalidateAndCancel</code>调用后，会话会立即标记为无效，<font color="#de7802">所有未完成的任务（包括正在网络传输的和队列中等待的）都会被强制取消</font>。被取消的任务会收到 <code>URLError.cancelled</code>错误，其<code>completionHandler</code>会立即被执行（或<code>delegate</code>方法会被触发）。一旦调用，该会话不能再创建新的请求，否则会出现崩溃或报错。</p>
-<p>当<code>finishTasksAndInvalidate</code>被调用后，会话会立即停止接收新的任务（之后调用<code>dataTask</code>会失败），但<font color="#de7802">允许当前已经在传输中的任务继续执行</font>，直到它们自然完成（成功或失败）。只有当所有现有的任务全部执行完（调用完各自的<code>completionHandler</code>）后，会话才会正式释放资源。如果队列中有尚未开始的任务（<code>resume()</code>还没调用或处于等待状态），这些任务会被取消，但已经开始传输的任务会保持运行。</p>
+<p>当<code>invalidateAndCancel</code>调用后，会话会立即标记为无效，<font color="#de7802">所有未完成的任务（包括正在网络传输的和队列中等待的）都会被强制取消</font>。被取消的任务会收到<code>URLError.cancelled</code>错误，其<code>completionHandler</code>会立即被执行（或<code>delegate</code>方法会被触发）。一旦调用，该会话不能再创建新的请求，否则会出现崩溃或报错。</p>
+<p>当<code>finishTasksAndInvalidate</code>被调用后，会话会立即停止接收新的任务（之后调用<code>dataTask</code>会失败），但<font color="#de7802">允许当前已经在传输中的任务继续执行</font>，直到它们自然完成（成功或失败）。只有当所有现有的任务全部执行完（调用完各自的<code>completionHandler</code>）后，会话才会正式释放资源。如果队列中有尚未开始的任务（<code>resume</code>还没调用或处于等待状态），这些任务会被取消，但已经开始传输的任务会保持运行。</p>
 <table>
 <thead>
 <tr>
@@ -629,7 +629,7 @@ code.has-jax {
 </tbody>
 </table>
 <ul>
-<li>内存泄漏警告：如果调用了<code>finishTasksAndInvalidate()</code>，但某个下载任务因为网络问题一直在重试或卡死，那么<code>Session</code>永远不会释放，从而导致内存泄漏。因此，通常建议在应用进入后台时使用<code>finishTasksAndInvalidate</code>，同时设置合理的超时时间（<code>timeoutIntervalForRequest</code>）。</li>
+<li>内存泄漏警告：如果调用了<code>finishTasksAndInvalidate</code>，但某个下载任务因为网络问题一直在重试或卡死，那么<code>Session</code>永远不会释放，从而导致内存泄漏。因此，通常建议在应用进入后台时使用<code>finishTasksAndInvalidate</code>，同时设置合理的超时时间（<code>timeoutIntervalForRequest</code>）。</li>
 <li>调用后禁止复用：无论调用哪个方法，该<code>URLSession</code>实例在失效后都不能再被复用。如果还需要发起请求，必须重新创建<code>URLSession</code>实例。</li>
 </ul>
 <h2 id="zlib-ngh-file-not-found">zlib-ng.h file not found</h2>
@@ -732,12 +732,14 @@ code.has-jax {
 <h2 id="taskdidreceivedata-has-already-been-called">taskDidReceiveData has already been called</h2>
 <p>在使用<code>URLSession</code>调用了<code>invalidateAndCancel</code>后，偶发出现崩溃<code>WKURLSchemeTask taskDidReceiveData:] has already been called for this task</code>。</p>
 <p>当在<code>start</code>方法里使用<code>URLSession</code>发起异步任务，并在某时刻调用了<code>invalidateAndCancel()</code>，<code>URLSession</code>的委托（<code>Delegate</code>）会在极短时间内收到两个回调：</p>
-<p>1、最后一个<code>didReceive data</code>回调（如果数据还在传输中）。</p>
-<p>2、<code>didCompleteWithError</code>回调（携带<code>NSURLErrorCancelled</code>错误）。</p>
+<ol>
+<li>最后一个<code>didReceive data</code>回调（如果数据还在传输中）。</li>
+<li><code>didCompleteWithError</code>回调（携带<code>NSURLErrorCancelled</code>错误）。</li>
+</ol>
 <p>如果代码不加严格保护，会出现致命时序问题：</p>
 <ul>
-<li>时序 A（正常：数据回调到达 -&gt; 调用<code>didReceive(data)</code> -&gt; 完成回调到达 -&gt; 调用<code>didFinish</code>。</li>
-<li>时序 B（崩溃）：<code>invalidateAndCancel</code>触发，<code>stop</code>被调用，此时将<code>isTaskCompleted</code>置为<code>true</code>。但有可能后台线程的<code>didReceive data</code>回调已经处于<code>RunLoop</code>队列中等待执行。之后，这个过期的数据回调被执行，虽然<code>isTaskCompleted</code>已是<code>true</code>，但如果在数据回调里只检查了<code>!isTaskCompleted</code>就调用 <code>didReceive(data)</code>，那么它依然会调用。随后完成回调到达，再次调用<code>didFinish</code>，或重复调用数据接收，系统直接崩溃。</li>
+<li>时序 A（正常）：数据回调到达 -&gt; 调用<code>didReceive(data)</code>&ndash;&gt; 完成回调到达&ndash;&gt; 调用<code>didFinish</code>。</li>
+<li>时序 B（崩溃）：<code>invalidateAndCancel</code>触发，<code>stop</code>被调用，此时将<code>isTaskCompleted</code>置为<code>true</code>。但有可能后台线程的<code>didReceive data</code>回调已经处于<code>RunLoop</code>队列中等待执行。之后，这个过期的数据回调被执行，虽然<code>isTaskCompleted</code>已是<code>true</code>，但如果在数据回调里只检查了<code>!isTaskCompleted</code>就调用 <code>didReceive(data)</code>，那么它依然会调用。随后完成回调到达，再次调用<code>didFinish</code>或重复调用数据接收，系统直接崩溃。</li>
 </ul>
 <h1 id="unable-to-type-check-this-expression">unable to type-check this expression</h1>
 <p>升级了<code>Xcode</code>版本后，原来的工程出现了编译错误：</p>
