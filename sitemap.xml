@@ -503,7 +503,13 @@ const KEY_ID = &amp;#39;id&amp;#39; const KEY_DURATION = &amp;#39;duration&amp;#
 async function A() {  // 没有await  B().then(item =&amp;gt; {  //  }).catch(error =&amp;gt; {  throw error  }) }  async function B() {  console.log(&amp;#34;B&amp;#34;)  throw Error(&amp;#34;B&amp;#34;) }  async function C() {  // 未捕获，因为A在错误发生前就返回了resolved promise  try {  await A()  console.log(&amp;#39;没有捕获到错误&amp;#39;)  } catch (e) {  console.log(`捕获到异常:${JSON.stringify(e)}`)  } } 问题根源是作用域的隔离。关键问题是A函数调用了B().then().catch()，但既没有await也没有return这个Promise链，所以：
  A函数同步执行完B().then().catch() 这行代码后，立即返回一个resolved状态的Promise。 C中的await A()拿到的是一个resolved的Promise，所以try块正常执行完毕。 在A中.catch里的throw error是在微任务中执行的，此时C的try/catch早已结束。  C调用A():  ├─ A() 同步执行  │ ├─ 调用B()，B同步抛出错误  │ ├─ B()返回rejected Promise  │ ├─ .catch()被注册（回调进入微任务队列）  │ └─ A()同步执行完毕，返回resolved Promise ← ①  │  ├─ C的try块中await A()得到resolved Promise  ├─ C打印&amp;#34;没有捕获到错误&amp;#34; ← ②  │  └─ 微任务执行：  └─ .catch回调执行，throw error ← ③ 此时才抛出，但C的try/catch已经不在调用栈上了 上面的异常有3种解决方案，第一种是在A中添加await：
 async function A() {  // 使用await  await B().then(item =&amp;gt; {  //  }).catch(error =&amp;gt; {  throw error  }) } 第二种方案是在A中直接return调用B的Promise链：
-async function A() {  // 使用return  return B().then(item =&amp;gt; {  //  }).catch(error =&amp;gt; {  throw error  }) } </content>
+async function A() {  // 使用return  return B().then(item =&amp;gt; {  //  }).catch(error =&amp;gt; {  throw error  }) } 第三种方案是在A内部用try/catch 处理（最清晰）：
+async function A() {  try {  await B()  } catch (error) {  // 这里throw会被A的调用者捕获  throw error  } } 为什么加上await就有效？
+async function A() {  await B().catch(error =&amp;gt; {  throw error // ① .catch中throw  })  // ② await检测到.catch()返回的Promise被 reject  // ③ await将这个rejection转换为同步异常抛出  // ④ A函数在这里被中断，返回rejected Promise } await的作用：它会等待Promise完成，如果Promise被rejected，await会将rejection转换为同步的throw，从而让A函数返回一个rejected状态的Promise。rejection指的是Promise的失败状态，也就是Promise变为rejected状态时携带的那个「失败原因」。
+// 这几种方式都会产生rejection： Promise.reject(&amp;#39;错误信息&amp;#39;) // rejection是&amp;#39;错误信息&amp;#39; throw new Error(&amp;#39;出错&amp;#39;) // 在async函数中，throw会被转换为rejection B() // 如果B返回rejected Promise  // rejection就是那个被reject的值 为什么await 能把rejection转换为 throw？await做了三件事：
+ 暂停当前async函数的执行 等待Promise完成（settled） 根据结果决定后续行为：  如果Promise是fulfilled（成功），取出结果值，继续执行。 如果Promise是rejected（失败），抛出这个失败原因。    同步的throw指的是：在async函数的执行流中，await后面的代码不会执行，函数会在这里被中断，效果就像在这里写了个throw语句一样。
+需要注意的是在async函数中，任何Promise链如果既没有await也没有return，它的错误就会脱离当前函数，变成未处理的Promise拒绝。
+</content>
     </entry>
     
      <entry>
