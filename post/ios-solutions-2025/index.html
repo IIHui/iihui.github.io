@@ -241,7 +241,7 @@ code.has-jax {
     <i class="fa fa-file-word-o"></i>
 </span>
 <span class="post-meta-item-text">字数: </span>
-<span class="leancloud-visitors-count">15762</span>
+<span class="leancloud-visitors-count">15838</span>
 &nbsp; | &nbsp;
 <span class="post-meta-item-icon">
     <i class="fa fa-coffee"></i>
@@ -283,25 +283,27 @@ code.has-jax {
 </span></span><span style="display:flex;"><span><span style="color:#75715e"># 重建整个索引（耗时较长）</span>
 </span></span><span style="display:flex;"><span>sudo mdutil -E /
 </span></span></code></pre></div><h2 id="xcode-16-编译问题">Xcode 16 编译问题</h2>
+<h3 id="include">include</h3>
 <p>升级至<code>Xcode 16</code>后编译原工程出现了如下错误：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span><span style="color:#75715e">#include &lt;sys/_types/_u_char.h&gt;&#39;; &#39;u_char&#39; must be declared before it is used</span>
 </span></span></code></pre></div><p>这是因为苹果在<code>iOS 17/macOS 14 SDK</code>中，移除了<a href="https://developer.apple.com/documentation/xcode-release-notes/xcode-16-release-notes">隐式类型声明</a>，要求所有的类型如<code>u_int32_t，u_char</code>等需要从适当的系统模块中导入。这意味着现在需要显式地导入包含这些类型定义的头文件：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span><span style="color:#75715e">#include &lt;sys/types.h&gt;  </span>
 </span></span></code></pre></div><p>解决了上面编译错误，又出现了第二个报错：</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>Declaration of <span style="color:#e6db74">&#39;sa_family_t&#39;</span> must be imported from module <span style="color:#e6db74">&#39;Darwin.POSIX.sys.types._sa_family_t&#39;</span> before it is required
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-c" data-lang="c"><span style="display:flex;"><span>Declaration of <span style="color:#960050;background-color:#1e0010">&#39;</span>sa_family_t<span style="color:#960050;background-color:#1e0010">&#39;</span> must be imported from module <span style="color:#960050;background-color:#1e0010">&#39;</span>Darwin.POSIX.sys.types._sa_family_t<span style="color:#960050;background-color:#1e0010">&#39;</span> before it is required
 </span></span></code></pre></div><p>同样地，也需要显式地导入如下头文件：</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span><span style="color:#75715e">#include &lt;sys/socket.h&gt;</span>
-</span></span></code></pre></div><p>升级到<code>Xcode 16.4</code>后，发现不能调试<code>iOS 13</code>真机，连上手机并手动信任后出现如下错误：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-c" data-lang="c"><span style="display:flex;"><span><span style="color:#75715e">#include</span> <span style="color:#75715e">&lt;sys/socket.h&gt;</span><span style="color:#75715e">
+</span></span></span></code></pre></div><h3 id="debug">debug</h3>
+<p>升级到<code>Xcode 16.4</code>后，发现不能调试<code>iOS 13</code>真机，连上手机并手动在弹出提示选择信任后出现如下错误：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sh" data-lang="sh"><span style="display:flex;"><span>Could not locate device support files。You may be able to resolve the issue by installing the latest version of Xcode from the Mac App Store or developer.apple.com.
-</span></span></code></pre></div><p>这是因为<code>Xcode 16</code>将默认支持的最低调试系统版本限制到<code>iOS 15</code>了。而以前在使用低版本的<code>Xcode</code>时，当真机连上<code>Xcode</code>后，会自动检测本地是否已有相应系统的支持文件，若没有会自动下载对应目录：</p>
+</span></span></code></pre></div><p>这是因为<code>Xcode 16</code>将<font color=red>默认支持的最低调试系统版本限制到<code>iOS 15</code>了</font>。以前在使用低版本<code>Xcode</code>时，当真机连上<code>Xcode</code>后，会自动检测本地是否已有相应系统的设备支持文件（<code>DeviceSupport</code>），若没有会自动下载<code>Xcode</code>对应目录：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sh" data-lang="sh"><span style="display:flex;"><span>/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/DeviceSupport
-</span></span></code></pre></div><p>因为<code>Xcode 16</code>默认不再支持调试<code>iOS 15</code>以下设备了，所以不会自动下载<code>iOS 15</code>以下的设备支持文件了。此时，需要手动下载低版本<code>iOS</code>系统的支持文件，当前的<a href="https://juejin.cn/post/7478182398409703476">解决方案</a>是到<a href="https://github.com/filsv/iOSDeviceSupport?tab=readme-ov-file">这里</a>下载对应iOS版本的<code>DeviceSupport</code>文件，然后解压并移动到：</p>
+</span></span></code></pre></div><p>因为<code>Xcode 16</code>默认不再支持调试<code>iOS 15</code>以下设备了，所以不会自动下载<code>iOS 15</code>以下的设备支持文件（<code>DeviceSupport</code>）了。此时，需要手动下载iOS低版本系统的支持文件，当前的<a href="https://juejin.cn/post/7478182398409703476">解决方案</a>是到<a href="https://github.com/filsv/iOSDeviceSupport?tab=readme-ov-file">这里</a>下载对应iOS版本的<code>DeviceSupport</code>文件，然后解压并移动到如下目录：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-fallback" data-lang="fallback"><span style="display:flex;"><span>/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/DeviceSupport
-</span></span></code></pre></div><p>接着再重启<code>Xcode</code>，就可以正常调试低版本手机了。</p>
-<h2 id="覆盖安装xcode">覆盖安装Xcode</h2>
-<p>从苹果官网下载新版<code>Xcode 16</code>覆盖之前从<code>App Store</code>上安装的低版本<code>Xcode</code>时，出现如下报错：</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>The operation can’t be completed because some items had to be skipped. For each item, choose File &gt; Get Info, make sure “Locked” is deselected, and <span style="color:#66d9ef">then</span> check the Sharing &amp; Permissions section. When you are sure the items are unlocked and not designated as Read Only or No Access, try again.
-</span></span></code></pre></div><p>可以通过如下方式解决：</p>
+</span></span></code></pre></div><p>最后再重启<code>Xcode</code>，就可以正常调试低版本手机了。</p>
+<h2 id="覆盖安装xcode-16">覆盖安装Xcode 16</h2>
+<p>从苹果官网下载新版<code>Xcode 16</code>进行安装，并覆盖之前从<code>App Store</code>上安装的低版本<code>Xcode</code>时，出现如下报错：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sh" data-lang="sh"><span style="display:flex;"><span>The operation can’t be completed because some items had to be skipped. For each item, choose File &gt; Get Info, make sure “Locked” is deselected, and <span style="color:#66d9ef">then</span> check the Sharing &amp; Permissions section. When you are sure the items are unlocked and not designated as Read Only or No Access, try again.
+</span></span></code></pre></div><p>可以通过如下几个命令解决：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span><span style="color:#75715e"># 解锁所有文件（移除用户不可更改标志）</span>
 </span></span><span style="display:flex;"><span>sudo chflags -R nouchg /Applications/Xcode.app
 </span></span><span style="display:flex;"><span>
@@ -310,7 +312,7 @@ code.has-jax {
 </span></span><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span><span style="color:#75715e"># 授予用户完全读写权限</span>
 </span></span><span style="display:flex;"><span>sudo chmod -R u+rw /Applications/Xcode.app
-</span></span></code></pre></div><p>示例：如果用户名为<code>john</code>，则上面命令为<code>sudo chown -R john:staff /Applications/Xcode.app</code>。</p>
+</span></span></code></pre></div><p>如果用户名为<code>john</code>，则上面命令为<code>sudo chown -R john:staff /Applications/Xcode.app</code>。</p>
 <h2 id="uicollectionview">UICollectionView</h2>
 <p>升级<code>Xcode 16</code>编译原工程后，出现如下报错：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>Expected dequeued view to be returned to the collection view in preparation <span style="color:#66d9ef">for</span> display. When the collection view<span style="color:#960050;background-color:#1e0010">&#39;</span>s data source is asked to provide a view <span style="color:#66d9ef">for</span> a given index path, ensure that a single view is dequeued and returned to the collection view. Avoid dequeuing views without a request from the collection view. For retrieving an existing view in the collection view, use -<span style="color:#f92672">[</span>UICollectionView cellForItemAtIndexPath:<span style="color:#f92672">]</span> or -<span style="color:#f92672">[</span>UICollectionView supplementaryViewForElementKind:atIndexPath:<span style="color:#f92672">]</span>
@@ -367,7 +369,7 @@ code.has-jax {
 </span></span><span style="display:flex;"><span>}
 </span></span></code></pre></div><h2 id="安装描述文件失败">安装描述文件失败</h2>
 <p>安装了新的描述文件，但调试时还是出现如下错误：</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>Please ensure the provisioning profile is configured <span style="color:#66d9ef">for</span> this device. If not, please try to generate a new profile.
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sh" data-lang="sh"><span style="display:flex;"><span>Please ensure the provisioning profile is configured <span style="color:#66d9ef">for</span> this device. If not, please try to generate a new profile.
 </span></span></code></pre></div><p>若确定待安装的描述文件没问题，可以尝试拔掉手机，再重新安装描述文件。</p>
 <h2 id="biocpromisc-operation-not-supported">BIOCPROMISC: Operation not supported</h2>
 <p>为iOS设备创建虚拟接口：</p>
@@ -406,13 +408,13 @@ code.has-jax {
 <h3 id="参数介绍">参数介绍</h3>
 <p><a href="https://blog.csdn.net/weixin_45565886/article/details/134064883">过滤参数介绍</a></p>
 <h2 id="ios-18-unsatisfied-local-network-prohibited">iOS 18 unsatisfied (Local network prohibited)</h2>
-<p>使用<code>Xcode 16</code>编译App，使用某个上传功能时出现如下错误：</p>
+<p>使用<code>Xcode 16</code>编译原工程，使用某个上传功能时出现如下错误：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>NSURLErrorNWPathKey<span style="color:#f92672">=</span>unsatisfied <span style="color:#f92672">(</span>Local network prohibited<span style="color:#f92672">)</span>
 </span></span></code></pre></div><p>这个错误表明应用被系统阻止访问本地网络，这是因为<code>iOS 18</code>有一些新变化：</p>
 <ul>
-<li>进一步加强了网络隔离策略</li>
-<li>强化了本地网络访问的权限控制</li>
-<li>对<code>mDNS/Bonjour</code>服务发现更严格限制</li>
+<li>进一步加强了网络隔离策略。</li>
+<li>强化了本地网络访问的权限控制。</li>
+<li>对<code>mDNS/Bonjour</code>服务发现更严格限制。</li>
 </ul>
 <p>解决方案是要在工程的<code>info.plist</code>添加如下内容：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-xml" data-lang="xml"><span style="display:flex;"><span><span style="color:#f92672">&lt;key&gt;</span>NSLocalNetworkUsageDescription<span style="color:#f92672">&lt;/key&gt;</span>
@@ -424,16 +426,16 @@ code.has-jax {
 </span></span><span style="display:flex;"><span>    <span style="color:#f92672">&lt;string&gt;</span>_printer._tcp<span style="color:#f92672">&lt;/string&gt;</span>
 </span></span><span style="display:flex;"><span><span style="color:#f92672">&lt;/array&gt;</span>
 </span></span></code></pre></div><h2 id="task冲突">Task冲突</h2>
-<p>在某个<code>Swift</code>文件开头引入了<code>PomiseKit</code>，即<code>import PromiseKit</code>。然后，使用新并发模型中的<code>Task{ }</code>时，却出现如下编译错误：</p>
+<p>在某个<code>Swift</code>文件顶部引入了<code>PomiseKit</code>，即<code>import PromiseKit</code>。然后，使用新并发模型中的<code>Task{ }</code>时，却出现如下编译错误：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">&#39;</span>Task<span style="color:#960050;background-color:#1e0010">&#39;</span> cannot be constructed because it has no accessible initializers
 </span></span></code></pre></div><p>这是因为在<code>PromiseKit</code>组件中也定义了一个<code>Task</code>，所以会优先使用<code>PromiseKit</code>里的这个<code>Task</code>，而不是<code>Swift</code>标准库中的<code>Task</code>。解决方案是使用标准并发模型的内部命名空间，即<code>_Concurrency</code>：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span>_Concurrency.Task {
 </span></span><span style="display:flex;"><span>   <span style="color:#75715e">//</span>
 </span></span><span style="display:flex;"><span>}
 </span></span></code></pre></div><h2 id="查看targert设置">查看targert设置</h2>
-<p>升级了<code>Xcode 16</code>之后发现同一个工程的不同<code>target</code>有一个编译成功，另一个编译失败。根据现象，显然是因为不同<code>target</code>的编译设置不一样导致的，为了查看不同的<code>target</code>的编译设置，可以使用如下命令：</p>
+<p>升级了<code>Xcode 16</code>后发现同一个工程的不同<code>target</code>有一个编译成功，另一个编译失败。根据现象，显然是因为不同<code>target</code>的某些编译设置不一样导致的，为了查看不同的<code>target</code>的编译设置，可以使用如下命令：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>xcodebuild -workspace xxx.xcworkspace -scheme <span style="color:#e6db74">&#34;xxxST&#34;</span> -configuration Debug -showBuildSettings &gt; ~/Downloads/st_build_settings.txt
-</span></span></code></pre></div><p>然后使用专门的文本对比工具比对不同<code>target</code>的编译设置，根据结果找出不同的设置项，改成相同即可。</p>
+</span></span></code></pre></div><p>然后使用专业的文本对比工具（例如Beyond Compare）比对不同<code>target</code>的编译设置，根据结果找出不同的设置项，改成相同即可。</p>
 <h2 id="编译时删除built_products_dirxxxxxxframework">编译时删除${BUILT_PRODUCTS_DIR}/xxx/xxx.framework</h2>
 <p>执行<code>pod update</code>后发现<code>pbxproj</code>中的<code>&quot;${BUILT_PRODUCTS_DIR}/xxx/xxx.framework&quot;</code>被删了，使用如下命令可以恢复：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span><span style="color:#75715e"># 1. 完全清除现有 Pods 集成</span>
@@ -469,7 +471,7 @@ code.has-jax {
 <p>接手别人的项目后使用<code>pod update</code>命令更新依赖，出现如下错误：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>RuntimeError - <span style="color:#e6db74">`</span>PBXGroup<span style="color:#e6db74">`</span> attempted to initialize an object with unknown ISA <span style="color:#e6db74">`</span>PBXFileSystemSynchronizedRootGroup<span style="color:#e6db74">`</span> from attributes: <span style="color:#e6db74">`</span><span style="color:#f92672">{</span><span style="color:#e6db74">&#34;isa&#34;</span><span style="color:#f92672">=</span>&gt;<span style="color:#e6db74">&#34;PBXFileSystemSynchronizedRootGroup&#34;</span>, <span style="color:#e6db74">&#34;exceptions&#34;</span><span style="color:#f92672">=</span>&gt;<span style="color:#f92672">[</span><span style="color:#e6db74">&#34;416D36782ECD6C14005419D5&#34;</span><span style="color:#f92672">]</span>, <span style="color:#e6db74">&#34;path&#34;</span><span style="color:#f92672">=</span>&gt;<span style="color:#e6db74">&#34;demo&#34;</span>, <span style="color:#e6db74">&#34;sourceTree&#34;</span><span style="color:#f92672">=</span>&gt;<span style="color:#e6db74">&#34;&lt;group&gt;&#34;</span><span style="color:#f92672">}</span><span style="color:#e6db74">`</span>
 </span></span></code></pre></div><p>这是因为<code>cocoapods</code>版本太低（实际是<code>cocoapods</code>的<code>Xcodeproj</code>版本太低），无法识别在高版本<code>Xcode</code>上创建的项目。需要将在高版本<code>Xcode</code>上已创建工程的根目录由<code>Folder</code>转为<code>Group</code>（打开项目在根目录上右键会出现相应选项）。若按上面方法修改后执行<code>pod update</code>后还是出现如下报错:</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span><span style="color:#f92672">[</span>!<span style="color:#f92672">]</span> <span style="color:#f92672">[</span>!<span style="color:#f92672">]</span> Xcodeproj doesn<span style="color:#e6db74">&#39;t know about the following attributes {&#34;minimizedProjectReferenceProxies&#34;=&gt;&#34;1&#34;, &#34;preferredProjectObjectVersion&#34;=&gt;&#34;77&#34;} for the &#39;</span>PBXProject<span style="color:#960050;background-color:#1e0010">&#39;</span> isa.
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sh" data-lang="sh"><span style="display:flex;"><span><span style="color:#f92672">[</span>!<span style="color:#f92672">]</span> <span style="color:#f92672">[</span>!<span style="color:#f92672">]</span> Xcodeproj doesn<span style="color:#e6db74">&#39;t know about the following attributes {&#34;minimizedProjectReferenceProxies&#34;=&gt;&#34;1&#34;, &#34;preferredProjectObjectVersion&#34;=&gt;&#34;77&#34;} for the &#39;</span>PBXProject<span style="color:#960050;background-color:#1e0010">&#39;</span> isa.
 </span></span></code></pre></div><p>这是因为低版本的<code>Xcodeproj</code>无法识别上面<font color="#de7802">在高版本上支持的两个新属性</font>，此时需要把文件<code>project.pbxproj</code>（在<code>finder</code>中右键<code>xxx.xcodeproj</code>&mdash;&gt;显示包内容&mdash;&gt;打开<code>project.pbxproj</code>）中的对应内容删除：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sh" data-lang="sh"><span style="display:flex;"><span>minimizedProjectReferenceProxies <span style="color:#f92672">=</span> 1;
 </span></span><span style="display:flex;"><span>preferredProjectObjectVersion <span style="color:#f92672">=</span> 77;
@@ -487,19 +489,19 @@ code.has-jax {
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>bundleShortVersion<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;</span><span style="color:#e6db74">${</span>2<span style="color:#66d9ef">:-</span>$demo<span style="color:#e6db74">}</span><span style="color:#e6db74">&#34;</span>
 </span></span></code></pre></div><h2 id="cannot-be-found--xlinker">cannot be found -Xlinker</h2>
 <p>修改工程<code>Build Settings</code>中的<code>Other Linker Flags</code>值，去除了<code>-force_load</code>紧接着的下一行，接着重新编译时出现如下错误：</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>Build input file cannot be found: <span style="color:#e6db74">&#39;/xxx/-Xlinker&#39;</span>. Did you forget to declare this file as an output of a script phase or custom build rule which produces it?
-</span></span></code></pre></div><p>这是因为<code>-all_load</code>或<code>-force_load</code>标志的作用都是加载静态库中所有文件，但<code>-all_load</code>作用于所有的库，而<code>-force_load</code>后面必须要指定具体的文件，现在删除了其后的文件，编译就出现了错误。</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sh" data-lang="sh"><span style="display:flex;"><span>Build input file cannot be found: <span style="color:#e6db74">&#39;/xxx/-Xlinker&#39;</span>. Did you forget to declare this file as an output of a script phase or custom build rule which produces it?
+</span></span></code></pre></div><p>这是因为<code>-all_load</code>或<code>-force_load</code>标志的作用都是加载静态库中所有文件，但<code>-all_load</code>作用于所有的库，而<code>-force_load</code>后面<font color="#de7802">必须要指定具体的文件</font>，现在删除了其后的文件，编译就出现了错误。</p>
 <p><a href="https://www.cnblogs.com/imock/p/7337773.html">参考资料</a></p>
 <h2 id="fbsopenapplicationserviceerrordomain">FBSOpenApplicationServiceErrorDomain</h2>
 <p>使用<code>Xcode</code>调试小组件时，出现如下错误：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sh" data-lang="sh"><span style="display:flex;"><span>SendProcessControlEvent:toPid: encountered an error: Error Domain<span style="color:#f92672">=</span>com.apple.dt.deviceprocesscontrolservice Code<span style="color:#f92672">=</span><span style="color:#ae81ff">8</span> <span style="color:#e6db74">&#34;Failed to show Widget &#39;xxx.Widget&#39; error: Error Domain=FBSOpenApplicationServiceErrorDomain Code=1 &#34;</span>The request to open <span style="color:#e6db74">&#34;com.apple.springboard&#34;</span> failed.<span style="color:#e6db74">&#34;
 </span></span></span></code></pre></div><h2 id="codesign-error">CodeSign Error</h2>
-<p>本地打包没有出现报错，但在流水线出现如下编译错误。然后尝试在流水线的<code>Xcode</code>中使用顶部菜单栏的<code>Product--&gt;Archive</code>时，持续弹出输入登录用户名和密码访问钥匙串的提示框。最后发现，是因为打包证书对应私钥没有设置<code>codesign</code>的访问权限：</p>
+<p>本地打包没有出现报错，但在流水线出现如下编译错误。然后尝试在流水线的<code>Xcode</code>中使用顶部菜单栏的<code>Product--&gt;Archive</code>时，持续不断地弹出输入登录用户名和密码访问钥匙串的提示框。最后发现，是因为打包证书对应私钥没有设置<code>codesign</code>的访问权限：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>The following build commands failed:
 </span></span><span style="display:flex;"><span> 	CodeSign /Users/cmo/Library/Developer/Xcode/DerivedData/xxx-fyjunjdgwijqqsamhglwtnuxfcil/Build/Products/Release-iphoneos/ddd/ddd.framework <span style="color:#f92672">(</span>in target <span style="color:#e6db74">&#39;ddd&#39;</span> from project <span style="color:#e6db74">&#39;Pods&#39;</span><span style="color:#f92672">)</span>
 </span></span><span style="display:flex;"><span> 	Building workspace xxx with scheme xxx and configuration Release
 </span></span></code></pre></div><p>解决方案是在钥匙串中选择对应的发布证书，接着点击最前面的右箭头展开私钥，然后双击展开后的私钥，在弹出来的页面，再选择右侧的<code>Access Control</code>，最后将<code>codesign</code>添加到访问白名单上（即放到<code>Always allow access by these applications</code>下）或者开启所有应用访问<code>Allow all applications to access this item</code>。</p>
-<p>添加<code>codesign</code>时可以使用<code>which codesign</code>命令查到对应路径为<code>/usr/bin/codesign</code>，即在一个隐藏路径下。此时需要使用<code>shift+command+.</code>显示隐藏路径，然后找到<code>/usr/bin/</code>下的<code>codesign</code>，将其添加到访问白名单里。</p>
+<p>添加<code>codesign</code>时可以使用<code>which codesign</code>命令查到对应路径为<code>/usr/bin/codesign</code>，即在一个隐藏路径下。此时需要使用<code>shift+command+.</code>显示隐藏路径，然后找到<code>/usr/bin/</code>下的<code>codesign</code>，将其添加到访问白名单。</p>
 <h2 id="ipad-tabbar显示">iPad TabBar显示</h2>
 <p>在<code>iOS 18</code>的<code>iPad</code>上，用户反馈<code>TabBar</code>到了顶部，而不像手机那样显示在底部。可以通过修改<code>UITabBarController</code>中的<code>traitOverrides</code>属性为<code>compact</code>来解决：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span><span style="color:#75715e">// 兼容iOS 18以上系统，将tabbar显示在底部</span>
@@ -1214,8 +1216,13 @@ code.has-jax {
     <li>
       <ul>
         <li><a href="#no-symbolic-information-found">No Symbolic Information Found</a></li>
-        <li><a href="#xcode-16-编译问题">Xcode 16 编译问题</a></li>
-        <li><a href="#覆盖安装xcode">覆盖安装Xcode</a></li>
+        <li><a href="#xcode-16-编译问题">Xcode 16 编译问题</a>
+          <ul>
+            <li><a href="#include">include</a></li>
+            <li><a href="#debug">debug</a></li>
+          </ul>
+        </li>
+        <li><a href="#覆盖安装xcode-16">覆盖安装Xcode 16</a></li>
         <li><a href="#uicollectionview">UICollectionView</a>
           <ul>
             <li><a href="#uinavigationcontroller中查找特定view">UINavigationController中查找特定View</a></li>
