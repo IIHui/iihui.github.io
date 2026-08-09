@@ -241,13 +241,13 @@ code.has-jax {
     <i class="fa fa-file-word-o"></i>
 </span>
 <span class="post-meta-item-text">字数: </span>
-<span class="leancloud-visitors-count">283</span>
+<span class="leancloud-visitors-count">750</span>
 &nbsp; | &nbsp;
 <span class="post-meta-item-icon">
     <i class="fa fa-coffee"></i>
 </span>
 <span class="post-meta-item-text">阅读: </span>
-<span class="leancloud-visitors-count">1 分钟</span>
+<span class="leancloud-visitors-count">2 分钟</span>
 </span>
       </div>
     </header>
@@ -290,7 +290,38 @@ code.has-jax {
 </span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">if</span> (<span style="color:#a6e22e">str</span> <span style="color:#f92672">&amp;&amp;</span> <span style="color:#a6e22e">str</span>.<span style="color:#a6e22e">trim</span>()) {
 </span></span><span style="display:flex;"><span>  <span style="color:#75715e">// 处理空字符串逻辑
 </span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>}
-</span></span></code></pre></div>
+</span></span></code></pre></div><h2 id="catch中throw-error">catch中throw error</h2>
+<p>在<code>async</code>方法C里面调用异步方法A，而在A内部调用另一个异步方法B时，在<code>then</code>的<code>catch</code>中<code>throw err</code>，但C中使用<code>try catch</code>捕获不到A中的catch中throw的错误：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span><span style="color:#66d9ef">async</span> <span style="color:#66d9ef">function</span> <span style="color:#a6e22e">A() {</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">// 没有await
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#a6e22e">B</span>().<span style="color:#a6e22e">then</span>(<span style="color:#a6e22e">item</span> <span style="color:#f92672">=&gt;</span> {
+</span></span><span style="display:flex;"><span>        <span style="color:#75715e">//
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    }).<span style="color:#66d9ef">catch</span>(<span style="color:#a6e22e">error</span> <span style="color:#f92672">=&gt;</span> {
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">throw</span> <span style="color:#a6e22e">error</span>
+</span></span><span style="display:flex;"><span>    })
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">async</span> <span style="color:#66d9ef">function</span> <span style="color:#a6e22e">B() {</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">console</span>.<span style="color:#a6e22e">log</span>(<span style="color:#e6db74">&#34;B&#34;</span>)
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">throw</span> Error(<span style="color:#e6db74">&#34;B&#34;</span>)
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">async</span> <span style="color:#66d9ef">function</span> <span style="color:#a6e22e">C() {</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">// 未捕获，因为A在错误发生前就返回了resolved promise
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#66d9ef">try</span> {
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">await</span> <span style="color:#a6e22e">A</span>()
+</span></span><span style="display:flex;"><span>        <span style="color:#a6e22e">console</span>.<span style="color:#a6e22e">log</span>(<span style="color:#e6db74">&#39;没有捕获到错误&#39;</span>)
+</span></span><span style="display:flex;"><span>    } <span style="color:#66d9ef">catch</span> (<span style="color:#a6e22e">e</span>) {
+</span></span><span style="display:flex;"><span>        <span style="color:#a6e22e">console</span>.<span style="color:#a6e22e">log</span>(<span style="color:#e6db74">`捕获到异常:</span><span style="color:#e6db74">${</span><span style="color:#a6e22e">JSON</span>.<span style="color:#a6e22e">stringify</span>(<span style="color:#a6e22e">e</span>)<span style="color:#e6db74">}</span><span style="color:#e6db74">`</span>)
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p>问题根源是作用域的隔离。关键问题是A函数调用了<code>B().then().catch()</code>，但既没有<code>await</code>也没有<code>return</code>这个Promise链，所以：</p>
+<ol>
+<li>A函数同步执行完<code>B().then().catch()</code> 这行代码后，立即返回一个<code>resolved</code>状态的Promise。</li>
+<li>C中的<code>await A()</code>拿到的是一个<code>resolved</code>的Promise，所以<code>try</code>块正常执行完毕。</li>
+<li>而 <code>.catch</code> 里的<code>throw error</code>是在微任务中执行的，此时C的<code>try/catch</code>早已结束。</li>
+</ol>
+
     </div>
     <footer class="post-footer">
         
@@ -450,6 +481,7 @@ code.has-jax {
       <ul>
         <li><a href="#record中使用key">Record中使用key</a></li>
         <li><a href="#去除前后空白符再判空">去除前后空白符，再判空</a></li>
+        <li><a href="#catch中throw-error">catch中throw error</a></li>
       </ul>
     </li>
   </ul>

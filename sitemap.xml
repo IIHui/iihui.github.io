@@ -499,7 +499,9 @@ NSSecureCoding是在Foundation框架中定义的一个协议。预编译头文�
         </tags>
         <content type="html"> Record中使用key 在ts中需要在一个class的多个不同方法中构建Record，其中id,duration等key使用了多次。下面方式是使用枚举常量规避多次使用&#39;id&#39;和&#39;duration&#39;，请注意下面record定义时的key使用了中括号:
 const enum RecordKey {  id = &amp;#39;id&amp;#39;,  duration = &amp;#39;duration&amp;#39; }  let record: Record&amp;lt;string, Object&amp;gt; = {  [RecordKey.id]: 1001,  [RecordKey.duration]: 60 }  console.log(record) 也可以定义键名常量解决该问题：
-const KEY_ID = &amp;#39;id&amp;#39; const KEY_DURATION = &amp;#39;duration&amp;#39; let record: Record&amp;lt;string, Object&amp;gt; = {  [KEY_ID]: 1001,  [KEY_DURATION]: 60 } console.log(record) 去除前后空白符，再判空 let str: string = &amp;#34; &amp;#34;  // 方法1：去除空白后判断长度 if (str.trim().length === 0) {  // 处理空字符串逻辑 }  // 方法2：直接与空串比较 if (str.trim() === &amp;#34;&amp;#34;) {  // 处理空字符串逻辑 }  // 方法3：利用空串的布尔值 if (str &amp;amp;&amp;amp; str.trim()) {  // 处理空字符串逻辑 } </content>
+const KEY_ID = &amp;#39;id&amp;#39; const KEY_DURATION = &amp;#39;duration&amp;#39; let record: Record&amp;lt;string, Object&amp;gt; = {  [KEY_ID]: 1001,  [KEY_DURATION]: 60 } console.log(record) 去除前后空白符，再判空 let str: string = &amp;#34; &amp;#34;  // 方法1：去除空白后判断长度 if (str.trim().length === 0) {  // 处理空字符串逻辑 }  // 方法2：直接与空串比较 if (str.trim() === &amp;#34;&amp;#34;) {  // 处理空字符串逻辑 }  // 方法3：利用空串的布尔值 if (str &amp;amp;&amp;amp; str.trim()) {  // 处理空字符串逻辑 } catch中throw error 在async方法C里面调用异步方法A，而在A内部调用另一个异步方法B时，在then的catch中throw err，但C中使用try catch捕获不到A中的catch中throw的错误：
+async function A() {  // 没有await  B().then(item =&amp;gt; {  //  }).catch(error =&amp;gt; {  throw error  }) }  async function B() {  console.log(&amp;#34;B&amp;#34;)  throw Error(&amp;#34;B&amp;#34;) }  async function C() {  // 未捕获，因为A在错误发生前就返回了resolved promise  try {  await A()  console.log(&amp;#39;没有捕获到错误&amp;#39;)  } catch (e) {  console.log(`捕获到异常:${JSON.stringify(e)}`)  } } 问题根源是作用域的隔离。关键问题是A函数调用了B().then().catch()，但既没有await也没有return这个Promise链，所以：
+ A函数同步执行完B().then().catch() 这行代码后，立即返回一个resolved状态的Promise。 C中的await A()拿到的是一个resolved的Promise，所以try块正常执行完毕。 而 .catch 里的throw error是在微任务中执行的，此时C的try/catch早已结束。  </content>
     </entry>
     
      <entry>
