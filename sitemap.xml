@@ -506,8 +506,8 @@ async function A() {  // 使用await  await B().then(item =&amp;gt; {  //  }).ca
 async function A() {  // 使用return  return B().then(item =&amp;gt; {  //  }).catch(error =&amp;gt; {  throw error  }) } 第三种方案是在A内部用try/catch 处理（最清晰）：
 async function A() {  try {  await B()  } catch (error) {  // 这里throw会被A的调用者捕获  throw error  } } 为什么加上await就有效？
 async function A() {  await B().catch(error =&amp;gt; {  throw error // ① .catch中throw  })  // ② await检测到.catch()返回的Promise被 reject  // ③ await将这个rejection转换为同步异常抛出  // ④ A函数在这里被中断，返回rejected Promise } await的作用：它会等待Promise完成，如果Promise被rejected，await会将rejection转换为同步的throw，从而让A函数返回一个rejected状态的Promise。rejection指的是Promise的失败状态，也就是Promise变为rejected状态时携带的那个「失败原因」。
-// 这几种方式都会产生rejection： Promise.reject(&amp;#39;错误信息&amp;#39;) // rejection是&amp;#39;错误信息&amp;#39; throw new Error(&amp;#39;出错&amp;#39;) // 在async函数中，throw会被转换为rejection B() // 如果B返回rejected Promise  // rejection就是那个被reject的值 为什么await 能把rejection转换为 throw？await做了三件事：
- 暂停当前async函数的执行 等待Promise完成（settled） 根据结果决定后续行为：  如果Promise是fulfilled（成功），取出结果值，继续执行。 如果Promise是rejected（失败），抛出这个失败原因。    同步的throw指的是：在async函数的执行流中，await后面的代码不会执行，函数会在这里被中断，效果就像在这里写了个throw语句一样。
+// 这几种方式都会产生rejection： Promise.reject(&amp;#39;错误信息&amp;#39;) // rejection是&amp;#39;错误信息&amp;#39; throw new Error(&amp;#39;出错&amp;#39;) // 在async函数中，throw会被转换为rejection B() // 如果B返回rejected Promise  // rejection就是那个被reject的值 为什么await 能把rejection转换为throw？await做了以下三件事：
+ 暂停当前async函数的执行。 等待Promise完成（settled）。 根据结果决定后续行为：  如果Promise是fulfilled（成功），取出结果值，继续执行。 如果Promise是rejected（失败），抛出这个失败原因。    同步的throw指的是：在async函数的执行流中，await后面的代码不会执行，函数会在这里被中断，效果就像在这里写了个throw语句一样。
 需要注意的是在async函数中，任何Promise链如果既没有await也没有return，它的错误就会脱离当前函数，变成未处理的Promise拒绝。
 </content>
     </entry>
