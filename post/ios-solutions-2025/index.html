@@ -241,7 +241,7 @@ code.has-jax {
     <i class="fa fa-file-word-o"></i>
 </span>
 <span class="post-meta-item-text">字数: </span>
-<span class="leancloud-visitors-count">16567</span>
+<span class="leancloud-visitors-count">16949</span>
 &nbsp; | &nbsp;
 <span class="post-meta-item-icon">
     <i class="fa fa-coffee"></i>
@@ -1060,12 +1060,23 @@ code.has-jax {
 <p>使用<code>cocoapods-art</code>引入了两个自定义仓库，若这两个仓库中有同名组件时，可以在组件版本后面指定源的地址：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ruby" data-lang="ruby"><span style="display:flex;"><span>pod <span style="color:#e6db74">&#39;Alamofire&#39;</span>, <span style="color:#e6db74">&#39;4.9.1&#39;</span>, <span style="color:#e6db74">:source</span> <span style="color:#f92672">=&gt;</span> <span style="color:#e6db74">&#39;http://xxx/artifactory/api/pods/yyy&#39;</span>
 </span></span></code></pre></div><h1 id="离线升级cocoapods">离线升级CocoaPods</h1>
-<p>由于低版本的<code>CocoaPods</code>识别不了<code>podspec</code>文件中<code>visionOS</code>字段，所以需要升级版本。如果要完成离线升级<code>CocoaPods</code>版本，首先到能联网的机器上，到<a href="https://github.com/bazel-contrib/portable-ruby/releases">这里</a>或者<a href="https://github.com/jdx/ruby/releases">这里</a>（这边不含适用<code>intel</code>芯片的<code>macOS</code>版本）下载离线<code>ruby</code>安装包。然后参考<a href="https://rvm.ruby-lang.org.cn/rvm/offline">这里</a>的文档，使用如下命令<code>rvm</code>压缩包：<code>curl -sSL https://github.com/rvm/rvm/tarball/stable -o rvm-stable.tar.gz</code>下载<code>rvm</code>离线安装包。</p>
+<p>由于低版本的<code>CocoaPods</code>识别不了<code>podspec</code>文件中<code>visionOS</code>字段，所以需要升级版本。如果要完成离线升级<code>CocoaPods</code>版本，首先到能联网的机器上，到<a href="https://github.com/bazel-contrib/portable-ruby/releases">这里</a>或者<a href="https://github.com/jdx/ruby/releases">这里</a>（这边不含适用<code>intel</code>芯片的<code>macOS</code>版本）下载离线<code>ruby</code>安装包，此次下载的<code>ruby-4.0.6.x86_64_darwin.tar.gz</code>。</p>
+<p>然后参考<a href="https://rvm.ruby-lang.org.cn/rvm/offline">这里</a>的文档，使用如下命令<code>rvm</code>压缩包：<code>curl -sSL https://github.com/rvm/rvm/tarball/stable -o rvm-stable.tar.gz</code>下载<code>rvm</code>离线安装包。</p>
+<p>在联网的机器上使用创建<code>Gemfile</code>文件，输入如下内容：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ruby" data-lang="ruby"><span style="display:flex;"><span>source <span style="color:#e6db74">&#39;https://rubygems.org&#39;</span>
+</span></span><span style="display:flex;"><span>gem <span style="color:#e6db74">&#39;cocoapods&#39;</span>, <span style="color:#e6db74">&#39;1.17.0&#39;</span>
+</span></span><span style="display:flex;"><span>gem <span style="color:#e6db74">&#39;cocoapods-art&#39;</span>  <span style="color:#75715e"># 如果你还需要这个插件</span>
+</span></span></code></pre></div><p>再执行<code>bundle package --all</code>拉取到所有文件。该命令解析所有依赖（包括传递依赖），接着下载所有<code>.gem</code> 文件到当前目录下的<code>vendor/cache</code>目录。</p>
 <p>然后将离线安装包拷贝到需要离线机器上：</p>
 <ol>
 <li>使用<code>mkdir rvm &amp;&amp; cd rvm</code>命令创建目录。</li>
 <li>使用命令安装rvm，即执行<code>./install --auto-dotfiles</code>。</li>
 <li>加载rvm，即执行<code>source ~/.rvm/scripts/rvm</code>。</li>
+<li>在<code>~/.zshrc</code>文件中加入<code>export PATH=&quot;$HOME/.rvm/bin:$PATH&quot;</code>，然后执行<code>source ~/.zshrc</code>。</li>
+<li>将联网机器中下载的<code>ruby-4.0.6.x86_64_darwin.tar.gz</code>拷贝离线机器上，然后解压到<code>~/.rvm/rubies</code>目录下。</li>
+<li>然后执行挂载命令<code>rvm mount ~/.rvm/rubies/ruby-4.0.6 -n ruby-4.0.6</code>，然后使用<code>rvm list</code>查看是否挂载成功。</li>
+<li>使用刚挂上的新<code>ruby</code>版本，即执行<code>rvm use ruby-4.0.6 --default</code>。</li>
+<li></li>
 </ol>
 <p>1、第一步在有网的机器上把rvm-stable下载下来，然后传到离线机器上
 2、第二步是解压rvm-stable.tar.gz，然后进到解压目录执行./install &ndash;auto-dotfiles
