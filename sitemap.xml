@@ -488,13 +488,13 @@ if case let .underlying(underlyingError, _) = error,  let urlError = underlyingE
 Pod单个组件指定源 使用cocoapods-art引入了两个自定义仓库，若这两个仓库中有同名且同版本的组件时，可以在组件版本后面明确指定仓库源地址：
 pod &amp;#39;Alamofire&amp;#39;, &amp;#39;4.9.1&amp;#39;, :source =&amp;gt; &amp;#39;http://xxx/artifactory/api/pods/yyy&amp;#39; 离线安装CocoaPods 由于低版本的CocoaPods识别不了podspec文件中visionOS字段，所以需要升级版本。如果要完成离线安装CocoaPods版本，需先到能联网的机器上下载相关文件。
 首先，到这里或这里（第二个链接中不含适用intel芯片的macOS版本）下载离线ruby安装包，此次下载的ruby-4.0.6.x86_64_darwin.tar.gz。
-接着，如果之前没有安装或rvm，参考这里的文档，在联网的机器上，使用如下命令下载rvm离线压缩包：curl -sSL https://github.com/rvm/rvm/tarball/stable -o rvm-stable.tar.gz。
-然后，在联网的机器上使用创建Gemfile文件，输入如下内容：
-source &amp;#39;https://rubygems.org&amp;#39; gem &amp;#39;cocoapods&amp;#39;, &amp;#39;1.17.0&amp;#39; gem &amp;#39;cocoapods-art&amp;#39; # 如果你还需要这个插件 再执行bundle package --all拉取到所有的依赖文件。该命令解析所有依赖（包括传递依赖），接着下载所有.gem文件到当前目录下的vendor/cache目录。将Gemfile文件和vendor/cache目录均压缩，然后拷贝到离线机器上。
-最后，在联网的机器上使用命令下载bundler，即执行gem fetch bundler -v 2.4.10，并将下载到的gem文件拷贝的离线机器上。
+接着，如果离线机器上之前没有安装rvm，参考这里的文档，在联网的机器上，使用如下命令下载rvm离线压缩包：curl -sSL https://github.com/rvm/rvm/tarball/stable -o rvm-stable.tar.gz。
+接着，在联网的机器上使用创建Gemfile文件，输入如下内容：
+source &amp;#39;https://rubygems.org&amp;#39; gem &amp;#39;cocoapods&amp;#39;, &amp;#39;1.17.0&amp;#39; gem &amp;#39;cocoapods-art&amp;#39; # 如果需要这个插件 再执行bundle package --all拉取所有依赖文件。该命令解析所有依赖（包括传递依赖）并下载所有.gem文件到当前目录下的vendor/cache中。将Gemfile文件和vendor/cache目录均进行压缩，然后拷贝到离线机器上。
+最后，在联网的机器上使用命令下载bundler，即执行gem fetch bundler -v 2.4.10，并将下载到的gem文件拷贝到离线机器上。
 最后在离线mac上，按如下步骤安装cocoapods和cocoapods-art：
-  使用mkdir rvm &amp;amp;&amp;amp; cd rvm命令创建并转到rvm目录，使用tar --strip-components=1 -xzf ../rvm-stable.tar.gz命令解压。
-  使用命令安装rvm，即执行./install --auto-dotfiles，其中--auto-dotfiles选项表示让rvm自动修改shell配置文件，以添加必要的环境变量和加载命令，以便每次打开终端时rvm能自动可用。即根据检测到的 shell，在~/.bash_profile、~/.bashrc或~/.zshrc 文件末尾添加一行：
+  先使用mkdir rvm &amp;amp;&amp;amp; cd rvm命令创建并转到rvm目录，再使用tar --strip-components=1 -xzf ../rvm-stable.tar.gz命令解压。
+  使用命令安装rvm，即执行./install --auto-dotfiles，其中--auto-dotfiles选项表示让rvm自动修改shell配置文件，以添加必要的环境变量和加载命令，以便每次打开终端时rvm能自动可用。即根据检测到的shell，在~/.bash_profile、~/.bashrc或~/.zshrc 文件末尾添加一行：
 [[ -s &amp;#34;$HOME/.rvm/scripts/rvm&amp;#34; ]] &amp;amp;&amp;amp; source &amp;#34;$HOME/.rvm/scripts/rvm&amp;#34;   接着加载rvm，即执行source ~/.rvm/scripts/rvm，该命令的作用是在当前shell会话中加载rvm的环境变量和函数定义，使rvm的命令（如rvm use、rvm install、ruby、gem 等）在当前终端中可用。
   在~/.zshrc文件中加入export PATH=&amp;quot;$HOME/.rvm/bin:$PATH&amp;quot;，然后执行source ~/.zshrc。
   将ruby-4.0.6.x86_64_darwin.tar.gz解压到~/.rvm/rubies目录下，即执行tar -xzf ruby-4.0.6.x86_64_darwin.tar.gz -C ~/.rvm/rubies/，其中的-C表示先跳转到目标目录，然后再解压。
