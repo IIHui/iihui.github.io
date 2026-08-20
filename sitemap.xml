@@ -486,23 +486,23 @@ if case let .underlying(underlyingError, _) = error,  let urlError = underlyingE
 #import &amp;lt;Foundation/Foundation.h&amp;gt; 第二种方式是直接在桥接文件中先导入Foundation：
 #import &amp;lt;Foundation/Foundation.h&amp;gt; 第三种是调整桥接文件中的头文件导入顺序，将后面已导入Foundation的头文件提到桥接头文件的前面先导入。
 Pod单个组件指定源 使用cocoapods-art引入了两个自定义仓库，若这两个仓库中有同名且同版本的组件时，可以在组件版本后面明确指定仓库源地址：
-pod &amp;#39;Alamofire&amp;#39;, &amp;#39;4.9.1&amp;#39;, :source =&amp;gt; &amp;#39;http://xxx/artifactory/api/pods/yyy&amp;#39; 离线安装CocoaPods 在无网络的mac上，由于低版本的CocoaPods识别不了podspec文件中visionOS字段，所以需要升级版本。如果要完成离线安装CocoaPods版本，需先到能联网的机器上下载相关文件。
-首先，到这里或这里（第二个链接中不含适用intel芯片的macOS版本）下载离线ruby安装包，此次下载的ruby-4.0.6.x86_64_darwin.tar.gz（Intel芯片）。
-接着，若离线机器上之前没有安装rvm，参考这里的文档，在联网的机器上，使用下面命令下载rvm离线压缩包：
+pod &amp;#39;Alamofire&amp;#39;, &amp;#39;4.9.1&amp;#39;, :source =&amp;gt; &amp;#39;http://xxx/artifactory/api/pods/yyy&amp;#39; 离线安装CocoaPods 在无互联网的macOS上，由于低版本的CocoaPods（1.12.1）识别不了podspec文件中visionos字段，所以需要升级版本。如果要完成离线安装CocoaPods版本，需先到能联网的机器上下载相关文件。
+首先，到这里或另一（第二个链接中不含适用intel芯片的macOS版本）下载离线ruby安装包，此次下载的ruby-4.0.6.x86_64_darwin.tar.gz（Intel芯片，若是M芯片需要下载arm64版本，即ruby-4.0.6.arm64_darwin.tar.gz）。
+接着，若离线机器上之前没有安装过rvm，参考这里的文档，在联网的机器上，使用下面命令下载rvm离线压缩包：
 curl -sSL https://github.com/rvm/rvm/tarball/stable -o rvm-stable.tar.gz 接着，在联网的机器上创建Gemfile文件，输入如下内容：
-source &amp;#39;https://rubygems.org&amp;#39; gem &amp;#39;cocoapods&amp;#39;, &amp;#39;1.17.0&amp;#39; gem &amp;#39;cocoapods-art&amp;#39; # 如果需要这个插件 再执行bundle package --all拉取所有依赖文件。该命令解析所有依赖（包括传递依赖）并下载所有.gem文件到当前目录下的vendor/cache中。将Gemfile文件和vendor/cache目录均进行压缩，然后拷贝到离线机器上。
+source &amp;#39;https://rubygems.org&amp;#39; gem &amp;#39;cocoapods&amp;#39;, &amp;#39;1.17.0&amp;#39; gem &amp;#39;cocoapods-art&amp;#39; # 如果需要这个插件 接着，再执行bundle package --all拉取所有依赖文件。该命令解析所有依赖（包括传递依赖）并下载所有.gem文件到当前目录下的vendor/cache中。再将Gemfile文件和vendor/cache目录均进行压缩，然后拷贝到离线机器上。
 最后，在联网的机器上使用命令下载bundler，即执行gem fetch bundler -v 2.4.10，并将下载到的gem文件拷贝到离线机器上。
 最后在离线mac上，按如下步骤安装cocoapods和cocoapods-art：
   先使用mkdir rvm &amp;amp;&amp;amp; cd rvm命令创建并转到rvm目录，再使用tar --strip-components=1 -xzf ../rvm-stable.tar.gz命令解压。
-  使用命令安装rvm，即执行./install --auto-dotfiles，其中--auto-dotfiles选项表示让rvm自动修改shell配置文件，以添加必要的环境变量和加载命令，以便每次打开终端时rvm能自动可用。即根据检测到的shell，在~/.bash_profile、~/.bashrc或~/.zshrc 文件末尾添加一行：
-[[ -s &amp;#34;$HOME/.rvm/scripts/rvm&amp;#34; ]] &amp;amp;&amp;amp; source &amp;#34;$HOME/.rvm/scripts/rvm&amp;#34;   接着加载rvm，即执行source ~/.rvm/scripts/rvm，该命令的作用是在当前shell会话中加载rvm的环境变量和函数定义，使rvm的命令（如rvm use、rvm install、ruby、gem 等）在当前终端中可用。
-  在~/.zshrc文件中加入export PATH=&amp;quot;$HOME/.rvm/bin:$PATH&amp;quot;，然后执行source ~/.zshrc。
+  接着安装rvm，即执行./install --auto-dotfiles，其中--auto-dotfiles选项表示让rvm自动修改shell配置文件，即添加必要的环境变量和加载命令，以便每次打开终端时rvm能自动加载。即根据检测到的shell，在~/.bash_profile、~/.bashrc或~/.zshrc 文件末尾添加一行：
+[[ -s &amp;#34;$HOME/.rvm/scripts/rvm&amp;#34; ]] &amp;amp;&amp;amp; source &amp;#34;$HOME/.rvm/scripts/rvm&amp;#34;   接着加载rvm，即执行source ~/.rvm/scripts/rvm，该命令的作用是在当前shell会话中加载rvm的环境变量和函数定义，使得rvm的命令（如rvm use、rvm install、ruby、gem 等）在当前终端中可用。
+  根据不同的shell，在其配置文件中（本机上是~/.zshrc文件）中加入export PATH=&amp;quot;$HOME/.rvm/bin:$PATH&amp;quot;，然后执行source ~/.zshrc。
   将ruby-4.0.6.x86_64_darwin.tar.gz解压到~/.rvm/rubies目录下，即执行tar -xzf ruby-4.0.6.x86_64_darwin.tar.gz -C ~/.rvm/rubies/，其中的-C表示先跳转到目标目录，然后再解压。
   执行挂载命令rvm mount ~/.rvm/rubies/ruby-4.0.6 -n ruby-4.0.6，并使用rvm list查看是否挂载成功。rvm mount命令作用是：让rvm识别并管理一个已经存在于~/.rvm/rubies/目录下的ruby安装，并给它取一个方便使用的别名（即ruby-4.0.6），根据rvm的设计，因为是外部挂载，会自动加上ext-前缀，如果要去掉前缀只能通过别名命令rvm alias create ruby-4.0.6-local ext-ruby-4.0.6，因为rvm的限制，别名不能直接改为ruby-4.0.6。若在高版本的macOS上弹出安全提示，可以先终止命令，先执行xattr -dr com.apple.quarantine ~/.rvm/rubies/ruby-4.0.6命令移除隔离属性。
   使用刚挂上的新ruby版本，即执行rvm use ext-ruby-4.0.6 --default。
   安装新版本bundler，即gem install --local bundler-2.4.10.gem。
   再执行bundle install --local安装cocoapods，安装完后再执行pod --verison，若显示的不是最新的1.17.0，则执行hash -r，再执行pod --verison。其中hash -r的作用是清空整个命令哈希表，强制shell在下次执行命令时重新搜索PATH，找到最新的可执行文件路径。
-  若在高版本的macOS上执行pod &amp;ndash;version命令时出现如下警告:
+  若在高版本的macOS上执行pod --version命令时出现如下警告:
 pod --version Ignoring gem-wrappers-1.4.0 because its extensions are not built. Try: gem pristine gem-wrappers --version 1.4.0 Ignoring gem-wrappers-1.4.0 because its extensions are not built. Try: gem pristine gem-wrappers --version 1.4.0 Ignoring gem-wrappers-1.4.0 because its extensions are not built. Try: gem pristine gem-wrappers --version 1.4.0 这个警告信息表明gem-wrappers这个gem的原生扩展（native extensions）没有被编译，因此RubyGems在加载时会忽略它。这个警告不会影响CocoaPods的正常使用，只是RubyGems在提醒这个扩展没有编译成功。
 实际上，gem-wrappers是rvm的一个辅助gem，用于为ruby可执行文件（如ruby、gem、bundle、pod）创建包装器脚本，使得rvm可以在运行时动态切换ruby环境。它通常随rvm一起安装，并包含原生C扩展。如果想消除上面警告，可以执行下面命令：
 gem pristine gem-wrappers --version 1.4.0 简单来说，gem pristine就是一个一键还原的功能，能快速将一个出问题的Gem恢复成它最纯净、最原始的状态，从而解决因编译或修改导致的各种问题。执行这个命令后，pod --version 警告消失了，正是因为它成功地为gem-wrappers重新编译了在当前系统环境下可用的原生扩展。
