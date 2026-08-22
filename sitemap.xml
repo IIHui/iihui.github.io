@@ -3888,7 +3888,13 @@ import_tables:  - luna_pinyin  - luna_pinyin.hanyu  - luna_pinyin.poetry  - luna
 输入法消失 将macOS升级到monterry后发现鼠须管输入法不见了，此时需要重新安装鼠须管，安装之后会弹出keyboard设置页面，再点击Input Sourece，然后选择左下角的&#43;，选中Chinese,Simplified，选中Squirrel即可：
 无法切回到简体 可能按错了快捷键鼠须管输入法一直切不回简体，可以按照如下方式切回到简体。首先，打开default.yaml，确保以下配置存在：
 # 强制全局默认简体 switches:  - name: simplification  reset: 1 # 1=简体，0=繁体  states: [ 繁, 简 ] 然后重新部署，接着再在终端中执行如下命令（可以先切到其它输入法，然后再切回来）：
-# 关闭输入法进程 killall Squirrel # 重新启动 /Library/Input Methods/Squirrel.app/Contents/MacOS/Squirrel --reload </content>
+# 关闭输入法进程 killall Squirrel # 重新启动 /Library/Input Methods/Squirrel.app/Contents/MacOS/Squirrel --reload 查看版本 可以通过查看~/Library/Rime/installation.yaml文件查看安装的版本：
+cat ~/Library/Rime/installation.yaml 下面输出的rime_version就是软件的版本：
+distribution_code_name: Squirrel distribution_name: &amp;#34;鼠鬚管&amp;#34; distribution_version: 0.18 install_time: &amp;#34;Sun Feb 14 12:38:12 2021&amp;#34; installation_id: &amp;#34;821ede9c-67a9-4679-885f-b8acf8a9bb8c&amp;#34; rime_version: 1.11.2 update_time: &amp;#34;Sat May 18 12:37:01 2024&amp;#34;% 升级1.1.2 到这里下载1.1.2版本，覆盖安装后发现候选词未显示。这是因为低版本的配置格式与当前安装的版本不兼容导致的，尤其鼠须管更新到1.0版本后，一些旧的配置项写法失效了。
+首先在~/Library/Rime/squirrel.custom.yaml文件中的水平配置不再生效：
+style/horizontal: true 需要替换为：
+style/candidate_list_layout: linear 替换后发现候选词还是未显示，此时可以将~/Library/Rime/下的文件均删除。然后，重新生成squirrel.custom.yaml文件，加入如下配置：
+patch: 	style/candidate_list_layout: linear </content>
     </entry>
     
      <entry>
@@ -4996,7 +5002,8 @@ Compare  使用坚果云时，由于较长时间没有同步，导致本地和�
 which code  # 输出结果 /usr/local/bin/code  # 查看版本 code --version 也可以手动将将VS Code中code的路径添加的PATH环境变量中，即在终端的配置文件中添加
 export PATH=&amp;#34;$PATH:/Applications/Visual Studio Code.app/Contents/Resources/app/bin&amp;#34;  # 下面可以查看code路径： ls /Applications/Visual\ Studio\ Code.app/Contents/Resources/app/bin code code-tunnel 另外也可以通过在终端的配置文件中使用alias给code设置一个别名，然后执行source ~/.zshrc：
 alias code=&amp;#34;open -a &amp;#39;Visual Studio Code&amp;#39;&amp;#34; Gitfox 按行暂存 在Gitfox中如果要按暂存，需在diff视图下，先按住要鼠标左键，然后拖动想要暂存的行，然后左侧会显示蓝绿色，表示当前选择中的行，最后点击鼠标右键，选中Stage Selected Lines，即可完成选中的行暂存：
-右键选中Stage Selected Lines：
+右键选中Stage Selected Lines即可暂存选中的代码行：
+修改仓库配置 若想修改仓库的设置，可以到Settings--&amp;gt;Local Config中修改：
 AppCode 列选择模式 如果Intellij系统的编辑器要进行列选择，需要先按住option键，然后左键单击再拖动鼠标，即可选择相应的范围。在AppCode中进行列选择的具体效果如下图所示：
  iTerm 设置为默认终端 因为经常使用iTerm2，所以想将它设置为默认终端。实际上iterm2本身支持修改自身为默认终端，只要在其菜单栏点击Make Iterm2 to default Term即可：
 快捷键   command &#43; d纵向将当前窗口分为大小相同的两个窗口。
