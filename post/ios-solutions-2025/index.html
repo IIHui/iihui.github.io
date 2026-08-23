@@ -241,13 +241,13 @@ code.has-jax {
     <i class="fa fa-file-word-o"></i>
 </span>
 <span class="post-meta-item-text">字数: </span>
-<span class="leancloud-visitors-count">21007</span>
+<span class="leancloud-visitors-count">21577</span>
 &nbsp; | &nbsp;
 <span class="post-meta-item-icon">
     <i class="fa fa-coffee"></i>
 </span>
 <span class="post-meta-item-text">阅读: </span>
-<span class="leancloud-visitors-count">42 分钟</span>
+<span class="leancloud-visitors-count">44 分钟</span>
 </span>
       </div>
     </header>
@@ -1289,11 +1289,43 @@ code.has-jax {
 <p>使用<code>xcodebuild archive</code>打包时，<code>ipa</code>文件名是由<code>info.plist</code>中的哪个字段决定的？下面是一个打包的命令，<code>exportPath</code>选项后指定的是目录，下面的变量<code>ipa_name</code>不包含<code>.ipa</code>后缀：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sh" data-lang="sh"><span style="display:flex;"><span>xcodebuild -exportArchive -archivePath <span style="color:#e6db74">&#34;</span><span style="color:#e6db74">${</span>build_path<span style="color:#e6db74">}</span><span style="color:#e6db74">/</span><span style="color:#e6db74">${</span>ipa_name<span style="color:#e6db74">}</span><span style="color:#e6db74">.xcarchive&#34;</span> -exportPath <span style="color:#e6db74">&#34;</span><span style="color:#e6db74">${</span>build_path<span style="color:#e6db74">}</span><span style="color:#e6db74">/&#34;</span> -exportOptionsPlist exportOptions.plist
 </span></span></code></pre></div><p>上面命令在编译目录下生成了ipa文件，但ipa文件名是<code>info.plist</code>文件中的<code>CFBundleName</code>决定的。如果不主动设置<code>CFBundleName</code>，则<code>CFBundleName</code>的默认值来自于<code>PRODUCT_NAME</code>，而<code>PRODUCT_NAME</code>一般设置为<code>TARGET_NAME</code>。</p>
+<h1 id="find-delete">find delete</h1>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sh" data-lang="sh"><span style="display:flex;"><span><span style="color:#75715e"># 先预览（不删除），确认目标</span>
 </span></span><span style="display:flex;"><span>find . -maxdepth <span style="color:#ae81ff">1</span> -type d -name <span style="color:#e6db74">&#34;tmp_path*&#34;</span> -print
 </span></span><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span><span style="color:#75715e"># 确认无误后执行删除</span>
 </span></span><span style="display:flex;"><span>find . -maxdepth <span style="color:#ae81ff">1</span> -type d -name <span style="color:#e6db74">&#34;tmp_path*&#34;</span> -exec rm -rf <span style="color:#f92672">{}</span> <span style="color:#ae81ff">\;</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 预览要删除的文件</span>
+</span></span><span style="display:flex;"><span>find <span style="color:#e6db74">&#34;</span><span style="color:#e6db74">${</span>project_path<span style="color:#e6db74">}</span><span style="color:#e6db74">/Common&#34;</span> -maxdepth <span style="color:#ae81ff">1</span> -type f -name <span style="color:#e6db74">&#34;Config*.swift&#34;</span> ! -name <span style="color:#e6db74">&#34;Config.swift&#34;</span> -print
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 确认无误后执行删除</span>
+</span></span><span style="display:flex;"><span>find <span style="color:#e6db74">&#34;</span><span style="color:#e6db74">${</span>project_path<span style="color:#e6db74">}</span><span style="color:#e6db74">/Common&#34;</span> -maxdepth <span style="color:#ae81ff">1</span> -type f -name <span style="color:#e6db74">&#34;Config*.swift&#34;</span> ! -name <span style="color:#e6db74">&#34;Config.swift&#34;</span> -delete
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">if</span> <span style="color:#f92672">[</span> -n <span style="color:#e6db74">&#34;</span><span style="color:#e6db74">${</span>project_path<span style="color:#e6db74">}</span><span style="color:#e6db74">&#34;</span> <span style="color:#f92672">]</span> <span style="color:#f92672">&amp;&amp;</span> <span style="color:#f92672">[</span> -d <span style="color:#e6db74">&#34;</span><span style="color:#e6db74">${</span>project_path<span style="color:#e6db74">}</span><span style="color:#e6db74">/Pods/Target Support Files&#34;</span> <span style="color:#f92672">]</span>; <span style="color:#66d9ef">then</span>
+</span></span><span style="display:flex;"><span>    rm -rf <span style="color:#e6db74">&#34;</span><span style="color:#e6db74">${</span>project_path<span style="color:#e6db74">}</span><span style="color:#e6db74">/Pods/Target Support Files&#34;</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">else</span>
+</span></span><span style="display:flex;"><span>    echo <span style="color:#e6db74">&#34;目录不存在或路径变量为空，跳过删除。&#34;</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">fi</span>
+</span></span></code></pre></div><h1 id="rvm-command-not-found">rvm command not found</h1>
+<p>在python脚本中执行<code>pod repo update xxx</code>后出现错误<code>/bin/sh: rvm: command not found</code>，这个错误是因为rvm不是一个可独立执行的程序，而是一组需要被加载到当前shell会话中的shell函数和环境变量。</p>
+<p>执行<code>subprocess.getstatusoutput()</code>时，默认使用<code>/bin/sh</code>启动一个非登录（non-login）**、**非交互（non-interactive）的shell。这种<code>shell</code>不会读取<code>~/.bashrc</code>、<code>~/.bash_profile</code>等配置文件，因此rvm并没有被加载，也就找不到<code>rvm</code>命令。</p>
+<p>解决方案是在执行rvm命令前，先加载rvm环境：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-python" data-lang="python"><span style="display:flex;"><span><span style="color:#f92672">import</span> subprocess
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>full_cmd <span style="color:#f92672">=</span> <span style="color:#e6db74">&#39;&#39;&#39;
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">bash -c &#39;source ~/.rvm/scripts/rvm &amp;&amp; rvm use 4.0.6 &amp;&amp; pod repo update xxx&#39;
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">&#39;&#39;&#39;</span>
+</span></span><span style="display:flex;"><span>status, output <span style="color:#f92672">=</span> subprocess<span style="color:#f92672">.</span>getstatusoutput(full_cmd)
+</span></span></code></pre></div><p>更推荐的方式是使用rvm-exec，因为rvm提供了一个可执行文件<code>rvm-exec</code>，它可以在指定的ruby版本下直接运行命令，而无需加载整个rvm环境，此时不需要关心环境变量，<code>rvm-exec</code>会自动设置好一切。</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-python" data-lang="python"><span style="display:flex;"><span><span style="color:#f92672">import</span> subprocess
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 假设你终端使用的是Ruby4.0.6（查看方式：终端运行 ruby -v）</span>
+</span></span><span style="display:flex;"><span>ruby_version <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;4.0.6&#34;</span>  <span style="color:#75715e"># 改成你实际使用的版本</span>
+</span></span><span style="display:flex;"><span>pod_command <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;pod repo update xxx&#34;</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>full_cmd <span style="color:#f92672">=</span> <span style="color:#e6db74">f</span><span style="color:#e6db74">&#34;~/.rvm/bin/rvm-exec </span><span style="color:#e6db74">{</span>ruby_version<span style="color:#e6db74">}</span><span style="color:#e6db74"> </span><span style="color:#e6db74">{</span>pod_command<span style="color:#e6db74">}</span><span style="color:#e6db74">&#34;</span>
+</span></span><span style="display:flex;"><span>status, output <span style="color:#f92672">=</span> subprocess<span style="color:#f92672">.</span>getstatusoutput(full_cmd)
 </span></span></code></pre></div>
     </div>
     <footer class="post-footer">
@@ -1519,6 +1551,8 @@ code.has-jax {
       </ul>
     </li>
     <li><a href="#archive-ipa">archive ipa</a></li>
+    <li><a href="#find-delete">find delete</a></li>
+    <li><a href="#rvm-command-not-found">rvm command not found</a></li>
   </ul>
 </nav></div>
     </div>
