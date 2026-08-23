@@ -241,7 +241,7 @@ code.has-jax {
     <i class="fa fa-file-word-o"></i>
 </span>
 <span class="post-meta-item-text">字数: </span>
-<span class="leancloud-visitors-count">20702</span>
+<span class="leancloud-visitors-count">21007</span>
 &nbsp; | &nbsp;
 <span class="post-meta-item-icon">
     <i class="fa fa-coffee"></i>
@@ -1279,12 +1279,21 @@ code.has-jax {
 </span></span><span style="display:flex;"><span>          /Users/xxx/.rvm/rubies/ruby-3.3.12/lib/ruby/3.3.0/rubygems/security.rb:463:in <span style="color:#e6db74">`</span>create_digest<span style="color:#e6db74">&#39;
 </span></span></span><span style="display:flex;"><span><span style="color:#e6db74">          /Users/xxx/.rvm/rubies/ruby-3.3.12/lib/ruby/3.3.0/rubygems/package.rb:358:in `block in digest&#39;</span>
 </span></span><span style="display:flex;"><span>          /Users/xxx/.rvm/rubies/ruby-3.3.12/lib/ruby/3.3.0/rubygems/package.rb:358:in 
-</span></span></code></pre></div><p>出现上面错误是因为在编译时没有启用<code>openssl</code>支持，导致<code>RubyGems</code>在验证gem包的数字签名时无法加载<code>openssl</code>扩展库。对于离线环境，需要在编译Ruby时正确指定<code>openssl</code>的路径即可解决：</p>
+</span></span></code></pre></div><p>出现上面错误是因为在编译时没有启用<code>openssl</code>支持，导致<code>RubyGems</code>在验证gem包的数字签名时无法加载<code>openssl</code>扩展库。对于离线环境，需要在编译<code>Ruby</code>时正确指定<code>openssl</code>的路径即可解决上面报错：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sh" data-lang="sh"><span style="display:flex;"><span><span style="color:#75715e"># 先卸载</span>
 </span></span><span style="display:flex;"><span>rvm uninstall ruby-3.3.12
 </span></span><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span><span style="color:#75715e"># 指定目录后重新安装</span>
 </span></span><span style="display:flex;"><span>rvm install ruby-3.3.12 --with-openssl-dir<span style="color:#f92672">=</span>/usr/local/openssl-1.1 --rubygems ignore
+</span></span></code></pre></div><h1 id="archive-ipa">archive ipa</h1>
+<p>使用<code>xcodebuild archive</code>打包时，<code>ipa</code>文件名是由<code>info.plist</code>中的哪个字段决定的？下面是一个打包的命令，<code>exportPath</code>选项后指定的是目录，下面的变量<code>ipa_name</code>不包含<code>.ipa</code>后缀：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sh" data-lang="sh"><span style="display:flex;"><span>xcodebuild -exportArchive -archivePath <span style="color:#e6db74">&#34;</span><span style="color:#e6db74">${</span>build_path<span style="color:#e6db74">}</span><span style="color:#e6db74">/</span><span style="color:#e6db74">${</span>ipa_name<span style="color:#e6db74">}</span><span style="color:#e6db74">.xcarchive&#34;</span> -exportPath <span style="color:#e6db74">&#34;</span><span style="color:#e6db74">${</span>build_path<span style="color:#e6db74">}</span><span style="color:#e6db74">/&#34;</span> -exportOptionsPlist exportOptions.plist
+</span></span></code></pre></div><p>上面命令在编译目录下生成了ipa文件，但ipa文件名是<code>info.plist</code>文件中的<code>CFBundleName</code>决定的。如果不主动设置<code>CFBundleName</code>，则<code>CFBundleName</code>的默认值来自于<code>PRODUCT_NAME</code>，而<code>PRODUCT_NAME</code>一般设置为<code>TARGET_NAME</code>。</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sh" data-lang="sh"><span style="display:flex;"><span><span style="color:#75715e"># 先预览（不删除），确认目标</span>
+</span></span><span style="display:flex;"><span>find . -maxdepth <span style="color:#ae81ff">1</span> -type d -name <span style="color:#e6db74">&#34;tmp_path*&#34;</span> -print
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 确认无误后执行删除</span>
+</span></span><span style="display:flex;"><span>find . -maxdepth <span style="color:#ae81ff">1</span> -type d -name <span style="color:#e6db74">&#34;tmp_path*&#34;</span> -exec rm -rf <span style="color:#f92672">{}</span> <span style="color:#ae81ff">\;</span>
 </span></span></code></pre></div>
     </div>
     <footer class="post-footer">
@@ -1509,6 +1518,7 @@ code.has-jax {
         <li><a href="#编译安装ruby">编译安装ruby</a></li>
       </ul>
     </li>
+    <li><a href="#archive-ipa">archive ipa</a></li>
   </ul>
 </nav></div>
     </div>
