@@ -241,13 +241,13 @@ code.has-jax {
     <i class="fa fa-file-word-o"></i>
 </span>
 <span class="post-meta-item-text">字数: </span>
-<span class="leancloud-visitors-count">21577</span>
+<span class="leancloud-visitors-count">22434</span>
 &nbsp; | &nbsp;
 <span class="post-meta-item-icon">
     <i class="fa fa-coffee"></i>
 </span>
 <span class="post-meta-item-text">阅读: </span>
-<span class="leancloud-visitors-count">44 分钟</span>
+<span class="leancloud-visitors-count">45 分钟</span>
 </span>
       </div>
     </header>
@@ -1190,7 +1190,7 @@ code.has-jax {
 </span></span><span style="display:flex;"><span>sudo make install
 </span></span></code></pre></div><p>安装完后，可以使用上面<code>libssl.1.1.dylib</code>库报错的方式解决，或者在上面编译安装时，将<code>--prefix</code>改为/<code>usr/local/opt/openssl@1.1</code>。</p>
 <h2 id="编译安装ruby">编译安装ruby</h2>
-<p>如果需要不通过挂载的方式，使用rvm进行编译安装ruby版本，可以先到<code>https://cache.ruby-lang.org/pub/ruby</code>下载对应版本，然后传到离线机器上，执行如下命令：</p>
+<p>如果需要不通过挂载的方式，使用rvm进行编译安装ruby版本，可以先到<code>https://cache.ruby-lang.org/pub/ruby</code>或<code>https://www.ruby-lang.org/zh_cn/downloads/</code>下载对应版本，然后传到离线机器上，执行如下命令：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sh" data-lang="sh"><span style="display:flex;"><span><span style="color:#75715e"># 复制文件到rvm目录下</span>
 </span></span><span style="display:flex;"><span>cp ruby-3.3.12.tar.gz ~/.rvm/archives
 </span></span><span style="display:flex;"><span>
@@ -1309,15 +1309,14 @@ code.has-jax {
 </span></span><span style="display:flex;"><span><span style="color:#66d9ef">fi</span>
 </span></span></code></pre></div><h1 id="rvm-command-not-found">rvm command not found</h1>
 <p>在python脚本中执行<code>pod repo update xxx</code>后出现错误<code>/bin/sh: rvm: command not found</code>，这个错误是因为rvm不是一个可独立执行的程序，而是一组需要被加载到当前shell会话中的shell函数和环境变量。</p>
-<p>执行<code>subprocess.getstatusoutput()</code>时，默认使用<code>/bin/sh</code>启动一个非登录（non-login）**、**非交互（non-interactive）的shell。这种<code>shell</code>不会读取<code>~/.bashrc</code>、<code>~/.bash_profile</code>等配置文件，因此rvm并没有被加载，也就找不到<code>rvm</code>命令。</p>
-<p>解决方案是在执行rvm命令前，先加载rvm环境：</p>
+<p>执行<code>subprocess.getstatusoutput()</code>时，默认使用<code>/bin/sh</code>启动一个非登录（non-login）**、**非交互（non-interactive）的shell。这种shell不会读取<code>~/.bashrc</code>、<code>~/.bash_profile</code>等配置文件，因此rvm并没有被加载，也就找不到<code>rvm</code>命令。解决方案之一是在执行rvm命令前，先加载rvm环境：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-python" data-lang="python"><span style="display:flex;"><span><span style="color:#f92672">import</span> subprocess
 </span></span><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span>full_cmd <span style="color:#f92672">=</span> <span style="color:#e6db74">&#39;&#39;&#39;
 </span></span></span><span style="display:flex;"><span><span style="color:#e6db74">bash -c &#39;source ~/.rvm/scripts/rvm &amp;&amp; rvm use 4.0.6 &amp;&amp; pod repo update xxx&#39;
 </span></span></span><span style="display:flex;"><span><span style="color:#e6db74">&#39;&#39;&#39;</span>
 </span></span><span style="display:flex;"><span>status, output <span style="color:#f92672">=</span> subprocess<span style="color:#f92672">.</span>getstatusoutput(full_cmd)
-</span></span></code></pre></div><p>更推荐的方式是使用rvm-exec，因为rvm提供了一个可执行文件<code>rvm-exec</code>，它可以在指定的ruby版本下直接运行命令，而无需加载整个rvm环境，此时不需要关心环境变量，<code>rvm-exec</code>会自动设置好一切。</p>
+</span></span></code></pre></div><p>更推荐的方式是使用<code>rvm-exec</code>，因为rvm提供了一个可执行文件<code>rvm-exec</code>，它可以在指定的ruby版本下直接运行命令，而无需加载整个rvm环境，此时不需要关心环境变量，<code>rvm-exec</code>会自动设置好一切。</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-python" data-lang="python"><span style="display:flex;"><span><span style="color:#f92672">import</span> subprocess
 </span></span><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span><span style="color:#75715e"># 假设你终端使用的是Ruby4.0.6（查看方式：终端运行 ruby -v）</span>
@@ -1326,7 +1325,23 @@ code.has-jax {
 </span></span><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span>full_cmd <span style="color:#f92672">=</span> <span style="color:#e6db74">f</span><span style="color:#e6db74">&#34;~/.rvm/bin/rvm-exec </span><span style="color:#e6db74">{</span>ruby_version<span style="color:#e6db74">}</span><span style="color:#e6db74"> </span><span style="color:#e6db74">{</span>pod_command<span style="color:#e6db74">}</span><span style="color:#e6db74">&#34;</span>
 </span></span><span style="display:flex;"><span>status, output <span style="color:#f92672">=</span> subprocess<span style="color:#f92672">.</span>getstatusoutput(full_cmd)
-</span></span></code></pre></div>
+</span></span></code></pre></div><h1 id="repo-art-更新索引">repo-art 更新索引</h1>
+<p>使用<code>pod repo-art update xxx</code>后发现服务端已经删除的索引，本地不会自动删除。这是因为<code>pod repo-art update</code> 被设计为一种累积性操作。这意味着它只会添加服务端的新索引，而<font color="#de7802">不会主动移除本地存在但服务端已删除的条目</font>。</p>
+<p>这么设计主要是为了保护通过<code>--local-only</code>标志创建的本地索引不被误删。<code>--local-only</code>允许在不推送到远程的情况下，在本地创建或修改索引，用于本地测试等场景。如果<code>update</code>命令会同步删除，这些本地独有的条目就会丢失。</p>
+<h2 id="--prune">&ndash;prune</h2>
+<p>如果要清理服务端已删除的本地索引，正确的做法是在执行update命令时加上<code>--prune</code>标识。这个命令会在更新本地索引的同时，修剪（prune）掉所有在服务端已不存在的条目，从而实现本地与服务端索引的完全同步。</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sh" data-lang="sh"><span style="display:flex;"><span>pod repo-art update xxx --prune
+</span></span></code></pre></div><p>使用<code>--prune</code>前请注意，<font color="#de7802">它会删除所有在服务端不存在的本地条目</font>。如果本地仓库中确实有通<code>--local-only</code>创建的、且尚未推送到服务端的索引，这些条目会被一并删除。因此，在执行<code>--prune</code>操作前，需确保没有需要保留的本地独有索引。</p>
+<h2 id="--local-only">&ndash;local-only</h2>
+<p>选项<code>--local-only</code>是<code>cocoapods-art</code>插件提供的一个选项，它可以在本地创建或修改索引，但不会同步到远程服务端。这为本地测试、私有调试或临时修改提供了一个隔离的环境。</p>
+<p>它的核心工作流程是这样的，首先在本地创建一个服务端不存在的索引条目，接着执行<code>pod repo-art update</code>更新本地仓库时，这个本地独有的条目会被保留下来，不会被删除。这个功能主要用于需要安全地测试本地修改的场景。首先在已有仓库中执行如下操作：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sh" data-lang="sh"><span style="display:flex;"><span>pod repo-art add my-repo MyLib 0.2.0.podspec --local-only
+</span></span></code></pre></div><p>然后在Podfile中使用0.0.2的<font color=red>前提是服务端存在相应的库文件</font>，否则拉取不到0.0.2版本：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ruby" data-lang="ruby"><span style="display:flex;"><span>plugin <span style="color:#e6db74">&#39;cocoapods-art&#39;</span>, <span style="color:#e6db74">:sources</span> <span style="color:#f92672">=&gt;</span> <span style="color:#f92672">[</span><span style="color:#e6db74">&#39;my-company-repo&#39;</span><span style="color:#f92672">]</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># ... 其他配置</span>
+</span></span><span style="display:flex;"><span>pod <span style="color:#e6db74">&#39;MyLib&#39;</span>, <span style="color:#e6db74">&#39;0.2.0&#39;</span>
+</span></span></code></pre></div><p>也就是<code>--local-only</code>选项的作用很有限，如果只想在本地测试一个<code>Pod</code>的修改，而不想上传到服务端，正确的做法是用<code>CocoaPods</code>的本地路径依赖，而不是<code>--local-only</code>。</p>
+
     </div>
     <footer class="post-footer">
         
@@ -1553,6 +1568,12 @@ code.has-jax {
     <li><a href="#archive-ipa">archive ipa</a></li>
     <li><a href="#find-delete">find delete</a></li>
     <li><a href="#rvm-command-not-found">rvm command not found</a></li>
+    <li><a href="#repo-art-更新索引">repo-art 更新索引</a>
+      <ul>
+        <li><a href="#--prune">&ndash;prune</a></li>
+        <li><a href="#--local-only">&ndash;local-only</a></li>
+      </ul>
+    </li>
   </ul>
 </nav></div>
     </div>
