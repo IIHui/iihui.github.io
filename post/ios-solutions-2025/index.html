@@ -241,13 +241,13 @@ code.has-jax {
     <i class="fa fa-file-word-o"></i>
 </span>
 <span class="post-meta-item-text">字数: </span>
-<span class="leancloud-visitors-count">22434</span>
+<span class="leancloud-visitors-count">22751</span>
 &nbsp; | &nbsp;
 <span class="post-meta-item-icon">
     <i class="fa fa-coffee"></i>
 </span>
 <span class="post-meta-item-text">阅读: </span>
-<span class="leancloud-visitors-count">45 分钟</span>
+<span class="leancloud-visitors-count">46 分钟</span>
 </span>
       </div>
     </header>
@@ -263,7 +263,7 @@ code.has-jax {
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>symbolicatecrash xxx1.crash -d xxx.dSYM -o xxx1.log
 </span></span></code></pre></div><p>根据添加<code>-d</code>选项后终端的输出日志，发现若使用<code>mdfind</code>查找<code>uuid</code>对应的<code>dsym</code>文件时无任何输出，也就说找不到<code>uuid</code>对应的<code>dsym</code>文件：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>mdfind <span style="color:#e6db74">&#34;com_apple_xcode_dsym_uuids == A7C6DA83-B3C1-3E0C-9734-0C59CD5032C8&#34;</span>
-</span></span></code></pre></div><p>这是因为<font color="#de7802"><code>Spotlight</code>索引未包含<code>dsym</code>文件的元数据</font>，可以通过如下方案解决。经过验证，第一次添加元数据标签成功后，后续再添加<code>dsym</code>文件时不再需要重复添加元数据标签（因为直接使用<code>mfind</code>可以查到到相应的<code>dsym</code>文件）：</p>
+</span></span></code></pre></div><p>这是因为<code>Spotlight</code><font color="#de7802">索引未包含</font><code>dsym</code>文件的元数据，可以通过如下方案解决。经过验证，第一次添加元数据标签成功后，后续再添加<code>dsym</code>文件时不再需要重复添加元数据标签（因为直接使用<code>mfind</code>可以查到到相应的<code>dsym</code>文件）：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span><span style="color:#75715e"># 替换为你的实际 UUID 和文件路径</span>
 </span></span><span style="display:flex;"><span>UUID<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;A7C6DA83-B3C1-3E0C-9734-0C59CD5032C8&#34;</span>
 </span></span><span style="display:flex;"><span>DSYM_PATH<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;/path/to/xxx.dSYM&#34;</span> <span style="color:#75715e"># 需要使用绝对路径</span>
@@ -295,7 +295,7 @@ code.has-jax {
 </span></span></span></code></pre></div><h3 id="debug">debug</h3>
 <p>升级到<code>Xcode 16.4</code>后，发现不能调试<code>iOS 13</code>真机，连上手机并手动在弹出提示选择信任后出现如下错误：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sh" data-lang="sh"><span style="display:flex;"><span>Could not locate device support files。You may be able to resolve the issue by installing the latest version of Xcode from the Mac App Store or developer.apple.com.
-</span></span></code></pre></div><p>这是因为<code>Xcode 16</code>将<font color=red>默认支持的最低调试系统版本限制到<code>iOS 15</code>了</font>。以前在使用低版本<code>Xcode</code>时，当真机连上<code>Xcode</code>后，会自动检测本地是否已有相应系统的设备支持文件（<code>DeviceSupport</code>），若没有会自动下载<code>Xcode</code>对应目录：</p>
+</span></span></code></pre></div><p>这是因为<code>Xcode 16</code>将<font color=red>默认支持的最低调试系统版本限制到</font><code>iOS 15</code>了。以前在使用低版本<code>Xcode</code>时，当真机连上<code>Xcode</code>后，会自动检测本地是否已有相应系统的设备支持文件（<code>DeviceSupport</code>），若没有会自动下载<code>Xcode</code>对应目录：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sh" data-lang="sh"><span style="display:flex;"><span>/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/DeviceSupport
 </span></span></code></pre></div><p>因为<code>Xcode 16</code>默认不再支持调试<code>iOS 15</code>以下设备了，所以不会自动下载<code>iOS 15</code>以下的设备支持文件（<code>DeviceSupport</code>）了。此时，需要手动下载iOS低版本系统的支持文件，当前的<a href="https://juejin.cn/post/7478182398409703476">解决方案</a>是到<a href="https://github.com/filsv/iOSDeviceSupport?tab=readme-ov-file">这里</a>下载对应iOS版本的<code>DeviceSupport</code>文件，然后解压并移动到如下目录：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-fallback" data-lang="fallback"><span style="display:flex;"><span>/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/DeviceSupport
@@ -426,25 +426,25 @@ code.has-jax {
 </span></span><span style="display:flex;"><span>    <span style="color:#f92672">&lt;string&gt;</span>_printer._tcp<span style="color:#f92672">&lt;/string&gt;</span>
 </span></span><span style="display:flex;"><span><span style="color:#f92672">&lt;/array&gt;</span>
 </span></span></code></pre></div><h2 id="task冲突">Task冲突</h2>
-<p>在某个<code>Swift</code>文件顶部引入了<code>PomiseKit</code>，即<code>import PromiseKit</code>。然后，使用新并发模型中的<code>Task{ }</code>时，却出现如下编译错误：</p>
+<p>在某个<code>Swift</code>文件顶部引入了<code>PomiseKit</code>，即<code>import PromiseKit</code>。然后，使用新并发模型中的<code>Task{ }</code>时，却出现了如下编译错误：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">&#39;</span>Task<span style="color:#960050;background-color:#1e0010">&#39;</span> cannot be constructed because it has no accessible initializers
-</span></span></code></pre></div><p>这是因为在<code>PromiseKit</code>组件中也定义了一个<code>Task</code>，所以会优先使用<code>PromiseKit</code>里的这个<code>Task</code>，而不是<code>Swift</code>标准库中的<code>Task</code>。解决方案是使用标准并发模型的内部命名空间，即<code>_Concurrency</code>：</p>
+</span></span></code></pre></div><p>这是因为在<code>PromiseKit</code>组件中也定义了一个<code>Task</code>，因为导入了<code>PromiseKit</code>，所以会优先使用组件<code>PromiseKit</code>里的这个<code>Task</code>，而不是<code>Swift</code>标准库中的<code>Task</code>。解决方案是<font color="#de7802">使用标准并发模型的内部命名空间</font>，即<code>_Concurrency</code>：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span>_Concurrency.Task {
 </span></span><span style="display:flex;"><span>   <span style="color:#75715e">//</span>
 </span></span><span style="display:flex;"><span>}
 </span></span></code></pre></div><h2 id="查看targert设置">查看targert设置</h2>
 <p>升级了<code>Xcode 16</code>后发现同一个工程的不同<code>target</code>有一个编译成功，另一个编译失败。根据现象，显然是因为不同<code>target</code>的某些编译设置不一样导致的，为了查看不同的<code>target</code>的编译设置，可以使用如下命令：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>xcodebuild -workspace xxx.xcworkspace -scheme <span style="color:#e6db74">&#34;xxxST&#34;</span> -configuration Debug -showBuildSettings &gt; ~/Downloads/st_build_settings.txt
-</span></span></code></pre></div><p>然后使用专业的文本对比工具（例如Beyond Compare）比对不同<code>target</code>的编译设置，根据结果找出不同的设置项，改成相同即可。</p>
+</span></span></code></pre></div><p>然后使用专业的文本对比工具（例如<code>Beyond Compare</code>）比对不同<code>target</code>的编译设置，然后根据对比结果找出不同的设置项，改成相同即可。</p>
 <h2 id="编译时删除built_products_dirxxxxxxframework">编译时删除${BUILT_PRODUCTS_DIR}/xxx/xxx.framework</h2>
 <p>执行<code>pod update</code>后发现<code>pbxproj</code>中的<code>&quot;${BUILT_PRODUCTS_DIR}/xxx/xxx.framework&quot;</code>被删了，使用如下命令可以恢复：</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span><span style="color:#75715e"># 1. 完全清除现有 Pods 集成</span>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span><span style="color:#75715e"># 完全清除现有 Pods 集成</span>
 </span></span><span style="display:flex;"><span>pod deintegrate
 </span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span><span style="color:#75715e"># 2. 清理缓存</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 清理缓存</span>
 </span></span><span style="display:flex;"><span>pod cache clean --all
 </span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span><span style="color:#75715e"># 3. 重新安装</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 重新安装</span>
 </span></span><span style="display:flex;"><span>pod install
 </span></span></code></pre></div><h2 id="修改组件最低支持版本">修改组件最低支持版本</h2>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ruby" data-lang="ruby"><span style="display:flex;"><span><span style="color:#75715e"># Podfile</span>
@@ -468,29 +468,29 @@ code.has-jax {
 </span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">end</span>
 </span></span><span style="display:flex;"><span><span style="color:#66d9ef">end</span>
 </span></span></code></pre></div><h2 id="pbxfilesystemsynchronizedrootgroup">PBXFileSystemSynchronizedRootGroup</h2>
-<p>接手别人的项目后使用<code>pod update</code>命令更新依赖，出现如下错误：</p>
+<p>接手别人的新项目后使用<code>pod update</code>命令更新依赖，出现如下错误：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>RuntimeError - <span style="color:#e6db74">`</span>PBXGroup<span style="color:#e6db74">`</span> attempted to initialize an object with unknown ISA <span style="color:#e6db74">`</span>PBXFileSystemSynchronizedRootGroup<span style="color:#e6db74">`</span> from attributes: <span style="color:#e6db74">`</span><span style="color:#f92672">{</span><span style="color:#e6db74">&#34;isa&#34;</span><span style="color:#f92672">=</span>&gt;<span style="color:#e6db74">&#34;PBXFileSystemSynchronizedRootGroup&#34;</span>, <span style="color:#e6db74">&#34;exceptions&#34;</span><span style="color:#f92672">=</span>&gt;<span style="color:#f92672">[</span><span style="color:#e6db74">&#34;416D36782ECD6C14005419D5&#34;</span><span style="color:#f92672">]</span>, <span style="color:#e6db74">&#34;path&#34;</span><span style="color:#f92672">=</span>&gt;<span style="color:#e6db74">&#34;demo&#34;</span>, <span style="color:#e6db74">&#34;sourceTree&#34;</span><span style="color:#f92672">=</span>&gt;<span style="color:#e6db74">&#34;&lt;group&gt;&#34;</span><span style="color:#f92672">}</span><span style="color:#e6db74">`</span>
-</span></span></code></pre></div><p>这是因为<code>cocoapods</code>版本太低（实际是<code>cocoapods</code>的<code>Xcodeproj</code>版本太低），无法识别在高版本<code>Xcode</code>上创建的项目。需要将在高版本<code>Xcode</code>上已创建工程的根目录由<code>Folder</code>转为<code>Group</code>（打开项目在根目录上右键会出现相应选项）。若按上面方法修改后执行<code>pod update</code>后还是出现如下报错:</p>
+</span></span></code></pre></div><p>这是因为<code>cocoapods</code>版本太低（实际是因为<code>cocoapods</code>的<code>Xcodeproj</code>版本太低），无法识别在高版本<code>Xcode</code>上创建的项目。需要将在高版本<code>Xcode</code>上已创建工程的根目录由<code>Folder</code>转为<code>Group</code>（打开项目在根目录上右键会出现相应选项）。若按上面方法修改后执行<code>pod update</code>后还是出现如下报错:</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sh" data-lang="sh"><span style="display:flex;"><span><span style="color:#f92672">[</span>!<span style="color:#f92672">]</span> <span style="color:#f92672">[</span>!<span style="color:#f92672">]</span> Xcodeproj doesn<span style="color:#e6db74">&#39;t know about the following attributes {&#34;minimizedProjectReferenceProxies&#34;=&gt;&#34;1&#34;, &#34;preferredProjectObjectVersion&#34;=&gt;&#34;77&#34;} for the &#39;</span>PBXProject<span style="color:#960050;background-color:#1e0010">&#39;</span> isa.
-</span></span></code></pre></div><p>这是因为低版本的<code>Xcodeproj</code>无法识别上面<font color="#de7802">在高版本上支持的两个新属性</font>，此时需要把文件<code>project.pbxproj</code>（在<code>finder</code>中右键<code>xxx.xcodeproj</code>&mdash;&gt;显示包内容&mdash;&gt;打开<code>project.pbxproj</code>）中的对应内容删除：</p>
+</span></span></code></pre></div><p>这是因为低版本的<code>Xcodeproj</code>无法识别上面<font color="#de7802">在高版本上的两个新属性</font>，此时需要把文件<code>project.pbxproj</code>（在<code>finder</code>中右键<code>xxx.xcodeproj</code>&mdash;&gt;显示包内容&mdash;&gt;打开<code>project.pbxproj</code>）中的对应内容删除：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sh" data-lang="sh"><span style="display:flex;"><span>minimizedProjectReferenceProxies <span style="color:#f92672">=</span> 1;
 </span></span><span style="display:flex;"><span>preferredProjectObjectVersion <span style="color:#f92672">=</span> 77;
 </span></span></code></pre></div><p>如果按上面方式删除上面两个字段，还是出现如下报错：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>/Library/Ruby/Gems/2.6.0/gems/xcodeproj-1.21.0/lib/xcodeproj/project.rb:228:in <span style="color:#e6db74">`</span>initialize_from_file<span style="color:#960050;background-color:#1e0010">&#39;</span>: <span style="color:#f92672">[</span>Xcodeproj<span style="color:#f92672">]</span> Unknown object version <span style="color:#f92672">(</span>56<span style="color:#f92672">)</span>. <span style="color:#f92672">(</span>RuntimeError<span style="color:#f92672">)</span>
-</span></span></code></pre></div><p>则需要修改<code>project.pbxproj</code>文件中的<code>objectVersion</code>为支持的版本（查看历史支持的版本），才能编译正常。</p>
+</span></span></code></pre></div><p>则需要修改<code>project.pbxproj</code>文件中的<code>objectVersion</code>为支持的版本（可以通过其它项目查看历史支持的版本），才能编译正常。</p>
 <p><a href="https://blog.devzeng.com/blog/xcode16-with-cocoapods.html">参考文档</a></p>
 <h2 id="修改发布和编译版本">修改发布和编译版本</h2>
-<p>使用<code>xcodebuild</code>命令进行打包时，可以指定编译版本和发布版本。具体命令如下，其中的变量<code>targetName</code>表示<code>target</code>，而<code>bundleShortVersion</code>表示发布版本，<code>bundleVersion</code>表示编译版本：</p>
+<p>使用<code>xcodebuild</code>命令进行打包时，<font color=red>可以指定编译版本和发布版本</font>。具体命令如下，其中的变量<code>targetName</code>表示<code>target</code>，而<code>bundleShortVersion</code>表示发布版本，<code>bundleVersion</code>表示编译版本：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>xcodebuild -quiet -workspace demo.xcworkspace -scheme <span style="color:#e6db74">&#34;</span><span style="color:#e6db74">${</span>targetName<span style="color:#e6db74">}</span><span style="color:#e6db74">&#34;</span> MARKETING_VERSION<span style="color:#f92672">=</span><span style="color:#e6db74">${</span>bundleShortVersion<span style="color:#e6db74">}</span> CURRENT_PROJECT_VERSION<span style="color:#f92672">=</span><span style="color:#e6db74">${</span>bundleVersion<span style="color:#e6db74">}</span>
-</span></span></code></pre></div><p>若需要在某个目录下删除非<code>ipa</code>和非<code>dSYM</code>的其它所有文件，可以使用如下命令：</p>
+</span></span></code></pre></div><p>若需要在某个目录下删除非<code>ipa</code>和非<code>dSYM</code>的其它所有文件，可以使用如下命令，即使用<code>find -delete</code>：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span><span style="color:#75715e"># 删除非.ipa和非.dSYM文件</span>
 </span></span><span style="display:flex;"><span>find <span style="color:#e6db74">&#34;</span>$build_path<span style="color:#e6db74">&#34;</span> -type f ! -name <span style="color:#e6db74">&#34;*.ipa&#34;</span> ! -name <span style="color:#e6db74">&#34;*.dSYM&#34;</span> -depth <span style="color:#ae81ff">1</span> -delete
-</span></span></code></pre></div><p>某个变量取两个环境变量的值，下面的变量是若<code>$2</code>为空，则取<code>$demo</code>的值：</p>
+</span></span></code></pre></div><p>某个变量取两个环境变量的值，下面变量<code>bundleShortVersion</code>的意思是若<code>$2</code>为空，则取<code>$demo</code>的值：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>bundleShortVersion<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;</span><span style="color:#e6db74">${</span>2<span style="color:#66d9ef">:-</span>$demo<span style="color:#e6db74">}</span><span style="color:#e6db74">&#34;</span>
 </span></span></code></pre></div><h2 id="cannot-be-found--xlinker">cannot be found -Xlinker</h2>
 <p>修改工程<code>Build Settings</code>中的<code>Other Linker Flags</code>值，去除了<code>-force_load</code>紧接着的下一行，接着重新编译时出现如下错误：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sh" data-lang="sh"><span style="display:flex;"><span>Build input file cannot be found: <span style="color:#e6db74">&#39;/xxx/-Xlinker&#39;</span>. Did you forget to declare this file as an output of a script phase or custom build rule which produces it?
-</span></span></code></pre></div><p>这是因为<code>-all_load</code>或<code>-force_load</code>标志的作用都是加载静态库中所有文件，但<code>-all_load</code>作用于所有的库，而<code>-force_load</code>后面<font color="#de7802">必须要指定具体的文件</font>，现在删除了其后的文件，编译就出现了错误。</p>
+</span></span></code></pre></div><p>这是因为<code>-all_load</code>或<code>-force_load</code>标志的作用都是加载静态库中所有文件，但<code>-all_load</code>作用于所有的库，而<code>-force_load</code><font color="#de7802">后面必须要指定具体的文件</font>，现在删除了其后的文件，编译就出现了错误。</p>
 <p><a href="https://www.cnblogs.com/imock/p/7337773.html">参考资料</a></p>
 <h2 id="fbsopenapplicationserviceerrordomain">FBSOpenApplicationServiceErrorDomain</h2>
 <p>使用<code>Xcode</code>调试小组件时，出现如下错误：</p>
@@ -498,10 +498,10 @@ code.has-jax {
 </span></span></span></code></pre></div><h2 id="codesign-error">CodeSign Error</h2>
 <p>本地打包没有出现报错，但在流水线出现如下编译错误。然后尝试在流水线的<code>Xcode</code>中使用顶部菜单栏的<code>Product--&gt;Archive</code>时，持续不断地弹出输入登录用户名和密码访问钥匙串的提示框。最后发现，是因为打包证书对应私钥没有设置<code>codesign</code>的访问权限：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>The following build commands failed:
-</span></span><span style="display:flex;"><span> 	CodeSign /Users/cmo/Library/Developer/Xcode/DerivedData/xxx-fyjunjdgwijqqsamhglwtnuxfcil/Build/Products/Release-iphoneos/ddd/ddd.framework <span style="color:#f92672">(</span>in target <span style="color:#e6db74">&#39;ddd&#39;</span> from project <span style="color:#e6db74">&#39;Pods&#39;</span><span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span> 	CodeSign /Users/xxx/Library/Developer/Xcode/DerivedData/xxx-fyjunjdgwijqqsamhglwtnuxfcil/Build/Products/Release-iphoneos/ddd/ddd.framework <span style="color:#f92672">(</span>in target <span style="color:#e6db74">&#39;ddd&#39;</span> from project <span style="color:#e6db74">&#39;Pods&#39;</span><span style="color:#f92672">)</span>
 </span></span><span style="display:flex;"><span> 	Building workspace xxx with scheme xxx and configuration Release
 </span></span></code></pre></div><p>解决方案是在钥匙串中选择对应的发布证书，接着点击最前面的右箭头展开私钥，然后双击展开后的私钥，在弹出来的页面，再选择右侧的<code>Access Control</code>，最后将<code>codesign</code>添加到访问白名单上（即放到<code>Always allow access by these applications</code>下）或者开启所有应用访问<code>Allow all applications to access this item</code>。</p>
-<p>添加<code>codesign</code>时可以使用<code>which codesign</code>命令查到对应路径为<code>/usr/bin/codesign</code>，即在一个隐藏路径下。此时需要使用<code>shift+command+.</code>显示隐藏路径，然后找到<code>/usr/bin/</code>下的<code>codesign</code>，将其添加到访问白名单。</p>
+<p>添加<code>codesign</code>时可以使用<code>which codesign</code>命令查到对应路径为<code>/usr/bin/codesign</code>，即在一个隐藏路径下。此时需要使用<code>shift+command+.</code>显示隐藏路径，然后找到<code>/usr/bin/</code>下的<code>codesign</code>，将其添加到访问白名单中。</p>
 <h2 id="ipad-tabbar显示">iPad TabBar显示</h2>
 <p>在<code>iOS 18</code>的<code>iPad</code>上，用户反馈<code>TabBar</code>到了顶部，而不像手机那样显示在底部。可以通过修改<code>UITabBarController</code>中的<code>traitOverrides</code>属性为<code>compact</code>来解决：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span><span style="color:#75715e">// 兼容iOS 18以上系统，将tabbar显示在底部</span>
@@ -510,8 +510,8 @@ code.has-jax {
 </span></span><span style="display:flex;"><span>        traitOverrides.horizontalSizeClass = .compact
 </span></span><span style="display:flex;"><span>    }
 </span></span><span style="display:flex;"><span>}
-</span></span></code></pre></div><p><a href="https://mazhuang.org/fragment/ios-18-UITabBarController-style-in-ipad/">参考资料</a></p>
-<p><a href="https://stackoverflow.com/questions/78631030/how-to-disable-the-new-uitabbarcontroller-view-style-in-ipados-18">参考资料</a></p>
+</span></span></code></pre></div><p><a href="https://mazhuang.org/fragment/ios-18-UITabBarController-style-in-ipad/">参考资料</a>
+<a href="https://stackoverflow.com/questions/78631030/how-to-disable-the-new-uitabbarcontroller-view-style-in-ipados-18">参考资料</a></p>
 <h2 id="百度地图sdk">百度地图sdk</h2>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ruby" data-lang="ruby"><span style="display:flex;"><span><span style="color:#e6db74">https</span>:<span style="color:#e6db74">//</span>github<span style="color:#f92672">.</span>com<span style="color:#f92672">/</span><span style="color:#66d9ef">CocoaPods</span><span style="color:#f92672">/</span><span style="color:#66d9ef">Specs</span><span style="color:#f92672">/</span>tree<span style="color:#f92672">/</span>master<span style="color:#f92672">/</span><span style="color:#66d9ef">Specs</span><span style="color:#f92672">/</span><span style="color:#ae81ff">3</span><span style="color:#f92672">/</span><span style="color:#ae81ff">7</span><span style="color:#f92672">/</span><span style="color:#ae81ff">9</span><span style="color:#f92672">/</span><span style="color:#66d9ef">BaiduMapKit</span>
 </span></span><span style="display:flex;"><span>
@@ -525,7 +525,7 @@ code.has-jax {
 </span></span><span style="display:flex;"><span>dyld: launch, loading dependent libraries
 </span></span><span style="display:flex;"><span>DYLD_LIBRARY_PATH<span style="color:#f92672">=</span>/usr/lib/system/introspection
 </span></span><span style="display:flex;"><span>DYLD_INSERT_LIBRARIES<span style="color:#f92672">=</span>/Developer/usr/lib/libBacktraceRecording.dylib:/Developer/usr/lib/libMainThreadChecker.dylib:/Developer/Library/PrivateFrameworks/DTDDISupport.framework/libViewDebuggerSupport.dylib:/usr/lib/libMTLCapture.dylib
-</span></span></code></pre></div><p>出现上面错误是因为<code>Xcode 16</code>编译应用时链接了<code>libswiftUniformTypeIdentifiers.dylib</code>，该库是<code>Swift</code>对 <code>UniformTypeIdentifiers</code>框架的<code>overlay</code>，而这个框架仅在<code>iOS 14+</code>系统里存在。在<code>iOS 13</code>设备上运行，<code>dyld</code>找不到该库，所以出现直接崩溃。即使没有显式<code>import UniformTypeIdentifiers</code>，只要代码中（包括依赖库）使用了<code>UTType</code>等<code>API</code>，编译器就会自动链接这个库。</p>
+</span></span></code></pre></div><p>出现上面错误是因为<code>Xcode 16</code>编译应用时链接了<code>libswiftUniformTypeIdentifiers.dylib</code>，该库是<code>Swift</code>对<code>UniformTypeIdentifiers</code>框架的<code>overlay</code>，而这个框架仅在<code>iOS 14+</code>系统里存在。在<code>iOS 13</code>设备上运行，<code>dyld</code>找不到该库，所以出现启动崩溃。即使没有显式的<code>import UniformTypeIdentifiers</code>，只要代码中（包括依赖库）使用了<code>UTType</code>等<code>API</code>，编译器就会自动链接这个库。</p>
 <p>第一种解决方案是条件化所有<code>UniformTypeIdentifiers</code>相关代码，即用<code>#available</code>把相关逻辑包裹起来，不要在文件顶部无条件<code>import UniformTypeIdentifiers</code>。</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span><span style="color:#75715e">// 正确做法：需要时才导入，并用available保护</span>
 </span></span><span style="display:flex;"><span><span style="color:#66d9ef">if</span> <span style="color:#75715e">#available</span>(<span style="color:#75715e">iOS</span> <span style="color:#ae81ff">14</span>, <span style="color:#f92672">*</span>) {
@@ -1062,8 +1062,8 @@ code.has-jax {
 </span></span></code></pre></div><h1 id="离线安装cocoapods">离线安装CocoaPods</h1>
 <p>在无互联网的macOS上，由于低版本的<code>CocoaPods</code>（1.12.1）识别不了<code>podspec</code>文件中<code>visionos</code>字段，所以需要升级版本。如果要完成离线安装<code>CocoaPods</code>版本，需先到能联网的机器上下载相关文件。</p>
 <h2 id="挂载安装">挂载安装</h2>
-<p>首先，到<a href="https://github.com/bazel-contrib/portable-ruby/releases">这里</a>或<a href="https://github.com/jdx/ruby/releases">另一</a>（第二个链接中不含适用<code>intel</code>芯片的<code>macOS</code>版本）下载离线<code>ruby</code>安装包，此次下载的<code>ruby-4.0.6.x86_64_darwin.tar.gz</code>（Intel芯片，若是M芯片需要下载<code>arm64</code>版本，即<code>ruby-4.0.6.arm64_darwin.tar.gz</code>）。</p>
-<p>接着，若离线机器上之前没有安装过<code>rvm</code>，参考<a href="https://rvm.ruby-lang.org.cn/rvm/offline">这里</a>的文档，在联网的机器上，使用下面命令下载<code>rvm</code>离线压缩包：</p>
+<p>首先，到<a href="https://github.com/bazel-contrib/portable-ruby/releases">这里</a>或<a href="https://github.com/jdx/ruby/releases">另一</a>（第二个链接中不含<code>intel</code>芯片的<code>macOS</code>版本）下载离线<code>ruby</code>安装包，此次下载的<code>ruby-4.0.6.x86_64_darwin.tar.gz</code>（Intel芯片，若是M芯片需要下载<code>arm64</code>版本，即<code>ruby-4.0.6.arm64_darwin.tar.gz</code>）。</p>
+<p>接着，若离线机器上之前没有安装过<code>rvm</code>工具，参考<a href="https://rvm.ruby-lang.org.cn/rvm/offline">这里</a>的文档，在联网的机器上，使用下面命令下载<code>rvm</code>离线压缩包：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sh" data-lang="sh"><span style="display:flex;"><span>curl -sSL https://github.com/rvm/rvm/tarball/stable -o rvm-stable.tar.gz
 </span></span></code></pre></div><p>接着，在联网的机器上创建<code>Gemfile</code>文件，输入如下内容：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ruby" data-lang="ruby"><span style="display:flex;"><span>source <span style="color:#e6db74">&#39;https://rubygems.org&#39;</span>
@@ -1087,38 +1087,49 @@ code.has-jax {
 <p>根据不同的<code>shell</code>，在其配置文件中（本机上是<code>~/.zshrc</code>文件）中加入<code>export PATH=&quot;$HOME/.rvm/bin:$PATH&quot;</code>，然后执行<code>source ~/.zshrc</code>。</p>
 </li>
 <li>
-<p>将<code>ruby-4.0.6.x86_64_darwin.tar.gz</code>解压到<code>~/.rvm/rubies</code>目录下，即执行命令<code>tar -xzf ruby-4.0.6.x86_64_darwin.tar.gz -C ~/.rvm/rubies/</code>，其中的<code>-C</code>表示先跳转到目标目录，然后再解压。</p>
+<p>将<code>ruby-4.0.6.x86_64_darwin.tar.gz</code>解压到<code>~/.rvm/rubies</code>目录下，即执行命令<code>tar -xzf ruby-4.0.6.x86_64_darwin.tar.gz -C ~/.rvm/rubies/</code>，其中的选项<code>-C</code>表示先跳转到目标目录，然后再解压。</p>
 </li>
 <li>
-<p>执行挂载命令<code>rvm mount ~/.rvm/rubies/ruby-4.0.6 -n ruby-4.0.6</code>，并使用<code>rvm list</code>查看是否挂载成功。<code>rvm mount</code>命令作用是：让<code>rvm</code>识别并管理一个已经存在于<code>~/.rvm/rubies/</code>目录下的<code>ruby</code>安装，并给它取一个方便使用的别名（即<code>ruby-4.0.6</code>），根据rvm的设计，因为是外部挂载，会自动加上<code>ext-</code>前缀，如果要去掉前缀只能通过别名命令<code>rvm alias create ruby-4.0.6-local ext-ruby-4.0.6</code>，因为<code>rvm</code>的限制，别名不能直接改为<code>ruby-4.0.6</code>。若在高版本的<code>macOS</code>上弹出安全提示，可以先终止命令，先执行<code>xattr -dr com.apple.quarantine ~/.rvm/rubies/ruby-4.0.6</code>命令移除隔离属性。</p>
+<p>执行挂载命令<code>rvm mount ~/.rvm/rubies/ruby-4.0.6 -n ruby-4.0.6</code>，并使用<code>rvm list</code>查看是否挂载成功。<code>rvm mount</code>命令作用是：让<code>rvm</code>识别并管理一个已经存在于<code>~/.rvm/rubies/</code>目录下的<code>ruby</code>安装，并给它取一个方便使用的别名（即<code>ruby-4.0.6</code>），但根据rvm的设计，因为是外部挂载，会自动加上<code>ext-</code>前缀，如果要修改，可以使用别名命令<code>rvm alias create ruby-4.0.6-local ext-ruby-4.0.6</code>，但因为<code>rvm</code>对于挂载的限制，挂载的别名不能直接改为<code>ruby-4.0.6</code>。若在高版本的<code>macOS</code>上挂载时弹出安全提示，可以先终止命令，执行<code>xattr -dr com.apple.quarantine ~/.rvm/rubies/ruby-4.0.6</code>命令移除隔离属性。</p>
 </li>
 <li>
-<p>使用刚挂载上的新<code>ruby</code>版本，即执行<code>rvm use ext-ruby-4.0.6</code>，如果设置成默认的ruby版本，可以使用<code>--default</code>选项。</p>
+<p>使用刚挂载上的新<code>ruby</code>版本，即执行<code>rvm use ext-ruby-4.0.6</code>，如果要将其设置成默认的<code>ruby</code>版本，可以追加<code>--default</code>选项。</p>
 </li>
 <li>
-<p>安装<code>bundler</code>，即执行<code>gem install --local bundler-2.4.10.gem</code>。</p>
+<p>离线安装<code>bundler</code>，即执行<code>gem install --local bundler-2.4.10.gem</code>命令。</p>
 </li>
 <li>
-<p>再执行<code>bundle install --local</code>安装<code>cocoapods</code>，安装完后再执行<code>pod --verison</code>，若显示的不是最新的<code>1.17.0</code>，则执行<code>hash -r</code>，再执行<code>pod --verison</code>。其中<code>hash -r</code>的作用是清空整个命令哈希表，强制<code>shell</code>在下次执行命令时重新搜索<code>PATH</code>，找到最新的可执行文件路径。</p>
+<p>再执行<code>bundle install --local</code>安装<code>cocoapods</code>，安装完后再执行<code>pod --verison</code>。若成功安装后显示的不是最新的<code>1.17.0</code>，则执行<code>hash -r</code>，再执行<code>pod --verison</code>。其中<code>hash -r</code>的作用是清空整个命令哈希表，强制<code>shell</code>在下次执行命令时重新搜索<code>PATH</code>，找到最新的可执行文件路径。</p>
 </li>
 </ol>
-<p>若在高版本的<code>macOS</code>上执行<code>pod --version</code>命令时出现如下警告:</p>
+<p>离线安装成功后，若在高版本的<code>macOS</code>上执行<code>pod --version</code>命令时出现如下警告:</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sh" data-lang="sh"><span style="display:flex;"><span>pod --version
 </span></span><span style="display:flex;"><span>Ignoring gem-wrappers-1.4.0 because its extensions are not built. Try: gem pristine gem-wrappers --version 1.4.0
 </span></span><span style="display:flex;"><span>Ignoring gem-wrappers-1.4.0 because its extensions are not built. Try: gem pristine gem-wrappers --version 1.4.0
 </span></span><span style="display:flex;"><span>Ignoring gem-wrappers-1.4.0 because its extensions are not built. Try: gem pristine gem-wrappers --version 1.4.0
-</span></span></code></pre></div><p>这个警告信息表明<code>gem-wrappers</code>这个<code>gem</code>的原生扩展（<code>native extensions</code>）没有被编译，因此<code>RubyGems</code>在加载时会忽略它。这个警告不会影响<code>CocoaPods</code>的正常使用，只是<code>RubyGems</code>在提醒这个扩展没有编译成功。</p>
+</span></span></code></pre></div><p>这个警告信息表明<code>gem-wrappers</code>这个<code>gem</code>的原生扩展（<code>native extensions</code>）没有被编译，因此<code>RubyGems</code>在加载时会忽略它。<font color="#de7802">这个警告不会影响</font><code>CocoaPods</code>的正常使用，只是<code>RubyGems</code>在提醒这个扩展没有编译成功。</p>
 <p>实际上，<code>gem-wrappers</code>是<code>rvm</code>的一个辅助<code>gem</code>，用于为ruby可执行文件（如<code>ruby</code>、<code>gem</code>、<code>bundle</code>、<code>pod</code>）创建包装器脚本，使得rvm可以在运行时动态切换ruby环境。它通常随rvm一起安装，并包含原生C扩展。如果想消除上面警告，可以执行下面命令：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sh" data-lang="sh"><span style="display:flex;"><span>gem pristine gem-wrappers --version 1.4.0
-</span></span></code></pre></div><p>简单来说，<code>gem pristine</code>就是一个一键还原的功能，能快速将一个出问题的gem恢复成它最纯净、最原始的状态，从而解决因编译或修改导致的各种问题。执行这个命令后，<code>pod --version</code>警告消失了，正是因为它成功地为<code>gem-wrappers</code>重新编译了在当前系统环境下可用的原生扩展。</p>
-<p>如果最后要再确认<code>cocoapods-art</code>的版本，可以使用如下命令查看：</p>
+</span></span></code></pre></div><p>简单来说，<code>gem pristine</code>就<font color="#de7802">是一个一键还原的功能</font>，能快速将一个出问题的gem恢复成它最纯净、最原始的状态，从而解决因编译或修改导致的各种问题。执行这个命令后，<code>pod --version</code>警告消失了，因为它成功地为<code>gem-wrappers</code>重新编译了在当前系统环境下可用的原生扩展。</p>
+<p>使用<code>gem list</code>可以查看gem的列表，当不带参数时，默认会列出本地已经安装的所有gem包。如果要再确认<code>cocoapods-art</code>的版本，可以使用如下命令查看：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sh" data-lang="sh"><span style="display:flex;"><span>gem list cocoapods-art
 </span></span></code></pre></div><p>正常的输出结果为：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sh" data-lang="sh"><span style="display:flex;"><span>*** LOCAL GEMS ***
 </span></span><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span>cocoapods-art <span style="color:#f92672">(</span>1.1.1<span style="color:#f92672">)</span>
+</span></span></code></pre></div><p>也可以使用<code>gem list cocoapods</code>查看版本，它会输出会包含<code>CocoaPods</code>的核心库 <code>cocoapods</code>，以及一系列相关的组件，比如<code>cocoapods-core</code>、<code>cocoapods-downloader</code>等：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sh" data-lang="sh"><span style="display:flex;"><span>*** LOCAL GEMS *** 
+</span></span><span style="display:flex;"><span>cocoapods <span style="color:#f92672">(</span>1.17.0<span style="color:#f92672">)</span> 
+</span></span><span style="display:flex;"><span>cocoapods-art <span style="color:#f92672">(</span>1.1.1<span style="color:#f92672">)</span> 
+</span></span><span style="display:flex;"><span>cocoapods-core <span style="color:#f92672">(</span>1.17.0<span style="color:#f92672">)</span> 
+</span></span><span style="display:flex;"><span>cocoapods-deintegrate <span style="color:#f92672">(</span>1.0.5<span style="color:#f92672">)</span> 
+</span></span><span style="display:flex;"><span>cocoapods-downloader <span style="color:#f92672">(</span>2.1<span style="color:#f92672">)</span> 
+</span></span><span style="display:flex;"><span>cocoapods-plugins <span style="color:#f92672">(</span>1.0.0<span style="color:#f92672">)</span> 
+</span></span><span style="display:flex;"><span>cocoapods-search <span style="color:#f92672">(</span>1.0.1<span style="color:#f92672">)</span> 
+</span></span><span style="display:flex;"><span>cocoapods-trunk <span style="color:#f92672">(</span>1.6.0<span style="color:#f92672">)</span> 
+</span></span><span style="display:flex;"><span>cocoapods-try <span style="color:#f92672">(</span>1.2.0<span style="color:#f92672">)</span>
 </span></span></code></pre></div><h2 id="libssl11dylib库">libssl.1.1.dylib库</h2>
-<p>在一台macOS版本为13.7.8，Xcode版本为14.3.1的机器上，按照上面方式离线安装<code>cocoapods</code>后，使用<code>pod --verison</code>命令后出现如下错误信息：</p>
+<p>在一台macOS版本为13.7.8，Xcode版本为14.3.1的iMac上，按照上面方式离线安装<code>cocoapods</code>后，使用<code>pod --verison</code>命令后出现如下错误信息：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sh" data-lang="sh"><span style="display:flex;"><span>Resolving dependencies...
 </span></span><span style="display:flex;"><span>&lt;internal:/Users/xxx/.rvm/rubies/ruby-3.2.2/lib/ruby/3.2.0/rubygems/core_ext/kernel_require.rb&gt;:37:in <span style="color:#e6db74">`</span>require<span style="color:#e6db74">&#39;: dlopen(/Users/xxx/.rvm/rubies/ruby-3.2.2/lib/ruby/3.2.0/x86_64-darwin22/openssl.bundle, 0x0009): Library not loaded: /usr/local/opt/openssl@1.1/lib/libssl.1.1.dylib (LoadError)
 </span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  Referenced from: &lt;E2F05253-721A-3DAB-92BC-BA7B15537E5E&gt; /Users/xxx/.rvm/rubies/ruby-3.2.2/lib/ruby/3.2.0/x86_64-darwin22/openssl.bundle
@@ -1129,8 +1140,8 @@ code.has-jax {
 </span></span><span style="display:flex;"><span>        from &lt;internal:/Users/xxx/.rvm/rubies/ruby-3.2.2/lib/ruby/3.2.0/rubygems/core_ext/kernel_require.rb&gt;:37:in <span style="color:#e6db74">`</span>require<span style="color:#e6db74">&#39;
 </span></span></span><span style="display:flex;"><span><span style="color:#e6db74">        from /Users/xxx/.rvm/rubies/ruby-3.2.2/lib/ruby/gems/3.2.0/gems/activesupport-7.0.6/lib/active_support/core_ext/digest/uuid.rb:4:in `&lt;top (required)&gt;&#39;</span>
 </span></span><span style="display:flex;"><span>        from &lt;internal:/Users/xxx/.rvm/rubies/ruby-3.2.2/lib/ruby/3.2.0/rubygems/core_ext/kernel_require.rb&gt;:37:in <span style="color:#e6db74">`</span>require<span style="color:#960050;background-color:#1e0010">&#39;</span>
-</span></span></code></pre></div><p>出现上面错误是因为Ruby的<code>openssl</code>扩展无法加载<code>libssl.1.1.dylib</code>动态库，通常是因为系统中缺少<code>openssl 1.1</code>或Ruby编译时链接的路径发生了变化（比如<code>Homebrew</code>更新了<code>openssl</code>版本）。</p>
-<p>首先使用命令验证文件是否存在，即<code>ls -l /usr/local/opt/openssl@1.1/lib/libssl.1.1.dylib</code>。发现无<code>/usr/local/opt</code>目录，但发现本地存在<code>/usr/local/openssl-1.1</code>目录，使用如下命令查看：</p>
+</span></span></code></pre></div><p>出现上面错误是因为Ruby的<code>openssl</code>扩展无法加载<code>libssl.1.1.dylib</code>动态库，通常是因为系统中缺少<code>openssl 1.1</code>或<code>Ruby</code>编译时链接的路径发生了变化（比如<code>Homebrew</code>更新了<code>openssl</code>版本）。</p>
+<p>首先使用命令验证文件是否存在，即<code>ls -l /usr/local/opt/openssl@1.1/lib/libssl.1.1.dylib</code>。从结果来看无<code>/usr/local/opt</code>目录，但发现本地存在<code>/usr/local/openssl-1.1</code>目录，使用如下命令查看：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sh" data-lang="sh"><span style="display:flex;"><span>ls -l /usr/local/openssl-1.1/lib/libssl.1.1.dylib
 </span></span></code></pre></div><p>发现动态库文件<code>libssl.1.1.dylib</code>是存在的。接着使用命令创建<code>opt</code>目录，即<code>sudo mkdir -p /usr/local/opt</code>，再创建软链接：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sh" data-lang="sh"><span style="display:flex;"><span>sudo ln -sf /usr/local/openssl-1.1 /usr/local/opt/openssl@1.1
@@ -1153,7 +1164,7 @@ code.has-jax {
 </span></span><span style="display:flex;"><span>make
 </span></span><span style="display:flex;"><span>make check  <span style="color:#75715e"># 可选，用于验证编译是否正确</span>
 </span></span><span style="display:flex;"><span>sudo make install
-</span></span></code></pre></div><p>安装gmp后，使用<code>rvm use 3.2.2</code>后出现如下报错：</p>
+</span></span></code></pre></div><p>安装gmp后，使用<code>rvm use 3.2.2</code>后又出现如下错误：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sh" data-lang="sh"><span style="display:flex;"><span><span style="color:#f92672">{</span>16:35<span style="color:#f92672">}[</span>ruby-3.2.2<span style="color:#f92672">]</span>~/Desktop/gmp-6.3.0/src/gmp-6.3.0 ➭ rvm use 3.2.2
 </span></span><span style="display:flex;"><span>Using /Users/xxx/.rvm/gems/ruby-3.2.2
 </span></span><span style="display:flex;"><span>&lt;internal:/Users/xxx/.rvm/rubies/ruby-3.2.2/lib/ruby/3.2.0/rubygems/core_ext/kernel_require.rb&gt;:85:in <span style="color:#e6db74">`</span>require<span style="color:#e6db74">&#39;: dlopen(/Users/xxx/.rvm/rubies/ruby-3.2.2/lib/ruby/3.2.0/x86_64-darwin22/psych.bundle, 0x0009): Library not loaded: /usr/local/opt/libyaml/lib/libyaml-0.2.dylib (LoadError)
@@ -1170,7 +1181,7 @@ code.has-jax {
 </span></span></span><span style="display:flex;"><span><span style="color:#e6db74">        from /Users/xxx/.rvm/rubies/ruby-3.2.2/lib/ruby/3.2.0/rubygems/gem_runner.rb:71:in `do_configuration&#39;</span>
 </span></span><span style="display:flex;"><span>        from /Users/xxx/.rvm/rubies/ruby-3.2.2/lib/ruby/3.2.0/rubygems/gem_runner.rb:33:in <span style="color:#e6db74">`</span>run<span style="color:#e6db74">&#39;
 </span></span></span><span style="display:flex;"><span><span style="color:#e6db74">        from /Users/xxx/.rvm/rubies/ruby-3.2.2/bin/gem:10:in `&lt;main&gt;&#39;</span>
-</span></span></code></pre></div><p>这次是<code>libyaml</code>库没找到，这是因为<code>psych.bundle</code>是Ruby的yaml解析扩展，编译时链接了<code>libyaml</code>，但系统里没有。可以到官网上下载<code>https://pyyaml.org/download/libyaml/yaml-0.2.5.tar.gz</code>，然后在离线机器上执行安装：</p>
+</span></span></code></pre></div><p>这次是<code>libyaml</code>库没找到，是因为<code>psych.bundle</code>是Ruby的yaml解析扩展，编译时链接了<code>libyaml</code>，但系统里没有。可以到官网上下载<code>https://pyyaml.org/download/libyaml/yaml-0.2.5.tar.gz</code>，然后在离线机器上执行安装：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sh" data-lang="sh"><span style="display:flex;"><span>tar -xzf yaml-0.2.5.tar.gz
 </span></span><span style="display:flex;"><span>cd yaml-0.2.5
 </span></span><span style="display:flex;"><span>./configure
@@ -1181,7 +1192,7 @@ code.has-jax {
 </span></span><span style="display:flex;"><span>默认会安装到 /usr/local，库文件为 /usr/local/lib/libyaml-0.2.dylib。
 </span></span></code></pre></div><p>安装完后，执行<code>rvm use 3.2.2</code>无问题，但使用<code>pod --version</code>又提示这个错误：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sh" data-lang="sh"><span style="display:flex;"><span>&lt;internal:/Users/xxx/.rvm/rubies/ruby-3.2.2/lib/ruby/3.2.0/rubygems/core_ext/kernel_require.rb&gt;:85:in <span style="color:#e6db74">`</span>require<span style="color:#e6db74">&#39;: dlopen(/Users/xxx/.rvm/rubies/ruby-3.2.2/lib/ruby/3.2.0/x86_64-darwin22/openssl.bundle, 0x0009): Library not loaded: /usr/local/opt/openssl@1.1/lib/libssl.1.1.dylib (LoadError)  Referenced from: &lt;E2F05253-721A-3DAB-92BC-BA7B15537E5E&gt; /Users/xxx/.rvm/rubies/ruby-3.2.2/lib/ruby/3.2.0/x86_64-darwin22/openssl.bundle  Reason: tried: &#39;</span>/usr/local/opt/openssl@1.1/lib/libssl.1.1.dylib<span style="color:#e6db74">&#39; (no such file), &#39;</span>/System/Volumes/Preboot/Cryptexes/OS/usr/local/opt/openssl@1.1/lib/libssl.1.1.dylib<span style="color:#e6db74">&#39; (no such file), &#39;</span>/usr/local/opt/openssl@1.1/lib/libssl.1.1.dylib<span style="color:#e6db74">&#39; (no such file), &#39;</span>/usr/local/lib/libssl.1.1.dylib<span style="color:#e6db74">&#39; (no such file), &#39;</span>/usr/lib/libssl.1.1.dylib<span style="color:#960050;background-color:#1e0010">&#39;</span> <span style="color:#f92672">(</span>no such file, not in dyld cache<span style="color:#f92672">)</span> - /Users/xxx/.rvm/rubies/ruby-3.2.2/lib/ruby/3.2.0/x86_64-darwin22/openssl.bundle
-</span></span></code></pre></div><p>然后先到<code>https://github.com/openssl/openssl/releases/download/OpenSSL_1_1_1w/openssl-1.1.1w.tar.gz</code>这里下载包，再到离线机器上使用如下方式安装：</p>
+</span></span></code></pre></div><p>然后先到<code>https://github.com/openssl/openssl/releases/download/OpenSSL_1_1_1w/openssl-1.1.1w.tar.gz</code>这里下载源码压缩包，再到离线机器上使用如下方式进行源码安装：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sh" data-lang="sh"><span style="display:flex;"><span>tar -xzf openssl-1.1.1w.tar.gz
 </span></span><span style="display:flex;"><span>cd openssl-1.1.1w
 </span></span><span style="display:flex;"><span>./Configure darwin64-x86_64-cc --prefix<span style="color:#f92672">=</span>/usr/local/openssl-1.1
@@ -1211,7 +1222,7 @@ code.has-jax {
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sh" data-lang="sh"><span style="display:flex;"><span><span style="color:#75715e"># 禁掉对Homebrew的检查</span>
 </span></span><span style="display:flex;"><span>rvm autolibs disable
 </span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span><span style="color:#75715e"># 执行安装</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 再执行安装</span>
 </span></span><span style="display:flex;"><span>rvm install ruby-3.3.12
 </span></span></code></pre></div><p>安装过程中，还是出现了报错：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sh" data-lang="sh"><span style="display:flex;"><span>Installing Ruby from source to: /Users/xxx/.rvm/rubies/ruby-3.3.12, this may take a <span style="color:#66d9ef">while</span> depending on your cpu<span style="color:#f92672">(</span>s<span style="color:#f92672">)</span>...
@@ -1286,9 +1297,9 @@ code.has-jax {
 </span></span><span style="display:flex;"><span><span style="color:#75715e"># 指定目录后重新安装</span>
 </span></span><span style="display:flex;"><span>rvm install ruby-3.3.12 --with-openssl-dir<span style="color:#f92672">=</span>/usr/local/openssl-1.1 --rubygems ignore
 </span></span></code></pre></div><h1 id="archive-ipa">archive ipa</h1>
-<p>使用<code>xcodebuild archive</code>打包时，<code>ipa</code>文件名是由<code>info.plist</code>中的哪个字段决定的？下面是一个打包的命令，<code>exportPath</code>选项后指定的是目录，下面的变量<code>ipa_name</code>不包含<code>.ipa</code>后缀：</p>
+<p>使用<code>xcodebuild archive</code>打包时，<code>-exportPath</code>选项对应的<code>ipa</code>文件名是由<code>info.plist</code>中的哪个字段决定的？下面是一个打包的命令，<code>exportPath</code>选项后指定的是目录，下面的变量<code>ipa_name</code>不包含<code>.ipa</code>后缀：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sh" data-lang="sh"><span style="display:flex;"><span>xcodebuild -exportArchive -archivePath <span style="color:#e6db74">&#34;</span><span style="color:#e6db74">${</span>build_path<span style="color:#e6db74">}</span><span style="color:#e6db74">/</span><span style="color:#e6db74">${</span>ipa_name<span style="color:#e6db74">}</span><span style="color:#e6db74">.xcarchive&#34;</span> -exportPath <span style="color:#e6db74">&#34;</span><span style="color:#e6db74">${</span>build_path<span style="color:#e6db74">}</span><span style="color:#e6db74">/&#34;</span> -exportOptionsPlist exportOptions.plist
-</span></span></code></pre></div><p>上面命令在编译目录下生成了ipa文件，但ipa文件名是<code>info.plist</code>文件中的<code>CFBundleName</code>决定的。如果不主动设置<code>CFBundleName</code>，则<code>CFBundleName</code>的默认值来自于<code>PRODUCT_NAME</code>，而<code>PRODUCT_NAME</code>一般设置为<code>TARGET_NAME</code>。</p>
+</span></span></code></pre></div><p>上面命令在编译目录下生成了ipa文件，但<code>ipa</code>文件名是<code>info.plist</code>文件中的<code>CFBundleName</code>决定的。如果不主动设置<code>CFBundleName</code>，则<code>CFBundleName</code>的默认值来自于<code>PRODUCT_NAME</code>，而<code>PRODUCT_NAME</code>一般设置为<code>TARGET_NAME</code>。</p>
 <h1 id="find-delete">find delete</h1>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sh" data-lang="sh"><span style="display:flex;"><span><span style="color:#75715e"># 先预览（不删除），确认目标</span>
 </span></span><span style="display:flex;"><span>find . -maxdepth <span style="color:#ae81ff">1</span> -type d -name <span style="color:#e6db74">&#34;tmp_path*&#34;</span> -print
@@ -1309,7 +1320,7 @@ code.has-jax {
 </span></span><span style="display:flex;"><span><span style="color:#66d9ef">fi</span>
 </span></span></code></pre></div><h1 id="rvm-command-not-found">rvm command not found</h1>
 <p>在python脚本中执行<code>pod repo update xxx</code>后出现错误<code>/bin/sh: rvm: command not found</code>，这个错误是因为rvm不是一个可独立执行的程序，而是一组需要被加载到当前shell会话中的shell函数和环境变量。</p>
-<p>执行<code>subprocess.getstatusoutput()</code>时，默认使用<code>/bin/sh</code>启动一个非登录（non-login）**、**非交互（non-interactive）的shell。这种shell不会读取<code>~/.bashrc</code>、<code>~/.bash_profile</code>等配置文件，因此rvm并没有被加载，也就找不到<code>rvm</code>命令。解决方案之一是在执行rvm命令前，先加载rvm环境：</p>
+<p>执行<code>subprocess.getstatusoutput()</code>时，默认使用<code>/bin/sh</code>启动一个非登录（non-login）、非交互（non-interactive）的shell。这种shell不会读取<code>~/.bashrc</code>、<code>~/.bash_profile</code>等配置文件，因此rvm并没有被加载，也就找不到<code>rvm</code>命令。解决方案之一是在执行rvm命令前，先加载rvm环境：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-python" data-lang="python"><span style="display:flex;"><span><span style="color:#f92672">import</span> subprocess
 </span></span><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span>full_cmd <span style="color:#f92672">=</span> <span style="color:#e6db74">&#39;&#39;&#39;
@@ -1329,14 +1340,14 @@ code.has-jax {
 <p>使用<code>pod repo-art update xxx</code>后发现服务端已经删除的索引，本地不会自动删除。这是因为<code>pod repo-art update</code> 被设计为一种累积性操作。这意味着它只会添加服务端的新索引，而<font color="#de7802">不会主动移除本地存在但服务端已删除的条目</font>。</p>
 <p>这么设计主要是为了保护通过<code>--local-only</code>标志创建的本地索引不被误删。<code>--local-only</code>允许在不推送到远程的情况下，在本地创建或修改索引，用于本地测试等场景。如果<code>update</code>命令会同步删除，这些本地独有的条目就会丢失。</p>
 <h2 id="--prune">&ndash;prune</h2>
-<p>如果要清理服务端已删除的本地索引，正确的做法是在执行update命令时加上<code>--prune</code>标识。这个命令会在更新本地索引的同时，修剪（prune）掉所有在服务端已不存在的条目，从而实现本地与服务端索引的完全同步。</p>
+<p>如果要清理服务端已删除的本地索引，正确的做法是在执行<code>update</code>命令时加上<code>--prune</code>选项。这个选项会在更新本地索引的同时，prune（修剪）掉<font color="#de7802">所有在服务端已不存在的条目，从而实现本地与服务端索引的完全同步</font>。</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sh" data-lang="sh"><span style="display:flex;"><span>pod repo-art update xxx --prune
-</span></span></code></pre></div><p>使用<code>--prune</code>前请注意，<font color="#de7802">它会删除所有在服务端不存在的本地条目</font>。如果本地仓库中确实有通<code>--local-only</code>创建的、且尚未推送到服务端的索引，这些条目会被一并删除。因此，在执行<code>--prune</code>操作前，需确保没有需要保留的本地独有索引。</p>
+</span></span></code></pre></div><p>使用<code>--prune</code>前请注意，<font color="#de7802">它会删除所有在服务端不存在的本地条目</font>。如果本地仓库中确实有通过<code>--local-only</code>创建的、且尚未推送到服务端的索引，这些条目会被一并删除。因此，在执行<code>--prune</code>操作前，需确保没有需要保留的本地独有的索引。</p>
 <h2 id="--local-only">&ndash;local-only</h2>
-<p>选项<code>--local-only</code>是<code>cocoapods-art</code>插件提供的一个选项，它可以在本地创建或修改索引，但不会同步到远程服务端。这为本地测试、私有调试或临时修改提供了一个隔离的环境。</p>
-<p>它的核心工作流程是这样的，首先在本地创建一个服务端不存在的索引条目，接着执行<code>pod repo-art update</code>更新本地仓库时，这个本地独有的条目会被保留下来，不会被删除。这个功能主要用于需要安全地测试本地修改的场景。首先在已有仓库中执行如下操作：</p>
+<p>选项<code>--local-only</code>是<code>cocoapods-art</code>插件提供的一个选项，它可以在本地创建或修改索引，但不会同步到远程服务端。这为本地测试、私有调试或临时修改提供了一个隔离的环境（但作用十分有限）。</p>
+<p>它的核心工作流程是先在本地创建一个服务端不存在的索引条目，然后在执行<code>pod repo-art update</code>更新仓库索引时，这个本地独有的条目会被保留下来，不会被删除。这个功能主要用于需要安全地测试本地修改的场景，先在本地已经添加有仓库中执行如下操作：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sh" data-lang="sh"><span style="display:flex;"><span>pod repo-art add my-repo MyLib 0.2.0.podspec --local-only
-</span></span></code></pre></div><p>然后在Podfile中使用0.0.2的<font color=red>前提是服务端存在相应的库文件</font>，否则拉取不到0.0.2版本：</p>
+</span></span></code></pre></div><p>特别需要注意的是，在<code>Podfile</code>中使用刚刚添加的0.0.2版本的<font color=red>前提是服务端存在相应的库文件</font>，否则拉取不到0.0.2对应的：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ruby" data-lang="ruby"><span style="display:flex;"><span>plugin <span style="color:#e6db74">&#39;cocoapods-art&#39;</span>, <span style="color:#e6db74">:sources</span> <span style="color:#f92672">=&gt;</span> <span style="color:#f92672">[</span><span style="color:#e6db74">&#39;my-company-repo&#39;</span><span style="color:#f92672">]</span>
 </span></span><span style="display:flex;"><span><span style="color:#75715e"># ... 其他配置</span>
 </span></span><span style="display:flex;"><span>pod <span style="color:#e6db74">&#39;MyLib&#39;</span>, <span style="color:#e6db74">&#39;0.2.0&#39;</span>
