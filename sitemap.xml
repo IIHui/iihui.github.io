@@ -485,19 +485,19 @@ if case let .underlying(underlyingError, _) = error,  let urlError = underlyingE
 #import &amp;lt;Foundation/Foundation.h&amp;gt; 第二种方式是直接在桥接文件中先导入Foundation：
 #import &amp;lt;Foundation/Foundation.h&amp;gt; 第三种是调整桥接文件中的头文件导入顺序，将后面已导入Foundation的头文件提到桥接头文件的前面先导入。
 Pod单个组件指定源 使用cocoapods-art引入了两个自定义仓库，若这两个仓库中有同名且同版本的组件时，可以在组件版本后面明确指定仓库源地址：
-pod &amp;#39;Alamofire&amp;#39;, &amp;#39;4.9.1&amp;#39;, :source =&amp;gt; &amp;#39;http://xxx/artifactory/api/pods/yyy&amp;#39; 离线安装CocoaPods 在无互联网的macOS上，由于低版本的CocoaPods（1.12.1）识别不了podspec文件中visionos字段，所以需要升级版本。如果要完成离线安装CocoaPods版本，需先到能联网的机器上下载相关文件。
-挂载安装 首先，到这里或另一（第二个链接中不含intel芯片的macOS版本）下载离线ruby安装包，此次下载的ruby-4.0.6.x86_64_darwin.tar.gz（Intel芯片，若是M芯片需要下载arm64版本，即ruby-4.0.6.arm64_darwin.tar.gz）。
+pod &amp;#39;Alamofire&amp;#39;, &amp;#39;4.9.1&amp;#39;, :source =&amp;gt; &amp;#39;http://xxx/artifactory/api/pods/yyy&amp;#39; 离线安装CocoaPods 在无互联网的macOS上，由于低版本的CocoaPods(1.12.1)识别不了podspec文件中visionos字段，所以需要升级版本至能识别该字段的版本。如果要完成离线安装CocoaPods版本，需先到能联网的机器上下载相关文件。
+挂载安装 首先，到这里或另一地址（第二个链接中不含intel芯片的macOS离线包）下载离线ruby安装包，此次下载的ruby-4.0.6.x86_64_darwin.tar.gz（Intel芯片，若是M芯片需要下载arm64版本，即ruby-4.0.6.arm64_darwin.tar.gz）。
 接着，若离线机器上之前没有安装过rvm工具，参考这里的文档，在联网的机器上，使用下面命令下载rvm离线压缩包：
-curl -sSL https://github.com/rvm/rvm/tarball/stable -o rvm-stable.tar.gz 接着，在联网的机器上创建Gemfile文件，输入如下内容：
-source &amp;#39;https://rubygems.org&amp;#39; gem &amp;#39;cocoapods&amp;#39;, &amp;#39;1.17.0&amp;#39; gem &amp;#39;cocoapods-art&amp;#39; # 如果需要这个插件 接着，再执行bundle package --all拉取所有依赖文件。该命令解析所有依赖（包括传递依赖）并下载所有.gem文件到当前目录下的vendor/cache中。再将Gemfile文件和vendor/cache目录均进行压缩，然后拷贝到离线机器上。
+curl -sSL https://github.com/rvm/rvm/tarball/stable -o rvm-stable.tar.gz 接着，在联网的机器上的某个目录创建Gemfile文件，输入如下内容：
+source &amp;#39;https://rubygems.org&amp;#39; gem &amp;#39;cocoapods&amp;#39;, &amp;#39;1.17.0&amp;#39; gem &amp;#39;cocoapods-art&amp;#39; # 插件 接着，执行bundle package --all拉取所有依赖gem文件。该命令解析所有依赖包并下载所有.gem文件到当前目录下的vendor/cache中。基础版的bundle package只缓存来自RubyGems仓库的gem，但加上--all后，Bundler会额外处理Gemfile中通过:git或:path方式引用的依赖，将它们也一并打包进vendor/cache目录下。这个设置会被记住，之后再次运行bundle package时默认就会包含它们。再将Gemfile文件和vendor/cache目录均进行压缩，然后拷贝到离线机器上。
 然后，在联网的机器上下载bundler，即执行命令gem fetch bundler -v 2.4.10，并将下载好的gem文件拷贝到离线机器上。
 在离线mac上，按如下步骤安装cocoapods和cocoapods-art：
-  先使用mkdir rvm &amp;amp;&amp;amp; cd rvm命令创建并转到rvm目录，再使用命令tar --strip-components=1 -xzf ../rvm-stable.tar.gz解压。
+  先使用mkdir rvm &amp;amp;&amp;amp; cd rvm命令创建并转到rvm目录，再使用命令tar --strip-components=1 -xzf ../rvm-stable.tar.gz解压，其中的--strip-components=1表示在解压时忽略压缩包内文件路径中的前N个目录层级。这里的=1就表示剥离最顶层的1级目录。-x(--extract)：表示执行解压操作，-z (--gzip)：表示压缩包是通过gzip算法压缩的，-f (--file)这个参数后面必须紧跟一个文件名，用来指定要操作的压缩包文件是哪一个。
   接着安装rvm，即执行./install --auto-dotfiles，其中--auto-dotfiles选项表示让rvm自动修改shell配置文件，即在配置文件中添加必要的环境变量和加载命令，以便每次打开终端时rvm能自动加载。即根据检测到当前使用的shell，在~/.bash_profile、~/.bashrc或~/.zshrc等配置文件末尾添加一行：
 [[ -s &amp;#34;$HOME/.rvm/scripts/rvm&amp;#34; ]] &amp;amp;&amp;amp; source &amp;#34;$HOME/.rvm/scripts/rvm&amp;#34;   接着加载rvm，即执行source ~/.rvm/scripts/rvm，该命令的作用是在当前shell会话中加载rvm的环境变量和函数定义，使得rvm的命令（如rvm use、rvm install、ruby、gem等）在当前终端中可用。
   根据不同的shell，在其配置文件中（本机上是~/.zshrc文件）中加入export PATH=&amp;quot;$HOME/.rvm/bin:$PATH&amp;quot;，然后执行source ~/.zshrc。
   将ruby-4.0.6.x86_64_darwin.tar.gz解压到~/.rvm/rubies目录下，即执行命令tar -xzf ruby-4.0.6.x86_64_darwin.tar.gz -C ~/.rvm/rubies/，其中的选项-C表示先跳转到目标目录，然后再解压。
-  执行挂载命令rvm mount ~/.rvm/rubies/ruby-4.0.6 -n ruby-4.0.6，并使用rvm list查看是否挂载成功。rvm mount命令作用是：让rvm识别并管理一个已经存在于~/.rvm/rubies/目录下的ruby安装，并给它取一个方便使用的别名（即ruby-4.0.6），但根据rvm的设计，因为是外部挂载，会自动加上ext-前缀，如果要修改，可以使用别名命令rvm alias create ruby-4.0.6-local ext-ruby-4.0.6，但因为rvm对于挂载的限制，挂载的别名不能直接改为ruby-4.0.6。若在高版本的macOS上挂载时弹出安全提示，可以先终止命令，执行xattr -dr com.apple.quarantine ~/.rvm/rubies/ruby-4.0.6命令移除隔离属性。
+  执行挂载命令rvm mount ~/.rvm/rubies/ruby-4.0.6 -n ruby-4.0.6，并使用rvm list查看是否挂载成功。rvm mount命令作用是：让rvm识别并管理一个已经存在于~/.rvm/rubies/目录下的ruby安装，并给它取一个别名（即ruby-4.0.6），但根据rvm的设计，因为是外部挂载，会自动加上ext-前缀，如果要修改，可以使用别名命令rvm alias create ruby-4.0.6-local ext-ruby-4.0.6，但因为rvm对于外部挂载的限制，挂载的别名不能直接改为ruby-4.0.6。若在高版本的macOS上挂载时弹出安全提示，可以先终止命令，执行xattr -dr com.apple.quarantine ~/.rvm/rubies/ruby-4.0.6命令移除隔离属性。
   使用刚挂载上的新ruby版本，即执行rvm use ext-ruby-4.0.6，如果要将其设置成默认的ruby版本，可以追加--default选项。
   离线安装bundler，即执行gem install --local bundler-2.4.10.gem命令。
   再执行bundle install --local安装cocoapods，安装完后再执行pod --verison。若成功安装后显示的不是最新的1.17.0，则执行hash -r，再执行pod --verison。其中hash -r的作用是清空整个命令哈希表，强制shell在下次执行命令时重新搜索PATH，找到最新的可执行文件路径。
