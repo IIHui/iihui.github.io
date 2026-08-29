@@ -531,7 +531,7 @@ LoadError: cannot load such file -- openssl  &amp;lt;internal:/Users/xxx/.rvm/ru
 # 先卸载 rvm uninstall ruby-3.3.12  # 指定目录后重新安装 rvm install ruby-3.3.12 --with-openssl-dir=/usr/local/openssl-1.1 --rubygems ignore 也可以进行源码安装时指定rubygems的版本，即添加选项，执行如下命令：
 rvm install 3.3.12 --rubygems 4.0.16 加上--rubygems这个参数，是为了明确告诉rvm，使用提前下载好的rubyGems版本包，而不是尝试联网找最新版。如果要离线更新gem版本，可以到这里https://rubygems.org/pages/download下载最新版本的安装包。
 然后将下载好的包复制到离线机器的rvm存档目录中，通常是~/.rvm/archives/目录，然后执行如下命令进行rubygems更新：
-rvm rubygems current 这个命令会告诉rvm，使用其在archives目录下找到的RubyGems包来更新当前使用的gem，只需要确保archives目录下有正确的包即可。
+rvm rubygems current 这个命令会告诉rvm，使用其在archives目录下找到的RubyGems包来更新ruby版本对应的RubyGems，只需要确保archives目录下有正确的包即可。
 也可以在联网的机器上下载rubygems-update-4.0.16.gem，然后将下载好的gem包复制到离线机器上，然后执行下面命令进行更新：
 # 离线安装rubygems-update gem install --local rubygems-update-4.0.16.gem  # 运行更新脚本，这个脚本会替换当前Ruby环境中的gem命令 update_rubygems archive ipa 使用xcodebuild archive打包时，-exportPath选项对应的ipa文件名是由info.plist中的哪个字段决定的？下面是一个打包的命令，exportPath选项后指定的是目录，下面的变量ipa_name不包含.ipa后缀：
 xcodebuild -exportArchive -archivePath &amp;#34;${build_path}/${ipa_name}.xcarchive&amp;#34; -exportPath &amp;#34;${build_path}/&amp;#34; -exportOptionsPlist exportOptions.plist 上面命令在编译目录下生成了ipa文件，但ipa文件名是info.plist文件中的CFBundleName决定的。如果不主动设置CFBundleName，则CFBundleName的默认值来自于PRODUCT_NAME，而PRODUCT_NAME一般设置为TARGET_NAME。
@@ -544,14 +544,14 @@ import subprocess  # 假设你终端使用的是Ruby4.0.6（查看方式：终�
 pod repo-art update xxx --prune 使用--prune前请注意，它会删除所有在服务端不存在的本地条目。如果本地仓库中确实有通过--local-only创建的、且尚未推送到服务端的索引，这些条目会被一并删除。因此，在执行--prune操作前，需确保没有需要保留的本地独有的索引。
 &amp;ndash;local-only 选项--local-only是cocoapods-art插件提供的一个选项，它可以在本地创建或修改索引，但不会同步到远程服务端。这为本地测试、私有调试或临时修改提供了一个隔离的环境（但作用十分有限）。
 它的核心工作流程是先在本地创建一个服务端不存在的索引条目，在执行pod repo-art update更新仓库索引时，这个本地独有的条目会被保留下来，不会被删除。这个功能主要用于需要安全地测试本地修改的场景，先在本地已经添加有仓库中执行如下操作：
-pod repo-art add my-repo MyLib 0.2.0.podspec --local-only 特别需要注意的是，在Podfile中使用刚刚添加的0.0.2版本的前提是服务端存在相应的库文件，否则拉取不到0.0.2对应的：
+pod repo-art add my-repo MyLib 0.2.0.podspec --local-only 特别需要注意的是，在Podfile中使用刚刚添加的0.2.0版本的前提是服务端存在相应的库文件，否则拉取不到0.2.0对应的：
 plugin &amp;#39;cocoapods-art&amp;#39;, :sources =&amp;gt; [&amp;#39;my-company-repo&amp;#39;] # ... 其他配置 pod &amp;#39;MyLib&amp;#39;, &amp;#39;0.2.0&amp;#39; 也就是--local-only选项的作用很有限，如果只想在本地测试一个Pod的修改，而不想上传到服务端，正确的做法是用CocoaPods的本地路径依赖（即使用:path），而不是--local-only。且使用--local-only只是为了在本地创造一个假的索引记录，从而骗过CocoaPods的版本查找逻辑。
 pod &amp;#39;MyLib&amp;#39;, :path =&amp;gt; &amp;#39;/path/to/MyLib&amp;#39; nvm command not found 使用sh xxx.sh执行脚本时，提示找不到nvm命令。根本原因是nvm是通过shell的配置文件（如.bashrc或.zshrc）加载的，而用sh执行的脚本默认不会加载这些配置，而导致nvm命令不可用。通常有两种方式解决该问题，第一种是在脚本开头添加加载命令：
 #!/bin/bash export NVM_DIR=&amp;#34;$HOME/.nvm&amp;#34; [ -s &amp;#34;$NVM_DIR/nvm.sh&amp;#34; ] &amp;amp;&amp;amp; \. &amp;#34;$NVM_DIR/nvm.sh&amp;#34; # 加载 nvm 如果不想修改脚本文件，可以在执行前用一条命令完成加载和执行：
 bash -c &amp;#39;source ~/.nvm/nvm.sh &amp;amp;&amp;amp; source ./xxx.sh&amp;#39; 但还是出现如下错误：
-nvm_echo &amp;#39; to remove, delete, or uninstall nvm - just remove the `$NVM_DIR` folder (usually `~/.nvm`)&amp;#39; command printf &amp;#39;%s\n&amp;#39; &amp;#39; to remove, delete, or uninstall nvm - just remove the `$NVM_DIR` folder (usually `~/.nvm`)&amp;#39; to remove, delete, or uninstall nvm - just remove the `$NVM_DIR` folder (usually `~/.nvm`) 这说明nvm已经加载成功了，但在脚本中调用nvm执行某个命令时失败了。后来发现是没有指定node版本，可以先使用nvm list列出所有的node版本，然后使用nvm use指定node版本：
+nvm_echo &amp;#39; to remove, delete, or uninstall nvm - just remove the `$NVM_DIR` folder (usually `~/.nvm`)&amp;#39; command printf &amp;#39;%s\n&amp;#39; &amp;#39; to remove, delete, or uninstall nvm - just remove the `$NVM_DIR` folder (usually `~/.nvm`)&amp;#39; to remove, delete, or uninstall nvm - just remove the `$NVM_DIR` folder (usually `~/.nvm`) 根据错误信息说明nvm已经加载成功了，但在脚本中调用nvm执行某个命令时失败了。后来发现是没有指定node版本，可以先使用nvm list列出所有的node版本，然后使用nvm use指定node版本：
 nvm use 22.15.0 如果使用上面命令后，执行脚本还是出现nvm报错，可以尝试使用：
-nvm use v22.15.0 前缀加了v确实正常了。通常来说，nvm use同时支持带v和不带v两种写法，它们是等价的必须加上v才能成功，主要原因是输入时引号或空格出了问题。
+nvm use v22.15.0 前缀加了v确实正常了。通常来说，命令nvm use同时支持带v和不带v两种写法，它们是等价的，必须加上v才能成功，可能是输入时引号或空格出了问题。
 </content>
     </entry>
     
