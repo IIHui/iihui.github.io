@@ -241,7 +241,7 @@ code.has-jax {
     <i class="fa fa-file-word-o"></i>
 </span>
 <span class="post-meta-item-text">字数: </span>
-<span class="leancloud-visitors-count">23080</span>
+<span class="leancloud-visitors-count">23474</span>
 &nbsp; | &nbsp;
 <span class="post-meta-item-icon">
     <i class="fa fa-coffee"></i>
@@ -1344,15 +1344,30 @@ code.has-jax {
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sh" data-lang="sh"><span style="display:flex;"><span>pod repo-art update xxx --prune
 </span></span></code></pre></div><p>使用<code>--prune</code>前请注意，<font color="#de7802">它会删除所有在服务端不存在的本地条目</font>。如果本地仓库中确实有通过<code>--local-only</code>创建的、且尚未推送到服务端的索引，这些条目会被一并删除。因此，在执行<code>--prune</code>操作前，需确保没有需要保留的本地独有的索引。</p>
 <h2 id="--local-only">&ndash;local-only</h2>
-<p>选项<code>--local-only</code>是<code>cocoapods-art</code>插件提供的一个选项，它可以在本地创建或修改索引，但不会同步到远程服务端。这为本地测试、私有调试或临时修改提供了一个隔离的环境（但作用十分有限）。</p>
-<p>它的核心工作流程是先在本地创建一个服务端不存在的索引条目，然后在执行<code>pod repo-art update</code>更新仓库索引时，这个本地独有的条目会被保留下来，不会被删除。这个功能主要用于需要安全地测试本地修改的场景，先在本地已经添加有仓库中执行如下操作：</p>
+<p>选项<code>--local-only</code>是<code>cocoapods-art</code>插件提供的一个选项，<font color="#de7802">它可以在本地创建或修改索引，但不会同步到远程服务端</font>。这为本地测试、私有调试或临时修改提供了一个隔离的环境（但作用十分有限）。</p>
+<p>它的核心工作流程是先在本地创建一个服务端不存在的索引条目，在执行<code>pod repo-art update</code>更新仓库索引时，这个本地独有的条目会被保留下来，不会被删除。这个功能主要用于需要安全地测试本地修改的场景，先在本地已经添加有仓库中执行如下操作：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sh" data-lang="sh"><span style="display:flex;"><span>pod repo-art add my-repo MyLib 0.2.0.podspec --local-only
 </span></span></code></pre></div><p>特别需要注意的是，在<code>Podfile</code>中使用刚刚添加的0.0.2版本的<font color=red>前提是服务端存在相应的库文件</font>，否则拉取不到0.0.2对应的：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ruby" data-lang="ruby"><span style="display:flex;"><span>plugin <span style="color:#e6db74">&#39;cocoapods-art&#39;</span>, <span style="color:#e6db74">:sources</span> <span style="color:#f92672">=&gt;</span> <span style="color:#f92672">[</span><span style="color:#e6db74">&#39;my-company-repo&#39;</span><span style="color:#f92672">]</span>
 </span></span><span style="display:flex;"><span><span style="color:#75715e"># ... 其他配置</span>
 </span></span><span style="display:flex;"><span>pod <span style="color:#e6db74">&#39;MyLib&#39;</span>, <span style="color:#e6db74">&#39;0.2.0&#39;</span>
-</span></span></code></pre></div><p>也就是<code>--local-only</code>选项的作用很有限，如果只想在本地测试一个<code>Pod</code>的修改，而不想上传到服务端，正确的做法是用<code>CocoaPods</code>的本地路径依赖，而不是<code>--local-only</code>。</p>
-
+</span></span></code></pre></div><p>也就是<code>--local-only</code>选项的作用很有限，如果只想在本地测试一个<code>Pod</code>的修改，而不想上传到服务端，正确的做法是用<code>CocoaPods</code>的本地路径依赖（即使用<code>:path</code>），而不是<code>--local-only</code>。且使用<code>--local-only</code>只是为了在本地创造一个假的索引记录，从而骗过<code>CocoaPods</code>的版本查找逻辑。</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ruby" data-lang="ruby"><span style="display:flex;"><span>pod <span style="color:#e6db74">&#39;MyLib&#39;</span>, <span style="color:#e6db74">:path</span> <span style="color:#f92672">=&gt;</span> <span style="color:#e6db74">&#39;/path/to/MyLib&#39;</span>
+</span></span></code></pre></div><h1 id="nvm-command-not-found">nvm command not found</h1>
+<p>使用<code>sh xxx.sh</code>执行脚本时，提示找不到nvm命令。根本原因是nvm是通过shell的配置文件（如<code>.bashrc</code>或<code>.zshrc</code>）加载的，而用sh执行的脚本默认不会加载这些配置，而导致nvm命令不可用。通常有两种方式解决该问题，第一种是在脚本开头添加加载命令：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sh" data-lang="sh"><span style="display:flex;"><span><span style="color:#75715e">#!/bin/bash
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>export NVM_DIR<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;</span>$HOME<span style="color:#e6db74">/.nvm&#34;</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">[</span> -s <span style="color:#e6db74">&#34;</span>$NVM_DIR<span style="color:#e6db74">/nvm.sh&#34;</span> <span style="color:#f92672">]</span> <span style="color:#f92672">&amp;&amp;</span> <span style="color:#ae81ff">\.</span> <span style="color:#e6db74">&#34;</span>$NVM_DIR<span style="color:#e6db74">/nvm.sh&#34;</span>  <span style="color:#75715e"># 加载 nvm</span>
+</span></span></code></pre></div><p>如果不想修改脚本文件，可以在执行前用一条命令完成加载和执行：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sh" data-lang="sh"><span style="display:flex;"><span>bash -c <span style="color:#e6db74">&#39;source ~/.nvm/nvm.sh &amp;&amp; source ./xxx.sh&#39;</span>
+</span></span></code></pre></div><p>但还是出现如下错误：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sh" data-lang="sh"><span style="display:flex;"><span>nvm_echo <span style="color:#e6db74">&#39; to remove, delete, or uninstall nvm - just remove the `$NVM_DIR` folder (usually `~/.nvm`)&#39;</span> 
+</span></span><span style="display:flex;"><span>command printf <span style="color:#e6db74">&#39;%s\n&#39;</span> <span style="color:#e6db74">&#39; to remove, delete, or uninstall nvm - just remove the `$NVM_DIR` folder (usually `~/.nvm`)&#39;</span> 
+</span></span><span style="display:flex;"><span>to remove, delete, or uninstall nvm - just remove the <span style="color:#e6db74">`</span>$NVM_DIR<span style="color:#e6db74">`</span> folder <span style="color:#f92672">(</span>usually <span style="color:#e6db74">`</span>~/.nvm<span style="color:#e6db74">`</span><span style="color:#f92672">)</span> 
+</span></span></code></pre></div><p>这说明nvm已经加载成功了，但在脚本中调用nvm执行某个命令时失败了，后来发现是没有指定特定的node版本，可以先使用nvm list列出所有的node版本：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sh" data-lang="sh"><span style="display:flex;"><span>nvm use v22.15.0
+</span></span><span style="display:flex;"><span>nvm use vv22.15.0
+</span></span></code></pre></div>
     </div>
     <footer class="post-footer">
         
@@ -1585,6 +1600,7 @@ code.has-jax {
         <li><a href="#--local-only">&ndash;local-only</a></li>
       </ul>
     </li>
+    <li><a href="#nvm-command-not-found">nvm command not found</a></li>
   </ul>
 </nav></div>
     </div>

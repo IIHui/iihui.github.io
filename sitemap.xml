@@ -538,10 +538,14 @@ import subprocess  # 假设你终端使用的是Ruby4.0.6（查看方式：终�
 &amp;ndash;prune 如果要清理服务端已删除的本地索引，正确的做法是在执行update命令时加上--prune选项。这个选项会在更新本地索引的同时，prune（修剪）掉所有在服务端已不存在的条目，从而实现本地与服务端索引的完全同步。
 pod repo-art update xxx --prune 使用--prune前请注意，它会删除所有在服务端不存在的本地条目。如果本地仓库中确实有通过--local-only创建的、且尚未推送到服务端的索引，这些条目会被一并删除。因此，在执行--prune操作前，需确保没有需要保留的本地独有的索引。
 &amp;ndash;local-only 选项--local-only是cocoapods-art插件提供的一个选项，它可以在本地创建或修改索引，但不会同步到远程服务端。这为本地测试、私有调试或临时修改提供了一个隔离的环境（但作用十分有限）。
-它的核心工作流程是先在本地创建一个服务端不存在的索引条目，然后在执行pod repo-art update更新仓库索引时，这个本地独有的条目会被保留下来，不会被删除。这个功能主要用于需要安全地测试本地修改的场景，先在本地已经添加有仓库中执行如下操作：
+它的核心工作流程是先在本地创建一个服务端不存在的索引条目，在执行pod repo-art update更新仓库索引时，这个本地独有的条目会被保留下来，不会被删除。这个功能主要用于需要安全地测试本地修改的场景，先在本地已经添加有仓库中执行如下操作：
 pod repo-art add my-repo MyLib 0.2.0.podspec --local-only 特别需要注意的是，在Podfile中使用刚刚添加的0.0.2版本的前提是服务端存在相应的库文件，否则拉取不到0.0.2对应的：
-plugin &amp;#39;cocoapods-art&amp;#39;, :sources =&amp;gt; [&amp;#39;my-company-repo&amp;#39;] # ... 其他配置 pod &amp;#39;MyLib&amp;#39;, &amp;#39;0.2.0&amp;#39; 也就是--local-only选项的作用很有限，如果只想在本地测试一个Pod的修改，而不想上传到服务端，正确的做法是用CocoaPods的本地路径依赖，而不是--local-only。
-</content>
+plugin &amp;#39;cocoapods-art&amp;#39;, :sources =&amp;gt; [&amp;#39;my-company-repo&amp;#39;] # ... 其他配置 pod &amp;#39;MyLib&amp;#39;, &amp;#39;0.2.0&amp;#39; 也就是--local-only选项的作用很有限，如果只想在本地测试一个Pod的修改，而不想上传到服务端，正确的做法是用CocoaPods的本地路径依赖（即使用:path），而不是--local-only。且使用--local-only只是为了在本地创造一个假的索引记录，从而骗过CocoaPods的版本查找逻辑。
+pod &amp;#39;MyLib&amp;#39;, :path =&amp;gt; &amp;#39;/path/to/MyLib&amp;#39; nvm command not found 使用sh xxx.sh执行脚本时，提示找不到nvm命令。根本原因是nvm是通过shell的配置文件（如.bashrc或.zshrc）加载的，而用sh执行的脚本默认不会加载这些配置，而导致nvm命令不可用。通常有两种方式解决该问题，第一种是在脚本开头添加加载命令：
+#!/bin/bash export NVM_DIR=&amp;#34;$HOME/.nvm&amp;#34; [ -s &amp;#34;$NVM_DIR/nvm.sh&amp;#34; ] &amp;amp;&amp;amp; \. &amp;#34;$NVM_DIR/nvm.sh&amp;#34; # 加载 nvm 如果不想修改脚本文件，可以在执行前用一条命令完成加载和执行：
+bash -c &amp;#39;source ~/.nvm/nvm.sh &amp;amp;&amp;amp; source ./xxx.sh&amp;#39; 但还是出现如下错误：
+nvm_echo &amp;#39; to remove, delete, or uninstall nvm - just remove the `$NVM_DIR` folder (usually `~/.nvm`)&amp;#39; command printf &amp;#39;%s\n&amp;#39; &amp;#39; to remove, delete, or uninstall nvm - just remove the `$NVM_DIR` folder (usually `~/.nvm`)&amp;#39; to remove, delete, or uninstall nvm - just remove the `$NVM_DIR` folder (usually `~/.nvm`) 这说明nvm已经加载成功了，但在脚本中调用nvm执行某个命令时失败了，后来发现是没有指定特定的node版本，可以先使用nvm list列出所有的node版本：
+nvm use v22.15.0 nvm use vv22.15.0 </content>
     </entry>
     
      <entry>
@@ -5090,8 +5094,9 @@ this.onAppQuit = (tasks) =&amp;gt; {  const _this = this;   try {  // 同步保�
 此时，可以将JetBrains AI Assistant插件禁用，再看日志发现已有Full line native server is started和Full line native server address is localhost:56286，这表示Full Line complete已生效。
 Ghostty 选择粘贴 Ghostty终端默认未开启选择即复制到系统粘贴板，添加如下配置项，然后重新加载配置后就开启了Ghostty的选择即复制：
 copy-on-select = clipboard IntelliJ IDEA Unresolved dependency Unresolved dependency: &amp;#39;xxx&amp;#39; 首先彻底关闭所有正在运行的IDEA，然后最粗暴的方案是找到本地Maven仓库索引根目录（默认在 ~/.m2/repository），删除该索引根目录。若想使用影响较小的方案是找到下面目录~/Library/Caches/JetBrains/IntelliJIdeaxxx/Maven，然后删除即可：
-2026-03-13 14:30:50.963357&#43;0800 xxx[593:62859] Connection 27: unable to determine interface type without an established connection 2026-03-13 14:30:50.963755&#43;0800 xxx[593:62859] Connection 27: unable to determine fallback status without a connection &amp;#34;未能完成操作。（kCFErrorDomainCFNetwork错误310。）&amp;#34; &amp;#34;未能完成操作。（kCFErrorDomainCFNetwork错误310。）&amp;#34; 查看依赖关系 首先选中工程中的pom.xml文件，然后点击右侧的Maven按钮，然后点击Dependencies，接着选中Analyze Dependencies，在弹出的页面的输入框中输入要检索的组件名称，即可看中是哪个组件引入的依赖：
-Software Install can’t be opened 在macOS中（非打包机器上）打开用个人未付费账号打包的应用，提示The application xxx can’t be opened，尝试了以下几种方式均不行：
+2026-03-13 14:30:50.963357&#43;0800 xxx[593:62859] Connection 27: unable to determine interface type without an established connection 2026-03-13 14:30:50.963755&#43;0800 xxx[593:62859] Connection 27: unable to determine fallback status without a connection &amp;#34;未能完成操作。（kCFErrorDomainCFNetwork错误310。）&amp;#34; &amp;#34;未能完成操作。（kCFErrorDomainCFNetwork错误310。）&amp;#34; 查看组件依赖 如果要查看某个子组件是哪个组件引入的，首先选中工程中的pom.xml文件，然后点击右侧导航栏的Maven按钮，然后点击Dependencies，接着选中Analyze Dependencies，在弹出的页面的输入框中输入要检索的组件名称，即可看中是哪个组件引入的依赖：
+如果要固定某个组件版本，可以先在pom.xml文件的&amp;lt;properties&amp;gt;下面定义组件版本，然后在&amp;lt;dependencies&amp;gt;下使用这个版本。使用版本时可以使用${org.mapstruct.version}。也可以直接在&amp;lt;version&amp;gt;1.1.1&amp;lt;/version&amp;gt;中直接硬编码写死版本：
+&amp;lt;properties&amp;gt;  &amp;lt;org.mapstruct.version&amp;gt;x.x.x&amp;lt;/org.mapstruct.version&amp;gt; &amp;lt;!-- 在这里定义版本号 --&amp;gt; &amp;lt;/properties&amp;gt;   &amp;lt;dependencies&amp;gt;  &amp;lt;!-- mapstruct--&amp;gt;  &amp;lt;dependency&amp;gt;  &amp;lt;groupId&amp;gt;org.mapstruct&amp;lt;/groupId&amp;gt;  &amp;lt;artifactId&amp;gt;mapstruct&amp;lt;/artifactId&amp;gt;  &amp;lt;version&amp;gt;${org.mapstruct.version}&amp;lt;/version&amp;gt;  &amp;lt;/dependency&amp;gt; &amp;lt;/dependencies&amp;gt; Software Install can’t be opened 在macOS中（非打包机器上）打开用个人未付费账号打包的应用，提示The application xxx can’t be opened，尝试了以下几种方式均不行：
 sudo xattr -r -d com.apple.quarantine /Applications/xxx.app  # 先临时开启任何来源 sudo spctl --master-disable # 关闭任何来源 sudo spctl --master-enable 最后使用如下命令（给一个临时的本地签名）才能打开：
 sudo codesign --force --deep --sign - /Applications/xxx.app 上面命令的作用是强制对指定的应用进行临时性（自签名）代码重签名，通常用于绕过门禁（Gatekeeper）或损坏的签名校验。下面解释每个参数的含义：
  codesign：macOS的代码签名工具，用于给应用、动态库、命令行工具等打上数字签名。 --force或-f：强制覆盖该应用已有的任何现有签名，无论它之前是Apple官方签名还是其他开发者签名。 --deep：进行深度签名。它会递归地扫描应用包（.app文件夹）内的所有嵌套可执行文件（如动态库、插件、Frameworks）并逐一签名，而不仅仅签名主二进制文件。 --sign -：末尾的-（横杠）表示使用临时的自签名证书（即Ad-Hoc签名），而非指定某个具体的开发者证书。系统会自动生成一个本地有效的签名，但该签名无法通过Apple的公证验证。  按照重签名后，有以下几个风险问题需要注意：
@@ -5150,7 +5155,8 @@ compinit:527: no such file or directory: /usr/local/share/zsh/site-functions/_br
 # 删除有问题的链接文件 rm -f /usr/local/share/zsh/site-functions/_brew rm -f /usr/local/share/zsh/site-functions/_brew_services Vim 配置文件 在使用vim时，它从一个名为.vimrc（在类Unix系统中，以.开头的文件为隐藏文件，为了看到这些文件，可以运行ls -a命令行）的文件中读取配置信息。
 syntax on &amp;#34;支持语法高亮显示 filetype plugin indent on &amp;#34;启用根据文件类型缩进 set autoindent &amp;#34;开启新行时处理缩进 set expandtab &amp;#34;将制表符Tab展开为空格 set tabstop=4 &amp;#34;要计算的空格数 set shiftwidth=4 &amp;#34;用于自动缩进的空格数 set backspace=2 &amp;#34;在多终端上修正退格键backspace的行为 colorscheme murphy &amp;#34;修改配色 打开文件 使用vim test.txt命令时，会打开一个名为test.txt的文件。如果该文件存在，则会看到它的内容，如果文件不存在，则打开一个空白界面。
 清空内容 如果要清空文件的所有内容，首先进入到命令模式（非编辑模式），然后输入gg命令， 接着输入dG命令。
-无提示生成ssh-key ssh-keygen -q -t rsa -C &amp;#34;xxx.com&amp;#34; -N &amp;#34;&amp;#34; -f ~/.ssh/id_rsa_yst &amp;lt;&amp;lt;&amp;lt;y &amp;gt;/dev/null 2&amp;gt;&amp;amp;1 PandoraxBox 定时任务 30 1 * * 1-7 /sbin/wifi down 00 20 * * 1-5 /sbin/wifi up 00 06 * * 6 /sbin/wifi up 00 06 * * 0 /sbin/wifi up 00 3 * * 5 sleep 5 &amp;amp;&amp;amp; touch /etc/banner &amp;amp;&amp;amp; reboot </content>
+无提示生成ssh-key ssh-keygen -q -t rsa -C &amp;#34;xxx.com&amp;#34; -N &amp;#34;&amp;#34; -f ~/.ssh/id_rsa_yst &amp;lt;&amp;lt;&amp;lt;y &amp;gt;/dev/null 2&amp;gt;&amp;amp;1 PandoraxBox 定时任务 30 1 * * 1-7 /sbin/wifi down 00 20 * * 1-5 /sbin/wifi up 00 06 * * 6 /sbin/wifi up 00 06 * * 0 /sbin/wifi up 00 3 * * 5 sleep 5 &amp;amp;&amp;amp; touch /etc/banner &amp;amp;&amp;amp; reboot pap.er 是用pap.er时没有设置图片下载路径，下载的图片默认存储在~/Pictures/pap.er/目录下。打开任意Finder窗口，按下Command &#43; Shift &#43; G，输入~/Pictures/pap.er并回车，即可直接跳转。
+</content>
     </entry>
     
      <entry>
