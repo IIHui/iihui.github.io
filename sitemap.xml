@@ -552,7 +552,9 @@ bash -c &amp;#39;source ~/.nvm/nvm.sh &amp;amp;&amp;amp; source ./xxx.sh&amp;#39
 nvm_echo &amp;#39; to remove, delete, or uninstall nvm - just remove the `$NVM_DIR` folder (usually `~/.nvm`)&amp;#39; command printf &amp;#39;%s\n&amp;#39; &amp;#39; to remove, delete, or uninstall nvm - just remove the `$NVM_DIR` folder (usually `~/.nvm`)&amp;#39; to remove, delete, or uninstall nvm - just remove the `$NVM_DIR` folder (usually `~/.nvm`) 根据错误信息说明nvm已经加载成功了，但在脚本中调用nvm执行某个命令时失败了。后来发现是没有指定node版本，可以先使用nvm list列出所有的node版本，然后使用nvm use指定node版本：
 nvm use 22.15.0 如果使用上面命令后，执行脚本还是出现nvm报错，可以尝试使用：
 nvm use v22.15.0 前缀加了v确实正常了。通常来说，命令nvm use同时支持带v和不带v两种写法，它们是等价的，必须加上v才能成功，可能是输入时引号或空格出了问题。
-</content>
+can’t be completely emptied 在应用程序中选中某个应用，移到废纸篓时，收到如下提示：
+The Bin can’t be completely emptied because “.xxx” is locked. To empty everything in the Bin, including locked items, press the Option key while you choose Finder &amp;gt; Empty Bin. 此时可以在应用程序中找到这个应用，然后右键选中Get Info，然后在where复制真正的路径，接着使用下面命令删除，按提示输入登录密码即可删除：
+sudo rm -rf xxx </content>
     </entry>
     
      <entry>
@@ -2749,15 +2751,15 @@ view Controllers 视图控制器是UIViewController的一个实例，实际上�
           <tag>iOS</tag>
         </tags>
         <content type="html">  Swift 5.3引入了很多新特性，包括多尾闭包、多模式catch、枚举比较、闭包中self省略以及Swift Package Manager等一些重要改变。
- 多尾闭包 以前 在Swift 5.3前尾闭包提供了精简写法，但仅限于函数最后一个参数为函数闭包。当一个函数有多个函数闭包参数时，如果该函数类型参数不是最后一个参数时，不能使用精简写法。如下所示，既有在圆括号内的闭包，又有在圆括号外的闭包：
+ 多尾闭包 以前 在Swift 5.3前尾闭包提供了精简写法，但仅限于函数最后一个参数为函数闭包。当一个函数有多个函数闭包参数时，如果该函数类型参数不是最后一个参数时，不能使用精简写法。如下所示，既有在圆括号内的闭包参数，又有在圆括号外的闭包参数：
 // 写法 1（传统写法） UIView.animate(withDuration: 0.25, animations: {  // animation code }, completion: { completed in  // completion code })  // 写法 2（单尾闭包精简写法） UIView.animate(withDuration: 0.25, animations: {  // animation code }) { completed in  // completion code } 现在 而在Swift 5.3中，同一个函数的多尾闭包有了新的精简模式。在第一个闭包参数之后可以使用标签的方式来使用尾闭包。这种新的写法把最后的连续几个闭包参数都算作是尾闭包，这些闭包参数都可以放在圆括号外面。
-UIView.animate(withDuration: 0.3) {  self.view.alpha = 0 } completion: { _ in  self.view.removeFromSuperview() } 但是，这些尾闭包中第一个闭包被强制省略标签。苹果的解释是：如果允许第一个尾闭包加上标签，那么开发者需要考虑是加好还是不加好，这会导致代码风格不一致，那么干脆禁了吧。也就是除了第一个尾闭包需要省略标签之外，其余的尾闭包都需有标签。
+UIView.animate(withDuration: 0.3) {  self.view.alpha = 0 } completion: { _ in  self.view.removeFromSuperview() } 但是，这些尾闭包中的第一个闭包被强制省略标签。苹果的解释是：如果允许第一个尾闭包加上标签，那么开发者需要考虑是加好还是不加好，这会导致代码风格不一致，那么干脆禁了吧。也就是除了第一个尾闭包需要省略标签之外，其余的尾闭包都需有标签。
 参考资料
-多模式catch语句 以前 在Swift 5.3前，捕获同一类型Error只能有一个catch，然后再使用switch语句区分同一类型Error中具体的哪种错误，如下所示：
+多模式catch语句 以前 在Swift 5.3前，捕获同一类型Error只能有一个catch，然后再使用switch语句区分同一类型Error中具体的哪种错误，示例如下所示：
 enum TaskError: Error {  case someRecoverableError  case someFailure(msg: String)  case anotherFailure(msg: String) }  func performTask() throws -&amp;gt; String {  throw TaskError.someFailure(msg: &amp;#34;some Failure&amp;#34;) }  func recover() {  // }  do {  try performTask() } catch let error as TaskError {  switch error {  case .someFailure(let msg), .anotherFailure(let msg):  debugPrint(msg)  case .someRecoverableError:  recover()  } } 现在 Swift 5.3可以使用多个catch块捕获同一类型不同类错误，这个特性使得代码具有更好的可读性，并且能够有效减少代码行数：
 do {  try performTask() } catch TaskError.someRecoverableError {  recover() } catch TaskError.someFailure(let msg), TaskError.anotherFailure(let msg) {  debugPrint(msg) }  enum TemperatureError: Error {  case tooCold, tooHot }  func getReactorTemperature() -&amp;gt; Int {  90 }  func checkReactorOperational() throws -&amp;gt; String {  let temp = getReactorTemperature()   if temp &amp;lt; 10 {  throw TemperatureError.tooCold  } else if temp &amp;gt; 90 {  throw TemperatureError.tooHot  } else {  return &amp;#34;OK&amp;#34;  } }  do {  let result = try checkReactorOperational()  debugPrint(&amp;#34;结果: \(result)&amp;#34;) } catch TemperatureError.tooHot, TemperatureError.tooCold {  // 捕获多个异常  debugPrint(&amp;#34;关闭反应堆&amp;#34;) } catch {  debugPrint(&amp;#34;未知错误&amp;#34;) } 枚举Comparable 之前 在Swift 5.3之前，如果需要比较enum，前提是enum需要先遵循Comparable协议，并且需要实现静态的&amp;lt;和minimum方法，但是这种代码维护成本高。因为，如果添加一个枚举值，则需要更新静态的&amp;lt;和minimum方法，才能比较enum，否则会出现编译错误：
-enum Volume: Comparable {  case low  case medium  case high   private static func minium(_ lhs: Self, _ rhs: Self) -&amp;gt; Self {  switch (lhs, rhs) {  case (.low, _), (_, .low):  return .low  case (.medium, _), (_, .medium):  return .medium  case (.high, _), (_, .high):  return .high  }  }   private static func &amp;lt; (_ lhs: Self, _ rhs: Self) -&amp;gt; Bool {  return (lhs != rhs) &amp;amp;&amp;amp; (lhs == self.minium(lhs, rhs))  } } 可以使用扩展的方式解决上面的比较问题，即在扩展中添加一个容易比较的计算属性值，在实现静态方法&amp;lt;时，使用自定义的comparableValue即可：
-private var comparableValue: Int {  switch self {  case .low:  return 0  case .medium:  return 1  case .high:  return 2  } }  private static func &amp;lt; (_ lhs: Self, _ rhs: Self) -&amp;gt; Bool {  return lhs.comparableValue &amp;lt; rhs.comparableValue } 现在 在Swift 5.3中，只要enum没有关联值或者只有一个Comparable的关联值，则会自动实现静态的&amp;lt;和minimum方法，定义的enum直接可以进行比较：
+enum Volume: Comparable {  case low  case medium  case high   private static func minium(_ lhs: Self, _ rhs: Self) -&amp;gt; Self {  switch (lhs, rhs) {  case (.low, _), (_, .low):  return .low  case (.medium, _), (_, .medium):  return .medium  case (.high, _), (_, .high):  return .high  }  }   private static func &amp;lt; (_ lhs: Self, _ rhs: Self) -&amp;gt; Bool {  return (lhs != rhs) &amp;amp;&amp;amp; (lhs == self.minium(lhs, rhs))  } } 可以使用扩展的方式解决上面的比较问题，即在扩展中添加一个容易比较的计算属性值，在实现静态的方法&amp;lt;时，使用自定义的comparableValue即可：
+private var comparableValue: Int {  switch self {  case .low:  return 0  case .medium:  return 1  case .high:  return 2  } }  private static func &amp;lt; (_ lhs: Self, _ rhs: Self) -&amp;gt; Bool {  return lhs.comparableValue &amp;lt; rhs.comparableValue } 现在 在Swift 5.3中，只要enum没有关联值或者只有一个Comparable的关联值，则会自动实现静态的方法&amp;lt;和minimum方法，定义的enum直接可以进行比较：
 enum Size: Comparable {  case small(Int)  case medium  case large(Int) }  let sizes: [Size] = [.medium, .small(4), .large(5), .large(1), .small(1)] debugPrint(sizes.sorted()) //[__lldb_expr_13.Size.small(1), __lldb_expr_13.Size.small(4), __lldb_expr_13.Size.medium, __lldb_expr_13.Size.large(1), __lldb_expr_13.Size.large(5)] self的省略 之前 在Swift 5.3之前，在闭包中对当前对象的属性或方法的引用，都要明确使用self，即便闭包不会产生循环引用时，也必须要添加这个self：
 struct SomeStruct {  var x = 0   func doSomething(task: @escaping () -&amp;gt; Void) {  task()  }   func test() {  doSomething {  // 闭包中使用属性，需要显式添加self  debugPrint(self.x)  }  } }  SomeStruct().test() 现在 而在Swift 5.3中，在闭包中对当前对象的属性或方法的引用没有这样的限制，可以去除self，直接使用属性和方法，如下所示：
 struct SomeStruct {  var x = 0   func doSomething(task: @escaping () -&amp;gt; Void) {  task()  }   func test() {  doSomething {  // 无需再显式添加self  debugPrint(x)  }  } } SomeStruct().test() 还有一种新的方法在捕获列表中使用self，只需在捕获列表中加入[self]。这样就可以避免在闭包中反复使用self，如下所示：
@@ -4312,10 +4314,10 @@ exception is java.lang.IllegalArgumentException: Could not resolve placeholder &
         <title>使用Charles</title>
         <url>https://iihui.github.io/post/tool-charles/</url>
         <categories>
-          <category>iOS</category>
+          <category>tool</category>
         </categories>
         <tags>
-          <tag>iOS</tag>
+          <tag>tool</tag>
         </tags>
         <content type="html">  Charles是一款用于iOS端的抓包工具，可以将它设置成网络访问的代理服务器，使得所有网络访问请求都通过它来完成，从而实现网络封包的截取和分析，以作为网络访问的监视器。当App连接Charles代理访问互联网时，Charles可以监控这个App发送和接收的所有数据，这些信息包括request,response和headers（包含cookies与caching）。
  安装证书 首先打开Charles，接着点击菜单栏的Help，选择SSL Proxing，然后选中Install Charles Root Certificate on a Mobile Device or Remote Browser，步骤如下图所示：
@@ -5521,10 +5523,10 @@ class MyManager {  // private 修饰  private static let sharedManager: MyManage
         <title>Papers教程</title>
         <url>https://iihui.github.io/post/tool-papers/</url>
         <categories>
-          <category>Tool</category>
+          <category>tool</category>
         </categories>
         <tags>
-          <tag>Tool</tag>
+          <tag>tool</tag>
         </tags>
         <content type="html">  Papers软件对自己的定位为个人科研图书馆，其主要功能为文献收集(Find)、文献整理(Organize)、文献阅读(Read)和文献引用(Cite)。这篇教程主要关注Papers的引用功能。
  四个功能 首先对上面提到的4个功能进行简介，以对Papers这个软件有个初步的认识，同时也可以了解文献管理软件的基本功能特点。
