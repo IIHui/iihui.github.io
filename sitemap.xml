@@ -559,10 +559,10 @@ Expected: /private/var/folders/ns/9rvphkg1387_4zqncdbkbml80000gn/T/debugpy318543
 find /Applications/PyCharm.app -name &amp;#34;attach*.dylib&amp;#34; 2&amp;gt;/dev/null 然后将找到的下列文件复制到/private/var/folders/ns/9rvphkg1387_4zqncdbkbml80000gn/T/debugpy3185433954253459765/debugpy/_vendored/pydevd/pydevd_attach_to_process/目录下：
 /Applications/PyCharm.app/Contents/plugins/python-ce/helpers/pydev/pydevd_attach_to_process/attach.dylib 这种方式只能临时解决。由于PyCharm的安全机制，这个临时目录会发生变化，例如重启PyCharm，还是会出现一样的错误，因为T的子目录会发生随便变化：
 Expected: private/var/folders/ns/9rvphkg1387_4zqncdbkbml80000gn/T/debugpy851305541846591445/debugpy/_vendored/pydevd/pydevd_attach_to_process/attach.dylib to exist. 一直没找到一劳永逸的解决方案，但排查过程中偶然发现，若debug的模式为pydevd，则错误会消失。修改mode的方式如下图所示，但这种修改也是临时的，若重启后后还是会被自动修改为debugpy。
-但从上面的find /Applications/PyCharm.app -name &amp;quot;attach*.dylib&amp;quot; 2&amp;gt;/dev/null命令的输出，可以找到attach.dylib文件所在的路径为：
-/Applications/PyCharm.app/Contents/plugins/python-ce/helpers/debugpy/_vendored/pydevd/pydevd_attach_to_process/attach.dylib 既然PyCharm的安装目录中是存在attach.dylib文件的，但为什么没有自动复制呢，是不是因为自动复制的目录不存在attach.dylib文件呢。使用下面命令查找是否存在多个pydevd_attach_to_process目录：
-find /Applications/PyCharm.app -name &amp;#34;pydevd_attach_to_process&amp;#34; 2&amp;gt;/dev/null 从输出上看，确实存在两个不同的pydevd_attach_to_process目录：
-/Applications/PyCharm.app/Contents/plugins/python-ce/helpers/pydev/pydevd_attach_to_process  /Applications/PyCharm.app/Contents/plugins/python-ce/helpers/debugpy/_vendored/pydevd/pydevd_attach_to_process 但打开目录后发现第一个目录下并没有attach.dylib文件，将第二个目录下的attach.dylib文件复制一份到第一个目录，然后重启PyCharm，接着再调试时就正常了。最后，验证关机重启mac后调试也正常，至此，该问题完美解决😎。
+但从上面的find /Applications/PyCharm.app -name &amp;quot;attach*.dylib&amp;quot; 2&amp;gt;/dev/null命令的输出，可以看到attach.dylib文件所在的路径为：
+/Applications/PyCharm.app/Contents/plugins/python-ce/helpers/debugpy/_vendored/pydevd/pydevd_attach_to_process/attach.dylib 既然PyCharm的安装目录中是存在attach.dylib文件的，但使用debugpy模式时为什么没有自动复制这个文件呢，是不是因为自动复制的目录下不存在attach.dylib文件呢。使用下面命令查找是否存在多个pydevd_attach_to_process目录：
+find /Applications/PyCharm.app -name &amp;#34;pydevd_attach_to_process&amp;#34; 2&amp;gt;/dev/null 从上面命令的输出上看，确实存在两个不同的pydevd_attach_to_process目录，这两个目录恰好对应两个调试模式，第一个是pydevd，第二个是debugpy：
+/Applications/PyCharm.app/Contents/plugins/python-ce/helpers/pydev/pydevd_attach_to_process  /Applications/PyCharm.app/Contents/plugins/python-ce/helpers/debugpy/_vendored/pydevd/pydevd_attach_to_process 但打开第一个目录后发现并没有attach.dylib文件，将第二个目录下的attach.dylib文件复制到第一个目录下，然后重启PyCharm，接着再使用debugpy模式调试时就正常了。最后，验证关机重启mac后调试也正常，至此，该问题完美解决😎。
 </content>
     </entry>
     
