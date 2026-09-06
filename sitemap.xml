@@ -43,6 +43,34 @@ summaryLength = 100 #放在同themes同级的config.toml上才有效 设置文�
     </entry>
     
      <entry>
+        <title>一些问题的解决方案2026</title>
+        <url>https://iihui.github.io/post/ios-solutions-2026/</url>
+        <categories>
+          <category>iOS</category>
+        </categories>
+        <tags>
+          <tag>iOS</tag>
+        </tags>
+        <content type="html"> cocoapods组件名 CocoaPods组件名（Pod Name）原则上不能包含英文点号，同时也不能以点号开头。CocoaPods在生成对应的 Swift或Objective-C模块（Module）时，需要遵循编程语言的标识符命名规则。这些规则通常只允许字母、数字和下划线，因此像点号（.）和连字符（-）这类符号是不被允许的。
+如果一个Pod的名字里包含了这些符号，CocoaPods在生成模块名时，会自动将它们替换为下划线（_）。但为了避免潜在的混淆和问题，组件命名时最好遵循以下原则：
+ 只使用：字母（a-z, A-Z）、数字（0-9）和下划线（_）。 使用：驼峰命名法或下划线分隔。  CocoaPods的Module Name和podspc中定义的spec.name是两套系统。spec.name是给CocoaPods包管理器内部使用的「身份证」，而 import语句使用的是面向编译器的模块名。
+# podspec的定义 spec.name = &amp;#34;LC09.09_xxx&amp;#34;  # import使用的语法，即需要添加下划线 LC09_09_xxx Xcode和Swift编译器要求模块名必须是C99扩展标识符，即只能包含字母、数字和下划线（_），且必须以字母或下划线开头。所以spec.name中的点号（.）是不被允许的。为了让编译通过，CocoaPods会自动将spec.name中所有非法字符（如.、-等）替换为下划线（_），生成一个合法的模块名。
+如果不想使用自动生成的名字，可以在podspec中可以通过spec.module_name属性来指定一个更友好的模块名，按下面设置后可以直接import LC09_09_xxx：
+Pod::Spec.new do |spec|  spec.name = &amp;#34;LC09.09_xxx&amp;#34;  # ... 其他配置 ...  spec.module_name = &amp;#34;YYY&amp;#34; # 自定义一个简洁合法的模块名 end pod update 在podfile文件中使用:path =&amp;gt;依赖本地组件的低版本时，然后执行pod update时出现如下错误：
+Errno::ENOENT - No such file or directory @ rb_sysopen - /Users/xxx/Downloads/xxx/Pods/Local Podspecs/Router.podspec.json /Users/xxx/.rvm/gems/ext-ruby-4.0.6/gems/cocoapods-core-1.17.0/lib/cocoapods-core/specification.rb:690:in &amp;#39;IO.read&amp;#39; /Users/xxx/.rvm/gems/ext-ruby-4.0.6/gems/cocoapods-core-1.17.0/lib/cocoapods-core/specification.rb:690:in &amp;#39;Pod::Specification#checksum&amp;#39; /Users/xxx/.rvm/gems/ext-ruby-4.0.6/gems/cocoapods-core-1.17.0/lib/cocoapods-core/lockfile.rb:543:in &amp;#39;block in Pod::Lockfile.generate_checksums&amp;#39; 这个错误是CocoaPods处理本地组件 (:path) 时，因缓存或状态不一致导致的。CocoaPods在Pods/Local Podspecs/目录下找不到（或无法读取）Router.podspec.json这个文件。这个文件是CocoaPods在pod install时生成的本地Podspec缓存，用于计算校验和 (checksum)。当这个缓存缺失或损坏时，pod update就会报错。
+expected attach.dylib to exist 从官网下载PyCharm 2026，接着双击并拖到Applications目录（即替换已有的应用），然后使用新版打开项目，调试时出现如下如下错误信息：
+Expected: /private/var/folders/ns/9rvphkg1387_4zqncdbkbml80000gn/T/debugpy3185433954253459765/debugpy/_vendored/pydevd/pydevd_attach_to_process/attach.dylib to exist. 临时解决方案是找到PyCharm目录下的attach.dylib文件，即使用如下命令：
+find /Applications/PyCharm.app -name &amp;#34;attach*.dylib&amp;#34; 2&amp;gt;/dev/null 然后将找到的attach.dylib文件复制到/private/var/folders/ns/9rvphkg1387_4zqncdbkbml80000gn/T/debugpy3185433954253459765/debugpy/_vendored/pydevd/pydevd_attach_to_process/目录下：
+/Applications/PyCharm.app/Contents/plugins/python-ce/helpers/pydev/pydevd_attach_to_process/attach.dylib 这种方式只能临时解决本次编译问题。由于PyCharm的安全机制，这个临时目录会发生变化，即重启PyCharm后，还是会出现一样的错误，因为T的子目录会发生随机变化：
+Expected: private/var/folders/ns/9rvphkg1387_4zqncdbkbml80000gn/T/debugpy851305541846591445/debugpy/_vendored/pydevd/pydevd_attach_to_process/attach.dylib to exist. 一直没找到一劳永逸的解决方案，但排查过程中偶然发现，若将debug模式修改为pydevd，则错误会消失。修改mode的方式如下图所示，但这种解决方案也是临时的，因为PyCharm重启后还是会自动将debug模式修改为debugpy。
+但从上面find /Applications/PyCharm.app -name &amp;quot;attach*.dylib&amp;quot; 2&amp;gt;/dev/null命令的输出，可以看到attach.dylib文件所在的路径为：
+/Applications/PyCharm.app/Contents/plugins/python-ce/helpers/debugpy/_vendored/pydevd/pydevd_attach_to_process/attach.dylib 既然PyCharm的安装目录中是存在attach.dylib文件的，但为什么使用debugpy模式时没有自动复制这个文件到调试的临时目录呢，是不是因为自动复制的目录下不存在attach.dylib文件呢。使用下面命令查找是否存在多个pydevd_attach_to_process目录：
+find /Applications/PyCharm.app -name &amp;#34;pydevd_attach_to_process&amp;#34; 2&amp;gt;/dev/null 从上面命令的输出上看，确实存在两个不同的pydevd_attach_to_process目录，这两个目录恰好对应两个调试模式，第一个是pydevd，第二个是debugpy：
+/Applications/PyCharm.app/Contents/plugins/python-ce/helpers/pydev/pydevd_attach_to_process  /Applications/PyCharm.app/Contents/plugins/python-ce/helpers/debugpy/_vendored/pydevd/pydevd_attach_to_process 到这里似乎看到了曙光，打开第一个目录后发现确实没有attach.dylib文件。尝试将第二个目录下的attach.dylib文件复制到第一个目录下，然后重启PyCharm，接着使用debugpy模式调试时真的正常了。最后，验证关机重启mac后调试也正常，至此，该问题完美解决😎。
+</content>
+    </entry>
+    
+     <entry>
         <title>一些问题的解决方案2021</title>
         <url>https://iihui.github.io/post/ios-solutions-2021/</url>
         <categories>
@@ -555,30 +583,6 @@ nvm use v22.15.0 前缀加了v确实正常了。通常来说，命令nvm use同�
 can’t be completely emptied 在应用程序中选中某个应用，移到废纸篓时，收到如下提示：
 The Bin can’t be completely emptied because “.xxx” is locked. To empty everything in the Bin, including locked items, press the Option key while you choose Finder &amp;gt; Empty Bin. 此时可以在应用程序中找到这个应用，然后右键选中Get Info，然后在where复制应用真正的路径，接着使用下面命令删除，按提示输入登录密码即可删除：
 sudo rm -rf xxx </content>
-    </entry>
-    
-     <entry>
-        <title>一些问题的解决方案2026</title>
-        <url>https://iihui.github.io/post/ios-solutions-2026/</url>
-        <categories>
-          <category>iOS</category>
-        </categories>
-        <tags>
-          <tag>iOS</tag>
-        </tags>
-        <content type="html"> cocoapods组件名 CocoaPods组件名（Pod Name）原则上不能包含英文点号，同时也不能以点号开头。CocoaPods在生成对应的 Swift或Objective-C模块（Module）时，需要遵循编程语言的标识符命名规则。这些规则通常只允许字母、数字和下划线，因此像点号（.）和连字符（-）这类符号是不被允许的。
-如果一个Pod的名字里包含了这些符号，CocoaPods在生成模块名时，会自动将它们替换为下划线（_）。但为了避免潜在的混淆和问题，给组件命名时最好遵循以下原则：
- 只使用：字母（a-z, A-Z）、数字（0-9）和下划线（_）。 使用：驼峰命名法或下划线分隔。  CocoaPods的Module Name和podspc中定义的spec.name是两套系统。spec.name是给CocoaPods包管理器内部使用的「身份证」，而 import语句使用的是面向编译器的模块名。
-# podspec的定义 spec.name = &amp;#34;LC09.09_xxx&amp;#34;  # import时可以使用的语法 LC09_09_xxx expected attach.dylib to exist 从官网下载PyCharm 2026，接着双击并拖到Applications目录（即替换已有的应用），然后使用新版打开项目，调试时出现如下如下错误信息：
-Expected: /private/var/folders/ns/9rvphkg1387_4zqncdbkbml80000gn/T/debugpy3185433954253459765/debugpy/_vendored/pydevd/pydevd_attach_to_process/attach.dylib to exist. 临时解决方案是找到PyCharm目录下的attach.dylib文件，即使用如下命令：
-find /Applications/PyCharm.app -name &amp;#34;attach*.dylib&amp;#34; 2&amp;gt;/dev/null 然后将找到的attach.dylib文件复制到/private/var/folders/ns/9rvphkg1387_4zqncdbkbml80000gn/T/debugpy3185433954253459765/debugpy/_vendored/pydevd/pydevd_attach_to_process/目录下：
-/Applications/PyCharm.app/Contents/plugins/python-ce/helpers/pydev/pydevd_attach_to_process/attach.dylib 这种方式只能临时解决本次编译问题。由于PyCharm的安全机制，这个临时目录会发生变化，即重启PyCharm后，还是会出现一样的错误，因为T的子目录会发生随机变化：
-Expected: private/var/folders/ns/9rvphkg1387_4zqncdbkbml80000gn/T/debugpy851305541846591445/debugpy/_vendored/pydevd/pydevd_attach_to_process/attach.dylib to exist. 一直没找到一劳永逸的解决方案，但排查过程中偶然发现，若将debug模式修改为pydevd，则错误会消失。修改mode的方式如下图所示，但这种解决方案也是临时的，因为PyCharm重启后还是会自动将debug模式修改为debugpy。
-但从上面find /Applications/PyCharm.app -name &amp;quot;attach*.dylib&amp;quot; 2&amp;gt;/dev/null命令的输出，可以看到attach.dylib文件所在的路径为：
-/Applications/PyCharm.app/Contents/plugins/python-ce/helpers/debugpy/_vendored/pydevd/pydevd_attach_to_process/attach.dylib 既然PyCharm的安装目录中是存在attach.dylib文件的，但为什么使用debugpy模式时没有自动复制这个文件到调试的临时目录呢，是不是因为自动复制的目录下不存在attach.dylib文件呢。使用下面命令查找是否存在多个pydevd_attach_to_process目录：
-find /Applications/PyCharm.app -name &amp;#34;pydevd_attach_to_process&amp;#34; 2&amp;gt;/dev/null 从上面命令的输出上看，确实存在两个不同的pydevd_attach_to_process目录，这两个目录恰好对应两个调试模式，第一个是pydevd，第二个是debugpy：
-/Applications/PyCharm.app/Contents/plugins/python-ce/helpers/pydev/pydevd_attach_to_process  /Applications/PyCharm.app/Contents/plugins/python-ce/helpers/debugpy/_vendored/pydevd/pydevd_attach_to_process 到这里似乎看到了曙光，打开第一个目录后发现确实没有attach.dylib文件。尝试将第二个目录下的attach.dylib文件复制到第一个目录下，然后重启PyCharm，接着使用debugpy模式调试时真的正常了。最后，验证关机重启mac后调试也正常，至此，该问题完美解决😎。
-</content>
     </entry>
     
      <entry>

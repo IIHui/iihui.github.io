@@ -241,20 +241,20 @@ code.has-jax {
     <i class="fa fa-file-word-o"></i>
 </span>
 <span class="post-meta-item-text">字数: </span>
-<span class="leancloud-visitors-count">1349</span>
+<span class="leancloud-visitors-count">1890</span>
 &nbsp; | &nbsp;
 <span class="post-meta-item-icon">
     <i class="fa fa-coffee"></i>
 </span>
 <span class="post-meta-item-text">阅读: </span>
-<span class="leancloud-visitors-count">3 分钟</span>
+<span class="leancloud-visitors-count">4 分钟</span>
 </span>
       </div>
     </header>
     <div class="post-body" itemprop="articleBody">
     <h1 id="cocoapods组件名">cocoapods组件名</h1>
 <p><code>CocoaPods</code>组件名（<code>Pod Name</code>）原则上不能包含英文点号，同时也不能以点号开头。<code>CocoaPods</code>在生成对应的 Swift或Objective-C模块（Module）时，需要遵循编程语言的标识符命名规则。这些规则通常只允许字母、数字和下划线，因此像点号（.）和连字符（-）这类符号是不被允许的。</p>
-<p>如果一个Pod的名字里包含了这些符号，<code>CocoaPods</code>在生成模块名时，<font color="#de7802">会自动将它们替换为下划线</font>（_）。但为了避免潜在的混淆和问题，给组件命名时最好遵循以下原则：</p>
+<p>如果一个Pod的名字里包含了这些符号，<code>CocoaPods</code>在生成模块名时，<font color="#de7802">会自动将它们替换为下划线</font>（_）。但为了避免潜在的混淆和问题，组件命名时最好遵循以下原则：</p>
 <ul>
 <li>只使用：字母（a-z, A-Z）、数字（0-9）和下划线（_）。</li>
 <li>使用：驼峰命名法或下划线分隔。</li>
@@ -263,9 +263,20 @@ code.has-jax {
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ruby" data-lang="ruby"><span style="display:flex;"><span><span style="color:#75715e"># podspec的定义</span>
 </span></span><span style="display:flex;"><span>spec<span style="color:#f92672">.</span>name         <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;LC09.09_xxx&#34;</span> 
 </span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span><span style="color:#75715e"># import时可以使用的语法</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># import使用的语法，即需要添加下划线</span>
 </span></span><span style="display:flex;"><span><span style="color:#66d9ef">LC09_09_xxx</span>
-</span></span></code></pre></div><h1 id="expected-attachdylib-to-exist">expected attach.dylib to exist</h1>
+</span></span></code></pre></div><p>Xcode和Swift编译器要求模块名必须是C99扩展标识符，即只能包含字母、数字和下划线（_），且必须以字母或下划线开头。所以<code>spec.name</code>中的点号（.）是不被允许的。为了让编译通过，<code>CocoaPods</code>会自动将<code>spec.name</code>中所有非法字符（如<code>.</code>、<code>-</code>等）替换为下划线（<code>_</code>），生成一个合法的模块名。</p>
+<p>如果不想使用自动生成的名字，可以在<code>podspec</code>中可以通过<code>spec.module_name</code>属性来指定一个更友好的模块名，按下面设置后可以直接<code>import LC09_09_xxx</code>：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ruby" data-lang="ruby"><span style="display:flex;"><span><span style="color:#66d9ef">Pod</span><span style="color:#f92672">::</span><span style="color:#66d9ef">Spec</span><span style="color:#f92672">.</span>new <span style="color:#66d9ef">do</span> <span style="color:#f92672">|</span>spec<span style="color:#f92672">|</span>
+</span></span><span style="display:flex;"><span>  spec<span style="color:#f92672">.</span>name         <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;LC09.09_xxx&#34;</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#75715e"># ... 其他配置 ...</span>
+</span></span><span style="display:flex;"><span>  spec<span style="color:#f92672">.</span>module_name  <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;YYY&#34;</span> <span style="color:#75715e"># 自定义一个简洁合法的模块名</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">end</span>
+</span></span></code></pre></div><h1 id="pod-update">pod update</h1>
+<p>在<code>podfile</code>文件中使用<code>:path =&gt;</code>依赖本地组件的低版本时，然后执行<code>pod update</code>时出现如下错误：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sh" data-lang="sh"><span style="display:flex;"><span>Errno::ENOENT - No such file or directory @ rb_sysopen - /Users/xxx/Downloads/xxx/Pods/Local Podspecs/Router.podspec.json /Users/xxx/.rvm/gems/ext-ruby-4.0.6/gems/cocoapods-core-1.17.0/lib/cocoapods-core/specification.rb:690:in <span style="color:#e6db74">&#39;IO.read&#39;</span> /Users/xxx/.rvm/gems/ext-ruby-4.0.6/gems/cocoapods-core-1.17.0/lib/cocoapods-core/specification.rb:690:in <span style="color:#e6db74">&#39;Pod::Specification#checksum&#39;</span> /Users/xxx/.rvm/gems/ext-ruby-4.0.6/gems/cocoapods-core-1.17.0/lib/cocoapods-core/lockfile.rb:543:in <span style="color:#e6db74">&#39;block in Pod::Lockfile.generate_checksums&#39;</span>
+</span></span></code></pre></div><p>这个错误是CocoaPods处理本地组件 (<code>:path</code>) 时，因缓存或状态不一致导致的。CocoaPods在<code>Pods/Local Podspecs/</code>目录下找不到（或无法读取）<code>Router.podspec.json</code>这个文件。这个文件是CocoaPods在<code>pod install</code>时生成的本地Podspec缓存，用于计算校验和 (<code>checksum</code>)。当这个缓存缺失或损坏时，<code>pod update</code>就会报错。</p>
+<h1 id="expected-attachdylib-to-exist">expected attach.dylib to exist</h1>
 <p>从官网下载<code>PyCharm 2026</code>，接着双击并拖到<code>Applications</code>目录（即替换已有的应用），然后使用新版打开项目，调试时出现如下如下错误信息：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sh" data-lang="sh"><span style="display:flex;"><span>Expected: /private/var/folders/ns/9rvphkg1387_4zqncdbkbml80000gn/T/debugpy3185433954253459765/debugpy/_vendored/pydevd/pydevd_attach_to_process/attach.dylib to exist.
 </span></span></code></pre></div><p>临时解决方案是找到<code>PyCharm</code>目录下的<code>attach.dylib</code>文件，即使用如下命令：</p>
@@ -301,16 +312,16 @@ code.has-jax {
         <div class="post-nav">
     <div class="post-nav-next post-nav-item">
     
-        <a href="https://iihui.github.io/post/ios-solutions-2025/" rel="next" title="一些问题的解决方案2025">
-        <i class="fa fa-chevron-left"></i> 一些问题的解决方案2025
+        <a href="https://iihui.github.io/post/hugo-next/" rel="next" title="Hugo Next 主题">
+        <i class="fa fa-chevron-left"></i> Hugo Next 主题
         </a>
     
     </div>
 
     <div class="post-nav-prev post-nav-item">
     
-        <a href="https://iihui.github.io/post/ts-question/" rel="prev" title="TypeScript基础">
-        TypeScript基础 <i class="fa fa-chevron-right"></i>
+        <a href="https://iihui.github.io/post/ios-solutions-2021/" rel="prev" title="一些问题的解决方案2021">
+        一些问题的解决方案2021 <i class="fa fa-chevron-right"></i>
         </a>
     
     </div>
@@ -442,6 +453,7 @@ code.has-jax {
         <div class="post-toc-content"><nav id="TableOfContents">
   <ul>
     <li><a href="#cocoapods组件名">cocoapods组件名</a></li>
+    <li><a href="#pod-update">pod update</a></li>
     <li><a href="#expected-attachdylib-to-exist">expected attach.dylib to exist</a></li>
   </ul>
 </nav></div>
