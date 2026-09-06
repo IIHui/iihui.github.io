@@ -554,13 +554,13 @@ nvm use 22.15.0 如果使用上面命令后，执行脚本还是出现nvm报错�
 nvm use v22.15.0 前缀加了v确实正常了。通常来说，命令nvm use同时支持带v和不带v两种写法，它们是等价的，必须加上v才能成功，可能是输入时引号或空格出了问题。
 can’t be completely emptied 在应用程序中选中某个应用，移到废纸篓时，收到如下提示：
 The Bin can’t be completely emptied because “.xxx” is locked. To empty everything in the Bin, including locked items, press the Option key while you choose Finder &amp;gt; Empty Bin. 此时可以在应用程序中找到这个应用，然后右键选中Get Info，然后在where复制应用真正的路径，接着使用下面命令删除，按提示输入登录密码即可删除：
-sudo rm -rf xxx Expected attach.dylib to exist 从官网下载PyCharm 2026，接着双击并拖到非Applications目录（即不先替换已有的应用），然后修改它的配置文件Contents/bin/pycharm.vmoptions，然后使用它打开项目，调试时出现如下如下错误信息：
-Expected: /private/var/folders/ns/9rvphkg1387_4zqncdbkbml80000gn/T/debugpy3185433954253459765/debugpy/_vendored/pydevd/pydevd_attach_to_process/attach.dylib to exist. 临时解决方案是找到PyCharm目录下的attach.dylib文件，使用命令如下：
-find /Applications/PyCharm.app -name &amp;#34;attach*.dylib&amp;#34; 2&amp;gt;/dev/null 然后将找到的下列文件复制到/private/var/folders/ns/9rvphkg1387_4zqncdbkbml80000gn/T/debugpy3185433954253459765/debugpy/_vendored/pydevd/pydevd_attach_to_process/目录下：
-/Applications/PyCharm.app/Contents/plugins/python-ce/helpers/pydev/pydevd_attach_to_process/attach.dylib 这种方式只能临时解决。由于PyCharm的安全机制，这个临时目录会发生变化，例如重启PyCharm，还是会出现一样的错误，因为T的子目录会发生随便变化：
-Expected: private/var/folders/ns/9rvphkg1387_4zqncdbkbml80000gn/T/debugpy851305541846591445/debugpy/_vendored/pydevd/pydevd_attach_to_process/attach.dylib to exist. 一直没找到一劳永逸的解决方案，但排查过程中偶然发现，若debug的模式为pydevd，则错误会消失。修改mode的方式如下图所示，但这种修改也是临时的，若重启后后还是会被自动修改为debugpy。
+sudo rm -rf xxx expected attach.dylib to exist 从官网下载PyCharm 2026，接着双击并拖到Applications目录（即替换已有的应用），最后使用新版打开项目，调试时出现如下如下错误信息：
+Expected: /private/var/folders/ns/9rvphkg1387_4zqncdbkbml80000gn/T/debugpy3185433954253459765/debugpy/_vendored/pydevd/pydevd_attach_to_process/attach.dylib to exist. 临时解决方案是找到PyCharm目录下的attach.dylib文件，即使用如下命令：
+find /Applications/PyCharm.app -name &amp;#34;attach*.dylib&amp;#34; 2&amp;gt;/dev/null 然后将找到的attach.dylib文件复制到/private/var/folders/ns/9rvphkg1387_4zqncdbkbml80000gn/T/debugpy3185433954253459765/debugpy/_vendored/pydevd/pydevd_attach_to_process/目录下：
+/Applications/PyCharm.app/Contents/plugins/python-ce/helpers/pydev/pydevd_attach_to_process/attach.dylib 这种方式只能临时解决本次编译问题。由于PyCharm的安全机制，这个临时目录会发生变化，即重启PyCharm后，还是会出现一样的错误，因为T的子目录会发生随机变化：
+Expected: private/var/folders/ns/9rvphkg1387_4zqncdbkbml80000gn/T/debugpy851305541846591445/debugpy/_vendored/pydevd/pydevd_attach_to_process/attach.dylib to exist. 一直没找到一劳永逸的解决方案，但排查过程中偶然发现，若将debug的模式修改为pydevd，则错误会消失。修改mode的方式如下图所示，但这种解决方案也是临时的，因为PyCharm重启后还是会自动修改为debugpy。
 但从上面的find /Applications/PyCharm.app -name &amp;quot;attach*.dylib&amp;quot; 2&amp;gt;/dev/null命令的输出，可以看到attach.dylib文件所在的路径为：
-/Applications/PyCharm.app/Contents/plugins/python-ce/helpers/debugpy/_vendored/pydevd/pydevd_attach_to_process/attach.dylib 既然PyCharm的安装目录中是存在attach.dylib文件的，但使用debugpy模式时为什么没有自动复制这个文件呢，是不是因为自动复制的目录下不存在attach.dylib文件呢。使用下面命令查找是否存在多个pydevd_attach_to_process目录：
+/Applications/PyCharm.app/Contents/plugins/python-ce/helpers/debugpy/_vendored/pydevd/pydevd_attach_to_process/attach.dylib 既然PyCharm的安装目录中是存在attach.dylib文件的，但使用debugpy模式时为什么没有自动复制这个文件到调试的临时目录呢，是不是因为自动复制的目录下不存在attach.dylib文件呢。使用下面命令查找是否存在多个pydevd_attach_to_process目录：
 find /Applications/PyCharm.app -name &amp;#34;pydevd_attach_to_process&amp;#34; 2&amp;gt;/dev/null 从上面命令的输出上看，确实存在两个不同的pydevd_attach_to_process目录，这两个目录恰好对应两个调试模式，第一个是pydevd，第二个是debugpy：
 /Applications/PyCharm.app/Contents/plugins/python-ce/helpers/pydev/pydevd_attach_to_process  /Applications/PyCharm.app/Contents/plugins/python-ce/helpers/debugpy/_vendored/pydevd/pydevd_attach_to_process 但打开第一个目录后发现并没有attach.dylib文件，将第二个目录下的attach.dylib文件复制到第一个目录下，然后重启PyCharm，接着再使用debugpy模式调试时就正常了。最后，验证关机重启mac后调试也正常，至此，该问题完美解决😎。
 </content>
