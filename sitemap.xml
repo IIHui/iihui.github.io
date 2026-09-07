@@ -51,11 +51,11 @@ summaryLength = 100 #放在同themes同级的config.toml上才有效 设置文�
         <tags>
           <tag>iOS</tag>
         </tags>
-        <content type="html"> cocoapods组件名 CocoaPods组件名（Pod Name）原则上不能包含英文点号，同时也不能以点号开头。CocoaPods在生成对应的 Swift或Objective-C模块（Module）时，需要遵循编程语言的标识符命名规则。这些规则通常只允许字母、数字和下划线，因此像点号（.）和连字符（-）这类符号是不被允许的。
-如果一个Pod的名字里包含了这些符号，CocoaPods在生成模块名时，会自动将它们替换为下划线（_）。但为了避免潜在的混淆和问题，组件命名时最好遵循以下原则：
- 只使用：字母（a-z, A-Z）、数字（0-9）和下划线（_）。 使用：驼峰命名法或下划线分隔。  CocoaPods的Module Name和podspc中定义的spec.name是两套系统。spec.name是给CocoaPods包管理器内部使用的「身份证」，而 import语句使用的是面向编译器的模块名。
-# podspec的定义 spec.name = &amp;#34;LC09.09_xxx&amp;#34;  # import使用的语法，即需要添加下划线 LC09_09_xxx Xcode和Swift编译器要求模块名必须是C99扩展标识符，即只能包含字母、数字和下划线（_），且必须以字母或下划线开头。所以spec.name中的点号（.）是不被允许的。为了让编译通过，CocoaPods会自动将spec.name中所有非法字符（如.、-等）替换为下划线（_），生成一个合法的模块名。
-如果不想使用自动生成的名字，可以在podspec中可以通过spec.module_name属性来指定一个更友好的模块名，按下面设置后可以直接import LC09_09_xxx：
+        <content type="html"> cocoapods组件名 CocoaPods组件名（Pod Name）原则上不能包含英文点号，同时也不能以点号开头。CocoaPods在生成对应的 Swift或Objective-C模块时，需要遵循编程语言的标识符命名规则。通常只允许字母、数字和下划线，因此像点号（.）和连字符（-）这类符号是不被允许的。
+如果一个Pod的名字里包含了这些符号，CocoaPods在生成模块名时，会自动将它们替换为下划线（_）。但为了避免潜在的混淆和问题，组件命名时应当遵循以下原则：
+ 只能使用字母（a-z, A-Z）、数字（0-9）和下划线（_）。 使用驼峰命名法或下划线分隔。  CocoaPods的Module Name和podspc中定义的spec.name是两套系统。spec.name是给CocoaPods包管理器内部使用的「身份证」，而import语句使用的是面向编译器的模块名。
+# podspec的定义 spec.name = &amp;#34;LC09.09_xxx&amp;#34;  # import使用的语法，即需要添加下划线 LC09_09_xxx Xcode和Swift编译器要求模块名必须是C99扩展标识符，即只能包含字母、数字和下划线（_），且必须以字母或下划线开头。所以spec.name中的点号（.）是不允许的。为了让编译通过，CocoaPods会自动将spec.name中所有非法字符（如.、-等）替换为下划线（_），生成一个合法的模块名。
+如果不想使用自动生成的模块名，可以在podspec中通过spec.module_name属性来指定一个更友好的模块名，按下面设置后可以直接import yyy：
 Pod::Spec.new do |spec|  spec.name = &amp;#34;LC09.09_xxx&amp;#34;  # ... 其他配置 ...  spec.module_name = &amp;#34;YYY&amp;#34; # 自定义一个简洁合法的模块名 end pod update 在podfile文件中使用:path =&amp;gt;依赖本地组件的低版本时，然后执行pod update时出现如下错误：
 Errno::ENOENT - No such file or directory @ rb_sysopen - /Users/xxx/Downloads/yyy/Pods/Local Podspecs/Router.podspec.json /Users/xxx/.rvm/gems/ext-ruby-4.0.6/gems/cocoapods-core-1.17.0/lib/cocoapods-core/specification.rb:690:in &amp;#39;IO.read&amp;#39; /Users/xxx/.rvm/gems/ext-ruby-4.0.6/gems/cocoapods-core-1.17.0/lib/cocoapods-core/specification.rb:690:in &amp;#39;Pod::Specification#checksum&amp;#39; /Users/xxx/.rvm/gems/ext-ruby-4.0.6/gems/cocoapods-core-1.17.0/lib/cocoapods-core/lockfile.rb:543:in &amp;#39;block in Pod::Lockfile.generate_checksums&amp;#39; 这个错误是CocoaPods处理本地组件 (:path) 时，因缓存或状态不一致导致的。CocoaPods在Pods/Local Podspecs/目录下找不到（或无法读取）Router.podspec.json这个文件。这个文件是CocoaPods在pod install时生成的本地podspec缓存，用于校验。当这个缓存缺失或损坏时，pod update就会报错。
 临时解决方案是将需要本地依赖组件的podspec文件手动复制到工程的Pods/Local Podspecs/目录下，然后执行pod update命令。也可以使用如下命令删除缓存和依赖文件，然后执行pod update：
