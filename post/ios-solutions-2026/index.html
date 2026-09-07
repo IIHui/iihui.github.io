@@ -241,7 +241,7 @@ code.has-jax {
     <i class="fa fa-file-word-o"></i>
 </span>
 <span class="post-meta-item-text">字数: </span>
-<span class="leancloud-visitors-count">2963</span>
+<span class="leancloud-visitors-count">2979</span>
 &nbsp; | &nbsp;
 <span class="post-meta-item-icon">
     <i class="fa fa-coffee"></i>
@@ -265,7 +265,7 @@ code.has-jax {
 </span></span><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span><span style="color:#75715e"># import使用的语法，即需要添加下划线</span>
 </span></span><span style="display:flex;"><span><span style="color:#66d9ef">LC09_09_xxx</span>
-</span></span></code></pre></div><p>Xcode和Swift编译器要求模块名必须是C99扩展标识符，即只能包含字母、数字和下划线（_），且必须以字母或下划线开头。所以<code>spec.name</code>中的点号（.）是不被允许的。为了让编译通过，<code>CocoaPods</code>会自动将<code>spec.name</code>中所有非法字符（如<code>.</code>、<code>-</code>等）替换为下划线（<code>_</code>），生成一个合法的模块名。</p>
+</span></span></code></pre></div><p>Xcode和Swift编译器要求模块名必须是C99扩展标识符，<font color=red>即只能包含字母、数字和下划线</font>（<code>_</code>），且必须以字母或下划线开头。所以<code>spec.name</code>中的点号（<code>.</code>）是不被允许的。为了让编译通过，<code>CocoaPods</code>会自动将<code>spec.name</code>中所有非法字符（如<code>.</code>、<code>-</code>等）替换为下划线（<code>_</code>），生成一个合法的模块名。</p>
 <p>如果不想使用自动生成的名字，可以在<code>podspec</code>中可以通过<code>spec.module_name</code>属性来指定一个更友好的模块名，按下面设置后可以直接<code>import LC09_09_xxx</code>：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ruby" data-lang="ruby"><span style="display:flex;"><span><span style="color:#66d9ef">Pod</span><span style="color:#f92672">::</span><span style="color:#66d9ef">Spec</span><span style="color:#f92672">.</span>new <span style="color:#66d9ef">do</span> <span style="color:#f92672">|</span>spec<span style="color:#f92672">|</span>
 </span></span><span style="display:flex;"><span>  spec<span style="color:#f92672">.</span>name         <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;LC09.09_xxx&#34;</span>
@@ -274,20 +274,20 @@ code.has-jax {
 </span></span><span style="display:flex;"><span><span style="color:#66d9ef">end</span>
 </span></span></code></pre></div><h1 id="pod-update">pod update</h1>
 <p>在<code>podfile</code>文件中使用<code>:path =&gt;</code>依赖本地组件的低版本时，然后执行<code>pod update</code>时出现如下错误：</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sh" data-lang="sh"><span style="display:flex;"><span>Errno::ENOENT - No such file or directory @ rb_sysopen - /Users/xxx/Downloads/xxx/Pods/Local Podspecs/Router.podspec.json /Users/xxx/.rvm/gems/ext-ruby-4.0.6/gems/cocoapods-core-1.17.0/lib/cocoapods-core/specification.rb:690:in <span style="color:#e6db74">&#39;IO.read&#39;</span> /Users/xxx/.rvm/gems/ext-ruby-4.0.6/gems/cocoapods-core-1.17.0/lib/cocoapods-core/specification.rb:690:in <span style="color:#e6db74">&#39;Pod::Specification#checksum&#39;</span> /Users/xxx/.rvm/gems/ext-ruby-4.0.6/gems/cocoapods-core-1.17.0/lib/cocoapods-core/lockfile.rb:543:in <span style="color:#e6db74">&#39;block in Pod::Lockfile.generate_checksums&#39;</span>
-</span></span></code></pre></div><p>这个错误是CocoaPods处理本地组件 (<code>:path</code>) 时，因缓存或状态不一致导致的。CocoaPods在<code>Pods/Local Podspecs/</code>目录下找不到（或无法读取）<code>Router.podspec.json</code>这个文件。这个文件是CocoaPods在<code>pod install</code>时生成的本地Podspec缓存，用于计算校验和 (<code>checksum</code>)。当这个缓存缺失或损坏时，<code>pod update</code>就会报错。</p>
-<p>临时解决方案是将需要本地依赖的组件的<code>podspec</code>文件手动复制到工程的<code>Pods/Local Podspecs/</code>目录下，然后执行<code>pod update</code>命令。也可以使用如下命令删除缓存和依赖文件：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sh" data-lang="sh"><span style="display:flex;"><span>Errno::ENOENT - No such file or directory @ rb_sysopen - /Users/xxx/Downloads/yyy/Pods/Local Podspecs/Router.podspec.json /Users/xxx/.rvm/gems/ext-ruby-4.0.6/gems/cocoapods-core-1.17.0/lib/cocoapods-core/specification.rb:690:in <span style="color:#e6db74">&#39;IO.read&#39;</span> /Users/xxx/.rvm/gems/ext-ruby-4.0.6/gems/cocoapods-core-1.17.0/lib/cocoapods-core/specification.rb:690:in <span style="color:#e6db74">&#39;Pod::Specification#checksum&#39;</span> /Users/xxx/.rvm/gems/ext-ruby-4.0.6/gems/cocoapods-core-1.17.0/lib/cocoapods-core/lockfile.rb:543:in <span style="color:#e6db74">&#39;block in Pod::Lockfile.generate_checksums&#39;</span>
+</span></span></code></pre></div><p>这个错误是<code>CocoaPods</code>处理本地组件 (<code>:path</code>) 时，因缓存或状态不一致导致的。<code>CocoaPods</code>在<code>Pods/Local Podspecs/</code>目录下找不到（或无法读取）<code>Router.podspec.json</code>这个文件。这个文件是<code>CocoaPods</code>在<code>pod install</code>时生成的本地<code>podspec</code>缓存，用于校验。当这个缓存缺失或损坏时，<code>pod update</code>就会报错。</p>
+<p>临时解决方案是将需要本地依赖组件的<code>podspec</code>文件手动复制到工程的<code>Pods/Local Podspecs/</code>目录下，然后执行<code>pod update</code>命令。也可以使用如下命令删除缓存和依赖文件，然后执行<code>pod update</code>：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sh" data-lang="sh"><span style="display:flex;"><span>rm -rf Pods Podfile.lock
-</span></span></code></pre></div><p>实际上，最简单的方式是使用<code>pod install</code>，而不是使用<code>pod update</code>命令。因为，CocoaPods在执行 <code>pod update</code> 时，并不是一口气完成的，而是分为三个阶段：</p>
+</span></span></code></pre></div><p>实际上，此时最简单的方式是使用<code>pod install</code>命令，而不是使用<code>pod update</code>命令。因为，<code>CocoaPods</code>在执行 <code>pod update</code> 时，并不是一口气完成的，而是分为三个阶段：</p>
 <ol>
 <li>解析阶段：读取<code>Podfile</code>和<code>Podfile.lock</code>，计算新的依赖版本。</li>
-<li>校验阶段：在这个阶段，<code>CocoaPods</code>会立即读取<code>Pods/Local Podspecs/\*.podspec.json</code>文件，计算当前沙盒（Pods文件夹）中各组件的<code>checksum</code>（校验和），用来和<code>Podfile.lock</code>中的旧校验和做比对，判断本地缓存是否被篡改过。</li>
+<li>校验阶段：在这个阶段，<code>CocoaPods</code>会立即读取<code>Pods/Local Podspecs/\*.podspec.json</code>文件，计算当前沙盒（Pods文件夹）中各组件的<code>checksum</code>，用来和<code>Podfile.lock</code>中的旧<code>checksum</code>做比对，判断本地缓存是否被篡改过。</li>
 <li>写入阶段：下载/复制新代码，并重新生成<code>Pods/Local Podspecs/</code>下的缓存文件。</li>
 </ol>
-<p>当<code>Router.podspec.json</code>文件不存在时，CocoaPods在第二阶段就直接抛出<code>Errno::ENOENT</code>异常并终止了进程，还没走到第三阶段（写入/生成新文件）。</p>
-<p>CocoaPods的设计者假设沙盒（Pods文件夹）一旦通过<code>pod install</code> 生成，就永远处于完整状态。<code>pod update</code> 是<font color="#de7802">一个增量更新命令</font>，它默认信任现有沙盒的完整性，<font color="#de7802">不会在校验失败时自作主张去创建缺失文件</font>，因为如果文件缺失，说明沙盒状态已损坏，最安全的做法是报错退出，让开发者手动修复（即执行完整的<code>pod install</code>）。</p>
-<p>所以只要修改了<code>:path</code> 指向的本地组件代码或<code>.podspec</code> 版本号，永远执行 <code>pod install</code>，而不是 <code>pod update</code>。</p>
-<p>实际上，<code>pod install</code>和 <code>pod update</code>的核心区别在于：<code>pod install</code>用于安装并锁定版本，而<code>pod update</code>用于更新到新版本。它们的核心区别如下：</p>
+<p>当<code>Router.podspec.json</code>文件不存在时，<code>CocoaPods</code>在第校验阶段就直接抛出<code>Errno::ENOENT</code>异常并终止了进程，还没走到第三阶段（写入/生成新文件）。</p>
+<p>实际上，<code>CocoaPods</code>的设计者假设沙盒（Pods文件夹）一旦通过<code>pod install</code> 生成，就<font color=red>处于完整状态</font>。而<code>pod update</code> 是<font color="#de7802">一个增量更新命令</font>，它默认信任现有沙盒的完整性，<font color="#de7802">不会在校验失败时自作主张去创建缺失文件</font>，因为如果文件缺失，说明沙盒状态已损坏，最安全的做法是报错退出，让开发者手动修复（即执行<code>pod install</code>命令）。</p>
+<p>所以只要修改了<code>:path</code>指向的本地组件代码或<code>.podspec</code> 版本号，需要执行<code>pod install</code>命令，而不是执行<code>pod update</code>命令。</p>
+<p>实际上，<code>pod install</code>和<code>pod update</code>的核心区别在于：<code>pod install</code>用于安装并锁定版本，而<code>pod update</code>用于更新到新的版本，它们的核心区别如下：</p>
 <table>
 <thead>
 <tr>
@@ -298,14 +298,14 @@ code.has-jax {
 </thead>
 <tbody>
 <tr>
-<td style="text-align:left">主要用途</td>
+<td style="text-align:left">用途</td>
 <td style="text-align:left">安装新库，或添加/删除已有库</td>
-<td style="text-align:left">更新现有库到更新的版本</td>
+<td style="text-align:left">更新现有库到新的版本</td>
 </tr>
 <tr>
 <td style="text-align:left">对<code>Podfile.lock</code> 的处理</td>
 <td style="text-align:left">尊重并锁定：使用其中记录的版本，不会检查更新</td>
-<td style="text-align:left">忽略并更新：忽略其中版本，查找符合 <code>Podfile</code> 的最新版本</td>
+<td style="text-align:left">忽略并更新：忽略其中已有版本，查找符合 <code>Podfile</code>的最新版本</td>
 </tr>
 <tr>
 <td style="text-align:left">对新Pod的处理</td>
@@ -314,12 +314,12 @@ code.has-jax {
 </tr>
 <tr>
 <td style="text-align:left">使用场景</td>
-<td style="text-align:left">首次设置、修改Podfile` 后、拉取同事代码后</td>
+<td style="text-align:left">首次设置、修改<code>Podfile</code>后</td>
 <td style="text-align:left">主动、有目的地升级某个或所有Pod</td>
 </tr>
 </tbody>
 </table>
-<p><code>Podfile.lock</code>文件是实现上述差异的关键。它记录了每个Pod当前使用的确切版本，保证了项目依赖的一致性。当运行<code>pod install</code>时，CocoaPods会以此文件为准，确保所有团队成员或部署环境的依赖版本完全一致。</p>
+<p>文件<code>Podfile.lock</code>是实现上述差异的关键。它记录了每个Pod当前使用的确切版本，保证了项目依赖的一致性。当运行<code>pod install</code>时，<code>CocoaPods</code>会以此文件为准，确保所有团队成员或部署环境的依赖版本完全一致。</p>
 <h1 id="expected-attachdylib-to-exist">expected attach.dylib to exist</h1>
 <p>从官网下载<code>PyCharm 2026</code>，接着双击并拖到<code>Applications</code>目录（即替换已有的应用），然后使用新版打开项目，调试时出现如下如下错误信息：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sh" data-lang="sh"><span style="display:flex;"><span>Expected: /private/var/folders/ns/9rvphkg1387_4zqncdbkbml80000gn/T/debugpy3185433954253459765/debugpy/_vendored/pydevd/pydevd_attach_to_process/attach.dylib to exist.
