@@ -51,12 +51,12 @@ summaryLength = 100 #放在同themes同级的config.toml上才有效 设置文�
         <tags>
           <tag>iOS</tag>
         </tags>
-        <content type="html"> cocoapods组件名 CocoaPods组件名（Pod Name）原则上不能包含英文点号，同时也不能以点号开头。CocoaPods在生成对应的 Swift或Objective-C模块时，需要遵循编程语言的标识符命名规则。通常只允许字母、数字和下划线，因此像点号（.）和连字符（-）这类符号是不被允许的。
+        <content type="html"> cocoapods组件名 CocoaPods组件名（Pod Name）原则上既不能包含英文点号，也不能以点号开头。CocoaPods在生成对应的 Swift或Objective-C模块时，需要遵循编程语言的标识符命名规则。模块通常只允许字母、数字和下划线，因此像点号（.）和连字符（-）这类符号是不被允许的。
 如果一个Pod的名字里包含了这些符号，CocoaPods在生成模块名时，会自动将它们替换为下划线（_）。但为了避免潜在的混淆和问题，组件命名时应当遵循以下原则：
- 只能使用字母（a-z, A-Z）、数字（0-9）和下划线（_）。 使用驼峰命名法或下划线分隔。  CocoaPods的Module Name和podspc中定义的spec.name是两套系统。spec.name是给CocoaPods包管理器内部使用的「身份证」，而import语句使用的是面向编译器的模块名。
+ 只能使用字母（a-z, A-Z）、数字（0-9）和下划线（_）。 使用驼峰命名法或下划线分隔。  CocoaPods的Module Name和podspc中定义的spec.name是不同的。spec.name是给CocoaPods包管理器内部使用的「身份证」，而import语句使用的是面向编译器的模块名。
 # podspec的定义 spec.name = &amp;#34;LC09.09_xxx&amp;#34;  # import使用的语法，即需要添加下划线 LC09_09_xxx Xcode和Swift编译器要求模块名必须是C99扩展标识符，即只能包含字母、数字和下划线（_），且必须以字母或下划线开头。所以spec.name中的点号（.）是不允许的。为了让编译通过，CocoaPods会自动将spec.name中所有非法字符（如.、-等）替换为下划线（_），生成一个合法的模块名。
-如果不想使用自动生成的模块名，可以在podspec中通过spec.module_name属性来指定一个更友好的模块名，按下面设置后可以直接import yyy：
-Pod::Spec.new do |spec|  spec.name = &amp;#34;LC09.09_xxx&amp;#34;  # ... 其他配置 ...  spec.module_name = &amp;#34;YYY&amp;#34; # 自定义一个简洁合法的模块名 end pod update 在podfile文件中使用:path =&amp;gt;依赖本地组件的低版本时，然后执行pod update时出现如下错误：
+如果不想使用自动生成的模块名，可以在podspec中通过spec.module_name属性来指定一个自定义模块名，按下面设置后可以直接import yyy：
+Pod::Spec.new do |spec|  spec.name = &amp;#34;LC09.09_xxx&amp;#34;  # ... 其他配置 ...  spec.module_name = &amp;#34;yyy&amp;#34; # 自定义的模块名 end pod update 在podfile文件中使用:path =&amp;gt;依赖本地组件的低版本时，然后执行pod update时出现如下错误：
 Errno::ENOENT - No such file or directory @ rb_sysopen - /Users/xxx/Downloads/yyy/Pods/Local Podspecs/Router.podspec.json /Users/xxx/.rvm/gems/ext-ruby-4.0.6/gems/cocoapods-core-1.17.0/lib/cocoapods-core/specification.rb:690:in &amp;#39;IO.read&amp;#39; /Users/xxx/.rvm/gems/ext-ruby-4.0.6/gems/cocoapods-core-1.17.0/lib/cocoapods-core/specification.rb:690:in &amp;#39;Pod::Specification#checksum&amp;#39; /Users/xxx/.rvm/gems/ext-ruby-4.0.6/gems/cocoapods-core-1.17.0/lib/cocoapods-core/lockfile.rb:543:in &amp;#39;block in Pod::Lockfile.generate_checksums&amp;#39; 这个错误是CocoaPods处理本地组件 (:path) 时，因缓存或状态不一致导致的。CocoaPods在Pods/Local Podspecs/目录下找不到（或无法读取）Router.podspec.json这个文件。这个文件是CocoaPods在pod install时生成的本地podspec缓存，用于校验。当这个缓存缺失或损坏时，pod update就会报错。
 临时解决方案是将需要本地依赖组件的podspec文件手动复制到工程的Pods/Local Podspecs/目录下，然后执行pod update命令。也可以使用如下命令删除缓存和依赖文件，然后执行pod update：
 rm -rf Pods Podfile.lock 实际上，此时最简单的方式是使用pod install命令，而不是使用pod update命令。因为，CocoaPods在执行 pod update 时，并不是一口气完成的，而是分为三个阶段：
@@ -4852,7 +4852,10 @@ Host key verification failed. scp: Connection closed 这是因为主机密钥没
 每当我们通过SSH连接到一个服务器时，该服务器的公钥就存储在我们的主目录中。该文件被称为 known_hosts。这个文件是用户账户的本地文件，包含了远程主机的已知密钥。这些是在第一次连接时从主机上收集的。与那些存储在~/.ssh/known_hosts文件中的密钥一样，这些密钥被用来验证远程主机的身份，从而防止冒充或中间人攻击。
 当我们重新连接到同一台服务器时，SSH连接将验证当前的公钥是否与我们保存在known_hosts文件中的公钥相符。如果匹配，连接将继续进行。如果匹配失败，SSH连接会失败，并出现Host key verification failed happens。参照这个解决方案，可以在使用scp命令时添加如下选项：
 scp -o StrictHostKeyChecking=no Error in the HTTP2 framing layer 使用omz update更新oh my zsh时，突然出现如下错误，重试一次又可以了，怀疑是网络不稳定导致的。如果依然还报错，可以参考这里给出的解决方案。
-fatal: unable to access &amp;#39;https://github.com/ohmyzsh/ohmyzsh.git/&amp;#39;: Error in the HTTP2 framing layer </content>
+fatal: unable to access &amp;#39;https://github.com/ohmyzsh/ohmyzsh.git/&amp;#39;: Error in the HTTP2 framing layer insteadOf 如果要将git@xxx.com全部替换为https的链接，可以使用如下设置：
+git config --global url.&amp;#34;https://xxx.com&amp;#34;.insteadOf &amp;#34;git@xxx.com&amp;#34; 需要注意的是，如果insteadOf后面的域名设置了多条替换，则生效的是第一条。如果要取消可以使用如下命令：
+git config --global --unset url.&amp;#34;https://xxx.com&amp;#34;.insteadOf 如果同一 url下有多条insteadOf，且想全部删除，可以执行如下命令：
+git config --global --replace-all url.&amp;#34;https://xxx.com&amp;#34;.insteadOf &amp;#34;&amp;#34; </content>
     </entry>
     
      <entry>
