@@ -241,13 +241,13 @@ code.has-jax {
     <i class="fa fa-file-word-o"></i>
 </span>
 <span class="post-meta-item-text">字数: </span>
-<span class="leancloud-visitors-count">3004</span>
+<span class="leancloud-visitors-count">3418</span>
 &nbsp; | &nbsp;
 <span class="post-meta-item-icon">
     <i class="fa fa-coffee"></i>
 </span>
 <span class="post-meta-item-text">阅读: </span>
-<span class="leancloud-visitors-count">6 分钟</span>
+<span class="leancloud-visitors-count">7 分钟</span>
 </span>
       </div>
     </header>
@@ -341,12 +341,20 @@ code.has-jax {
 </span></span><span style="display:flex;"><span>/Applications/PyCharm.app/Contents/plugins/python-ce/helpers/debugpy/_vendored/pydevd/pydevd_attach_to_process
 </span></span></code></pre></div><p>到这里似乎看到了曙光，打开第一个目录后发现确实没有<code>attach.dylib</code>文件。尝试将第二个目录下的<code>attach.dylib</code>文件复制到第一个目录下，然后重启<code>PyCharm</code>，接着使用<code>debugpy</code>模式调试时真的正常了。最后，验证关机重启mac后调试也正常，至此，该问题完美解决😎。</p>
 <h1 id="module-has-a-minimum-deployment-target">module has a minimum deployment target</h1>
+<p>已经将工程和组件的<code>IPHONEOS_DEPLOYMENT_TARGET</code>均已设置为<code>15.0</code>，但还是出现下面错误：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sh" data-lang="sh"><span style="display:flex;"><span>/Users/zzz/Downloads/xxx/Pods/yyy/yyy.framework/Modules/yyy.swiftmodule/arm64-apple-ios.private.swiftinterface:15:8: error: compiling <span style="color:#66d9ef">for</span> iOS 13.0, but module <span style="color:#e6db74">&#39;SnapKit&#39;</span> has a minimum deployment target of iOS 15.0: /Users/zzz/Library/Developer/Xcode/DerivedData/xxx-azqctlzpgaeickagenhyzsakerkn/Build/Products/Debug-iphoneos/SnapKit/SnapKit.framework/Modules/SnapKit.swiftmodule/arm64-apple-ios.swiftmodule
 </span></span><span style="display:flex;"><span>  <span style="color:#ae81ff">13</span> | import MobileCoreServices
 </span></span><span style="display:flex;"><span>  <span style="color:#ae81ff">14</span> | import Photos
 </span></span><span style="display:flex;"><span>  <span style="color:#ae81ff">15</span> | import SnapKit
 </span></span><span style="display:flex;"><span>     |        <span style="color:#e6db74">`</span>- error: compiling <span style="color:#66d9ef">for</span> iOS 13.0, but module <span style="color:#e6db74">&#39;SnapKit&#39;</span> has a minimum deployment target of iOS 15.0: /Users/zzz/Library/Developer/Xcode/DerivedData/xxx-azqctlzpgaeickagenhyzsakerkn/Build/Products/Debug-iphoneos/SnapKit/SnapKit.framework/Modules/SnapKit.swiftmodule/arm64-apple-ios.swiftmodule
-</span></span></code></pre></div><img src="https://files.seeusercontent.com/2026/09/09/fAp0/2026-09-09_22-17-46.png" alt="2026-09-09_22-17-46" style="zoom:67%;" />
+</span></span></code></pre></div><p>出现上面错误是因为组件是非源码依赖的，且在构建framework组件时生成的编译标记版本和。因为编译器在链接（Linking）和编译依赖（Compiling Dependencies）阶段，会同时检查所有被引用模块（Module）自身携带的编译标志。</p>
+<ul>
+<li>主工程的15.0 告诉编译器：“请以15.0为目标编译主App”。</li>
+<li>但Framework A 的<code>.swiftinterface</code>写着<code>13.0</code>，告诉编译器：“请以13.0的规则来对待我这个模块”。</li>
+<li>当这两者同时存在，且依赖（SnapKit）不支持 13.0 时，编译就会直接终止。</li>
+</ul>
+<img src="https://files.seeusercontent.com/2026/09/09/fAp0/2026-09-09_22-17-46.png" alt="2026-09-09_22-17-46" style="zoom:67%;" />
+<p>临时方案是将上面<code>arm64-apple-ios.private.swiftinterface</code>和<code>arm64-apple-ios.swiftinterface</code>文件中的<code>ios13.0</code>修改为<code>ios15.0</code>，再重新编译即可：</p>
 <img src="https://files.seeusercontent.com/2026/09/09/3lJa/2026-09-09_22-19-05.png" alt="2026-09-09_22-19-05" style="zoom:67%;" />
     </div>
     <footer class="post-footer">
