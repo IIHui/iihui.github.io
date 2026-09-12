@@ -241,7 +241,7 @@ code.has-jax {
     <i class="fa fa-file-word-o"></i>
 </span>
 <span class="post-meta-item-text">字数: </span>
-<span class="leancloud-visitors-count">3544</span>
+<span class="leancloud-visitors-count">3577</span>
 &nbsp; | &nbsp;
 <span class="post-meta-item-icon">
     <i class="fa fa-coffee"></i>
@@ -261,14 +261,14 @@ code.has-jax {
 </ul>
 <p><code>CocoaPods</code>的<code>Module Name</code>和<code>podspc</code>中定义的<code>spec.name</code>是不同的。<code>spec.name</code>是给<code>CocoaPods</code>包管理器内部使用的「身份证」，而<code>import</code>语句使用的是面向编译器的模块名。</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ruby" data-lang="ruby"><span style="display:flex;"><span><span style="color:#75715e"># podspec的定义</span>
-</span></span><span style="display:flex;"><span>spec<span style="color:#f92672">.</span>name         <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;LC09.09_xxx&#34;</span> 
+</span></span><span style="display:flex;"><span>spec<span style="color:#f92672">.</span>name         <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;zzz.yyy_xxx&#34;</span> 
 </span></span><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span><span style="color:#75715e"># import使用的语法，即需要添加下划线</span>
-</span></span><span style="display:flex;"><span><span style="color:#66d9ef">LC09_09_xxx</span>
+</span></span><span style="display:flex;"><span>zzz_yyy_xxx
 </span></span></code></pre></div><p>Xcode和Swift编译器要求模块名必须是C99扩展标识符，<font color=red>即只能包含字母、数字和下划线</font>（<code>_</code>），且必须以字母或下划线开头。所以<code>spec.name</code>中的点号（<code>.</code>）是不允许的。为了让编译通过，<code>CocoaPods</code>会自动将<code>spec.name</code>中所有非法字符（如<code>.</code>、<code>-</code>等）替换为下划线（<code>_</code>），生成一个合法的模块名。</p>
 <p>如果不想使用自动生成的模块名，可以在<code>podspec</code>中通过<code>spec.module_name</code>属性来指定一个自定义模块名，按下面设置后可以直接<code>import yyy</code>：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ruby" data-lang="ruby"><span style="display:flex;"><span><span style="color:#66d9ef">Pod</span><span style="color:#f92672">::</span><span style="color:#66d9ef">Spec</span><span style="color:#f92672">.</span>new <span style="color:#66d9ef">do</span> <span style="color:#f92672">|</span>spec<span style="color:#f92672">|</span>
-</span></span><span style="display:flex;"><span>  spec<span style="color:#f92672">.</span>name         <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;LC09.09_xxx&#34;</span>
+</span></span><span style="display:flex;"><span>  spec<span style="color:#f92672">.</span>name         <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;zzz.yyy_xxx&#34;</span>
 </span></span><span style="display:flex;"><span>  <span style="color:#75715e"># ... 其他配置 ...</span>
 </span></span><span style="display:flex;"><span>  spec<span style="color:#f92672">.</span>module_name  <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;yyy&#34;</span> <span style="color:#75715e"># 自定义的模块名</span>
 </span></span><span style="display:flex;"><span><span style="color:#66d9ef">end</span>
@@ -341,20 +341,20 @@ code.has-jax {
 </span></span><span style="display:flex;"><span>/Applications/PyCharm.app/Contents/plugins/python-ce/helpers/debugpy/_vendored/pydevd/pydevd_attach_to_process
 </span></span></code></pre></div><p>到这里似乎看到了曙光，打开第一个目录后发现确实没有<code>attach.dylib</code>文件。尝试将第二个目录下的<code>attach.dylib</code>文件复制到第一个目录下，然后重启<code>PyCharm</code>，接着使用<code>debugpy</code>模式调试时真的正常了。最后，验证关机重启mac后调试也正常，至此，该问题完美解决😎。</p>
 <h1 id="module-has-a-minimum-deployment-target">module has a minimum deployment target</h1>
-<p>已经将工程和依赖的所有组件的<code>IPHONEOS_DEPLOYMENT_TARGET</code>设置为<code>15.0</code>，但还是出现下面编译错误。这个错误的意思是该组件是为<code>iOS 13</code>以上系统构建的，但其依赖的子组件SnapKit确要求最低版本为<code>iOS 15</code>：</p>
+<p>已经将工程和依赖的所有组件的<code>IPHONEOS_DEPLOYMENT_TARGET</code>设置为<code>15.0</code>，但还是出现下面编译错误。这个错误的意思是该组件是为<code>iOS 13</code>以上系统构建的，但其依赖的子组件<code>SnapKit</code>却要求支持的最低版本为<code>iOS 15</code>。所以产生了冲突，会出现编译错误：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sh" data-lang="sh"><span style="display:flex;"><span>/Users/zzz/Downloads/xxx/Pods/yyy/yyy.framework/Modules/yyy.swiftmodule/arm64-apple-ios.private.swiftinterface:15:8: error: compiling <span style="color:#66d9ef">for</span> iOS 13.0, but module <span style="color:#e6db74">&#39;SnapKit&#39;</span> has a minimum deployment target of iOS 15.0: /Users/zzz/Library/Developer/Xcode/DerivedData/xxx-azqctlzpgaeickagenhyzsakerkn/Build/Products/Debug-iphoneos/SnapKit/SnapKit.framework/Modules/SnapKit.swiftmodule/arm64-apple-ios.swiftmodule
 </span></span><span style="display:flex;"><span>  <span style="color:#ae81ff">13</span> | import MobileCoreServices
 </span></span><span style="display:flex;"><span>  <span style="color:#ae81ff">14</span> | import Photos
 </span></span><span style="display:flex;"><span>  <span style="color:#ae81ff">15</span> | import SnapKit
 </span></span><span style="display:flex;"><span>     |        <span style="color:#e6db74">`</span>- error: compiling <span style="color:#66d9ef">for</span> iOS 13.0, but module <span style="color:#e6db74">&#39;SnapKit&#39;</span> has a minimum deployment target of iOS 15.0: /Users/zzz/Library/Developer/Xcode/DerivedData/xxx-azqctlzpgaeickagenhyzsakerkn/Build/Products/Debug-iphoneos/SnapKit/SnapKit.framework/Modules/SnapKit.swiftmodule/arm64-apple-ios.swiftmodule
-</span></span></code></pre></div><p>出现上面错误是因为组件是非源码依赖的，且在构建framework时生成的编译标记版本和<code>deployment target</code>出现了冲突。因为编译器在链接和编译依赖阶段，会同时检查所有被引用模块（Module）自身携带的编译标志。</p>
+</span></span></code></pre></div><p>出现上面错误是因为组件是非源码依赖的，且在构建<code>framework</code>后生成的编译标记版本和<code>deployment target</code>出现了冲突。因为编译器在链接和编译依赖阶段，会同时检查所有被引用模块（<code>Module</code>）自身携带的编译标志。</p>
 <ul>
-<li>主工程的15.0 告诉编译器：“请以15.0为目标编译主App”。</li>
-<li>但<code>Framework yyy</code>中的<code>.swiftinterface</code>写着<code>13.0</code>，是告诉编译器：“请以13.0的规则来对待这个模块”。</li>
-<li>当这两者同时存在，且依赖（SnapKit）不支持13.0时，编译就会直接终止。</li>
+<li>主工程设置的<code>15.0</code>告诉编译器：以<code>15.0</code>为目标编译主App。</li>
+<li>但<code>Framework yyy</code>中的<code>.swiftinterface</code>写着<code>13.0</code>，是告诉编译器：以<code>13.0</code>的规则来对待这个模块。</li>
+<li>这两者同时存在，且依赖的组件（<code>SnapKit</code>）不支持<code>13.0</code>时，编译就直接终止并报错。</li>
 </ul>
 <img src="https://files.seeusercontent.com/2026/09/09/fAp0/2026-09-09_22-17-46.png" alt="2026-09-09_22-17-46" style="zoom:67%;" />
-<p>临时方案是将上面<code>framework</code>的<code>Mudules</code>目录下<code>arm64-apple-ios.private.swiftinterface</code>和<code>arm64-apple-ios.swiftinterface</code>文件中的<code>ios13.0</code>修改为<code>ios15.0</code>。此时，编译器读取该Framework的标志时，发现它也是15.0，和SnapKit要求的15.0一致，冲突消失，编译通过。</p>
+<p>解决该问题的临时方案是将出现冲突的二进制<code>framework</code>的<code>Mudules</code>目录下<code>arm64-apple-ios.private.swiftinterface</code>和<code>arm64-apple-ios.swiftinterface</code>文件中的<code>ios13.0</code>修改为<code>ios15.0</code>。此时，编译器读取该<code>Framework</code>的编译标志时，发现它也是<code>15.0</code>，和<code>SnapKit</code>要求的<code>15.0</code>一致，冲突消失，编译通过。</p>
 <img src="https://files.seeusercontent.com/2026/09/09/3lJa/2026-09-09_22-19-05.png" alt="2026-09-09_22-19-05" style="zoom:67%;" />
     </div>
     <footer class="post-footer">
