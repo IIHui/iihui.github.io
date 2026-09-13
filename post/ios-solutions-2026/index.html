@@ -241,7 +241,7 @@ code.has-jax {
     <i class="fa fa-file-word-o"></i>
 </span>
 <span class="post-meta-item-text">字数: </span>
-<span class="leancloud-visitors-count">6107</span>
+<span class="leancloud-visitors-count">6122</span>
 &nbsp; | &nbsp;
 <span class="post-meta-item-icon">
     <i class="fa fa-coffee"></i>
@@ -439,20 +439,20 @@ code.has-jax {
 </span></span><span style="display:flex;"><span>0x18e159000 -        0x18e165b3b libsystem_pthread.dylib <span style="color:#f92672">(</span>*<span style="color:#f92672">)</span> &lt;a373f0b0-9880-326a-88b4-dd8be4e33072&gt; /usr/lib/system/libsystem_pthread.dylib
 </span></span><span style="display:flex;"><span>0x18dfed000 -        0x18e06e1e7 libsystem_c.dylib <span style="color:#f92672">(</span>*<span style="color:#f92672">)</span> &lt;d77ceb62-aff6-3cec-ba9b-4f057fbe2eb5&gt; /usr/lib/system/libsystem_c.dylib
 </span></span><span style="display:flex;"><span>0x18dd74000 -        0x18de274ff dyld <span style="color:#f92672">(</span>*<span style="color:#f92672">)</span> &lt;74e52480-c2bd-3c8d-812d-95fe2b74a096&gt; /usr/lib/dyld
-</span></span></code></pre></div><p>从日志上来看像是加载<code>MIL/MLAssetIO</code>等AI模型框架，尝试在命令行使用<code>env IDEDisableMIL=1 open /Applications/Xcode.app</code>命令启动Xcode，依然出现闪退。尝试按下面方式清理缓存后，还是出现启动闪退：</p>
+</span></span></code></pre></div><p>从日志上来看像是加载<code>MIL/MLAssetIO</code>等AI模型框架出现的异常。尝试在命令行使用<code>env IDEDisableMIL=1 open /Applications/Xcode.app</code>命令启动<code>Xcode</code>，依然出现闪退。接着，尝试清理缓存，打开<code>Xcode</code>还是出现启动闪退：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sh" data-lang="sh"><span style="display:flex;"><span>rm -rf ~/Library/Developer/Xcode/DerivedData
 </span></span><span style="display:flex;"><span>rm -rf ~/Library/Caches/com.apple.dt.Xcode
 </span></span><span style="display:flex;"><span>rm -rf ~/Library/Preferences/com.apple.dt.Xcode.plist
 </span></span><span style="display:flex;"><span><span style="color:#75715e"># 删除Xcode的保存窗口/工作区状态</span>
 </span></span><span style="display:flex;"><span>rm -rf ~/Library/Application<span style="color:#ae81ff">\ </span>Support/com.apple.dt.Xcode
 </span></span><span style="display:flex;"><span>rm -rf ~/Library/Saved<span style="color:#ae81ff">\ </span>Application<span style="color:#ae81ff">\ </span>State/com.apple.dt.Xcode.savedState
-</span></span></code></pre></div><p>最后在命令行使用命令<code>/Applications/Xcode.app/Contents/MacOS/Xcode</code>打开，还是出现错误，但此时的错误信息已经不一样了，具体信息如下：</p>
+</span></span></code></pre></div><p>尝试在命令行使用<code>/Applications/Xcode.app/Contents/MacOS/Xcode</code>打开<code>Xcode</code>，还是出现错误，但此时的错误信息已经不一样了，具体信息如下：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-fallback" data-lang="fallback"><span style="display:flex;"><span>Error loading required libraries. If there is an ongoing installation please wait for it to complete. Otherwise reinstall. (dlopen(@rpath/Frameworks/libIDEApplicationLoader.dylib, 0x0001): Symbol not found: _XPCTypeBool   Referenced from: &lt;9AE16A95-2414-31C4-BB7F-672E0C9AE66B&gt; /Library/Developer/PrivateFrameworks/CoreDevice.framework/Versions/A/CoreDevice   Expected in:     &lt;781B8B5D-634D-3B6B-82FB-9080774ECF61&gt; /Library/Apple/System/Library/PrivateFrameworks/Mercury.framework/Versions/A/Mercury) zsh: abort      ~/Downloads/Xcode.app/Contents/MacOS/Xcode
-</span></span></code></pre></div><p>上面报错是因为macOS系统自带的<code>Mercury.framework</code>版本太低，缺少符号<code>_XPCTypeBool</code>。<code>CoreDevice</code>框架依赖这个符号，<code>dlopen</code>加载库直接失败而导致<code>Xcode main</code>阶段<code>abort</code>闪退。</p>
+</span></span></code></pre></div><p>上面报错是因为<code>macOS</code>系统自带的<code>Mercury.framework</code>版本太低，低版本缺少符号<code>_XPCTypeBool</code>。<code>CoreDevice</code>框架依赖这个符号，<code>dlopen</code>加载库直接失败而导致<code>Xcode main</code>阶段<code>abort</code>闪退。</p>
 <p>需要注意的是，上面这个报错不是<code>Xcode.app</code>包里的文件损坏，是系统私有框架版本不匹配。 <code>Xcode 27A266a</code>预览版要求比<code>macOS 26.6.2</code>更新系统版本，因为系统Mercury.framework缺少新的XPC符号。此时可以升级<code>mac OS beta</code>版本，但升级需要的时间比较长。</p>
-<p>Xcode安装时会往<code>/Library/Developer/PrivateFrameworks/</code>放置<code>CoreDevice.framework</code>。如果这里残留了过高版本的CoreDevice，它会强行要求新Mercury符号。比较简单的解决方案是先关闭所有<code>Xcode、simulator、xcodebuild</code>：</p>
+<p>安装<code>Xcode</code>时会往<code>/Library/Developer/PrivateFrameworks/</code>放置<code>CoreDevice.framework</code>。如果这里残留了高版本的<code>CoreDevice</code>，它会强行要求新的<code>Mercury</code>符号。简单的解决方案是先关闭所有<code>Xcode、simulator、xcodebuild</code>：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sh" data-lang="sh"><span style="display:flex;"><span>pkill -9 Xcode Simulator xcodebuild
-</span></span></code></pre></div><p>接着移除这个高版本<code>CoreDevice</code>，然后在重新打开<code>Xcode</code>，此时<code>Xcode</code>会尝试<font color="#de7802">重新部署一份和自身配套的</font> <code>CoreDevice</code>，就不再出现闪退了：</p>
+</span></span></code></pre></div><p>接着移除这个高版本<code>CoreDevice</code>，然后在重新打开<code>Xcode</code>，此时<code>Xcode</code>会尝试<font color="#de7802">重新部署一份和自身配套的</font> <code>CoreDevice</code>，然后就不再出现闪退了：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sh" data-lang="sh"><span style="display:flex;"><span>sudo rm -rf /Library/Developer/PrivateFrameworks/CoreDevice.framework
 </span></span></code></pre></div>
     </div>
