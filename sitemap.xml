@@ -91,7 +91,21 @@ Error loading required libraries. If there is an ongoing installation please wai
 安装Xcode时会往/Library/Developer/PrivateFrameworks/放置CoreDevice.framework。如果这里残留了高版本的CoreDevice，它会强行要求新的Mercury符号。简单的解决方案是先关闭所有Xcode、simulator、xcodebuild：
 pkill -9 Xcode Simulator xcodebuild 接着移除这个高版本CoreDevice，然后在重新打开Xcode，此时Xcode会尝试重新部署一份和自身配套的 CoreDevice，然后就不再出现闪退了：
 sudo rm -rf /Library/Developer/PrivateFrameworks/CoreDevice.framework M1 iMac 闪屏 使用M1 iMac 2021款有屏幕排线/液晶硬件通病，表现为随温度升高出现闪烁、横向条纹，冷机正常，用一会就闪。如果苹果开机诊断界面也闪屏，基本就是硬件故障，软件修不好。
- 断电静置关机→拔掉电源线，等待3~5 分钟，重新插电开机，释放残余供电。 显示器设置调整系统设置→显示器。   关闭自动亮度、原彩显示 (True Tone)。 关闭夜览。 降低屏幕亮度，部分低亮度下的PWM闪烁会缓解。 辅助功能→显示：打开减弱动态效果、降低透明度。  </content>
+ 断电静置关机→拔掉电源线，等待3~5 分钟，重新插电开机，释放残余供电。 显示器设置调整系统设置→显示器。   关闭自动亮度、原彩显示 (True Tone)。 关闭夜览。 降低屏幕亮度，部分低亮度下的PWM闪烁会缓解。 辅助功能→显示：打开减弱动态效果、降低透明度。  cocoapods cache cocoapods的缓存分为两种，一种是spec索引库缓存（podspec索引，组件元信息），另一种是源码下载缓存（组件源码压缩包）。
+ spec索引库缓存的存储位置为~/.cocoapods/repos，存放的是各个源的podspec索引文件（CDN模式现在不再完整拉取整个repo）。 源码下载缓存的存储位置为~/Library/Caches/CocoaPods，pod cache命令管理的就是这个缓存。  源码缓存 命令pod cache用于处理已经下载好的组件源码包缓存，而pod repo用于组件元信息索引库podspec。下面是查看某个组件的源码包缓存的命令：
+# 查看全部缓存 pod cache list  # 只查看指定组件（比如 Alamofire） pod cache list Alamofire  # 简短输出，只打印缓存相对路径 pod cache list Alamofire --short  # 删除指定组件源码缓存 pod cache clean Alamofire  # 清空全部源码缓存 pod cache clean --all 作用机制 缓存包存储~/Library/Caches/CocoaPods的这个目录只缓存已经下载完成的组件源码压缩包（podspec索引不在这，索引在~/.cocoapods/repos repos-art）。 适用普通CDN源、cocoapods-art私有制品源，缓存逻辑完全一致，只是下载源地址不同。
+~/Library/Caches/CocoaPods ├─ Pods │ ├─ Release # 正式release版本的zip包（绝大多数） │ │ └─ 库名/版本号/xxx.zip │ └─ External # git分支/commit源码（pod指定git、branch、commit的情况） ├─ Sources # 临时解压目录（pod安装过程临时用，执行完一般清理） └─ ...其他临时文件 首先CocoaPods从podspec拿到源码下载地址（github/Artifactory制品 url）。然后到~/Library/Caches/CocoaPods/Pods/Release/库名/版本号/查找完整zip包。如果命中缓存：
+ 不再发起网络下载请求。 直接从本地缓存zip解压到项目Pods/目录。 极大加速pod install/update。  如果未命中缓存：
+ 发起网络请求，从远端（github / Artifactory）下载源码zip。 下载成功后，写入上面的缓存目录永久保存。 然后解压到项目Pods目录。  缓存的生命周期
+ 不会自动过期：一旦下载，永久保存在本地，CocoaPods不会自动清理。 哪怕删除项目、删除Pods目录，缓存zip依然保留。 只有手动清理才会删除。  # 删除指定库缓存 pod cache clean SDKName # 清空全部源码缓存 pod cache clean --all 目录~/Library/Caches/CocoaPods/Sources是临时解压目录：
+ pod 安装时：把缓存zip解压到Sources目录，再复制代码到项目Pods。 安装结束，会清理Sources下临时文件。真正持久缓存的是Release/External下面的zip压缩包，不是解压后的源码。  索引库 索引库保存了组件版本信息、podspec描述文件（pod search 依赖的索引）。查看本地所有spec索引库源的命令为pod repo list，本地repo索引源的存储目录为~/.cocoapods/repos/。进入某个repo目录，可以使用如下命令查找组件的podspec文件：
+# 示例：在cocoapods官方源中查找 Alamofire find ~/.cocoapods/repos/cocoapods -name &amp;#34;Alamofire&amp;#34; 需要注意的是CocoaPods 1.8&#43;开始默认使用CDN模式，此时~/.cocoapods/repos目录很小，不是完整的spce仓库，不会完整下载整个Specs仓库，只是少量按需下载的podspec缓存。
+搜索索引缓存 命令pod search使用的搜索索引缓存文件，存放在~/Library/Caches/CocoaPods/search_index.json。直接打开这个json可以查看本地搜索索引缓存。 如果搜不到新库，可以删除该文件，重新执行pod search xxx重新生成索引缓存。
+命令pod update完整拉取流程分两步，第一步是拉索引，第二步是拉源码。pod update会忽略Podfile.lock，去源里查找每个pod允许范围内的最新版本（pod &#39;xxx&#39;, &#39;~&amp;gt; 2.0&#39;），而不是沿用lock里的固定版本。
+1、先访问Podfile 配置的spec 源（CDN/git 私有源，获取最新podspec索引（版本信息）。
+2、根据podspec里面记录的源码地址去下载源码，优先使用本地源码缓存。
+3、最后更新Podfile.lock和Pods目录。
+</content>
     </entry>
     
      <entry>
