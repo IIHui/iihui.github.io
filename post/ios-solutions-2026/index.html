@@ -241,7 +241,7 @@ code.has-jax {
     <i class="fa fa-file-word-o"></i>
 </span>
 <span class="post-meta-item-text">字数: </span>
-<span class="leancloud-visitors-count">8103</span>
+<span class="leancloud-visitors-count">8070</span>
 &nbsp; | &nbsp;
 <span class="post-meta-item-icon">
     <i class="fa fa-coffee"></i>
@@ -447,7 +447,7 @@ code.has-jax {
 </span></span><span style="display:flex;"><span>rm -rf ~/Library/Application<span style="color:#ae81ff">\ </span>Support/com.apple.dt.Xcode
 </span></span><span style="display:flex;"><span>rm -rf ~/Library/Saved<span style="color:#ae81ff">\ </span>Application<span style="color:#ae81ff">\ </span>State/com.apple.dt.Xcode.savedState
 </span></span></code></pre></div><p>尝试在命令行使用<code>/Applications/Xcode.app/Contents/MacOS/Xcode</code>打开<code>Xcode</code>，还是出现错误，但此时的错误信息已经不一样了，具体信息如下：</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-fallback" data-lang="fallback"><span style="display:flex;"><span>Error loading required libraries. If there is an ongoing installation please wait for it to complete. Otherwise reinstall. (dlopen(@rpath/Frameworks/libIDEApplicationLoader.dylib, 0x0001): Symbol not found: _XPCTypeBool   Referenced from: &lt;9AE16A95-2414-31C4-BB7F-672E0C9AE66B&gt; /Library/Developer/PrivateFrameworks/CoreDevice.framework/Versions/A/CoreDevice   Expected in:     &lt;781B8B5D-634D-3B6B-82FB-9080774ECF61&gt; /Library/Apple/System/Library/PrivateFrameworks/Mercury.framework/Versions/A/Mercury) zsh: abort      ~/Downloads/Xcode.app/Contents/MacOS/Xcode
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-fallback" data-lang="fallback"><span style="display:flex;"><span>Error loading required libraries. If there is an ongoing installation please wait for it to complete. Otherwise reinstall. (dlopen(@rpath/Frameworks/libIDEApplicationLoader.dylib, 0x0001): Symbol not found: _XPCTypeBool   Referenced from: &lt;9AE16A95-2414-31C4-BB7F-672E0C9AE66B&gt; /Library/Developer/PrivateFrameworks/CoreDevice.framework/Versions/A/CoreDevice   Expected in:     &lt;781B8B5D-634D-3B6B-82FB-9080774ECF61&gt; /Library/Apple/System/Library/PrivateFrameworks/Mercury.framework/Versions/A/Mercury) zsh: abort      /Applications/Xcode.app/Contents/MacOS/Xcode
 </span></span></code></pre></div><p>上面报错是因为<code>macOS</code>系统自带的<code>Mercury.framework</code>版本太低，低版本缺少符号<code>_XPCTypeBool</code>。<code>CoreDevice</code>框架依赖这个符号，<code>dlopen</code>加载库直接失败而导致<code>Xcode main</code>阶段<code>abort</code>闪退。</p>
 <p>需要注意的是，上面这个报错不是<code>Xcode.app</code>包里的文件损坏，是系统私有框架版本不匹配。 <code>Xcode 27A266a</code>预览版要求比<code>macOS 26.6.2</code>更新系统版本，因为系统Mercury.framework缺少新的XPC符号。此时可以升级<code>mac OS beta</code>版本，但升级需要的时间比较长。</p>
 <p>安装<code>Xcode</code>时会往<code>/Library/Developer/PrivateFrameworks/</code>放置<code>CoreDevice.framework</code>。如果这里残留了高版本的<code>CoreDevice</code>，它会强行要求新的<code>Mercury</code>符号。简单的解决方案是先关闭所有<code>Xcode、simulator、xcodebuild</code>：</p>
@@ -489,7 +489,7 @@ code.has-jax {
 </span></span><span style="display:flex;"><span><span style="color:#75715e"># 清空全部源码缓存</span>
 </span></span><span style="display:flex;"><span>pod cache clean --all
 </span></span></code></pre></div><h3 id="作用机制">作用机制</h3>
-<p>缓存包存储<code>~/Library/Caches/CocoaPods</code>的这个目录只缓存已经下载完成的组件源码压缩包（<code>podspec</code>索引不在这，索引在<code>~/.cocoapods/repos</code> <code>repos-art</code>）。 适用普通CDN源、cocoapods-art私有制品源，缓存逻辑完全一致，只是下载源地址不同。</p>
+<p>缓存包存储<code>~/Library/Caches/CocoaPods</code>的这个目录只缓存已经下载完成的组件源码压缩包（<code>podspec</code>索引不在这，索引在<code>~/.cocoapods/repos/repos-art</code>）。 适用普通CDN源、<code>cocoapods-art</code>私有制品源，缓存逻辑完全一致，只是下载源地址不同。</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sh" data-lang="sh"><span style="display:flex;"><span>~/Library/Caches/CocoaPods
 </span></span><span style="display:flex;"><span>├─ Pods
 </span></span><span style="display:flex;"><span>│  ├─ Release       <span style="color:#75715e"># 正式release版本的zip包（绝大多数）</span>
@@ -497,7 +497,7 @@ code.has-jax {
 </span></span><span style="display:flex;"><span>│  └─ External       <span style="color:#75715e"># git分支/commit源码（pod指定git、branch、commit的情况）</span>
 </span></span><span style="display:flex;"><span>├─ Sources           <span style="color:#75715e"># 临时解压目录（pod安装过程临时用，执行完一般清理）</span>
 </span></span><span style="display:flex;"><span>└─ ...其他临时文件
-</span></span></code></pre></div><p>首先CocoaPods从podspec拿到源码下载地址（github/Artifactory制品 url）。然后到<code>~/Library/Caches/CocoaPods/Pods/Release/库名/版本号/</code>查找完整zip包。如果命中缓存：</p>
+</span></span></code></pre></div><p>首先<code>CocoaPods</code>从<code>podspec</code>拿到源码下载地址。然后到<code>~/Library/Caches/CocoaPods/Pods/Release/库名/版本号/</code>查找完整zip包。如果命中缓存：</p>
 <ul>
 <li>不再发起网络下载请求。</li>
 <li>直接从本地缓存zip解压到项目<code>Pods/</code>目录。</li>
@@ -505,22 +505,22 @@ code.has-jax {
 </ul>
 <p>如果未命中缓存：</p>
 <ul>
-<li>发起网络请求，从远端（github / Artifactory）下载源码zip。</li>
+<li>发起网络请求，从远端下载源码zip。</li>
 <li>下载成功后，写入上面的缓存目录永久保存。</li>
 <li>然后解压到项目Pods目录。</li>
 </ul>
-<p>缓存的生命周期</p>
-<ol>
-<li>不会自动过期：一旦下载，永久保存在本地，CocoaPods不会自动清理。 哪怕删除项目、删除Pods目录，缓存zip依然保留。</li>
+<p>缓存的生命周期:</p>
+<ul>
+<li>不会自动过期：一旦下载，永久保存在本地，<code>CocoaPods</code>不会自动清理。 不管删除项目、删除Pods目录，缓存zip依然保留。</li>
 <li>只有手动清理才会删除。</li>
-</ol>
+</ul>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sh" data-lang="sh"><span style="display:flex;"><span><span style="color:#75715e"># 删除指定库缓存</span>
 </span></span><span style="display:flex;"><span>pod cache clean SDKName
 </span></span><span style="display:flex;"><span><span style="color:#75715e"># 清空全部源码缓存</span>
 </span></span><span style="display:flex;"><span>pod cache clean --all
 </span></span></code></pre></div><p>目录<code>~/Library/Caches/CocoaPods/Sources</code>是临时解压目录：</p>
 <ul>
-<li>pod 安装时：把缓存zip解压到Sources目录，再复制代码到项目Pods。</li>
+<li>pod安装时：把缓存zip解压到Sources目录，再复制代码到项目Pods。</li>
 <li>安装结束，会清理Sources下临时文件。真正持久缓存的是Release/External下面的zip压缩包，不是解压后的源码。</li>
 </ul>
 <h2 id="索引库">索引库</h2>
@@ -530,10 +530,10 @@ code.has-jax {
 </span></span></code></pre></div><p>需要注意的是<code>CocoaPods 1.8+</code>开始默认使用<code>CDN</code>模式，此时<code>~/.cocoapods/repos</code>目录很小，不是完整的<code>spce</code>仓库，不会完整下载整个<code>Specs</code>仓库，只是少量按需下载的<code>podspec</code>缓存。</p>
 <h2 id="搜索索引缓存">搜索索引缓存</h2>
 <p>命令<code>pod search</code>使用的搜索索引缓存文件，存放在<code>~/Library/Caches/CocoaPods/search_index.json</code>。直接打开这个<code>json</code>可以查看本地搜索索引缓存。 如果搜不到新库，可以删除该文件，重新执行<code>pod search xxx</code>重新生成索引缓存。</p>
-<p>命令<code>pod update</code>完整拉取流程分两步，第一步是拉索引，第二步是拉源码。<code>pod update</code>会忽略<code>Podfile.lock</code>，去源里查找每个pod允许范围内的最新版本（<code>pod 'xxx', '~&gt; 2.0'</code>），而不是沿用lock里的固定版本。</p>
-<p>1、先访问Podfile 配置的spec 源（CDN/git 私有源，获取最新podspec索引（版本信息）。</p>
-<p>2、根据podspec里面记录的源码地址去下载源码，优先使用本地源码缓存。</p>
-<p>3、最后更新Podfile.lock和Pods目录。</p>
+<p>命令<code>pod update</code>完整拉取流程分两步，第一步是拉索引，第二步是拉源码。<code>pod update</code>会忽略<code>Podfile.lock</code>，去源里查找每个pod允许范围内的最新版本（<code>pod 'xxx', '~&gt; 2.0'</code>），而不是沿用<code>podfile.lock</code>里的固定版本。</p>
+<p>1、先访问<code>Podfile</code>配置的spec源（CDN/git 私有源，获取最新pod<code>s</code>pec索引（版本信息）。</p>
+<p>2、根据<code>podspec</code>里面记录的源码地址去下载源码，优先使用本地源码缓存。</p>
+<p>3、最后更新<code>Podfile.lock</code>和<code>Pods</code>目录。</p>
 
     </div>
     <footer class="post-footer">
