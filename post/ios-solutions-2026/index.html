@@ -241,7 +241,7 @@ code.has-jax {
     <i class="fa fa-file-word-o"></i>
 </span>
 <span class="post-meta-item-text">字数: </span>
-<span class="leancloud-visitors-count">8126</span>
+<span class="leancloud-visitors-count">8132</span>
 &nbsp; | &nbsp;
 <span class="post-meta-item-icon">
     <i class="fa fa-coffee"></i>
@@ -347,7 +347,7 @@ code.has-jax {
 </span></span><span style="display:flex;"><span>  <span style="color:#ae81ff">14</span> | import Photos
 </span></span><span style="display:flex;"><span>  <span style="color:#ae81ff">15</span> | import SnapKit
 </span></span><span style="display:flex;"><span>     |        <span style="color:#e6db74">`</span>- error: compiling <span style="color:#66d9ef">for</span> iOS 13.0, but module <span style="color:#e6db74">&#39;SnapKit&#39;</span> has a minimum deployment target of iOS 15.0: /Users/zzz/Library/Developer/Xcode/DerivedData/xxx-azqctlzpgaeickagenhyzsakerkn/Build/Products/Debug-iphoneos/SnapKit/SnapKit.framework/Modules/SnapKit.swiftmodule/arm64-apple-ios.swiftmodule
-</span></span></code></pre></div><p>出现上面错误是因为组件是非源码依赖的，且在构建<code>framework</code>后生成的编译标记版本和设置的<code>deployment target</code>出现了冲突。因为编译器在链接和编译依赖阶段，会同时检查所有被引用模块（<code>Module</code>）自身携带的编译标志。</p>
+</span></span></code></pre></div><p>出现上面错误是因为组件是非源码依赖的，且在组件被构建<code>framework</code>后生成的编译标记版本和设置的<code>deployment target</code>出现了冲突。因为编译器在链接和编译依赖阶段，会同时检查所有被引用模块（<code>Module</code>）自身携带的编译标志。</p>
 <ul>
 <li>主工程设置的<code>15.0</code>告诉编译器：以<code>15.0</code>为目标编译主App。</li>
 <li>但<code>Framework yyy</code>中的<code>.swiftinterface</code>写着<code>13.0</code>，是告诉编译器：以<code>13.0</code>的规则来对待这个模块。</li>
@@ -366,20 +366,20 @@ code.has-jax {
 <li>平台：<code>apple-ios</code>。</li>
 <li>最低部署目标：<code>13.0</code>。</li>
 </ul>
-<p>意味着这个二进制Framework在编译时，Xcode被明确告知这个<code>Framework</code>要兼容<code>iOS 13.0</code>及以上的系统，因此编译器将这个元数据写死在了<code>.swiftinterface</code>文件中。</p>
+<p>意味着这个二进制<code>Framework</code>在编译时，<code>Xcode</code>被明确告知这个<code>Framework</code>要兼容<code>iOS 13.0</code>及以上的系统，因此编译器将这个元数据写死在了<code>.swiftinterface</code>文件中。</p>
 <p>为什么这个标志会导致你现在的报错？，底层逻辑是这样的：</p>
 <ol>
 <li>主工程设置为<code>iOS 15.0</code>。</li>
 <li>报错的这个二进制<code>Framework</code>内部的<code>.swiftinterface</code>文件写着 <code>-target ... ios13.0</code>。这说明<code>Framework A</code>认为自己可以运行在<code>iOS 13.0</code>上。</li>
 <li>组件<code>Framework A</code>内部依赖了<code>SnapKit</code>。</li>
 <li>通过Podfile的<code>post_install</code>已经把<code>SnapKit</code>的部署目标强行改成了<code>15.0</code>。</li>
-<li>编译器在编译<code>Framework A</code>时，会去检查它的依赖（SnapKit）。编译器发现：<code>Framework A</code>说它要针对<code>iOS 13.0</code>编译（根据它的<code>interface</code>文件），但<code>SnapKit</code>说它最低要<code>15.0</code>，版本有冲突，编译器拒绝执行，于是报错。</li>
+<li>编译器在编译<code>Framework A</code>时，会去检查它的依赖（<code>SnapKit</code>）。编译器发现：<code>Framework A</code>说它要针对<code>iOS 13.0</code>编译（根据它的<code>interface</code>文件），但<code>SnapKit</code>说它最低要<code>15.0</code>，版本有冲突，编译器拒绝执行，于是报错。</li>
 </ol>
-<p>为什么直接改主工程的Target没用？因为编译器在链接（Linking）和编译依赖（Compiling Dependencies）阶段，会同时检查所有被引用模块（Module）自身携带的编译标志。</p>
+<p>为什么直接改主工程的<code>Target</code>没用？因为编译器在链接（Linking）和编译依赖（Compiling Dependencies）阶段，会同时检查所有被引用模块（Module）自身携带的编译标志。</p>
 <ul>
-<li>主工程的15.0 告诉编译器：以 15.0 为目标编译主 App。</li>
-<li>但<code>Framework A</code>的 <code>.swiftinterface</code> 写着 <code>13.0</code>，告诉编译器：以13.0的规则来对待我这个模块。</li>
-<li>当这两者同时存在，且依赖（SnapKit）不支持13.0时，编译就会直接终止。</li>
+<li>主工程的<code>15.0</code>告诉编译器：以<code>15.0</code>为目标编译主App。</li>
+<li>但<code>Framework A</code>的 <code>.swiftinterface</code> 写着 <code>13.0</code>，告诉编译器：以<code>13.0</code>的规则来对待我这个模块。</li>
+<li>当这两者同时存在，且依赖（SnapKit）不支持<code>13.0</code>时，编译就会直接终止。</li>
 </ul>
 <p>既然不能改源码，尝试修改<code>SnapKit</code>是正确的，但现在问题出在<code>Framework A</code>自身携带的<code>-target ... ios13.0</code>标志上。因为无法获取源码，需要修改这个<code>Framework A</code>的<code>.swiftinterface</code> 文件内容，把里面的<code>13.0</code>改成 <code>15.0</code>（或更高）。具体操作（针对这个标志）：</p>
 <ol>
@@ -388,7 +388,7 @@ code.has-jax {
 <li>找到<code>// swift-module-flags:</code>那一行，将<code>-target arm64-apple-ios13.0</code>手动改为<code>-target arm64-apple-ios15.0</code>。</li>
 <li>保存文件。</li>
 </ol>
-<p>改完之后：编译器读取该Framework的标志时，发现它也是15.0，和SnapKit要求的15.0一致，冲突消失，编译通过。</p>
+<p>改完之后：编译器读取该<code>Framework</code>的标志时，发现它也是<code>15.0</code>，和<code>SnapKit</code>要求的<code>15.0</code>一致，冲突消失，编译通过。</p>
 <h1 id="xcode-27-crash">Xcode 27 crash</h1>
 <p>在<code>MacBook Air</code>安装完<code>Xcode 27 RC 1</code>打开后出现闪退，使用<code>App Cleaner &amp; Uninstaller</code>卸载重装后还是出现闪退，部分崩溃日志如下所示：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sh" data-lang="sh"><span style="display:flex;"><span>Process:             Xcode <span style="color:#f92672">[</span>2604<span style="color:#f92672">]</span>
