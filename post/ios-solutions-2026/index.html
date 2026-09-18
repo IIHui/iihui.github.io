@@ -241,7 +241,7 @@ code.has-jax {
     <i class="fa fa-file-word-o"></i>
 </span>
 <span class="post-meta-item-text">字数: </span>
-<span class="leancloud-visitors-count">8146</span>
+<span class="leancloud-visitors-count">8143</span>
 &nbsp; | &nbsp;
 <span class="post-meta-item-icon">
     <i class="fa fa-coffee"></i>
@@ -375,7 +375,7 @@ code.has-jax {
 <li>通过<code>Podfile</code>的<code>post_install</code>已经把<code>SnapKit</code>的部署目标强行改成了<code>15.0</code>。</li>
 <li>编译器在编译<code>Framework A</code>时，会去检查它的依赖（<code>SnapKit</code>）。编译器发现：<code>Framework A</code>说它要针对<code>iOS 13.0</code>编译（根据它的<code>interface</code>文件），但<code>SnapKit</code>说它最低要<code>15.0</code>，版本有冲突，编译器拒绝执行，于是报错。</li>
 </ol>
-<p>为什么直接改主工程的<code>Target</code>没用？因为编译器在链接（Linking）和编译依赖（Compiling Dependencies）阶段，会同时检查所有被引用模块（Module）自身携带的编译标志。</p>
+<p>为什么直接改主工程的<code>Target</code>没用？因为编译器在链接和编译依赖（<code>Compiling Dependencies</code>）阶段，会同时检查所有被引用模块（Module）自身携带的编译标志。</p>
 <ul>
 <li>主工程的<code>15.0</code>告诉编译器：以<code>15.0</code>为目标编译主App。</li>
 <li>但<code>Framework A</code>的<code>.swiftinterface</code> 写着 <code>13.0</code>，告诉编译器：以<code>13.0</code>的规则来对待我这个模块。</li>
@@ -383,9 +383,9 @@ code.has-jax {
 </ul>
 <p>既然不能改源码，尝试修改<code>SnapKit</code>是正确的，但现在问题出在<code>Framework A</code>自身携带的<code>-target ... ios13.0</code>标志上。因为无法获取源码，需要修改这个<code>Framework A</code>的<code>.swiftinterface</code> 文件内容，把里面的<code>13.0</code>改成 <code>15.0</code>（或更高）。具体操作（针对这个标志）：</p>
 <ol>
-<li>找到该二进制Framework，右键显示包内容&ndash;&gt; <code>Modules</code>&ndash;&gt; <code>YourFramework.swiftmodule</code>。</li>
+<li>找到该二进制Framework，右键显示包内容<code>--&gt;Modules--&gt;xxxFramework.swiftmodule</code>。</li>
 <li>打开<code>arm64-apple-ios.swiftinterface</code>和<code>arm64-apple-ios.private.swiftinterface</code>（用文本编辑器，如VS Code或Xcode）。</li>
-<li>找到<code>// swift-module-flags:</code>那一行，将<code>-target arm64-apple-ios13.0</code>手动改为<code>-target arm64-apple-ios15.0</code>。</li>
+<li>找到<code>// swift-module-flags:</code>这一行，将<code>-target arm64-apple-ios13.0</code>手动改为<code>-target arm64-apple-ios15.0</code>。</li>
 <li>保存文件。</li>
 </ol>
 <p>改完之后：编译器读取该<code>Framework</code>的标志时，发现它也是<code>15.0</code>，和<code>SnapKit</code>要求的<code>15.0</code>一致，冲突消失，编译通过。</p>
@@ -520,8 +520,8 @@ code.has-jax {
 </span></span><span style="display:flex;"><span>pod cache clean --all
 </span></span></code></pre></div><p>目录<code>~/Library/Caches/CocoaPods/Sources</code>是临时解压目录：</p>
 <ul>
-<li>pod安装时：把缓存zip解压到Sources目录，再复制代码到项目Pods。</li>
-<li>安装结束，会清理Sources下临时文件。真正持久缓存的是Release/External下面的zip压缩包，不是解压后的源码。</li>
+<li>pod安装时：把缓存zip解压到<code>Sources</code>目录，再复制代码到项目<code>Pods</code>。</li>
+<li>安装结束，会清理<code>Sources</code>下临时文件。真正持久缓存的是<code>Release/External</code>下面的<code>zip</code>压缩包，不是解压后的源码。</li>
 </ul>
 <h2 id="索引库">索引库</h2>
 <p>索引库保存了组件版本信息、<code>podspec</code>描述文件（<code>pod search</code> 依赖的索引）。查看本地所有<code>spec</code>索引库源的命令为<code>pod repo list</code>，本地<code>repo</code>索引源的存储目录为<code>~/.cocoapods/repos/</code>。进入某个repo目录，可以使用如下命令查找组件的<code>podspec</code>文件：</p>
