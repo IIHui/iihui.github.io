@@ -113,7 +113,13 @@ cat *.podspec(om[1]) 其中om[1]表示按修改时间排序后取第一个。om[
 因为glob限定符是zsh独有的特性，bash、sh等shell不支持。zsh允许在通配模式末尾用括号附加一组限定符，用来控制哪些匹配文件被保留、以什么顺序排列、以及取几个。其设计目的就是让文件名展开本身就能完成过去需要 ls、sort、head组合才能做的事。
 o是排序限定符，后面可以跟不同的字母指定排序键：
  om → 按修改时间。 oa → 按访问时间。 oc → 按inode变更时间。 oL → 按文件大小。 on → 按文件名（数字感知排序）。  默认om是从新到旧，如果想从旧到新，使用大写O：*(Om)。[1] 是下标限定符，[1,10] 表示取前10个。
-</content>
+字符串替换 在ruby中字符串替换使用sub方法，它只替换第一个匹配：
+s.name.to_s.sub(&amp;#39;_&amp;#39;, &amp;#39;.&amp;#39;)  s.name.to_s.sub(/_/, &amp;#39;.&amp;#39;) # 正则写法 方法sub只替换第一个匹配的，而gsub替换所有匹配。
+如果改用python替换可以使用：
+s = &amp;#34;my.pod.name&amp;#34; result = s.replace(&amp;#39;.&amp;#39;, &amp;#39;_&amp;#39;, 1) print(result) # =&amp;gt; my_pod.name 提取podspec版本 使用ruby脚本怎么读取podspec中的s.version或spec.verison？。podspec本质上是一个Ruby DSL文件，有两种常用方式读取其中的s.version。下面是使用cocoapods官方API实现：
+require &amp;#39;cocoapods-core&amp;#39;  spec = Pod::Specification.from_file(&amp;#39;MyPod.podspec&amp;#39;) puts spec.version # =&amp;gt; 1.0.0 直接使用正则表达式直接抽取：
+content = File.read(&amp;#39;MyPod.podspec&amp;#39;) version = content[/\.version\s*=\s*[&amp;#39;&amp;#34;]([^&amp;#39;&amp;#34;]&#43;)[&amp;#39;&amp;#34;]/, 1] puts version 如果使用python可以使用如下方式：
+import re from pathlib import Path  def get_podspec_info(directory=&amp;#39;.&amp;#39;):  files = sorted(Path(directory).glob(&amp;#39;*.podspec&amp;#39;))  if not files:  raise FileNotFoundError(f&amp;#39;No .podspec found in {Path(directory).resolve()}&amp;#39;)   content = files[0].read_text(encoding=&amp;#39;utf-8&amp;#39;)   def extract(key):  m = re.search(rf&amp;#39;\.{key}\s*=\s*[\&amp;#39;&amp;#34;]([^\&amp;#39;&amp;#34;]&#43;)[\&amp;#39;&amp;#34;]&amp;#39;, content)  return m.group(1) if m else None   return {  &amp;#39;name&amp;#39;: extract(&amp;#39;name&amp;#39;),  &amp;#39;version&amp;#39;: extract(&amp;#39;version&amp;#39;),  }   if __name__ == &amp;#39;__main__&amp;#39;:  info = get_podspec_info()  print(info) # {&amp;#39;name&amp;#39;: &amp;#39;MyPod&amp;#39;, &amp;#39;version&amp;#39;: &amp;#39;1.0.0&amp;#39;}  print(info[&amp;#39;name&amp;#39;]) # MyPod  print(info[&amp;#39;version&amp;#39;]) # 1.0.0 </content>
     </entry>
     
      <entry>
