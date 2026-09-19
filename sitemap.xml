@@ -107,7 +107,13 @@ sudo rm -rf /Library/Developer/PrivateFrameworks/CoreDevice.framework M1 iMac �
 3、最后更新Podfile.lock和Pods目录。
 查看podspec文件 使用cat命令查看当前目录下第一个podspec文件内容：
 cat &amp;#34;$(ls -t *.podspec | head -n 1)&amp;#34;  ls -t *.podspec：列出当前目录下所有.podspec文件，并按修改时间从新到旧排序。 head -n 1：取排序后的第一个，也就是最新修改的那个。 $(...)：把结果作为cat的参数。 加双引号是为了兼容文件名中有空格的情况。  如果要的是最旧的第一个用：
-cat &amp;#34;$(ls -tr *.podspec | head -n 1)&amp;#34; </content>
+cat &amp;#34;$(ls -tr *.podspec | head -n 1)&amp;#34; 因为macOS默认是zsh，也可以更简洁地写：
+cat *.podspec(om[1]) 其中om[1]表示按修改时间排序后取第一个。om[1]是zsh中Glob限定符（Glob Qualifier）的组合用法，它并非命令或缩写，而是zsh在文件名通配（globbing）阶段提供的内置排序与筛选语法。
+ o是排序标志，表示接下来的字母指定排序依据。 m表示按修改时间排序，默认从新到旧。 [1]表示从排序后的结果中取第1个（即最新的文件）。  所以*.podspec(om[1])的完整语义是：匹配所有.podspec文件→ 按修改时间从新到旧排序→取第一个（最新修改的）。这与ls -t *.podspec | head -1效果相同，但完全在shell的glob层面完成，不依赖外部命令。
+因为glob限定符是zsh独有的特性，bash、sh等shell不支持。zsh允许在通配模式末尾用括号附加一组限定符，用来控制哪些匹配文件被保留、以什么顺序排列、以及取几个。其设计目的就是让文件名展开本身就能完成过去需要 ls、sort、head组合才能做的事。
+o是排序限定符，后面可以跟不同的字母指定排序键：
+ om → 按修改时间。 oa → 按访问时间。 oc → 按inode变更时间。 oL → 按文件大小。 on → 按文件名（数字感知排序）。  默认om是从新到旧，如果想从旧到新，使用大写O：*(Om)。[1] 是下标限定符，[1,10] 表示取前10个。
+</content>
     </entry>
     
      <entry>
