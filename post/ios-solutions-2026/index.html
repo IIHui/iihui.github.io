@@ -241,7 +241,7 @@ code.has-jax {
     <i class="fa fa-file-word-o"></i>
 </span>
 <span class="post-meta-item-text">字数: </span>
-<span class="leancloud-visitors-count">9321</span>
+<span class="leancloud-visitors-count">9499</span>
 &nbsp; | &nbsp;
 <span class="post-meta-item-icon">
     <i class="fa fa-coffee"></i>
@@ -616,7 +616,30 @@ code.has-jax {
 </span></span><span style="display:flex;"><span>shutil<span style="color:#f92672">.</span>rmtree(<span style="color:#e6db74">&#39;release&#39;</span>, ignore_errors<span style="color:#f92672">=</span><span style="color:#66d9ef">True</span>)
 </span></span><span style="display:flex;"><span>os<span style="color:#f92672">.</span>makedirs(<span style="color:#e6db74">&#39;release&#39;</span>, exist_ok<span style="color:#f92672">=</span><span style="color:#66d9ef">True</span>)
 </span></span></code></pre></div><p>使用<code>os.makedirs(release_dir, exist_ok=True)</code>的意思是：递归创建目录，并且如果目录已经存在也不报错。</p>
-
+<h1 id="打包到目录">打包到目录</h1>
+<p>使用<code>tar</code>不会自动创建输出目录，如果<code>release</code>目录不存在会报错，所以必须先<code>os.makedirs('release', exist_ok=True)</code>。</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-python" data-lang="python"><span style="display:flex;"><span><span style="color:#f92672">import</span> os
+</span></span><span style="display:flex;"><span><span style="color:#f92672">import</span> subprocess
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">def</span> <span style="color:#a6e22e">pack_to_release</span>(name, version, source_dir<span style="color:#f92672">=</span><span style="color:#66d9ef">None</span>, release_dir<span style="color:#f92672">=</span><span style="color:#e6db74">&#39;release&#39;</span>):
+</span></span><span style="display:flex;"><span>    source_dir <span style="color:#f92672">=</span> source_dir <span style="color:#f92672">or</span> name
+</span></span><span style="display:flex;"><span>    os<span style="color:#f92672">.</span>makedirs(release_dir, exist_ok<span style="color:#f92672">=</span><span style="color:#66d9ef">True</span>)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    archive <span style="color:#f92672">=</span> os<span style="color:#f92672">.</span>path<span style="color:#f92672">.</span>join(release_dir, <span style="color:#e6db74">f</span><span style="color:#e6db74">&#39;</span><span style="color:#e6db74">{</span>name<span style="color:#e6db74">}{</span>version<span style="color:#e6db74">}</span><span style="color:#e6db74">.tar.gz&#39;</span>)
+</span></span><span style="display:flex;"><span>    cmd <span style="color:#f92672">=</span> [<span style="color:#e6db74">&#39;tar&#39;</span>, <span style="color:#e6db74">&#39;-czvf&#39;</span>, archive, source_dir]
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    subprocess<span style="color:#f92672">.</span>run(cmd, check<span style="color:#f92672">=</span><span style="color:#66d9ef">True</span>)
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">return</span> archive
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span> 
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">if</span> __name__ <span style="color:#f92672">==</span> <span style="color:#e6db74">&#39;__main__&#39;</span>:
+</span></span><span style="display:flex;"><span>    name <span style="color:#f92672">=</span> <span style="color:#e6db74">&#39;MyPod&#39;</span>
+</span></span><span style="display:flex;"><span>    version <span style="color:#f92672">=</span> <span style="color:#e6db74">&#39;1.0.0&#39;</span>
+</span></span><span style="display:flex;"><span>    path <span style="color:#f92672">=</span> pack_to_release(name, version)
+</span></span><span style="display:flex;"><span>    print(<span style="color:#e6db74">f</span><span style="color:#e6db74">&#39;打包完成: </span><span style="color:#e6db74">{</span>path<span style="color:#e6db74">}</span><span style="color:#e6db74">&#39;</span>)
+</span></span></code></pre></div><p>有时希望解压后直接是文件而不是<code>MyPod/</code>目录，用<code>-C</code>：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-python" data-lang="python"><span style="display:flex;"><span>subprocess<span style="color:#f92672">.</span>run([<span style="color:#e6db74">&#39;tar&#39;</span>, <span style="color:#e6db74">&#39;-czvf&#39;</span>, archive, <span style="color:#e6db74">&#39;-C&#39;</span>, name, <span style="color:#e6db74">&#39;.&#39;</span>], check<span style="color:#f92672">=</span><span style="color:#66d9ef">True</span>)
+</span></span></code></pre></div>
     </div>
     <footer class="post-footer">
         
@@ -793,6 +816,7 @@ code.has-jax {
     <li><a href="#字符串替换">字符串替换</a></li>
     <li><a href="#提取podspec版本">提取podspec版本</a></li>
     <li><a href="#python删除目录">python删除目录</a></li>
+    <li><a href="#打包到目录">打包到目录</a></li>
   </ul>
 </nav></div>
     </div>
