@@ -489,7 +489,7 @@ code.has-jax {
 </span></span><span style="display:flex;"><span><span style="color:#75715e"># 清空全部源码缓存</span>
 </span></span><span style="display:flex;"><span>pod cache clean --all
 </span></span></code></pre></div><h3 id="作用机制">作用机制</h3>
-<p>缓存包存储<code>~/Library/Caches/CocoaPods</code>的这个目录只缓存已经下载完成的组件源码压缩包（<code>podspec</code>索引不在这，索引在<code>~/.cocoapods/repos/repos-art</code>）。 适用普通CDN源、<code>cocoapods-art</code>私有制品源，缓存逻辑完全一致，只是下载源地址不同。</p>
+<p>缓存包存储<code>~/Library/Caches/CocoaPods</code>的这个目录只缓存已经下载完成的组件源码压缩包（<code>podspec</code>索引不在这，索引在<code>~/.cocoapods/repos/repos-art</code>）。 适用普通<code>CDN</code>源、<code>cocoapods-art</code>私有制品源，缓存逻辑完全一致，只是下载源地址不同。</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sh" data-lang="sh"><span style="display:flex;"><span>~/Library/Caches/CocoaPods
 </span></span><span style="display:flex;"><span>├─ Pods
 </span></span><span style="display:flex;"><span>│  ├─ Release       <span style="color:#75715e"># 正式release版本的zip包（绝大多数）</span>
@@ -511,7 +511,7 @@ code.has-jax {
 </ul>
 <p>缓存的生命周期:</p>
 <ul>
-<li>不会自动过期：一旦下载，永久保存在本地，<code>CocoaPods</code>不会自动清理。 不管删除项目、删除Pods目录，缓存zip依然保留。</li>
+<li>不会自动过期：一旦下载，永久保存在本地，<code>CocoaPods</code>不会自动清理。 不管删除项目、删除<code>Pods</code>目录，缓存zip依然保留。</li>
 <li>只有手动清理才会删除。</li>
 </ul>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sh" data-lang="sh"><span style="display:flex;"><span><span style="color:#75715e"># 删除指定库缓存</span>
@@ -520,7 +520,7 @@ code.has-jax {
 </span></span><span style="display:flex;"><span>pod cache clean --all
 </span></span></code></pre></div><p>目录<code>~/Library/Caches/CocoaPods/Sources</code>是临时解压目录：</p>
 <ul>
-<li>pod安装时：把缓存zip解压到<code>Sources</code>目录，再复制代码到项目<code>Pods</code>。</li>
+<li><code>pod</code>安装时：把缓存zip解压到<code>Sources</code>目录，再复制代码到项目<code>Pods</code>。</li>
 <li>安装结束，会清理<code>Sources</code>下临时文件。真正持久缓存的是<code>Release/External</code>下面的<code>zip</code>压缩包，不是解压后的源码。</li>
 </ul>
 <h2 id="索引库">索引库</h2>
@@ -531,7 +531,7 @@ code.has-jax {
 <h2 id="搜索索引缓存">搜索索引缓存</h2>
 <p>命令<code>pod search</code>使用的搜索索引缓存文件，存放在<code>~/Library/Caches/CocoaPods/search_index.json</code>。直接打开这个<code>json</code>可以查看本地搜索索引缓存。 如果搜不到新库，可以删除该文件，重新执行<code>pod search xxx</code>重新生成索引缓存。</p>
 <p>命令<code>pod update</code>完整拉取流程分两步，第一步是拉索引，第二步是拉源码。<code>pod update</code>会忽略<code>Podfile.lock</code>，去源里查找每个pod允许范围内的最新版本（<code>pod 'xxx', '~&gt; 2.0'</code>），而不是沿用<code>podfile.lock</code>里的固定版本。</p>
-<p>1、先访问<code>Podfile</code>配置的spec源（CDN/git 私有源，获取最新pod<code>s</code>pec索引（版本信息）。</p>
+<p>1、先访问<code>Podfile</code>配置的<code>spec</code>源（<code>CDN/git</code>私有源，获取最新<code>podspec</code>索引（版本信息）。</p>
 <p>2、根据<code>podspec</code>里面记录的源码地址去下载源码，优先使用本地源码缓存。</p>
 <p>3、最后更新<code>Podfile.lock</code>和<code>Pods</code>目录。</p>
 <h1 id="查看podspec文件">查看podspec文件</h1>
@@ -575,7 +575,7 @@ code.has-jax {
 </span></span><span style="display:flex;"><span>result <span style="color:#f92672">=</span> s<span style="color:#f92672">.</span>replace(<span style="color:#e6db74">&#39;.&#39;</span>, <span style="color:#e6db74">&#39;_&#39;</span>, <span style="color:#ae81ff">1</span>)
 </span></span><span style="display:flex;"><span>print(result)  <span style="color:#75715e"># =&gt; my_pod.name</span>
 </span></span></code></pre></div><h1 id="提取podspec版本">提取podspec版本</h1>
-<p>使用ruby脚本怎么读取<code>podspec</code>中的<code>s.version</code>或<code>spec.verison</code>？。<code>podspec</code>本质上是一个<code>Ruby DSL</code>文件，有两种常用方式读取其中的<code>s.version</code>。下面是使用cocoapods官方API实现：</p>
+<p>使用ruby脚本怎么读取<code>podspec</code>中的<code>s.version</code>或<code>spec.verison</code>？。<code>podspec</code>本质上是一个<code>Ruby DSL</code>文件，有两种常用方式读取其中的<code>s.version</code>。下面是使用<code>cocoapods</code>官方API实现：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ruby" data-lang="ruby"><span style="display:flex;"><span>require <span style="color:#e6db74">&#39;cocoapods-core&#39;</span>
 </span></span><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span>spec <span style="color:#f92672">=</span> <span style="color:#66d9ef">Pod</span><span style="color:#f92672">::</span><span style="color:#66d9ef">Specification</span><span style="color:#f92672">.</span>from_file(<span style="color:#e6db74">&#39;MyPod.podspec&#39;</span>)
