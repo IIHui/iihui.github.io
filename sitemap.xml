@@ -98,10 +98,10 @@ sudo rm -rf /Library/Developer/PrivateFrameworks/CoreDevice.framework M1 iMac �
 如果未命中缓存：
  发起网络请求，从podspec中配置的远端下载组件压缩包。 压缩包下载成功后，存放到上面的缓存目录永久保存。 然后解压到项目Pods目录。  缓存的生命周期:
  不会自动过期：一旦下载，永久保存在本地，CocoaPods不会自动清理。 不管删除项目、删除Pods目录，缓压缩包依然保留。 只有手动清理才会删除已下载的缓存压缩包。  # 删除指定库缓存 pod cache clean xxx # 清空全部压缩包缓存 pod cache clean --all 但需要注意的是，目录~/Library/Caches/CocoaPods/Sources仅是临时解压目录：
- pod安装时：把缓存压缩包解压到Sources目录，再复制到项目Pods。 安装结束，会清理Sources目录下的临时文件。真正持久缓存的是Release/External下面的压缩包，不是解压后的源码。  在~/Library/Caches/CocoaPods/Pods/Release目录下，标准的pod组件（从CDN/art仓库下载tar压缩包）， 命名规则：PodName/版本-文件哈希值/Source/。其中，Source文件夹存放的是解压完成后的组件包（后续pod install/update直接复制这个目录到项目Pods，不再重新下载）。
+ pod安装时：把缓存压缩包解压到Sources目录，再复制到项目Pods。 安装结束，会清理Sources目录下的临时文件。真正持久缓存的是Release/External下面的压缩包，不是解压后的源码。  在~/Library/Caches/CocoaPods/Pods/Release目录下，标准的pod组件（即从CDN或cocoapods-art仓库下载tar压缩包）， 命名规则为：PodName/版本-文件哈希值/Source/。Source文件夹存放的是解压完成后的组件包，后续执行pod install/update时，如果命中缓存，则会直接复制这个目录到项目Pods，不再重新下载。
 ~/Library/Caches/CocoaPods ├── Pods │ ├── Release # 【最核心】Release版本pod源码缓存 │ │ └── Pod名称/版本-hash/Source/ # 解压后的源码 │ └── External # git/自定义url拉取的pod（非release tar包） │ └── Pod名称/hash/ └── tmp # 临时下载目录（重点！未命中缓存的压缩包在这里） 缓存校验：CocoaPods通过tar包的哈希判断缓存是否命中，不是单纯看版本号。
-目录~/Library/Caches/CocoaPods/Pods/External来源不是release tar包：pod &#39;xxx&#39;, :git =&amp;gt; &#39;xxx&#39;、自定义url源码包，会存在这里，按commit hash区分。
-目录~/Library/Caches/CocoaPods/tmp是一个临时目录，未命中缓存时，tar压缩包先下载到其下的downloads目录~/Library/Caches/CocoaPods/tmp/downloads/。
+目录~/Library/Caches/CocoaPods/Pods/External专门缓存非标准Spec Release tar包的Pod源码：也就是通过Git或自定义HTTP URL引入的依赖，不是从spec仓库（CDN或cocoapods-art）分发的release压缩包。即标准release包存Release目录；git或自定义url源码时存External目录，但:path本地Pod不会进这个缓存，因为它是直接读取本地文件夹。
+# git仓库 pod &amp;#39;XXX&amp;#39;, :git =&amp;gt; &amp;#39;https://xxx.git&amp;#39; pod &amp;#39;XXX&amp;#39;, :git =&amp;gt; &amp;#39;https://xxx.git&amp;#39;, :tag =&amp;gt; &amp;#39;1.0.0&amp;#39; pod &amp;#39;XXX&amp;#39;, :git =&amp;gt; &amp;#39;https://xxx.git&amp;#39;, :commit =&amp;gt; &amp;#39;abc123&amp;#39; pod &amp;#39;XXX&amp;#39;, :git =&amp;gt; &amp;#39;https://xxx.git&amp;#39;, :branch =&amp;gt; &amp;#39;dev&amp;#39;  # 直接指定源码压缩包URL（非spec托管的tar） pod &amp;#39;XXX&amp;#39;, :http =&amp;gt; &amp;#39;https://xxx/custom-source.zip&amp;#39; 目录~/Library/Caches/CocoaPods/tmp是一个临时目录，未命中缓存时，tar压缩包先下载到其下的downloads目录~/Library/Caches/CocoaPods/tmp/downloads/。
   下载阶段：网络拉取tar包→存tmp临时文件（随机命名，.tmp后缀）
   校验阶段：下载完成后校验sha256哈希。若校验成功后，解压到Pods/Release/xxx永久缓存，否则直接删除tmp临时文件。
   异常场景：网络中断、pod命令ctrl&#43;c 中断，tmp里会残留未完成的压缩包碎片。

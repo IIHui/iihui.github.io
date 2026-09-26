@@ -241,13 +241,13 @@ code.has-jax {
     <i class="fa fa-file-word-o"></i>
 </span>
 <span class="post-meta-item-text">字数: </span>
-<span class="leancloud-visitors-count">10428</span>
+<span class="leancloud-visitors-count">10627</span>
 &nbsp; | &nbsp;
 <span class="post-meta-item-icon">
     <i class="fa fa-coffee"></i>
 </span>
 <span class="post-meta-item-text">阅读: </span>
-<span class="leancloud-visitors-count">21 分钟</span>
+<span class="leancloud-visitors-count">22 分钟</span>
 </span>
       </div>
     </header>
@@ -518,7 +518,7 @@ code.has-jax {
 <li><code>pod</code>安装时：把缓存压缩包解压到<code>Sources</code>目录，再复制到项目<code>Pods</code>。</li>
 <li>安装结束，会清理<code>Sources</code>目录下的临时文件。真正持久缓存的是<code>Release/External</code>下面的压缩包，不是解压后的源码。</li>
 </ul>
-<p>在<code>~/Library/Caches/CocoaPods/Pods/Release</code>目录下，标准的<code>pod</code>组件（从CDN/art仓库下载tar压缩包）， 命名规则：<code>PodName/版本-文件哈希值/Source/</code>。其中，<code>Source</code>文件夹存放的是解压完成后的组件包（后续<code>pod install/update</code>直接复制这个目录到项目<code>Pods</code>，不再重新下载）。</p>
+<p>在<code>~/Library/Caches/CocoaPods/Pods/Release</code>目录下，标准的<code>pod</code>组件（即从<code>CDN</code>或<code>cocoapods-art</code>仓库下载tar压缩包）， 命名规则为：<code>PodName/版本-文件哈希值/Source/</code>。<code>Source</code>文件夹<font color=red>存放的是解压完成后的组件包</font>，后续执行<code>pod install/update</code>时，如果命中缓存，则会直接复制这个目录到项目<code>Pods</code>，不再重新下载。</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sh" data-lang="sh"><span style="display:flex;"><span>~/Library/Caches/CocoaPods
 </span></span><span style="display:flex;"><span>├── Pods
 </span></span><span style="display:flex;"><span>│   ├── Release                 <span style="color:#75715e"># 【最核心】Release版本pod源码缓存</span>
@@ -527,8 +527,16 @@ code.has-jax {
 </span></span><span style="display:flex;"><span>│       └── Pod名称/hash/
 </span></span><span style="display:flex;"><span>└── tmp                         <span style="color:#75715e"># 临时下载目录（重点！未命中缓存的压缩包在这里）</span>
 </span></span></code></pre></div><p>缓存校验：<code>CocoaPods</code>通过<code>tar</code>包的哈希判断缓存是否命中，不是单纯看版本号。</p>
-<p>目录<code>~/Library/Caches/CocoaPods/Pods/External</code>来源不是<code>release tar</code>包：<code>pod 'xxx', :git =&gt; 'xxx'</code>、自定义url源码包，会存在这里，按<code>commit hash</code>区分。</p>
-<p>目录<code>~/Library/Caches/CocoaPods/tmp</code>是一个临时目录，未命中缓存时，<code>tar</code>压缩包先下载到其下的downloads目录<code>~/Library/Caches/CocoaPods/tmp/downloads/</code>。</p>
+<p>目录<code>~/Library/Caches/CocoaPods/Pods/External</code>专门缓存非标准<code>Spec Release tar</code>包的Pod源码：也就是通过<code>Git</code>或自定义<code>HTTP URL</code>引入的依赖，不是从<code>spec</code>仓库（CDN或<code>cocoapods-art</code>）分发的<code>release</code>压缩包。即标准<code>release</code>包存<code>Release</code>目录；git或自定义url源码时存<code>External</code>目录，但<code>:path</code>本地Pod不会进这个缓存，因为它是直接读取本地文件夹。</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sh" data-lang="sh"><span style="display:flex;"><span><span style="color:#75715e"># git仓库</span>
+</span></span><span style="display:flex;"><span>pod <span style="color:#e6db74">&#39;XXX&#39;</span>, :git <span style="color:#f92672">=</span>&gt; <span style="color:#e6db74">&#39;https://xxx.git&#39;</span>
+</span></span><span style="display:flex;"><span>pod <span style="color:#e6db74">&#39;XXX&#39;</span>, :git <span style="color:#f92672">=</span>&gt; <span style="color:#e6db74">&#39;https://xxx.git&#39;</span>, :tag <span style="color:#f92672">=</span>&gt; <span style="color:#e6db74">&#39;1.0.0&#39;</span>
+</span></span><span style="display:flex;"><span>pod <span style="color:#e6db74">&#39;XXX&#39;</span>, :git <span style="color:#f92672">=</span>&gt; <span style="color:#e6db74">&#39;https://xxx.git&#39;</span>, :commit <span style="color:#f92672">=</span>&gt; <span style="color:#e6db74">&#39;abc123&#39;</span>
+</span></span><span style="display:flex;"><span>pod <span style="color:#e6db74">&#39;XXX&#39;</span>, :git <span style="color:#f92672">=</span>&gt; <span style="color:#e6db74">&#39;https://xxx.git&#39;</span>, :branch <span style="color:#f92672">=</span>&gt; <span style="color:#e6db74">&#39;dev&#39;</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 直接指定源码压缩包URL（非spec托管的tar）</span>
+</span></span><span style="display:flex;"><span>pod <span style="color:#e6db74">&#39;XXX&#39;</span>, :http <span style="color:#f92672">=</span>&gt; <span style="color:#e6db74">&#39;https://xxx/custom-source.zip&#39;</span>
+</span></span></code></pre></div><p>目录<code>~/Library/Caches/CocoaPods/tmp</code>是一个临时目录，未命中缓存时，<code>tar</code>压缩包先下载到其下的downloads目录<code>~/Library/Caches/CocoaPods/tmp/downloads/</code>。</p>
 <ul>
 <li>
 <p>下载阶段：网络拉取tar包→存tmp临时文件（随机命名，<code>.tmp</code>后缀）</p>
