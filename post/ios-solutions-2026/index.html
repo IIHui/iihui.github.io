@@ -241,13 +241,13 @@ code.has-jax {
     <i class="fa fa-file-word-o"></i>
 </span>
 <span class="post-meta-item-text">字数: </span>
-<span class="leancloud-visitors-count">9510</span>
+<span class="leancloud-visitors-count">9559</span>
 &nbsp; | &nbsp;
 <span class="post-meta-item-icon">
     <i class="fa fa-coffee"></i>
 </span>
 <span class="post-meta-item-text">阅读: </span>
-<span class="leancloud-visitors-count">19 分钟</span>
+<span class="leancloud-visitors-count">20 分钟</span>
 </span>
       </div>
     </header>
@@ -467,17 +467,17 @@ code.has-jax {
 <li>辅助功能→显示：打开<strong>减弱动态效果、降低透明度</strong>。</li>
 </ul>
 <h1 id="cocoapods-cache">cocoapods cache</h1>
-<p><code>cocoapods</code>的缓存分为两种，一种是<code>spec</code>索引库缓存（<code>podspec</code>索引，组件元信息），另一种是源码下载缓存（组件源码压缩包）。</p>
+<p><code>cocoapods</code>的缓存分为两种，一种是<code>spec</code>索引库缓存（<code>podspec</code>索引，存储的是组件元信息），另一种是源码下载缓存（组件源码的压缩包）。</p>
 <ul>
-<li>spec索引库缓存的存储位置为<code>~/.cocoapods/repos</code>，存放的是各个源的<code>podspec</code>索引文件（<code>CDN</code>模式现在不再完整拉取整个repo）。</li>
-<li>源码下载缓存的存储位置为<code>~/Library/Caches/CocoaPods</code>，<code>pod cache</code>命令管理的就是这个缓存。</li>
+<li><code>spec</code>索引库缓存的存储位置为<code>~/.cocoapods/repos</code>，存放的是各个源的<code>podspec</code>索引文件（<code>CDN</code>模式现在不再完整拉取整个repo）。</li>
+<li>源码下载缓存的存储位置为<code>~/Library/Caches/CocoaPods</code>，使用<code>pod cache</code>命令时管理的就是这个缓存。</li>
 </ul>
 <h2 id="源码缓存">源码缓存</h2>
 <p>命令<code>pod cache</code>用于处理已经下载好的组件源码包缓存，而<code>pod repo</code>用于组件元信息索引库podspec。下面是查看某个组件的源码包缓存的命令：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sh" data-lang="sh"><span style="display:flex;"><span><span style="color:#75715e"># 查看全部缓存</span>
 </span></span><span style="display:flex;"><span>pod cache list
 </span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span><span style="color:#75715e"># 只查看指定组件（比如 Alamofire）</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 只查看指定组件（比如Alamofire）</span>
 </span></span><span style="display:flex;"><span>pod cache list Alamofire
 </span></span><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span><span style="color:#75715e"># 简短输出，只打印缓存相对路径</span>
@@ -489,39 +489,34 @@ code.has-jax {
 </span></span><span style="display:flex;"><span><span style="color:#75715e"># 清空全部源码缓存</span>
 </span></span><span style="display:flex;"><span>pod cache clean --all
 </span></span></code></pre></div><h3 id="作用机制">作用机制</h3>
-<p>缓存包存储<code>~/Library/Caches/CocoaPods</code>的这个目录只缓存已经下载完成的组件源码压缩包（<code>podspec</code>索引不在这，索引在<code>~/.cocoapods/repos/repos-art</code>）。 适用普通<code>CDN</code>源、<code>cocoapods-art</code>私有制品源，缓存逻辑完全一致，只是下载源地址不同。</p>
+<p>缓存包存储<code>~/Library/Caches/CocoaPods</code>的这个目录只缓存已经下载完成的组件压缩包（<code>podspec</code>索引不在这，索引在<code>~/.cocoapods/repos/repos-art</code>）。 普通<code>CDN</code>源、<code>cocoapods-art</code>私有制品源，缓存逻辑完全一致，只是下载的源地址不同。</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sh" data-lang="sh"><span style="display:flex;"><span>~/Library/Caches/CocoaPods
 </span></span><span style="display:flex;"><span>├─ Pods
 </span></span><span style="display:flex;"><span>│  ├─ Release       <span style="color:#75715e"># 正式release版本的zip包（绝大多数）</span>
 </span></span><span style="display:flex;"><span>│  │  └─ 库名/版本号/xxx.zip
-</span></span><span style="display:flex;"><span>│  └─ External       <span style="color:#75715e"># git分支/commit源码（pod指定git、branch、commit的情况）</span>
+</span></span><span style="display:flex;"><span>│  └─ External       <span style="color:#75715e"># git分支/commit源码（pod指定git、branch、commit情况）</span>
 </span></span><span style="display:flex;"><span>├─ Sources           <span style="color:#75715e"># 临时解压目录（pod安装过程临时用，执行完一般清理）</span>
 </span></span><span style="display:flex;"><span>└─ ...其他临时文件
-</span></span></code></pre></div><p>首先<code>CocoaPods</code>从<code>podspec</code>拿到源码下载地址。然后到<code>~/Library/Caches/CocoaPods/Pods/Release/库名/版本号/</code>查找完整zip包。如果命中缓存：</p>
-<ul>
-<li>不再发起网络下载请求。</li>
-<li>直接从本地缓存zip解压到项目<code>Pods/</code>目录。</li>
-<li>极大加速<code>pod install/update</code>。</li>
-</ul>
+</span></span></code></pre></div><p>首先<code>CocoaPods</code>从<code>podspec</code>拿到源码下载地址。然后到<code>~/Library/Caches/CocoaPods/Pods/Release/库名/版本号/</code>查找完整压缩包。如果命中缓存，就不再发起网络下载请求，直接从本地缓存压缩包解压到项目<code>Pods/</code>目录，这样能够极大加速<code>pod install/update</code>时间。</p>
 <p>如果未命中缓存：</p>
 <ul>
-<li>发起网络请求，从远端下载源码zip。</li>
-<li>下载成功后，写入上面的缓存目录永久保存。</li>
+<li>发起网络请求，从<code>podspec</code>中配置的远端下载组件压缩包。</li>
+<li>压缩包下载成功后，存放到上面的缓存目录永久保存。</li>
 <li>然后解压到项目<code>Pods</code>目录。</li>
 </ul>
 <p>缓存的生命周期:</p>
 <ul>
-<li>不会自动过期：一旦下载，永久保存在本地，<code>CocoaPods</code>不会自动清理。 不管删除项目、删除<code>Pods</code>目录，缓存zip依然保留。</li>
-<li>只有手动清理才会删除。</li>
+<li>不会自动过期：一旦下载，永久保存在本地，<code>CocoaPods</code>不会自动清理。 不管删除项目、删除<code>Pods</code>目录，缓压缩包依然保留。</li>
+<li>只有手动清理才会删除已下载的缓存压缩包。</li>
 </ul>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sh" data-lang="sh"><span style="display:flex;"><span><span style="color:#75715e"># 删除指定库缓存</span>
-</span></span><span style="display:flex;"><span>pod cache clean SDKName
-</span></span><span style="display:flex;"><span><span style="color:#75715e"># 清空全部源码缓存</span>
+</span></span><span style="display:flex;"><span>pod cache clean xxx
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 清空全部压缩包缓存</span>
 </span></span><span style="display:flex;"><span>pod cache clean --all
-</span></span></code></pre></div><p>目录<code>~/Library/Caches/CocoaPods/Sources</code>是临时解压目录：</p>
+</span></span></code></pre></div><p>但需要注意的是，目录<code>~/Library/Caches/CocoaPods/Sources</code>仅<font color="#de7802">是临时解压目录</font>：</p>
 <ul>
-<li><code>pod</code>安装时：把缓存zip解压到<code>Sources</code>目录，再复制代码到项目<code>Pods</code>。</li>
-<li>安装结束，会清理<code>Sources</code>下临时文件。真正持久缓存的是<code>Release/External</code>下面的<code>zip</code>压缩包，不是解压后的源码。</li>
+<li><code>pod</code>安装时：把缓存压缩包解压到<code>Sources</code>目录，再复制到项目<code>Pods</code>。</li>
+<li>安装结束，会清理<code>Sources</code>目录下的临时文件。真正持久缓存的是<code>Release/External</code>下面的压缩包，不是解压后的源码。</li>
 </ul>
 <h2 id="索引库">索引库</h2>
 <p>索引库保存了组件版本信息、<code>podspec</code>描述文件（<code>pod search</code> 依赖的索引）。查看本地所有<code>spec</code>索引库源的命令为<code>pod repo list</code>，本地<code>repo</code>索引源的存储目录为<code>~/.cocoapods/repos/</code>。进入某个repo目录，可以使用如下命令查找组件的<code>podspec</code>文件：</p>
@@ -617,7 +612,7 @@ code.has-jax {
 </span></span><span style="display:flex;"><span>os<span style="color:#f92672">.</span>makedirs(<span style="color:#e6db74">&#39;release&#39;</span>, exist_ok<span style="color:#f92672">=</span><span style="color:#66d9ef">True</span>)
 </span></span></code></pre></div><p>使用<code>os.makedirs(release_dir, exist_ok=True)</code>的意思是：递归创建目录，并且如果目录已经存在也不报错。</p>
 <h1 id="tar打包">tar打包</h1>
-<p>在python中使用<code>tar</code>不会自动创建输出目录，如果<code>release</code>目录不存在会报错，所以必须先<code>os.makedirs('release', exist_ok=True)</code>。</p>
+<p>在python中使用<code>tar</code>命令时不会自动创建目标目录，如果目标目录不存在会报错，所以必须先创建目标目录，即使用<code>os.makedirs('release', exist_ok=True)</code>。</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-python" data-lang="python"><span style="display:flex;"><span><span style="color:#f92672">import</span> os
 </span></span><span style="display:flex;"><span><span style="color:#f92672">import</span> subprocess
 </span></span><span style="display:flex;"><span>
