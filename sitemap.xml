@@ -91,23 +91,23 @@ Error loading required libraries. If there is an ongoing installation please wai
 安装Xcode时会往/Library/Developer/PrivateFrameworks/放置CoreDevice.framework。如果这里残留了高版本的CoreDevice，它会强行要求新的Mercury符号。简单的解决方案是先关闭所有Xcode、simulator、xcodebuild：
 pkill -9 Xcode Simulator xcodebuild 接着移除这个高版本CoreDevice，然后在重新打开Xcode，此时Xcode会尝试重新部署一份和自身配套的 CoreDevice，然后就不再出现闪退了：
 sudo rm -rf /Library/Developer/PrivateFrameworks/CoreDevice.framework M1 iMac 闪屏 使用M1 iMac 2021款有屏幕排线/液晶硬件通病，表现为随温度升高出现闪烁、横向条纹，冷机正常，用一会就闪。如果苹果开机诊断界面也闪屏，基本就是硬件故障，软件修不好。
- 断电静置关机→拔掉电源线，等待3~5 分钟，重新插电开机，释放残余供电。 显示器设置调整系统设置→显示器。   关闭自动亮度、原彩显示 (True Tone)。 关闭夜览。 降低屏幕亮度，部分低亮度下的PWM闪烁会缓解。 辅助功能→显示：打开减弱动态效果、降低透明度。  cocoapods cache cocoapods的缓存分为两种，一种是spec索引库缓存（podspec索引，存储的是组件元信息），另一种是源码下载缓存（组件源码的压缩包）。
- spec索引库缓存的存储位置为~/.cocoapods/repos，存放的是各个源的podspec索引文件（CDN模式现在不再完整拉取整个repo）。 源码下载缓存的存储位置为~/Library/Caches/CocoaPods，使用pod cache命令时管理的就是这个缓存。  源码缓存 命令pod cache用于处理已经下载好的组件源码包缓存，而pod repo用于组件元信息索引库podspec。下面是查看某个组件的源码包缓存的命令：
-# 查看全部缓存 pod cache list  # 只查看指定组件（比如Alamofire） pod cache list Alamofire  # 简短输出，只打印缓存相对路径 pod cache list Alamofire --short  # 删除指定组件源码缓存 pod cache clean Alamofire  # 清空全部源码缓存 pod cache clean --all 作用机制 缓存包存储~/Library/Caches/CocoaPods的这个目录只缓存已经下载完成的组件压缩包（podspec索引不在这，索引在~/.cocoapods/repos/repos-art）。 普通CDN源、cocoapods-art私有制品源，缓存逻辑完全一致，只是下载的源地址不同。
+ 断电静置关机→拔掉电源线，等待3~5 分钟，重新插电开机，释放残余供电。 显示器设置调整系统设置→显示器。   关闭自动亮度、原彩显示 (True Tone)。 关闭夜览。 降低屏幕亮度，部分低亮度下的PWM闪烁会缓解。 辅助功能→显示：打开减弱动态效果、降低透明度。  cocoapods cache 工具cocoapods的缓存分为两种，一种是podspec索引库缓存（每个podspec文件存储的是组件元信息），另一种是源码下载缓存（组件源码的压缩包）。
+ spec索引库缓存的存储位置为~/.cocoapods/repos，存放的是各个源的podspec索引文件（CDN模式现在不再完整拉取整个repo）。 下载的组件压缩包缓存的存储位置为~/Library/Caches/CocoaPods，使用pod cache命令时管理的就是这个缓存。  组件包缓存 命令pod cache用于管理已经下载好的组件包缓存，而pod repo用于管理组件元信息索引库podspec。下面是查看某个组件包缓存的命令：
+# 查看全部缓存 pod cache list  # 只查看指定组件（比如Alamofire） pod cache list Alamofire  # 简短输出，只打印缓存相对路径 pod cache list Alamofire --short  # 删除指定组件源码缓存 pod cache clean Alamofire  # 清空全部源码缓存 pod cache clean --all 作用机制 缓存包存储~/Library/Caches/CocoaPods的这个目录只缓存已经下载完成的组件压缩包（podspec索引不在这，是在~/.cocoapods/repos目录下）。 普通CDN源、cocoapods-art私有制品源，缓存逻辑完全一致，只是下载的源地址不同。
 ~/Library/Caches/CocoaPods ├─ Pods │ ├─ Release # 正式release版本的pod源码缓存 │ │ └─ 库名/版本-hash/xxx.zip │ └─ External # git分支/commit源码（pod指定git、branch、commit情况） ├─ Sources # 临时解压目录（pod安装过程临时用，执行完一般清理） └─ ...其他临时文件 首先CocoaPods从podspec拿到源码下载地址。然后到~/Library/Caches/CocoaPods/Pods/Release/库名/版本号/查找完整压缩包。如果命中缓存，就不再发起网络下载请求，直接从本地缓存压缩包解压到项目Pods/目录，这样能够极大加速pod install/update时间。
 如果未命中缓存：
  发起网络请求，从podspec中配置的远端下载组件压缩包。 压缩包下载成功后，存放到上面的缓存目录永久保存。 然后解压到项目Pods目录。  缓存的生命周期:
  不会自动过期：一旦下载，永久保存在本地，CocoaPods不会自动清理。 不管删除项目、删除Pods目录，缓压缩包依然保留。 只有手动清理才会删除已下载的缓存压缩包。  # 删除指定库缓存 pod cache clean xxx # 清空全部压缩包缓存 pod cache clean --all 但需要注意的是，目录~/Library/Caches/CocoaPods/Sources仅是临时解压目录：
- pod安装时：把缓存压缩包解压到Sources目录，再复制到项目Pods。 安装结束，会清理Sources目录下的临时文件。真正持久缓存的是Release/External下面的压缩包，不是解压后的源码。  Pods/Release目录下，标准pod（从CDN/art仓库下载tar压缩包）， 命名规则：PodName/版本-文件哈希值/Source/。其中，Source文件夹：解压完成后的源码（后续pod install/update直接复制这个目录到项目 Pods，不再重新下载）。
+ pod安装时：把缓存压缩包解压到Sources目录，再复制到项目Pods。 安装结束，会清理Sources目录下的临时文件。真正持久缓存的是Release/External下面的压缩包，不是解压后的源码。  在~/Library/Caches/CocoaPods/Pods/Release目录下，标准的pod组件（从CDN/art仓库下载tar压缩包）， 命名规则：PodName/版本-文件哈希值/Source/。其中，Source文件夹存放的是解压完成后的组件包（后续pod install/update直接复制这个目录到项目Pods，不再重新下载）。
 ~/Library/Caches/CocoaPods ├── Pods │ ├── Release # 【最核心】Release版本pod源码缓存 │ │ └── Pod名称/版本-hash/Source/ # 解压后的源码 │ └── External # git/自定义url拉取的pod（非release tar包） │ └── Pod名称/hash/ └── tmp # 临时下载目录（重点！未命中缓存的压缩包在这里） 缓存校验：CocoaPods通过tar包的哈希判断缓存是否命中，不是单纯看版本号。
-目录Pods/External来源不是release tar包：pod &#39;xxx&#39;, :git =&amp;gt; &#39;xxx&#39;、自定义url源码包，会存在这里，按commit hash区分。
-tmp（临时目录，关键），未命中缓存时，tar压缩包先下载到这里路径：~/Library/Caches/CocoaPods/tmp/downloads/。
+目录~/Library/Caches/CocoaPods/Pods/External来源不是release tar包：pod &#39;xxx&#39;, :git =&amp;gt; &#39;xxx&#39;、自定义url源码包，会存在这里，按commit hash区分。
+目录~/Library/Caches/CocoaPods/tmp是一个临时目录，未命中缓存时，tar压缩包先下载到其下的downloads目录~/Library/Caches/CocoaPods/tmp/downloads/。
   下载阶段：网络拉取tar包→存tmp临时文件（随机命名，.tmp后缀）
-  校验阶段：下载完成后校验sha256哈希，校验成功后，解压到Pods/Release/xxx永久缓存；校验失败直接删除tmp临时文件。
+  校验阶段：下载完成后校验sha256哈希。若校验成功后，解压到Pods/Release/xxx永久缓存，否则直接删除tmp临时文件。
   异常场景：网络中断、pod命令ctrl&#43;c 中断，tmp里会残留未完成的压缩包碎片。
   下载成功后，tmp里的原始tar压缩包会被删除，只保留解压后的源码在Release。
-  CocoaPods不会长期保存tar压缩包，永久缓存的是解压后的源码文件夹，不是压缩包本身。补充：很多人误区：以为Release目录存tar包，Release只存解压源码，原始tar包只短暂存在tmp。
-索引库 索引库保存了组件版本信息、podspec描述文件（pod search 依赖的索引）。查看本地所有spec索引库源的命令为pod repo list，本地repo索引源的存储目录为~/.cocoapods/repos/。进入某个repo目录，可以使用如下命令查找组件的podspec文件：
+  需要注意的是CocoaPods不会长期保存tar压缩包，永久缓存的是解压后的源码文件夹，不是压缩包本身。补充：很多人误区：以为Release目录存tar包，Release只存解压源码，原始tar包只短暂存在tmp。
+podspec索引库 索引库保存了组件版本信息、podspec描述文件（pod search 依赖的索引）。查看本地所有spec索引库源的命令为pod repo list，本地repo索引源的存储目录为~/.cocoapods/repos/。进入某个repo目录，可以使用如下命令查找组件的podspec文件：
 # 示例：在cocoapods官方源中查找 Alamofire find ~/.cocoapods/repos/cocoapods -name &amp;#34;Alamofire&amp;#34; 需要注意的是CocoaPods 1.8&#43;开始默认使用CDN模式，此时~/.cocoapods/repos目录很小，不是完整的spce仓库，不会完整下载整个Specs仓库，只是少量按需下载的podspec缓存。
 搜索索引缓存 命令pod search使用的搜索索引缓存文件，存放在~/Library/Caches/CocoaPods/search_index.json。直接打开这个json可以查看本地搜索索引缓存。 如果搜不到新库，可以删除该文件，重新执行pod search xxx重新生成索引缓存。
 命令pod update完整拉取流程分两步，第一步是拉索引，第二步是拉源码。pod update会忽略Podfile.lock，去源里查找每个pod允许范围内的最新版本（pod &#39;xxx&#39;, &#39;~&amp;gt; 2.0&#39;），而不是沿用podfile.lock里的固定版本。
