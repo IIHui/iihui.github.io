@@ -241,7 +241,7 @@ code.has-jax {
     <i class="fa fa-file-word-o"></i>
 </span>
 <span class="post-meta-item-text">字数: </span>
-<span class="leancloud-visitors-count">10581</span>
+<span class="leancloud-visitors-count">10589</span>
 &nbsp; | &nbsp;
 <span class="post-meta-item-icon">
     <i class="fa fa-coffee"></i>
@@ -526,7 +526,7 @@ code.has-jax {
 </span></span><span style="display:flex;"><span>│   └── External                <span style="color:#75715e"># git或自定义url拉取的pod（非release tar包）</span>
 </span></span><span style="display:flex;"><span>│       └── Pod名称/hash/
 </span></span><span style="display:flex;"><span>└── tmp                         <span style="color:#75715e"># 临时下载目录（未命中缓存的压缩包在这里）</span>
-</span></span></code></pre></div><p>目录<code>~/Library/Caches/CocoaPods/Pods/External</code>专门缓存非标准<code>Spec Release tar</code>包的Pod源码：也就是通过<code>Git</code>或自定义<code>HTTP URL</code>引入的依赖，不是从<code>spec</code>仓库（CDN或<code>cocoapods-art</code>）分发的<code>release</code>压缩包。即标准<code>release</code>包存<code>Release</code>目录；git或自定义url源码时存<code>External</code>目录，但<code>:path</code>本地Pod不会进这个缓存，因为它是直接读取本地文件夹。</p>
+</span></span></code></pre></div><p>目录<code>~/Library/Caches/CocoaPods/Pods/External</code>专门缓存非标准<code>Spec Release tar</code>包的<code>Pod</code>源码：也就是通过<code>Git</code>或自定义<code>HTTP URL</code>引入的依赖，不是从<code>spec</code>仓库（CDN或<code>cocoapods-art</code>）分发的<code>release</code>压缩包。即标准<code>release</code>包存<code>Release</code>目录；git或自定义url源码时存<code>External</code>目录，但<code>:path</code>本地Pod不会进这个缓存，因为它是直接读取本地文件夹。</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sh" data-lang="sh"><span style="display:flex;"><span><span style="color:#75715e"># git仓库</span>
 </span></span><span style="display:flex;"><span>pod <span style="color:#e6db74">&#39;XXX&#39;</span>, :git <span style="color:#f92672">=</span>&gt; <span style="color:#e6db74">&#39;https://xxx.git&#39;</span>
 </span></span><span style="display:flex;"><span>pod <span style="color:#e6db74">&#39;XXX&#39;</span>, :git <span style="color:#f92672">=</span>&gt; <span style="color:#e6db74">&#39;https://xxx.git&#39;</span>, :tag <span style="color:#f92672">=</span>&gt; <span style="color:#e6db74">&#39;1.0.0&#39;</span>
@@ -544,21 +544,21 @@ code.has-jax {
 <p>校验阶段：下载完成后校验sha256哈希。若校验成功后，解压到<code>Pods/Release/xxx</code>永久缓存，否则直接删除<code>tmp</code>临时文件。</p>
 </li>
 <li>
-<p>异常场景：网络中断、pod命令ctrl+c 中断，tmp里会残留未完成的压缩包碎片。</p>
+<p>异常场景：网络中断、pod命令ctrl+c 中断，<code>tmp</code>目录里会残留未完成的压缩包碎片。</p>
 </li>
 <li>
-<p>下载成功后，tmp里的原始tar压缩包会被删除，只保留解压后的源码在Release。</p>
+<p>下载成功后，tmp里的原始tar压缩包会被删除，只保留解压后的源码在<code>Release</code>目录下。</p>
 </li>
 </ul>
 <p>需要注意的是<code>CocoaPods</code>不会长期保存<code>tar</code>压缩包，永久缓存的是解压后的源码文件夹，不是压缩包本身。补充：很多人误以为<code>Release</code>目录存<code>tar</code>包，其实<code>Release</code>只存解压源码，原始<code>tar</code>包只短暂存在<code>tmp</code>。</p>
 <h2 id="podspec索引库">podspec索引库</h2>
-<p>索引库保存了组件版本信息、<code>podspec</code>描述文件（<code>pod search</code> 依赖的索引）。查看本地所有<code>spec</code>索引库源的命令为<code>pod repo list</code>，本地<code>repo</code>索引源的存储目录为<code>~/.cocoapods/repos/</code>。进入某个repo目录，可以使用如下命令查找组件的<code>podspec</code>文件：</p>
+<p>索引库保存了组件版本信息、<code>podspec</code>描述文件（<code>pod search</code> 依赖的索引）。查看本地所有<code>spec</code>索引库源的命令为<code>pod repo list</code>，本地<code>repo</code>索引源的存储目录为<code>~/.cocoapods/repos/</code>。进入某个<code>repo</code>目录，可以使用如下命令查找组件的<code>podspec</code>文件：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sh" data-lang="sh"><span style="display:flex;"><span><span style="color:#75715e"># 示例：在cocoapods官方源中查找 Alamofire</span>
 </span></span><span style="display:flex;"><span>find ~/.cocoapods/repos/cocoapods -name <span style="color:#e6db74">&#34;Alamofire&#34;</span>
 </span></span></code></pre></div><p>需要注意的是<code>CocoaPods 1.8+</code>开始默认使用<code>CDN</code>模式，此时<code>~/.cocoapods/repos</code>目录很小，不是完整的<code>spce</code>仓库，不会完整下载整个<code>Specs</code>仓库，只是少量按需下载的<code>podspec</code>缓存。</p>
 <h2 id="搜索索引缓存">搜索索引缓存</h2>
 <p>命令<code>pod search</code>使用的搜索索引缓存文件，存放在<code>~/Library/Caches/CocoaPods/search_index.json</code>。直接打开这个<code>json</code>可以查看本地搜索索引缓存。 如果搜不到新库，可以删除该文件，重新执行<code>pod search xxx</code>重新生成索引缓存。</p>
-<p>命令<code>pod update</code>完整拉取流程分两步，第一步是拉索引，第二步是拉源码。<code>pod update</code>会忽略<code>Podfile.lock</code>，去源里查找每个<code>pod</code>允许范围内的最新版本（<code>pod 'xxx', '~&gt; 2.0'</code>），而不是沿用<code>podfile.lock</code>里的固定版本。</p>
+<p>命令<code>pod update</code>完整拉取流程分两步，第一步是拉索引，第二步是拉源码。使用<code>pod update</code>时会忽略<code>Podfile.lock</code>，去源里查找每个<code>pod</code>允许范围内的最新版本（<code>pod 'xxx', '~&gt; 2.0'</code>），而不是沿用<code>podfile.lock</code>里的固定版本。</p>
 <p>1、先访问<code>Podfile</code>配置的<code>spec</code>源（<code>CDN/git</code>私有源，获取最新<code>podspec</code>索引（版本信息）。</p>
 <p>2、根据<code>podspec</code>里面记录的源码地址去下载源码，优先使用本地源码缓存。</p>
 <p>3、最后更新<code>Podfile.lock</code>和<code>Pods</code>目录。</p>

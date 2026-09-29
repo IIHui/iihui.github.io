@@ -103,13 +103,13 @@ sudo rm -rf /Library/Developer/PrivateFrameworks/CoreDevice.framework M1 iMac �
 # git仓库 pod &amp;#39;XXX&amp;#39;, :git =&amp;gt; &amp;#39;https://xxx.git&amp;#39; pod &amp;#39;XXX&amp;#39;, :git =&amp;gt; &amp;#39;https://xxx.git&amp;#39;, :tag =&amp;gt; &amp;#39;1.0.0&amp;#39; pod &amp;#39;XXX&amp;#39;, :git =&amp;gt; &amp;#39;https://xxx.git&amp;#39;, :commit =&amp;gt; &amp;#39;abc123&amp;#39; pod &amp;#39;XXX&amp;#39;, :git =&amp;gt; &amp;#39;https://xxx.git&amp;#39;, :branch =&amp;gt; &amp;#39;dev&amp;#39;  # 直接指定源码压缩包URL（非spec托管的tar） pod &amp;#39;XXX&amp;#39;, :http =&amp;gt; &amp;#39;https://xxx/custom-source.zip&amp;#39; 目录~/Library/Caches/CocoaPods/tmp是一个临时目录，未命中缓存时，tar压缩包先下载到其下的downloads目录~/Library/Caches/CocoaPods/tmp/downloads/。
   下载阶段：网络拉取tar包→存tmp临时文件（随机命名，.tmp后缀）
   校验阶段：下载完成后校验sha256哈希。若校验成功后，解压到Pods/Release/xxx永久缓存，否则直接删除tmp临时文件。
-  异常场景：网络中断、pod命令ctrl&#43;c 中断，tmp里会残留未完成的压缩包碎片。
-  下载成功后，tmp里的原始tar压缩包会被删除，只保留解压后的源码在Release。
+  异常场景：网络中断、pod命令ctrl&#43;c 中断，tmp目录里会残留未完成的压缩包碎片。
+  下载成功后，tmp里的原始tar压缩包会被删除，只保留解压后的源码在Release目录下。
   需要注意的是CocoaPods不会长期保存tar压缩包，永久缓存的是解压后的源码文件夹，不是压缩包本身。补充：很多人误以为Release目录存tar包，其实Release只存解压源码，原始tar包只短暂存在tmp。
 podspec索引库 索引库保存了组件版本信息、podspec描述文件（pod search 依赖的索引）。查看本地所有spec索引库源的命令为pod repo list，本地repo索引源的存储目录为~/.cocoapods/repos/。进入某个repo目录，可以使用如下命令查找组件的podspec文件：
 # 示例：在cocoapods官方源中查找 Alamofire find ~/.cocoapods/repos/cocoapods -name &amp;#34;Alamofire&amp;#34; 需要注意的是CocoaPods 1.8&#43;开始默认使用CDN模式，此时~/.cocoapods/repos目录很小，不是完整的spce仓库，不会完整下载整个Specs仓库，只是少量按需下载的podspec缓存。
 搜索索引缓存 命令pod search使用的搜索索引缓存文件，存放在~/Library/Caches/CocoaPods/search_index.json。直接打开这个json可以查看本地搜索索引缓存。 如果搜不到新库，可以删除该文件，重新执行pod search xxx重新生成索引缓存。
-命令pod update完整拉取流程分两步，第一步是拉索引，第二步是拉源码。pod update会忽略Podfile.lock，去源里查找每个pod允许范围内的最新版本（pod &#39;xxx&#39;, &#39;~&amp;gt; 2.0&#39;），而不是沿用podfile.lock里的固定版本。
+命令pod update完整拉取流程分两步，第一步是拉索引，第二步是拉源码。使用pod update时会忽略Podfile.lock，去源里查找每个pod允许范围内的最新版本（pod &#39;xxx&#39;, &#39;~&amp;gt; 2.0&#39;），而不是沿用podfile.lock里的固定版本。
 1、先访问Podfile配置的spec源（CDN/git私有源，获取最新podspec索引（版本信息）。
 2、根据podspec里面记录的源码地址去下载源码，优先使用本地源码缓存。
 3、最后更新Podfile.lock和Pods目录。
