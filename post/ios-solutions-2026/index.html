@@ -241,7 +241,7 @@ code.has-jax {
     <i class="fa fa-file-word-o"></i>
 </span>
 <span class="post-meta-item-text">字数: </span>
-<span class="leancloud-visitors-count">10596</span>
+<span class="leancloud-visitors-count">10609</span>
 &nbsp; | &nbsp;
 <span class="post-meta-item-icon">
     <i class="fa fa-coffee"></i>
@@ -285,7 +285,7 @@ code.has-jax {
 <li>写入阶段：下载/复制新代码，并重新生成<code>Pods/Local Podspecs/</code>下的缓存文件。</li>
 </ol>
 <p>当<code>Router.podspec.json</code>文件不存在时，<code>CocoaPods</code>在第校验阶段就直接抛出<code>Errno::ENOENT</code>异常并终止了进程，还没走到第三阶段（写入/生成新文件）。</p>
-<p>实际上，<code>CocoaPods</code>的设计者假设沙盒（Pods文件夹）一旦通过<code>pod install</code> 生成，就<font color=red>处于完整状态</font>。而<code>pod update</code> 是<font color="#de7802">一个增量更新命令</font>，它默认信任现有沙盒的完整性，<font color="#de7802">不会在校验失败时自作主张去创建缺失文件</font>，因为如果文件缺失，说明沙盒状态已损坏，最安全的做法是报错退出，让开发者手动修复（即执行<code>pod install</code>命令）。</p>
+<p>实际上，<code>CocoaPods</code>的设计者假设沙盒（是指<code>Pods</code>文件夹）一旦通过<code>pod install</code> 生成，就<font color=red>处于完整状态</font>。而<code>pod update</code>是<font color="#de7802">一个增量更新命令</font>，它默认信任现有沙盒的完整性，<font color="#de7802">不会在校验失败时自作主张去创建缺失文件</font>。因为如果文件缺失，说明沙盒状态已损坏，最安全的做法是报错退出，让开发者手动修复，即执行<code>pod install</code>命令。</p>
 <p>所以只要修改了<code>:path</code>指向的本地组件代码或<code>.podspec</code> 版本号，需要执行<code>pod install</code>命令，而不是执行<code>pod update</code>命令。</p>
 <p>实际上，<code>pod install</code>和<code>pod update</code>的核心区别在于：<code>pod install</code>用于安装并锁定版本，而<code>pod update</code>用于更新到新的版本，它们的核心区别如下：</p>
 <table>
@@ -299,8 +299,8 @@ code.has-jax {
 <tbody>
 <tr>
 <td style="text-align:left">用途</td>
-<td style="text-align:left">安装新库，或添加/删除已有库</td>
-<td style="text-align:left">更新现有库到新的版本</td>
+<td style="text-align:left">安装新库，或添加或删除已有库</td>
+<td style="text-align:left">更新现有库到新版本</td>
 </tr>
 <tr>
 <td style="text-align:left">对<code>Podfile.lock</code> 的处理</td>
@@ -308,14 +308,14 @@ code.has-jax {
 <td style="text-align:left">忽略并更新：忽略其中已有版本，查找符合 <code>Podfile</code>的最新版本</td>
 </tr>
 <tr>
-<td style="text-align:left">对新Pod的处理</td>
+<td style="text-align:left">对新pod组件的处理</td>
 <td style="text-align:left">查找并安装符合<code>Podfile</code>的最新版本</td>
-<td style="text-align:left">会更新所有Pod，风险较高，不推荐用于添加新Pod</td>
+<td style="text-align:left">会更新所有Pod组件，风险较高，不推荐用于添加新Pod组件</td>
 </tr>
 <tr>
 <td style="text-align:left">使用场景</td>
-<td style="text-align:left">首次设置、修改<code>Podfile</code>后</td>
-<td style="text-align:left">主动、有目的地升级某个或所有Pod</td>
+<td style="text-align:left">首次设置或修改<code>Podfile</code>后</td>
+<td style="text-align:left">主动、有目的地升级某个或所有Pod组件</td>
 </tr>
 </tbody>
 </table>
