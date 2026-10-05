@@ -241,7 +241,7 @@ code.has-jax {
     <i class="fa fa-file-word-o"></i>
 </span>
 <span class="post-meta-item-text">字数: </span>
-<span class="leancloud-visitors-count">10597</span>
+<span class="leancloud-visitors-count">10596</span>
 &nbsp; | &nbsp;
 <span class="post-meta-item-icon">
     <i class="fa fa-coffee"></i>
@@ -263,22 +263,22 @@ code.has-jax {
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ruby" data-lang="ruby"><span style="display:flex;"><span><span style="color:#75715e"># podspec的定义</span>
 </span></span><span style="display:flex;"><span>spec<span style="color:#f92672">.</span>name         <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;zzz.yyy_xxx&#34;</span> 
 </span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span><span style="color:#75715e"># import使用的语法，即需要添加下划线</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># import使用的语法，即需将点替换为下划线</span>
 </span></span><span style="display:flex;"><span>zzz_yyy_xxx
-</span></span></code></pre></div><p>Xcode和Swift编译器要求模块名必须是C99扩展标识符，<font color=red>即只能包含字母、数字和下划线</font>（<code>_</code>），且必须以字母或下划线开头。所以<code>spec.name</code>中的点号（<code>.</code>）是不允许的。为了让编译通过，<code>CocoaPods</code>会自动将<code>spec.name</code>中所有非法字符（如<code>.</code>、<code>-</code>等）替换为下划线（<code>_</code>），生成一个合法的模块名。</p>
+</span></span></code></pre></div><p>因为<code>Xcode</code>和<code>Swift</code>编译器要求模块名必须是<code>C99</code>扩展标识符，<font color=red>即只能包含字母、数字和下划线</font>（<code>_</code>），且必须以字母或下划线开头。所以<code>spec.name</code>中的点号（<code>.</code>）是不允许的。为了让编译通过，<code>CocoaPods</code>会自动将<code>spec.name</code>中所有非法字符（如<code>.</code>、<code>-</code>等）替换为下划线（<code>_</code>），生成一个合法的模块名。</p>
 <p>如果不想使用自动生成的模块名，可以在<code>podspec</code>中通过<code>spec.module_name</code>属性来指定一个自定义模块名，按下面设置后可以直接<code>import yyy</code>：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ruby" data-lang="ruby"><span style="display:flex;"><span><span style="color:#66d9ef">Pod</span><span style="color:#f92672">::</span><span style="color:#66d9ef">Spec</span><span style="color:#f92672">.</span>new <span style="color:#66d9ef">do</span> <span style="color:#f92672">|</span>spec<span style="color:#f92672">|</span>
 </span></span><span style="display:flex;"><span>  spec<span style="color:#f92672">.</span>name         <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;zzz.yyy_xxx&#34;</span>
-</span></span><span style="display:flex;"><span>  <span style="color:#75715e"># ... 其他配置 ...</span>
-</span></span><span style="display:flex;"><span>  spec<span style="color:#f92672">.</span>module_name  <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;yyy&#34;</span> <span style="color:#75715e"># 自定义的模块名</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#75715e"># ... 其它配置</span>
+</span></span><span style="display:flex;"><span>  spec<span style="color:#f92672">.</span>module_name  <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;yyy&#34;</span> <span style="color:#75715e"># 自定义模块名</span>
 </span></span><span style="display:flex;"><span><span style="color:#66d9ef">end</span>
 </span></span></code></pre></div><h1 id="pod-update">pod update</h1>
-<p>在<code>podfile</code>文件中，将某个组件改为使用<code>:path =&gt;</code>依赖本地的低版本源码时，接着执行<code>pod update</code>时出现如下错误：</p>
+<p>在<code>podfile</code>文件中，想要将某个组件改为使用<code>:path =&gt;</code>依赖本地的低版本源码调试时，接着执行<code>pod update</code>时出现如下错误：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sh" data-lang="sh"><span style="display:flex;"><span>Errno::ENOENT - No such file or directory @ rb_sysopen - /Users/xxx/Downloads/yyy/Pods/Local Podspecs/Router.podspec.json /Users/xxx/.rvm/gems/ext-ruby-4.0.6/gems/cocoapods-core-1.17.0/lib/cocoapods-core/specification.rb:690:in <span style="color:#e6db74">&#39;IO.read&#39;</span> /Users/xxx/.rvm/gems/ext-ruby-4.0.6/gems/cocoapods-core-1.17.0/lib/cocoapods-core/specification.rb:690:in <span style="color:#e6db74">&#39;Pod::Specification#checksum&#39;</span> /Users/xxx/.rvm/gems/ext-ruby-4.0.6/gems/cocoapods-core-1.17.0/lib/cocoapods-core/lockfile.rb:543:in <span style="color:#e6db74">&#39;block in Pod::Lockfile.generate_checksums&#39;</span>
-</span></span></code></pre></div><p>这个错误是<code>CocoaPods</code>在处理本地组件 (<code>:path</code>) 时，缓存或状态不一致导致的。<code>CocoaPods</code>在<code>Pods/Local Podspecs/</code>目录下找不到<code>Router.podspec.json</code>这个文件。这个文件是<code>CocoaPods</code>在<code>pod install</code>时生成的本地<code>podspec</code>缓存，用于校验。当这个缓存缺失或损坏时，<code>pod update</code>就会报错。</p>
+</span></span></code></pre></div><p>这个错误是因为<code>CocoaPods</code>在处理本地组件 (<code>:path</code>) 时，缓存损坏或缺失导致的。<code>CocoaPods</code>在<code>Pods/Local Podspecs/</code>目录下找不到<code>Router.podspec.json</code>。这个文件是<code>CocoaPods</code>在<code>pod install</code>时生成的本地<code>podspec</code>缓存，当这个缓存缺失或损坏时，<code>pod update</code>就会报错。</p>
 <p>临时解决方案是将需要本地依赖组件的<code>podspec</code>文件手动复制到工程的<code>Pods/Local Podspecs/</code>目录下，然后执行<code>pod update</code>命令。也可以使用如下命令删除缓存和依赖文件，然后执行<code>pod update</code>：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sh" data-lang="sh"><span style="display:flex;"><span>rm -rf Pods Podfile.lock
-</span></span></code></pre></div><p>实际上，此时最简单的方式是使用<code>pod install</code>命令，而不是使用<code>pod update</code>命令。因为，<code>CocoaPods</code>在执行 <code>pod update</code> 时，并不是一口气完成的，而是分为三个阶段：</p>
+</span></span></code></pre></div><p>实际上，此时最简单的解决方式是使用<code>pod install</code>命令，而不是使用<code>pod update</code>命令。因为，<code>CocoaPods</code>在执行 <code>pod update</code> 时，并不是一步完成的，而是分为三个阶段：</p>
 <ol>
 <li>解析阶段：读取<code>Podfile</code>和<code>Podfile.lock</code>，计算新的依赖版本。</li>
 <li>校验阶段：在这个阶段，<code>CocoaPods</code>会立即读取<code>Pods/Local Podspecs/\*.podspec.json</code>文件，计算当前沙盒（Pods文件夹）中各组件的<code>checksum</code>，用来和<code>Podfile.lock</code>中的旧<code>checksum</code>做比对，判断本地缓存是否被篡改过。</li>
