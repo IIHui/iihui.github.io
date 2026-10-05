@@ -51,9 +51,9 @@ summaryLength = 100 #放在同themes同级的config.toml上才有效 设置文�
         <tags>
           <tag>iOS</tag>
         </tags>
-        <content type="html"> cocoapods组件名 CocoaPods组件名（Pod Name）原则上既不能包含英文点号，也不能以点号开头。CocoaPods在生成对应的 Swift或Objective-C模块时，需要遵循编程语言的标识符命名规则。模块通常只允许字母、数字和下划线，因此像点号（.）和连字符（-）这类符号是不被允许的。
-如果一个Pod的名字里包含了这些符号，CocoaPods在生成模块名时，会自动将它们替换为下划线（_）。但为了避免潜在的混淆和问题，组件命名时应当遵循以下原则：
- 只能使用字母（a-z, A-Z）、数字（0-9）和下划线（_）。 使用驼峰命名法或下划线分隔。  CocoaPods的Module Name和podspc中定义的spec.name是不同的。spec.name是给CocoaPods包管理器内部使用的「身份证」，而import语句使用的是面向编译器的模块名。
+        <content type="html"> cocoapods组件名 CocoaPods组件名（Pod Name）原则上既不能包含英文点号，也不能以点号开头。CocoaPods生成对应的 Swift或Objective-C模块时，需要遵循编程语言的标识符命名规则。模块通常只允许字母、数字和下划线，因此像点号（.）和连字符（-）这类符号是不被允许的。
+如果一个Pod组件名字里包含了这些符号，CocoaPods在生成模块名时，会自动将它们替换为下划线（_）。但为了避免潜在的混淆和问题，组件命名时应当遵循以下原则：
+ 只能使用字母（a-z, A-Z）、数字（0-9）和下划线（_）。 使用驼峰命名法或下划线分隔。  需要注意的是，CocoaPods组件的Module Name和podspc中定义的spec.name是不同的。spec.name是CocoaPods包管理器内部使用的「身份证」，而import语句使用的是面向编译器的模块名。
 # podspec的定义 spec.name = &amp;#34;zzz.yyy_xxx&amp;#34;  # import使用的语法，即需要添加下划线 zzz_yyy_xxx Xcode和Swift编译器要求模块名必须是C99扩展标识符，即只能包含字母、数字和下划线（_），且必须以字母或下划线开头。所以spec.name中的点号（.）是不允许的。为了让编译通过，CocoaPods会自动将spec.name中所有非法字符（如.、-等）替换为下划线（_），生成一个合法的模块名。
 如果不想使用自动生成的模块名，可以在podspec中通过spec.module_name属性来指定一个自定义模块名，按下面设置后可以直接import yyy：
 Pod::Spec.new do |spec|  spec.name = &amp;#34;zzz.yyy_xxx&amp;#34;  # ... 其他配置 ...  spec.module_name = &amp;#34;yyy&amp;#34; # 自定义的模块名 end pod update 在podfile文件中，将某个组件改为使用:path =&amp;gt;依赖本地的低版本源码时，接着执行pod update时出现如下错误：
