@@ -632,11 +632,11 @@ find delete # 先预览（不删除），确认目标 find . -maxdepth 1 -type d
 import subprocess  full_cmd = &amp;#39;&amp;#39;&amp;#39; bash -c &amp;#39;source ~/.rvm/scripts/rvm &amp;amp;&amp;amp; rvm use 4.0.6 &amp;amp;&amp;amp; pod repo update xxx&amp;#39; &amp;#39;&amp;#39;&amp;#39; status, output = subprocess.getstatusoutput(full_cmd) 更推荐的方式是使用rvm-exec，因为rvm提供了一个可执行文件rvm-exec，它可以在指定的ruby版本下直接运行命令，而无需加载整个rvm环境，此时不需要关心环境变量，rvm-exec会自动设置好一切。
 import subprocess  # 假设你终端使用的是Ruby4.0.6（查看方式：终端运行 ruby -v） ruby_version = &amp;#34;4.0.6&amp;#34; # 改成你实际使用的版本 pod_command = &amp;#34;pod repo update xxx&amp;#34;  full_cmd = f&amp;#34;~/.rvm/bin/rvm-exec {ruby_version}{pod_command}&amp;#34; status, output = subprocess.getstatusoutput(full_cmd) repo-art 更新索引 使用pod repo-art update xxx后发现服务端已经删除的索引，本地依然存在。这是因为pod repo-art update被设计为一种累积性操作。这意味着它只会添加服务端新增的索引，而不会主动移除本地存在但服务端已删除的条目。
 这么设计主要是为了保护通过--local-only标志创建的本地索引不被误删。--local-only允许在不推送到远程的情况下，在本地创建或修改索引，用于本地测试等场景。如果update命令会同步删除，这些本地独有的条目就会丢失。
-&amp;ndash;prune 如果要清理服务端已删除的本地索引，正确的做法是在执行update命令时加上--prune选项。这个选项会在更新本地索引的同时，prune（修剪）掉所有在服务端已不存在的条目，从而实现本地与服务端索引的完全同步。
+&amp;ndash;prune 如果要清理服务端已删除的本地索引，正确的做法是在执行update命令时加上--prune选项。这个选项会在更新本地索引的同时，prune（修剪）掉所有在服务端已不存在的条目，从而实现本地与服务端podspec索引的完全同步。
 pod repo-art update xxx --prune 使用--prune前请注意，它会删除所有在服务端不存在的本地条目。如果本地仓库中确实有通过--local-only创建的、且尚未推送到服务端的索引，这些条目会被一并删除。因此，在执行--prune操作前，需确保没有需要保留的本地独有的索引。
 &amp;ndash;local-only 选项--local-only是cocoapods-art插件提供的一个选项，它可以在本地创建或修改索引，但不会同步到远程服务端。这为本地测试、私有调试或临时修改提供了一个隔离的环境（但作用十分有限）。
 它的核心工作流程是先在本地创建一个服务端不存在的索引条目，在执行pod repo-art update更新仓库索引时，这个本地独有的条目会被保留下来，不会被删除。这个功能主要用于需要安全地测试本地修改的场景，先在本地已经添加有仓库中执行如下操作：
-pod repo-art add my-repo MyLib 0.2.0.podspec --local-only 特别需要注意的是，在Podfile中使用刚刚添加的0.2.0版本的前提是服务端存在相应的库文件，否则拉取不到0.2.0对应的：
+pod repo-art add my-repo MyLib 0.2.0.podspec --local-only 特别需要注意的是，在Podfile中使用刚刚添加的0.2.0版本的前提是服务端存在相应的库文件，否则拉取不到组件0.2.0的版本：
 plugin &amp;#39;cocoapods-art&amp;#39;, :sources =&amp;gt; [&amp;#39;my-company-repo&amp;#39;] # ... 其他配置 pod &amp;#39;MyLib&amp;#39;, &amp;#39;0.2.0&amp;#39; 也就是--local-only选项的作用很有限，如果只想在本地测试一个Pod的修改，而不想上传到服务端，正确的做法是用CocoaPods的本地路径依赖（即使用:path），而不是--local-only。且使用--local-only只是为了在本地创造一个假的索引记录，从而骗过CocoaPods的版本查找逻辑。
 pod &amp;#39;MyLib&amp;#39;, :path =&amp;gt; &amp;#39;/path/to/MyLib&amp;#39; nvm command not found 使用sh xxx.sh执行脚本时，提示找不到nvm命令。根本原因是nvm是通过shell的配置文件（如.bashrc或.zshrc）加载的，而用sh执行的脚本默认不会加载这些配置，而导致nvm命令不可用。通常有两种方式解决该问题，第一种是在脚本开头添加加载命令：
 #!/bin/bash export NVM_DIR=&amp;#34;$HOME/.nvm&amp;#34; [ -s &amp;#34;$NVM_DIR/nvm.sh&amp;#34; ] &amp;amp;&amp;amp; \. &amp;#34;$NVM_DIR/nvm.sh&amp;#34; # 加载 nvm 如果不想修改脚本文件，可以在执行前用一条命令完成加载和执行：
