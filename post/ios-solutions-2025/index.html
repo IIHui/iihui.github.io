@@ -241,7 +241,7 @@ code.has-jax {
     <i class="fa fa-file-word-o"></i>
 </span>
 <span class="post-meta-item-text">字数: </span>
-<span class="leancloud-visitors-count">24278</span>
+<span class="leancloud-visitors-count">24290</span>
 &nbsp; | &nbsp;
 <span class="post-meta-item-icon">
     <i class="fa fa-coffee"></i>
@@ -640,7 +640,7 @@ code.has-jax {
 </span></span></code></pre></div><p>原因是<code>SSZipArchive</code>依赖的<code>minizip-ng</code>库需要<code>zlib-ng</code>，但编译时找不到<code>zlib-ng.h</code>头文件。最后发现是<code>podspec</code>文件中<code>pod_target_xcconfig</code>的设置有问题，其完整设置如下：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ruby" data-lang="ruby"><span style="display:flex;"><span> s<span style="color:#f92672">.</span>pod_target_xcconfig <span style="color:#f92672">=</span> { <span style="color:#e6db74">&#39;DEFINES_MODULE&#39;</span> <span style="color:#f92672">=&gt;</span> <span style="color:#e6db74">&#39;YES&#39;</span>,
 </span></span><span style="display:flex;"><span>    <span style="color:#e6db74">&#39;GCC_PREPROCESSOR_DEFINITIONS&#39;</span> <span style="color:#f92672">=&gt;</span> <span style="color:#e6db74">&#39;HAVE_ARC4RANDOM_BUF HAVE_ICONV HAVE_INTTYPES_H HAVE_PKCRYPT HAVE_STDINT_H HAVE_WZAES HAVE_ZLIB ZLIB_COMPAT&#39;</span> }
-</span></span></code></pre></div><p>上面设置中的<code>DEFINES_MODULE' =&gt; 'YES'</code>是告诉<code>Xcode</code>将这个<code>Pod</code>构建为模块（<code>module</code>），并生成 <code>.modulemap</code>文件，即：</p>
+</span></span></code></pre></div><p>上面设置中的<code>DEFINES_MODULE' =&gt; 'YES'</code>是告诉<code>Xcode</code>将这个<code>Pod</code>组件构建为模块（<code>module</code>），并生成 <code>.modulemap</code>文件，即：</p>
 <ul>
 <li>让<code>Swift</code>能通过<code>import YourPod</code>引入这个库（即使是纯<code>C/ObjC</code>库也能生成<code>module map</code>）。</li>
 <li>开启<code>CLANG_ENABLE_MODULES</code>，允许库内用<code>@import</code> 语法。</li>
@@ -720,7 +720,7 @@ code.has-jax {
 </span></span><span style="display:flex;"><span><span style="color:#e6db74">&#34;VERSION_STRING=</span><span style="color:#ae81ff">\\\&#34;</span><span style="color:#e6db74">1.0</span><span style="color:#ae81ff">\\\&#34;</span><span style="color:#e6db74">&#34;</span> <span style="color:#75715e"># 双引号里双重转义</span>
 </span></span></code></pre></div><h2 id="帧框加载已失败">帧框加载已失败</h2>
 <p>调试<code>WKWebView</code>时报错信息为「帧框加载已失败」，同时看到错误码为<code>WebKitErrorDomain code 102</code>。出问题的场景是在<code>WKWebView</code>中使用<code>WKURLSchemeTask</code>拦截网络请求，返回本地文件数据时。</p>
-<p>最后调试发现是通过<code>WKURLSchemeTask</code>返回数据时，<code>WebKit</code>需要正确的<code>HTTP</code>响应头（<code>Headers</code>）来解析内容。如果信息不全，<code>WebKit</code>会<font color=red>认为响应无效并中断加载</font>。首先不要使用<code>URLResponse</code>，因为它默认状态码为<code>0</code>，<code>WebKit</code>无法识别。必须创建<code>HTTPURLResponse</code>并明确设置<code>200</code>状态码，同时需要提供<code>Content-Type</code>和<code>Content-Length</code>这两个关键的<code>Header</code>，而此次出现错误是因为文件是<code>html</code>，但设置的<code>Content-Type</code>类型是错误的。</p>
+<p>最后调试发现是通过<code>WKURLSchemeTask</code>返回数据时，<code>WebKit</code>需要正确的<code>HTTP</code>响应头（<code>Headers</code>）来解析内容。如果信息不全，<code>WebKit</code>会<font color=red>认为响应无效并中断加载</font>。首先不要使用<code>URLResponse</code>，因为它默认状态码为<code>0</code>，<code>WebKit</code>无法识别。因此，必须创建<code>HTTPURLResponse</code>并明确设置<code>200</code>状态码，同时需要提供<code>Content-Type</code>和<code>Content-Length</code>这两个关键的<code>Header</code>。而此次出现错误是因为文件是<code>html</code>，但设置的<code>Content-Type</code>类型是错误的。</p>
 <p>如果通过<code>WKURLSchemeTask</code>拦截的是一个子资源请求（例如，主页面是<code>https://example.com</code>，但<code>iframe</code>或图片的请求被自定义<code>scheme</code>如<code>myapp://</code>拦截并返回了本地数据），会构成了跨域请求。此时，需要在返回的 <code>HTTPURLResponse</code>的<code>headerFields</code> 中，明确添加允许跨域的头部：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span><span style="color:#66d9ef">var</span> headerFields = [String: String]()
 </span></span><span style="display:flex;"><span><span style="color:#75715e">// ... 设置 Content-Type, Content-Length ...</span>
@@ -728,20 +728,20 @@ code.has-jax {
 </span></span><span style="display:flex;"><span><span style="color:#75715e">// 或者设置为你的主页面域名，如 &#34;https://example.com&#34;</span>
 </span></span></code></pre></div><p>此外，<code>WKURLSchemeTask</code>的生命周期需要精确管理。在<code>WebView</code>已经停止任务后（调用<code>stopURLSchemeTask</code>），再调用<code>didReceive</code>或<code>didFinish</code>会导致崩溃。另外，如果在调用<code>didReceive(URLResponse)</code> 之前就发送了数据（<code>Data</code>），也会引发崩溃。解决方案如下：</p>
 <ul>
-<li>确保调用顺序正确：必须严格按照<code>didReceive(response)</code>-&gt;<code>didReceive(data)</code> -&gt; <code>didFinish</code>顺序调用。</li>
-<li>处理任务停止情况：当<code>webView(_:stop:)</code> 方法被调用后。当任务被停止时，应取消加载操作，并不再对该任务调用任何<code>WKURLSchemeTask</code>的方法。同时，确保所有对<code>WKURLSchemeTask</code>的调用都在主线程执行，以避免竞态条件。</li>
+<li>确保调用顺序正确：必须严格按照<code>didReceive(response)--&gt;didReceive(data) --&gt; didFinish</code>顺序调用。</li>
+<li>处理任务停止情况：当<code>webView(_:stop:)</code> 方法被调用后，应取消加载操作，并不再对该任务调用任何<code>WKURLSchemeTask</code>的方法。同时，确保所有对<code>WKURLSchemeTask</code>的调用都在主线程执行，以避免竞态条件。</li>
 </ul>
 <h2 id="taskdidreceivedata-has-already-been-called">taskDidReceiveData has already been called</h2>
 <p>在使用<code>URLSession</code>调用了<code>invalidateAndCancel</code>后，偶发出现崩溃<code>WKURLSchemeTask taskDidReceiveData:] has already been called for this task</code>。</p>
-<p>当在<code>start</code>方法里使用<code>URLSession</code>发起异步任务，并在某时刻调用了<code>invalidateAndCancel()</code>，<code>URLSession</code>的委托（<code>Delegate</code>）会在极短时间内收到两个回调：</p>
+<p>当在<code>start</code>方法里使用<code>URLSession</code>发起异步任务，并在某时刻调用<code>invalidateAndCancel()</code>，则<code>URLSession</code>的代理（<code>Delegate</code>）会在极短时间内收到两个回调：</p>
 <ol>
-<li>最后一个<code>didReceive data</code>回调（如果数据还在传输中）。</li>
+<li>最后一个<code>didReceive(data)</code>回调（如果数据还在传输中）。</li>
 <li><code>didCompleteWithError</code>回调（携带<code>NSURLErrorCancelled</code>错误）。</li>
 </ol>
-<p>如果代码不加严格保护，会出现致命时序问题：</p>
+<p>如果代码逻辑不加严格保护，会出现致命时序问题：</p>
 <ul>
-<li>时序 A（正常）：数据回调到达 -&gt; 调用<code>didReceive(data)</code>&ndash;&gt; 完成回调到达&ndash;&gt; 调用<code>didFinish</code>。</li>
-<li>时序 B（崩溃）：<code>invalidateAndCancel</code>触发，<code>stop</code>被调用，此时将<code>isTaskCompleted</code>置为<code>true</code>。但有可能后台线程的<code>didReceive data</code>回调已经处于<code>RunLoop</code>队列中等待执行。之后，这个过期的数据回调被执行，虽然<code>isTaskCompleted</code>已是<code>true</code>，但如果在数据回调里只检查了<code>!isTaskCompleted</code>就调用 <code>didReceive(data)</code>，那么它依然会调用。随后完成回调到达，再次调用<code>didFinish</code>或重复调用数据接收，系统直接崩溃。</li>
+<li>时序 A（正常）：数据回调到达&ndash;&gt; 调用<code>didReceive(data)</code>&ndash;&gt; 完成回调到达&ndash;&gt; 调用<code>didFinish</code>。</li>
+<li>时序 B（崩溃）：当<code>invalidateAndCancel</code>触发后<code>stop</code>被调用，此时将<code>isTaskCompleted</code>置为<code>true</code>。但有可能后台线程的<code>didReceive(data)</code>回调已经处于<code>RunLoop</code>队列中等待执行。之后，这个过期的数据回调被执行，虽然<code>isTaskCompleted</code>已是<code>true</code>，但如果在数据回调里只检查了<code>!isTaskCompleted</code>就调用 <code>didReceive(data)</code>，那么它依然会调用。随后完成回调到达，再次调用<code>didFinish</code>或重复调用数据接收，系统直接崩溃。</li>
 </ul>
 <h1 id="unable-to-type-check-this-expression">unable to type-check this expression</h1>
 <p>升级了<code>Xcode</code>版本后，原来的工程出现了编译错误：</p>
@@ -749,7 +749,7 @@ code.has-jax {
 </span></span></code></pre></div><p><code>Swift</code>的类型检查器会尝试为一个表达式找出所有可能的类型组合。如果表达式过长或包含复杂操作，这个「搜索空间」会指数级增长，导致检查超时。</p>
 <p>在<code>Xcode 26 (Swift 6)</code> 中，上面问题可能因以下原因被触发或加剧：</p>
 <ul>
-<li><code>Swift 6</code>更严格的类型推断：新版本可能在类型推断上更严格，导致一些原本勉强能通过检查的表达式变得超时。</li>
+<li><code>Swift 6</code>有更严格的类型推断：新版本可能在类型推断上更严格，导致一些原本勉强能通过检查的表达式变得超时。</li>
 <li>新增的重载：<code>Swift</code>或依赖库中添加的新方法或运算符重载，也可能增加类型检查器的搜索负担。</li>
 </ul>
 <p>解决方案是按照提示<font color="#de7802">将复杂的表达式拆分为多个独立的子表达式</font>，示例代码如下：</p>
@@ -986,9 +986,9 @@ code.has-jax {
 </span></span><span style="display:flex;"><span>}
 </span></span></code></pre></div><h1 id="wkwebview错误">WKWebView错误</h1>
 <p>在<code>WKWebView</code>加载时，有如下两个错误相关的代理方法：</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">webView</span>(<span style="color:#66d9ef">_</span> webView: WKWebView, didFailProvisionalNavigation navigation: WKNavigation!, withError error: Error) 
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">webView</span>(<span style="color:#66d9ef">_</span> webView: WKWebView, didFailProvisionalNavigation navigation: WKNavigation, withError error: Error) 
 </span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">webView</span>(<span style="color:#66d9ef">_</span> webView: WKWebView, didFail navigation: WKNavigation!, withError error: Error)
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">webView</span>(<span style="color:#66d9ef">_</span> webView: WKWebView, didFail navigation: WKNavigation, withError error: Error)
 </span></span></code></pre></div><p>这两个方法本质区别在于：<font color="#de7802">页面在收到服务器响应头之前失败，还是之后失败</font>。分界线就是回调<code>didCommit</code>（页面开始接收内容）是否已被调用。可以按下面方式理解：</p>
 <ul>
 <li><code>didFailProvisionalNavigation</code>：「上路前就翻车」。即请求还没真正开始获取数据就失败了。</li>
@@ -1008,7 +1008,7 @@ code.has-jax {
 <li>加载主资源（如<code>HTML</code>本身）时，数据流被系统中断（例如App被切到后台）。</li>
 <li>内存占用过大，<code>WebKit</code>主动中止了加载。</li>
 </ul>
-<p>服务器返回404或500状态码通常不会走到这里（因为那依然算「成功收到响应头」），大多数情况下<code>WebView</code>会正常加载服务器返回的错误页面，并最终调用<code>didFinish</code>。</p>
+<p>服务器返回404或500状态码通常不会走到这里（因为那<font color="#de7802">依然算成功收到响应头</font>），大多数情况下，<code>WebView</code>会正常加载服务器返回的错误页面，并最终调用<code>didFinish</code>。</p>
 <p>如果在页面跳转或关闭时主动取消加载，例如调用<code>stopLoading()</code>，两个方法都可能被触发，且错误码通常是<code>NSURLErrorCancelled（-999）</code>。建议在错误回调中过滤掉这个错误码，避免干扰用户：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span><span style="color:#66d9ef">if</span> (error <span style="color:#66d9ef">as</span> NSError).code == NSURLErrorCancelled { <span style="color:#66d9ef">return</span> }
 </span></span></code></pre></div><p>两个错误回调只会调用其中一个。对于<font color=red>同一次加载失败，系统只会根据失败发生的阶段</font>，调用这两个方法中的其中一个，而不会两个都调用。</p>
@@ -1056,7 +1056,7 @@ code.has-jax {
 </span></span></span></code></pre></div><p>第二种方式是直接在桥接文件中先导入<code>Foundation</code>：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-objc" data-lang="objc"><span style="display:flex;"><span><span style="color:#75715e">#import &lt;Foundation/Foundation.h&gt;
 </span></span></span></code></pre></div><p>第三种是调整桥接文件中的头文件导入顺序，将后面已导入<code>Foundation</code>的头文件提到桥接头文件的前面先导入。</p>
-<h1 id="pod单个组件指定源">Pod单个组件指定源</h1>
+<h1 id="单个组件指定源">单个组件指定源</h1>
 <p>使用<code>cocoapods-art</code>引入了两个自定义仓库，若这两个仓库中有同名且同版本的组件时，可以在组件版本后面明确指定仓库源地址：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ruby" data-lang="ruby"><span style="display:flex;"><span>pod <span style="color:#e6db74">&#39;Alamofire&#39;</span>, <span style="color:#e6db74">&#39;4.9.1&#39;</span>, <span style="color:#e6db74">:source</span> <span style="color:#f92672">=&gt;</span> <span style="color:#e6db74">&#39;http://xxx/artifactory/api/pods/yyy&#39;</span>
 </span></span></code></pre></div><h1 id="离线安装cocoapods">离线安装CocoaPods</h1>
@@ -1598,7 +1598,7 @@ code.has-jax {
     <li><a href="#moya判断网络问题">Moya判断网络问题</a></li>
     <li><a href="#wkwebview错误">WKWebView错误</a></li>
     <li><a href="#no-type-or-protocol-named-nssecurecoding">no type or protocol named &lsquo;NSSecureCoding&rsquo;</a></li>
-    <li><a href="#pod单个组件指定源">Pod单个组件指定源</a></li>
+    <li><a href="#单个组件指定源">单个组件指定源</a></li>
     <li><a href="#离线安装cocoapods">离线安装CocoaPods</a>
       <ul>
         <li><a href="#挂载安装">挂载安装</a></li>
