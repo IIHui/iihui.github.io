@@ -241,7 +241,7 @@ code.has-jax {
     <i class="fa fa-file-word-o"></i>
 </span>
 <span class="post-meta-item-text">字数: </span>
-<span class="leancloud-visitors-count">24290</span>
+<span class="leancloud-visitors-count">24293</span>
 &nbsp; | &nbsp;
 <span class="post-meta-item-icon">
     <i class="fa fa-coffee"></i>
@@ -1309,9 +1309,9 @@ code.has-jax {
 </span></span><span style="display:flex;"><span><span style="color:#75715e"># 运行更新脚本，这个脚本会替换当前Ruby环境中的gem命令</span>
 </span></span><span style="display:flex;"><span>update_rubygems
 </span></span></code></pre></div><h1 id="archive-ipa">archive ipa</h1>
-<p>使用<code>xcodebuild archive</code>打包时，<code>-exportPath</code>选项对应的<code>ipa</code>文件名是由<code>info.plist</code>中的哪个字段决定的？下面是一个打包的命令，<code>exportPath</code>选项后指定的是目录，下面的变量<code>ipa_name</code>不包含<code>.ipa</code>后缀：</p>
+<p>使用<code>xcodebuild archive</code>打包时，<code>-exportPath</code>选项对应的<code>ipa</code>文件名是由<code>info.plist</code>中的哪个字段决定的？下面是一个打包命令，<code>exportPath</code>选项后指定的是目录，下面的变量<code>ipa_name</code>不包含<code>.ipa</code>后缀：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sh" data-lang="sh"><span style="display:flex;"><span>xcodebuild -exportArchive -archivePath <span style="color:#e6db74">&#34;</span><span style="color:#e6db74">${</span>build_path<span style="color:#e6db74">}</span><span style="color:#e6db74">/</span><span style="color:#e6db74">${</span>ipa_name<span style="color:#e6db74">}</span><span style="color:#e6db74">.xcarchive&#34;</span> -exportPath <span style="color:#e6db74">&#34;</span><span style="color:#e6db74">${</span>build_path<span style="color:#e6db74">}</span><span style="color:#e6db74">/&#34;</span> -exportOptionsPlist exportOptions.plist
-</span></span></code></pre></div><p>上面命令在编译目录下生成了ipa文件，但<code>ipa</code>文件名是<code>info.plist</code>文件中的<code>CFBundleName</code>决定的。如果不主动设置<code>CFBundleName</code>，则<code>CFBundleName</code>的默认值来自于<code>PRODUCT_NAME</code>，而<code>PRODUCT_NAME</code>一般设置为<code>TARGET_NAME</code>。</p>
+</span></span></code></pre></div><p>上面命令在编译目录下生成了<code>ipa</code>文件，但<code>ipa</code>文件名是<code>info.plist</code>文件中的<code>CFBundleName</code>决定的。如果不主动设置<code>CFBundleName</code>，则<code>CFBundleName</code>默认值来自于<code>PRODUCT_NAME</code>，而<code>PRODUCT_NAME</code>一般被设置为<code>TARGET_NAME</code>。</p>
 <h1 id="find-delete">find delete</h1>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sh" data-lang="sh"><span style="display:flex;"><span><span style="color:#75715e"># 先预览（不删除），确认目标</span>
 </span></span><span style="display:flex;"><span>find . -maxdepth <span style="color:#ae81ff">1</span> -type d -name <span style="color:#e6db74">&#34;tmp_path*&#34;</span> -print
@@ -1331,15 +1331,15 @@ code.has-jax {
 </span></span><span style="display:flex;"><span>    echo <span style="color:#e6db74">&#34;目录不存在或路径变量为空，跳过删除。&#34;</span>
 </span></span><span style="display:flex;"><span><span style="color:#66d9ef">fi</span>
 </span></span></code></pre></div><h1 id="rvm-command-not-found">rvm command not found</h1>
-<p>在python脚本中执行<code>pod repo update xxx</code>后出现错误<code>/bin/sh: rvm: command not found</code>，这个错误是因为rvm不是一个可独立执行的程序，而是一组需要被加载到当前shell会话中的shell函数和环境变量。</p>
-<p>执行<code>subprocess.getstatusoutput()</code>时，默认使用<code>/bin/sh</code>启动一个非登录（non-login）、非交互（non-interactive）的shell。这种shell不会读取<code>~/.bashrc</code>、<code>~/.bash_profile</code>等配置文件，因此rvm并没有被加载，也就找不到<code>rvm</code>命令。解决方案之一是在执行rvm命令前，先加载rvm环境：</p>
+<p>在<code>python</code>脚本中执行<code>pod repo update xxx</code>命令时出现错误<code>/bin/sh: rvm: command not found</code>。这个错误是因为<code>rvm</code>不是一个可独立执行的程序，而是一组需要被加载到当前<code>shell</code>会话中的函数和环境变量。</p>
+<p>在<code>python</code>中执行<code>subprocess.getstatusoutput()</code>时，会默认使用<code>/bin/sh</code>启动一个非登录（<code>non-login</code>）、非交互（<code>non-interactive</code>）的<code>shell</code>。这种<code>shell</code>不会读取<code>~/.bashrc</code>、<code>~/.bash_profile</code>等配置文件，因此<code>rvm</code>并没有被加载，也就找不到<code>rvm</code>命令。解决方案之一是在执行<code>rvm</code>命令前，先加载<code>rvm</code>环境：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-python" data-lang="python"><span style="display:flex;"><span><span style="color:#f92672">import</span> subprocess
 </span></span><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span>full_cmd <span style="color:#f92672">=</span> <span style="color:#e6db74">&#39;&#39;&#39;
 </span></span></span><span style="display:flex;"><span><span style="color:#e6db74">bash -c &#39;source ~/.rvm/scripts/rvm &amp;&amp; rvm use 4.0.6 &amp;&amp; pod repo update xxx&#39;
 </span></span></span><span style="display:flex;"><span><span style="color:#e6db74">&#39;&#39;&#39;</span>
 </span></span><span style="display:flex;"><span>status, output <span style="color:#f92672">=</span> subprocess<span style="color:#f92672">.</span>getstatusoutput(full_cmd)
-</span></span></code></pre></div><p>更推荐的方式是使用<code>rvm-exec</code>，因为rvm提供了一个可执行文件<code>rvm-exec</code>，它可以在指定的ruby版本下直接运行命令，而无需加载整个rvm环境，此时不需要关心环境变量，<code>rvm-exec</code>会自动设置好一切。</p>
+</span></span></code></pre></div><p>更推荐的方式是使用<code>rvm-exec</code>，因为<code>rvm</code>提供了一个可执行文件<code>rvm-exec</code>，它可以在指定的<code>ruby</code>版本下直接运行命令，而无需加载整个<code>rvm</code>环境，此时不需要关心环境变量，<code>rvm-exec</code>会自动设置好一切。</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-python" data-lang="python"><span style="display:flex;"><span><span style="color:#f92672">import</span> subprocess
 </span></span><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span><span style="color:#75715e"># 假设你终端使用的是Ruby4.0.6（查看方式：终端运行 ruby -v）</span>
@@ -1349,7 +1349,7 @@ code.has-jax {
 </span></span><span style="display:flex;"><span>full_cmd <span style="color:#f92672">=</span> <span style="color:#e6db74">f</span><span style="color:#e6db74">&#34;~/.rvm/bin/rvm-exec </span><span style="color:#e6db74">{</span>ruby_version<span style="color:#e6db74">}</span><span style="color:#e6db74"> </span><span style="color:#e6db74">{</span>pod_command<span style="color:#e6db74">}</span><span style="color:#e6db74">&#34;</span>
 </span></span><span style="display:flex;"><span>status, output <span style="color:#f92672">=</span> subprocess<span style="color:#f92672">.</span>getstatusoutput(full_cmd)
 </span></span></code></pre></div><h1 id="repo-art-更新索引">repo-art 更新索引</h1>
-<p>使用<code>pod repo-art update xxx</code>后发现服务端已经删除的索引，本地依然存在。这是因为<code>pod repo-art update</code>被设计为一种累积性操作。这意味着它只会添加服务端新增的索引，而<font color="#de7802">不会主动移除本地存在但服务端已删除的条目</font>。</p>
+<p>使用<code>pod repo-art update xxx</code>后发现服务端已经删除的索引，本地依然存在。这是因为<code>pod repo-art update</code>被<font color=red>设计为一种累积性操作</font>。这意味着它只会添加服务端新增的索引，而<font color="#de7802">不会主动移除本地存在但服务端已删除的条目</font>。</p>
 <p>这么设计主要是为了保护通过<code>--local-only</code>标志创建的本地索引不被误删。<code>--local-only</code>允许在不推送到远程的情况下，在本地创建或修改索引，用于本地测试等场景。如果<code>update</code>命令会同步删除，这些本地独有的条目就会丢失。</p>
 <h2 id="--prune">&ndash;prune</h2>
 <p>如果要清理服务端已删除的本地索引，正确的做法是在执行<code>update</code>命令时加上<code>--prune</code>选项。这个选项会在更新本地索引的同时，prune（修剪）掉<font color="#de7802">所有在服务端已不存在的条目，从而实现本地与服务端索引的完全同步</font>。</p>
@@ -1366,7 +1366,7 @@ code.has-jax {
 </span></span></code></pre></div><p>也就是<code>--local-only</code>选项的作用很有限，如果只想在本地测试一个<code>Pod</code>的修改，而不想上传到服务端，正确的做法是用<code>CocoaPods</code>的本地路径依赖（即使用<code>:path</code>），而不是<code>--local-only</code>。且使用<code>--local-only</code>只是为了在本地创造一个假的索引记录，从而骗过<code>CocoaPods</code>的版本查找逻辑。</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ruby" data-lang="ruby"><span style="display:flex;"><span>pod <span style="color:#e6db74">&#39;MyLib&#39;</span>, <span style="color:#e6db74">:path</span> <span style="color:#f92672">=&gt;</span> <span style="color:#e6db74">&#39;/path/to/MyLib&#39;</span>
 </span></span></code></pre></div><h1 id="nvm-command-not-found">nvm command not found</h1>
-<p>使用<code>sh xxx.sh</code>执行脚本时，提示找不到nvm命令。根本原因是nvm是通过shell的配置文件（如<code>.bashrc</code>或<code>.zshrc</code>）加载的，而用sh执行的脚本默认不会加载这些配置，而导致nvm命令不可用。通常有两种方式解决该问题，第一种是在脚本开头添加加载命令：</p>
+<p>使用<code>sh xxx.sh</code>执行脚本时，提示找不到<code>nvm</code>命令。根本原因是<code>nvm</code>是通过<code>shell</code>的配置文件（如<code>.bashrc</code>或<code>.zshrc</code>）加载的，而用<code>sh</code>执行的脚本<font color=red>默认不会加载这些配置</font>，而导致<code>nvm</code>命令不可用。通常有两种方式解决该问题，第一种是在脚本开头添加加载命令：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sh" data-lang="sh"><span style="display:flex;"><span><span style="color:#75715e">#!/bin/bash
 </span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>export NVM_DIR<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;</span>$HOME<span style="color:#e6db74">/.nvm&#34;</span>
 </span></span><span style="display:flex;"><span><span style="color:#f92672">[</span> -s <span style="color:#e6db74">&#34;</span>$NVM_DIR<span style="color:#e6db74">/nvm.sh&#34;</span> <span style="color:#f92672">]</span> <span style="color:#f92672">&amp;&amp;</span> <span style="color:#ae81ff">\.</span> <span style="color:#e6db74">&#34;</span>$NVM_DIR<span style="color:#e6db74">/nvm.sh&#34;</span>  <span style="color:#75715e"># 加载 nvm</span>
@@ -1380,11 +1380,11 @@ code.has-jax {
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sh" data-lang="sh"><span style="display:flex;"><span>nvm use 22.15.0
 </span></span></code></pre></div><p>如果使用上面命令后，执行脚本还是出现<code>nvm</code>报错，可以尝试使用：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sh" data-lang="sh"><span style="display:flex;"><span>nvm use v22.15.0
-</span></span></code></pre></div><p>前缀加了v确实正常了。通常来说，命令<code>nvm use</code>同时支持带<code>v</code>和不带<code>v</code>两种写法，它们是等价的，必须加上<code>v</code>才能成功，可能是输入时引号或空格出了问题。</p>
+</span></span></code></pre></div><p>前缀加了<code>v</code>确实正常了。通常来说，命令<code>nvm use</code>同时支持带<code>v</code>和不带<code>v</code>两种写法，它们是等价的，必须加上<code>v</code>才能成功，可能是输入时引号或空格出了问题。</p>
 <h1 id="cant-be-completely-emptied">can’t be completely emptied</h1>
 <p>在应用程序中选中某个应用，移到废纸篓时，收到如下提示：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sh" data-lang="sh"><span style="display:flex;"><span>The Bin can’t be completely emptied because “.xxx” is locked. To empty everything in the Bin, including locked items, press the Option key <span style="color:#66d9ef">while</span> you choose Finder &gt; Empty Bin.
-</span></span></code></pre></div><p>此时可以在应用程序中找到这个应用，然后右键选中<code>Get Info</code>，然后在<code>where</code>复制应用真正的路径，接着使用下面命令删除，按提示输入登录密码即可删除：</p>
+</span></span></code></pre></div><p>此时可以在应用程序中找到这个应用，然后右键选中<code>Get Info</code>，然后在<code>where</code>复制应用真正的路径，接着使用下面命令删除，按提示输入密码即可删除：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sh" data-lang="sh"><span style="display:flex;"><span>sudo rm -rf xxx
 </span></span></code></pre></div>
     </div>
