@@ -307,14 +307,14 @@ let code = json[&amp;#34;code&amp;#34;].intValue if code == 200 {  // Success - 
 升级WCDBSwift组件到2.1.16版本后，编译时又出现如下错误：
 Unable to resolve Swift module dependency to a compatible module: &amp;#39;libminipng&amp;#39; import libminipng  Module compiled with Swift 6.2 cannot be imported by the Swift 6.3.2 compiler: /Users/xxx/Downloads/uPic-1.4.8/libs/libminipng.framework/Modules/libminipng.swiftmodule/x86_64-apple-macos.swiftmodule 原因是依赖的libminipng是使用Swift 6.2编译的，而Xcode 26.5使用的Swift版本是6.3.2。解决方案只能将libminipng使用Xcode 26.5重新编译生成新的framework，然后进行替换。即到这里下载libminipng源码，然后使用Xcode 26.5编译为framework，最后到upic 1.4.8目录下替换libs目录下的libminipng.framework即可。
 如果编译了libminipng源码工程后找不到产物，可以使用如下命令查找libminipng.framework所在目录。然后将release目录下的libminipng.framework复制到uPic工程的libs目录下：
-find ~/Library/Developer/Xcode/DerivedData -name &amp;#34;libminipng.framework&amp;#34; -type iOS 16 Scanning barcode 原来的条形码识别功能正常，但用户反馈系统升级到iOS 16后发现扫描条形码很久都没反应。查资料后发现有其他开发者也遇到相同的问题。
-测试后发现在iOS 16上条形码和二维码不能同时识别，目前该问题似乎已经在iOS 16.3修复了。在修复之前，发现将条形码竖着放就能正常识别。
-depreciation of UIremotekeyboardwindow 原生的笔记功能是通过WebView来实现的，一些自定义功能是通过监听键盘的弹出事件，然后隐藏键盘相关的Window并显示自定义view来实现的。但这种实现方式借助了私有类UIremotekeyboardwindow。
-升级到iOS 16后发现自定义的view已不能覆盖键盘视图。查资料发现UIremotekeyboardwindow在iOS 16上已被移除，当前的解决方案是在系统键盘上方增加View来显示原有功能，而不是用自定义view覆盖系统键盘所在位置。
-Python添加Module 在Intellij IDEA中编写python脚本时引入了第三方库，但在debug时提示没有相应的module，只要按照这个资料操作即可解决模块缺失导致的编译报错问题。
-Failed to open macho file 调试Swift脚本时出现了Failed to open macho file at xxx Too many levels of symbolic links错误信息，具体如下所示：
+find ~/Library/Developer/Xcode/DerivedData -name &amp;#34;libminipng.framework&amp;#34; -type iOS 16 Scanning barcode 原来的条形码识别功能正常，但用户反馈系统升级到iOS 16后发现扫描条形码很久都没反应。查资料后发现有其他开发者也遇到相同问题。
+测试后发现在iOS 16上条形码和二维码不能同时识别，目前该问题似乎已经在iOS 16.3修复了。在修复之前，测试发现将条形码竖着放就能正常识别。
+depreciation of UIremotekeyboardwindow 原生笔记功能是通过WebView来实现的，一些自定义功能是通过监听键盘的弹出事件，然后隐藏键盘相关的Window并显示自定义view来实现的。但这种实现方式借助了私有类UIremotekeyboardwindow。
+升级到iOS 16后发现自定义的view已不能覆盖键盘视图。查资料发现UIremotekeyboardwindow在iOS 16上已被移除，当前解决方案是在系统键盘上方增加View来显示原有功能，而不是用自定义view覆盖系统键盘所在位置。
+Python添加Module 在Intellij IDEA中编写python脚本时引入了第三方库，但debug时提示没有相应module。只需按照这个资料操作即可解决模块缺失导致的编译报错问题。
+Failed to open macho file 调试Swift写的macOS脚本时出现了Failed to open macho file at xxx Too many levels of symbolic links错误信息，具体如下所示：
 Failed to open macho file at /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swift for reading: Too many levels of symbolic links 只需参考这个解决方案，添加如下代码即可去除上面的报错信息：
-if ProcessInfo.processInfo.environment.keys.contains(&amp;#34;OS_ACTIVITY_DT_MODE&amp;#34;) {  var env = ProcessInfo.processInfo.environment  env[&amp;#34;OS_ACTIVITY_DT_MODE&amp;#34;] = nil  process.environment = env } com.sun.tools.javac.code.TypeTags 编译Java老工程后出现如下所示错误。根据这个资料后发现是当前工程配置的jdk版本太高，只需在工程中设置使用低版本（当前是1.8版本）的sdk可解决该报错。
+if ProcessInfo.processInfo.environment.keys.contains(&amp;#34;OS_ACTIVITY_DT_MODE&amp;#34;) {  var env = ProcessInfo.processInfo.environment  env[&amp;#34;OS_ACTIVITY_DT_MODE&amp;#34;] = nil  process.environment = env } com.sun.tools.javac.code.TypeTags 编译Java老工程后出现如下所示错误。查到这个资料，发现是当前工程配置的jdk版本太高，只需在工程中设置使用低版本（当前是1.8版本）的sdk可解决该报错。
 com.sun.tools.javac.code.TypeTags can&amp;rsquo;t find gem cocoapods 使用rvm install 2.6.6命令安装了ruby 2.6.6版本。并使用 rvm use 2.6.6命令将版本切换到2.6.6后，再执行pod lib lint --verbose File.podspec命令时出现如下错误：
 /System/Library/Frameworks/Ruby.framework/Versions/2.6/usr/lib/ruby/2.6.0/rubygems.rb:283:in `find_spec_for_exe&amp;#39;: can&amp;#39;t find gem cocoapods (&amp;gt;= 0.a) with executable pod (Gem::GemNotFoundException)  from /System/Library/Frameworks/Ruby.framework/Versions/2.6/usr/lib/ruby/2.6.0/rubygems.rb:302:in `activate_bin_path&amp;#39; from /usr/local/bin/pod:23:in `&amp;lt;main&amp;gt;&amp;#39; 这是因为使用rvm安装的两个ruby版本是相互隔离的，在之前的ruby版本上安装的cocoapods，在新版上不适用。解决方案是执行sudo gem install cocoapods命令重新安装cocoapods。
 find_cached_set 使用的ruby版本为2.7.2，安装的cocoapods版本是1.11.3，执行pod lib lint --verbose File.podspec出现如下错误信息：
