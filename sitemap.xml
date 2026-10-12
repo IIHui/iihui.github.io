@@ -311,7 +311,7 @@ find ~/Library/Developer/Xcode/DerivedData -name &amp;#34;libminipng.framework&a
 测试后发现在iOS 16上条形码和二维码不能同时识别，目前该问题似乎已经在iOS 16.3修复了。在修复之前，测试发现将条形码竖着放就能正常识别。
 depreciation of UIremotekeyboardwindow 原生笔记功能是通过WebView来实现的，一些自定义功能是通过监听键盘的弹出事件，然后隐藏键盘相关的Window并显示自定义view来实现的。但这种实现方式借助了私有类UIremotekeyboardwindow。
 升级到iOS 16后发现自定义的view已不能覆盖键盘视图。查资料发现UIremotekeyboardwindow在iOS 16上已被移除，当前解决方案是在系统键盘上方增加View来显示原有功能，而不是用自定义view覆盖系统键盘所在位置。
-Python添加Module 在Intellij IDEA中编写python脚本时引入了第三方库，但debug时提示没有相应module。只需按照这个资料操作即可解决模块缺失导致的编译报错问题。
+IDEA 添加Python的Package 在Intellij IDEA中编写python脚本时引入了第三方库，但debug时提示没有相应module。只需按照这个资料操作即可解决模块缺失导致的编译报错问题。
 Failed to open macho file 调试Swift写的macOS脚本时出现了Failed to open macho file at xxx Too many levels of symbolic links错误，具体信息如下所示：
 Failed to open macho file at /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swift for reading: Too many levels of symbolic links 只需参考这个解决方案，添加如下代码即可去除上面的报错信息：
 if ProcessInfo.processInfo.environment.keys.contains(&amp;#34;OS_ACTIVITY_DT_MODE&amp;#34;) {  var env = ProcessInfo.processInfo.environment  env[&amp;#34;OS_ACTIVITY_DT_MODE&amp;#34;] = nil  process.environment = env } com.sun.tools.javac.code.TypeTags 编译Java老工程后出现如下所示错误信息。查到这个资料，发现是当前工程配置的jdk版本太高，只需在工程中设置使用低版本（当前是1.8版本）的sdk可解决该报错。
@@ -373,9 +373,9 @@ command script import lldb.macosx.crashlog https://juejin.cn/post/68449036193308
 https://zhuanlan.zhihu.com/p/271096997
 https://www.guardsquare.com/blog/making-the-most-out-of-ios-crash-reports-with-lldb
 failed to install provisioning profiles 开发所使用描述文件过期后，在安装新生成的描述文件时出现如下错误信息。参考这篇文章，重启电脑，就能够正常安装。
-Failed to install one or more provisioning profiles on the device. Please ensure the provisioning profile is configured for this device.If not,please try to generate a new profile file not found libarclite_iphoneos.a 今天将Xcode从14.2升级到14.3版本后，编译原来的工程，出现如下错误。具体原因和解决方案参考这两篇这两篇文章文章1和文章2：
-File not found: ~/Downloads/Xcode 14.3.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/arc/libarclite_iphoneos.a 第一种方式是将Xcode 14.2版本Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/目录下的arc目录完全拷贝到Xcode 14.3对应目录，接着完全关闭Xcode 14.3，再打开重新编译即可。
-第二种方式是将App最低支持版本设置为11.0，把相关组件最低支持版本也设置为11.0:
+Failed to install one or more provisioning profiles on the device. Please ensure the provisioning profile is configured for this device.If not,please try to generate a new profile file not found libarclite_iphoneos.a 将Xcode从14.2升级到14.3版本后，编译原来的工程，出现如下错误。具体原因和解决方案参考这文章1和文章2：
+File not found: ~/Downloads/Xcode 14.3.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/arc/libarclite_iphoneos.a 第一种方式是将Xcode 14.2版本Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/目录下的arc目录完全拷贝到Xcode 14.3对应目录，接着完全关闭Xcode 14.3，再打开重新编译原工程即可。
+第二种方式是将App最低支持版本设置为11.0，同时把相关组件最低支持版本也设置为11.0:
 post_install do |installer|  installer.pods_project.targets.each do |target|  target.build_configurations.each do |config|  config.build_settings[&amp;#39;IPHONEOS_DEPLOYMENT_TARGET&amp;#39;] = &amp;#39;11.0&amp;#39;  end  end end 如果编译还出现如下错误，重启Xcode即可：
 Build service could not create build operation: unknown error while handling message: MsgHandlingError(message: &amp;#34;unable to initiate PIF transfer session (operation in progress?)&amp;#34;) xattr operation not permitted 在iterm2中执行命令sudo xattr -rd com.apple.quarantine /Applications/xxx.app后出现如下错误，经查询是因为在Ventura 13.4系统中没有给iterm2这个应用赋予访问文件夹/Applications的权限。
 xattr: [Errno 1] Operation not permitted: &amp;#39;/Applications/xxx&amp;#39; 解决方案是打开System Settings---&amp;gt;Privacy &amp;amp; Security ---&amp;gt;Full Disk Access，然后找到iterm2并放开权限即可。勾选权限后，会提示要关闭Iterm，再重启即可。
