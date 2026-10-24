@@ -241,7 +241,7 @@ code.has-jax {
     <i class="fa fa-file-word-o"></i>
 </span>
 <span class="post-meta-item-text">字数: </span>
-<span class="leancloud-visitors-count">12392</span>
+<span class="leancloud-visitors-count">12459</span>
 &nbsp; | &nbsp;
 <span class="post-meta-item-icon">
     <i class="fa fa-coffee"></i>
@@ -769,8 +769,8 @@ code.has-jax {
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ruby" data-lang="ruby"><span style="display:flex;"><span>s<span style="color:#f92672">.</span>pod_target_xcconfig <span style="color:#f92672">=</span> {<span style="color:#e6db74">&#39;DEFINES_MODULE&#39;</span> <span style="color:#f92672">=&gt;</span> <span style="color:#e6db74">&#39;YES&#39;</span>,
 </span></span><span style="display:flex;"><span><span style="color:#e6db74">&#39;GCC_PREPROCESSOR_DEFINITIONS&#39;</span> <span style="color:#f92672">=&gt;</span> <span style="color:#e6db74">&#39;HAVE_ARC4RANDOM_BUF HAVE_INTTYPES_H HAVE_PKCRYPT HAVE_STDINT_H HAVE_WZAES HAVE_ZLIB ZLIB_COMPAT&#39;</span> }
 </span></span></code></pre></div><p>根源问题是引入新<code>sdk</code>的<code>header</code>搜索路径优先于系统的<code>zlib</code>。报错<code>'zlib.h' file not found</code>是一个很反直觉的现象：本来找到了新<code>sdk</code>里的<code>zlib.h</code>，但里面的<code>zconf.h</code>依赖链有问题，或者<code>headermap</code>，路径污染导致编译器中途找不到，或者<code>headermap</code>优先命中<code>sdk</code>的<code>zlib.h</code>，但这份<code>zlib</code>头和<code>minizip</code>不兼容。</p>
-<p>临时解决方案是将<code>#  include &quot;zlib.h&quot;</code>改为<code>#  include &lt;zlib.h&gt;</code>。双引号引入是优先搜索<code>USER_HEADER_SEARCH_PATHS</code>，再搜索<code>HEADER_SEARCH_PATHS</code>，最后到系统标准路径搜索。</p>
-<p>而尖括号的引入是<code>HEADER_SEARCH_PATHS</code>+系统内置<code>sdk</code>头目录（<code>SDKROOT/usr/include</code>) ，它不会去 <code>USER_HEADER_SEARCH_PATHS</code>里面找。</p>
+<p>临时解决方案是将<code>#  include &quot;zlib.h&quot;</code>改为<code>#  include &lt;zlib.h&gt;</code>。双引号的规则是先搜索当期源文件所在目录，再搜索<code>USER_HEADER_SEARCH_PATHS</code>，接着搜索<code>HEADER_SEARCH_PATHS</code>，最后到系统标准路径搜索。新<code>sdk</code>自带的<code>zlib.h</code>及其所在路径一旦进入<code>USER_HEADER_SEARCH_PATHS</code>，就会被优先命中。</p>
+<p>而尖括号是<code>HEADER_SEARCH_PATHS</code>+系统内置<code>sdk</code>头目录（<code>SDKROOT/usr/include</code>) ，它不会去 <code>USER_HEADER_SEARCH_PATHS</code>里面找。</p>
 <p>改成<code>#include &lt;zlib.h&gt;</code>后，编译器跳过<code>USER</code>区域，直接去系统标准路径拿到系统的<code>zlib.h</code>，完全绕开sdk里那一份<code>zlib</code>，所以立刻正常。</p>
 
     </div>
