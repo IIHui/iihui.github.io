@@ -142,9 +142,8 @@ gem install xcframework_converter  xcfconvert &amp;lt;path/to/Framework.framewor
 include &amp;ldquo;zlib.h&amp;rdquo; 源码方式引入了一个新组件，该组件源码中带了一个zlib.h文件。工程中原来已经源码方式引入了SSZipArchive组件，新组件引入后出现编译错误：
 SSZipArchive/minizip/mz_strm_zlib.c:18:12: error: &amp;#39;zlib.h&amp;#39; file not found 同时，需要注意的是SSZipArchive的podspec中已经配置了相应的宏：
 s.pod_target_xcconfig = {&amp;#39;DEFINES_MODULE&amp;#39; =&amp;gt; &amp;#39;YES&amp;#39;, &amp;#39;GCC_PREPROCESSOR_DEFINITIONS&amp;#39; =&amp;gt; &amp;#39;HAVE_ARC4RANDOM_BUF HAVE_INTTYPES_H HAVE_PKCRYPT HAVE_STDINT_H HAVE_WZAES HAVE_ZLIB ZLIB_COMPAT&amp;#39; } 根源问题是引入新sdk的header搜索路径优先于系统的zlib。报错&#39;zlib.h&#39; file not found是一个很反直觉的现象：本来找到了新sdk里的zlib.h，但里面的zconf.h依赖链有问题，或者headermap，路径污染导致编译器中途找不到，或者headermap优先命中sdk的zlib.h，但这份zlib头和minizip不兼容。
-临时解决方案是将# include &amp;quot;zlib.h&amp;quot;改为# include &amp;lt;zlib.h&amp;gt;。双引号的规则是先搜索当期源文件所在目录，再搜索USER_HEADER_SEARCH_PATHS，接着搜索HEADER_SEARCH_PATHS，最后到系统标准路径搜索。新sdk自带的zlib.h及其所在路径一旦进入USER_HEADER_SEARCH_PATHS，就会被优先命中。
-而尖括号是HEADER_SEARCH_PATHS&#43;系统内置sdk头目录（SDKROOT/usr/include) ，它不会去 USER_HEADER_SEARCH_PATHS里面找。
-改成#include &amp;lt;zlib.h&amp;gt;后，编译器跳过USER区域，直接去系统标准路径拿到系统的zlib.h，完全绕开sdk里那一份zlib，所以立刻正常。
+临时解决方案是将# include &amp;quot;zlib.h&amp;quot;改为# include &amp;lt;zlib.h&amp;gt;。双引号的规则是先搜索源文件所在目录，再搜索USER_HEADER_SEARCH_PATHS，接着搜索HEADER_SEARCH_PATHS，最后到系统标准路径搜索。新sdk自带的zlib.h及其所在路径一旦进入USER_HEADER_SEARCH_PATHS，就会被优先命中。
+而尖括号引入是搜索HEADER_SEARCH_PATHS&#43;系统内置sdk头目录（SDKROOT/usr/include) ，不会搜索 USER_HEADER_SEARCH_PATHS。改成#include &amp;lt;zlib.h&amp;gt;后，编译器跳过USER区域，直接去系统标准路径拿到系统的zlib.h，完全绕开sdk里的那一份zlib，所以立刻就正常。
 </content>
     </entry>
     
