@@ -144,7 +144,8 @@ SSZipArchive/minizip/mz_strm_zlib.c:18:12: error: &amp;#39;zlib.h&amp;#39; file 
 s.pod_target_xcconfig = {&amp;#39;DEFINES_MODULE&amp;#39; =&amp;gt; &amp;#39;YES&amp;#39;, &amp;#39;GCC_PREPROCESSOR_DEFINITIONS&amp;#39; =&amp;gt; &amp;#39;HAVE_ARC4RANDOM_BUF HAVE_INTTYPES_H HAVE_PKCRYPT HAVE_STDINT_H HAVE_WZAES HAVE_ZLIB ZLIB_COMPAT&amp;#39; } 根源问题是引入新sdk的header搜索路径优先于系统的zlib。报错&#39;zlib.h&#39; file not found是一个很反直觉的现象：本来找到了新sdk里的zlib.h，但里面的zconf.h依赖链有问题，或者headermap，路径污染导致编译器中途找不到，或者headermap优先命中sdk的zlib.h，但这份zlib头和minizip不兼容。
 临时解决方案是将# include &amp;quot;zlib.h&amp;quot;改为# include &amp;lt;zlib.h&amp;gt;。双引号的规则是先搜索源文件所在目录，再搜索USER_HEADER_SEARCH_PATHS，接着搜索HEADER_SEARCH_PATHS，最后到系统标准路径搜索。新sdk自带的zlib.h及其所在路径一旦进入USER_HEADER_SEARCH_PATHS，就会被优先命中。
 而尖括号引入是搜索HEADER_SEARCH_PATHS&#43;系统内置sdk头目录（SDKROOT/usr/include) ，不会搜索 USER_HEADER_SEARCH_PATHS。改成#include &amp;lt;zlib.h&amp;gt;后，编译器跳过USER区域，直接去系统标准路径拿到系统的zlib.h，完全绕开sdk里的那一份zlib，所以立刻就正常。
-</content>
+如果不修改：
+post_install do |installer|  installer.pods_project.targets.each do |target|  if shturl.cc/N == &amp;#34;新SDK名字&amp;#34;  target.build_configurations.each do |config|  # 把这个sdk的搜索路径标记为system，里面的头文件不会优先被 &amp;#34;&amp;#34; 查找命中  paths = config.build_settings[&amp;#39;HEADER_SEARCH_PATHS&amp;#39;]  next unless paths  config.build_settings[&amp;#39;HEADER_SEARCH_PATHS&amp;#39;] = paths.map { |p| p.include?(&amp;#39;|system&amp;#39;) ? p : &amp;#34;#{p} |system&amp;#34; }  end  end  end end </content>
     </entry>
     
      <entry>

@@ -241,13 +241,13 @@ code.has-jax {
     <i class="fa fa-file-word-o"></i>
 </span>
 <span class="post-meta-item-text">字数: </span>
-<span class="leancloud-visitors-count">12460</span>
+<span class="leancloud-visitors-count">12554</span>
 &nbsp; | &nbsp;
 <span class="post-meta-item-icon">
     <i class="fa fa-coffee"></i>
 </span>
 <span class="post-meta-item-text">阅读: </span>
-<span class="leancloud-visitors-count">25 分钟</span>
+<span class="leancloud-visitors-count">26 分钟</span>
 </span>
       </div>
     </header>
@@ -771,7 +771,20 @@ code.has-jax {
 </span></span></code></pre></div><p>根源问题是引入新<code>sdk</code>的<code>header</code>搜索路径优先于系统的<code>zlib</code>。报错<code>'zlib.h' file not found</code>是一个很反直觉的现象：本来找到了新<code>sdk</code>里的<code>zlib.h</code>，但里面的<code>zconf.h</code>依赖链有问题，或者<code>headermap</code>，路径污染导致编译器中途找不到，或者<code>headermap</code>优先命中<code>sdk</code>的<code>zlib.h</code>，但这份<code>zlib</code>头和<code>minizip</code>不兼容。</p>
 <p>临时解决方案是将<code>#  include &quot;zlib.h&quot;</code>改为<code>#  include &lt;zlib.h&gt;</code>。双引号的规则是先搜索源文件所在目录，再搜索<code>USER_HEADER_SEARCH_PATHS</code>，接着搜索<code>HEADER_SEARCH_PATHS</code>，最后到系统标准路径搜索。新<code>sdk</code>自带的<code>zlib.h</code>及其所在路径一旦进入<code>USER_HEADER_SEARCH_PATHS</code>，就会被优先命中。</p>
 <p>而尖括号引入是搜索<code>HEADER_SEARCH_PATHS</code>+系统内置<code>sdk</code>头目录（<code>SDKROOT/usr/include</code>) ，不会搜索 <code>USER_HEADER_SEARCH_PATHS</code>。改成<code>#include &lt;zlib.h&gt;</code>后，编译器跳过<code>USER</code>区域，直接去系统标准路径拿到系统的<code>zlib.h</code>，完全绕开<code>sdk</code>里的那一份<code>zlib</code>，所以立刻就正常。</p>
-
+<p>如果不修改：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sh" data-lang="sh"><span style="display:flex;"><span>post_install <span style="color:#66d9ef">do</span> |installer|
+</span></span><span style="display:flex;"><span>  installer.pods_project.targets.each <span style="color:#66d9ef">do</span> |target|
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">if</span> shturl.cc/N <span style="color:#f92672">==</span> <span style="color:#e6db74">&#34;新SDK名字&#34;</span>
+</span></span><span style="display:flex;"><span>      target.build_configurations.each <span style="color:#66d9ef">do</span> |config|
+</span></span><span style="display:flex;"><span>        <span style="color:#75715e"># 把这个sdk的搜索路径标记为system，里面的头文件不会优先被 &#34;&#34; 查找命中</span>
+</span></span><span style="display:flex;"><span>        paths <span style="color:#f92672">=</span> config.build_settings<span style="color:#f92672">[</span><span style="color:#e6db74">&#39;HEADER_SEARCH_PATHS&#39;</span><span style="color:#f92672">]</span>
+</span></span><span style="display:flex;"><span>        next unless paths
+</span></span><span style="display:flex;"><span>        config.build_settings<span style="color:#f92672">[</span><span style="color:#e6db74">&#39;HEADER_SEARCH_PATHS&#39;</span><span style="color:#f92672">]</span> <span style="color:#f92672">=</span> paths.map <span style="color:#f92672">{</span> |p| p.include?<span style="color:#f92672">(</span><span style="color:#e6db74">&#39;|system&#39;</span><span style="color:#f92672">)</span> ? p : <span style="color:#e6db74">&#34;#{p} |system&#34;</span> <span style="color:#f92672">}</span>
+</span></span><span style="display:flex;"><span>      end
+</span></span><span style="display:flex;"><span>    end
+</span></span><span style="display:flex;"><span>  end
+</span></span><span style="display:flex;"><span>end
+</span></span></code></pre></div>
     </div>
     <footer class="post-footer">
         
