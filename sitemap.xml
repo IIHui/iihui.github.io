@@ -145,8 +145,9 @@ s.pod_target_xcconfig = {&amp;#39;DEFINES_MODULE&amp;#39; =&amp;gt; &amp;#39;YES
 临时解决方案是将# include &amp;quot;zlib.h&amp;quot;改为# include &amp;lt;zlib.h&amp;gt;。双引号的规则是先搜索源文件所在目录，再搜索USER_HEADER_SEARCH_PATHS，接着搜索HEADER_SEARCH_PATHS，最后到系统标准路径搜索。新sdk自带的zlib.h及其所在路径一旦进入USER_HEADER_SEARCH_PATHS，就会被优先命中。
 而尖括号引入是搜索HEADER_SEARCH_PATHS&#43;系统内置sdk头目录（SDKROOT/usr/include) ，不会搜索 USER_HEADER_SEARCH_PATHS。改成#include &amp;lt;zlib.h&amp;gt;后，编译器跳过USER区域，直接去系统标准路径拿到系统的zlib.h，完全绕开sdk里的那一份zlib，所以立刻就正常。
 如果不修改：
-post_install do |installer|  installer.pods_project.targets.each do |target|  if shturl.cc/N == &amp;#34;新SDK名字&amp;#34;  target.build_configurations.each do |config|  # 把这个sdk的搜索路径标记为system，里面的头文件不会优先被 &amp;#34;&amp;#34; 查找命中  paths = config.build_settings[&amp;#39;HEADER_SEARCH_PATHS&amp;#39;]  next unless paths  config.build_settings[&amp;#39;HEADER_SEARCH_PATHS&amp;#39;] = paths.map { |p| p.include?(&amp;#39;|system&amp;#39;) ? p : &amp;#34;#{p} |system&amp;#34; }  end  end  end end Swift版本判断 下面两种判断版本的写法是一样的，社区中大量关于iOS 26特性（如Liquid Glass）的代码示例，都统一使用 #available(iOS 26.0, *):
-if #available(iOS 26.0, *)  if #available(iOS 26, *) </content>
+post_install do |installer|  installer.pods_project.targets.each do |target|  if shturl.cc/N == &amp;#34;新SDK名字&amp;#34;  target.build_configurations.each do |config|  # 把这个sdk的搜索路径标记为system，里面的头文件不会优先被 &amp;#34;&amp;#34; 查找命中  paths = config.build_settings[&amp;#39;HEADER_SEARCH_PATHS&amp;#39;]  next unless paths  config.build_settings[&amp;#39;HEADER_SEARCH_PATHS&amp;#39;] = paths.map { |p| p.include?(&amp;#39;|system&amp;#39;) ? p : &amp;#34;#{p} |system&amp;#34; }  end  end  end end Swift版本判断 在Swift中使用新版API时经常需要进行版本判断，下面两种写法的语义和实际行为完全是等价的。社区中大量关于iOS 26特性（如Liquid Glass）的代码示例，都统一使用 #available(iOS 26.0, *):
+if #available(iOS 26.0, *)  if #available(iOS 26, *) 虽然功能一战，但在代码风格上和语义上存在细微差别。iOS 26（整数）：更简洁，直接指定主版本号。Swift 语言设计上支持这种简写，编译器会将其理解为 26.0。iOS 26.0（浮点数）：更精确、更严谨。它显式地写出了主次版本号，与Apple SDK中API的可用性标注格式（如introduced: 26.0）保持一致，可读性更强。
+</content>
     </entry>
     
      <entry>
