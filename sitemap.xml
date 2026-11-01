@@ -155,7 +155,9 @@ plutil -lint /Users/xxx/Supporting\ Files/Info.plist 如果plist文件有语法�
 使用pre_install也不行，这是因为spec元数据校验（版本或平台约束等），发生在拉取spec之后但在下载代码之前，hook机制碰不到这个阶段，所以不会生效。
 最后，可能会想到把干预提前到podspec读取的时刻。即通过在本地新建一个第三方组件的podspec文件副本，只修改其支持的最低iOS系统版本，其它内容保持不变：
 pod &amp;#39;xxx&amp;#39;, :podspec =&amp;gt; &amp;#39;LocalSpecs/xxx.podspec&amp;#39; override和public顺序 关键词override和public都是声明修饰符，Swift编译器对它们的顺序没有硬性要求。下面两种写法在功能上完全等价，都能通过编译：
-override public func mouseDown(with event: NSEvent) { ... } public override func mouseDown(with event: NSEvent) { ... } 虽然编译器不强制，但为了团队协作和代码一致性，建议遵循公认的规范。SwiftLint的modifier_order 规则明确推荐了修饰符的排列顺序，其核心次序如下:
+override public func foo() { ... } public override func foo() { ... } 虽然编译器不强制，但为了团队协作和代码一致性，建议遵循公认的规范。SwiftLint的modifier_order规则明确推荐了修饰符的排列顺序，其核心次序如下:
+override → 访问级别（public/private等） → dynamic → mutating → lazy → final → required → convenience → static podspec读取环境变量 在CocoaPods的Podfile和podspec文件中读取~/.zshrc里定义的export 变量，核心方法都是利用Ruby的 ENV来获取环境变量的值。
+simulator_flag = ENV[&amp;#39;use_simulator&amp;#39;] # 读取后得到的是字符串  use_simulator = ENV.fetch(&amp;#39;use_simulator&amp;#39;, &amp;#39;0&amp;#39;).to_i 使用ENV[&#39;use_simulator&#39;]读到的永远是字符串（比如&amp;quot;1&amp;quot;），不是数字1。要转成数字，用.to_i或Integer(...)。
 </content>
     </entry>
     
