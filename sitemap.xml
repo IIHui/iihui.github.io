@@ -150,11 +150,11 @@ if #available(iOS 26.0, *)  if #available(iOS 26, *) 虽然功能一战，但在
 PropertyListConversionError 修改了info.plist文件，使用Xcode重新编译时出现如下错误：
 Showing Recent Errors Only unable to read property list from file: /Users/xxx/Supporting Files/Info.plist: The operation couldn’t be completed. (SWBUtil.PropertyListConversionError error 2.) 这个错误的意思是Xcode在构建时无法解析指定Info.plist文件，这通常不是因为文件丢失，而是文件中的内容格式有误，或是Build Settings中配置的文件路径不对。上面这个错误没有具体指出是哪一行出现的问题，最快的诊断方法是使用macOS自带的plutil工具检查文件格式：
 plutil -lint /Users/xxx/Supporting\ Files/Info.plist 如果plist文件有语法错误，plutil会精确指出问题所在，然后根据它的提示修改Info.plist文件内容即可。实际上Info.plist本质是一个XML文件，任何细小的格式错误都可能导致解析失败。
-指定podspec 某个组件X依赖了一个第三方组件，但该第三方组件支持的最低iOS版本为15.5，高于被其依赖的X组件支持的最低iOS版本（11.0）。若为了临时调试，可以在本地将索引库中将该第三方组件的podspec文件中的最低支持版本修改为11。
-但需要注意的是，不能在podfile中利用post_install或pre_install修改这个第三方组件最低支持的iOS系统版本。post_install 无效的原因是，CocoaPods的依赖解析发生在生成Pods工程之前。
-在第三方组件的podspec中声明了platform :ios, &#39;15.5&#39;，解析器在检查依赖关系时一旦发现组件的 11.0 低于这个值，就会直接抛出错误，根本不会走到post_install 这一步。
-可能会想到把干预提前到podspec被读取的时刻，即想到使用pre_install。这是因为spec元数据校验（版本 / 平台约束），发生在拉取spec之后、下载代码之前，hook机制碰不到这个阶段。
-</content>
+本地podspec 某个组件X依赖了一个第三方组件，但该第三方组件支持的最低iOS版本为15.5，高于被其依赖的X组件支持的最低iOS版本（11.0）。若为了临时调试，可以在本地将索引库中将该第三方组件的podspec文件中的最低支持版本修改为11 .0。
+但需要注意的是，不能在podfile中利用post_install或pre_install修改这个第三方组件最低支持的iOS系统版本。post_install无效的原因是CocoaPods的依赖解析发生在生成Pods工程之前。在第三方组件的podspec中声明了platform :ios, &#39;15.5&#39;，解析器在检查依赖关系时一旦发现组件的 11.0 低于这个值，就会直接抛出错误，根本不会走到post_install 这一步。
+使用pre_install也不行，这是因为spec元数据校验（版本或平台约束等），发生在拉取spec之后、下载代码之前，hook机制碰不到这个阶段。
+最后，可能会想到把干预提前到podspec被读取的时刻，此时可以通过在本地新建一个第三方组件的podspec文件，只修改其支持的最低iOS系统版本，其他内容保持不变：
+pod &amp;#39;xxx&amp;#39;, :podspec =&amp;gt; &amp;#39;LocalSpecs/xxx.podspec&amp;#39; </content>
     </entry>
     
      <entry>
