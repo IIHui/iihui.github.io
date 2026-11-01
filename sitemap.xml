@@ -145,11 +145,15 @@ s.pod_target_xcconfig = {&amp;#39;DEFINES_MODULE&amp;#39; =&amp;gt; &amp;#39;YES
 临时解决方案是将# include &amp;quot;zlib.h&amp;quot;改为# include &amp;lt;zlib.h&amp;gt;。双引号的规则是先搜索源文件所在目录，再搜索USER_HEADER_SEARCH_PATHS，接着搜索HEADER_SEARCH_PATHS，最后到系统标准路径搜索。新sdk自带的zlib.h及其所在路径一旦进入USER_HEADER_SEARCH_PATHS，就会被优先命中。
 而尖括号引入是搜索HEADER_SEARCH_PATHS&#43;系统内置sdk头目录（SDKROOT/usr/include) ，不会搜索 USER_HEADER_SEARCH_PATHS。改成#include &amp;lt;zlib.h&amp;gt;后，编译器跳过USER区域，直接去系统标准路径拿到系统的zlib.h，完全绕开sdk里的那一份zlib，所以立刻就正常。
 如果不修改：
-post_install do |installer|  installer.pods_project.targets.each do |target|  if shturl.cc/N == &amp;#34;新SDK名字&amp;#34;  target.build_configurations.each do |config|  # 把这个sdk的搜索路径标记为system，里面的头文件不会优先被 &amp;#34;&amp;#34; 查找命中  paths = config.build_settings[&amp;#39;HEADER_SEARCH_PATHS&amp;#39;]  next unless paths  config.build_settings[&amp;#39;HEADER_SEARCH_PATHS&amp;#39;] = paths.map { |p| p.include?(&amp;#39;|system&amp;#39;) ? p : &amp;#34;#{p} |system&amp;#34; }  end  end  end end Swift版本判断 在Swift中使用新版API时经常需要进行版本判断，下面两种写法的语义和实际行为完全是等价的。社区中大量关于iOS 26特性（如Liquid Glass）的代码示例，都统一使用 #available(iOS 26.0, *):
-if #available(iOS 26.0, *)  if #available(iOS 26, *) 虽然功能一战，但在代码风格上和语义上存在细微差别。iOS 26（整数）：更简洁，直接指定主版本号。Swift 语言设计上支持这种简写，编译器会将其理解为 26.0。iOS 26.0（浮点数）：更精确、更严谨。它显式地写出了主次版本号，与Apple SDK中API的可用性标注格式（如introduced: 26.0）保持一致，可读性更强。
+post_install do |installer|  installer.pods_project.targets.each do |target|  if shturl.cc/N == &amp;#34;新SDK名字&amp;#34;  target.build_configurations.each do |config|  # 把这个sdk的搜索路径标记为system，里面的头文件不会优先被 &amp;#34;&amp;#34; 查找命中  paths = config.build_settings[&amp;#39;HEADER_SEARCH_PATHS&amp;#39;]  next unless paths  config.build_settings[&amp;#39;HEADER_SEARCH_PATHS&amp;#39;] = paths.map { |p| p.include?(&amp;#39;|system&amp;#39;) ? p : &amp;#34;#{p} |system&amp;#34; }  end  end  end end iOS版本判断 在Swift中使用新版API时经常需要进行版本判断，下面两种写法的语义和实际行为完全是等价的。社区中大量关于iOS 26特性（如Liquid Glass）的代码示例，都统一使用 #available(iOS 26.0, *):
+if #available(iOS 26.0, *)  if #available(iOS 26, *) 虽然功能一战，但在代码风格上和语义上存在细微差别。iOS 26（整数）：更简洁，直接指定主版本号。Swift语言设计上支持这种简写，编译器会将其理解为 26.0。而iOS 26.0（浮点数）：更精确、更严谨，它显式地写出了主次版本号，与Apple SDK中API的可用性标注格式（如introduced: 26.0）保持一致，可读性更强。
 PropertyListConversionError 修改了info.plist文件，使用Xcode重新编译时出现如下错误：
-Showing Recent Errors Only unable to read property list from file: /Users/xxx/Supporting Files/Info.plist: The operation couldn’t be completed. (SWBUtil.PropertyListConversionError error 2.) 这个错误的意思是Xcode在构建时无法解析Info.plist文件，这通常不是因为文件丢失，而是它的内容格式有误，或是Build Settings中配置路径不对。但这个错误没有具体指出是哪一行出现的问题，最快的诊断方法是使用macOS自带的plutil工具检查文件格式：
-plutil -lint /Users/xxx/Supporting\ Files/Info.plist 如果文件有语法错误，plutil会精确指出问题所在，然后根据它的提示修改Info.plist文件内容即可。实际上Info.plist本质是一个XML文件，任何细小的格式错误都可能导致解析失败。
+Showing Recent Errors Only unable to read property list from file: /Users/xxx/Supporting Files/Info.plist: The operation couldn’t be completed. (SWBUtil.PropertyListConversionError error 2.) 这个错误的意思是Xcode在构建时无法解析指定Info.plist文件，这通常不是因为文件丢失，而是文件中的内容格式有误，或是Build Settings中配置的文件路径不对。上面这个错误没有具体指出是哪一行出现的问题，最快的诊断方法是使用macOS自带的plutil工具检查文件格式：
+plutil -lint /Users/xxx/Supporting\ Files/Info.plist 如果plist文件有语法错误，plutil会精确指出问题所在，然后根据它的提示修改Info.plist文件内容即可。实际上Info.plist本质是一个XML文件，任何细小的格式错误都可能导致解析失败。
+指定podspec 某个组件X依赖了一个第三方组件，但该第三方组件支持的最低iOS版本为15.5，高于被其依赖的X组件支持的最低iOS版本（11.0）。若为了临时调试，可以在本地将索引库中将该第三方组件的podspec文件中的最低支持版本修改为11。
+但需要注意的是，不能在podfile中利用post_install或pre_install修改这个第三方组件最低支持的iOS系统版本。post_install 无效的原因是，CocoaPods的依赖解析发生在生成Pods工程之前。
+在第三方组件的podspec中声明了platform :ios, &#39;15.5&#39;，解析器在检查依赖关系时一旦发现组件的 11.0 低于这个值，就会直接抛出错误，根本不会走到post_install 这一步。
+可能会想到把干预提前到podspec被读取的时刻，即想到使用pre_install。这是因为spec元数据校验（版本 / 平台约束），发生在拉取spec之后、下载代码之前，hook机制碰不到这个阶段。
 </content>
     </entry>
     
