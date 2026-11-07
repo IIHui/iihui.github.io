@@ -241,7 +241,7 @@ code.has-jax {
     <i class="fa fa-file-word-o"></i>
 </span>
 <span class="post-meta-item-text">字数: </span>
-<span class="leancloud-visitors-count">14066</span>
+<span class="leancloud-visitors-count">14055</span>
 &nbsp; | &nbsp;
 <span class="post-meta-item-icon">
     <i class="fa fa-coffee"></i>
@@ -785,25 +785,25 @@ code.has-jax {
 </span></span><span style="display:flex;"><span>  end
 </span></span><span style="display:flex;"><span>end
 </span></span></code></pre></div><h1 id="ios版本判断">iOS版本判断</h1>
-<p>在Swift中使用新版API时经常需要进行版本判断，下面两种写法的语义和实际行为完全是等价的。社区中大量关于<code>iOS 26</code>特性（如<code>Liquid Glass</code>）的代码示例，都统一使用 <code>#available(iOS 26.0, *)</code>:</p>
+<p>在Swift中使用新的API时需要进行版本判断，下面两种写法的语义和实际行为完全是等价的。社区中有大量关于<code>iOS 26</code>特性（如<code>Liquid Glass</code>）的代码示例，都统一使用<code>#available(iOS 26.0, *)</code>:</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span><span style="color:#66d9ef">if</span> <span style="color:#75715e">#available</span>(<span style="color:#75715e">iOS</span> <span style="color:#ae81ff">26.0</span>, <span style="color:#f92672">*</span>)
 </span></span><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span><span style="color:#66d9ef">if</span> <span style="color:#75715e">#available</span>(<span style="color:#75715e">iOS</span> <span style="color:#ae81ff">26</span>, <span style="color:#f92672">*</span>)
-</span></span></code></pre></div><p>虽然功能一战，但在代码风格上和语义上存在细微差别。<code>iOS 26</code>（整数）：更简洁，直接指定主版本号。Swift语言设计上支持这种简写，编译器会将其理解为 <code>26.0</code>。而<code>iOS 26.0</code>（浮点数）：更精确、更严谨，它显式地写出了主次版本号，与<code>Apple SDK</code>中<code>API</code>的可用性标注格式（如<code>introduced: 26.0</code>）保持一致，可读性更强。</p>
+</span></span></code></pre></div><p>虽然两种声明方式功能一致，但在风格和语义上存在细微差别。<code>iOS 26</code>（整数）更简洁，直接指定主版本号。Swift语言设计上支持这种简写，编译器会将其理解为<code>26.0</code>。而<code>iOS 26.0</code>（浮点数）更精确和严谨，它显式地写出了主次版本号，与<code>Apple SDK</code>中<code>API</code>的可用性标注格式（如<code>introduced: 26.0</code>）保持一致，可读性更强。</p>
 <h1 id="propertylistconversionerror">PropertyListConversionError</h1>
 <p>修改了<code>info.plist</code>文件，使用<code>Xcode</code>重新编译时出现如下错误：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sh" data-lang="sh"><span style="display:flex;"><span>Showing Recent Errors Only unable to read property list from file: /Users/xxx/Supporting Files/Info.plist: The operation couldn’t be completed. <span style="color:#f92672">(</span>SWBUtil.PropertyListConversionError error 2.<span style="color:#f92672">)</span>
-</span></span></code></pre></div><p>这个错误的意思是<code>Xcode</code>在构建时无法解析指定<code>Info.plist</code>文件，这通常不是因为文件丢失，而是文件中的内容格式有误，或是<code>Build Settings</code>中配置的文件路径不对。上面这个错误没有具体指出是哪一行出现的问题，最快的诊断方法是使用<code>macOS</code>自带的<code>plutil</code>工具检查文件格式：</p>
+</span></span></code></pre></div><p>这个错误是指<code>Xcode</code>在构建时无法解析指定<code>Info.plist</code>文件，通常不是因为文件不存在，而是文件中的内容格式有误。上面这个错误没有具体指出是哪一行出现的问题，最快的诊断方法是使用<code>macOS</code>自带的<code>plutil</code>工具检查文件格式：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sh" data-lang="sh"><span style="display:flex;"><span>plutil -lint /Users/xxx/Supporting<span style="color:#ae81ff">\ </span>Files/Info.plist
 </span></span></code></pre></div><p>如果<code>plist</code>文件有语法错误，<code>plutil</code>会精确指出问题所在，然后根据它的提示修改<code>Info.plist</code>文件内容即可。实际上<code>Info.plist</code>本质是一个<code>XML</code>文件，任何细小的格式错误都可能导致解析失败。</p>
 <h1 id="本地podspec">本地podspec</h1>
-<p>某个组件X依赖了一个新的第三方组件，但该新第三方组件支持的最低<code>iOS</code>版本为<code>15.5</code>，高于被其依赖的X组件支持的最低<code>iOS 11.0</code>版本。为了临时调试，<font color=red>可以在本地将索引库</font>（<code>~/.cocoapods</code>目录下）中将该第三方组件对应版本的<code>podspec</code>文件中的最低支持版本修改为<code>11 .0</code>。</p>
-<p>特别需要注意的是，不能在<code>podfile</code>中利用<code>post_install</code>或<code>pre_install</code>修改组件X依赖的第三方组件的最低支持<code>iOS</code>版本。<code>post_install</code>无效的原因是<code>CocoaPods</code>的依赖解析发生在生成<code>Pods</code>工程之前。第三方组件的索引文件<code>podspec</code>中声明了<code>platform :ios, '15.5'</code>，解析器在检查依赖关系时一旦发现组件的 <code>11.0</code> 低于这个值，就会直接抛出错误，不会走到<code>post_install</code>这一步。</p>
+<p>某个组件X依赖了一个新的第三方组件，但该新的第三方组件支持的最低<code>iOS</code>版本为<code>15.5</code>，高于被其依赖的X组件的最低<code>iOS 11.0</code>版本。为了临时调试，<font color=red>可以在本地将索引库</font>（<code>~/.cocoapods</code>目录）中将该第三方组件对应版本的<code>podspec</code>文件中的最低支持版本修改为<code>11 .0</code>。</p>
+<p>特别需要注意的是，不能在<code>podfile</code>中利用<code>post_install</code>或<code>pre_install</code>两个钩子修改组件X依赖的第三方组件的最低支持<code>iOS</code>版本。<code>post_install</code>钩子无效的原因是<code>CocoaPods</code>的依赖解析发生在生成<code>Pods</code>工程之前。第三方组件的索引文件<code>podspec</code>中声明了<code>platform :ios, '15.5'</code>，解析器在检查依赖关系时一旦发现组件的 <code>11.0</code> 低于这个值，就会直接抛出错误，不会走到<code>post_install</code>这一步。</p>
 <p>使用<code>pre_install</code>也不行，这是因为<code>spec</code>元数据校验（版本或平台约束等），发生在拉取<code>spec</code>之后但在下载代码之前，<code>hook</code>机制碰不到这个阶段，所以不会生效。</p>
 <p>最后，可能会想到把干预提前到<code>podspec</code>读取的时刻。即通过在本地新建一个第三方组件的<code>podspec</code>文件副本，只修改其支持的最低iOS系统版本，其它内容保持不变：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sh" data-lang="sh"><span style="display:flex;"><span>pod <span style="color:#e6db74">&#39;xxx&#39;</span>, :podspec <span style="color:#f92672">=</span>&gt; <span style="color:#e6db74">&#39;LocalSpecs/xxx.podspec&#39;</span>
 </span></span></code></pre></div><h1 id="override和public顺序">override和public顺序</h1>
-<p>关键词<code>override</code>和<code>public</code>都是声明修饰符，Swift<font color="#de7802">编译器对它们的顺序没有硬性要求</font>。下面两种写法在功能上完全等价，都能通过编译：</p>
+<p>关键词<code>override</code>和<code>public</code>都是声明修饰符，Swift的<font color="#de7802">编译器对它们的顺序没有硬性要求</font>。下面两种写法在功能上完全等价，都能通过编译：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-swift" data-lang="swift"><span style="display:flex;"><span><span style="color:#66d9ef">override</span> <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">func</span> <span style="color:#a6e22e">foo</span>() { ... }
 </span></span><span style="display:flex;"><span><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">override</span> <span style="color:#66d9ef">func</span> <span style="color:#a6e22e">foo</span>() { ... }
 </span></span></code></pre></div><p>虽然编译器不强制，但为了团队协作和代码一致性，建议遵循公认的规范。<code>SwiftLint</code>的<code>modifier_order</code>规则明确推荐了修饰符的排列顺序，其核心次序如下:</p>
