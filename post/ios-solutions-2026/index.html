@@ -241,13 +241,13 @@ code.has-jax {
     <i class="fa fa-file-word-o"></i>
 </span>
 <span class="post-meta-item-text">字数: </span>
-<span class="leancloud-visitors-count">14569</span>
+<span class="leancloud-visitors-count">15169</span>
 &nbsp; | &nbsp;
 <span class="post-meta-item-icon">
     <i class="fa fa-coffee"></i>
 </span>
 <span class="post-meta-item-text">阅读: </span>
-<span class="leancloud-visitors-count">30 分钟</span>
+<span class="leancloud-visitors-count">31 分钟</span>
 </span>
       </div>
     </header>
@@ -815,6 +815,7 @@ code.has-jax {
 </span></span><span style="display:flex;"><span>use_simulator <span style="color:#f92672">=</span> <span style="color:#66d9ef">ENV</span><span style="color:#f92672">.</span>fetch(<span style="color:#e6db74">&#39;use_simulator&#39;</span>, <span style="color:#e6db74">&#39;0&#39;</span>)<span style="color:#f92672">.</span>to_i
 </span></span></code></pre></div><p>使用<code>ENV['use_simulator']</code>读到的永远是字符串（比如<code>&quot;1&quot;</code>），不是数字<code>1</code>。要转成数字，用<code>.to_i</code>或<code>Integer(...)</code>。</p>
 <h1 id="拉取podspec文件">拉取podspec文件</h1>
+<p>想要在命令行下拉取某个组件的pospec文件，可以使用如下方式：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sh" data-lang="sh"><span style="display:flex;"><span>curl -L https://raw.githubusercontent.com/microsoft/plcrashreporter/1.12.0/PLCrashReporter.podspec -o PLCrashReporter.podspec
 </span></span><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span>curl -L -o PLCrashReporter.podspec.json <span style="color:#e6db74">&#34;https://github.com/CocoaPods/Specs/blob/master/Specs/9/5/4/PLCrashReporter/1.12.0/PLCrashReporter.podspec.json?raw=true&#34;</span>
@@ -823,7 +824,7 @@ code.has-jax {
 </span></span><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span>pod spec cat PLCrashReporter,1.12.0 &gt; PLCrashReporter.podspec
 </span></span></code></pre></div><h1 id="zstd_iphoneos_arm64">zstd_iphoneos_arm64</h1>
-<p>将百度官网iOS端地图全功能sdk下载到本地，然后将需要用到<code>xcframework</code>放进同一个目录，接着新建podspec文件，在其中写了<code>s.vendored_frameworks = &quot;SDK/**/*.xcframework&quot;</code>。跑模拟器时执行<code>pod update</code>后总是出现了<code>-l &quot;zstd_iphoneos_arm64&quot;</code>，而不是<code>-l &quot;zstd_iphonesimulator&quot;</code>导致编译一直报错。</p>
+<p>将百度官网iOS端<a href="https://lbs.baidu.com/docs/ios?title=iossdk/sdkiosdev-download">地图全功能sdk</a>下载到本地，然后将需要用到<code>xcframework</code>放进同一个目录，接着新建<code>podspec</code>文件，在其中写了<code>s.vendored_frameworks = &quot;SDK/**/*.xcframework&quot;</code>。跑模拟器时执行<code>pod update</code>后，在<code>Pods-xxx.debug.xcconfig</code>和<code>Pods-xxx.release.xcconfig</code>文件中的<code>OTHER_LDFLAGS</code>总是有<code>-l &quot;zstd_iphoneos_arm64&quot;</code>，而不是<code>-l &quot;zstd_iphonesimulator&quot;</code>导致编译一直报错。</p>
 <p>最简单的解决方案是在<code>libzstd.xcframework</code>目录下将<code>libzstd_iphonesimulator.a</code>重命名为<code>libzstd_iphoneos_arm64.a</code>，然后重新编译即可。</p>
 <p>另外一种方案是在模拟器时，使用<code>post_integrate</code>钩子，将主工程对应的<code>xcfonfig</code>文件中<code>zstd_iphoneos_arm64</code>替换为<code>zstd_iphonesimulator</code>，钩子脚本如下：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ruby" data-lang="ruby"><span style="display:flex;"><span>post_integrate <span style="color:#66d9ef">do</span> <span style="color:#f92672">|</span>installer<span style="color:#f92672">|</span>
@@ -842,6 +843,22 @@ code.has-jax {
 </span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">File</span><span style="color:#f92672">.</span>write(file, content, <span style="color:#e6db74">encoding</span>: <span style="color:#e6db74">&#34;utf-8&#34;</span>)
 </span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">end</span>
 </span></span><span style="display:flex;"><span><span style="color:#66d9ef">end</span>
+</span></span></code></pre></div><p>出现上面问题根源是使用<code>-library libzstd_iphoneos_arm64.a -library libzstd_iphonesimulator.a</code>生成<code>xcframework</code>后内部直接是裸<code>.a</code>，没有外层<code>.framework</code>。这种裸<code>archive</code>的<code>xcframework</code>，在<code>CocoaPods + use_frameworks!/:linkage</code>静态模式下行为不一样。此时， <code>CocoaPods</code>识别它是独立<code>static archive</code>，逻辑退化成类似<code>vendored_libraries</code>提取名字，产出<code>-l xxx</code>，并且写入<code>aggregate</code>的<code>xcconfig</code>文件中。</p>
+<p>你可能会想如果按上面解释，不是应该同时出现<code>-l &quot;zstd_iphoneos_arm64&quot;</code>和<code>-l &quot;zstd_iphonesimulator&quot;</code>吗。<code>xcframework</code>本身不会同时写入两条，<code>CocoaPods</code>在解析<code>xcframework</code>时，只会挑选当前选中平台对应的那一个静态库，然后提取库名，生成一条 <code>-lxxx</code>，而不是把两个架构库都塞进去。</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sh" data-lang="sh"><span style="display:flex;"><span>libzstd.xcframework
+</span></span><span style="display:flex;"><span>├── Info.plist
+</span></span><span style="display:flex;"><span>├── ios-arm64
+</span></span><span style="display:flex;"><span>│   ├── Headers
+</span></span><span style="display:flex;"><span>│   │   ├── zdict.h
+</span></span><span style="display:flex;"><span>│   │   ├── zstd.h
+</span></span><span style="display:flex;"><span>│   │   └── zstd_errors.h
+</span></span><span style="display:flex;"><span>│   └── libzstd_iphoneos_arm64.a
+</span></span><span style="display:flex;"><span>└── ios-arm64_x86_64-simulator
+</span></span><span style="display:flex;"><span>    ├── Headers
+</span></span><span style="display:flex;"><span>    │   ├── zdict.h
+</span></span><span style="display:flex;"><span>    │   ├── zstd.h
+</span></span><span style="display:flex;"><span>    │   └── zstd_errors.h
+</span></span><span style="display:flex;"><span>    └── libzstd_iphonesimulator.a
 </span></span></code></pre></div>
     </div>
     <footer class="post-footer">
