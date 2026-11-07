@@ -150,10 +150,10 @@ if #available(iOS 26.0, *)  if #available(iOS 26, *) 虽然两种声明方式功
 PropertyListConversionError 修改了info.plist文件，使用Xcode重新编译时出现如下错误：
 Showing Recent Errors Only unable to read property list from file: /Users/xxx/Supporting Files/Info.plist: The operation couldn’t be completed. (SWBUtil.PropertyListConversionError error 2.) 这个错误是指Xcode在构建时无法解析指定Info.plist文件，通常不是因为文件不存在，而是文件中的内容格式有误。上面这个错误没有具体指出是哪一行出现的问题，最快的诊断方法是使用macOS自带的plutil工具检查文件格式：
 plutil -lint /Users/xxx/Supporting\ Files/Info.plist 如果plist文件有语法错误，plutil会精确指出问题所在，然后根据它的提示修改Info.plist文件内容即可。实际上Info.plist本质是一个XML文件，任何细小的格式错误都可能导致解析失败。
-本地podspec 某个组件X依赖了一个新的第三方组件，但该新的第三方组件支持的最低iOS版本为15.5，高于被其依赖的X组件的最低iOS 11.0版本。为了临时调试，可以在本地将索引库（~/.cocoapods目录）中将该第三方组件对应版本的podspec文件中的最低支持版本修改为11 .0。
-特别需要注意的是，不能在podfile中利用post_install或pre_install两个钩子修改组件X依赖的第三方组件的最低支持iOS版本。post_install钩子无效的原因是CocoaPods的依赖解析发生在生成Pods工程之前。第三方组件的索引文件podspec中声明了platform :ios, &#39;15.5&#39;，解析器在检查依赖关系时一旦发现组件的 11.0 低于这个值，就会直接抛出错误，不会走到post_install这一步。
-使用pre_install也不行，这是因为spec元数据校验（版本或平台约束等），发生在拉取spec之后但在下载代码之前，hook机制碰不到这个阶段，所以不会生效。
-最后，可能会想到把干预提前到podspec读取的时刻。即通过在本地新建一个第三方组件的podspec文件副本，只修改其支持的最低iOS系统版本，其它内容保持不变：
+本地podspec 某个组件X依赖了一个第三方组件，但该三方组件支持的最低iOS版本为15.5，高于X组件支持最低iOS 11.0版本。为了临时调试，可以在本地将索引库（~/.cocoapods目录）中将该三方组件对应版本的podspec索引文件中的最低支持版本修改为11 .0。
+特别注意的是，不能在podfile中利用post_install或pre_install钩子修改组件X依赖的该三方组件的最低支持版本。post_install钩子无效是因为CocoaPods依赖解析发生在生成Pods工程之前。第三方组件的索引文件podspec中声明了platform :ios, &#39;15.5&#39;，解析器在检查依赖关系时一旦发现X组件支持的最低版本低于三方组件的值，就会直接抛出错误，还未走到post_install这一步。
+使用pre_install钩子也不行，是因为spec元数据校验（版本或平台约束等），发生在拉取spec之后但在下载代码之前，hook机制接触不到这个阶段，所以不会生效。
+最后，可能会想到把干预提前到podspec读取的时刻。即在本地新建一个该三方组件的podspec副本，在该文件中修改其支持的最低版本，其它内容保持不变：
 pod &amp;#39;xxx&amp;#39;, :podspec =&amp;gt; &amp;#39;LocalSpecs/xxx.podspec&amp;#39; override和public顺序 关键词override和public都是声明修饰符，Swift的编译器对它们的顺序没有硬性要求。下面两种写法在功能上完全等价，都能通过编译：
 override public func foo() { ... } public override func foo() { ... } 虽然编译器不强制，但为了团队协作和代码一致性，建议遵循公认的规范。SwiftLint的modifier_order规则明确推荐了修饰符的排列顺序，其核心次序如下:
 override → 访问级别（public/private等） → dynamic → mutating → lazy → final → required → convenience → static podspec读取环境变量 在CocoaPods的Podfile和podspec文件中读取~/.zshrc里定义的export 变量，核心方法都是利用Ruby的 ENV来获取环境变量的值。
