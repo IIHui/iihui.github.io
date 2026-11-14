@@ -241,7 +241,7 @@ code.has-jax {
     <i class="fa fa-file-word-o"></i>
 </span>
 <span class="post-meta-item-text">字数: </span>
-<span class="leancloud-visitors-count">16596</span>
+<span class="leancloud-visitors-count">16672</span>
 &nbsp; | &nbsp;
 <span class="post-meta-item-icon">
     <i class="fa fa-coffee"></i>
@@ -628,8 +628,8 @@ code.has-jax {
 </span></span><span style="display:flex;"><span>       <span style="color:#f92672">.</span>lines
 </span></span><span style="display:flex;"><span>       <span style="color:#f92672">.</span>reject { <span style="color:#f92672">|</span>l<span style="color:#f92672">|</span> l<span style="color:#f92672">.</span>lstrip<span style="color:#f92672">.</span>start_with?(<span style="color:#e6db74">&#39;#&#39;</span>) }
 </span></span><span style="display:flex;"><span>       <span style="color:#f92672">.</span>join
-</span></span></code></pre></div><p>其中<code>/^=begin\b.*?^=end\b.*?$/m</code>，<code>gsub</code>是全局替换，会处理所有匹配到的块注释，不只是第一个。<code>/m</code>只改变<code>.</code>的行为：让<code>.</code>匹配包括换行符在内的任意字符。</p>
-<p>这种方法能应付大部分情况，但仍有边界（比如字符串里含<code>#</code>、<code>=begin</code>出现在字符串里），只是实际<code>podspec</code>里极少出现。最保险的方式是让CocoaPods解析：</p>
+</span></span></code></pre></div><p>其中<code>/^=begin\b.*?^=end\b.*?$/m</code>，<code>gsub</code>是全局替换，会处理所有匹配到的块注释，不只是第一个。其中<code>\b</code>表示单词边界，防止误匹配<code>=begin123</code>之类的标识符，<code>.*?</code>非贪婪匹配任意字符（含换行因为<code>/m</code>），<code>*?$</code>表示匹配<code>=end</code>所在行剩余部分到行尾，<code>/m</code>只改变<code>.</code>的行为：让<code>.</code>匹配包括换行符在内的任意字符。</p>
+<p>这种方法能应付大部分情况，但仍有边界（比如字符串里含<code>#</code>、<code>=begin</code>出现在字符串里），只是实际<code>podspec</code>里极少出现。最保险的方式是让<code>CocoaPods</code>解析：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ruby" data-lang="ruby"><span style="display:flex;"><span>require <span style="color:#e6db74">&#39;cocoapods-core&#39;</span>
 </span></span><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span>spec <span style="color:#f92672">=</span> <span style="color:#66d9ef">Pod</span><span style="color:#f92672">::</span><span style="color:#66d9ef">Specification</span><span style="color:#f92672">.</span>from_file(<span style="color:#e6db74">&#39;MyPod.podspec&#39;</span>)
