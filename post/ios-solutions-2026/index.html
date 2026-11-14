@@ -241,7 +241,7 @@ code.has-jax {
     <i class="fa fa-file-word-o"></i>
 </span>
 <span class="post-meta-item-text">字数: </span>
-<span class="leancloud-visitors-count">16140</span>
+<span class="leancloud-visitors-count">16422</span>
 &nbsp; | &nbsp;
 <span class="post-meta-item-icon">
     <i class="fa fa-coffee"></i>
@@ -612,8 +612,23 @@ code.has-jax {
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ruby" data-lang="ruby"><span style="display:flex;"><span>content <span style="color:#f92672">=</span> <span style="color:#66d9ef">File</span><span style="color:#f92672">.</span>read(<span style="color:#e6db74">&#39;MyPod.podspec&#39;</span>)
 </span></span><span style="display:flex;"><span>version <span style="color:#f92672">=</span> content<span style="color:#f92672">[</span><span style="color:#e6db74">/\.version\s*=\s*[&#39;&#34;]([^&#39;&#34;]+)[&#39;&#34;]/</span>, <span style="color:#ae81ff">1</span><span style="color:#f92672">]</span>
 </span></span><span style="display:flex;"><span>puts version
-</span></span></code></pre></div><p>上面ruby代码中<code>\.version</code>匹配字面的<code>.version</code>，<code>\s*</code>匹配零个或多个空白字符，包括空格、换行等，<code>=</code>匹配等号，<code>\s*</code>再次匹配零个或多个空白字符。<code>['&quot;]</code>匹配单引号<code>'</code>或双引号<code>&quot;</code>。<code>([^'&quot;]+)</code>捕获组，匹配一个或多个不是单引号也不是双引号的字符，也就是版本号内容。<code>['&quot;]</code>匹配结尾的单引号或双引号。</p>
-<p>如果使用<code>python</code>脚本可以使用如下方式：</p>
+</span></span></code></pre></div><p>上面<code>Ruby</code>代码中<code>\.version</code>匹配字面的<code>.version</code>，<code>\s*</code>匹配零个或多个空白字符（空格、换行等），<code>=</code>匹配等号，<code>\s*</code>再次匹配零个或多个空白字符。<code>['&quot;]</code>匹配单引号<code>'</code>或双引号<code>&quot;</code>。<code>([^'&quot;]+)</code>捕获组，匹配一个或多个不是单引号也不是双引号的字符，也就是版本号内容。<code>['&quot;]</code>匹配结尾的单引号或双引号。最后的<code>, 1</code>表示取第1个捕获组的内容，也就是括号<code>([^'&quot;]+)</code>匹配到的版本号。</p>
+<p>上面代码会把会把注释里出现的文本也当成版本号，下面代码锚定行首页排除注释行：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ruby" data-lang="ruby"><span style="display:flex;"><span>version <span style="color:#f92672">=</span> content<span style="color:#f92672">[</span><span style="color:#e6db74">/^[ \t]*(?!#)[^\n]*?\.version\s*=\s*[&#39;&#34;]([^&#39;&#34;]+)[&#39;&#34;]/</span>, <span style="color:#ae81ff">1</span><span style="color:#f92672">]</span>
+</span></span></code></pre></div><p>其中的<code>^</code>匹配每行开头，<code>[ \t]*</code>允许行首有缩进空白，<code>(?!#)</code> 负向先行断言，行首（去掉空白后）不能是<code>#</code>，从而排除整行注释。<code>[^\n]*?</code>在同一行内非贪婪地走到<code>.version</code>。</p>
+<p>第二个方法是先过滤注释行，然后再匹配：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ruby" data-lang="ruby"><span style="display:flex;"><span>code <span style="color:#f92672">=</span> content<span style="color:#f92672">.</span>lines
+</span></span><span style="display:flex;"><span>              <span style="color:#f92672">.</span>reject { <span style="color:#f92672">|</span>line<span style="color:#f92672">|</span> line<span style="color:#f92672">.</span>lstrip<span style="color:#f92672">.</span>start_with?(<span style="color:#e6db74">&#39;#&#39;</span>) }
+</span></span><span style="display:flex;"><span>              <span style="color:#f92672">.</span>join
+</span></span><span style="display:flex;"><span>version <span style="color:#f92672">=</span> code<span style="color:#f92672">[</span><span style="color:#e6db74">/\.version\s*=\s*[&#39;&#34;]([^&#39;&#34;]+)[&#39;&#34;]/</span>, <span style="color:#ae81ff">1</span><span style="color:#f92672">]</span>
+</span></span></code></pre></div><p>但要注意Ruby的<code>=begin / =end</code>块注释。这种写法不会被<code>start_with?('#')</code> 过滤掉，需要额外处理：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ruby" data-lang="ruby"><span style="display:flex;"><span><span style="color:#75715e"># 去掉块注释</span>
+</span></span><span style="display:flex;"><span>code <span style="color:#f92672">=</span> content
+</span></span><span style="display:flex;"><span>       <span style="color:#f92672">.</span>gsub(<span style="color:#e6db74">/^=begin\b.*?^=end\b.*?$/m</span>, <span style="color:#e6db74">&#39;&#39;</span>)   
+</span></span><span style="display:flex;"><span>       <span style="color:#f92672">.</span>lines
+</span></span><span style="display:flex;"><span>       <span style="color:#f92672">.</span>reject { <span style="color:#f92672">|</span>l<span style="color:#f92672">|</span> l<span style="color:#f92672">.</span>lstrip<span style="color:#f92672">.</span>start_with?(<span style="color:#e6db74">&#39;#&#39;</span>) }
+</span></span><span style="display:flex;"><span>       <span style="color:#f92672">.</span>join
+</span></span></code></pre></div><p>如果使用<code>python</code>脚本可以使用如下方式：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-python" data-lang="python"><span style="display:flex;"><span><span style="color:#f92672">import</span> re
 </span></span><span style="display:flex;"><span><span style="color:#f92672">from</span> pathlib <span style="color:#f92672">import</span> Path
 </span></span><span style="display:flex;"><span>
