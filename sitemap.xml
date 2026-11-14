@@ -126,7 +126,8 @@ s.name.to_s.sub(&amp;#39;_&amp;#39;, &amp;#39;.&amp;#39;)  s.name.to_s.sub(/_/, 
 如果改用python替换可以使用：
 s = &amp;#34;my.pod.name&amp;#34; result = s.replace(&amp;#39;.&amp;#39;, &amp;#39;_&amp;#39;, 1) print(result) # =&amp;gt; my_pod.name 提取podspec版本 使用ruby脚本怎么读取podspec中的s.version或spec.verison。podspec本质上是一个Ruby DSL文件，有两种常用方式读取其中的s.version。下面是使用cocoapods官方API实现：
 require &amp;#39;cocoapods-core&amp;#39;  spec = Pod::Specification.from_file(&amp;#39;MyPod.podspec&amp;#39;) puts spec.version # =&amp;gt; 1.0.0 直接使用正则表达式直接抽取：
-content = File.read(&amp;#39;MyPod.podspec&amp;#39;) version = content[/\.version\s*=\s*[&amp;#39;&amp;#34;]([^&amp;#39;&amp;#34;]&#43;)[&amp;#39;&amp;#34;]/, 1] puts version 如果使用python脚本可以使用如下方式：
+content = File.read(&amp;#39;MyPod.podspec&amp;#39;) version = content[/\.version\s*=\s*[&amp;#39;&amp;#34;]([^&amp;#39;&amp;#34;]&#43;)[&amp;#39;&amp;#34;]/, 1] puts version 上面ruby代码中\.version匹配字面的.version，\s*匹配零个或多个空白字符，包括空格、换行等，=匹配等号，\s*再次匹配零个或多个空白字符。[&#39;&amp;quot;]匹配单引号&#39;或双引号&amp;quot;。([^&#39;&amp;quot;]&#43;)捕获组，匹配一个或多个不是单引号也不是双引号的字符，也就是版本号内容。[&#39;&amp;quot;]匹配结尾的单引号或双引号。
+如果使用python脚本可以使用如下方式：
 import re from pathlib import Path  def get_podspec_info(directory=&amp;#39;.&amp;#39;):  files = sorted(Path(directory).glob(&amp;#39;*.podspec&amp;#39;))  if not files:  raise FileNotFoundError(f&amp;#39;No .podspec found in {Path(directory).resolve()}&amp;#39;)   content = files[0].read_text(encoding=&amp;#39;utf-8&amp;#39;)   def extract(key):  m = re.search(rf&amp;#39;\.{key}\s*=\s*[\&amp;#39;&amp;#34;]([^\&amp;#39;&amp;#34;]&#43;)[\&amp;#39;&amp;#34;]&amp;#39;, content)  return m.group(1) if m else None   return {  &amp;#39;name&amp;#39;: extract(&amp;#39;name&amp;#39;),  &amp;#39;version&amp;#39;: extract(&amp;#39;version&amp;#39;),  }   if __name__ == &amp;#39;__main__&amp;#39;:  info = get_podspec_info()  print(info) # {&amp;#39;name&amp;#39;: &amp;#39;MyPod&amp;#39;, &amp;#39;version&amp;#39;: &amp;#39;1.0.0&amp;#39;}  print(info[&amp;#39;name&amp;#39;]) # MyPod  print(info[&amp;#39;version&amp;#39;]) # 1.0.0 删除目录 使用python删除某个目录下所有文件，然后再重新目录：
 import shutil, os shutil.rmtree(&amp;#39;release&amp;#39;, ignore_errors=True) os.makedirs(&amp;#39;release&amp;#39;, exist_ok=True) 使用os.makedirs(release_dir, exist_ok=True)的意思是，需要递归创建目录且如果目录已经存在也不报错，继续往下走。
 tar打包 在python中使用tar命令时不会自动创建目标目录，如果目标目录不存在会报错，所以必须先创建目标目录，即使用os.makedirs(&#39;release&#39;, exist_ok=True)。
@@ -155,7 +156,7 @@ plutil -lint /Users/xxx/Supporting\ Files/Info.plist 如果plist文件有语法�
 使用pre_install钩子也不行，是因为spec元数据校验（版本或平台约束等），发生在拉取spec之后但在下载代码之前，hook机制接触不到这个阶段，所以不会生效。
 最后，可能会想到把干预提前到podspec读取的时刻。即在本地新建一个该三方组件的podspec副本，在该文件中修改其支持的最低版本，其它内容保持不变：
 pod &amp;#39;xxx&amp;#39;, :podspec =&amp;gt; &amp;#39;LocalSpecs/xxx.podspec&amp;#39; override和public顺序 关键词override和public都是声明修饰符，Swift的编译器对它们的顺序没有硬性要求。下面两种写法在功能上完全等价，都能通过编译：
-override public func foo() { ... } public override func foo() { ... } 虽然编译器不强制，但为了团队协作和代码一致性，建议遵循公认的规范。SwiftLint的modifier_order规则明确推荐了修饰符的排列顺序，其核心次序如下:
+override public func foo() { ... } public override func foo() { ... } 虽然编译器对修饰符的顺序不做强制要求，但为了团队协作和代码一致性，建议遵循公认的规范。SwiftLint的modifier_order规则明确推荐了修饰符的排列顺序，其核心次序如下:
 override --&amp;gt; public/private等访问控制 --&amp;gt; dynamic --&amp;gt; mutating --&amp;gt; lazy --&amp;gt; final --&amp;gt; required --&amp;gt; convenience --&amp;gt; static podspec读取环境变量 在CocoaPods的Podfile和podspec文件中读取~/.zshrc里定义的export 变量，核心方法都是利用Ruby的 ENV来获取环境变量的值。
 simulator_flag = ENV[&amp;#39;use_simulator&amp;#39;] # 读取后得到的是字符串  use_simulator = ENV.fetch(&amp;#39;use_simulator&amp;#39;, &amp;#39;0&amp;#39;).to_i 使用ENV[&#39;use_simulator&#39;]读到的永远是字符串（比如&amp;quot;1&amp;quot;），不是数字1。要转成数字，用.to_i或Integer(...)。
 拉取podspec文件 想要在命令行下拉取某个组件的pospec文件，可以使用如下方式：
