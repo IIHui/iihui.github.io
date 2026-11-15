@@ -241,7 +241,7 @@ code.has-jax {
     <i class="fa fa-file-word-o"></i>
 </span>
 <span class="post-meta-item-text">字数: </span>
-<span class="leancloud-visitors-count">16672</span>
+<span class="leancloud-visitors-count">16681</span>
 &nbsp; | &nbsp;
 <span class="post-meta-item-icon">
     <i class="fa fa-coffee"></i>
@@ -254,7 +254,7 @@ code.has-jax {
     <div class="post-body" itemprop="articleBody">
     <h1 id="cocoapods组件名">cocoapods组件名</h1>
 <p><code>CocoaPods</code>组件名（<code>Pod Name</code>）原则上<font color="#de7802">既不能包含英文点号，也不能以点号开头</font>。<code>CocoaPods</code>生成对应的 <code>Swift</code>或<code>Objective-C</code>模块时，需要遵循编程语言的标识符命名规则。模块<font color=red>通常只允许字母、数字和下划线</font>，因此像点号（<code>.</code>）和连字符（<code>-</code>）这类符号是不被允许的。</p>
-<p>如果一个Pod组件名字里包含了这些符号，<code>CocoaPods</code>在生成模块名时，<font color="#de7802">会自动将它们替换为下划线</font>（<code>_</code>）。但为了避免潜在的混淆和问题，组件命名时应当遵循以下原则：</p>
+<p>如果一个<code>Pod</code>组件名字里包含了这些符号，<code>CocoaPods</code>在生成模块名时，<font color="#de7802">会自动将它们替换为下划线</font>（<code>_</code>）。但为了避免潜在的混淆和问题，组件命名时应当遵循以下原则：</p>
 <ul>
 <li>只能使用字母（<code>a-z, A-Z</code>）、数字（<code>0-9</code>）和下划线（<code>_</code>）。</li>
 <li>使用驼峰命名法或下划线分隔。</li>
@@ -845,9 +845,9 @@ code.has-jax {
 </span></span><span style="display:flex;"><span><span style="color:#75715e"># 下载对应json文件</span>
 </span></span><span style="display:flex;"><span>curl -L -o PLCrashReporter.podspec.json <span style="color:#e6db74">&#34;https://github.com/CocoaPods/Specs/blob/master/Specs/9/5/4/PLCrashReporter/1.12.0/PLCrashReporter.podspec.json?raw=true&#34;</span>
 </span></span></code></pre></div><h1 id="zstd_iphoneos_arm64">zstd_iphoneos_arm64</h1>
-<p>将百度官网iOS端<a href="https://lbs.baidu.com/docs/ios?title=iossdk/sdkiosdev-download">地图全功能sdk</a>下载到本地，然后将需要用到<code>xcframework</code>放进同一个目录，接着新建<code>podspec</code>文件，在其中写了<code>s.vendored_frameworks = &quot;SDK/**/*.xcframework&quot;</code>。跑模拟器时执行<code>pod update</code>后，在<code>Pods-xxx.debug.xcconfig</code>和<code>Pods-xxx.release.xcconfig</code>文件中的<code>OTHER_LDFLAGS</code>总是有<code>-l &quot;zstd_iphoneos_arm64&quot;</code>，而不是<code>-l &quot;zstd_iphonesimulator&quot;</code>导致编译一直报错。</p>
+<p>将百度官网iOS端<a href="https://lbs.baidu.com/docs/ios?title=iossdk/sdkiosdev-download">地图全功能sdk</a>下载到本地，然后需将用到的<code>xcframework</code>放进同一个目录，接着新建<code>podspec</code>文件，在其中写<code>s.vendored_frameworks = &quot;SDK/**/*.xcframework&quot;</code>。跑模拟器时执行<code>pod update</code>后，在<code>Pods-xxx.debug.xcconfig</code>和<code>Pods-xxx.release.xcconfig</code>文件中的<code>OTHER_LDFLAGS</code>总是有<code>-l &quot;zstd_iphoneos_arm64&quot;</code>，而不是<code>-l &quot;zstd_iphonesimulator&quot;</code>，所以编译一直报错。</p>
 <p>最简单的解决方案是在<code>libzstd.xcframework</code>目录下将<code>libzstd_iphonesimulator.a</code>重命名为<code>libzstd_iphoneos_arm64.a</code>，然后重新编译即可。</p>
-<p>另外一种方案是在模拟器时，使用<code>post_integrate</code>钩子，将主工程对应的<code>xcfonfig</code>文件中<code>zstd_iphoneos_arm64</code>替换为<code>zstd_iphonesimulator</code>，钩子脚本如下：</p>
+<p>另外一种方案是在使用模拟器时，利用<code>post_integrate</code>钩子将主工程对应的<code>xcfonfig</code>文件中的<code>zstd_iphoneos_arm64</code>替换为<code>zstd_iphonesimulator</code>。下面是可正常是用的钩子脚本：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ruby" data-lang="ruby"><span style="display:flex;"><span>post_integrate <span style="color:#66d9ef">do</span> <span style="color:#f92672">|</span>installer<span style="color:#f92672">|</span>
 </span></span><span style="display:flex;"><span>  puts <span style="color:#e6db74">&#34;====== post_integrate ENTERED ======&#34;</span>
 </span></span><span style="display:flex;"><span>  all_xcconfigs <span style="color:#f92672">=</span> <span style="color:#66d9ef">Dir</span><span style="color:#f92672">.</span>glob(<span style="color:#66d9ef">File</span><span style="color:#f92672">.</span>join(installer<span style="color:#f92672">.</span>sandbox<span style="color:#f92672">.</span>root, <span style="color:#e6db74">&#34;**&#34;</span>, <span style="color:#e6db74">&#34;*.xcconfig&#34;</span>))
