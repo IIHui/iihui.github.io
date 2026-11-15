@@ -241,7 +241,7 @@ code.has-jax {
     <i class="fa fa-file-word-o"></i>
 </span>
 <span class="post-meta-item-text">字数: </span>
-<span class="leancloud-visitors-count">17195</span>
+<span class="leancloud-visitors-count">17131</span>
 &nbsp; | &nbsp;
 <span class="post-meta-item-icon">
     <i class="fa fa-coffee"></i>
@@ -836,22 +836,23 @@ code.has-jax {
 </span></span><span style="display:flex;"><span>use_simulator <span style="color:#f92672">=</span> <span style="color:#66d9ef">ENV</span><span style="color:#f92672">.</span>fetch(<span style="color:#e6db74">&#39;use_simulator&#39;</span>, <span style="color:#e6db74">&#39;0&#39;</span>)<span style="color:#f92672">.</span>to_i
 </span></span></code></pre></div><p>使用<code>ENV['use_simulator']</code>读到的永远是字符串（比如<code>&quot;1&quot;</code>），不是数字<code>1</code>。要转成数字，用<code>.to_i</code>或<code>Integer(...)</code>。</p>
 <h1 id="拉取podspec文件">拉取podspec文件</h1>
-<p>想要在命令行下拉取某个组件的<code>pospec</code>文件，可以使用如下方式：</p>
+<p>想要在命令行下拉取<code>PLCrashReporter</code>组件版本<code>1.12.0</code>的<code>pospec</code>文件，可以使用如下方式：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sh" data-lang="sh"><span style="display:flex;"><span><span style="color:#75715e"># 下载podspec文件</span>
 </span></span><span style="display:flex;"><span>curl -L https://raw.githubusercontent.com/microsoft/plcrashreporter/1.12.0/PLCrashReporter.podspec -o PLCrashReporter.podspec
 </span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span><span style="color:#75715e"># 这里可能获取到json文件或podspec文件，可以先使用pod spec which PLCrashReporter --version=1.12.0查看文件类型，如果是podspec文件内容才是podspec</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 这里可能拿到的是json文件或podspec文件</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 可以先用pod spec which PLCrashReporter --version=1.12.0查看</span>
 </span></span><span style="display:flex;"><span>pod spec cat PLCrashReporter --version<span style="color:#f92672">=</span>1.12.0 &gt; PLCrashReporter.podspec 
 </span></span><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span><span style="color:#75715e"># 下载对应json文件</span>
 </span></span><span style="display:flex;"><span>curl -L -o PLCrashReporter.podspec.json <span style="color:#e6db74">&#34;https://github.com/CocoaPods/Specs/blob/master/Specs/9/5/4/PLCrashReporter/1.12.0/PLCrashReporter.podspec.json?raw=true&#34;</span>
-</span></span></code></pre></div><p>使用<code>pod trunk push</code>上传<code>podspec</code>时，服务端会把开发者提交的<code>.podspec</code>自动序列化成<code>*.podspec.json</code>存入官方<code>CDN specs repo</code>。从<code>CocoaPods 1.8</code>开始，默认源是<code>cdn.cocoapods.org</code>，也就是<code>CDN</code>上只分发这份<code>JSON</code>，不再分发原始的<code>podspec</code>文件，即本地缓存下来的文件就<code>PLCrashReporter.podspec.json</code>。使用<code>pod spec cat</code>读的就是<code>JSON</code>版本，而不是原始的<code>Ruby DSL</code>对应<code>.podspec</code>文件。</p>
-<p>如果需要确认<code>pod spec cat</code>读取的是什么类型文件，可以先使用<code>pod spec which PLCrashReporter --version=1.12.0</code>查看文件类型:</p>
+</span></span></code></pre></div><p>开发者使用<code>pod trunk push</code>上传<code>podspec</code>时，服务端会把开发者提交的<code>.podspec</code>自动序列化成<code>*.podspec.json</code>存入官方<code>CDN specs repo</code>。从<code>CocoaPods 1.8</code>开始，默认源为<code>cdn.cocoapods.org</code>，也就是<code>CDN</code>上只分发这份<code>JSON</code>，不再分发原始的<code>podspec</code>文件，即本地缓存下来的文件就是<code>PLCrashReporter.podspec.json</code>。使用<code>pod spec cat</code>读的就是<code>JSON</code>版本，而不是原始的<code>Ruby DSL</code>对应<code>.podspec</code>文件。</p>
+<p>如果需要事先确认<code>pod spec cat</code>读取的是什么类型文件，可以先使用<code>pod spec which PLCrashReporter --version=1.12.0</code>查看文件类型:</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sh" data-lang="sh"><span style="display:flex;"><span>pod spec which PLCrashReporter --version<span style="color:#f92672">=</span>1.12.0
 </span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span><span style="color:#75715e"># 下面是输出结果</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 输出的结果</span>
 </span></span><span style="display:flex;"><span>/Users/xxx/.cocoapods/repos/trunk/Specs/9/5/4/PLCrashReporter/1.12.0/PLCrashReporter.podspec.json
-</span></span></code></pre></div><p>如果一定要拉取<code>podspec</code>文件，可以使用如下命令按tag拉取整个仓库，然后复制该<code>podspec</code>文件：</p>
+</span></span></code></pre></div><p>如果一定要拉取对应版本的<code>podspec</code>文件，可以使用如下命令首先按<code>tag</code>拉取整个仓库，然后复制该版本的<code>podspec</code>文件：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sh" data-lang="sh"><span style="display:flex;"><span>git clone --depth <span style="color:#ae81ff">1</span> --branch 1.12.0 https://github.com/microsoft/plcrashreporter.git
 </span></span><span style="display:flex;"><span>cp plcrashreporter/PLCrashReporter.podspec ./
 </span></span><span style="display:flex;"><span>rm -rf plcrashreporter
@@ -875,7 +876,7 @@ code.has-jax {
 </span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">end</span>
 </span></span><span style="display:flex;"><span><span style="color:#66d9ef">end</span>
 </span></span></code></pre></div><p>出现上面问题是因为使用<code>-library libzstd_iphoneos_arm64.a -library libzstd_iphonesimulator.a</code>生成<code>xcframework</code>后内部是裸<code>.a</code>，没有外层<code>.framework</code>。这种裸<code>.a</code>打包成的<code>xcframework</code>，在<code>CocoaPods + use_frameworks!/:linkage</code>静态模式下行为不一样。此时， <code>CocoaPods</code>识别它是独立<code>static archive</code>，逻辑退化成类似<code>vendored_libraries</code>提取名字，产出<code>-l xxx</code>，并且写入对应的<code>xcconfig</code>文件中。</p>
-<p>按上面解释，按直觉应该会同时出现<code>-l &quot;zstd_iphoneos_arm64&quot;</code>和<code>-l &quot;zstd_iphonesimulator&quot;</code>，实际上却只出现一条<code>-l &quot;zstd_iphoneos_arm64&quot;</code>。这是因为<code>xcframework</code>本身不会同时写入两条，<code>CocoaPods</code>在解析<code>xcframework</code>时，只会挑选当前选中平台对应的那一个静态库，然后提取库名，生成一条<code>-l xxx</code>，而不是把两个架构库都塞进去。</p>
+<p>按上面解释，直觉上讲应该会同时出现<code>-l &quot;zstd_iphoneos_arm64&quot;</code>和<code>-l &quot;zstd_iphonesimulator&quot;</code>，实际上却只出现一条<code>-l &quot;zstd_iphoneos_arm64&quot;</code>。这是因为使用<code>xcframework</code>时不会同时写入两条，<code>CocoaPods</code>在解析<code>xcframework</code>时，只会挑选当前选中平台对应的那一个静态库，然后提取库名，生成一条<code>-l xxx</code>，而不是把两个架构库都塞进去。</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sh" data-lang="sh"><span style="display:flex;"><span>libzstd.xcframework
 </span></span><span style="display:flex;"><span>├── Info.plist
 </span></span><span style="display:flex;"><span>├── ios-arm64
@@ -890,7 +891,7 @@ code.has-jax {
 </span></span><span style="display:flex;"><span>    │   ├── zstd.h
 </span></span><span style="display:flex;"><span>    │   └── zstd_errors.h
 </span></span><span style="display:flex;"><span>    └── libzstd_iphonesimulator.a
-</span></span></code></pre></div><p>但<code>CocoaPods</code>对静态<code>.a</code>构成的<code>xcframework</code>时，集成阶段会扫描<code>xcframework</code>并遍历<code>AvailableLibraries</code>条目，<font color=red>总是拿第一个匹配它当前运行环境的条目</font>，然后提取<code>BinaryPath</code>，去掉<code>lib</code>和<code>.a</code>，生成<code>-l {name}</code>，写入<code>xcconfig</code>，并进行一次性写死。</p>
+</span></span></code></pre></div><p>对于静态<code>.a</code>构成的<code>xcframework</code>，在<code>CocoaPods</code>集成阶段会扫描<code>xcframework</code>并遍历<code>AvailableLibraries</code>条目，<font color=red>总是拿第一个</font><code>BinaryPath</code>，去掉<code>lib</code>和<code>.a</code>，生成<code>-l {name}</code>，写入<code>xcconfig</code>（一次性写死）。</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-xml" data-lang="xml"><span style="display:flex;"><span><span style="color:#75715e">&lt;?xml version=&#34;1.0&#34; encoding=&#34;UTF-8&#34;?&gt;</span>
 </span></span><span style="display:flex;"><span><span style="color:#75715e">&lt;!DOCTYPE plist PUBLIC &#34;-//Apple//DTD PLIST 1.0//EN&#34; &#34;http://www.apple.com/DTDs/PropertyList-1.0.dtd&#34;&gt;</span>
 </span></span><span style="display:flex;"><span><span style="color:#f92672">&lt;plist</span> <span style="color:#a6e22e">version=</span><span style="color:#e6db74">&#34;1.0&#34;</span><span style="color:#f92672">&gt;</span>
@@ -939,7 +940,7 @@ code.has-jax {
 </span></span><span style="display:flex;"><span>	<span style="color:#f92672">&lt;string&gt;</span>1.0<span style="color:#f92672">&lt;/string&gt;</span>
 </span></span><span style="display:flex;"><span><span style="color:#f92672">&lt;/dict&gt;</span>
 </span></span><span style="display:flex;"><span><span style="color:#f92672">&lt;/plist&gt;</span>
-</span></span></code></pre></div><p>但需要注意的是，执行<code>pod install</code>时，<code>Pod</code>进程本身有一个默认<code>SDK/平台</code>偏好（很多时候默认是<code>iphoneos</code>）。 哪怕后面在<code>Xcode</code>切模拟器编译，<code>xcconfig</code>里那条<code>-l</code>已经是集成时预先抓出来的真机名字，不会自动跟着<code>Xcode</code>的<code>SDKROOT</code>切换。</p>
+</span></span></code></pre></div><p>哪怕后面切换了模拟器编译，<code>xcconfig</code>里那条<code>-l</code>已经是集成时预先抓出来的真机名字，不会自动跟着<code>Xcode</code>的<code>SDKROOT</code>切换，所以出现了编译错误。</p>
 <h1 id="版本替换">版本替换</h1>
 <p>下面<code>Linux</code>中的<code>Shell</code>脚本，如果code的值是<code>2026110308</code>，name的值是<code>5.20.1</code>，则sed工具第一行替换时<code>testCode</code>被替换为<code>2026110308</code>，第二行替换时因为<code>1.0.0</code>中的点是正则通配符，<code>2026110308</code>中<code>110308</code>被命中了，所以会被替换为<code>20265.20.1</code>，接着<code>testName</code>会替换为<code>5.20.1</code>:</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sh" data-lang="sh"><span style="display:flex;"><span>testCode<span style="color:#f92672">=</span><span style="color:#ae81ff">1000000</span>
