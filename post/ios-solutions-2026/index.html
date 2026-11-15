@@ -241,7 +241,7 @@ code.has-jax {
     <i class="fa fa-file-word-o"></i>
 </span>
 <span class="post-meta-item-text">字数: </span>
-<span class="leancloud-visitors-count">17050</span>
+<span class="leancloud-visitors-count">17195</span>
 &nbsp; | &nbsp;
 <span class="post-meta-item-icon">
     <i class="fa fa-coffee"></i>
@@ -845,8 +845,13 @@ code.has-jax {
 </span></span><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span><span style="color:#75715e"># 下载对应json文件</span>
 </span></span><span style="display:flex;"><span>curl -L -o PLCrashReporter.podspec.json <span style="color:#e6db74">&#34;https://github.com/CocoaPods/Specs/blob/master/Specs/9/5/4/PLCrashReporter/1.12.0/PLCrashReporter.podspec.json?raw=true&#34;</span>
-</span></span></code></pre></div><p>实际上，<code>trunk</code>上传时，会把开发者提交的<code>.podspec</code>自动序列化转成<code>*.podspec.json</code>存入<code>CDN specs repo</code>，命令<code>pod spec cat</code>直接拉取仓库里已经序列化好的<code>json</code>，不是原始<code>Ruby</code>脚本。对于<code>CDN Specs</code>仓库里存的是<code>.podspec.json</code>，使用<code>pod spec cat</code>读的就是<code>JSON</code>版本，而不是原始的<code>Ruby DSL</code>对应<code>.podspec</code>文件。</p>
-<p>也可以使用如下代码将整个仓库拉下来，然后复制该<code>podspec</code>文件：</p>
+</span></span></code></pre></div><p>使用<code>pod trunk push</code>上传<code>podspec</code>时，服务端会把开发者提交的<code>.podspec</code>自动序列化成<code>*.podspec.json</code>存入官方<code>CDN specs repo</code>。从<code>CocoaPods 1.8</code>开始，默认源是<code>cdn.cocoapods.org</code>，也就是<code>CDN</code>上只分发这份<code>JSON</code>，不再分发原始的<code>podspec</code>文件，即本地缓存下来的文件就<code>PLCrashReporter.podspec.json</code>。使用<code>pod spec cat</code>读的就是<code>JSON</code>版本，而不是原始的<code>Ruby DSL</code>对应<code>.podspec</code>文件。</p>
+<p>如果需要确认<code>pod spec cat</code>读取的是什么类型文件，可以先使用<code>pod spec which PLCrashReporter --version=1.12.0</code>查看文件类型:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sh" data-lang="sh"><span style="display:flex;"><span>pod spec which PLCrashReporter --version<span style="color:#f92672">=</span>1.12.0
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 下面是输出结果</span>
+</span></span><span style="display:flex;"><span>/Users/xxx/.cocoapods/repos/trunk/Specs/9/5/4/PLCrashReporter/1.12.0/PLCrashReporter.podspec.json
+</span></span></code></pre></div><p>如果一定要拉取<code>podspec</code>文件，可以使用如下命令按tag拉取整个仓库，然后复制该<code>podspec</code>文件：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sh" data-lang="sh"><span style="display:flex;"><span>git clone --depth <span style="color:#ae81ff">1</span> --branch 1.12.0 https://github.com/microsoft/plcrashreporter.git
 </span></span><span style="display:flex;"><span>cp plcrashreporter/PLCrashReporter.podspec ./
 </span></span><span style="display:flex;"><span>rm -rf plcrashreporter
