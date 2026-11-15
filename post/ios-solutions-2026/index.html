@@ -241,13 +241,13 @@ code.has-jax {
     <i class="fa fa-file-word-o"></i>
 </span>
 <span class="post-meta-item-text">字数: </span>
-<span class="leancloud-visitors-count">16874</span>
+<span class="leancloud-visitors-count">17050</span>
 &nbsp; | &nbsp;
 <span class="post-meta-item-icon">
     <i class="fa fa-coffee"></i>
 </span>
 <span class="post-meta-item-text">阅读: </span>
-<span class="leancloud-visitors-count">34 分钟</span>
+<span class="leancloud-visitors-count">35 分钟</span>
 </span>
       </div>
     </header>
@@ -845,10 +845,11 @@ code.has-jax {
 </span></span><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span><span style="color:#75715e"># 下载对应json文件</span>
 </span></span><span style="display:flex;"><span>curl -L -o PLCrashReporter.podspec.json <span style="color:#e6db74">&#34;https://github.com/CocoaPods/Specs/blob/master/Specs/9/5/4/PLCrashReporter/1.12.0/PLCrashReporter.podspec.json?raw=true&#34;</span>
-</span></span></code></pre></div><p>也可以使用如下代码将整个仓库拉下来，然后复制该<code>podspec</code>文件：</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ruby" data-lang="ruby"><span style="display:flex;"><span>git clone <span style="color:#f92672">--</span>depth <span style="color:#ae81ff">1</span> <span style="color:#f92672">--</span>branch <span style="color:#ae81ff">1</span><span style="color:#f92672">.</span><span style="color:#ae81ff">12</span><span style="color:#f92672">.</span><span style="color:#ae81ff">0</span> <span style="color:#e6db74">https</span>:<span style="color:#e6db74">//</span>github<span style="color:#f92672">.</span>com<span style="color:#f92672">/</span>microsoft<span style="color:#f92672">/</span>plcrashreporter<span style="color:#f92672">.</span>git
-</span></span><span style="display:flex;"><span>cp plcrashreporter<span style="color:#f92672">/</span><span style="color:#66d9ef">PLCrashReporter</span><span style="color:#f92672">.</span>podspec <span style="color:#f92672">.</span>/
-</span></span><span style="display:flex;"><span>rm <span style="color:#f92672">-</span>rf plcrashreporter
+</span></span></code></pre></div><p>实际上，<code>trunk</code>上传时，会把开发者提交的<code>.podspec</code>自动序列化转成<code>*.podspec.json</code>存入<code>CDN specs repo</code>，命令<code>pod spec cat</code>直接拉取仓库里已经序列化好的<code>json</code>，不是原始<code>Ruby</code>脚本。对于<code>CDN Specs</code>仓库里存的是<code>.podspec.json</code>，使用<code>pod spec cat</code>读的就是<code>JSON</code>版本，而不是原始的<code>Ruby DSL</code>对应<code>.podspec</code>文件。</p>
+<p>也可以使用如下代码将整个仓库拉下来，然后复制该<code>podspec</code>文件：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sh" data-lang="sh"><span style="display:flex;"><span>git clone --depth <span style="color:#ae81ff">1</span> --branch 1.12.0 https://github.com/microsoft/plcrashreporter.git
+</span></span><span style="display:flex;"><span>cp plcrashreporter/PLCrashReporter.podspec ./
+</span></span><span style="display:flex;"><span>rm -rf plcrashreporter
 </span></span></code></pre></div><h1 id="zstd_iphoneos_arm64">zstd_iphoneos_arm64</h1>
 <p>将百度官网iOS端<a href="https://lbs.baidu.com/docs/ios?title=iossdk/sdkiosdev-download">地图全功能sdk</a>下载到本地，然后需将用到的<code>xcframework</code>放进同一个目录，接着新建<code>podspec</code>文件，在其中写<code>s.vendored_frameworks = &quot;SDK/**/*.xcframework&quot;</code>。跑模拟器时执行<code>pod update</code>后，在<code>Pods-xxx.debug.xcconfig</code>和<code>Pods-xxx.release.xcconfig</code>文件中的<code>OTHER_LDFLAGS</code>总是有<code>-l &quot;zstd_iphoneos_arm64&quot;</code>，而不是<code>-l &quot;zstd_iphonesimulator&quot;</code>，所以编译一直报错。</p>
 <p>最简单的解决方案是在<code>libzstd.xcframework</code>目录下将<code>libzstd_iphonesimulator.a</code>重命名为<code>libzstd_iphoneos_arm64.a</code>，然后重新编译即可。</p>
