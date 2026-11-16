@@ -241,13 +241,13 @@ code.has-jax {
     <i class="fa fa-file-word-o"></i>
 </span>
 <span class="post-meta-item-text">字数: </span>
-<span class="leancloud-visitors-count">17131</span>
+<span class="leancloud-visitors-count">17605</span>
 &nbsp; | &nbsp;
 <span class="post-meta-item-icon">
     <i class="fa fa-coffee"></i>
 </span>
 <span class="post-meta-item-text">阅读: </span>
-<span class="leancloud-visitors-count">35 分钟</span>
+<span class="leancloud-visitors-count">36 分钟</span>
 </span>
       </div>
     </header>
@@ -891,7 +891,7 @@ code.has-jax {
 </span></span><span style="display:flex;"><span>    │   ├── zstd.h
 </span></span><span style="display:flex;"><span>    │   └── zstd_errors.h
 </span></span><span style="display:flex;"><span>    └── libzstd_iphonesimulator.a
-</span></span></code></pre></div><p>对于静态<code>.a</code>构成的<code>xcframework</code>，在<code>CocoaPods</code>集成阶段会扫描<code>xcframework</code>并遍历<code>AvailableLibraries</code>条目，<font color=red>总是拿第一个</font><code>BinaryPath</code>，去掉<code>lib</code>和<code>.a</code>，生成<code>-l {name}</code>，写入<code>xcconfig</code>（一次性写死）。</p>
+</span></span></code></pre></div><p>对于静态<code>.a</code>构成的<code>xcframework</code>（内部是<code>-library</code>，不是<code>framework</code>），在<code>CocoaPods</code>集成阶段会扫描<code>xcframework</code>并遍历<code>AvailableLibraries</code>条目，<font color=red>总是拿第一个</font><code>BinaryPath</code>，去掉<code>lib</code>和<code>.a</code>，生成<code>-l {name}</code>，写入<code>xcconfig</code>（一次性写死）。</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-xml" data-lang="xml"><span style="display:flex;"><span><span style="color:#75715e">&lt;?xml version=&#34;1.0&#34; encoding=&#34;UTF-8&#34;?&gt;</span>
 </span></span><span style="display:flex;"><span><span style="color:#75715e">&lt;!DOCTYPE plist PUBLIC &#34;-//Apple//DTD PLIST 1.0//EN&#34; &#34;http://www.apple.com/DTDs/PropertyList-1.0.dtd&#34;&gt;</span>
 </span></span><span style="display:flex;"><span><span style="color:#f92672">&lt;plist</span> <span style="color:#a6e22e">version=</span><span style="color:#e6db74">&#34;1.0&#34;</span><span style="color:#f92672">&gt;</span>
@@ -940,8 +940,34 @@ code.has-jax {
 </span></span><span style="display:flex;"><span>	<span style="color:#f92672">&lt;string&gt;</span>1.0<span style="color:#f92672">&lt;/string&gt;</span>
 </span></span><span style="display:flex;"><span><span style="color:#f92672">&lt;/dict&gt;</span>
 </span></span><span style="display:flex;"><span><span style="color:#f92672">&lt;/plist&gt;</span>
-</span></span></code></pre></div><p>哪怕后面切换了模拟器编译，<code>xcconfig</code>里那条<code>-l</code>已经是集成时预先抓出来的真机名字，不会自动跟着<code>Xcode</code>的<code>SDKROOT</code>切换，所以出现了编译错误。</p>
-<h1 id="版本替换">版本替换</h1>
+</span></span></code></pre></div><p>只有<code>-create-xcframework -library</code>（静态库<code>xcframework</code>）这条路径会触发<code>CocoaPods</code>的这个<code>-l</code>提取逻辑。<code>Info.plist</code>是Xcode构建期的路由表，负责「选哪个二进制」，CocoaPods是在<code>pod install</code>静态扫描阶段，粗暴提取第一个静态库名字生成<code>-l</code>。所以不是<code>Info.plist</code>写错了，是它和<code>CocoaPods</code>对静态库 <code>xcframework</code>的处理逻辑之间，存在这个非常经典的前提约定：所有<code>slice</code>的静态库必须同名。</p>
+<p>即这是<code>CocoaPods</code>的历史设计局限，不是<code>bug</code>，但属于一个很反直觉的硬前提，它假定<code>-library</code>模式的<code>xcframework</code>内所有<code>slice</code>的静态库<code>basename</code>完全相同，并且只取<code>AvailableLibraries[0]</code>来生成<code>-l</code>。</p>
+<p>下面是对应源码位置 的核心片段（基于<code>CocoaPods1.15.x / 1.16.x</code>主线），相关源码文件为<code>lib/cocoapods-core/xcframework_library.rb</code>：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ruby" data-lang="ruby"><span style="display:flex;"><span><span style="color:#75715e"># 伪还原（和官方源码逻辑一致）</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">class</span> <span style="color:#a6e22e">XCFrameworkLibrary</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">attr_reader</span> <span style="color:#e6db74">:path</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">attr_reader</span> <span style="color:#e6db74">:available_libraries</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">def</span> <span style="color:#a6e22e">initialize</span>(path)
+</span></span><span style="display:flex;"><span>    @path <span style="color:#f92672">=</span> path
+</span></span><span style="display:flex;"><span>    plist <span style="color:#f92672">=</span> <span style="color:#66d9ef">Xcodeproj</span><span style="color:#f92672">::</span><span style="color:#66d9ef">Plist</span><span style="color:#f92672">.</span>read_from_path(plist_path)
+</span></span><span style="display:flex;"><span>    @available_libraries <span style="color:#f92672">=</span> plist<span style="color:#f92672">[</span><span style="color:#e6db74">&#39;AvailableLibraries&#39;</span><span style="color:#f92672">].</span>map <span style="color:#66d9ef">do</span> <span style="color:#f92672">|</span>lib_hash<span style="color:#f92672">|</span>
+</span></span><span style="display:flex;"><span>      <span style="color:#66d9ef">AvailableLibrary</span><span style="color:#f92672">.</span>new(lib_hash)
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">end</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">end</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>  <span style="color:#75715e"># 重点：取第一个library，用来提取库名</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">def</span> <span style="color:#a6e22e">primary_library</span>
+</span></span><span style="display:flex;"><span>    available_libraries<span style="color:#f92672">.</span>first
+</span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">end</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">def</span> <span style="color:#a6e22e">library_name</span>
+</span></span><span style="display:flex;"><span>    lib_file <span style="color:#f92672">=</span> primary_library<span style="color:#f92672">.</span>library_path
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e"># libzstd_iphoneos_arm64.a → zstd_iphoneos_arm64</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">File</span><span style="color:#f92672">.</span>basename(lib_file, <span style="color:#e6db74">&#39;.a&#39;</span>)<span style="color:#f92672">.</span>sub(<span style="color:#e6db74">/^lib/</span>, <span style="color:#e6db74">&#39;&#39;</span>)
+</span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">end</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">end</span>
+</span></span></code></pre></div><h1 id="版本替换">版本替换</h1>
 <p>下面<code>Linux</code>中的<code>Shell</code>脚本，如果code的值是<code>2026110308</code>，name的值是<code>5.20.1</code>，则sed工具第一行替换时<code>testCode</code>被替换为<code>2026110308</code>，第二行替换时因为<code>1.0.0</code>中的点是正则通配符，<code>2026110308</code>中<code>110308</code>被命中了，所以会被替换为<code>20265.20.1</code>，接着<code>testName</code>会替换为<code>5.20.1</code>:</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sh" data-lang="sh"><span style="display:flex;"><span>testCode<span style="color:#f92672">=</span><span style="color:#ae81ff">1000000</span>
 </span></span><span style="display:flex;"><span>testName<span style="color:#f92672">=</span>1.0.0
