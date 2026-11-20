@@ -241,7 +241,7 @@ code.has-jax {
     <i class="fa fa-file-word-o"></i>
 </span>
 <span class="post-meta-item-text">字数: </span>
-<span class="leancloud-visitors-count">17896</span>
+<span class="leancloud-visitors-count">17904</span>
 &nbsp; | &nbsp;
 <span class="post-meta-item-icon">
     <i class="fa fa-coffee"></i>
@@ -1007,11 +1007,15 @@ code.has-jax {
 </span></span><span style="display:flex;"><span>    a <span style="color:#f92672">=</span> p<span style="color:#f92672">.</span>parse_args()
 </span></span><span style="display:flex;"><span>    build_path <span style="color:#f92672">=</span> get(a<span style="color:#f92672">.</span>build_path, <span style="color:#e6db74">&#34;BUILD_PATH&#34;</span>)
 </span></span><span style="display:flex;"><span>    print(build_path)
-</span></span></code></pre></div><p>使用<code>xcodebuild</code>打包时出现如下错误，这个错误表明<code>xcodebuild</code>在构建流程的某个环节（通常是签名、拷贝或后续处理脚本）试图访问最终<code>.app</code>包内的可执行文件，但该文件在<code>DerivedData</code>的指定路径下并不存在。最直接的原因通常是构建缓存损坏，或者命令行构建时的签名配置与产物生成逻辑不匹配。</p>
+</span></span></code></pre></div><h1 id="deriveddata-no-such-file">DerivedData No such file</h1>
+<p>使用<code>xcodebuild</code>打包时出现如下错误，这个错误表明在构建流程的某个环节试图访问最终<code>.app</code>包内的可执行文件，但该文件在<code>DerivedData</code>的指定路径下并不存在。最直接的原因通常是构建缓存损坏，或者命令行构建时的签名配置与产物生成逻辑不匹配。</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sh" data-lang="sh"><span style="display:flex;"><span>error: opening /Users/xxx/Library/Developer/Xcode/DerivedData/yyy-gkvodylwxcqhdkegkwjibuptokmk/Build/Products/Release-iphoneos/yyy.app/yyy: No such file or directory
 </span></span></code></pre></div><p>此时可以删除该项目的<code>DerivedData</code>文件：</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sh" data-lang="sh"><span style="display:flex;"><span><span style="color:#75715e"># 1. 删除该项目专属的 DerivedData 文件夹</span>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sh" data-lang="sh"><span style="display:flex;"><span><span style="color:#75715e"># 删除该项目专属的DerivedData文件夹</span>
 </span></span><span style="display:flex;"><span>rm -rf ~/Library/Developer/Xcode/DerivedData/yyy-*
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 可选：同时清理模块缓存，避免相关干扰</span>
+</span></span><span style="display:flex;"><span>rm -rf ~/Library/Developer/Xcode/DerivedData/ModuleCache.noindex
 </span></span></code></pre></div>
     </div>
     <footer class="post-footer">
@@ -1202,6 +1206,7 @@ code.has-jax {
     <li><a href="#拉取podspec文件">拉取podspec文件</a></li>
     <li><a href="#zstd_iphoneos_arm64">zstd_iphoneos_arm64</a></li>
     <li><a href="#版本替换">版本替换</a></li>
+    <li><a href="#deriveddata-no-such-file">DerivedData No such file</a></li>
   </ul>
 </nav></div>
     </div>
