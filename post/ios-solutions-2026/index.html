@@ -241,13 +241,13 @@ code.has-jax {
     <i class="fa fa-file-word-o"></i>
 </span>
 <span class="post-meta-item-text">字数: </span>
-<span class="leancloud-visitors-count">19890</span>
+<span class="leancloud-visitors-count">20224</span>
 &nbsp; | &nbsp;
 <span class="post-meta-item-icon">
     <i class="fa fa-coffee"></i>
 </span>
 <span class="post-meta-item-text">阅读: </span>
-<span class="leancloud-visitors-count">40 分钟</span>
+<span class="leancloud-visitors-count">41 分钟</span>
 </span>
       </div>
     </header>
@@ -1125,6 +1125,35 @@ code.has-jax {
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sh" data-lang="sh"><span style="display:flex;"><span>find <span style="color:#e6db74">&#34;</span>$build_path<span style="color:#e6db74">&#34;</span> -mindepth <span style="color:#ae81ff">1</span> -maxdepth <span style="color:#ae81ff">1</span> <span style="color:#ae81ff">\
 </span></span></span><span style="display:flex;"><span><span style="color:#ae81ff"></span>  ! -name <span style="color:#e6db74">&#39;*.dSYM&#39;</span> ! -name <span style="color:#e6db74">&#39;*.ipa&#39;</span> <span style="color:#ae81ff">\
 </span></span></span><span style="display:flex;"><span><span style="color:#ae81ff"></span>  -exec rm -rf <span style="color:#f92672">{}</span> +
+</span></span></code></pre></div><p>作为对比，<code>-exec rm -rf {} +</code>是把<code>find</code>找到的这批路径，攒成一条<code>rm -rf path1 path2 ...</code>命令，一次性删掉，比<code>\;</code>逐条执行高效，比<code>xargs</code>少一层管道，是<code>find</code>里批量删除的标准写法。</p>
+<h1 id="podspec读取环境变量-1">podspec读取环境变量</h1>
+<p>在<code>podspec</code>和<code>podfile</code>中怎么读取在<code>zshrc</code>中定义的<code>export use_simulator=1</code>变量的值？可以通过<code>ENV</code>来读取环境变量，不过读取到的是字符串：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ruby" data-lang="ruby"><span style="display:flex;"><span><span style="color:#75715e"># Podfile</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 直接读取变量值</span>
+</span></span><span style="display:flex;"><span>simulator_flag <span style="color:#f92672">=</span> <span style="color:#66d9ef">ENV</span><span style="color:#f92672">[</span><span style="color:#e6db74">&#39;use_simulator&#39;</span><span style="color:#f92672">]</span> 
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">if</span> simulator_flag <span style="color:#f92672">==</span> <span style="color:#e6db74">&#39;1&#39;</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#75715e"># 当use_simulator为1时执行的逻辑</span>
+</span></span><span style="display:flex;"><span>  pod <span style="color:#e6db74">&#39;SomeFramework&#39;</span>, <span style="color:#e6db74">:path</span> <span style="color:#f92672">=&gt;</span> <span style="color:#e6db74">&#39;./local_simulator_version&#39;</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#75715e"># 或者根据条件设置其他参数</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">else</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#75715e"># 默认逻辑</span>
+</span></span><span style="display:flex;"><span>  pod <span style="color:#e6db74">&#39;SomeFramework&#39;</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">end</span>
+</span></span></code></pre></div><p>如果要将读取的环境变量的值转换为整数，可以使用<code>to_i</code>：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ruby" data-lang="ruby"><span style="display:flex;"><span>use_simulator <span style="color:#f92672">=</span> <span style="color:#66d9ef">ENV</span><span style="color:#f92672">.</span>fetch(<span style="color:#e6db74">&#39;use_simulator&#39;</span>, <span style="color:#e6db74">&#39;0&#39;</span>)<span style="color:#f92672">.</span>to_i
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">if</span> use_simulator <span style="color:#f92672">==</span> <span style="color:#ae81ff">1</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">...</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">end</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">if</span> <span style="color:#66d9ef">ENV</span><span style="color:#f92672">[</span><span style="color:#e6db74">&#39;use_simulator&#39;</span><span style="color:#f92672">]</span> <span style="color:#f92672">==</span> <span style="color:#ae81ff">1</span>   <span style="color:#75715e"># 永远不成立，因为左边是字符串&#34;1&#34;</span>
+</span></span><span style="display:flex;"><span>  
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 严格的写法</span>
+</span></span><span style="display:flex;"><span>use_simulator <span style="color:#f92672">=</span> <span style="color:#66d9ef">begin</span>
+</span></span><span style="display:flex;"><span>  Integer(<span style="color:#66d9ef">ENV</span><span style="color:#f92672">.</span>fetch(<span style="color:#e6db74">&#39;use_simulator&#39;</span>, <span style="color:#e6db74">&#39;0&#39;</span>), <span style="color:#ae81ff">10</span>)
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">rescue</span> <span style="color:#66d9ef">ArgumentError</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#ae81ff">0</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">end</span>
 </span></span></code></pre></div>
     </div>
     <footer class="post-footer">
@@ -1329,6 +1358,7 @@ code.has-jax {
     </li>
     <li><a href="#-exit-1">|| exit 1</a></li>
     <li><a href="#-exec-rm--rf--">-exec rm -rf {} +</a></li>
+    <li><a href="#podspec读取环境变量-1">podspec读取环境变量</a></li>
   </ul>
 </nav></div>
     </div>
