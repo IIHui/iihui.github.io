@@ -194,7 +194,9 @@ error: opening /Users/xxx/Library/Developer/Xcode/DerivedData/yyy-gkvodylwxcqhdk
 某个python库是否存在 需要在命令行确认某个python库是否存在：
 # 退出码0表示能导入，非0表示不能 python3 -c &amp;#34;import requests&amp;#34; &amp;amp;&amp;amp; echo &amp;#34;可导入&amp;#34; || echo &amp;#34;不可导入&amp;#34;  # 顺便看版本 python3 -c &amp;#34;import requests; print(requests.__version__)&amp;#34;   pip3 show requests &amp;gt;/dev/null 2&amp;gt;&amp;amp;1 &amp;amp;&amp;amp; echo &amp;#34;已安装&amp;#34; || echo &amp;#34;未安装&amp;#34;  # 可以用同一个解释器的pip，避免pip与python不匹配 python3 -m pip show requests &amp;gt;/dev/null 2&amp;gt;&amp;amp;1 &amp;amp;&amp;amp; echo &amp;#34;已安装&amp;#34; || echo &amp;#34;未安装&amp;#34;  # 列出并过滤 python3 -m pip list | grep -i requests 也可以封装shell脚本，用于确认任意库是否存在：
 #!/bin/bash # check_mod.sh &amp;lt;module_name&amp;gt; mod=&amp;#34;$1&amp;#34; if python3 -c &amp;#34;import $mod&amp;#34; &amp;gt;/dev/null 2&amp;gt;&amp;amp;1; then  ver=$(python3 -c &amp;#34;import $mod; print(getattr($mod,&amp;#39;__version__&amp;#39;,&amp;#39;(无版本号)&amp;#39;))&amp;#34; 2&amp;gt;/dev/null)  echo &amp;#34;$mod可导入，版本: $ver&amp;#34; else  echo &amp;#34;$mod不可导入&amp;#34;  exit 1 fi LC_ALL=en_US.UTF-8 下面shell命令中，LC_ALL是locale（本地化/区域设置）相关环境变量中优先级最高的一个。en_US.UTF-8表示一种locale，en_US表示美式英语区域设置，UTF-8表示字符编码为UTF-8。export的作用是把LC_ALL导出为环境变量。当前shell以及它启动的子进程（如python、grep、sort、awk等）都会继承这个设置。
-export LC_ALL=en_US.UTF-8 常见作用  避免中文/多字节字符乱码。 让程序按UTF-8处理文本。 统一排序、日期格式、错误消息语言等本地化行为。 常见于脚本中，确保后续命令在一致的locale下运行。  </content>
+export LC_ALL=en_US.UTF-8 常见作用  避免中文/多字节字符乱码。 让程序按UTF-8处理文本。 统一排序、日期格式、错误消息语言等本地化行为。 常见于脚本中，确保后续命令在一致的locale下运行。  之后运行locale，可能看到如下内容。但需要注意的是，系统必须已经安装en_US.UTF-8这个locale，否则可能报错或回退。
+LANG=&amp;#34;en_US.UTF-8&amp;#34; LC_COLLATE=&amp;#34;en_US.UTF-8&amp;#34; LC_CTYPE=&amp;#34;en_US.UTF-8&amp;#34; LC_MESSAGES=&amp;#34;en_US.UTF-8&amp;#34; LC_MONETARY=&amp;#34;en_US.UTF-8&amp;#34; LC_NUMERIC=&amp;#34;en_US.UTF-8&amp;#34; LC_TIME=&amp;#34;en_US.UTF-8&amp;#34; LC_ALL= 下面是一条通用Unix/Linux/macOS shell命令，在macOS的zsh或bash中都可以使用。在当前工作目录下创建一个名为.devops的目录；如果它已经存在，就什么都不做，也不报错。其中，-p表示需要时自动创建父目录，如果目标目录已存在，也不报错：
+mkdir -p .devops </content>
     </entry>
     
      <entry>
