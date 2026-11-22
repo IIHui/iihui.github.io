@@ -241,7 +241,7 @@ code.has-jax {
     <i class="fa fa-file-word-o"></i>
 </span>
 <span class="post-meta-item-text">字数: </span>
-<span class="leancloud-visitors-count">19630</span>
+<span class="leancloud-visitors-count">19890</span>
 &nbsp; | &nbsp;
 <span class="post-meta-item-icon">
     <i class="fa fa-coffee"></i>
@@ -1115,8 +1115,16 @@ code.has-jax {
 </span></span><span style="display:flex;"><span>LC_NUMERIC<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;en_US.UTF-8&#34;</span>
 </span></span><span style="display:flex;"><span>LC_TIME<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;en_US.UTF-8&#34;</span>
 </span></span><span style="display:flex;"><span>LC_ALL<span style="color:#f92672">=</span>
-</span></span></code></pre></div><p>下面是一条通用<code>Unix/Linux/macOS shell</code>命令，在<code>macOS</code>的<code>zsh</code>或<code>bash</code>中都可以使用。在当前工作目录下创建一个名为<code>.devops</code>的目录；如果它已经存在，就什么都不做，也不报错。其中，<code>-p</code>表示需要时自动创建父目录，如果目标目录已存在，也不报错：</p>
+</span></span></code></pre></div><p>下面是一条通用<code>Unix/Linux/macOS shell</code>命令，在<code>macOS</code>的<code>zsh</code>或<code>bash</code>中都可以使用。在当前工作目录下创建一个名为<code>.devops</code>的目录，如果它已经存在就什么都不做，也不报错。其中，<code>-p</code>表示需要时自动创建父目录，如果目标目录已存在，不报错：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sh" data-lang="sh"><span style="display:flex;"><span>mkdir -p .devops
+</span></span></code></pre></div><h1 id="-exit-1">|| exit 1</h1>
+<p>在shell脚本中命令后面拼接<code>|| exit 1</code>的含义是什么？如果前面的命令执行成功，退出状态码为0，<code>||</code>右边不执行，脚本继续往下走。如果cmd执行失败，退出状态码非0，则执行<code>exit 1</code>，立即退出当前shell脚本，并把退出码设为1：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sh" data-lang="sh"><span style="display:flex;"><span>cmd <span style="color:#f92672">||</span> exit <span style="color:#ae81ff">1</span>
+</span></span></code></pre></div><h1 id="-exec-rm--rf--">-exec rm -rf {} +</h1>
+<p>在当前目录下删除除dSYM或ipa文件，<code>-exec rm -rf {} +</code>是对匹配项逐个删除，能处理带空格的文件名。其中的-exec表示对匹配到的文件执行一条命令，<code>{}</code>表示占位符，会被find替换成匹配到的路径替换，<code>+</code>表示把多个路径攒起来一次性传给命令：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sh" data-lang="sh"><span style="display:flex;"><span>find <span style="color:#e6db74">&#34;</span>$build_path<span style="color:#e6db74">&#34;</span> -mindepth <span style="color:#ae81ff">1</span> -maxdepth <span style="color:#ae81ff">1</span> <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span><span style="color:#ae81ff"></span>  ! -name <span style="color:#e6db74">&#39;*.dSYM&#39;</span> ! -name <span style="color:#e6db74">&#39;*.ipa&#39;</span> <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span><span style="color:#ae81ff"></span>  -exec rm -rf <span style="color:#f92672">{}</span> +
 </span></span></code></pre></div>
     </div>
     <footer class="post-footer">
@@ -1319,6 +1327,8 @@ code.has-jax {
         </li>
       </ul>
     </li>
+    <li><a href="#-exit-1">|| exit 1</a></li>
+    <li><a href="#-exec-rm--rf--">-exec rm -rf {} +</a></li>
   </ul>
 </nav></div>
     </div>
