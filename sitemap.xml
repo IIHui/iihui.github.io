@@ -197,10 +197,10 @@ error: opening /Users/xxx/Library/Developer/Xcode/DerivedData/yyy-gkvodylwxcqhdk
 export LC_ALL=en_US.UTF-8 常见作用  避免中文/多字节字符乱码。 让程序按UTF-8处理文本。 统一排序、日期格式、错误消息语言等本地化行为。 常见于脚本中，确保后续命令在一致的locale下运行。  之后运行locale，可能看到如下内容。但需要注意的是，系统必须已经安装en_US.UTF-8这个locale，否则可能报错或回退。
 LANG=&amp;#34;en_US.UTF-8&amp;#34; LC_COLLATE=&amp;#34;en_US.UTF-8&amp;#34; LC_CTYPE=&amp;#34;en_US.UTF-8&amp;#34; LC_MESSAGES=&amp;#34;en_US.UTF-8&amp;#34; LC_MONETARY=&amp;#34;en_US.UTF-8&amp;#34; LC_NUMERIC=&amp;#34;en_US.UTF-8&amp;#34; LC_TIME=&amp;#34;en_US.UTF-8&amp;#34; LC_ALL= 下面是一条通用Unix/Linux/macOS shell命令，在macOS的zsh或bash中都可以使用。在当前工作目录下创建一个名为.devops的目录，如果它已经存在就什么都不做，也不报错。其中，-p表示需要时自动创建父目录，如果目标目录已存在，不报错：
 mkdir -p .devops || exit 1 在shell脚本中命令后面拼接|| exit 1的含义是什么？如果前面的命令执行成功，退出状态码为0，||右边不执行，脚本继续往下走。如果cmd执行失败，退出状态码非0，则执行exit 1，立即退出当前shell脚本，并把退出码设为1：
-cmd || exit 1 -exec rm -rf {} &#43; 在当前目录下删除除dSYM或ipa文件，-exec rm -rf {} &#43;是对匹配项逐个删除，能处理带空格的文件名。其中的-exec表示对匹配到的文件执行一条命令，{}表示占位符，会被find替换成匹配到的路径替换，&#43;表示把多个路径攒起来一次性传给命令：
+cmd || exit 1 -exec rm -rf {} &#43; 在当前目录下删除除dSYM或ipa外的所有文件，-exec rm -rf {} &#43;是对匹配项逐个删除，能处理带空格的文件名。其中的-exec表示对匹配到的文件执行一条命令，{}表示占位符，会被find替换成匹配到的路径替换，&#43;表示把多个路径攒起来一次性传给命令：
 find &amp;#34;$build_path&amp;#34; -mindepth 1 -maxdepth 1 \  ! -name &amp;#39;*.dSYM&amp;#39; ! -name &amp;#39;*.ipa&amp;#39; \  -exec rm -rf {} &#43; 作为对比，-exec rm -rf {} &#43;是把find找到的这批路径，攒成一条rm -rf path1 path2 ...命令，一次性删掉，比\;逐条执行高效，比xargs少一层管道，是find里批量删除的标准写法。
-podspec读取环境变量 在podspec和podfile中怎么读取在zshrc中定义的export use_simulator=1变量的值？可以通过ENV来读取环境变量，不过读取到的是字符串：
-# Podfile # 直接读取变量值 simulator_flag = ENV[&amp;#39;use_simulator&amp;#39;]  if simulator_flag == &amp;#39;1&amp;#39;  # 当use_simulator为1时执行的逻辑  pod &amp;#39;SomeFramework&amp;#39;, :path =&amp;gt; &amp;#39;./local_simulator_version&amp;#39;  # 或者根据条件设置其他参数 else  # 默认逻辑  pod &amp;#39;SomeFramework&amp;#39; end 如果要将读取的环境变量的值转换为整数，可以使用to_i：
+podspec读取环境变量 在podspec和podfile中怎么读取在zshrc文件中定义的export use_simulator=1变量的值？可以通过ENV来读取环境变量，不过读取到的是字符串值：
+# Podfile # 直接读取变量值 simulator_flag = ENV[&amp;#39;use_simulator&amp;#39;]  if simulator_flag == &amp;#39;1&amp;#39;  # 当use_simulator为1时执行的逻辑  pod &amp;#39;SomeFramework&amp;#39;, :path =&amp;gt; &amp;#39;./local_simulator_version&amp;#39;  # 或者根据条件设置其他参数 else  # 默认逻辑  pod &amp;#39;SomeFramework&amp;#39; end 如果要将读取的环境变量值转换为整数，可以使用to_i：
 use_simulator = ENV.fetch(&amp;#39;use_simulator&amp;#39;, &amp;#39;0&amp;#39;).to_i if use_simulator == 1  ... end  if ENV[&amp;#39;use_simulator&amp;#39;] == 1 # 永远不成立，因为左边是字符串&amp;#34;1&amp;#34;  # 严格的写法 use_simulator = begin  Integer(ENV.fetch(&amp;#39;use_simulator&amp;#39;, &amp;#39;0&amp;#39;), 10) rescue ArgumentError  0 end </content>
     </entry>
     

@@ -241,7 +241,7 @@ code.has-jax {
     <i class="fa fa-file-word-o"></i>
 </span>
 <span class="post-meta-item-text">字数: </span>
-<span class="leancloud-visitors-count">20224</span>
+<span class="leancloud-visitors-count">20230</span>
 &nbsp; | &nbsp;
 <span class="post-meta-item-icon">
     <i class="fa fa-coffee"></i>
@@ -1106,7 +1106,7 @@ code.has-jax {
 <li>统一排序、日期格式、错误消息语言等本地化行为。</li>
 <li>常见于脚本中，确保后续命令在一致的<code>locale</code>下运行。</li>
 </ul>
-<p>之后运行locale，可能看到如下内容。但需要注意的是，系统必须已经安装<code>en_US.UTF-8</code>这个<code>locale</code>，否则可能报错或回退。</p>
+<p>之后运行<code>locale</code>，可能看到如下内容。但需要注意的是，系统必须已经安装<code>en_US.UTF-8</code>这个<code>locale</code>，否则可能报错或回退。</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sh" data-lang="sh"><span style="display:flex;"><span>LANG<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;en_US.UTF-8&#34;</span>
 </span></span><span style="display:flex;"><span>LC_COLLATE<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;en_US.UTF-8&#34;</span>
 </span></span><span style="display:flex;"><span>LC_CTYPE<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;en_US.UTF-8&#34;</span>
@@ -1118,19 +1118,19 @@ code.has-jax {
 </span></span></code></pre></div><p>下面是一条通用<code>Unix/Linux/macOS shell</code>命令，在<code>macOS</code>的<code>zsh</code>或<code>bash</code>中都可以使用。在当前工作目录下创建一个名为<code>.devops</code>的目录，如果它已经存在就什么都不做，也不报错。其中，<code>-p</code>表示需要时自动创建父目录，如果目标目录已存在，不报错：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sh" data-lang="sh"><span style="display:flex;"><span>mkdir -p .devops
 </span></span></code></pre></div><h1 id="-exit-1">|| exit 1</h1>
-<p>在shell脚本中命令后面拼接<code>|| exit 1</code>的含义是什么？如果前面的命令执行成功，退出状态码为0，<code>||</code>右边不执行，脚本继续往下走。如果cmd执行失败，退出状态码非0，则执行<code>exit 1</code>，立即退出当前shell脚本，并把退出码设为1：</p>
+<p>在shell脚本中命令后面拼接<code>|| exit 1</code>的含义是什么？如果前面的命令执行成功，退出状态码为0，<code>||</code>右边不执行，脚本继续往下走。如果<code>cmd</code>执行失败，退出状态码非0，则执行<code>exit 1</code>，立即退出当前shell脚本，并把退出码设为1：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sh" data-lang="sh"><span style="display:flex;"><span>cmd <span style="color:#f92672">||</span> exit <span style="color:#ae81ff">1</span>
 </span></span></code></pre></div><h1 id="-exec-rm--rf--">-exec rm -rf {} +</h1>
-<p>在当前目录下删除除dSYM或ipa文件，<code>-exec rm -rf {} +</code>是对匹配项逐个删除，能处理带空格的文件名。其中的-exec表示对匹配到的文件执行一条命令，<code>{}</code>表示占位符，会被find替换成匹配到的路径替换，<code>+</code>表示把多个路径攒起来一次性传给命令：</p>
+<p>在当前目录下删除除<code>dSYM</code>或<code>ipa</code>外的所有文件，<code>-exec rm -rf {} +</code>是对匹配项逐个删除，能处理带空格的文件名。其中的<code>-exec</code>表示对匹配到的文件执行一条命令，<code>{}</code>表示占位符，会被<code>find</code>替换成匹配到的路径替换，<code>+</code>表示把多个路径攒起来一次性传给命令：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sh" data-lang="sh"><span style="display:flex;"><span>find <span style="color:#e6db74">&#34;</span>$build_path<span style="color:#e6db74">&#34;</span> -mindepth <span style="color:#ae81ff">1</span> -maxdepth <span style="color:#ae81ff">1</span> <span style="color:#ae81ff">\
 </span></span></span><span style="display:flex;"><span><span style="color:#ae81ff"></span>  ! -name <span style="color:#e6db74">&#39;*.dSYM&#39;</span> ! -name <span style="color:#e6db74">&#39;*.ipa&#39;</span> <span style="color:#ae81ff">\
 </span></span></span><span style="display:flex;"><span><span style="color:#ae81ff"></span>  -exec rm -rf <span style="color:#f92672">{}</span> +
 </span></span></code></pre></div><p>作为对比，<code>-exec rm -rf {} +</code>是把<code>find</code>找到的这批路径，攒成一条<code>rm -rf path1 path2 ...</code>命令，一次性删掉，比<code>\;</code>逐条执行高效，比<code>xargs</code>少一层管道，是<code>find</code>里批量删除的标准写法。</p>
 <h1 id="podspec读取环境变量-1">podspec读取环境变量</h1>
-<p>在<code>podspec</code>和<code>podfile</code>中怎么读取在<code>zshrc</code>中定义的<code>export use_simulator=1</code>变量的值？可以通过<code>ENV</code>来读取环境变量，不过读取到的是字符串：</p>
+<p>在<code>podspec</code>和<code>podfile</code>中怎么读取在<code>zshrc</code>文件中定义的<code>export use_simulator=1</code>变量的值？可以通过<code>ENV</code>来读取环境变量，不过读取到的是字符串值：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ruby" data-lang="ruby"><span style="display:flex;"><span><span style="color:#75715e"># Podfile</span>
 </span></span><span style="display:flex;"><span><span style="color:#75715e"># 直接读取变量值</span>
-</span></span><span style="display:flex;"><span>simulator_flag <span style="color:#f92672">=</span> <span style="color:#66d9ef">ENV</span><span style="color:#f92672">[</span><span style="color:#e6db74">&#39;use_simulator&#39;</span><span style="color:#f92672">]</span> 
+</span></span><span style="display:flex;"><span>simulator_flag <span style="color:#f92672">=</span> <span style="color:#66d9ef">ENV</span><span style="color:#f92672">[</span><span style="color:#e6db74">&#39;use_simulator&#39;</span><span style="color:#f92672">]</span>
 </span></span><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span><span style="color:#66d9ef">if</span> simulator_flag <span style="color:#f92672">==</span> <span style="color:#e6db74">&#39;1&#39;</span>
 </span></span><span style="display:flex;"><span>  <span style="color:#75715e"># 当use_simulator为1时执行的逻辑</span>
@@ -1140,7 +1140,7 @@ code.has-jax {
 </span></span><span style="display:flex;"><span>  <span style="color:#75715e"># 默认逻辑</span>
 </span></span><span style="display:flex;"><span>  pod <span style="color:#e6db74">&#39;SomeFramework&#39;</span>
 </span></span><span style="display:flex;"><span><span style="color:#66d9ef">end</span>
-</span></span></code></pre></div><p>如果要将读取的环境变量的值转换为整数，可以使用<code>to_i</code>：</p>
+</span></span></code></pre></div><p>如果要将读取的环境变量值转换为整数，可以使用<code>to_i</code>：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ruby" data-lang="ruby"><span style="display:flex;"><span>use_simulator <span style="color:#f92672">=</span> <span style="color:#66d9ef">ENV</span><span style="color:#f92672">.</span>fetch(<span style="color:#e6db74">&#39;use_simulator&#39;</span>, <span style="color:#e6db74">&#39;0&#39;</span>)<span style="color:#f92672">.</span>to_i
 </span></span><span style="display:flex;"><span><span style="color:#66d9ef">if</span> use_simulator <span style="color:#f92672">==</span> <span style="color:#ae81ff">1</span>
 </span></span><span style="display:flex;"><span>  <span style="color:#f92672">...</span>
