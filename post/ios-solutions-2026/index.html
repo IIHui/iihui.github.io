@@ -241,7 +241,7 @@ code.has-jax {
     <i class="fa fa-file-word-o"></i>
 </span>
 <span class="post-meta-item-text">字数: </span>
-<span class="leancloud-visitors-count">20226</span>
+<span class="leancloud-visitors-count">20229</span>
 &nbsp; | &nbsp;
 <span class="post-meta-item-icon">
     <i class="fa fa-coffee"></i>
@@ -281,11 +281,11 @@ code.has-jax {
 </span></span></code></pre></div><p>实际上，最简单的解决方式是使用<code>pod install</code>命令，而不是使用<code>pod update</code>命令。因为，<code>CocoaPods</code>在执行 <code>pod update</code> 时，并不是一步完成的，而是经历三个阶段：</p>
 <ol>
 <li>解析阶段：读取<code>Podfile</code>和<code>Podfile.lock</code>，计算新的依赖版本。</li>
-<li>校验阶段：在这个阶段，<code>CocoaPods</code>会立即读取<code>Pods/Local Podspecs/\*.podspec.json</code>文件，计算当前沙盒（Pods文件夹）中各组件的<code>checksum</code>，用来和<code>Podfile.lock</code>中的旧<code>checksum</code>做比对，判断本地缓存是否被篡改过。</li>
+<li>校验阶段：此时<code>CocoaPods</code>立即读取<code>Pods/Local Podspecs/\*.podspec.json</code>文件，计算当前沙盒（<code>Pods</code>文件夹）中各个组件的<code>checksum</code>，用来和<code>Podfile.lock</code>中的旧<code>checksum</code>做比对，判断本地缓存是否被篡改过。</li>
 <li>写入阶段：下载/复制新代码，并重新生成<code>Pods/Local Podspecs/</code>下的缓存文件。</li>
 </ol>
-<p>当<code>Router.podspec.json</code>文件不存在时，<code>CocoaPods</code>在第校验阶段就直接抛出<code>Errno::ENOENT</code>异常并终止了进程，还没走到第三阶段（写入/生成新文件）。</p>
-<p>实际上，<code>CocoaPods</code>的设计者假设沙盒（是指<code>Pods</code>文件夹）一旦通过<code>pod install</code> 生成，就<font color=red>处于完整状态</font>。而<code>pod update</code>是<font color="#de7802">一个增量更新命令</font>，它默认信任现有沙盒的完整性，<font color="#de7802">不会在校验失败时自作主张去创建缺失文件</font>。因为如果文件缺失，说明沙盒状态已损坏，最安全的做法是报错退出，让开发者手动修复，即执行<code>pod install</code>命令。</p>
+<p>当<code>Router.podspec.json</code>文件不存在时，<code>CocoaPods</code>在第二阶段（校验阶段）就直接抛出<code>Errno::ENOENT</code>异常并终止了进程，还没走到第三阶段（写入/生成新文件）。</p>
+<p>实际上，<code>CocoaPods</code>的设计者假设沙盒（是指<code>Pods</code>文件夹）一旦通过<code>pod install</code> 生成，就<font color=red>处于完整状态</font>。而<code>pod update</code>是<font color="#de7802">一个增量更新命令，它默认信任现有沙盒的完整性，不会在校验失败时自作主张去主动创建缺失文件</font>。因为如果文件缺失，说明沙盒状态已损坏，最安全的做法是报错退出，让开发者手动修复，即执行<code>pod install</code>命令。</p>
 <p>所以只要修改了<code>:path</code>指向的本地组件代码或<code>.podspec</code> 版本号，需要执行<code>pod install</code>命令，而不是执行<code>pod update</code>命令。</p>
 <p>实际上，<code>pod install</code>和<code>pod update</code>的核心区别在于：<code>pod install</code>用于安装并锁定版本，而<code>pod update</code>用于更新到新的版本，它们的核心区别如下：</p>
 <table>
